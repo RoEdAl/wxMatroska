@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="StdWx.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="wxConfiguration.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="wxCueChapters.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="StdWx.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="wxConfiguration.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header files">
+      <UniqueIdentifier>{71aada00-a880-4a04-9d2d-f671a90ebaa1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files">
+      <UniqueIdentifier>{4c4a7d32-bed9-449f-b9ca-ba4acff49a3d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

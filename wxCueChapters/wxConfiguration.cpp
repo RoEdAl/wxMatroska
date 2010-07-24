@@ -5,6 +5,9 @@
 #include "StdWx.h"
 #include "wxConfiguration.h"
 
+const wxChar wxConfiguration::CUE_SHEET_EXT[] = wxT("cue");
+const wxChar wxConfiguration::MATROSKA_CHAPTERS_EXT[] = wxT("mvc.xml");
+
 IMPLEMENT_CLASS( wxConfiguration, wxObject )
 
 wxConfiguration::wxConfiguration(void)
@@ -17,7 +20,10 @@ wxConfiguration::wxConfiguration(void)
 	 m_sTrackNameFormat( wxT("%dp% - %dt% - %tt%") ),
 	 m_bEmbedded( false ),
 	 m_bPolishQuotationMarks(true),
-	 m_bSaveCueSheet(false)
+	 m_bSaveCueSheet(false),
+	 m_bTrackOneIndexOne(true),
+	 m_bAbortOnError(true),
+	 m_bRoundDownToFullFrames(false)
 {
 }
 
@@ -43,9 +49,15 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddSwitch( wxT("nec"), wxT("no-embedded-cue"), _("Try to read embedded cue sheet"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("c"), wxT("save-cue-sheet"), _("Save cue sheet instead of Matroska chapter file. This switch allows to extract embedded cue sheet when used with ec option."), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("m"), wxT("save-matroska-chapters"), _("Save Matroska chapter file (default)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("t1i1"), wxT("track-01-index-01"), _("For first track assume index 01 as beginning of track (default)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("t1i0"), wxT("track-01-index-00"), _("For first track assume index 00 as beginning of track"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("pqm"), wxT("polish-quotation-marks"), _("Convert quotation marks to polish quotation marks inside strings (default: on)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("npqm"), wxT("no-polish-quotation-marks"), _("Don't convert quotation marks to polish quotation marks inside strings"), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddParam( _("<Input CUE file>"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_OPTION_MANDATORY );
+	cmdLine.AddSwitch( wxT("a"), wxT("abort-on-error"), _("Abort when conversion errors occurs (default)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("na"), wxT("dont-abort-on-error"), _("Do not abort when conversion errors occurs"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("r"), wxT("round-down-to-full-frames"), _("Round down track end time to full frames (default: no)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("nr"), wxT("dont-round-down-to-full-frames"), _("Do not round down track end time to full frames"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddParam( _("<Input CUE file>"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_OPTION_MANDATORY|wxCMD_LINE_PARAM_MULTIPLE );
 }
 
 bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
@@ -80,6 +92,15 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	if ( cmdLine.Found( wxT("c") ) ) m_bSaveCueSheet = true;
 	if ( cmdLine.Found( wxT("m") ) ) m_bSaveCueSheet = false;
 
+	if ( cmdLine.Found( wxT("t1i1") ) ) m_bTrackOneIndexOne = true;
+	if ( cmdLine.Found( wxT("t1i0") ) ) m_bTrackOneIndexOne = false;
+
+	if ( cmdLine.Found( wxT("a") ) ) m_bAbortOnError = true;
+	if ( cmdLine.Found( wxT("na") ) ) m_bAbortOnError = false;
+
+	if ( cmdLine.Found( wxT("r") ) ) m_bRoundDownToFullFrames = true;
+	if ( cmdLine.Found( wxT("nr") ) ) m_bRoundDownToFullFrames = false;
+
 	if ( cmdLine.Found( wxT("e"), &s ) )
 	{
 		m_sAlternateExtensions = s;
@@ -92,17 +113,9 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	if ( cmdLine.GetParamCount() > 0 )
 	{
-		wxFileName fn( cmdLine.GetParam() );
-		if ( fn.FileExists() && !fn.IsDir() )
+		for( size_t i=0; i<cmdLine.GetParamCount(); i++ )
 		{
-			m_sInputFile = fn.GetFullPath();
-			fn.SetExt( wxT("xml") );
-			m_sOutputFile = fn.GetFullPath();
-		}
-		else
-		{
-			wxLogWarning( _("Invalid input file") );
-			bRes = false;
+			m_inputFile.Add( cmdLine.GetParam( i ) );
 		}
 	}
 	else
@@ -126,12 +139,12 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	if ( cmdLine.Found( wxT("o"), &s ) )
 	{
-		m_sOutputFile = s;
+		m_outputFile.Assign( s );
 	}
 
 	if ( cmdLine.Found( wxT("f"), &s ) )
 	{
-		m_sSingleDataFile = s;
+		m_singleDataFile.Assign( s );
 	}
 
 	return bRes;
@@ -142,7 +155,12 @@ static wxString BoolToStr( bool b )
 	return b? wxT("yes") : wxT("no");
 }
 
-wxXmlNode* wxConfiguration::BuildXmlComments( wxXmlNode*& pLast ) const
+static wxString BoolToIdx( bool b )
+{
+	return b? wxT("01") : wxT("00");
+}
+
+wxXmlNode* wxConfiguration::BuildXmlComments( const wxString& sInputFile, const wxString& sOutputFile, wxXmlNode*& pLast ) const
 {
 	wxString sInit( wxT("This chapter file was created by cue2mkc tool") );
 	wxXmlNode* pComment = new wxXmlNode( (wxXmlNode*)NULL, wxXML_COMMENT_NODE, wxEmptyString, sInit );
@@ -151,19 +169,27 @@ wxXmlNode* wxConfiguration::BuildXmlComments( wxXmlNode*& pLast ) const
 	wxDateTime dtNow( wxDateTime::Now() );
 
 	as.Add( wxString::Format( wxT("Creation time: %s %s"), dtNow.FormatISODate(), dtNow.FormatISOTime() ) );
-	as.Add( wxString::Format( wxT("CUE file: %s"), m_sInputFile ) );
-	as.Add( wxString::Format( wxT("Output file: %s"), m_sOutputFile ) );
+	as.Add( wxString::Format( wxT("CUE file: %s"), sInputFile ) );
+	as.Add( wxString::Format( wxT("Output file: %s"), sOutputFile ) );
 	as.Add( wxString::Format( wxT("Save cue sheet: %s"), BoolToStr(m_bSaveCueSheet) ) );
 	as.Add( wxString::Format( wxT("Calculate end time of chapters: %s"), BoolToStr(m_bChapterTimeEnd) ) );
 	as.Add( wxString::Format( wxT("Read embedded cue sheet: %s"), BoolToStr(m_bEmbedded) ) );
 	as.Add( wxString::Format( wxT("Convert quotation marks to polish quotation marks: %s"), BoolToStr(m_bPolishQuotationMarks) ) );
 	as.Add( wxString::Format( wxT("Use data files to calculate end time of chapters: %s"), BoolToStr(m_bUseDataFiles) ) );
-	as.Add( wxString::Format( wxT("Single data file: %s"), m_sSingleDataFile ) );
+
+	wxString sSingleDataFile;
+	if ( m_singleDataFile.IsOk() )
+	{
+		sSingleDataFile = m_singleDataFile.GetFullPath();
+	}
+	as.Add( wxString::Format( wxT("Single data file: %s"), sSingleDataFile ) );
 	as.Add( wxString::Format( wxT("Alternate extensions: %s"), m_sAlternateExtensions ) );
 	as.Add( wxString::Format( wxT("Unknown chapter end time to next chapter: %s"), BoolToStr(m_bUnknownChapterTimeEndToNextChapter) ) );
 	as.Add( wxString::Format( wxT("Chapter offset (frames): %d"), m_nChapterOffset ) );
 	as.Add( wxString::Format( wxT("Track name format: %s"), m_sTrackNameFormat ) );
 	as.Add( wxString::Format( wxT("Chapter string language: %s"), m_sLang ) );
+	as.Add( wxString::Format( wxT("For track 01 assume index %s as beginning of track"), BoolToIdx(m_bTrackOneIndexOne) ) );
+	as.Add( wxString::Format( wxT("Round down track end time to full frames: %s"), BoolToStr(m_bRoundDownToFullFrames) ) );
 
 	wxXmlNode* pNext = pComment;
 	size_t strings = as.GetCount();
@@ -208,14 +234,14 @@ bool wxConfiguration::HasAlternateExtensions() const
 	return !m_sAlternateExtensions.IsEmpty();
 }
 
-const wxString& wxConfiguration::GetSingleDataFile() const
+const wxFileName& wxConfiguration::GetSingleDataFile() const
 {
-	return m_sSingleDataFile;
+	return m_singleDataFile;
 }
 
 bool wxConfiguration::HasSingleDataFile() const
 {
-	return !m_sSingleDataFile.IsEmpty();
+	return m_singleDataFile.IsOk();
 }
 
 const wxString& wxConfiguration::GetTrackNameFormat() const
@@ -228,14 +254,33 @@ const wxString& wxConfiguration::GetLang() const
 	return m_sLang;
 }
 
-const wxString& wxConfiguration::GetInputFile() const
+const wxArrayString& wxConfiguration::GetInputFiles() const
 {
-	return m_sInputFile;
+	return m_inputFile;
 }
 
-const wxString& wxConfiguration::GetOutputFile() const
+wxString wxConfiguration::GetOutputFile( const wxString& sInputFile ) const
 {
-	return m_sOutputFile;
+	wxFileName inputFile( sInputFile );
+	if ( !inputFile.IsOk() ) return wxEmptyString;
+
+	if ( !m_outputFile.IsOk() )
+	{
+		inputFile.SetExt( m_bSaveCueSheet? CUE_SHEET_EXT : MATROSKA_CHAPTERS_EXT );
+	}
+	else
+	{
+		if ( m_outputFile.DirExists() )
+		{
+			inputFile.SetPath( m_outputFile.GetFullPath() );
+			inputFile.SetExt( m_bSaveCueSheet? CUE_SHEET_EXT : MATROSKA_CHAPTERS_EXT );
+		}
+		else
+		{
+			inputFile = m_outputFile;
+		}
+	}
+	return inputFile.GetFullPath();
 }
 
 bool wxConfiguration::IsEmbedded() const
@@ -251,4 +296,19 @@ bool wxConfiguration::UsePolishQuotationMarks() const
 bool wxConfiguration::SaveCueSheet() const
 {
 	return m_bSaveCueSheet;
+}
+
+bool wxConfiguration::TrackOneIndexOne() const
+{
+	return m_bTrackOneIndexOne;
+}
+
+bool wxConfiguration::AbortOnError() const
+{
+	return m_bAbortOnError;
+}
+
+bool wxConfiguration::RoundDownToFullFrames() const
+{
+	return m_bRoundDownToFullFrames;
 }

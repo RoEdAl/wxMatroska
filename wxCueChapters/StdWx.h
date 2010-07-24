@@ -27,6 +27,7 @@
 #include <wx/filename.h>
 #include <wx/xml/xml.h>
 #include <wx/sstream.h>
+#include <wx/dir.h>
 
 #endif // _STD_WX_H
 

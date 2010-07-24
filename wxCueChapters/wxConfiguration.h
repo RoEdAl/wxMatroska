@@ -18,14 +18,17 @@ protected:
 	bool m_bEmbedded;
 	bool m_bPolishQuotationMarks;
 	bool m_bSaveCueSheet;
+	bool m_bTrackOneIndexOne; // or zero
+	bool m_bAbortOnError;
+	bool m_bRoundDownToFullFrames;
 
 	wxString m_sAlternateExtensions;
-	wxString m_sSingleDataFile;
+	wxFileName m_singleDataFile;
 	wxString m_sLang;
 	wxString m_sTrackNameFormat;
 
-	wxString m_sInputFile;
-	wxString m_sOutputFile;
+	wxArrayString m_inputFile;
+	wxFileName m_outputFile;
 
 public:
 
@@ -35,15 +38,23 @@ public:
 	bool GetUseDataFiles() const;
 	const wxString& GetAlternateExtensions() const;
 	bool HasAlternateExtensions() const;
-	const wxString& GetSingleDataFile() const;
+	const wxFileName& GetSingleDataFile() const;
 	bool HasSingleDataFile() const;
 	const wxString& GetLang() const;
 	const wxString& GetTrackNameFormat() const;
-	const wxString& GetInputFile() const;
+	const wxArrayString& GetInputFiles() const;
 	bool IsEmbedded() const;
-	const wxString& GetOutputFile() const;
+	wxString GetOutputFile( const wxString& ) const;
 	bool UsePolishQuotationMarks() const;
 	bool SaveCueSheet() const;
+	bool TrackOneIndexOne() const;
+	bool AbortOnError() const;
+	bool RoundDownToFullFrames() const;
+
+public:
+
+	static const wxChar CUE_SHEET_EXT[];
+	static const wxChar MATROSKA_CHAPTERS_EXT[];
 
 public:
 
@@ -53,7 +64,7 @@ public:
 	static void  AddCmdLineParams( wxCmdLineParser& );
 	bool Read( const wxCmdLineParser& );
 
-	wxXmlNode* BuildXmlComments( wxXmlNode*& ) const;
+	wxXmlNode* BuildXmlComments( const wxString&, const wxString&, wxXmlNode*& ) const;
 };
 
 #endif // _WX_CONFIGURATION_H

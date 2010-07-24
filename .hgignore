@@ -9,7 +9,9 @@ syntax: regexp
 \.obj$
 \.pdb$
 \.opensdf$
+\.suo$
 \.vcxproj\.user$
 ^obj/
+^ipch/
 ^bin/
 

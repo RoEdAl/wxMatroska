@@ -388,7 +388,7 @@ wxULongLong wxDataFile::GetNumberOfFrames( wxULongLong samples )
 	return frames;
 }
 
-wxULongLong wxDataFile::GetNumberOfSamples( const wxString& sAlternateExt ) const
+wxULongLong wxDataFile::GetNumberOfSamples( const wxString& sAlternateExt, bool bRoundDown ) const
 {
 	wxFileName fn;
 	if ( !FindFile( fn, sAlternateExt) )
@@ -396,15 +396,24 @@ wxULongLong wxDataFile::GetNumberOfSamples( const wxString& sAlternateExt ) cons
 		return wxInvalidNumberOfSamples;
 	}
 
+	wxULongLong res;
 	if ( m_ftype == BINARY )
 	{
-		return GetNumberOfSamplesFromBinary(fn);
+		res = GetNumberOfSamplesFromBinary(fn);
 	}
 	else
 	{
-		return GetNumberOfSamplesFromMediaInfo(fn);
+		res = GetNumberOfSamplesFromMediaInfo(fn);
 	}
 
+	if ( (res != wxInvalidNumberOfSamples) && bRoundDown )
+	{
+		wxULongLong frames( GetNumberOfFrames( res ) );
+		res = frames;
+		res *= wxULL(588);
+	}
+
+	return res;
 }
 
 wxString wxDataFile::GetSamplesStr(wxULongLong samples)
