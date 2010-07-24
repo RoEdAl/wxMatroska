@@ -1,0 +1,15 @@
+syntax: regexp
+\.lib$
+\.sdf$
+\.exe$
+\.tlog$
+\.res$
+\.manifest$
+\.pch$
+\.obj$
+\.pdb$
+\.opensdf$
+\.vcxproj\.user$
+^obj/
+^bin/
+
