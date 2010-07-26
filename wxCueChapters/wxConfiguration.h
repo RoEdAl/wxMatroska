@@ -2,8 +2,8 @@
 	wxConfiguration.h
 */
 
-#ifndef _WX_CONFIGURATION_H
-#define _WX_CONFIGURATION_H
+#ifndef _WX_CONFIGURATION_H_
+#define _WX_CONFIGURATION_H_
 
 class wxConfiguration :public wxObject
 {
@@ -21,6 +21,7 @@ protected:
 	bool m_bTrackOneIndexOne; // or zero
 	bool m_bAbortOnError;
 	bool m_bRoundDownToFullFrames;
+	bool m_bHiddenIndexes;
 
 	wxString m_sAlternateExtensions;
 	wxFileName m_singleDataFile;
@@ -50,6 +51,7 @@ public:
 	bool TrackOneIndexOne() const;
 	bool AbortOnError() const;
 	bool RoundDownToFullFrames() const;
+	bool HiddenIndexes() const;
 
 public:
 

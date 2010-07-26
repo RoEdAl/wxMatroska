@@ -147,20 +147,6 @@ wxTimeSpan wxIndex::GetTimeSpan() const
 	return wxTimeSpan::Milliseconds( ms );
 }
 
-void wxIndex::ToStream( wxTextOutputStream& stream, wxString desc ) const
-{
-	wxString sLine;
-	sLine.Printf( wxT("\t\t%s %02d:%02d:%02d\n"), desc.GetData(), m_minutes, m_seconds, m_frames );
-	stream.WriteString( sLine );
-}
-
-void wxIndex::ToStream( wxTextOutputStream& stream ) const
-{
-	wxString sLine;
-	sLine.Printf( wxT("\t\tINDEX %02d %02d:%02d:%02d\n"), m_number, m_minutes, m_seconds, m_frames );
-	stream.WriteString( sLine );
-}
-
 wxString wxIndex::ToString() const
 {
 	wxString s;

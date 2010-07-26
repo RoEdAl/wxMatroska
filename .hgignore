@@ -10,8 +10,11 @@ syntax: regexp
 \.pdb$
 \.opensdf$
 \.suo$
+\.ncb$
 \.vcxproj\.user$
+vcproj\..+\.user$
 ^obj/
 ^ipch/
 ^bin/
+^cue/.*\.mkc\.xml
 

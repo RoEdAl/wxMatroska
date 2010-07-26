@@ -35,7 +35,6 @@ public:
 	virtual ~wxCueSheet(void);
 	wxCueSheet& operator=( const wxCueSheet& );
 
-	virtual void ToStream(wxTextOutputStream&, int = DUMP_COMMENTS ) const;
 	virtual bool HasGarbage() const;
 
 	bool HasSingleDataFile() const;

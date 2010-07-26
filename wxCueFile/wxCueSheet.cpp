@@ -109,25 +109,6 @@ void wxCueSheet::copy(const wxCueSheet& cs)
 	m_tracks = cs.m_tracks;
 }
 
-void wxCueSheet::ToStream(wxTextOutputStream& stream, int nDumpFlags ) const
-{
-	wxCueComponent::ToStream( stream, nDumpFlags );
-	DumpString( stream, wxT("CATALOG"), m_sCatalog );
-
-	if ( !m_sCdTextFile.IsEmpty() )
-	{
-		wxString sQuoted( m_sCdTextFile );
-		sQuoted.Prepend( wxT('"') ).Append( wxT('"') );
-		DumpString( stream, wxT("CDTEXTFILE"), sQuoted );
-	}
-
-	size_t tracks = m_tracks.Count();
-	for( size_t i=0; i<tracks; i++ )
-	{
-		m_tracks[i].ToStream( stream, nDumpFlags );
-	}
-}
-
 wxArrayTrack& wxCueSheet::SortTracks()
 {
 	size_t tracks = m_tracks.Count();

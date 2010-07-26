@@ -81,6 +81,8 @@ public:
 	unsigned long GetNumber() const;
 
 	DataMode GetMode() const;
+	wxString GetModeAsString() const;
+
 	wxTrack& SetMode( DataMode );
 	bool SetMode( const wxString& );
 
@@ -124,8 +126,6 @@ public:
 	wxTrack(const wxTrack&);
 	virtual ~wxTrack(void);
 	wxTrack& operator=(const wxTrack&);
-
-	virtual void ToStream(wxTextOutputStream&, int = DUMP_COMMENTS ) const;
 
 	bool IsValid() const;
 

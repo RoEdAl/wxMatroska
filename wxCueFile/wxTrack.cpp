@@ -78,6 +78,11 @@ wxTrack::DataMode wxTrack::GetMode() const
 	return m_dataMode;
 }
 
+wxString wxTrack::GetModeAsString() const
+{
+	return DataModeToString( m_dataMode );
+}
+
 wxTrack& wxTrack::SetMode(wxTrack::DataMode dataMode)
 {
 	m_dataMode = dataMode;
@@ -167,7 +172,7 @@ const wxDataFile& wxTrack::GetDataFile() const
 
 bool wxTrack::HasDataFile() const
 {
-	return m_df.IsEmpty();
+	return !m_df.IsEmpty();
 }
 
 const wxTrack::wxArrayFlag& wxTrack::GetFlags() const
@@ -371,44 +376,6 @@ bool wxTrack::IsValid() const
 {
 	return (m_number < 100);
 }
-
-void wxTrack::ToStream(wxTextOutputStream& stream, int nDumpFlags ) const
-{
-	wxString sLine;
-
-	if ( (nDumpFlags & DUMP_EMPTY_LINES) != 0 )
-	{
-		stream.WriteString( wxT("\n") );
-	}
-
-	m_df.ToStream( stream );
-	sLine.Printf( wxT("%02d %s"), m_number, DataModeToString(m_dataMode).GetData() );
-	DumpString( stream, wxT("TRACK"), sLine );
-	wxCueComponent::ToStream( stream, nDumpFlags );
-
-	// flags
-	if ( HasFlags() )
-	{
-		DumpString( stream, wxT("FLAGS"), GetFlagsAsString() );
-	}
-
-	if ( HasPreGap() )
-	{
-		GetPreGap().ToStream( stream, wxT("PREGAP") );
-	}
-
-	size_t indexes = m_indexes.Count();
-	for( size_t i=0; i<indexes; i++ )
-	{
-		m_indexes[i].ToStream( stream );
-	}
-
-	if ( HasPostGap() )
-	{
-		GetPostGap().ToStream( stream, wxT("POSTGAP") );
-	}
-}
-
 
 int wxTrack::CompareFn( wxTrack** t1, wxTrack** t2 )
 {

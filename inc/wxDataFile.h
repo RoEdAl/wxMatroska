@@ -48,6 +48,7 @@ public:
 	wxString GetFullPath() const;
 
 	FileType GetFileType() const;
+	wxString GetFileTypeAsString() const;
 	static wxString GetSamplesStr( wxULongLong );
 
 	bool IsEmpty() const;
@@ -73,8 +74,6 @@ public:
 	static wxULongLong GetNumberOfFrames( wxULongLong );
 	static void GetNumberOfFrames( wxULongLong, wxULongLong&, wxUint32& );
 	wxTimeSpan GetDuration( const wxString& = wxEmptyString ) const; // wxInvalidDuration if duration cannot be calculated
-
-	void ToStream(wxTextOutputStream&) const;
 
 	static wxString FileTypeToString( FileType );
 	static bool StringToFileType( const wxString&, FileType& );

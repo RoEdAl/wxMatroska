@@ -39,8 +39,6 @@ public:
 	bool Assign( unsigned int, wxTimeSpan );
 
 	bool IsValid(bool = false) const;
-	void ToStream( wxTextOutputStream& ) const;
-	void ToStream( wxTextOutputStream&, wxString ) const;
 	wxString ToString() const;
 	wxString GetTimeStr() const;
 	static void FixDecimalPoint( wxString& );

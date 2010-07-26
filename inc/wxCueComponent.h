@@ -23,12 +23,7 @@ public:
 
 	WX_DECLARE_STRING_HASH_MAP( wxString, wxHashString );
 
-	enum
-	{
-		DUMP_COMMENTS = 1,
-		DUMP_GARBAGE = 2,
-		DUMP_EMPTY_LINES = 4
-	};
+	
 
 protected:
 
@@ -63,8 +58,6 @@ protected:
 protected:
 
 	void copy(const wxCueComponent&);
-	static wxString FormatCdTextData( const wxString&, const wxString& );
-	void DumpString( wxTextOutputStream&, const wxChar*, const wxString& ) const;
 
 public:
 
@@ -80,6 +73,7 @@ public:
 	bool CheckEntryType( ENTRY_TYPE ) const;
 
 	void Clear(void);
+	bool IsTrack() const;
 
 	virtual void GetReplacements( wxHashString& ) const;
 
@@ -95,8 +89,8 @@ public:
 	static bool GetCdTextInfoFormat( const wxString&, ENTRY_FORMAT& );
 	static bool GetEntryType( const wxString&, ENTRY_TYPE& );
 
-	virtual void ToStream(wxTextOutputStream&, int = DUMP_COMMENTS ) const;
-	wxString ToString(int = DUMP_COMMENTS) const;
+	static wxString FormatCdTextData( const wxString&, const wxString& );
+
 };
 
 #endif

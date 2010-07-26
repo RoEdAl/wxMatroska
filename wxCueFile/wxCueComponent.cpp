@@ -181,20 +181,6 @@ void wxCueComponent::Clear()
 	m_cdTextInfo.clear();
 }
 
-void wxCueComponent::DumpString( wxTextOutputStream& stream, const wxChar* szEntry, const wxString& text ) const
-{
-	if ( !text.IsEmpty() )
-	{
-		wxString sLine;
-		sLine.Printf( wxT("%s %s\n"), szEntry, text.GetData() );
-		if ( m_bTrack )
-		{
-			sLine = sLine.Prepend( wxT("\t") );
-		}
-		stream.WriteString( sLine );
-	}
-}
-
 wxString wxCueComponent::FormatCdTextData(const wxString& sKeyword, const wxString& sValue )
 {
 	ENTRY_FORMAT fmt;
@@ -213,41 +199,6 @@ wxString wxCueComponent::FormatCdTextData(const wxString& sKeyword, const wxStri
 
 		return s;
 	}
-}
-
-void wxCueComponent::ToStream(wxTextOutputStream& stream, int nDumpFlags ) const
-{
-	// dump comments
-	if ( (nDumpFlags & DUMP_COMMENTS) != 0 )
-	{
-		for( wxArrayString::const_iterator i = m_comments.begin(); i != m_comments.end(); i++ )
-		{
-			DumpString( stream, wxT("REM"), *i );
-		}
-	}
-
-	// dump CT-TEXT info
-	for( wxHashString::const_iterator i=m_cdTextInfo.begin(); i != m_cdTextInfo.end(); i++ )
-	{
-		DumpString( stream, i->first, FormatCdTextData( i->first, i->second ) );
-	}
-
-	// dump garbage
-	if ( (nDumpFlags & DUMP_GARBAGE) != 0 )
-	{
-		for( wxArrayString::const_iterator i = m_garbage.begin(); i != m_garbage.end(); i++ )
-		{
-			stream.WriteString( *i );
-		}
-	}
-}
-
-wxString wxCueComponent::ToString(int nDumpFlags) const
-{
-	wxStringOutputStream sout;
-	wxTextOutputStream ts( sout );
-	ToStream( ts, nDumpFlags );
-	return sout.GetString();
 }
 
 void wxCueComponent::GetReplacements( wxCueComponent::wxHashString& replacements ) const
@@ -295,4 +246,9 @@ void wxCueComponent::GetReplacements( wxCueComponent::wxHashString& replacements
 
 		replacements[ s ] = sValue;
 	}
+}
+
+bool wxCueComponent::IsTrack() const
+{
+	return m_bTrack;
 }

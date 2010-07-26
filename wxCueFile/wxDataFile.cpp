@@ -127,6 +127,11 @@ wxDataFile::FileType wxDataFile::GetFileType() const
 	return m_ftype;
 }
 
+wxString wxDataFile::GetFileTypeAsString() const
+{
+	return FileTypeToString( m_ftype );
+}
+
 bool wxDataFile::IsEmpty() const
 {
 	return !m_fileName.IsOk();
@@ -150,16 +155,6 @@ wxDataFile& wxDataFile::Assign(const wxFileName& fileName, wxDataFile::FileType 
 	m_fileName = fileName;
 	m_ftype = ftype;
 	return *this;
-}
-
-void wxDataFile::ToStream(wxTextOutputStream& stream) const
-{
-	if ( !IsEmpty() )
-	{
-		wxString s;
-		s.Printf( wxT("FILE \"%s\" %s\n"), m_fileName.GetFullName().GetData(), FileTypeToString(m_ftype).GetData() );
-		stream.WriteString( s );
-	}
 }
 
 bool wxDataFile::FindFile( wxFileName& fn, const wxString& sAlternateExt ) const

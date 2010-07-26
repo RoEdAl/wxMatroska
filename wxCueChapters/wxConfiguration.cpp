@@ -6,7 +6,7 @@
 #include "wxConfiguration.h"
 
 const wxChar wxConfiguration::CUE_SHEET_EXT[] = wxT("cue");
-const wxChar wxConfiguration::MATROSKA_CHAPTERS_EXT[] = wxT("mvc.xml");
+const wxChar wxConfiguration::MATROSKA_CHAPTERS_EXT[] = wxT("mkc.xml");
 
 IMPLEMENT_CLASS( wxConfiguration, wxObject )
 
@@ -38,7 +38,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddSwitch( wxT("nce"), wxT("no-chapter-time-end"), _("Do not calculate end time of chapters"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("uc"), wxT("unknown-chapter-end-to-next-track"), _("If track's end time is unknown set it to next track position using frame offset (default: off)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("nuc"), wxT("no-unknown-chapter-end-to-next-track"), _("Do not set end time of track if unknown"), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddOption( wxT("cf"), wxT("chapter-offset"), _("Chapter offset in frames to use with -uc option (default: 150)"), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( wxT("fo"), wxT("frame-offset"), _("Offset in frames to use with -uc option (default: 150)"), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("df"), wxT("use-data-files"), _("Use data file(s) to calculate end time of chapters (default: on)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("ndf"), wxT("dont-use-data-files"), _("Use data file(s) to calculate end time of chapters (requires MediaInfo library)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxT("e"), wxT("alternate-extensions"), _("Comma-separated list of alternate extensions of data files (default: none)"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
@@ -57,7 +57,9 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddSwitch( wxT("na"), wxT("dont-abort-on-error"), _("Do not abort when conversion errors occurs"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("r"), wxT("round-down-to-full-frames"), _("Round down track end time to full frames (default: no)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("nr"), wxT("dont-round-down-to-full-frames"), _("Do not round down track end time to full frames"), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddParam( _("<Input CUE file>"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_OPTION_MANDATORY|wxCMD_LINE_PARAM_MULTIPLE );
+	cmdLine.AddSwitch( wxT("hi"), wxT("hidden-indexes"), _("Convert indexes to hidden chapters"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("nhi"), wxT("no-hidden-indexes"), _("Convert indexes to normal (non-hidden) chapters (default)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddParam( _("<Input CUE file>"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE );
 }
 
 bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
@@ -71,7 +73,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	if ( cmdLine.Found( wxT("nuc") ) ) m_bUnknownChapterTimeEndToNextChapter = false;
 
 	wxString s;
-	if ( cmdLine.Found( wxT("cf"), &s ) )
+	if ( cmdLine.Found( wxT("fo"), &s ) )
 	{
 		if ( !s.ToULong( &m_nChapterOffset ) )
 		{
@@ -100,6 +102,9 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	if ( cmdLine.Found( wxT("r") ) ) m_bRoundDownToFullFrames = true;
 	if ( cmdLine.Found( wxT("nr") ) ) m_bRoundDownToFullFrames = false;
+
+	if ( cmdLine.Found( wxT("hi") ) ) m_bHiddenIndexes = true;
+	if ( cmdLine.Found( wxT("nhi") ) ) m_bHiddenIndexes = false;
 
 	if ( cmdLine.Found( wxT("e"), &s ) )
 	{
@@ -160,6 +165,12 @@ static wxString BoolToIdx( bool b )
 	return b? wxT("01") : wxT("00");
 }
 
+static wxString GetFileName( const wxString& sFileName )
+{
+	wxFileName fn( sFileName );
+	return fn.GetFullName();
+}
+
 wxXmlNode* wxConfiguration::BuildXmlComments( const wxString& sInputFile, const wxString& sOutputFile, wxXmlNode*& pLast ) const
 {
 	wxString sInit( wxT("This chapter file was created by cue2mkc tool") );
@@ -169,8 +180,8 @@ wxXmlNode* wxConfiguration::BuildXmlComments( const wxString& sInputFile, const 
 	wxDateTime dtNow( wxDateTime::Now() );
 
 	as.Add( wxString::Format( wxT("Creation time: %s %s"), dtNow.FormatISODate(), dtNow.FormatISOTime() ) );
-	as.Add( wxString::Format( wxT("CUE file: %s"), sInputFile ) );
-	as.Add( wxString::Format( wxT("Output file: %s"), sOutputFile ) );
+	as.Add( wxString::Format( wxT("CUE file: %s"), GetFileName(sInputFile) ) );
+	as.Add( wxString::Format( wxT("Output file: %s"), GetFileName(sOutputFile) ) );
 	as.Add( wxString::Format( wxT("Save cue sheet: %s"), BoolToStr(m_bSaveCueSheet) ) );
 	as.Add( wxString::Format( wxT("Calculate end time of chapters: %s"), BoolToStr(m_bChapterTimeEnd) ) );
 	as.Add( wxString::Format( wxT("Read embedded cue sheet: %s"), BoolToStr(m_bEmbedded) ) );
@@ -184,12 +195,13 @@ wxXmlNode* wxConfiguration::BuildXmlComments( const wxString& sInputFile, const 
 	}
 	as.Add( wxString::Format( wxT("Single data file: %s"), sSingleDataFile ) );
 	as.Add( wxString::Format( wxT("Alternate extensions: %s"), m_sAlternateExtensions ) );
-	as.Add( wxString::Format( wxT("Unknown chapter end time to next chapter: %s"), BoolToStr(m_bUnknownChapterTimeEndToNextChapter) ) );
+	as.Add( wxString::Format( wxT("Set chapter's end time to beginning of next chapter if track's end time cannot be calculated: %s"), BoolToStr(m_bUnknownChapterTimeEndToNextChapter) ) );
 	as.Add( wxString::Format( wxT("Chapter offset (frames): %d"), m_nChapterOffset ) );
 	as.Add( wxString::Format( wxT("Track name format: %s"), m_sTrackNameFormat ) );
 	as.Add( wxString::Format( wxT("Chapter string language: %s"), m_sLang ) );
 	as.Add( wxString::Format( wxT("For track 01 assume index %s as beginning of track"), BoolToIdx(m_bTrackOneIndexOne) ) );
 	as.Add( wxString::Format( wxT("Round down track end time to full frames: %s"), BoolToStr(m_bRoundDownToFullFrames) ) );
+	as.Add( wxString::Format( wxT("Convert indexes to hidden subchapters: %s"), BoolToStr(m_bHiddenIndexes) ) );
 
 	wxXmlNode* pNext = pComment;
 	size_t strings = as.GetCount();
@@ -311,4 +323,9 @@ bool wxConfiguration::AbortOnError() const
 bool wxConfiguration::RoundDownToFullFrames() const
 {
 	return m_bRoundDownToFullFrames;
+}
+
+bool wxConfiguration::HiddenIndexes() const
+{
+	return m_bHiddenIndexes;
 }
