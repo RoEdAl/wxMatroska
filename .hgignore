@@ -17,4 +17,7 @@ vcproj\..+\.user$
 ^ipch/
 ^bin/
 ^cue/.*\.mkc\.xml
+^MediaInfo/
+^MediaInfoGUI/
+
 
