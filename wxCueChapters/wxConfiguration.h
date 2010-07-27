@@ -39,6 +39,7 @@ protected:
 protected:
 
 	bool CheckLang( const wxString& ) const;
+	void FillArray( wxArrayString& as ) const;
 
 public:
 
@@ -77,6 +78,7 @@ public:
 	static void  AddCmdLineParams( wxCmdLineParser& );
 	bool Read( const wxCmdLineParser& );
 
+	void Dump() const;
 	wxXmlNode* BuildXmlComments( const wxString&, const wxString&, wxXmlNode*& ) const;
 };
 

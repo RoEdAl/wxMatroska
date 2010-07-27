@@ -183,6 +183,7 @@ bool wxDataFile::FindFile( wxFileName& fn, const wxString& sAlternateExt ) const
 		if ( fnTry.FileExists() )
 		{
 			fn = fnTry;
+			wxLogInfo( _("%s -> %s"), m_fileName.GetFullName(), fnTry.GetFullName() );
 			return true;
 		}
 	}

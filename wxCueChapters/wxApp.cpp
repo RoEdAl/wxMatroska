@@ -34,8 +34,8 @@ void wxMyApp::AddVersionInfos( wxCmdLineParser& cmdline )
 {
 	cmdline.AddUsageText( wxString::Format( wxT("Application version: %s"), APP_VERSION ) );
 	cmdline.AddUsageText( wxString::Format( wxT("Author: %s"), APP_AUTHOR ) );
-	cmdline.AddUsageText( wxString::Format( wxT("Operationg system: %s"), wxPlatformInfo::Get().GetOperatingSystemDescription() ) );
-	cmdline.AddUsageText( wxString::Format( wxT("wxWidgets version: %d.%d.%d"), wxMAJOR_VERSION, wxMAJOR_VERSION, wxRELEASE_NUMBER ) );
+	cmdline.AddUsageText( wxString::Format( wxT("Operating system: %s"), wxPlatformInfo::Get().GetOperatingSystemDescription() ) );
+	cmdline.AddUsageText( wxString::Format( wxT("wxWidgets version: %d.%d.%d"), wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER ) );
 }
 
 void wxMyApp::AddFormatDescription( wxCmdLineParser& cmdline )
@@ -81,7 +81,14 @@ bool wxMyApp::OnCmdLineParsed( wxCmdLineParser& cmdline )
 		return false;
 	}
 
-	return m_cfg.Read( cmdline );
+	if ( !m_cfg.Read( cmdline ) )
+	{
+		return false;
+	}
+
+	wxLogMessage( _("%s ver. %s"), GetAppDisplayName(), APP_VERSION );
+	m_cfg.Dump();
+	return true;
 }
 
  bool wxMyApp::OnInit()
@@ -100,12 +107,14 @@ bool wxMyApp::OnCmdLineParsed( wxCmdLineParser& cmdline )
 int wxMyApp::ConvertCueSheet( const wxString& sInputFile, const wxCueSheet& cueSheet )
 {
 	wxString sOutputFile( m_cfg.GetOutputFile( sInputFile ) );
+
 	if ( m_cfg.SaveCueSheet() )
 	{
+		wxLogInfo( _("Saving cue scheet to \"%s\""), sOutputFile );
 		wxFileOutputStream fos( sOutputFile );
 		if ( !fos.IsOk() )
 		{
-			wxLogError( _("Fail to open %s file"), sOutputFile );
+			wxLogError( _("Fail to open \"%s\""), sOutputFile );
 			return 1;
 		}
 
@@ -118,12 +127,15 @@ int wxMyApp::ConvertCueSheet( const wxString& sInputFile, const wxCueSheet& cueS
 	}
 	else
 	{
+		wxLogInfo( _("Converting cue scheet to XML format") );
+		wxLogInfo( _("Output file \"%s\""), sOutputFile );
+
 		wxXmlCueSheetRenderer renderer( m_cfg, sInputFile, sOutputFile );
 		if ( renderer.Render( cueSheet ) )
 		{
 			if ( !renderer.SaveXmlDoc() )
 			{
-				wxLogError( _("Fail to save output %s file"), sOutputFile );
+				wxLogError( _("Fail to save XML document to \"%s\""), sOutputFile );
 				return 1;
 			}
 		}
@@ -138,19 +150,23 @@ int wxMyApp::ConvertCueSheet( const wxString& sInputFile, const wxCueSheet& cueS
 
 int wxMyApp::ProcessCueFile( wxCueSheetReader& reader, const wxString& sInputFile )
 {
+	wxLogMessage( _("Processing \"%s\""), sInputFile );
+
 	if ( m_cfg.IsEmbedded() )
 	{
+		wxLogInfo( _("Reading cue sheet from media file") );
 		if ( !reader.ReadEmbeddedCueSheet( sInputFile ) )
 		{
-			wxLogError( _("Fail to read embedded sue sheet from file %s or parse error"), sInputFile );
+			wxLogError( _("Fail to read embedded sue sheet from \"%s\" or parse error"), sInputFile );
 			return 1;
 		}
 	}
 	else
 	{
+		wxLogInfo( _("Reading cue sheet from text file") );
 		if ( !reader.ReadCueSheet( sInputFile ) )
 		{
-			wxLogError( _("Fail to read or parse input CUE file %s"), sInputFile );
+			wxLogError( _("Fail to read or parse input cue file \"%s\""), sInputFile );
 			return 1;
 		}
 	}
@@ -166,6 +182,7 @@ int wxMyApp::ProcessCueFile( wxCueSheetReader& reader, const wxString& sInputFil
 		else
 		{
 			wxDataFile dataFile( m_cfg.GetSingleDataFile(), wxDataFile::WAVE );
+			wxLogInfo( _("Setting data file to \"%s\""), dataFile.GetFileName() );
 			cueSheet.SetSingleDataFile( dataFile );
 		}
 		return ConvertCueSheet( sInputFile, cueSheet );
@@ -203,4 +220,11 @@ int wxMyApp::OnRun()
 	}
 
 	return m_cfg.AbortOnError()? res : 0;
+}
+
+int wxMyApp::OnExit()
+{
+	int res = wxAppConsole::OnExit();
+	wxLogMessage( _("Bye") );
+	return res;
 }

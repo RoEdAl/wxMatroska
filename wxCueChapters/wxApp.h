@@ -39,6 +39,7 @@ protected:
 	virtual void OnInitCmdLine(	wxCmdLineParser& );
 	virtual bool OnCmdLineParsed( wxCmdLineParser& );
 	virtual int OnRun();
+	virtual int OnExit();
 
 public:
 

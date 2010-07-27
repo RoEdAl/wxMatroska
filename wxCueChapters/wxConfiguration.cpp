@@ -267,20 +267,8 @@ static wxString GetFileName( const wxString& sFileName )
 	return fn.GetFullName();
 }
 
-wxXmlNode* wxConfiguration::BuildXmlComments( const wxString& sInputFile, const wxString& sOutputFile, wxXmlNode*& pLast ) const
+void wxConfiguration::FillArray( wxArrayString& as ) const
 {
-	wxString sInit;
-	sInit.Printf( wxT("This file was created by %s tool"), wxGetApp().GetAppDisplayName() );
-	wxXmlNode* pComment = new wxXmlNode( (wxXmlNode*)NULL, wxXML_COMMENT_NODE, wxEmptyString, sInit );
-
-	wxArrayString as;
-	wxDateTime dtNow( wxDateTime::Now() );
-
-	as.Add( wxString::Format( wxT("Application version: %s"), wxGetApp().APP_VERSION ) );
-	as.Add( wxString::Format( wxT("Application vendor: %s"), wxGetApp().GetVendorDisplayName() ) );
-	as.Add( wxString::Format( wxT("Creation time: %s %s"), dtNow.FormatISODate(), dtNow.FormatISOTime() ) );
-	as.Add( wxString::Format( wxT("CUE file: %s"), GetFileName(sInputFile) ) );
-	as.Add( wxString::Format( wxT("Output file: %s"), GetFileName(sOutputFile) ) );
 	as.Add( wxString::Format( wxT("Save cue sheet: %s"), BoolToStr(m_bSaveCueSheet) ) );
 	as.Add( wxString::Format( wxT("Calculate end time of chapters: %s"), BoolToStr(m_bChapterTimeEnd) ) );
 	as.Add( wxString::Format( wxT("Read embedded cue sheet: %s"), BoolToStr(m_bEmbedded) ) );
@@ -303,6 +291,44 @@ wxXmlNode* wxConfiguration::BuildXmlComments( const wxString& sInputFile, const 
 	as.Add( wxString::Format( wxT("Default cue sheet file extension: %s"), m_sCueSheetExt ) );
 	as.Add( wxString::Format( wxT("Default Matroska chapters XML file extension: %s"), m_sMatroskaChaptersXmlExt ) );
 	as.Add( wxString::Format( wxT("Convert \"simple 'quotation' marks\" to \u201Epolish \u201Aquotation\u2019 marks\u201D inside strings: %s"), BoolToStr(m_bPolishQuotationMarks) ) );
+}
+
+void wxConfiguration::Dump() const
+{
+	if ( wxLog::IsLevelEnabled( wxLOG_Info, wxLOG_COMPONENT ) && wxLog::GetVerbose() )
+	{
+		wxString sSeparator( wxT('='), 50 );
+		wxArrayString as;
+		as.Add( sSeparator );
+		as.Add( _("Configuration:") );
+		FillArray( as );
+		as.Add( sSeparator );
+		size_t strings = as.GetCount();
+		wxDateTime dt( wxDateTime::Now() );
+		wxLog* pLog = wxLog::GetActiveTarget();
+		for( size_t i=0; i<strings; i++ )
+		{
+			pLog->OnLog( wxLOG_Info, as[i], dt.GetTicks() );
+		}
+	}
+}
+
+wxXmlNode* wxConfiguration::BuildXmlComments( const wxString& sInputFile, const wxString& sOutputFile, wxXmlNode*& pLast ) const
+{
+	wxString sInit;
+	sInit.Printf( wxT("This file was created by %s tool"), wxGetApp().GetAppDisplayName() );
+	wxXmlNode* pComment = new wxXmlNode( (wxXmlNode*)NULL, wxXML_COMMENT_NODE, wxEmptyString, sInit );
+
+	wxArrayString as;
+	wxDateTime dtNow( wxDateTime::Now() );
+
+	as.Add( wxString::Format( wxT("Application version: %s"), wxGetApp().APP_VERSION ) );
+	as.Add( wxString::Format( wxT("Application vendor: %s"), wxGetApp().GetVendorDisplayName() ) );
+	as.Add( wxString::Format( wxT("Creation time: %s %s"), dtNow.FormatISODate(), dtNow.FormatISOTime() ) );
+	as.Add( wxString::Format( wxT("CUE file: %s"), GetFileName(sInputFile) ) );
+	as.Add( wxString::Format( wxT("Output file: %s"), GetFileName(sOutputFile) ) );
+
+	FillArray( as );
 
 	wxXmlNode* pNext = pComment;
 	size_t strings = as.GetCount();
