@@ -31,6 +31,9 @@ protected:
 	wxArrayString m_inputFile;
 	wxFileName m_outputFile;
 
+	wxString m_sCueSheetExt;
+	wxString m_sMatroskaChaptersXmlExt;
+
 public:
 
 	bool GetChapterTimeEnd() const;
@@ -52,8 +55,10 @@ public:
 	bool AbortOnError() const;
 	bool RoundDownToFullFrames() const;
 	bool HiddenIndexes() const;
+	const wxString& CueSheetExt() const;
+	const wxString& MatroskaChaptersXmlExt() const;
 
-public:
+protected:
 
 	static const wxChar CUE_SHEET_EXT[];
 	static const wxChar MATROSKA_CHAPTERS_EXT[];

@@ -7,6 +7,7 @@
 
 const wxChar wxConfiguration::CUE_SHEET_EXT[] = wxT("cue");
 const wxChar wxConfiguration::MATROSKA_CHAPTERS_EXT[] = wxT("mkc.xml");
+static const size_t MAX_EXT_LEN = 20;
 
 IMPLEMENT_CLASS( wxConfiguration, wxObject )
 
@@ -23,7 +24,9 @@ wxConfiguration::wxConfiguration(void)
 	 m_bSaveCueSheet(false),
 	 m_bTrackOneIndexOne(true),
 	 m_bAbortOnError(true),
-	 m_bRoundDownToFullFrames(false)
+	 m_bRoundDownToFullFrames(false),
+	 m_sCueSheetExt(CUE_SHEET_EXT),
+	 m_sMatroskaChaptersXmlExt(MATROSKA_CHAPTERS_EXT)
 {
 }
 
@@ -33,7 +36,7 @@ wxConfiguration::~wxConfiguration(void)
 
 void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 {
-	cmdLine.AddOption( wxT("o"), wxT("output"), _("Output Matroska chapter file or cue sheet file (see -c option)"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( wxT("o"), wxT("output"), _("Output Matroska chapter file or cue sheet file (see -c option), it may be also directory path"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("ce"), wxT("chapter-time-end"), _("Calculate end time of chapters if possible (default: on)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("nce"), wxT("no-chapter-time-end"), _("Do not calculate end time of chapters"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("uc"), wxT("unknown-chapter-end-to-next-track"), _("If track's end time is unknown set it to next track position using frame offset (default: off)"), wxCMD_LINE_PARAM_OPTIONAL );
@@ -51,15 +54,22 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddSwitch( wxT("m"), wxT("save-matroska-chapters"), _("Save Matroska chapter file (default)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("t1i1"), wxT("track-01-index-01"), _("For first track assume index 01 as beginning of track (default)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("t1i0"), wxT("track-01-index-00"), _("For first track assume index 00 as beginning of track"), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT("pqm"), wxT("polish-quotation-marks"), _("Convert quotation marks to polish quotation marks inside strings (default: on)"), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT("npqm"), wxT("no-polish-quotation-marks"), _("Don't convert quotation marks to polish quotation marks inside strings"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("a"), wxT("abort-on-error"), _("Abort when conversion errors occurs (default)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("na"), wxT("dont-abort-on-error"), _("Do not abort when conversion errors occurs"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("r"), wxT("round-down-to-full-frames"), _("Round down track end time to full frames (default: no)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("nr"), wxT("dont-round-down-to-full-frames"), _("Do not round down track end time to full frames"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("hi"), wxT("hidden-indexes"), _("Convert indexes to hidden chapters"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("nhi"), wxT("no-hidden-indexes"), _("Convert indexes to normal (non-hidden) chapters (default)"), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddParam( _("<Input CUE file>"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE );
+	cmdLine.AddOption( wxT("dce"), wxT("default-cue-sheet-file-extension"), wxString::Format( _("Default cue sheet file extension (default: %s)"), CUE_SHEET_EXT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( wxT("dme"), wxT("default-matroska-chapters-file-extension"), wxString::Format( _("Default matroska chapters XML file extension (default: %s)"), MATROSKA_CHAPTERS_EXT) , wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("pqm"), wxT("polish-quotation-marks"), _("Convert \"simple 'quotation' marks\" to \u201Epolish \u201Aquotation\u2019 marks\u201D inside strings (default: on)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("npqm"), wxT("no-polish-quotation-marks"), _("Don't convert simple quotation marks to polish quotation marks inside strings"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddParam( _("<cue sheet>"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE );
+}
+
+static bool check_ext( const wxString& sExt )
+{
+	return !sExt.IsEmpty() && (sExt.Length() < MAX_EXT_LEN);
 }
 
 bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
@@ -106,6 +116,32 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	if ( cmdLine.Found( wxT("hi") ) ) m_bHiddenIndexes = true;
 	if ( cmdLine.Found( wxT("nhi") ) ) m_bHiddenIndexes = false;
 
+	if ( cmdLine.Found( wxT("dce"), &s ) )
+	{
+		if ( check_ext( s ) )
+		{
+			m_sCueSheetExt = s;
+		}
+		else
+		{
+			wxLogWarning( _("Invalid cue sheet file extension %s"), s );
+			bRes = false;
+		}
+	}
+
+	if ( cmdLine.Found( wxT("dme"), &s ) )
+	{
+		if ( check_ext( s ) )
+		{
+			m_sMatroskaChaptersXmlExt = s;
+		}
+		else
+		{
+			wxLogWarning( _("Invalid Matroska chapters file extension %s"), s );
+			bRes = false;
+		}
+	}
+
 	if ( cmdLine.Found( wxT("e"), &s ) )
 	{
 		m_sAlternateExtensions = s;
@@ -137,7 +173,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		}
 		else
 		{
-			wxLogWarning( _("Invalid laguage - %s"), s.GetData() );
+			wxLogWarning( _("Invalid laguage - %s"), s );
 			bRes = false;
 		}
 	}
@@ -185,7 +221,6 @@ wxXmlNode* wxConfiguration::BuildXmlComments( const wxString& sInputFile, const 
 	as.Add( wxString::Format( wxT("Save cue sheet: %s"), BoolToStr(m_bSaveCueSheet) ) );
 	as.Add( wxString::Format( wxT("Calculate end time of chapters: %s"), BoolToStr(m_bChapterTimeEnd) ) );
 	as.Add( wxString::Format( wxT("Read embedded cue sheet: %s"), BoolToStr(m_bEmbedded) ) );
-	as.Add( wxString::Format( wxT("Convert quotation marks to polish quotation marks: %s"), BoolToStr(m_bPolishQuotationMarks) ) );
 	as.Add( wxString::Format( wxT("Use data files to calculate end time of chapters: %s"), BoolToStr(m_bUseDataFiles) ) );
 
 	wxString sSingleDataFile;
@@ -202,6 +237,9 @@ wxXmlNode* wxConfiguration::BuildXmlComments( const wxString& sInputFile, const 
 	as.Add( wxString::Format( wxT("For track 01 assume index %s as beginning of track"), BoolToIdx(m_bTrackOneIndexOne) ) );
 	as.Add( wxString::Format( wxT("Round down track end time to full frames: %s"), BoolToStr(m_bRoundDownToFullFrames) ) );
 	as.Add( wxString::Format( wxT("Convert indexes to hidden subchapters: %s"), BoolToStr(m_bHiddenIndexes) ) );
+	as.Add( wxString::Format( wxT("Default cue sheet file extension: %s"), m_sCueSheetExt ) );
+	as.Add( wxString::Format( wxT("Default Matroska chapters XML file extension: %s"), m_sMatroskaChaptersXmlExt ) );
+	as.Add( wxString::Format( wxT("Convert \"simple 'quotation' marks\" to \u201Epolish \u201Aquotation\u2019 marks\u201D inside strings: %s"), BoolToStr(m_bPolishQuotationMarks) ) );
 
 	wxXmlNode* pNext = pComment;
 	size_t strings = as.GetCount();
@@ -278,14 +316,14 @@ wxString wxConfiguration::GetOutputFile( const wxString& sInputFile ) const
 
 	if ( !m_outputFile.IsOk() )
 	{
-		inputFile.SetExt( m_bSaveCueSheet? CUE_SHEET_EXT : MATROSKA_CHAPTERS_EXT );
+		inputFile.SetExt( m_bSaveCueSheet? m_sCueSheetExt : m_sMatroskaChaptersXmlExt );
 	}
 	else
 	{
 		if ( m_outputFile.DirExists() )
 		{
 			inputFile.SetPath( m_outputFile.GetFullPath() );
-			inputFile.SetExt( m_bSaveCueSheet? CUE_SHEET_EXT : MATROSKA_CHAPTERS_EXT );
+			inputFile.SetExt( m_bSaveCueSheet? m_sCueSheetExt : m_sMatroskaChaptersXmlExt );
 		}
 		else
 		{
@@ -328,4 +366,14 @@ bool wxConfiguration::RoundDownToFullFrames() const
 bool wxConfiguration::HiddenIndexes() const
 {
 	return m_bHiddenIndexes;
+}
+
+const wxString& wxConfiguration::CueSheetExt() const
+{
+	return m_sCueSheetExt;
+}
+
+const wxString& wxConfiguration::MatroskaChaptersXmlExt() const
+{
+	return m_sMatroskaChaptersXmlExt;
 }
