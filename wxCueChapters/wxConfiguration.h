@@ -34,6 +34,12 @@ protected:
 	wxString m_sCueSheetExt;
 	wxString m_sMatroskaChaptersXmlExt;
 
+	wxArrayString m_asLang;
+
+protected:
+
+	bool CheckLang( const wxString& ) const;
+
 public:
 
 	bool GetChapterTimeEnd() const;

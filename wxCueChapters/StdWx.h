@@ -28,6 +28,8 @@
 #include <wx/xml/xml.h>
 #include <wx/sstream.h>
 #include <wx/dir.h>
+#include <wx/stdpaths.h>
+#include <wx/tokenzr.h>
 
 #endif // _STD_WX_H
 

@@ -4,12 +4,51 @@
 
 #include "StdWx.h"
 #include "wxConfiguration.h"
+#include "wxApp.h"
 
 const wxChar wxConfiguration::CUE_SHEET_EXT[] = wxT("cue");
 const wxChar wxConfiguration::MATROSKA_CHAPTERS_EXT[] = wxT("mkc.xml");
+
 static const size_t MAX_EXT_LEN = 20;
+static const wxChar LANG_FILE_URL[] = wxT("http://www.loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt");
+static const wxChar LANG_FILE_NAME[] = wxT("ISO-639-2_utf-8.txt");
 
 IMPLEMENT_CLASS( wxConfiguration, wxObject )
+
+static bool read_languages_strings( wxArrayString& as )
+{
+	wxStandardPaths& paths = wxStandardPaths::Get();
+	wxFileName fn( paths.GetExecutablePath() );
+	fn.SetFullName( LANG_FILE_NAME );
+	if ( !fn.FileExists() )
+	{
+		wxLogDebug( wxT("Cannot find language file %s."), fn.GetFullPath() );
+		wxLogDebug( wxT("You can find this file at %s."), LANG_FILE_URL );
+		return false;
+	}
+
+	wxFileInputStream fis( fn.GetFullPath() );
+	if ( !fis.IsOk() )
+	{
+		wxLogDebug( wxT("Cannot open language file %s"), fn.GetFullPath() );
+		return false;
+	}
+
+	as.Clear();
+	wxTextInputStream tis( fis );
+	while( !fis.Eof() )
+	{
+		wxString sLine( tis.ReadLine() );
+		if ( sLine.IsEmpty() ) continue;
+
+		wxStringTokenizer tokenizer( sLine, wxT("|") );
+		if ( tokenizer.HasMoreTokens() )
+		{
+			as.Add( tokenizer.GetNextToken() );
+		}
+	}
+	return true;
+}
 
 wxConfiguration::wxConfiguration(void)
 	:m_bChapterTimeEnd(true),
@@ -28,6 +67,7 @@ wxConfiguration::wxConfiguration(void)
 	 m_sCueSheetExt(CUE_SHEET_EXT),
 	 m_sMatroskaChaptersXmlExt(MATROSKA_CHAPTERS_EXT)
 {
+	read_languages_strings( m_asLang );
 }
 
 wxConfiguration::~wxConfiguration(void)
@@ -70,6 +110,26 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 static bool check_ext( const wxString& sExt )
 {
 	return !sExt.IsEmpty() && (sExt.Length() < MAX_EXT_LEN);
+}
+
+bool wxConfiguration::CheckLang( const wxString& sLang ) const
+{
+	if ( m_asLang.IsEmpty() )
+	{
+		return !sLang.IsEmpty() && ( sLang.Length() <= 3 ) && sLang.IsAscii();
+	}
+	else
+	{
+		size_t langs = m_asLang.Count();
+		for( size_t i=0; i<langs; i++ )
+		{
+			if ( sLang.CmpNoCase( m_asLang[i] ) == 0 )
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 }
 
 bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
@@ -167,13 +227,13 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	if ( cmdLine.Found( wxT("l"), &s ) )
 	{
-		if ( ( s.Length() == 3 ) && s.IsAscii() )
+		if ( CheckLang( s ) )
 		{
 			m_sLang = s.Lower();
 		}
 		else
 		{
-			wxLogWarning( _("Invalid laguage - %s"), s );
+			wxLogWarning( _("Invalid laguage %s"), s );
 			bRes = false;
 		}
 	}
@@ -209,12 +269,15 @@ static wxString GetFileName( const wxString& sFileName )
 
 wxXmlNode* wxConfiguration::BuildXmlComments( const wxString& sInputFile, const wxString& sOutputFile, wxXmlNode*& pLast ) const
 {
-	wxString sInit( wxT("This chapter file was created by cue2mkc tool") );
+	wxString sInit;
+	sInit.Printf( wxT("This file was created by %s tool"), wxGetApp().GetAppDisplayName() );
 	wxXmlNode* pComment = new wxXmlNode( (wxXmlNode*)NULL, wxXML_COMMENT_NODE, wxEmptyString, sInit );
 
 	wxArrayString as;
 	wxDateTime dtNow( wxDateTime::Now() );
 
+	as.Add( wxString::Format( wxT("Application version: %s"), wxGetApp().APP_VERSION ) );
+	as.Add( wxString::Format( wxT("Application vendor: %s"), wxGetApp().GetVendorDisplayName() ) );
 	as.Add( wxString::Format( wxT("Creation time: %s %s"), dtNow.FormatISODate(), dtNow.FormatISOTime() ) );
 	as.Add( wxString::Format( wxT("CUE file: %s"), GetFileName(sInputFile) ) );
 	as.Add( wxString::Format( wxT("Output file: %s"), GetFileName(sOutputFile) ) );
