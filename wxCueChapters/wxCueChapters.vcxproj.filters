@@ -7,7 +7,10 @@
     <ClCompile Include="wxConfiguration.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
-    <ClCompile Include="wxCueChapters.cpp">
+    <ClCompile Include="wxApp.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="wxXmlCueSheetRenderer.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -19,6 +22,12 @@
       <Filter>Header files</Filter>
     </ClInclude>
     <ClInclude Include="wxConfiguration.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="wxApp.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="wxXmlCueSheetRenderer.h">
       <Filter>Header files</Filter>
     </ClInclude>
   </ItemGroup>
