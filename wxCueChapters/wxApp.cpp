@@ -110,11 +110,11 @@ int wxMyApp::ConvertCueSheet( const wxString& sInputFile, const wxCueSheet& cueS
 
 	if ( m_cfg.SaveCueSheet() )
 	{
-		wxLogInfo( _("Saving cue scheet to \"%s\""), sOutputFile );
+		wxLogInfo( _("Saving cue scheet to \u201C%s\u201D"), sOutputFile );
 		wxFileOutputStream fos( sOutputFile );
 		if ( !fos.IsOk() )
 		{
-			wxLogError( _("Fail to open \"%s\""), sOutputFile );
+			wxLogError( _("Fail to open \u201C%s\u201D"), sOutputFile );
 			return 1;
 		}
 
@@ -128,14 +128,14 @@ int wxMyApp::ConvertCueSheet( const wxString& sInputFile, const wxCueSheet& cueS
 	else
 	{
 		wxLogInfo( _("Converting cue scheet to XML format") );
-		wxLogInfo( _("Output file \"%s\""), sOutputFile );
+		wxLogInfo( _("Output file \u201C%s\u201D"), sOutputFile );
 
 		wxXmlCueSheetRenderer renderer( m_cfg, sInputFile, sOutputFile );
 		if ( renderer.Render( cueSheet ) )
 		{
 			if ( !renderer.SaveXmlDoc() )
 			{
-				wxLogError( _("Fail to save XML document to \"%s\""), sOutputFile );
+				wxLogError( _("Fail to save XML document to \u201C%s\u201D"), sOutputFile );
 				return 1;
 			}
 		}
@@ -150,14 +150,14 @@ int wxMyApp::ConvertCueSheet( const wxString& sInputFile, const wxCueSheet& cueS
 
 int wxMyApp::ProcessCueFile( wxCueSheetReader& reader, const wxString& sInputFile )
 {
-	wxLogMessage( _("Processing \"%s\""), sInputFile );
+	wxLogMessage( _("Processing \u201C%s\u201D"), sInputFile );
 
 	if ( m_cfg.IsEmbedded() )
 	{
 		wxLogInfo( _("Reading cue sheet from media file") );
 		if ( !reader.ReadEmbeddedCueSheet( sInputFile ) )
 		{
-			wxLogError( _("Fail to read embedded sue sheet from \"%s\" or parse error"), sInputFile );
+			wxLogError( _("Fail to read embedded sue sheet from \u201C%s\u201D or parse error"), sInputFile );
 			return 1;
 		}
 	}
@@ -166,7 +166,7 @@ int wxMyApp::ProcessCueFile( wxCueSheetReader& reader, const wxString& sInputFil
 		wxLogInfo( _("Reading cue sheet from text file") );
 		if ( !reader.ReadCueSheet( sInputFile ) )
 		{
-			wxLogError( _("Fail to read or parse input cue file \"%s\""), sInputFile );
+			wxLogError( _("Fail to read or parse input cue file \u201C%s\u201D"), sInputFile );
 			return 1;
 		}
 	}
@@ -182,7 +182,7 @@ int wxMyApp::ProcessCueFile( wxCueSheetReader& reader, const wxString& sInputFil
 		else
 		{
 			wxDataFile dataFile( m_cfg.GetSingleDataFile(), wxDataFile::WAVE );
-			wxLogInfo( _("Setting data file to \"%s\""), dataFile.GetFileName() );
+			wxLogInfo( _("Setting data file to \u201C%s\u201D"), dataFile.GetFileName() );
 			cueSheet.SetSingleDataFile( dataFile );
 		}
 		return ConvertCueSheet( sInputFile, cueSheet );
@@ -198,12 +198,40 @@ int wxMyApp::OnRun()
 	wxCueSheetReader reader;
 	reader.UsePolishQuotationMarks( m_cfg.UsePolishQuotationMarks() );
 
-	int res;
+	int res = 0;
 	const wxArrayString& inputFile = m_cfg.GetInputFiles();
 	for( size_t i=0; i<inputFile.Count(); i++ )
 	{
 		wxFileName fn( inputFile[i] );
+		if ( !wxDir::Exists( fn.GetPath() ) )
+		{
+			wxLogMessage( _("Directory \u201C%s\u201D doesn't exists"), fn.GetPath() );
+			res = 1;
+			if ( m_cfg.AbortOnError() )
+			{
+				break;
+			}
+			else
+			{
+				continue;
+			}
+		}
+
 		wxDir dir( fn.GetPath() );
+		if ( !dir.IsOpened() )
+		{
+			wxLogError( _("Cannot open directory \u201C%s\u201D"), fn.GetPath() );
+			res = 1;
+			if ( m_cfg.AbortOnError() )
+			{
+				break;
+			}
+			else
+			{
+				continue;
+			}
+		}
+
 		wxString sFileSpec( fn.GetFullName() );
 		wxString sInputFile;
 		if ( dir.GetFirst( &sInputFile, sFileSpec, wxDIR_FILES ) )

@@ -34,10 +34,11 @@ protected:
 	wxString m_sCueSheetExt;
 	wxString m_sMatroskaChaptersXmlExt;
 
-	wxArrayString m_asLang;
+	wxSortedArrayString m_asLang;
 
 protected:
 
+	static bool ReadLanguagesStrings( wxSortedArrayString& );
 	bool CheckLang( const wxString& ) const;
 	void FillArray( wxArrayString& as ) const;
 

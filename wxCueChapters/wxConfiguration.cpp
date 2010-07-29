@@ -15,27 +15,28 @@ static const wxChar LANG_FILE_NAME[] = wxT("ISO-639-2_utf-8.txt");
 
 IMPLEMENT_CLASS( wxConfiguration, wxObject )
 
-static bool read_languages_strings( wxArrayString& as )
+bool wxConfiguration::ReadLanguagesStrings( wxSortedArrayString& as )
 {
 	wxStandardPaths& paths = wxStandardPaths::Get();
 	wxFileName fn( paths.GetExecutablePath() );
 	fn.SetFullName( LANG_FILE_NAME );
 	if ( !fn.FileExists() )
 	{
-		wxLogDebug( wxT("Cannot find language file %s."), fn.GetFullPath() );
-		wxLogDebug( wxT("You can find this file at %s."), LANG_FILE_URL );
+		wxLogInfo( wxT("Cannot find language file \u201C%s\u201D."), fn.GetFullPath() );
+		wxLogInfo( wxT("You can find this file at \u201C%s\u201D."), LANG_FILE_URL );
 		return false;
 	}
 
 	wxFileInputStream fis( fn.GetFullPath() );
 	if ( !fis.IsOk() )
 	{
-		wxLogDebug( wxT("Cannot open language file %s"), fn.GetFullPath() );
+		wxLogDebug( wxT("Cannot open language file \u201C%s\u201D"), fn.GetFullPath() );
 		return false;
 	}
 
 	as.Clear();
 	wxTextInputStream tis( fis );
+	size_t n = 0;
 	while( !fis.Eof() )
 	{
 		wxString sLine( tis.ReadLine() );
@@ -44,7 +45,21 @@ static bool read_languages_strings( wxArrayString& as )
 		wxStringTokenizer tokenizer( sLine, wxT("|") );
 		if ( tokenizer.HasMoreTokens() )
 		{
-			as.Add( tokenizer.GetNextToken() );
+			wxString sLang( tokenizer.GetNextToken() );
+			if ( sLang.Length() > 3 )
+			{
+				wxLogError( _("Invalid language %s. File \u201C%s\u201D is corrupt."), sLang, fn.GetFullName() );
+				as.Clear();
+				return false;
+			}
+			as.Add( sLang );
+		}
+
+		if ( n++ > 2000 )
+		{
+			wxLogError( _("Too many languages. File \u201C%s\u201D is corrupt."), fn.GetFullName() );
+			as.Clear();
+			return false;
 		}
 	}
 	return true;
@@ -58,7 +73,7 @@ wxConfiguration::wxConfiguration(void)
 	 m_sAlternateExtensions( wxEmptyString ),
 	 m_sLang( wxT("eng") ),
 	 m_sTrackNameFormat( wxT("%dp% - %dt% - %tt%") ),
-	 m_bEmbedded( false ),
+	 m_bEmbedded(false),
 	 m_bPolishQuotationMarks(true),
 	 m_bSaveCueSheet(false),
 	 m_bTrackOneIndexOne(true),
@@ -67,7 +82,7 @@ wxConfiguration::wxConfiguration(void)
 	 m_sCueSheetExt(CUE_SHEET_EXT),
 	 m_sMatroskaChaptersXmlExt(MATROSKA_CHAPTERS_EXT)
 {
-	read_languages_strings( m_asLang );
+	ReadLanguagesStrings( m_asLang );
 }
 
 wxConfiguration::~wxConfiguration(void)
@@ -103,7 +118,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddOption( wxT("dce"), wxT("default-cue-sheet-file-extension"), wxString::Format( _("Default cue sheet file extension (default: %s)"), CUE_SHEET_EXT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxT("dme"), wxT("default-matroska-chapters-file-extension"), wxString::Format( _("Default matroska chapters XML file extension (default: %s)"), MATROSKA_CHAPTERS_EXT) , wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("pqm"), wxT("polish-quotation-marks"), _("Convert \"simple 'quotation' marks\" to \u201Epolish \u201Aquotation\u2019 marks\u201D inside strings (default: on)"), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT("npqm"), wxT("no-polish-quotation-marks"), _("Don't convert simple quotation marks to polish quotation marks inside strings"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("eqm"), wxT("english-quotation-marks"), _("Convert \"simple 'quotation' marks\" to \u201Cenglish \u2018quotation\u2019 marks\u201D inside strings"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddParam( _("<cue sheet>"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE );
 }
 
@@ -120,15 +135,8 @@ bool wxConfiguration::CheckLang( const wxString& sLang ) const
 	}
 	else
 	{
-		size_t langs = m_asLang.Count();
-		for( size_t i=0; i<langs; i++ )
-		{
-			if ( sLang.CmpNoCase( m_asLang[i] ) == 0 )
-			{
-				return true;
-			}
-		}
-		return false;
+		int idx = m_asLang.Index( sLang.Lower() );
+		return (idx != wxNOT_FOUND);
 	}
 }
 
@@ -159,7 +167,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	if ( cmdLine.Found( wxT("nec") ) ) m_bEmbedded = false;
 
 	if ( cmdLine.Found( wxT("pqm") ) ) m_bPolishQuotationMarks = true;
-	if ( cmdLine.Found( wxT("npqm") ) ) m_bPolishQuotationMarks = false;
+	if ( cmdLine.Found( wxT("eqm") ) ) m_bPolishQuotationMarks = false;
 
 	if ( cmdLine.Found( wxT("c") ) ) m_bSaveCueSheet = true;
 	if ( cmdLine.Found( wxT("m") ) ) m_bSaveCueSheet = false;
@@ -241,6 +249,21 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	if ( cmdLine.Found( wxT("o"), &s ) )
 	{
 		m_outputFile.Assign( s );
+		if ( !m_outputFile.MakeAbsolute() )
+		{
+			wxLogInfo( _("Fail to normalize path \u201C%s\u201D"), s );
+			bRes = false;
+		}
+		if ( m_outputFile.DirExists() )
+		{
+			wxLogInfo( _("Output path is a directory") );
+			m_outputFile.AssignDir( s );
+			if ( !m_outputFile.MakeAbsolute() )
+			{
+				wxLogInfo( _("Fail to normalize path \u201C%s\u201D"), s );
+				bRes = false;
+			}
+		}
 	}
 
 	if ( cmdLine.Found( wxT("f"), &s ) )
@@ -290,7 +313,14 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
 	as.Add( wxString::Format( wxT("Convert indexes to hidden subchapters: %s"), BoolToStr(m_bHiddenIndexes) ) );
 	as.Add( wxString::Format( wxT("Default cue sheet file extension: %s"), m_sCueSheetExt ) );
 	as.Add( wxString::Format( wxT("Default Matroska chapters XML file extension: %s"), m_sMatroskaChaptersXmlExt ) );
-	as.Add( wxString::Format( wxT("Convert \"simple 'quotation' marks\" to \u201Epolish \u201Aquotation\u2019 marks\u201D inside strings: %s"), BoolToStr(m_bPolishQuotationMarks) ) );
+	if ( m_bPolishQuotationMarks )
+	{
+		as.Add( wxString::Format( wxT("Convert \"simple 'quotation' marks\" to \u201Epolish \u201Aquotation\u2019 marks\u201D inside strings") ) );
+	}
+	else
+	{
+		as.Add( wxString::Format( wxT("Convert \"simple 'quotation' marks\" to \u201Cenglish \u2018quotation\u2019 marks\u201D inside strings") ) );
+	}
 }
 
 void wxConfiguration::Dump() const
@@ -302,6 +332,7 @@ void wxConfiguration::Dump() const
 		as.Add( sSeparator );
 		as.Add( _("Configuration:") );
 		FillArray( as );
+		as.Add( wxString::Format( wxT("Output path: \u201C%s\u201D"), m_outputFile.GetFullPath() ) );
 		as.Add( sSeparator );
 		size_t strings = as.GetCount();
 		wxDateTime dt( wxDateTime::Now() );
@@ -325,8 +356,8 @@ wxXmlNode* wxConfiguration::BuildXmlComments( const wxString& sInputFile, const 
 	as.Add( wxString::Format( wxT("Application version: %s"), wxGetApp().APP_VERSION ) );
 	as.Add( wxString::Format( wxT("Application vendor: %s"), wxGetApp().GetVendorDisplayName() ) );
 	as.Add( wxString::Format( wxT("Creation time: %s %s"), dtNow.FormatISODate(), dtNow.FormatISOTime() ) );
-	as.Add( wxString::Format( wxT("CUE file: %s"), GetFileName(sInputFile) ) );
-	as.Add( wxString::Format( wxT("Output file: %s"), GetFileName(sOutputFile) ) );
+	as.Add( wxString::Format( wxT("CUE file: \u201C%s\u201D"), GetFileName(sInputFile) ) );
+	as.Add( wxString::Format( wxT("Output file: \u201C%s\u201D"), GetFileName(sOutputFile) ) );
 
 	FillArray( as );
 
@@ -409,9 +440,9 @@ wxString wxConfiguration::GetOutputFile( const wxString& sInputFile ) const
 	}
 	else
 	{
-		if ( m_outputFile.DirExists() )
+		if ( m_outputFile.IsDir() )
 		{
-			inputFile.SetPath( m_outputFile.GetFullPath() );
+			inputFile.SetPath( m_outputFile.GetPath() );
 			inputFile.SetExt( m_bSaveCueSheet? m_sCueSheetExt : m_sMatroskaChaptersXmlExt );
 		}
 		else

@@ -69,6 +69,9 @@ protected:
 
 	static PARSE_STRUCT parseArray[];
 	static size_t parseArraySize;
+
+	static const wxChar ENGLISH_DOUBLE_QUOTES[];
+	static const wxChar ENGLISH_SINGLE_QUOTES[];
 	static const wxChar POLISH_DOUBLE_QUOTES[];
 	static const wxChar POLISH_SINGLE_QUOTES[];
 

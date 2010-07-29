@@ -182,7 +182,7 @@ bool wxXmlCueSheetRenderer::SaveXmlDoc()
 
 	if ( !m_pXmlDoc->Save( m_sOutputFile ) )
 	{
-		wxLogError( _("Fail to save chapters to \"%s\""), m_sOutputFile );
+		wxLogError( _("Fail to save chapters to \u201C%s\u201D"), m_sOutputFile );
 		return false;
 	}
 
@@ -334,7 +334,7 @@ bool wxXmlCueSheetRenderer::OnPostRenderDisc( const wxCueSheet& cueSheet )
 				wxDataFile dataFile;
 				if ( cueSheet.IsLastTrackForDataFile( i, dataFile ) )
 				{
-					wxLogInfo( _("Calculating end time for track %d using media file \"%s\""), tracks[i].GetNumber(), dataFile.GetFileName() );
+					wxLogInfo( _("Calculating end time for track %d using media file \u201C%s\u201D"), tracks[i].GetNumber(), dataFile.GetFileName() );
 					wxULongLong samples( dataFile.GetNumberOfSamples( m_cfg.GetAlternateExtensions(), m_cfg.RoundDownToFullFrames() ) );
 					if ( samples != wxDataFile::wxInvalidNumberOfSamples )
 					{

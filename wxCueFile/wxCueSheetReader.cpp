@@ -31,6 +31,9 @@ static const wxChar* INFOS[] = {
 
 static const size_t INFOS_SIZE = sizeof(INFOS)/sizeof(const wxChar*);
 
+const wxChar wxCueSheetReader::ENGLISH_DOUBLE_QUOTES[] = wxT("\u201C\\1\u201D");
+const wxChar wxCueSheetReader::ENGLISH_SINGLE_QUOTES[] = wxT("\u2018\\1\u2019");
+
 const wxChar wxCueSheetReader::POLISH_DOUBLE_QUOTES[] = wxT("\u201E\\1\u201D");
 const wxChar wxCueSheetReader::POLISH_SINGLE_QUOTES[] = wxT("\u201A\\1\u2019");
 
@@ -389,6 +392,11 @@ wxString wxCueSheetReader::Unquote( const wxString& qs )
 	{
 		m_reQuotes.ReplaceAll( &s, POLISH_SINGLE_QUOTES );
 		m_reDoubleQuotes.ReplaceAll( &s, POLISH_DOUBLE_QUOTES );
+	}
+	else
+	{
+		m_reQuotes.ReplaceAll( &s, ENGLISH_SINGLE_QUOTES );
+		m_reDoubleQuotes.ReplaceAll( &s, ENGLISH_DOUBLE_QUOTES );
 	}
 	return s;
 }

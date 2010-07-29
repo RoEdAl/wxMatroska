@@ -23,8 +23,6 @@ public:
 
 	WX_DECLARE_STRING_HASH_MAP( wxString, wxHashString );
 
-	
-
 protected:
 
 	typedef struct _CDTEXT_ENTRY
