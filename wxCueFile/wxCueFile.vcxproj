@@ -88,12 +88,16 @@
     <ClCompile Include="wxCueComponent.cpp" />
     <ClCompile Include="wxCueSheet.cpp" />
     <ClCompile Include="wxCueSheetReader.cpp" />
+    <ClCompile Include="wxCueSheetRenderer.cpp" />
     <ClCompile Include="wxDataFile.cpp" />
     <ClCompile Include="wxIndex.cpp" />
     <ClCompile Include="wxMediaInfo.cpp" />
+    <ClCompile Include="wxTextCueSheetRenderer.cpp" />
     <ClCompile Include="wxTrack.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\inc\wxCueSheetRenderer.h" />
+    <ClInclude Include="..\inc\wxTextCueSheetRenderer.h" />
     <ClInclude Include="StdWx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="..\inc\wxCueComponent.h" />

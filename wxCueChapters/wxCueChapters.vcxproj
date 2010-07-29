@@ -100,13 +100,16 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="wxApp.cpp" />
     <ClCompile Include="wxConfiguration.cpp" />
-    <ClCompile Include="wxCueChapters.cpp" />
+    <ClCompile Include="wxXmlCueSheetRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdWx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="wxApp.h" />
     <ClInclude Include="wxConfiguration.h" />
+    <ClInclude Include="wxXmlCueSheetRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\wxCueFile\wxCueFile.vcxproj">

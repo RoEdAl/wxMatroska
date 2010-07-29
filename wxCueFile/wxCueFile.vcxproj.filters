@@ -25,6 +25,12 @@
     <ClCompile Include="wxTrack.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
+    <ClCompile Include="wxCueSheetRenderer.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="wxTextCueSheetRenderer.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdWx.h">
@@ -52,6 +58,12 @@
       <Filter>External header files</Filter>
     </ClInclude>
     <ClInclude Include="..\inc\wxTrack.h">
+      <Filter>External header files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\wxCueSheetRenderer.h">
+      <Filter>External header files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\wxTextCueSheetRenderer.h">
       <Filter>External header files</Filter>
     </ClInclude>
   </ItemGroup>
