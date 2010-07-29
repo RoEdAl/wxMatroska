@@ -19,5 +19,8 @@ vcproj\..+\.user$
 ^cue/.*\.mkc\.xml
 ^MediaInfo/
 ^MediaInfoGUI/
+^gui/.*\.exe$
+^gui/BackUp/
+
 
 

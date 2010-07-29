@@ -97,12 +97,12 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddSwitch( wxT("uc"), wxT("unknown-chapter-end-to-next-track"), _("If track's end time is unknown set it to next track position using frame offset (default: off)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("nuc"), wxT("no-unknown-chapter-end-to-next-track"), _("Do not set end time of track if unknown"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxT("fo"), wxT("frame-offset"), _("Offset in frames to use with -uc option (default: 150)"), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT("df"), wxT("use-data-files"), _("Use data file(s) to calculate end time of chapters (default: on)"), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT("ndf"), wxT("dont-use-data-files"), _("Use data file(s) to calculate end time of chapters (requires MediaInfo library)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("df"), wxT("use-data-files"), _("Use data file(s) to calculate end time of chapters (default: off)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("ndf"), wxT("dont-use-data-files"), _("Don't use data file(s) to calculate end time of chapters (requires MediaInfo library)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxT("e"), wxT("alternate-extensions"), _("Comma-separated list of alternate extensions of data files (default: none)"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxT("f"), wxT("single-data-file"), _("Sets single data file to cue sheet (default: none)"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxT("tf"), wxT("track-title-format"), _("Track title format (default: %dp% - %dt% - %tt%)"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddOption( wxT("l"), wxT("language"), _("Set language of chapter tilte (default: eng)"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( wxT("l"), wxT("language"), _("Set language of chapter's tilte (default: eng)"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("ec"), wxT("embedded-cue"), _("Try to read embedded cue sheet (requires MediaInfo library)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("nec"), wxT("no-embedded-cue"), _("Try to read embedded cue sheet"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("c"), wxT("save-cue-sheet"), _("Save cue sheet instead of Matroska chapter file. This switch allows to extract embedded cue sheet when used with ec option."), wxCMD_LINE_PARAM_OPTIONAL );
@@ -116,7 +116,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddSwitch( wxT("hi"), wxT("hidden-indexes"), _("Convert indexes to hidden chapters"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("nhi"), wxT("no-hidden-indexes"), _("Convert indexes to normal (non-hidden) chapters (default)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxT("dce"), wxT("default-cue-sheet-file-extension"), wxString::Format( _("Default cue sheet file extension (default: %s)"), CUE_SHEET_EXT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddOption( wxT("dme"), wxT("default-matroska-chapters-file-extension"), wxString::Format( _("Default matroska chapters XML file extension (default: %s)"), MATROSKA_CHAPTERS_EXT) , wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( wxT("dme"), wxT("default-matroska-chapters-file-extension"), wxString::Format( _("Default Matroska chapters XML file extension (default: %s)"), MATROSKA_CHAPTERS_EXT) , wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("pqm"), wxT("polish-quotation-marks"), _("Convert \"simple 'quotation' marks\" to \u201Epolish \u201Aquotation\u2019 marks\u201D inside strings (default: on)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("eqm"), wxT("english-quotation-marks"), _("Convert \"simple 'quotation' marks\" to \u201Cenglish \u2018quotation\u2019 marks\u201D inside strings"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddParam( _("<cue sheet>"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE );
