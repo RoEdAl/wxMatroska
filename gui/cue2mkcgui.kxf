@@ -68,67 +68,9 @@
 									</collection>
 								</property>
 								<property name="TabOrder" vt="Int8">1</property>
-								<property name="CtrlStyle" vt="Int32">1342242829</property>
+								<property name="CtrlStyle" vt="Int32">1342242825</property>
 								<property name="CtrlExStyle" vt="Int16">512</property>
 								<property name="Resizing" vt="Set">DockLeft, DockRight, DockTop, DockBottom</property>
-							</properties>
-							<components/>
-						</object>
-						<object type="TALabel" name="LabelSource">
-							<properties>
-								<property name="Left" vt="Int8">1</property>
-								<property name="Top" vt="Int16">302</property>
-								<property name="Width" vt="Int8">32</property>
-								<property name="Height" vt="Int8">21</property>
-								<property name="AutoSize" vt="False">False</property>
-								<property name="Caption" vt="String">&amp;File: </property>
-								<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
-								<property name="Font.Color" vt="Ident">clWindowText</property>
-								<property name="Font.Height" vt="Int8">-11</property>
-								<property name="Font.Name" vt="String">Microsoft Sans Serif</property>
-								<property name="Font.Style" vt="Set">fsBold</property>
-								<property name="ParentFont" vt="False">False</property>
-								<property name="TabOrder" vt="Int8">2</property>
-								<property name="HaveVariable" vt="False">False</property>
-								<property name="CtrlStyle" vt="Int32">1342178048</property>
-								<property name="CtrlExStyle" vt="Int8">0</property>
-								<property name="Resizing" vt="Set">DockLeft, DockBottom, DockWidth, DockHeight</property>
-							</properties>
-							<components/>
-						</object>
-						<object type="TAInput" name="InputSource">
-							<properties>
-								<property name="Left" vt="Int8">68</property>
-								<property name="Top" vt="Int16">302</property>
-								<property name="Width" vt="Int16">345</property>
-								<property name="Height" vt="Int8">21</property>
-								<property name="Hint" vt="String">Specify ASF, MSV or MSA file tor repair</property>
-								<property name="TabOrder" vt="Int8">3</property>
-								<property name="CtrlStyle" vt="Int32">1342242944</property>
-								<property name="CtrlExStyle" vt="Int16">512</property>
-								<property name="Resizing" vt="Set">DockLeft, DockRight, DockBottom, DockHeight</property>
-							</properties>
-							<components/>
-						</object>
-						<object type="TAButton" name="ButtonSource">
-							<properties>
-								<property name="Left" vt="Int16">415</property>
-								<property name="Top" vt="Int16">302</property>
-								<property name="Width" vt="Int8">29</property>
-								<property name="Height" vt="Int8">21</property>
-								<property name="Hint" vt="String">Browse for input file</property>
-								<property name="Caption" vt="WString">…</property>
-								<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
-								<property name="Font.Color" vt="Ident">clWindowText</property>
-								<property name="Font.Height" vt="Int8">-13</property>
-								<property name="Font.Name" vt="String">Microsoft Sans Serif</property>
-								<property name="Font.Style" vt="Set"/>
-								<property name="ParentFont" vt="False">False</property>
-								<property name="TabOrder" vt="Int8">4</property>
-								<property name="Color" vt="Ident">clBtnFace</property>
-								<property name="CtrlStyle" vt="Int32">1342259200</property>
-								<property name="CtrlExStyle" vt="Int8">0</property>
-								<property name="Resizing" vt="Set">DockRight, DockBottom, DockWidth, DockHeight</property>
 							</properties>
 							<components/>
 						</object>
@@ -139,7 +81,7 @@
 								<property name="Width" vt="Int8">65</property>
 								<property name="Height" vt="Int8">21</property>
 								<property name="Caption" vt="String"> &amp;Output:</property>
-								<property name="TabOrder" vt="Int8">6</property>
+								<property name="TabOrder" vt="Int8">4</property>
 								<property name="CtrlStyle" vt="Int32">1342250243</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
 								<property name="Resizing" vt="Set">DockLeft, DockBottom, DockWidth, DockHeight</property>
@@ -153,20 +95,20 @@
 								<property name="Width" vt="Int16">345</property>
 								<property name="Height" vt="Int8">21</property>
 								<property name="Hint" vt="String">Destination directory</property>
-								<property name="TabOrder" vt="Int8">7</property>
+								<property name="TabOrder" vt="Int8">5</property>
 								<property name="CtrlStyle" vt="Int32">1342242944</property>
 								<property name="CtrlExStyle" vt="Int16">512</property>
 								<property name="Resizing" vt="Set">DockLeft, DockRight, DockBottom, DockHeight</property>
 							</properties>
 							<components/>
 						</object>
-						<object type="TAButton" name="ButtonOutputDir">
+						<object type="TAButton" name="ButtonOutputFile">
 							<properties>
 								<property name="Left" vt="Int16">415</property>
 								<property name="Top" vt="Int16">327</property>
 								<property name="Width" vt="Int8">29</property>
 								<property name="Height" vt="Int8">21</property>
-								<property name="Hint" vt="String">Browse for output directory</property>
+								<property name="Hint" vt="String">Specify output file</property>
 								<property name="Caption" vt="WString">…</property>
 								<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
 								<property name="Font.Color" vt="Ident">clWindowText</property>
@@ -174,7 +116,7 @@
 								<property name="Font.Name" vt="String">Microsoft Sans Serif</property>
 								<property name="Font.Style" vt="Set"/>
 								<property name="ParentFont" vt="False">False</property>
-								<property name="TabOrder" vt="Int8">8</property>
+								<property name="TabOrder" vt="Int8">6</property>
 								<property name="Color" vt="Ident">clBtnFace</property>
 								<property name="CtrlStyle" vt="Int32">1342259200</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
@@ -182,13 +124,13 @@
 							</properties>
 							<components/>
 						</object>
-						<object type="TAButton" name="ButtonOutputOpen">
+						<object type="TAButton" name="ButtonOutputDirectory">
 							<properties>
 								<property name="Left" vt="Int16">445</property>
 								<property name="Top" vt="Int16">327</property>
 								<property name="Width" vt="Int8">29</property>
 								<property name="Height" vt="Int8">21</property>
-								<property name="Hint" vt="String">Open destination directory or file</property>
+								<property name="Hint" vt="String">SpecifyOutputDirectory</property>
 								<property name="Caption" vt="String">1</property>
 								<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
 								<property name="Font.Color" vt="Ident">clWindowText</property>
@@ -196,7 +138,7 @@
 								<property name="Font.Name" vt="String">Wingdings</property>
 								<property name="Font.Style" vt="Set">fsBold</property>
 								<property name="ParentFont" vt="False">False</property>
-								<property name="TabOrder" vt="Int8">9</property>
+								<property name="TabOrder" vt="Int8">7</property>
 								<property name="Color" vt="Ident">clBtnFace</property>
 								<property name="CtrlStyle" vt="Int32">1342259200</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
@@ -206,23 +148,23 @@
 						</object>
 						<object type="TAButton" name="ButtonInputAdd">
 							<properties>
-								<property name="Left" vt="Int16">445</property>
+								<property name="Left" vt="Int8">5</property>
 								<property name="Top" vt="Int16">302</property>
 								<property name="Width" vt="Int8">29</property>
 								<property name="Height" vt="Int8">21</property>
 								<property name="Hint" vt="String">Add specified file or file mask to list</property>
-								<property name="Caption" vt="String">1</property>
+								<property name="Caption" vt="WString">é</property>
 								<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
 								<property name="Font.Color" vt="Ident">clWindowText</property>
 								<property name="Font.Height" vt="Int8">-13</property>
 								<property name="Font.Name" vt="String">Wingdings</property>
 								<property name="Font.Style" vt="Set">fsBold</property>
 								<property name="ParentFont" vt="False">False</property>
-								<property name="TabOrder" vt="Int8">5</property>
+								<property name="TabOrder" vt="Int8">3</property>
 								<property name="Color" vt="Ident">clBtnFace</property>
 								<property name="CtrlStyle" vt="Int32">1342259200</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
-								<property name="Resizing" vt="Set">DockRight, DockBottom, DockWidth, DockHeight</property>
+								<property name="Resizing" vt="Set">DockLeft, DockBottom, DockWidth, DockHeight</property>
 							</properties>
 							<components/>
 						</object>
@@ -240,7 +182,7 @@
 								<property name="Font.Name" vt="String">Microsoft Sans Serif</property>
 								<property name="Font.Style" vt="Set">fsBold</property>
 								<property name="ParentFont" vt="False">False</property>
-								<property name="TabOrder" vt="Int8">10</property>
+								<property name="TabOrder" vt="Int8">8</property>
 								<property name="Color" vt="Ident">clBtnFace</property>
 								<property name="CtrlStyle" vt="Int32">1342259200</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
@@ -267,6 +209,50 @@
 								<property name="CtrlStyle" vt="Int32">1342178048</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
 								<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+							</properties>
+							<components/>
+						</object>
+						<object type="TAButton" name="ButtonInputDelete">
+							<properties>
+								<property name="Left" vt="Int8">40</property>
+								<property name="Top" vt="Int16">302</property>
+								<property name="Width" vt="Int8">29</property>
+								<property name="Height" vt="Int8">21</property>
+								<property name="Hint" vt="String">Delete selected items from list</property>
+								<property name="Caption" vt="WString">û</property>
+								<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
+								<property name="Font.Color" vt="Ident">clWindowText</property>
+								<property name="Font.Height" vt="Int8">-16</property>
+								<property name="Font.Name" vt="String">Wingdings</property>
+								<property name="Font.Style" vt="Set">fsBold</property>
+								<property name="ParentFont" vt="False">False</property>
+								<property name="TabOrder" vt="Int8">2</property>
+								<property name="Color" vt="Ident">clBtnFace</property>
+								<property name="CtrlStyle" vt="Int32">1342259200</property>
+								<property name="CtrlExStyle" vt="Int8">0</property>
+								<property name="Resizing" vt="Set">DockLeft, DockBottom, DockWidth, DockHeight</property>
+							</properties>
+							<components/>
+						</object>
+						<object type="TAButton" name="ButtonMakeMask">
+							<properties>
+								<property name="Left" vt="Int8">76</property>
+								<property name="Top" vt="Int16">302</property>
+								<property name="Width" vt="Int8">29</property>
+								<property name="Height" vt="Int8">21</property>
+								<property name="Hint" vt="String">Make file mask with selected items</property>
+								<property name="Caption" vt="String">l</property>
+								<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
+								<property name="Font.Color" vt="Ident">clWindowText</property>
+								<property name="Font.Height" vt="Int8">-13</property>
+								<property name="Font.Name" vt="String">Wingdings</property>
+								<property name="Font.Style" vt="Set">fsBold</property>
+								<property name="ParentFont" vt="False">False</property>
+								<property name="TabOrder" vt="Int8">9</property>
+								<property name="Color" vt="Ident">clBtnFace</property>
+								<property name="CtrlStyle" vt="Int32">1342259200</property>
+								<property name="CtrlExStyle" vt="Int8">0</property>
+								<property name="Resizing" vt="Set">DockLeft, DockBottom, DockWidth, DockHeight</property>
 							</properties>
 							<components/>
 						</object>
@@ -401,27 +387,11 @@
 							</properties>
 							<components/>
 						</object>
-						<object type="TALabel" name="LabelSingleDataFile">
-							<properties>
-								<property name="Left" vt="Int8">3</property>
-								<property name="Top" vt="Int8">126</property>
-								<property name="Width" vt="Int8">76</property>
-								<property name="Height" vt="Int8">21</property>
-								<property name="AutoSize" vt="False">False</property>
-								<property name="Caption" vt="String">Single data file:</property>
-								<property name="TabOrder" vt="Int8">8</property>
-								<property name="HaveVariable" vt="False">False</property>
-								<property name="CtrlStyle" vt="Int32">1342178048</property>
-								<property name="CtrlExStyle" vt="Int8">0</property>
-								<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
-							</properties>
-							<components/>
-						</object>
 						<object type="TAInput" name="InputSingleDataFile">
 							<properties>
-								<property name="Left" vt="Int8">81</property>
+								<property name="Left" vt="Int8">113</property>
 								<property name="Top" vt="Int8">126</property>
-								<property name="Width" vt="Int16">309</property>
+								<property name="Width" vt="Int16">277</property>
 								<property name="Height" vt="Int8">21</property>
 								<property name="MaxLength" vt="Int16">150</property>
 								<property name="TabOrder" vt="Int8">9</property>
@@ -724,7 +694,7 @@
 							</properties>
 							<components/>
 						</object>
-						<object type="TAButton" name="ButtonsingleDataFile">
+						<object type="TAButton" name="ButtonSingleDataFile">
 							<properties>
 								<property name="Left" vt="Int16">394</property>
 								<property name="Top" vt="Int8">126</property>
@@ -746,6 +716,21 @@
 							</properties>
 							<components/>
 						</object>
+						<object type="TACheckbox" name="CheckSingleDataFile">
+							<properties>
+								<property name="Left" vt="Int8">3</property>
+								<property name="Top" vt="Int8">126</property>
+								<property name="Width" vt="Int8">105</property>
+								<property name="Height" vt="Int8">21</property>
+								<property name="Hint" vt="String">Single data file</property>
+								<property name="Caption" vt="String">Single data file</property>
+								<property name="TabOrder" vt="Int8">8</property>
+								<property name="CtrlStyle" vt="Int32">1342247171</property>
+								<property name="CtrlExStyle" vt="Int8">0</property>
+								<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+							</properties>
+							<components/>
+						</object>
 					</components>
 				</object>
 				<object type="TTabSheet" name="OutputPane">
@@ -763,9 +748,9 @@
 							<properties>
 								<property name="Left" vt="Int8">3</property>
 								<property name="Top" vt="Int8">1</property>
-								<property name="Width" vt="Int8">29</property>
+								<property name="Width" vt="Int8">64</property>
 								<property name="Height" vt="Int8">17</property>
-								<property name="Caption" vt="String">Log:</property>
+								<property name="Caption" vt="String">Messages:</property>
 								<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
 								<property name="Font.Color" vt="Ident">clWindowText</property>
 								<property name="Font.Height" vt="Int8">-11</property>
@@ -845,6 +830,20 @@
 								<property name="TabOrder" vt="Int8">4</property>
 								<property name="Color" vt="Ident">clBtnFace</property>
 								<property name="CtrlStyle" vt="Int32">1342259200</property>
+								<property name="CtrlExStyle" vt="Int8">0</property>
+								<property name="Resizing" vt="Set">DockRight, DockBottom, DockWidth, DockHeight</property>
+							</properties>
+							<components/>
+						</object>
+						<object type="TACheckbox" name="CheckBoxVerbose">
+							<properties>
+								<property name="Left" vt="Int16">328</property>
+								<property name="Top" vt="Int16">353</property>
+								<property name="Width" vt="Int8">97</property>
+								<property name="Height" vt="Int8">17</property>
+								<property name="Caption" vt="String">&amp;Verbose mode</property>
+								<property name="TabOrder" vt="Int8">5</property>
+								<property name="CtrlStyle" vt="Int32">1342242819</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
 								<property name="Resizing" vt="Set">DockRight, DockBottom, DockWidth, DockHeight</property>
 							</properties>

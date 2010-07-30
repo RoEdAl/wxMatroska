@@ -20,7 +20,5 @@ vcproj\..+\.user$
 ^MediaInfo/
 ^MediaInfoGUI/
 ^gui/.*\.exe$
+^gui/.*\.dll$
 ^gui/BackUp/
-
-
-
