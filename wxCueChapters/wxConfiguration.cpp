@@ -17,7 +17,7 @@ IMPLEMENT_CLASS( wxConfiguration, wxObject )
 
 bool wxConfiguration::ReadLanguagesStrings( wxSortedArrayString& as )
 {
-	wxStandardPaths& paths = wxStandardPaths::Get();
+	const wxStandardPaths& paths = wxStandardPaths::Get();
 	wxFileName fn( paths.GetExecutablePath() );
 	fn.SetFullName( LANG_FILE_NAME );
 	if ( !fn.FileExists() )
@@ -46,16 +46,17 @@ bool wxConfiguration::ReadLanguagesStrings( wxSortedArrayString& as )
 		if ( tokenizer.HasMoreTokens() )
 		{
 			wxString sLang( tokenizer.GetNextToken() );
-			if ( sLang.Length() > 3 )
+			if ( sLang.IsEmpty() || (sLang.Length() > 3) )
 			{
-				wxLogError( _("Invalid language %s. File \u201C%s\u201D is corrupt."), sLang, fn.GetFullName() );
-				as.Clear();
-				return false;
+				wxLogDebug( _("Skipping language %s."), sLang );
 			}
-			as.Add( sLang );
+			else
+			{
+				as.Add( sLang );
+			}
 		}
 
-		if ( n++ > 2000 )
+		if ( n++ > 5000 )
 		{
 			wxLogError( _("Too many languages. File \u201C%s\u201D is corrupt."), fn.GetFullName() );
 			as.Clear();
@@ -151,12 +152,17 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	if ( cmdLine.Found( wxT("nuc") ) ) m_bUnknownChapterTimeEndToNextChapter = false;
 
 	wxString s;
-	if ( cmdLine.Found( wxT("fo"), &s ) )
+	long v;
+	if ( cmdLine.Found( wxT("fo"), &v ) )
 	{
-		if ( !s.ToULong( &m_nChapterOffset ) )
+		if ( (v<0) || (v>10000) )
 		{
-			wxLogWarning( _("Unknown frame offset - %s"), s.GetData() );
+			wxLogWarning( _("Wrong frame offset - %d"), v );
 			bRes = false;
+		}
+		else
+		{
+			m_nChapterOffset = (unsigned long)v;
 		}
 	}
 
@@ -300,7 +306,7 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
 	wxString sSingleDataFile;
 	if ( m_singleDataFile.IsOk() )
 	{
-		sSingleDataFile = m_singleDataFile.GetFullPath();
+		sSingleDataFile = m_singleDataFile.GetFullName();
 	}
 	as.Add( wxString::Format( wxT("Single data file: %s"), sSingleDataFile ) );
 	as.Add( wxString::Format( wxT("Alternate extensions: %s"), m_sAlternateExtensions ) );
