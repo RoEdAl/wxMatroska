@@ -6,6 +6,7 @@
 #include "wxConfiguration.h"
 #include "wxIndex.h"
 #include "wxTrack.h"
+#include "wxInputFile.h"
 #include "wxXmlCueSheetRenderer.h"
 
 IMPLEMENT_CLASS( wxXmlCueSheetRenderer, wxCueSheetRenderer )
@@ -155,10 +156,10 @@ static wxXmlNode* add_idx_chapter_atom(
 // ===============================================================================
 
 wxXmlCueSheetRenderer::wxXmlCueSheetRenderer(
-	const wxConfiguration& cfg, const wxString& sInputFile, const wxString& sOutputFile ):
+	const wxConfiguration& cfg, const wxInputFile& inputFile, const wxString& sOutputFile ):
     m_pXmlDoc((wxXmlDocument*)NULL),
 	m_cfg(cfg),
-	m_sInputFile( sInputFile ),
+	m_inputFile( inputFile ),
 	m_sOutputFile( sOutputFile )
 {
 }
@@ -202,7 +203,7 @@ bool wxXmlCueSheetRenderer::OnPreRenderDisc( const wxCueSheet& cueSheet )
 	m_pXmlDoc->SetRoot( pChapters );
 
 	wxXmlNode* pLastComment;
-	wxXmlNode* pComment = m_cfg.BuildXmlComments( m_sInputFile, m_sOutputFile, pLastComment );
+	wxXmlNode* pComment = m_cfg.BuildXmlComments( m_inputFile, m_sOutputFile, pLastComment );
 	pChapters->SetChildren( pComment );
 
 	m_pEditionEntry = new wxXmlNode( (wxXmlNode*)NULL, wxXML_ELEMENT_NODE, wxT("EditionEntry") );

@@ -222,3 +222,22 @@ wxCueSheet& wxCueSheet::SetSingleDataFile( const wxDataFile& dataFile )
 	}
 	return *this;
 }
+
+wxCueSheet& wxCueSheet::SetDataFiles( const wxArrayDataFile& dataFile )
+{
+	size_t tracks = m_tracks.Count();
+	size_t j=0;
+	for( size_t i=0; (i<tracks) && (j<dataFile.Count()); i++ )
+	{
+		if ( m_tracks[i].HasDataFile() )
+		{
+			m_tracks[i].SetDataFile( dataFile[j++] );
+		}
+	}
+	if ( j < dataFile.Count() )
+	{
+		wxLogWarning( _("Not all data files in cue sheet are replaced") );
+		wxLogWarning( _("%d data file(s) left"), (dataFile.Count()-j) );
+	}
+	return *this;
+}

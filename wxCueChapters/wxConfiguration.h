@@ -5,6 +5,12 @@
 #ifndef _WX_CONFIGURATION_H_
 #define _WX_CONFIGURATION_H_
 
+#ifndef _WX_INPUT_FILE_H_
+#include "wxInputFile.h"
+#endif
+
+WX_DECLARE_OBJARRAY( wxInputFile, wxArrayInputFile );
+
 class wxConfiguration :public wxObject
 {
 	DECLARE_DYNAMIC_CLASS(wxConfiguration)
@@ -24,11 +30,10 @@ protected:
 	bool m_bHiddenIndexes;
 
 	wxString m_sAlternateExtensions;
-	wxFileName m_singleDataFile;
 	wxString m_sLang;
 	wxString m_sTrackNameFormat;
 
-	wxArrayString m_inputFile;
+	wxArrayInputFile m_inputFile;
 	wxFileName m_outputFile;
 
 	wxString m_sCueSheetExt;
@@ -50,11 +55,9 @@ public:
 	bool GetUseDataFiles() const;
 	const wxString& GetAlternateExtensions() const;
 	bool HasAlternateExtensions() const;
-	const wxFileName& GetSingleDataFile() const;
-	bool HasSingleDataFile() const;
 	const wxString& GetLang() const;
 	const wxString& GetTrackNameFormat() const;
-	const wxArrayString& GetInputFiles() const;
+	const wxArrayInputFile& GetInputFiles() const;
 	bool IsEmbedded() const;
 	wxString GetOutputFile( const wxString& ) const;
 	bool UsePolishQuotationMarks() const;
@@ -80,7 +83,7 @@ public:
 	bool Read( const wxCmdLineParser& );
 
 	void Dump() const;
-	wxXmlNode* BuildXmlComments( const wxString&, const wxString&, wxXmlNode*& ) const;
+	wxXmlNode* BuildXmlComments( const wxInputFile&, const wxString&, wxXmlNode*& ) const;
 };
 
 #endif // _WX_CONFIGURATION_H

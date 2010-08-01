@@ -39,7 +39,9 @@ public:
 
 	bool HasSingleDataFile() const;
 	bool HasSingleDataFile( wxDataFile& ) const;
+
 	wxCueSheet& SetSingleDataFile( const wxDataFile& );
+	wxCueSheet& SetDataFiles( const wxArrayDataFile& );
 
 	bool IsLastTrackForDataFile( size_t, wxDataFile& ) const;
 

@@ -80,4 +80,6 @@ public:
 	static wxString GetFileTypeRegExp();
 };
 
+WX_DECLARE_OBJARRAY( wxDataFile, wxArrayDataFile );
+
 #endif // _WX_DATA_FILE_H_

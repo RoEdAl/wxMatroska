@@ -5,6 +5,10 @@
 #ifndef _WX_MY_APP_H_
 #define _WX_MY_APP_H_
 
+#ifndef _WX_INPUT_FILE_H_
+class wxInputFile;
+#endif
+
 #ifndef _WX_CONFIGURATION_H_
 class wxConfiguration;
 #endif
@@ -26,12 +30,13 @@ protected:
 
 protected:
 
-	int ProcessCueFile( wxCueSheetReader&, const wxString& );
+	int ProcessCueFile( wxCueSheetReader&, const wxInputFile& );
 	int ConvertCueSheet( const wxString&, const wxCueSheet& );
 
 	void AddSeparator( wxCmdLineParser& );
 	static void AddVersionInfos( wxCmdLineParser& );
 	static void AddFormatDescription( wxCmdLineParser& );
+	static void AddInputFileFormatDescription( wxCmdLineParser& );
 
 protected:
 

@@ -38,6 +38,21 @@ void wxMyApp::AddVersionInfos( wxCmdLineParser& cmdline )
 	cmdline.AddUsageText( wxString::Format( wxT("wxWidgets version: %d.%d.%d"), wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER ) );
 }
 
+void wxMyApp::AddInputFileFormatDescription( wxCmdLineParser& cmdline )
+{
+	cmdline.AddUsageText( _("Input file format specification:") );
+
+	cmdline.AddUsageText( _("Input file may be a wildcard:") );
+	cmdline.AddUsageText( _("\t*.cue") );
+	cmdline.AddUsageText( _("When -ec is used inmut file may be a path to media file with embedded cue sheet:") );
+	cmdline.AddUsageText( _("\t*.flac test.ape") );
+	cmdline.AddUsageText( _("To read embedded cue sheet MediaInfo library is used.") );
+
+	cmdline.AddUsageText( wxString::Format( _("You may also specify data files after cue file using %c as separator."), wxInputFile::SEPARATOR ) );
+	cmdline.AddUsageText( wxString::Format( _("\t\"test.cue%ctest.flac\""), wxInputFile::SEPARATOR ) );
+	cmdline.AddUsageText( _("This allow you to override data file specification in cue sheet file.") );
+}
+
 void wxMyApp::AddFormatDescription( wxCmdLineParser& cmdline )
 {
 	cmdline.AddUsageText( _("Formating directives:") );
@@ -67,6 +82,8 @@ void wxMyApp::OnInitCmdLine( wxCmdLineParser& cmdline )
 	wxAppConsole::OnInitCmdLine( cmdline );
 	wxConfiguration::AddCmdLineParams( cmdline );
 	cmdline.SetLogo( _("This application converts cue sheet files to Matroska XML chapter files in a more advanced way than standard Matroska tools.") );
+	AddSeparator( cmdline );
+	AddInputFileFormatDescription( cmdline );
 	AddSeparator( cmdline );
 	AddFormatDescription( cmdline );
 	AddSeparator( cmdline );
@@ -148,8 +165,9 @@ int wxMyApp::ConvertCueSheet( const wxString& sInputFile, const wxCueSheet& cueS
 	return 0;
 }
 
-int wxMyApp::ProcessCueFile( wxCueSheetReader& reader, const wxString& sInputFile )
+int wxMyApp::ProcessCueFile( wxCueSheetReader& reader, const wxInputFile& inputFile )
 {
+	wxString sInputFile( inputFile.GetInputFile().GetFullPath() );
 	wxLogMessage( _("Processing \u201C%s\u201D"), sInputFile );
 
 	if ( m_cfg.IsEmbedded() )
@@ -171,20 +189,19 @@ int wxMyApp::ProcessCueFile( wxCueSheetReader& reader, const wxString& sInputFil
 		}
 	}
 
-	if ( m_cfg.HasSingleDataFile() || m_cfg.IsEmbedded() )
+	if ( inputFile.HasDataFiles() )
 	{
 		wxCueSheet cueSheet( reader.GetCueSheet() );
-		if ( !m_cfg.HasSingleDataFile() )
-		{
-			wxDataFile dataFile( sInputFile, wxDataFile::WAVE );
-			cueSheet.SetSingleDataFile( dataFile );
-		}
-		else
-		{
-			wxDataFile dataFile( m_cfg.GetSingleDataFile(), wxDataFile::WAVE );
-			wxLogInfo( _("Setting data file to \u201C%s\u201D"), dataFile.GetFileName() );
-			cueSheet.SetSingleDataFile( dataFile );
-		}
+		wxArrayDataFile dataFiles;
+		inputFile.GetDataFiles( dataFiles, wxDataFile::WAVE );
+		cueSheet.SetDataFiles( dataFiles );
+		return ConvertCueSheet( sInputFile, cueSheet );
+	}
+	else if ( m_cfg.IsEmbedded() )
+	{
+		wxCueSheet cueSheet( reader.GetCueSheet() );
+		wxDataFile dataFile( sInputFile, wxDataFile::WAVE );
+		cueSheet.SetSingleDataFile( dataFile );
 		return ConvertCueSheet( sInputFile, cueSheet );
 	}
 	else
@@ -199,10 +216,11 @@ int wxMyApp::OnRun()
 	reader.UsePolishQuotationMarks( m_cfg.UsePolishQuotationMarks() );
 
 	int res = 0;
-	const wxArrayString& inputFile = m_cfg.GetInputFiles();
+	const wxArrayInputFile& inputFile = m_cfg.GetInputFiles();
 	for( size_t i=0; i<inputFile.Count(); i++ )
 	{
-		wxFileName fn( inputFile[i] );
+		wxFileName fn( inputFile[i].GetInputFile() );
+
 		if ( !wxDir::Exists( fn.GetPath() ) )
 		{
 			wxLogMessage( _("Directory \u201C%s\u201D doesn't exists"), fn.GetPath() );
@@ -236,10 +254,13 @@ int wxMyApp::OnRun()
 		wxString sInputFile;
 		if ( dir.GetFirst( &sInputFile, sFileSpec, wxDIR_FILES ) )
 		{
+			wxInputFile singleFile( inputFile[i] );
 			while( true )
 			{
 				fn.SetFullName( sInputFile );
-				res = ProcessCueFile( reader, fn.GetFullPath() );
+				singleFile.SetInputFile( fn );
+
+				res = ProcessCueFile( reader, singleFile );
 				if ( (res != 0) && m_cfg.AbortOnError() ) break;
 
 				if ( !dir.GetNext( &sInputFile ) ) break;

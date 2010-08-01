@@ -9,6 +9,10 @@
 #include <wxCueSheetRenderer.h>
 #endif
 
+#ifndef _WX_INPUT_FILE_H_
+class wxInputFile;
+#endif
+
 #ifndef _WX_CONFIGURATION_H_
 class wxConfiguration;
 #endif
@@ -25,7 +29,7 @@ protected:
 	wxXmlNode* m_pEditionEntry;
 
 	const wxConfiguration& m_cfg;
-	wxString m_sInputFile;
+	wxInputFile m_inputFile;
 	wxString m_sOutputFile;
 
 protected:
@@ -41,7 +45,7 @@ protected:
 
 public:
 
-	wxXmlCueSheetRenderer(const wxConfiguration&, const wxString&, const wxString& );
+	wxXmlCueSheetRenderer(const wxConfiguration&, const wxInputFile&, const wxString& );
 	virtual ~wxXmlCueSheetRenderer(void);
 
 	wxXmlDocument* GetXmlDoc() const;

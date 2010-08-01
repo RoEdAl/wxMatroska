@@ -230,13 +230,17 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		for( size_t i=0; i<cmdLine.GetParamCount(); i++ )
 		{
-			m_inputFile.Add( cmdLine.GetParam( i ) );
+			wxInputFile inputFile( cmdLine.GetParam( i ) );
+			if ( inputFile.IsOk() )
+			{
+				m_inputFile.Add( inputFile );
+			}
+			else
+			{
+				wxLogWarning( _("Invalid input file \u201C%s\u201D"), cmdLine.GetParam( i ) );
+				bRes = false;
+			}
 		}
-	}
-	else
-	{
-		wxLogWarning( _("Input file not specified") );
-		bRes = false;
 	}
 
 	if ( cmdLine.Found( wxT("l"), &s ) )
@@ -272,11 +276,6 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		}
 	}
 
-	if ( cmdLine.Found( wxT("f"), &s ) )
-	{
-		m_singleDataFile.Assign( s );
-	}
-
 	return bRes;
 }
 
@@ -303,12 +302,6 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
 	as.Add( wxString::Format( wxT("Read embedded cue sheet: %s"), BoolToStr(m_bEmbedded) ) );
 	as.Add( wxString::Format( wxT("Use data files to calculate end time of chapters: %s"), BoolToStr(m_bUseDataFiles) ) );
 
-	wxString sSingleDataFile;
-	if ( m_singleDataFile.IsOk() )
-	{
-		sSingleDataFile = m_singleDataFile.GetFullName();
-	}
-	as.Add( wxString::Format( wxT("Single data file: %s"), sSingleDataFile ) );
 	as.Add( wxString::Format( wxT("Alternate extensions: %s"), m_sAlternateExtensions ) );
 	as.Add( wxString::Format( wxT("Set chapter's end time to beginning of next chapter if track's end time cannot be calculated: %s"), BoolToStr(m_bUnknownChapterTimeEndToNextChapter) ) );
 	as.Add( wxString::Format( wxT("Chapter offset (frames): %d"), m_nChapterOffset ) );
@@ -350,7 +343,7 @@ void wxConfiguration::Dump() const
 	}
 }
 
-wxXmlNode* wxConfiguration::BuildXmlComments( const wxString& sInputFile, const wxString& sOutputFile, wxXmlNode*& pLast ) const
+wxXmlNode* wxConfiguration::BuildXmlComments( const wxInputFile& inputFile, const wxString& sOutputFile, wxXmlNode*& pLast ) const
 {
 	wxString sInit;
 	sInit.Printf( wxT("This file was created by %s tool"), wxGetApp().GetAppDisplayName() );
@@ -362,7 +355,7 @@ wxXmlNode* wxConfiguration::BuildXmlComments( const wxString& sInputFile, const 
 	as.Add( wxString::Format( wxT("Application version: %s"), wxGetApp().APP_VERSION ) );
 	as.Add( wxString::Format( wxT("Application vendor: %s"), wxGetApp().GetVendorDisplayName() ) );
 	as.Add( wxString::Format( wxT("Creation time: %s %s"), dtNow.FormatISODate(), dtNow.FormatISOTime() ) );
-	as.Add( wxString::Format( wxT("CUE file: \u201C%s\u201D"), GetFileName(sInputFile) ) );
+	as.Add( wxString::Format( wxT("CUE file: \u201C%s\u201D"), inputFile.ToString(false) ) );
 	as.Add( wxString::Format( wxT("Output file: \u201C%s\u201D"), GetFileName(sOutputFile) ) );
 
 	FillArray( as );
@@ -410,16 +403,6 @@ bool wxConfiguration::HasAlternateExtensions() const
 	return !m_sAlternateExtensions.IsEmpty();
 }
 
-const wxFileName& wxConfiguration::GetSingleDataFile() const
-{
-	return m_singleDataFile;
-}
-
-bool wxConfiguration::HasSingleDataFile() const
-{
-	return m_singleDataFile.IsOk();
-}
-
 const wxString& wxConfiguration::GetTrackNameFormat() const
 {
 	return m_sTrackNameFormat;
@@ -430,7 +413,7 @@ const wxString& wxConfiguration::GetLang() const
 	return m_sLang;
 }
 
-const wxArrayString& wxConfiguration::GetInputFiles() const
+const wxArrayInputFile& wxConfiguration::GetInputFiles() const
 {
 	return m_inputFile;
 }
@@ -503,3 +486,6 @@ const wxString& wxConfiguration::MatroskaChaptersXmlExt() const
 {
 	return m_sMatroskaChaptersXmlExt;
 }
+
+#include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
+WX_DEFINE_OBJARRAY( wxArrayInputFile );

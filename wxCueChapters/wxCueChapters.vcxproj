@@ -102,6 +102,7 @@
     </ClCompile>
     <ClCompile Include="wxApp.cpp" />
     <ClCompile Include="wxConfiguration.cpp" />
+    <ClCompile Include="wxInputFile.cpp" />
     <ClCompile Include="wxXmlCueSheetRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -109,6 +110,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="wxApp.h" />
     <ClInclude Include="wxConfiguration.h" />
+    <ClInclude Include="wxInputFile.h" />
     <ClInclude Include="wxXmlCueSheetRenderer.h" />
   </ItemGroup>
   <ItemGroup>

@@ -13,6 +13,9 @@
     <ClCompile Include="wxXmlCueSheetRenderer.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
+    <ClCompile Include="wxInputFile.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdWx.h">
@@ -28,6 +31,9 @@
       <Filter>Header files</Filter>
     </ClInclude>
     <ClInclude Include="wxXmlCueSheetRenderer.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="wxInputFile.h">
       <Filter>Header files</Filter>
     </ClInclude>
   </ItemGroup>

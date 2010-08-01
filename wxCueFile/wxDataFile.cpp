@@ -437,3 +437,6 @@ wxString wxDataFile::GetSamplesStr(wxULongLong samples)
 
 	return wxIndex::GetTimeStr( s.GetLo(), mm.GetLo(), rest );
 }
+
+#include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
+WX_DEFINE_OBJARRAY( wxArrayDataFile );

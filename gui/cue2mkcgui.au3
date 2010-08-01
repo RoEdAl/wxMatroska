@@ -13,7 +13,7 @@
 #include <EditConstants.au3>
 #include <GUIConstantsEx.au3>
 #include <ListBoxConstants.au3>
-#include <ListViewConstants.au3>
+#include <TreeViewConstants.au3>
 #include <ComboConstants.au3>
 #include <StaticConstants.au3>
 #include <TabConstants.au3>
@@ -24,7 +24,7 @@
 #include <GuiEdit.au3>
 #include <WinAPI.au3>
 #include <File.au3>
-#include <GuiListView.au3>
+#include <GuiTreeView.au3>
 
 Func get_tool_full_path($sExeName)
 	Local $sExe = $sExeName & ".exe"
@@ -68,175 +68,165 @@ Func get_directory($sPath)
 EndFunc   ;==>get_directory
 
 #Region ### START Koda GUI section ### Form=C:\Documents and Settings\VBox\My Documents\Visual Studio 2010\Projects\wxMatroska\gui\cue2mkcgui.kxf
-$FormMain = GUICreate("cue2mkc GUI", 488, 419, -1, -1, BitOR($WS_MAXIMIZEBOX, $WS_MINIMIZEBOX, $WS_SIZEBOX, $WS_THICKFRAME, $WS_SYSMENU, $WS_CAPTION, $WS_OVERLAPPEDWINDOW, $WS_TILEDWINDOW, $WS_POPUP, $WS_POPUPWINDOW, $WS_GROUP, $WS_TABSTOP, $WS_BORDER, $WS_CLIPSIBLINGS), BitOR($WS_EX_ACCEPTFILES, $WS_EX_WINDOWEDGE))
+$FormMain = GUICreate("cue2mkc GUI", 486, 410, -1, -1, BitOR($WS_MAXIMIZEBOX, $WS_MINIMIZEBOX, $WS_SIZEBOX, $WS_THICKFRAME, $WS_SYSMENU, $WS_CAPTION, $WS_OVERLAPPEDWINDOW, $WS_TILEDWINDOW, $WS_POPUP, $WS_POPUPWINDOW, $WS_GROUP, $WS_TABSTOP, $WS_BORDER, $WS_CLIPSIBLINGS), BitOR($WS_EX_ACCEPTFILES, $WS_EX_WINDOWEDGE))
 GUISetFont(8, 400, 0, "Microsoft Sans Serif")
-$MainTab = GUICtrlCreateTab(4, 4, 481, 409, BitOR($TCS_FLATBUTTONS, $TCS_BUTTONS))
+$MainTab = GUICtrlCreateTab(4, 2, 481, 409, BitOR($TCS_FLATBUTTONS, $TCS_BUTTONS))
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKHEIGHT)
 $PaneInputOutput = GUICtrlCreateTabItem("Input and output files")
-$LabelFiles = GUICtrlCreateLabel("&File list: ", 9, 32, 40, 21, $SS_CENTERIMAGE)
+$LabelFiles = GUICtrlCreateLabel("&File list: ", 9, 30, 40, 21, $SS_CENTERIMAGE)
 GUICtrlSetFont(-1, 8, 800, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$ListViewInputFiles = GUICtrlCreateListView("File path", 9, 56, 469, 273, BitOR($LVS_REPORT, $LVS_SHOWSELALWAYS))
-GUICtrlSendMsg(-1, $LVM_SETCOLUMNWIDTH, 0, 450)
+$TreeViewInputFiles = GUICtrlCreateTreeView(8, 58, 469, 270, BitOR($TVS_HASBUTTONS, $TVS_HASLINES, $TVS_DISABLEDRAGDROP, $TVS_SHOWSELALWAYS, $TVS_FULLROWSELECT, $WS_GROUP, $WS_TABSTOP), $WS_EX_STATICEDGE)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
-GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKBOTTOM)
-$ButtonInputDelete = GUICtrlCreateButton("û", 48, 333, 29, 21, 0)
-GUICtrlSetFont(-1, 12, 800, 0, "Wingdings")
-GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-GUICtrlSetTip(-1, "Delete selected items from list")
-$ButtonInputAdd = GUICtrlCreateButton("é", 13, 333, 29, 21, 0)
-GUICtrlSetFont(-1, 10, 800, 0, "Wingdings")
+$ButtonInputAdd = GUICtrlCreateButton("+", 13, 331, 29, 21, 0)
+GUICtrlSetFont(-1, 14, 800, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Add specified file or file mask to list")
-$CheckBoxOutputDir = GUICtrlCreateCheckbox(" &Output:", 9, 358, 65, 21, BitOR($BS_CHECKBOX, $BS_AUTOCHECKBOX, $BS_LEFT, $BS_VCENTER, $BS_PUSHLIKE, $WS_TABSTOP))
+$ButtonInputDelete = GUICtrlCreateButton("-", 48, 331, 29, 21, 0)
+GUICtrlSetFont(-1, 14, 800, 0, "Microsoft Sans Serif")
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+GUICtrlSetTip(-1, "Delete selected items from list")
+$ButtonMakeMask = GUICtrlCreateButton("•", 84, 331, 29, 21, 0)
+GUICtrlSetFont(-1, 14, 800, 0, "Microsoft Sans Serif")
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+GUICtrlSetTip(-1, "Make file mask with selected items")
+$ButtonDataFile = GUICtrlCreateButton("+", 118, 331, 29, 21, 0)
+GUICtrlSetFont(-1, 12, 400, 0, "Microsoft Sans Serif")
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+GUICtrlSetTip(-1, "Add data file to selected cue sheet")
+$CheckBoxOutputDir = GUICtrlCreateCheckbox(" &Output:", 9, 356, 65, 21, BitOR($BS_CHECKBOX, $BS_AUTOCHECKBOX, $BS_LEFT, $BS_VCENTER, $BS_PUSHLIKE, $WS_TABSTOP))
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$InputOuputDir = GUICtrlCreateInput("", 76, 358, 345, 21)
+$InputOuputDir = GUICtrlCreateInput("", 76, 356, 345, 21)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Destination directory")
-$ButtonOutputFile = GUICtrlCreateButton("…", 423, 358, 29, 21, 0)
+$ButtonOutputFile = GUICtrlCreateButton("…", 423, 356, 29, 21, 0)
 GUICtrlSetFont(-1, 10, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Specify output file")
-$ButtonOutputDirectory = GUICtrlCreateButton("1", 453, 358, 29, 21, 0)
+$ButtonOutputDirectory = GUICtrlCreateButton("1", 453, 356, 29, 21, 0)
 GUICtrlSetFont(-1, 10, 800, 0, "Wingdings")
 GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "SpecifyOutputDirectory")
-$ButtonGo = GUICtrlCreateButton("&Run", 397, 384, 85, 25, 0)
+$ButtonGo = GUICtrlCreateButton("&Run", 397, 382, 85, 25, 0)
 GUICtrlSetFont(-1, 8, 800, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Run cue2mkc tool")
-$ButtonMakeMask = GUICtrlCreateButton("l", 84, 333, 29, 21, 0)
-GUICtrlSetFont(-1, 10, 800, 0, "Wingdings")
-GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-GUICtrlSetTip(-1, "Make file mask with selected items")
 $OptionsPane = GUICtrlCreateTabItem("Options")
-$CheckBoxCe = GUICtrlCreateCheckbox("Calculate end time of chapters if possible", 11, 32, 217, 17)
+$CheckBoxCe = GUICtrlCreateCheckbox("Calculate end time of chapters if possible", 11, 30, 217, 17)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$CheckBoxEc = GUICtrlCreateCheckbox("Embedded cue sheet", 11, 49, 129, 17)
+$CheckBoxEc = GUICtrlCreateCheckbox("Embedded cue sheet", 11, 47, 129, 17)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Try to read embedded cue sheet (requires MediaInfo library)")
-$CheckBoxDf = GUICtrlCreateCheckbox("Use data file(s) to calculate end time of chapters", 11, 68, 249, 17)
+$CheckBoxDf = GUICtrlCreateCheckbox("Use data file(s) to calculate end time of chapters", 11, 66, 249, 17)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$CheckBoxUc = GUICtrlCreateCheckbox("If track's end time is unknown set it to next track position using frame offset", 11, 88, 377, 17)
+$CheckBoxUc = GUICtrlCreateCheckbox("If track's end time is unknown set it to next track position using frame offset", 11, 86, 377, 17)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelFo = GUICtrlCreateLabel("Offset:", 24, 108, 35, 17, $SS_CENTERIMAGE)
+$LabelFo = GUICtrlCreateLabel("Offset:", 24, 106, 35, 17, $SS_CENTERIMAGE)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$InputFo = GUICtrlCreateInput("150", 60, 108, 65, 21, BitOR($ES_AUTOHSCROLL, $ES_NUMBER))
+$InputFo = GUICtrlCreateInput("150", 60, 106, 65, 21, BitOR($ES_AUTOHSCROLL, $ES_NUMBER))
 GUICtrlSetLimit(-1, 4)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Frame offset")
-$LabelAlternateExt = GUICtrlCreateLabel("Comma-separated list of alternate extensions of data files:", 11, 132, 273, 21, $SS_CENTERIMAGE)
+$LabelAlternateExt = GUICtrlCreateLabel("Comma-separated list of alternate extensions of data files:", 11, 130, 273, 21, $SS_CENTERIMAGE)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$InputAlternateExt = GUICtrlCreateInput("", 288, 132, 113, 21)
+$InputAlternateExt = GUICtrlCreateInput("", 288, 130, 113, 21)
 GUICtrlSetLimit(-1, 150)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKHEIGHT)
-$CheckSingleDataFile = GUICtrlCreateCheckbox("Single data file", 11, 157, 105, 21, BitOR($BS_CHECKBOX, $BS_AUTOCHECKBOX, $BS_LEFT, $BS_PUSHLIKE, $WS_TABSTOP))
+$LabelTf = GUICtrlCreateLabel("Track title format:", 11, 153, 86, 21, $SS_CENTERIMAGE)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-GUICtrlSetTip(-1, "Single data file")
-$InputSingleDataFile = GUICtrlCreateInput("", 121, 157, 277, 21)
-GUICtrlSetLimit(-1, 150)
-GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
-GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKHEIGHT)
-$ButtonSingleDataFile = GUICtrlCreateButton("…", 402, 157, 29, 21, 0)
-GUICtrlSetFont(-1, 10, 400, 0, "Microsoft Sans Serif")
-GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-GUICtrlSetTip(-1, "Browse for data file")
-$LabelTf = GUICtrlCreateLabel("Track title format:", 11, 182, 86, 21)
-GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
-GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$InputTf = GUICtrlCreateInput("%dp% - %dt% - %tt%", 99, 179, 113, 21)
+$InputTf = GUICtrlCreateInput("%dp% - %dt% - %tt%", 99, 153, 113, 21)
 GUICtrlSetLimit(-1, 150)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelLang = GUICtrlCreateLabel("Chapter's title language:", 11, 200, 117, 21, $SS_CENTERIMAGE)
+$LabelLang = GUICtrlCreateLabel("Chapter's title language:", 11, 175, 117, 21, $SS_CENTERIMAGE)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$InputLang = GUICtrlCreateInput("eng", 131, 200, 41, 21)
+$InputLang = GUICtrlCreateInput("eng", 131, 175, 41, 21)
 GUICtrlSetLimit(-1, 3)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$CheckBoxR = GUICtrlCreateCheckbox("Round down track end time to full frames", 11, 225, 217, 17)
+$CheckBoxR = GUICtrlCreateCheckbox("Round down track end time to full frames", 11, 199, 217, 17)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$CheckBoxHi = GUICtrlCreateCheckbox("Convert indexes to hidden chapters", 11, 245, 217, 17)
+$CheckBoxHi = GUICtrlCreateCheckbox("Convert indexes to hidden chapters", 11, 219, 217, 17)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelDce = GUICtrlCreateLabel("Cue sheet file extension:", 11, 266, 119, 17, $SS_CENTERIMAGE)
+$LabelDce = GUICtrlCreateLabel("Cue sheet file extension:", 11, 240, 119, 17, $SS_CENTERIMAGE)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$InputDce = GUICtrlCreateInput("cue", 132, 266, 53, 21)
+$InputDce = GUICtrlCreateInput("cue", 132, 240, 53, 21)
 GUICtrlSetLimit(-1, 50)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelDme = GUICtrlCreateLabel("Matroska chapters file extension:", 11, 288, 159, 17, $SS_CENTERIMAGE)
+$LabelDme = GUICtrlCreateLabel("Matroska chapters file extension:", 11, 262, 159, 17, $SS_CENTERIMAGE)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$InputDme = GUICtrlCreateInput("mkc.xml", 173, 288, 53, 21)
+$InputDme = GUICtrlCreateInput("mkc.xml", 173, 262, 53, 21)
 GUICtrlSetLimit(-1, 50)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelOutputFormat = GUICtrlCreateLabel("Output format:", 11, 312, 71, 17, $SS_CENTERIMAGE)
+$LabelOutputFormat = GUICtrlCreateLabel("Output format:", 11, 286, 71, 17, $SS_CENTERIMAGE)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$ComboOutputFormat = GUICtrlCreateCombo("", 84, 312, 149, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+$ComboOutputFormat = GUICtrlCreateCombo("", 84, 286, 149, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 GUICtrlSetData(-1, "cue sheet|Matroska chapter xml file", "Matroska chapter xml file")
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelTrack01_1 = GUICtrlCreateLabel("For track 01 assume index", 11, 340, 128, 21, $SS_CENTERIMAGE)
+$LabelTrack01_1 = GUICtrlCreateLabel("For track 01 assume index", 11, 314, 128, 21, $SS_CENTERIMAGE)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$ComboTrack01 = GUICtrlCreateCombo("", 141, 340, 41, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+$ComboTrack01 = GUICtrlCreateCombo("", 141, 314, 41, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 GUICtrlSetData(-1, "00|01", "01")
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelTrack01_2 = GUICtrlCreateLabel("as beginning of track", 188, 340, 103, 21, $SS_CENTERIMAGE)
+$LabelTrack01_2 = GUICtrlCreateLabel("as beginning of track", 188, 314, 103, 21, $SS_CENTERIMAGE)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelQuotationMarks = GUICtrlCreateLabel("Quotation marks:", 11, 364, 84, 17, $SS_CENTERIMAGE)
+$LabelQuotationMarks = GUICtrlCreateLabel("Quotation marks:", 11, 338, 84, 21, $SS_CENTERIMAGE)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$ComboQuotationMarks = GUICtrlCreateCombo("", 98, 364, 149, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+$ComboQuotationMarks = GUICtrlCreateCombo("", 98, 338, 149, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 GUICtrlSetData(-1, "„polish ‚quotation’ marks”|“english ‘quotation’ marks”", "„polish ‚quotation’ marks”")
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Method of converting ""simple 'quotation' marks"" inside strings")
-$CheckBoxA = GUICtrlCreateCheckbox("Abort when conversion errors occurs", 11, 387, 201, 17)
+$CheckBoxA = GUICtrlCreateCheckbox("Abort when conversion errors occurs", 11, 361, 201, 17)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $OutputPane = GUICtrlCreateTabItem("&Output")
-$LabelLog = GUICtrlCreateLabel("Messages:", 11, 32, 64, 17, $SS_CENTERIMAGE)
+$LabelLog = GUICtrlCreateLabel("Messages:", 11, 30, 64, 17, $SS_CENTERIMAGE)
 GUICtrlSetFont(-1, 8, 800, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$ListLog = GUICtrlCreateList("", 11, 53, 469, 320, BitOR($LBS_USETABSTOPS, $LBS_NOINTEGRALHEIGHT, $LBS_NOSEL, $WS_HSCROLL, $WS_VSCROLL), $WS_EX_STATICEDGE)
-GUICtrlSetFont(-1, 8, 400, 0, "Courier New")
+$ListLog = GUICtrlCreateList("", 11, 51, 469, 320, BitOR($LBS_USETABSTOPS, $LBS_NOINTEGRALHEIGHT, $LBS_NOSEL, $WS_HSCROLL, $WS_VSCROLL), $WS_EX_STATICEDGE)
+GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetBkColor(-1, 0xECE9D8)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKBOTTOM)
 GUICtrlSetTip(-1, "Application messages")
-$ButtonMsgCopy = GUICtrlCreateButton("&Copy", 11, 378, 61, 29, 0)
+$ButtonMsgCopy = GUICtrlCreateButton("&Copy", 11, 376, 61, 29, 0)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Copy messages to clipboard")
-$ButtonClearLog = GUICtrlCreateButton("Clear", 75, 378, 61, 29, 0)
+$ButtonClearLog = GUICtrlCreateButton("Clear", 75, 376, 61, 29, 0)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Clear log")
-$ButtonInfo = GUICtrlCreateButton("&?", 438, 378, 41, 29, 0)
+$ButtonInfo = GUICtrlCreateButton("&?", 438, 376, 41, 29, 0)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Show PDF utility help")
-$CheckBoxVerbose = GUICtrlCreateCheckbox("&Verbose mode", 336, 384, 97, 17)
+$CheckBoxVerbose = GUICtrlCreateCheckbox("&Verbose mode", 336, 382, 97, 17)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateTabItem("")
@@ -253,15 +243,15 @@ Func out_dir_enable($bEnable)
 	EndIf
 EndFunc   ;==>out_dir_enable
 
-Func single_file_enable($bEnable)
+Func frame_offset_enable($bEnable)
 	Local $state = _Iif($bEnable, $GUI_ENABLE, $GUI_DISABLE)
-	GUICtrlSetState($InputSingleDataFile, $state)
-	GUICtrlSetState($ButtonSingleDataFile, $state)
+	GUICtrlSetState($LabelFo, $state)
+	GUICtrlSetState($InputFo, $state)
 
 	If $bEnable Then
-		GUICtrlSetState($InputSingleDataFile, $GUI_FOCUS)
+		GUICtrlSetState($InputFo, $GUI_FOCUS)
 	EndIf
-EndFunc   ;==>single_file_enable
+EndFunc   ;==>frame_offset_enable
 
 Func log_msg($message)
 	Local $nIndex = _GUICtrlListBox_AddString($ListLog, $message)
@@ -354,9 +344,8 @@ Func set_default_options()
 	GUICtrlSetState($CheckBoxDf, $GUI_CHECKED)
 	GUICtrlSetState($CheckBoxUc, $GUI_UNCHECKED)
 	GUICtrlSetData($InputFo, 150)
+	frame_offset_enable(False)
 	GUICtrlSetData($InputAlternateExt, "")
-	GUICtrlSetData($InputSingleDataFile, "")
-	single_file_enable(False)
 	GUICtrlSetData($InputTf, "%dp% - %dt% - %tt%")
 	GUICtrlSetData($InputLang, "eng")
 	GUICtrlSetState($CheckBoxR, $GUI_UNCHECKED)
@@ -390,13 +379,6 @@ Func read_options()
 	$w = GUICtrlRead($InputAlternateExt)
 	If StringLen($w) > 0 Then
 		$s &= "-e """
-		$s &= $w
-		$s &= """ "
-	EndIf
-
-	$w = GUICtrlRead($InputSingleDataFile)
-	If StringLen($w) > 0 Then
-		$s &= "-f """
 		$s &= $w
 		$s &= """ "
 	EndIf
@@ -478,14 +460,30 @@ Func get_cmd_line()
 	Local $sParams = "", $s
 	Local $sOptions = read_options()
 
-	Local $sOutput = GUICtrlRead($InputOuputDir)
-	Local $sInput = ""
-	Local $i, $w = _GUICtrlListView_GetItemCount($ListViewInputFiles)
-	For $i = 0 To $w - 1
+	Local $sInput = "", $w = 0, $s, $hChild
+	Local $hItem = _GUICtrlTreeView_GetFirstItem(GUICtrlGetHandle($TreeViewInputFiles))
+	While $hItem <> 0
+		$w += 1
+
+		$s = _GUICtrlTreeView_GetText(GUICtrlGetHandle($TreeViewInputFiles), $hItem)
+		$hChild = _GUICtrlTreeView_GetFirstChild(GUICtrlGetHandle($TreeViewInputFiles), $hItem)
+		While $hChild <> 0
+			$s &= ';'
+			$s &= _GUICtrlTreeView_GetText(GUICtrlGetHandle($TreeViewInputFiles), $hChild)
+			$hChild = _GUICtrlTreeView_GetNextChild(GUICtrlGetHandle($TreeViewInputFiles), $hChild)
+		WEnd
+
 		$sInput &= """"
-		$sInput &= _GUICtrlListView_GetItemText($ListViewInputFiles, $i)
+		$sInput &= $s
 		$sInput &= """ "
-	Next
+
+		$hItem = _GUICtrlTreeView_GetNextSibling(GUICtrlGetHandle($TreeViewInputFiles), $hItem)
+	WEnd
+
+	Local $sOutput = ""
+	If GUICtrlRead($CheckBoxOutputDir) = $GUI_CHECKED Then
+		$sOutput = GUICtrlRead($InputOuputDir)
+	EndIf
 
 	$s = """" & $sExe & """ " & $sOptions
 	If StringLen($sOutput) > 0 Then
@@ -541,6 +539,37 @@ Func make_mask($sPath)
 	Return SetError(0, 0, $sMask)
 EndFunc   ;==>make_mask
 
+Func add_main_item($s)
+	Local $hItem = _GUICtrlTreeView_Add(GUICtrlGetHandle($TreeViewInputFiles), 0, $s)
+	If $hItem <> 0 Then
+		_GUICtrlTreeView_SelectItem(GUICtrlGetHandle($TreeViewInputFiles), $hItem)
+	EndIf
+EndFunc   ;==>add_main_item
+
+Func add_child_item($hParent, $s)
+	Local $hItem = _GUICtrlTreeView_AddChild(GUICtrlGetHandle($TreeViewInputFiles), $hParent, $s)
+	If $hItem <> 0 Then
+		_GUICtrlTreeView_SelectItem(GUICtrlGetHandle($TreeViewInputFiles), $hItem)
+	EndIf
+EndFunc   ;==>add_child_item
+
+Func get_full_file_select($s)
+	Local $as = StringSplit($s, "|", 1)
+	If $as[0] = 0 Then Return SetError(1, $as[0])
+	If $as[0] = 1 Then
+		Local $ar[1] = [$as[1]]
+		Return SetError(0, $as[0], $ar)
+	EndIf
+
+	Local $sDir = $as[1]
+	;ConsoleWrite($as[0] & @CRLF)
+	Local $ar[$as[0] - 1]
+	For $i = 2 To $as[0]
+		$ar[$i - 2] = $sDir & "\" & $as[$i]
+	Next
+	Return SetError(0, 0, $ar)
+EndFunc   ;==>get_full_file_select
+
 log_msg("This is simple frontend to cue2mkc utility.")
 log_msg("Use this application convert cue sheet files to Matroska chapters files.")
 log_msg("AutoIt version: " & @AutoItVersion & ".")
@@ -556,8 +585,8 @@ set_default_options()
 GUICtrlSetData($InputOuputDir, @MyDocumentsDir)
 GUICtrlSetTip($CheckBoxOutputDir, "Specify output directory or file." & @CRLF & "By default files are created in directories where input file resides.", "Output directory or file")
 out_dir_enable(False)
-_GUICtrlListBox_SetHorizontalExtent($ListLog, 2500)
-GUICtrlSetState($ListViewInputFiles, $GUI_DROPACCEPTED)
+_GUICtrlListBox_SetHorizontalExtent($ListLog, 5000)
+GUICtrlSetState($TreeViewInputFiles, $GUI_DROPACCEPTED)
 GUISetState(@SW_SHOW)
 
 While True
@@ -567,17 +596,24 @@ While True
 			Exit
 
 		Case $GUI_EVENT_DROPPED
-			If @GUI_DropId = $ListViewInputFiles Then
+			If @GUI_DropId = $TreeViewInputFiles Then
 				$s = @GUI_DragFile
 				If StringLen($s) > 0 Then
-					_GUICtrlListView_AddItem($ListViewInputFiles, $s)
+					add_main_item($s)
 				EndIf
 			EndIf
 
 		Case $ButtonInputAdd
-			$s = FileOpenDialog("Specify input file", @WorkingDir, $CUE_FILTER, 1 + 2, "", $FormMain)
+			$s = FileOpenDialog("Specify input file", @WorkingDir, $CUE_FILTER, 1 + 2 + 4, "", $FormMain)
 			If Not @error Then
-				_GUICtrlListView_AddItem($ListViewInputFiles, $s)
+				$as = get_full_file_select($s)
+				If Not @error Then
+					_GUICtrlTreeView_BeginUpdate(GUICtrlGetHandle($TreeViewInputFiles))
+					For $s In $as
+						add_main_item($s)
+					Next
+					_GUICtrlTreeView_EndUpdate(GUICtrlGetHandle($TreeViewInputFiles))
+				EndIf
 			EndIf
 
 		Case $ButtonOutputFile
@@ -595,8 +631,8 @@ While True
 		Case $CheckBoxOutputDir
 			out_dir_enable(_Iif(GUICtrlRead($CheckBoxOutputDir) = $GUI_CHECKED, True, False))
 
-		Case $CheckSingleDataFile
-			single_file_enable(_Iif(GUICtrlRead($CheckSingleDataFile) = $GUI_CHECKED, True, False))
+		Case $CheckBoxUc
+			frame_offset_enable(_Iif(GUICtrlRead($CheckBoxUc) = $GUI_CHECKED, True, False))
 
 		Case $ButtonGo
 			$s = get_cmd_line()
@@ -625,24 +661,35 @@ While True
 		Case $ButtonClearLog
 			clear_log()
 
-		Case $ButtonSingleDataFile
-			$s = FileOpenDialog("Specify audio file", @WorkingDir, $MEDIA_FILTER, 1 + 2, "", $FormMain)
-			If Not @error Then
-				GUICtrlSetData($InputSingleDataFile, $s)
+		Case $ButtonMakeMask
+			$hItem = _GUICtrlTreeView_GetSelection(GUICtrlGetHandle($TreeViewInputFiles))
+			If $hItem <> 0 Then
+				_GUICtrlTreeView_SetText(GUICtrlGetHandle($TreeViewInputFiles), $hItem, _
+						make_mask(_GUICtrlTreeView_GetText(GUICtrlGetHandle($TreeViewInputFiles), $hItem)))
 			EndIf
 
 		Case $ButtonInputDelete
-			_GUICtrlListView_DeleteItemsSelected(GUICtrlGetHandle($ListViewInputFiles))
+			$hItem = _GUICtrlTreeView_GetSelection(GUICtrlGetHandle($TreeViewInputFiles))
+			If $hItem <> 0 Then
+				_GUICtrlTreeView_Delete(GUICtrlGetHandle($TreeViewInputFiles), $hItem)
+			EndIf
 
-		Case $ButtonMakeMask
-			$idx = _GUICtrlListView_GetSelectedIndices(GUICtrlGetHandle($ListViewInputFiles), True)
-			For $i = 1 To $idx[0]
-				_GUICtrlListView_SetItemText( _
-						GUICtrlGetHandle($ListViewInputFiles), _
-						$idx[$i], _
-						make_mask(_GUICtrlListView_GetItemText(GUICtrlGetHandle($ListViewInputFiles), $idx[$i])) _
-						)
-			Next
+		Case $ButtonDataFile
+			$hItem = _GUICtrlTreeView_GetSelection(GUICtrlGetHandle($TreeViewInputFiles))
+			If $hItem <> 0 And _GUICtrlTreeView_Level(GUICtrlGetHandle($TreeViewInputFiles), $hItem) = 0 Then
+				$s = FileOpenDialog("Specify media file", @WorkingDir, $MEDIA_FILTER, 1 + 2 + 4, "", $FormMain)
+				If Not @error Then
+					$as = get_full_file_select($s)
+					If Not @error Then
+						_GUICtrlTreeView_BeginUpdate(GUICtrlGetHandle($TreeViewInputFiles))
+						For $s In $as
+							add_child_item($hItem, $s)
+						Next
+						_GUICtrlTreeView_EndUpdate(GUICtrlGetHandle($TreeViewInputFiles))
+					EndIf
+				EndIf
+			EndIf
+
 	EndSwitch
 WEnd
 
