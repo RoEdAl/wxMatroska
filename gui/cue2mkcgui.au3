@@ -59,6 +59,15 @@ Dim Const $MEDIA_FILTER = "Audio files (*.flac;*.ape;*.wv;*.wav;*.aiff;*.tta)|Al
 Dim Const $STILL_ACTIVE = 259
 Dim Const $APP_EXIT_CODE = "Exit code: %d."
 
+Func is_directory($s)
+	If Not FileExists($s) Then
+		Return SetError(1, 1, False)
+	EndIf
+
+	Local $a = FileGetAttrib($s)
+	Return SetError(0, 0, (StringInStr($s, "D") > 0))
+EndFunc   ;==>is_directory
+
 Func get_directory($sPath)
 	Local $sDrive, $sDir, $sFName, $sExt
 	_PathSplit($sPath, $sDrive, $sDir, $sFName, $sExt)
@@ -68,17 +77,19 @@ Func get_directory($sPath)
 EndFunc   ;==>get_directory
 
 #Region ### START Koda GUI section ### Form=C:\Documents and Settings\VBox\My Documents\Visual Studio 2010\Projects\wxMatroska\gui\cue2mkcgui.kxf
-$FormMain = GUICreate("cue2mkc GUI", 486, 410, -1, -1, BitOR($WS_MAXIMIZEBOX, $WS_MINIMIZEBOX, $WS_SIZEBOX, $WS_THICKFRAME, $WS_SYSMENU, $WS_CAPTION, $WS_OVERLAPPEDWINDOW, $WS_TILEDWINDOW, $WS_POPUP, $WS_POPUPWINDOW, $WS_GROUP, $WS_TABSTOP, $WS_BORDER, $WS_CLIPSIBLINGS), BitOR($WS_EX_ACCEPTFILES, $WS_EX_WINDOWEDGE))
+$FormMain = GUICreate("cue2mkc GUI", 486, 444, -1, -1, BitOR($WS_MAXIMIZEBOX, $WS_MINIMIZEBOX, $WS_SIZEBOX, $WS_THICKFRAME, $WS_SYSMENU, $WS_CAPTION, $WS_OVERLAPPEDWINDOW, $WS_TILEDWINDOW, $WS_POPUP, $WS_POPUPWINDOW, $WS_GROUP, $WS_TABSTOP, $WS_BORDER, $WS_CLIPSIBLINGS), BitOR($WS_EX_ACCEPTFILES, $WS_EX_WINDOWEDGE))
 GUISetFont(8, 400, 0, "Microsoft Sans Serif")
-$MainTab = GUICtrlCreateTab(4, 2, 481, 409, BitOR($TCS_FLATBUTTONS, $TCS_BUTTONS))
+$DummyOutput = GUICtrlCreateDummy()
+$MainTab = GUICtrlCreateTab(4, 2, 481, 441, BitOR($TCS_FLATBUTTONS, $TCS_BUTTONS))
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKHEIGHT)
 $PaneInputOutput = GUICtrlCreateTabItem("Input and output files")
-$LabelFiles = GUICtrlCreateLabel("&File list: ", 9, 30, 40, 21, $SS_CENTERIMAGE)
+$LabelFiles = GUICtrlCreateLabel("&File list: ", 9, 29, 40, 21, $SS_CENTERIMAGE)
 GUICtrlSetFont(-1, 8, 800, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $TreeViewInputFiles = GUICtrlCreateTreeView(8, 58, 469, 270, BitOR($TVS_HASBUTTONS, $TVS_HASLINES, $TVS_DISABLEDRAGDROP, $TVS_SHOWSELALWAYS, $TVS_FULLROWSELECT, $WS_GROUP, $WS_TABSTOP), $WS_EX_STATICEDGE)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKBOTTOM)
 $ButtonInputAdd = GUICtrlCreateButton("+", 13, 331, 29, 21, 0)
 GUICtrlSetFont(-1, 14, 800, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
@@ -95,22 +106,26 @@ $ButtonDataFile = GUICtrlCreateButton("+", 118, 331, 29, 21, 0)
 GUICtrlSetFont(-1, 12, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Add data file to selected cue sheet")
-$CheckBoxOutputDir = GUICtrlCreateCheckbox(" &Output:", 9, 356, 65, 21, BitOR($BS_CHECKBOX, $BS_AUTOCHECKBOX, $BS_LEFT, $BS_VCENTER, $BS_PUSHLIKE, $WS_TABSTOP))
+$LabelOutput = GUICtrlCreateLabel("&Output:", 11, 356, 48, 21, $SS_CENTERIMAGE)
+GUICtrlSetFont(-1, 8, 800, 0, "Microsoft Sans Serif")
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+$ComboOutput = GUICtrlCreateCombo("", 8, 380, 137, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+GUICtrlSetData(-1, "Input directory|Directory|File")
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$InputOuputDir = GUICtrlCreateInput("", 76, 356, 345, 21)
+$InputOuputDir = GUICtrlCreateInput("", 148, 380, 305, 21)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Destination directory")
-$ButtonOutputFile = GUICtrlCreateButton("…", 423, 356, 29, 21, 0)
-GUICtrlSetFont(-1, 10, 400, 0, "Microsoft Sans Serif")
-GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-GUICtrlSetTip(-1, "Specify output file")
-$ButtonOutputDirectory = GUICtrlCreateButton("1", 453, 356, 29, 21, 0)
-GUICtrlSetFont(-1, 10, 800, 0, "Wingdings")
+$ButtonOutputDirectory = GUICtrlCreateButton("1", 453, 380, 29, 21, 0)
+GUICtrlSetFont(-1, 10, 400, 0, "Wingdings")
 GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "SpecifyOutputDirectory")
-$ButtonGo = GUICtrlCreateButton("&Run", 397, 382, 85, 25, 0)
+$CheckBoxSwitchToOutput = GUICtrlCreateCheckbox("&Switch to output pane", 240, 408, 137, 17)
+GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
+GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+GUICtrlSetTip(-1, "Switch to output pane before running")
+$ButtonGo = GUICtrlCreateButton("&Run", 389, 406, 85, 29, 0)
 GUICtrlSetFont(-1, 8, 800, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Run cue2mkc tool")
@@ -206,42 +221,47 @@ $CheckBoxA = GUICtrlCreateCheckbox("Abort when conversion errors occurs", 11, 36
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $OutputPane = GUICtrlCreateTabItem("&Output")
-$LabelLog = GUICtrlCreateLabel("Messages:", 11, 30, 64, 17, $SS_CENTERIMAGE)
+$LabelLog = GUICtrlCreateLabel("Messages:", 11, 29, 64, 17, $SS_CENTERIMAGE)
 GUICtrlSetFont(-1, 8, 800, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$ListLog = GUICtrlCreateList("", 11, 51, 469, 320, BitOR($LBS_USETABSTOPS, $LBS_NOINTEGRALHEIGHT, $LBS_NOSEL, $WS_HSCROLL, $WS_VSCROLL), $WS_EX_STATICEDGE)
+$ListLog = GUICtrlCreateList("", 11, 51, 469, 352, BitOR($LBS_USETABSTOPS, $LBS_NOINTEGRALHEIGHT, $LBS_NOSEL, $WS_HSCROLL, $WS_VSCROLL), $WS_EX_STATICEDGE)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetBkColor(-1, 0xECE9D8)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKBOTTOM)
 GUICtrlSetTip(-1, "Application messages")
-$ButtonMsgCopy = GUICtrlCreateButton("&Copy", 11, 376, 61, 29, 0)
+$ButtonMsgCopy = GUICtrlCreateButton("&Copy", 11, 408, 61, 29, 0)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Copy messages to clipboard")
-$ButtonClearLog = GUICtrlCreateButton("Clear", 75, 376, 61, 29, 0)
+$ButtonClearLog = GUICtrlCreateButton("Clear", 75, 408, 61, 29, 0)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Clear log")
-$ButtonInfo = GUICtrlCreateButton("&?", 438, 376, 41, 29, 0)
+$ButtonInfo = GUICtrlCreateButton("&?", 438, 408, 41, 29, 0)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Show PDF utility help")
-$CheckBoxVerbose = GUICtrlCreateCheckbox("&Verbose mode", 336, 382, 97, 17)
+$CheckBoxVerbose = GUICtrlCreateCheckbox("&Verbose mode", 336, 414, 97, 17)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateTabItem("")
 #EndRegion ### END Koda GUI section ###
 
-Func out_dir_enable($bEnable)
-	Local $state = _Iif($bEnable, $GUI_ENABLE, $GUI_DISABLE)
-	GUICtrlSetState($InputOuputDir, $state)
-	GUICtrlSetState($ButtonOutputFile, $state)
-	GUICtrlSetState($ButtonOutputDirectory, $state)
+Func set_output_mode($nMode)
+	Switch $nMode
+		Case 0 ; same as inpuut directory
+			GUICtrlSetState($InputOuputDir, $GUI_DISABLE)
+			GUICtrlSetState($ButtonOutputDirectory, $GUI_DISABLE)
 
-	If $bEnable Then
-		GUICtrlSetState($InputOuputDir, $GUI_FOCUS)
-	EndIf
-EndFunc   ;==>out_dir_enable
+		Case 1, 2 ; directory
+			GUICtrlSetState($InputOuputDir, $GUI_ENABLE)
+			GUICtrlSetState($InputOuputDir, $GUI_FOCUS)
+			GUICtrlSetState($ButtonOutputDirectory, $GUI_ENABLE)
+			If StringLen(GUICtrlRead($InputOuputDir)) = 0 Then
+				GUICtrlSendToDummy($DummyOutput)
+			EndIf
+	EndSwitch
+EndFunc   ;==>set_output_mode
 
 Func frame_offset_enable($bEnable)
 	Local $state = _Iif($bEnable, $GUI_ENABLE, $GUI_DISABLE)
@@ -480,15 +500,25 @@ Func get_cmd_line()
 		$hItem = _GUICtrlTreeView_GetNextSibling(GUICtrlGetHandle($TreeViewInputFiles), $hItem)
 	WEnd
 
-	Local $sOutput = ""
-	If GUICtrlRead($CheckBoxOutputDir) = $GUI_CHECKED Then
-		$sOutput = GUICtrlRead($InputOuputDir)
-	EndIf
+	Local $sOutputFile = "", $sOutputDir = ""
+	Switch GUICtrlRead($ComboOutput)
+		Case 1 ; directory
+			$sOutputDir = GUICtrlRead($InputOuputDir)
+
+		Case 2 ; file
+			$sOutputFile = GUICtrlRead($InputOuputDir)
+	EndSwitch
 
 	$s = """" & $sExe & """ " & $sOptions
-	If StringLen($sOutput) > 0 Then
+	If StringLen($sOutputFile) > 0 Then
 		$s &= " -o """
-		$s &= $sOutput
+		$s &= $sOutputFile
+		$s &= """"
+	EndIf
+
+	If StringLen($sOutputDir) > 0 Then
+		$s &= " -od """
+		$s &= $sOutputDir
 		$s &= """"
 	EndIf
 
@@ -500,36 +530,36 @@ Func get_cmd_line()
 	Return SetError(0, 0, $s)
 EndFunc   ;==>get_cmd_line
 
-Func is_directory($s)
-	If Not FileExists($s) Then
-		Return False
-	EndIf
-
-	Local $a = FileGetAttrib($s)
-	Return (StringInStr($s, "D") > 0)
-EndFunc   ;==>is_directory
-
-Func output_dir_or_file_dlg($bFile)
-	Local $s
-	If $bFile Then
-		$s = FileSaveDialog("Specify output file", @WorkingDir, $XML_FILTER, 2 + 16, "", $FormMain)
-		If Not @error Then
-			Return SetError(0, 1, $s)
-		Else
-			Return SetError(1, 1)
-		EndIf
-	Else
-		$s = GUICtrlRead($InputOuputDir)
-		If StringLen($s) = 0 Or Not is_directory($s) Then
-			$s = @WorkingDir
-		EndIf
-		$s = FileSelectFolder("Specify output directory", "", 1 + 2 + 4, $s, $FormMain)
-		If Not @error Then
-			Return SetError(0, 1, $s)
-		Else
-			Return SetError(1, 1)
+Func output_dir_or_file_dlg($nMode)
+	Local $s = GUICtrlRead($InputOuputDir)
+	If StringLen($s) = 0 Or Not FileExists($s) Then
+		$s = @WorkingDir
+	ElseIf FileExists($s) Then
+		If Not is_directory($s) Then
+			$s = get_directory($s)
 		EndIf
 	EndIf
+
+	Switch $nMode
+		Case 2 ; file
+			$s = FileSaveDialog("Specify output file", $s, $XML_FILTER, 2 + 16, "", $FormMain)
+			If Not @error Then
+				Return SetError(0, 1, $s)
+			Else
+				Return SetError(1, 1)
+			EndIf
+
+		Case 1 ; directory
+			$s = FileSelectFolder("Specify output directory", "", 1 + 2 + 4, $s, $FormMain)
+			If Not @error Then
+				Return SetError(0, 1, $s)
+			Else
+				Return SetError(1, 1)
+			EndIf
+
+		Case Else
+			Return SetError(1)
+	EndSwitch
 EndFunc   ;==>output_dir_or_file_dlg
 
 Func make_mask($sPath)
@@ -583,10 +613,11 @@ EndIf
 
 set_default_options()
 GUICtrlSetData($InputOuputDir, @MyDocumentsDir)
-GUICtrlSetTip($CheckBoxOutputDir, "Specify output directory or file." & @CRLF & "By default files are created in directories where input file resides.", "Output directory or file")
-out_dir_enable(False)
+_GUICtrlComboBox_SetCurSel($ComboOutput, 0)
+set_output_mode(0)
 _GUICtrlListBox_SetHorizontalExtent($ListLog, 5000)
 GUICtrlSetState($TreeViewInputFiles, $GUI_DROPACCEPTED)
+GUICtrlSetState($CheckBoxSwitchToOutput, $GUI_CHECKED)
 GUISetState(@SW_SHOW)
 
 While True
@@ -616,20 +647,17 @@ While True
 				EndIf
 			EndIf
 
-		Case $ButtonOutputFile
-			$s = output_dir_or_file_dlg(True)
+		Case $DummyOutput
+			$s = output_dir_or_file_dlg(_GUICtrlComboBox_GetCurSel($ComboOutput))
 			If Not @error Then
 				GUICtrlSetData($InputOuputDir, $s)
 			EndIf
 
 		Case $ButtonOutputDirectory
-			$s = output_dir_or_file_dlg(False)
-			If Not @error Then
-				GUICtrlSetData($InputOuputDir, $s)
-			EndIf
+			GUICtrlSendToDummy($DummyOutput)
 
-		Case $CheckBoxOutputDir
-			out_dir_enable(_Iif(GUICtrlRead($CheckBoxOutputDir) = $GUI_CHECKED, True, False))
+		Case $ComboOutput
+			set_output_mode(_GUICtrlComboBox_GetCurSel($ComboOutput))
 
 		Case $CheckBoxUc
 			frame_offset_enable(_Iif(GUICtrlRead($CheckBoxUc) = $GUI_CHECKED, True, False))
@@ -637,7 +665,9 @@ While True
 		Case $ButtonGo
 			$s = get_cmd_line()
 			If Not @error Then
-				GUICtrlSetState($OutputPane, $GUI_SHOW)
+				If GUICtrlRead($CheckBoxSwitchToOutput) = $GUI_CHECKED Then
+					GUICtrlSetState($OutputPane, $GUI_SHOW)
+				EndIf
 				$nRet = run_wait($s)
 				If @error Then
 					log_msg("Error executing command.")

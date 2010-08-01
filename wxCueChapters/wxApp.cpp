@@ -17,7 +17,7 @@ const wxChar wxMyApp::APP_AUTHOR[] = wxT("Edmunt Pienkowsky: roed@onet.eu");
 wxIMPLEMENT_APP(wxMyApp);
 
 wxMyApp::wxMyApp(void)
-	:m_sSeparator( wxT('='), 70 )
+	:m_sSeparator( wxT('='), 75 )
 {
 }
 

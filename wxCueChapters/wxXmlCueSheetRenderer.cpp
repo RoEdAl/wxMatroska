@@ -333,7 +333,7 @@ bool wxXmlCueSheetRenderer::OnPostRenderDisc( const wxCueSheet& cueSheet )
 			if ( !has_chapter_time_end( pChapterAtom ) )
 			{
 				wxDataFile dataFile;
-				if ( cueSheet.IsLastTrackForDataFile( i, dataFile ) )
+				if ( m_cfg.GetUseDataFiles() && cueSheet.IsLastTrackForDataFile( i, dataFile ) )
 				{
 					wxLogInfo( _("Calculating end time for track %d using media file \u201C%s\u201D"), tracks[i].GetNumber(), dataFile.GetFileName() );
 					wxULongLong samples( dataFile.GetNumberOfSamples( m_cfg.GetAlternateExtensions(), m_cfg.RoundDownToFullFrames() ) );
