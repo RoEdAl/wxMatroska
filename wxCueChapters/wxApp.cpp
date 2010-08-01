@@ -121,9 +121,9 @@ bool wxMyApp::OnCmdLineParsed( wxCmdLineParser& cmdline )
 	 return true;
  }
 
-int wxMyApp::ConvertCueSheet( const wxString& sInputFile, const wxCueSheet& cueSheet )
+int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, const wxCueSheet& cueSheet )
 {
-	wxString sOutputFile( m_cfg.GetOutputFile( sInputFile ) );
+	wxString sOutputFile( m_cfg.GetOutputFile( inputFile ) );
 
 	if ( m_cfg.SaveCueSheet() )
 	{
@@ -147,7 +147,7 @@ int wxMyApp::ConvertCueSheet( const wxString& sInputFile, const wxCueSheet& cueS
 		wxLogInfo( _("Converting cue scheet to XML format") );
 		wxLogInfo( _("Output file \u201C%s\u201D"), sOutputFile );
 
-		wxXmlCueSheetRenderer renderer( m_cfg, sInputFile, sOutputFile );
+		wxXmlCueSheetRenderer renderer( m_cfg, inputFile, sOutputFile );
 		if ( renderer.Render( cueSheet ) )
 		{
 			if ( !renderer.SaveXmlDoc() )
@@ -195,18 +195,18 @@ int wxMyApp::ProcessCueFile( wxCueSheetReader& reader, const wxInputFile& inputF
 		wxArrayDataFile dataFiles;
 		inputFile.GetDataFiles( dataFiles, wxDataFile::WAVE );
 		cueSheet.SetDataFiles( dataFiles );
-		return ConvertCueSheet( sInputFile, cueSheet );
+		return ConvertCueSheet( inputFile, cueSheet );
 	}
 	else if ( m_cfg.IsEmbedded() )
 	{
 		wxCueSheet cueSheet( reader.GetCueSheet() );
 		wxDataFile dataFile( sInputFile, wxDataFile::WAVE );
 		cueSheet.SetSingleDataFile( dataFile );
-		return ConvertCueSheet( sInputFile, cueSheet );
+		return ConvertCueSheet( inputFile, cueSheet );
 	}
 	else
 	{
-		return ConvertCueSheet( sInputFile, reader.GetCueSheet() );
+		return ConvertCueSheet( inputFile, reader.GetCueSheet() );
 	}
 }
 

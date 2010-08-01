@@ -59,7 +59,7 @@ public:
 	const wxString& GetTrackNameFormat() const;
 	const wxArrayInputFile& GetInputFiles() const;
 	bool IsEmbedded() const;
-	wxString GetOutputFile( const wxString& ) const;
+	wxString GetOutputFile( const wxInputFile& ) const;
 	bool UsePolishQuotationMarks() const;
 	bool SaveCueSheet() const;
 	bool TrackOneIndexOne() const;

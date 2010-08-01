@@ -418,9 +418,9 @@ const wxArrayInputFile& wxConfiguration::GetInputFiles() const
 	return m_inputFile;
 }
 
-wxString wxConfiguration::GetOutputFile( const wxString& sInputFile ) const
+wxString wxConfiguration::GetOutputFile( const wxInputFile& _inputFile ) const
 {
-	wxFileName inputFile( sInputFile );
+	wxFileName inputFile( _inputFile.GetInputFile() );
 	if ( !inputFile.IsOk() ) return wxEmptyString;
 
 	if ( !m_outputFile.IsOk() )
