@@ -417,14 +417,14 @@ void wxCueSheetReader::ParseLine( size_t WXUNUSED(nLine), const wxString& sToken
 			}
 			else
 			{
-				AddError( _("Keyword %s is not allowed here"), sToken.GetData() );
+				AddError( _("Keyword %s is not allowed here"), sToken );
 			}
 			return;
 		}
 	}
 
 	m_errors.Clear();
-	AddError( _("Unknown token %s"), sToken.GetData() );
+	AddError( _("Unknown token %s"), sToken );
 }
 
 void wxCueSheetReader::ParseCdTextInfo( size_t WXUNUSED(nLine), const wxString& sToken, const wxString& sBody )
@@ -455,7 +455,7 @@ void wxCueSheetReader::ParseCdTextInfo( size_t WXUNUSED(nLine), const wxString& 
 	{
 		if ( !AddCdTextInfo( sToken, s ) )
 		{
-			AddError( _("Keyword %s is not allowed here"), sToken.GetData() );
+			AddError( _("Keyword %s is not allowed here"), sToken );
 		}
 	}
 }
@@ -682,7 +682,7 @@ void wxCueSheetReader::ParseFlags( const wxString& WXUNUSED(sToken), const wxStr
 		wxString sFlag( tokenizer.GetNextToken() );
 		if ( !GetLastTrack().AddFlag( sFlag ) )
 		{
-			AddError( _("Invalid flag %s"), sFlag.GetData() );
+			AddError( _("Invalid flag %s"), sFlag );
 		}
 	}
 }
@@ -694,7 +694,7 @@ void wxCueSheetReader::ParseTrack( const wxString& sToken, const wxString& sBody
 		unsigned long trackNo;
 		if ( !m_reDataMode.GetMatch( sBody, 1 ).ToULong( &trackNo ) )
 		{
-			AddError( _("Invalid track number %s"), m_reDataMode.GetMatch( sBody, 1 ).GetData() );
+			AddError( _("Invalid track number %s"), m_reDataMode.GetMatch( sBody, 1 ) );
 		}
 		else
 		{

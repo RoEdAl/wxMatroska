@@ -22,3 +22,7 @@ vcproj\..+\.user$
 ^gui/.*\.exe$
 ^gui/.*\.dll$
 ^gui/BackUp/
+.+/build
+.+/dist
+nbproject/private
+

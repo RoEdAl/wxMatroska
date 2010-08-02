@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="69">
+  <logicalFolder name="root" displayName="root" projectFiles="true">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true"
+                   kind="SOURCE_LOGICAL_FOLDER">
+      <logicalFolder name="inc" displayName="inc" projectFiles="true">
+        <itemPath>../inc/wxCueComponent.h</itemPath>
+        <itemPath>../inc/wxCueSheet.h</itemPath>
+        <itemPath>../inc/wxCueSheetReader.h</itemPath>
+        <itemPath>../inc/wxCueSheetRenderer.h</itemPath>
+        <itemPath>../inc/wxDataFile.h</itemPath>
+        <itemPath>../inc/wxIndex.h</itemPath>
+        <itemPath>../inc/wxMediaInfo.h</itemPath>
+        <itemPath>../inc/wxTextCueSheetRenderer.h</itemPath>
+        <itemPath>../inc/wxTrack.h</itemPath>
+      </logicalFolder>
+      <itemPath>StdWx.h</itemPath>
+      <itemPath>targetver.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true"
+                   kind="SOURCE_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true"
+                   kind="SOURCE_LOGICAL_FOLDER">
+      <itemPath>StdWx.cpp</itemPath>
+      <itemPath>wxCueComponent.cpp</itemPath>
+      <itemPath>wxCueSheet.cpp</itemPath>
+      <itemPath>wxCueSheetReader.cpp</itemPath>
+      <itemPath>wxCueSheetRenderer.cpp</itemPath>
+      <itemPath>wxDataFile.cpp</itemPath>
+      <itemPath>wxIndex.cpp</itemPath>
+      <itemPath>wxMediaInfo.cpp</itemPath>
+      <itemPath>wxTextCueSheetRenderer.cpp</itemPath>
+      <itemPath>wxTrack.cpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="3">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>MinGW|MinGW</compilerSet>
+        <platform>3</platform>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <incDir>
+            <pElem>../inc</pElem>
+            <pElem>C:/Devel/wxWidgets/lib/gcc_lib/mswud</pElem>
+            <pElem>C:/Devel/wxWidgets/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>wxUSE_GUI=0</Elem>
+          </preprocessorList>
+        </ccTool>
+        <archiverTool>
+          <output>${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libwxcuefile.a</output>
+        </archiverTool>
+      </compileType>
+    </conf>
+    <conf name="Release" type="3">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>MinGW|MinGW</compilerSet>
+        <platform>3</platform>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>6</developmentMode>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <archiverTool>
+        </archiverTool>
+      </compileType>
+    </conf>
+  </confs>
+</configurationDescriptor>
