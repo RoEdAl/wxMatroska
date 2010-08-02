@@ -212,6 +212,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\wxInputFile.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\wxXmlCueSheetRenderer.cpp"
 				>
 			</File>
@@ -235,6 +239,10 @@
 			</File>
 			<File
 				RelativePath=".\wxConfiguration.h"
+				>
+			</File>
+			<File
+				RelativePath=".\wxInputFile.h"
 				>
 			</File>
 			<File

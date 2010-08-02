@@ -12,7 +12,7 @@
 #include "wxApp.h"
 
 const wxChar wxMyApp::APP_VERSION[] = wxT("0.1 beta");
-const wxChar wxMyApp::APP_AUTHOR[] = wxT("Edmunt Pienkowsky: roed@onet.eu");
+const wxChar wxMyApp::APP_AUTHOR[] = wxT("Edmunt Pienkowsky - roed@onet.eu");
 
 wxIMPLEMENT_APP(wxMyApp);
 
@@ -112,7 +112,7 @@ bool wxMyApp::OnCmdLineParsed( wxCmdLineParser& cmdline )
  {
 	 SetAppName( wxT("cue2mkc") );
 	 SetVendorName( wxT("Edmunt Pienkowsky") );
-	 SetVendorDisplayName( wxT("Edmunt Pienkowsky: roed@onet.eu") );
+	 SetVendorDisplayName( APP_AUTHOR );
 
 	 if ( !wxAppConsole::OnInit() )
 	 {
