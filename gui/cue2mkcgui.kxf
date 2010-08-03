@@ -821,7 +821,7 @@
 								<property name="Top" vt="Int16">379</property>
 								<property name="Width" vt="Int8">41</property>
 								<property name="Height" vt="Int8">29</property>
-								<property name="Hint" vt="String">Show PDF utility help</property>
+								<property name="Hint" vt="String">Runs cue2mkc with --help option</property>
 								<property name="Caption" vt="String">&amp;?</property>
 								<property name="TabOrder" vt="Int8">4</property>
 								<property name="Color" vt="Ident">clBtnFace</property>

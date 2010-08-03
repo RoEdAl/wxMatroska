@@ -11,6 +11,7 @@ syntax: regexp
 \.opensdf$
 \.suo$
 \.ncb$
+\.aps$
 \.vcxproj\.user$
 vcproj\..+\.user$
 ^obj/
