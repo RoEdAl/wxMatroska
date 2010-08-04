@@ -8,6 +8,7 @@
 
 const wxChar wxConfiguration::CUE_SHEET_EXT[] = wxT("cue");
 const wxChar wxConfiguration::MATROSKA_CHAPTERS_EXT[] = wxT("mkc.xml");
+const wxChar wxConfiguration::MATROSKA_TAGS_EXT[] = wxT("mkt.xml");
 
 static const size_t MAX_EXT_LEN = 20;
 static const wxChar LANG_FILE_URL[] = wxT("http://www.loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt");
@@ -77,11 +78,13 @@ wxConfiguration::wxConfiguration(void)
 	 m_bEmbedded(false),
 	 m_bPolishQuotationMarks(true),
 	 m_bSaveCueSheet(false),
+	 m_bGenerateTags(false),
 	 m_bTrackOneIndexOne(true),
 	 m_bAbortOnError(true),
 	 m_bRoundDownToFullFrames(false),
 	 m_sCueSheetExt(CUE_SHEET_EXT),
-	 m_sMatroskaChaptersXmlExt(MATROSKA_CHAPTERS_EXT)
+	 m_sMatroskaChaptersXmlExt(MATROSKA_CHAPTERS_EXT),
+	 m_sMatroskaTagsXmlExt(MATROSKA_TAGS_EXT)
 {
 	ReadLanguagesStrings( m_asLang );
 }
@@ -109,6 +112,8 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddSwitch( wxT("nec"), wxT("no-embedded-cue"), _("Try to read embedded cue sheet"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("c"), wxT("save-cue-sheet"), _("Save cue sheet instead of Matroska chapter file. This switch allows to extract embedded cue sheet when used with ec option."), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("m"), wxT("save-matroska-chapters"), _("Save Matroska chapter file (default)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("t"), wxT("generate-tags"), _("Generate tags file (default: no)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("nt"), wxT("dont-generate-tags"), _("Generate tags file (default: no)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("t1i1"), wxT("track-01-index-01"), _("For first track assume index 01 as beginning of track (default)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("t1i0"), wxT("track-01-index-00"), _("For first track assume index 00 as beginning of track"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("a"), wxT("abort-on-error"), _("Abort when conversion errors occurs (default)"), wxCMD_LINE_PARAM_OPTIONAL );
@@ -119,6 +124,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddSwitch( wxT("nhi"), wxT("no-hidden-indexes"), _("Convert indexes to normal (non-hidden) (sub)chapters (default)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxT("dce"), wxT("default-cue-sheet-file-extension"), wxString::Format( _("Default cue sheet file extension (default: %s)"), CUE_SHEET_EXT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxT("dme"), wxT("default-matroska-chapters-file-extension"), wxString::Format( _("Default Matroska chapters XML file extension (default: %s)"), MATROSKA_CHAPTERS_EXT) , wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( wxT("dte"), wxT("default-matroska-tags-file-extension"), wxString::Format( _("Default Matroska tags XML file extension (default: %s)"), MATROSKA_TAGS_EXT) , wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("pqm"), wxT("polish-quotation-marks"), _("Convert \"simple 'quotation' marks\" to \u201Epolish \u201Aquotation\u2019 marks\u201D inside strings (default: on)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("eqm"), wxT("english-quotation-marks"), _("Convert \"simple 'quotation' marks\" to \u201Cenglish \u2018quotation\u2019 marks\u201D inside strings"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddParam( _("<cue sheet>"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE|wxCMD_LINE_PARAM_OPTIONAL );
@@ -191,6 +197,9 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	if ( cmdLine.Found( wxT("hi") ) ) m_bHiddenIndexes = true;
 	if ( cmdLine.Found( wxT("nhi") ) ) m_bHiddenIndexes = false;
 
+	if ( cmdLine.Found( wxT("t") ) ) m_bGenerateTags = true;
+	if ( cmdLine.Found( wxT("nt") ) ) m_bGenerateTags = false;
+
 	if ( cmdLine.Found( wxT("dce"), &s ) )
 	{
 		if ( check_ext( s ) )
@@ -213,6 +222,19 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		else
 		{
 			wxLogWarning( _("Invalid Matroska chapters file extension %s"), s );
+			bRes = false;
+		}
+	}
+
+	if ( cmdLine.Found( wxT("dte"), &s ) )
+	{
+		if ( check_ext( s ) )
+		{
+			m_sMatroskaTagsXmlExt = s;
+		}
+		else
+		{
+			wxLogWarning( _("Invalid Matroska tags file extension %s"), s );
 			bRes = false;
 		}
 	}
@@ -298,6 +320,7 @@ static wxString GetFileName( const wxString& sFileName )
 void wxConfiguration::FillArray( wxArrayString& as ) const
 {
 	as.Add( wxString::Format( wxT("Save cue sheet: %s"), BoolToStr(m_bSaveCueSheet) ) );
+	as.Add( wxString::Format( wxT("Generate tags file: %s"), BoolToStr(m_bGenerateTags) ) );
 	as.Add( wxString::Format( wxT("Calculate end time of chapters: %s"), BoolToStr(m_bChapterTimeEnd) ) );
 	as.Add( wxString::Format( wxT("Read embedded cue sheet: %s"), BoolToStr(m_bEmbedded) ) );
 	as.Add( wxString::Format( wxT("Use data files to calculate end time of chapters: %s"), BoolToStr(m_bUseDataFiles) ) );
@@ -312,6 +335,7 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
 	as.Add( wxString::Format( wxT("Convert indexes to hidden subchapters: %s"), BoolToStr(m_bHiddenIndexes) ) );
 	as.Add( wxString::Format( wxT("Default cue sheet file extension: %s"), m_sCueSheetExt ) );
 	as.Add( wxString::Format( wxT("Default Matroska chapters XML file extension: %s"), m_sMatroskaChaptersXmlExt ) );
+	as.Add( wxString::Format( wxT("Default Matroska tags XML file extension: %s"), m_sMatroskaTagsXmlExt ) );
 	if ( m_bPolishQuotationMarks )
 	{
 		as.Add( wxString::Format( wxT("Convert \"simple 'quotation' marks\" to \u201Epolish \u201Aquotation\u2019 marks\u201D inside strings") ) );
@@ -343,11 +367,12 @@ void wxConfiguration::Dump() const
 	}
 }
 
-wxXmlNode* wxConfiguration::BuildXmlComments( const wxInputFile& inputFile, const wxString& sOutputFile, wxXmlNode*& pLast ) const
+void wxConfiguration::BuildXmlComments( const wxInputFile& inputFile, const wxString& sOutputFile, wxXmlNode* pNode ) const
 {
 	wxString sInit;
 	sInit.Printf( wxT("This file was created by %s tool"), wxGetApp().GetAppDisplayName() );
 	wxXmlNode* pComment = new wxXmlNode( (wxXmlNode*)NULL, wxXML_COMMENT_NODE, wxEmptyString, sInit );
+	pNode->AddChild( pComment );
 
 	wxArrayString as;
 	wxDateTime dtNow( wxDateTime::Now() );
@@ -360,17 +385,12 @@ wxXmlNode* wxConfiguration::BuildXmlComments( const wxInputFile& inputFile, cons
 
 	FillArray( as );
 
-	wxXmlNode* pNext = pComment;
 	size_t strings = as.GetCount();
 	for( size_t i=0; i<strings; i++ )
 	{
 		wxXmlNode* pComment = new wxXmlNode( (wxXmlNode*)NULL, wxXML_COMMENT_NODE, wxEmptyString, as[i] );
-		pNext->SetNext( pComment );
-		pNext = pComment;
+		pNode->AddChild( pComment );
 	}
-
-	pLast = pNext;
-	return pComment;
 }
 
 bool wxConfiguration::GetChapterTimeEnd() const
@@ -442,6 +462,48 @@ wxString wxConfiguration::GetOutputFile( const wxInputFile& _inputFile ) const
 	return inputFile.GetFullPath();
 }
 
+void wxConfiguration::GetOutputFile( const wxInputFile& _inputFile,
+	wxString& sOutputFile, wxString& sTagsFile
+	) const
+{
+	sOutputFile.Empty();
+	sTagsFile.Empty();
+
+	wxFileName inputFile( _inputFile.GetInputFile() );
+	if ( !inputFile.IsOk() ) return;
+
+	if ( !m_outputFile.IsOk() )
+	{
+		inputFile.SetExt( m_bSaveCueSheet? m_sCueSheetExt : m_sMatroskaChaptersXmlExt );
+		sOutputFile = inputFile.GetFullPath();
+
+		if ( !m_bSaveCueSheet && m_bGenerateTags )
+		{
+			inputFile.SetExt( m_sMatroskaTagsXmlExt );
+			sTagsFile = inputFile.GetFullPath();
+		}
+	}
+	else
+	{
+		if ( m_outputFile.IsDir() )
+		{
+			inputFile.SetPath( m_outputFile.GetPath() );
+			inputFile.SetExt( m_bSaveCueSheet? m_sCueSheetExt : m_sMatroskaChaptersXmlExt );
+		}
+		else
+		{
+			inputFile = m_outputFile;
+		}
+
+		sOutputFile = inputFile.GetFullPath();
+		if ( !m_bSaveCueSheet && m_bGenerateTags )
+		{
+			inputFile.SetExt( m_sMatroskaTagsXmlExt );
+			sTagsFile = inputFile.GetFullPath();
+		}
+	}
+}
+
 bool wxConfiguration::IsEmbedded() const
 {
 	return m_bEmbedded;
@@ -485,6 +547,11 @@ const wxString& wxConfiguration::CueSheetExt() const
 const wxString& wxConfiguration::MatroskaChaptersXmlExt() const
 {
 	return m_sMatroskaChaptersXmlExt;
+}
+
+bool wxConfiguration::GenerateTags() const
+{
+	return m_bGenerateTags;
 }
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!

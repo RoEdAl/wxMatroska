@@ -4,7 +4,7 @@
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.2
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.3
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Edmunt Pienkowsky - roed@onet.eu
 #AutoIt3Wrapper_Res_Icon_Add=icons/cue_file.ico
@@ -190,46 +190,56 @@ GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCK
 $CheckBoxHi = GUICtrlCreateCheckbox("Convert indexes to hidden chapters", 11, 219, 217, 17)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelDce = GUICtrlCreateLabel("Cue sheet file extension:", 11, 240, 119, 17, $SS_CENTERIMAGE)
+$LabelOutputFormat = GUICtrlCreateLabel("Output format:", 11, 238, 71, 17, $SS_CENTERIMAGE)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$InputDce = GUICtrlCreateInput("cue", 132, 240, 53, 21)
-GUICtrlSetLimit(-1, 50)
-GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
-GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelDme = GUICtrlCreateLabel("Matroska chapters file extension:", 11, 262, 159, 17, $SS_CENTERIMAGE)
-GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
-GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$InputDme = GUICtrlCreateInput("mkc.xml", 173, 262, 53, 21)
-GUICtrlSetLimit(-1, 50)
-GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
-GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelOutputFormat = GUICtrlCreateLabel("Output format:", 11, 286, 71, 17, $SS_CENTERIMAGE)
-GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
-GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$ComboOutputFormat = GUICtrlCreateCombo("", 84, 286, 149, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+$ComboOutputFormat = GUICtrlCreateCombo("", 84, 238, 149, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 GUICtrlSetData(-1, "cue sheet|Matroska chapter xml file", "Matroska chapter xml file")
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelTrack01_1 = GUICtrlCreateLabel("For track 01 assume index", 11, 314, 128, 21, $SS_CENTERIMAGE)
+$CheckBoxT = GUICtrlCreateCheckbox("Generate tags file", 24, 262, 129, 17)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$ComboTrack01 = GUICtrlCreateCombo("", 141, 314, 41, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+$LabelTrack01_1 = GUICtrlCreateLabel("For track 01 assume index", 11, 282, 128, 21, $SS_CENTERIMAGE)
+GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+$ComboTrack01 = GUICtrlCreateCombo("", 141, 282, 41, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 GUICtrlSetData(-1, "00|01", "01")
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelTrack01_2 = GUICtrlCreateLabel("as beginning of track", 188, 314, 103, 21, $SS_CENTERIMAGE)
+$LabelTrack01_2 = GUICtrlCreateLabel("as beginning of track", 188, 282, 103, 21, $SS_CENTERIMAGE)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelQuotationMarks = GUICtrlCreateLabel("Quotation marks:", 11, 338, 84, 21, $SS_CENTERIMAGE)
+$LabelQuotationMarks = GUICtrlCreateLabel("Quotation marks:", 11, 306, 84, 21, $SS_CENTERIMAGE)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$ComboQuotationMarks = GUICtrlCreateCombo("", 98, 338, 149, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+$ComboQuotationMarks = GUICtrlCreateCombo("", 98, 306, 149, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 GUICtrlSetData(-1, "„polish ‚quotation’ marks”|“english ‘quotation’ marks”", "„polish ‚quotation’ marks”")
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Method of converting ""simple 'quotation' marks"" inside strings")
-$CheckBoxA = GUICtrlCreateCheckbox("Abort when conversion errors occurs", 11, 361, 201, 17)
+$CheckBoxA = GUICtrlCreateCheckbox("Abort when conversion errors occurs", 11, 329, 201, 17)
+GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+$LabelDce = GUICtrlCreateLabel("Cue sheet file extension:", 11, 356, 119, 17, $SS_CENTERIMAGE)
+GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+$InputDce = GUICtrlCreateInput("cue", 176, 356, 53, 21)
+GUICtrlSetLimit(-1, 50)
+GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+$LabelDme = GUICtrlCreateLabel("Matroska chapters file extension:", 11, 378, 159, 21, $SS_CENTERIMAGE)
+GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+$InputDme = GUICtrlCreateInput("mkc.xml", 176, 378, 53, 21)
+GUICtrlSetLimit(-1, 50)
+GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+$LabelDte = GUICtrlCreateLabel("Matroska tags file extension:", 12, 400, 159, 21, $SS_CENTERIMAGE)
+GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+$InputDte = GUICtrlCreateInput("mkt.xml", 176, 400, 53, 21)
+GUICtrlSetLimit(-1, 50)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $OutputPane = GUICtrlCreateTabItem("&Output")
@@ -285,6 +295,16 @@ Func frame_offset_enable($bEnable)
 		GUICtrlSetState($InputFo, $GUI_FOCUS)
 	EndIf
 EndFunc   ;==>frame_offset_enable
+
+Func generate_tags_enable($nMode)
+	Switch $nMode
+		Case 0
+			GUICtrlSetState($CheckBoxT, $GUI_DISABLE)
+
+		Case 1
+			GUICtrlSetState($CheckBoxT, $GUI_ENABLE)
+	EndSwitch
+EndFunc   ;==>generate_tags_enable
 
 Func log_msg($message)
 	Local $nIndex = _GUICtrlListBox_AddString($ListLog, $message)
@@ -385,7 +405,10 @@ Func set_default_options()
 	GUICtrlSetState($CheckBoxHi, $GUI_CHECKED)
 	GUICtrlSetData($InputDce, "cue")
 	GUICtrlSetData($InputDme, "mkc.xml")
+	GUICtrlSetData($InputDte, "mkt.xml")
 	_GUICtrlComboBox_SetCurSel($ComboOutputFormat, 1)
+	GUICtrlSetState($CheckBoxT, $GUI_UNCHECKED)
+	generate_tags_enable(1)
 	_GUICtrlComboBox_SetCurSel($ComboTrack01, 1)
 	_GUICtrlComboBox_SetCurSel($ComboQuotationMarks, 0)
 	GUICtrlSetState($CheckBoxA, $GUI_UNCHECKED)
@@ -450,6 +473,13 @@ Func read_options()
 		$s &= " "
 	EndIf
 
+	$w = GUICtrlRead($InputDte)
+	If StringLen($w) > 0 Then
+		$s &= "-dte "
+		$s &= $w
+		$s &= " "
+	EndIf
+
 	$w = _GUICtrlComboBox_GetCurSel($ComboOutputFormat)
 	Switch $w
 		Case 0
@@ -457,6 +487,8 @@ Func read_options()
 
 		Case 1
 			$s &= " -m "
+			$s &= _Iif(GUICtrlRead($CheckBoxT) = $GUI_CHECKED, "-t", "-nt")
+			$s &= " "
 	EndSwitch
 
 	$w = _GUICtrlComboBox_GetCurSel($ComboTrack01)
@@ -749,6 +781,9 @@ While True
 			If $hItem <> 0 Then
 				_GUICtrlTreeView_Delete(GUICtrlGetHandle($TreeViewInputFiles), $hItem)
 			EndIf
+
+		Case $ComboOutputFormat
+			generate_tags_enable(_GUICtrlComboBox_GetCurSel($ComboOutputFormat))
 
 		Case $ButtonDataFile
 			$hItem = _GUICtrlTreeView_GetSelection(GUICtrlGetHandle($TreeViewInputFiles))

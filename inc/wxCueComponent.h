@@ -85,6 +85,7 @@ public:
 	static wxString GetCdTextInfoRegExp();
 	static wxString GetKeywordsRegExp();
 	static bool GetCdTextInfoFormat( const wxString&, ENTRY_FORMAT& );
+	static bool GetCdTextInfoType( const wxString&, ENTRY_TYPE& );
 	static bool GetEntryType( const wxString&, ENTRY_TYPE& );
 
 	static wxString FormatCdTextData( const wxString&, const wxString& );

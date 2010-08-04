@@ -24,6 +24,7 @@ protected:
 	bool m_bEmbedded;
 	bool m_bPolishQuotationMarks;
 	bool m_bSaveCueSheet;
+	bool m_bGenerateTags;
 	bool m_bTrackOneIndexOne; // or zero
 	bool m_bAbortOnError;
 	bool m_bRoundDownToFullFrames;
@@ -38,6 +39,7 @@ protected:
 
 	wxString m_sCueSheetExt;
 	wxString m_sMatroskaChaptersXmlExt;
+	wxString m_sMatroskaTagsXmlExt;
 
 	wxSortedArrayString m_asLang;
 
@@ -59,7 +61,6 @@ public:
 	const wxString& GetTrackNameFormat() const;
 	const wxArrayInputFile& GetInputFiles() const;
 	bool IsEmbedded() const;
-	wxString GetOutputFile( const wxInputFile& ) const;
 	bool UsePolishQuotationMarks() const;
 	bool SaveCueSheet() const;
 	bool TrackOneIndexOne() const;
@@ -68,11 +69,17 @@ public:
 	bool HiddenIndexes() const;
 	const wxString& CueSheetExt() const;
 	const wxString& MatroskaChaptersXmlExt() const;
+	const wxString& MatroskaTagsXmlExt() const;
+	bool GenerateTags() const;
+
+	wxString GetOutputFile( const wxInputFile& ) const;
+	void GetOutputFile( const wxInputFile&, wxString&, wxString& ) const;
 
 protected:
 
 	static const wxChar CUE_SHEET_EXT[];
 	static const wxChar MATROSKA_CHAPTERS_EXT[];
+	static const wxChar MATROSKA_TAGS_EXT[];
 
 public:
 
@@ -83,7 +90,7 @@ public:
 	bool Read( const wxCmdLineParser& );
 
 	void Dump() const;
-	wxXmlNode* BuildXmlComments( const wxInputFile&, const wxString&, wxXmlNode*& ) const;
+	void BuildXmlComments( const wxInputFile&, const wxString&, wxXmlNode* ) const;
 };
 
 #endif // _WX_CONFIGURATION_H

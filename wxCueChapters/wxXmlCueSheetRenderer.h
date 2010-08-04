@@ -28,14 +28,19 @@ protected:
 	wxXmlNode* m_pPrevChapterAtom;
 	wxXmlNode* m_pEditionEntry;
 
+	wxXmlDocument* m_pXmlTags;
+	wxXmlNode* m_pTags;
+
 	const wxConfiguration& m_cfg;
 	wxInputFile m_inputFile;
 	wxString m_sOutputFile;
+	wxString m_sTagsFile;
 
 protected:
 
 	virtual bool OnPreRenderDisc( const wxCueSheet& );
 	virtual bool OnPreRenderTrack( const wxTrack& );
+	virtual bool OnRenderTrack( const wxTrack& );
 	virtual bool OnPostRenderTrack( const wxTrack& );
 	virtual bool OnPostRenderDisc( const wxCueSheet& );
 
@@ -43,12 +48,21 @@ protected:
 	virtual bool OnRenderPostGap( const wxTrack&, const wxIndex& );
 	virtual bool OnRenderIndex( const wxTrack&, const wxIndex& );
 
+protected:
+
+	static wxULongLong GenerateUID();
+
 public:
 
-	wxXmlCueSheetRenderer(const wxConfiguration&, const wxInputFile&, const wxString& );
+	wxXmlCueSheetRenderer(const wxConfiguration&, const wxInputFile& );
 	virtual ~wxXmlCueSheetRenderer(void);
 
 	wxXmlDocument* GetXmlDoc() const;
+	wxXmlDocument* GetXmlTags() const;
+
+	const wxString& GetOutputFile() const;
+	const wxString& GetTagsFile() const;
+
 	bool SaveXmlDoc();
 };
 

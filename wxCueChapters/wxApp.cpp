@@ -110,6 +110,9 @@ bool wxMyApp::OnCmdLineParsed( wxCmdLineParser& cmdline )
 
  bool wxMyApp::OnInit()
  {
+	 wxDateTime dt( wxDateTime::Now() );
+	 srand( dt.GetTicks() );
+
 	 SetAppName( wxT("cue2mkc") );
 	 SetVendorName( wxT("Edmunt Pienkowsky") );
 	 SetVendorDisplayName( APP_AUTHOR );
@@ -123,10 +126,9 @@ bool wxMyApp::OnCmdLineParsed( wxCmdLineParser& cmdline )
 
 int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, const wxCueSheet& cueSheet )
 {
-	wxString sOutputFile( m_cfg.GetOutputFile( inputFile ) );
-
 	if ( m_cfg.SaveCueSheet() )
 	{
+		wxString sOutputFile( m_cfg.GetOutputFile( inputFile ) );
 		wxLogInfo( _("Saving cue scheet to \u201C%s\u201D"), sOutputFile );
 		wxFileOutputStream fos( sOutputFile );
 		if ( !fos.IsOk() )
@@ -145,14 +147,18 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, const wxCueSheet& cu
 	else
 	{
 		wxLogInfo( _("Converting cue scheet to XML format") );
-		wxLogInfo( _("Output file \u201C%s\u201D"), sOutputFile );
 
-		wxXmlCueSheetRenderer renderer( m_cfg, inputFile, sOutputFile );
+		wxXmlCueSheetRenderer renderer( m_cfg, inputFile );
+		wxLogInfo( _("Output file \u201C%s\u201D"), renderer.GetOutputFile() );
+		if ( m_cfg.GenerateTags() )
+		{
+			wxLogInfo( _("Tags file \u201C%s\u201D"), renderer.GetTagsFile() );
+		}
+
 		if ( renderer.Render( cueSheet ) )
 		{
 			if ( !renderer.SaveXmlDoc() )
 			{
-				wxLogError( _("Fail to save XML document to \u201C%s\u201D"), sOutputFile );
 				return 1;
 			}
 		}

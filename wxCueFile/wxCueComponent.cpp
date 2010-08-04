@@ -69,7 +69,7 @@ wxString wxCueComponent::GetKeywordsRegExp()
 	return sResult;
 }
 
-bool wxCueComponent::GetCdTextInfoFormat( const wxString& sKeyword, ENTRY_FORMAT& fmt )
+bool wxCueComponent::GetCdTextInfoFormat( const wxString& sKeyword, wxCueComponent::ENTRY_FORMAT& fmt )
 {
 	for( size_t i=0; i<CdTextFieldsSize; i++ )
 	{
@@ -82,7 +82,20 @@ bool wxCueComponent::GetCdTextInfoFormat( const wxString& sKeyword, ENTRY_FORMAT
 	return false;
 }
 
-bool wxCueComponent::GetEntryType( const wxString& sKeyword, ENTRY_TYPE& et )
+bool wxCueComponent::GetCdTextInfoType( const wxString& sKeyword, wxCueComponent::ENTRY_TYPE& et )
+{
+	for( size_t i=0; i<CdTextFieldsSize; i++ )
+	{
+		if ( sKeyword.CmpNoCase( CdTextFields[i].keyword ) == 0 )
+		{
+			et = CdTextFields[i].type;
+			return true;
+		}
+	}
+	return false;
+}
+
+bool wxCueComponent::GetEntryType( const wxString& sKeyword, wxCueComponent::ENTRY_TYPE& et )
 {
 	for( size_t i=0; i<KeywordsSize; i++ )
 	{
