@@ -78,19 +78,25 @@ wxConfiguration::wxConfiguration(void)
 	 m_bEmbedded(false),
 	 m_bPolishQuotationMarks(true),
 	 m_bSaveCueSheet(false),
+	 m_bCueSheetFileUtf8Encoding(false),
 	 m_bGenerateTags(false),
 	 m_bTrackOneIndexOne(true),
 	 m_bAbortOnError(true),
 	 m_bRoundDownToFullFrames(false),
 	 m_sCueSheetExt(CUE_SHEET_EXT),
 	 m_sMatroskaChaptersXmlExt(MATROSKA_CHAPTERS_EXT),
-	 m_sMatroskaTagsXmlExt(MATROSKA_TAGS_EXT)
+	 m_sMatroskaTagsXmlExt(MATROSKA_TAGS_EXT),
+	 m_pConv((wxMBConv*)NULL)
 {
 	ReadLanguagesStrings( m_asLang );
 }
 
 wxConfiguration::~wxConfiguration(void)
 {
+	if ( m_pConv != (wxMBConv*)NULL )
+	{
+		delete m_pConv;
+	}
 }
 
 void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
@@ -114,6 +120,8 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddSwitch( wxT("m"), wxT("save-matroska-chapters"), _("Save Matroska chapter file (default)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("t"), wxT("generate-tags"), _("Generate tags file (default: no)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("nt"), wxT("dont-generate-tags"), _("Generate tags file (default: no)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("c8"), wxT("cue-sheet-utf8"), _("Save cue sheet using UTF-8 encoding (default: no - default encoding is used)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("nc8"), wxT("no-cue-sheet-utf8"), _("Save cue sheet using UTF-8 encoding (default: no - default encoding is used)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("t1i1"), wxT("track-01-index-01"), _("For first track assume index 01 as beginning of track (default)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("t1i0"), wxT("track-01-index-00"), _("For first track assume index 00 as beginning of track"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("a"), wxT("abort-on-error"), _("Abort when conversion errors occurs (default)"), wxCMD_LINE_PARAM_OPTIONAL );
@@ -199,6 +207,9 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	if ( cmdLine.Found( wxT("t") ) ) m_bGenerateTags = true;
 	if ( cmdLine.Found( wxT("nt") ) ) m_bGenerateTags = false;
+
+	if ( cmdLine.Found( wxT("c8") ) ) m_bCueSheetFileUtf8Encoding = true;
+	if ( cmdLine.Found( wxT("nc8") ) ) m_bCueSheetFileUtf8Encoding = false;
 
 	if ( cmdLine.Found( wxT("dce"), &s ) )
 	{
@@ -321,6 +332,7 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
 {
 	as.Add( wxString::Format( wxT("Save cue sheet: %s"), BoolToStr(m_bSaveCueSheet) ) );
 	as.Add( wxString::Format( wxT("Generate tags file: %s"), BoolToStr(m_bGenerateTags) ) );
+	as.Add( wxString::Format( wxT("Cue sheet file encoding: %s"), (m_bCueSheetFileUtf8Encoding? wxT("UTF-8") : wxT("Default") ) ) );
 	as.Add( wxString::Format( wxT("Calculate end time of chapters: %s"), BoolToStr(m_bChapterTimeEnd) ) );
 	as.Add( wxString::Format( wxT("Read embedded cue sheet: %s"), BoolToStr(m_bEmbedded) ) );
 	as.Add( wxString::Format( wxT("Use data files to calculate end time of chapters: %s"), BoolToStr(m_bUseDataFiles) ) );
@@ -552,6 +564,29 @@ const wxString& wxConfiguration::MatroskaChaptersXmlExt() const
 bool wxConfiguration::GenerateTags() const
 {
 	return m_bGenerateTags;
+}
+
+bool wxConfiguration::IsCueSheetFileUtf8Encoding() const
+{
+	return m_bCueSheetFileUtf8Encoding;
+}
+
+const wxMBConv& wxConfiguration::GetCueSheetFileEncoding()
+{
+	if ( m_pConv == (wxMBConv*)NULL )
+	{
+		if ( m_bCueSheetFileUtf8Encoding )
+		{
+			m_pConv = new wxMBConvUTF8();
+		}
+		else
+		{
+			m_pConv = new wxConvAuto();
+		}
+	}
+
+	wxASSERT( m_pConv != (wxMBConv*)NULL );
+	return (*m_pConv);
 }
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!

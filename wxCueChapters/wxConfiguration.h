@@ -25,6 +25,7 @@ protected:
 	bool m_bPolishQuotationMarks;
 	bool m_bSaveCueSheet;
 	bool m_bGenerateTags;
+	bool m_bCueSheetFileUtf8Encoding;
 	bool m_bTrackOneIndexOne; // or zero
 	bool m_bAbortOnError;
 	bool m_bRoundDownToFullFrames;
@@ -42,6 +43,8 @@ protected:
 	wxString m_sMatroskaTagsXmlExt;
 
 	wxSortedArrayString m_asLang;
+
+	wxMBConv* m_pConv;
 
 protected:
 
@@ -71,6 +74,8 @@ public:
 	const wxString& MatroskaChaptersXmlExt() const;
 	const wxString& MatroskaTagsXmlExt() const;
 	bool GenerateTags() const;
+	bool IsCueSheetFileUtf8Encoding() const;
+	const wxMBConv& GetCueSheetFileEncoding();
 
 	wxString GetOutputFile( const wxInputFile& ) const;
 	void GetOutputFile( const wxInputFile&, wxString&, wxString& ) const;

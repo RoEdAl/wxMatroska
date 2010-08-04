@@ -197,48 +197,51 @@ $ComboOutputFormat = GUICtrlCreateCombo("", 84, 238, 149, 25, BitOR($CBS_DROPDOW
 GUICtrlSetData(-1, "cue sheet|Matroska chapter xml file", "Matroska chapter xml file")
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$CheckBoxT = GUICtrlCreateCheckbox("Generate tags file", 24, 262, 129, 17)
+$CheckBoxT = GUICtrlCreateCheckbox("Generate tags file", 24, 262, 113, 17)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelTrack01_1 = GUICtrlCreateLabel("For track 01 assume index", 11, 282, 128, 21, $SS_CENTERIMAGE)
+$CheckBoxC8 = GUICtrlCreateCheckbox("Set cue sheet file encoding to UTF-8", 24, 280, 201, 17)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$ComboTrack01 = GUICtrlCreateCombo("", 141, 282, 41, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+$LabelTrack01_1 = GUICtrlCreateLabel("For track 01 assume index", 11, 298, 128, 21, $SS_CENTERIMAGE)
+GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+$ComboTrack01 = GUICtrlCreateCombo("", 141, 298, 41, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 GUICtrlSetData(-1, "00|01", "01")
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelTrack01_2 = GUICtrlCreateLabel("as beginning of track", 188, 282, 103, 21, $SS_CENTERIMAGE)
+$LabelTrack01_2 = GUICtrlCreateLabel("as beginning of track", 188, 298, 103, 21, $SS_CENTERIMAGE)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelQuotationMarks = GUICtrlCreateLabel("Quotation marks:", 11, 306, 84, 21, $SS_CENTERIMAGE)
+$LabelQuotationMarks = GUICtrlCreateLabel("Quotation marks:", 11, 322, 84, 21, $SS_CENTERIMAGE)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$ComboQuotationMarks = GUICtrlCreateCombo("", 98, 306, 149, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+$ComboQuotationMarks = GUICtrlCreateCombo("", 98, 322, 149, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 GUICtrlSetData(-1, "„polish ‚quotation’ marks”|“english ‘quotation’ marks”", "„polish ‚quotation’ marks”")
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Method of converting ""simple 'quotation' marks"" inside strings")
-$CheckBoxA = GUICtrlCreateCheckbox("Abort when conversion errors occurs", 11, 329, 201, 17)
+$CheckBoxA = GUICtrlCreateCheckbox("Abort when conversion errors occurs", 11, 345, 201, 17)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelDce = GUICtrlCreateLabel("Cue sheet file extension:", 11, 356, 119, 17, $SS_CENTERIMAGE)
+$LabelDce = GUICtrlCreateLabel("Cue sheet file extension:", 11, 372, 119, 17, $SS_CENTERIMAGE)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$InputDce = GUICtrlCreateInput("cue", 176, 356, 53, 21)
+$InputDce = GUICtrlCreateInput("cue", 176, 372, 53, 21)
 GUICtrlSetLimit(-1, 50)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelDme = GUICtrlCreateLabel("Matroska chapters file extension:", 11, 378, 159, 21, $SS_CENTERIMAGE)
+$LabelDme = GUICtrlCreateLabel("Matroska chapters file extension:", 11, 394, 159, 21, $SS_CENTERIMAGE)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$InputDme = GUICtrlCreateInput("mkc.xml", 176, 378, 53, 21)
+$InputDme = GUICtrlCreateInput("mkc.xml", 176, 394, 53, 21)
 GUICtrlSetLimit(-1, 50)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelDte = GUICtrlCreateLabel("Matroska tags file extension:", 12, 400, 159, 21, $SS_CENTERIMAGE)
+$LabelDte = GUICtrlCreateLabel("Matroska tags file extension:", 12, 416, 159, 21, $SS_CENTERIMAGE)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$InputDte = GUICtrlCreateInput("mkt.xml", 176, 400, 53, 21)
+$InputDte = GUICtrlCreateInput("mkt.xml", 176, 416, 53, 21)
 GUICtrlSetLimit(-1, 50)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
@@ -267,7 +270,6 @@ $CheckBoxVerbose = GUICtrlCreateCheckbox("&Verbose mode", 336, 414, 97, 17)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateTabItem("")
-GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
 
 Func set_output_mode($nMode)
@@ -300,9 +302,11 @@ Func generate_tags_enable($nMode)
 	Switch $nMode
 		Case 0
 			GUICtrlSetState($CheckBoxT, $GUI_DISABLE)
+			GUICtrlSetState($CheckBoxC8, $GUI_ENABLE)
 
 		Case 1
 			GUICtrlSetState($CheckBoxT, $GUI_ENABLE)
+			GUICtrlSetState($CheckBoxC8, $GUI_DISABLE)
 	EndSwitch
 EndFunc   ;==>generate_tags_enable
 
@@ -408,6 +412,7 @@ Func set_default_options()
 	GUICtrlSetData($InputDte, "mkt.xml")
 	_GUICtrlComboBox_SetCurSel($ComboOutputFormat, 1)
 	GUICtrlSetState($CheckBoxT, $GUI_UNCHECKED)
+	GUICtrlSetState($CheckBoxC8, $GUI_UNCHECKED)
 	generate_tags_enable(1)
 	_GUICtrlComboBox_SetCurSel($ComboTrack01, 1)
 	_GUICtrlComboBox_SetCurSel($ComboQuotationMarks, 0)
@@ -484,7 +489,8 @@ Func read_options()
 	Switch $w
 		Case 0
 			$s &= " -c "
-
+			$s &= _Iif(GUICtrlRead($CheckBoxC8) = $GUI_CHECKED, "-c8", "-nc8")
+			$s &= " "
 		Case 1
 			$s &= " -m "
 			$s &= _Iif(GUICtrlRead($CheckBoxT) = $GUI_CHECKED, "-t", "-nt")
@@ -546,7 +552,7 @@ Func get_cmd_line()
 	WEnd
 
 	Local $sOutputFile = "", $sOutputDir = ""
-	Switch GUICtrlRead($ComboOutput)
+	Switch _GUICtrlComboBox_GetCurSel($ComboOutput)
 		Case 1 ; directory
 			$sOutputDir = GUICtrlRead($InputOuputDir)
 

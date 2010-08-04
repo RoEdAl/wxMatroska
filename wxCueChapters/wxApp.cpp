@@ -137,7 +137,7 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, const wxCueSheet& cu
 			return 1;
 		}
 
-		wxTextOutputStream tos( fos );
+		wxTextOutputStream tos( fos, wxEOL_NATIVE, m_cfg.GetCueSheetFileEncoding() );
 		wxTextCueSheetRenderer renderer( &tos );
 		if ( !renderer.Render( cueSheet ) )
 		{
