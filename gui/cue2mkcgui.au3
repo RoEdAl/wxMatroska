@@ -4,7 +4,7 @@
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.5
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.6
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Edmunt Pienkowsky - roed@onet.eu
 #AutoIt3Wrapper_Res_Icon_Add=icons/cue_file.ico
@@ -132,7 +132,7 @@ GUICtrlSetTip(-1, "Destination directory")
 $ButtonOutputDirectory = GUICtrlCreateButton("1", 505, 336, 29, 21, 0)
 GUICtrlSetFont(-1, 10, 400, 0, "Wingdings")
 GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-GUICtrlSetTip(-1, "SpecifyOutputDirectory")
+GUICtrlSetTip(-1, "Specify output directory or file")
 $CheckBoxSwitchToOutput = GUICtrlCreateCheckbox("&Switch to output pane", 308, 372, 137, 17)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
@@ -204,6 +204,7 @@ GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCK
 $InputLang = GUICtrlCreateInput("eng", 142, 365, 41, 21)
 GUICtrlSetLimit(-1, 3)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+GUICtrlSetTip(-1, "This option also affects tags file generation")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 $GroupFileExtensions = GUICtrlCreateGroup("File extensions", 308, 32, 225, 93, -1, $WS_EX_TRANSPARENT)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
@@ -231,6 +232,7 @@ $CheckBoxEu = GUICtrlCreateCheckbox("Generate edition UID", 312, 220, 129, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $CheckBoxTc = GUICtrlCreateCheckbox("Parse tags from cue sheet comments", 312, 238, 197, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+GUICtrlSetTip(-1, "Try to parse tags from cue sheet comments")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 $GroupCueSheet = GUICtrlCreateGroup("Cue sheet generation options", 308, 268, 225, 49, -1, $WS_EX_TRANSPARENT)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
