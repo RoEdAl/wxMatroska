@@ -108,25 +108,16 @@ static bool has_chapter_time_end( wxXmlNode* pChapterAtom )
 static wxXmlNode* add_chapter_display( wxXmlNode* pChapterAtom, const wxString& sChapterString, const wxString& sLang )
 {
 	wxXmlNode* pChapterDisplay = new wxXmlNode( (wxXmlNode*)NULL, wxXML_ELEMENT_NODE, wxT("ChapterDisplay") );
-	wxXmlNode* pLastChild = get_last_child( pChapterAtom );
-	if ( pLastChild != (wxXmlNode*)NULL )
-	{
-		pLastChild->SetNext( pChapterDisplay );
-	}
-	else
-	{
-		pChapterAtom->SetChildren( pChapterDisplay );
-	}
 
 	wxXmlNode* pChapterString = new wxXmlNode( pChapterDisplay, wxXML_ELEMENT_NODE, wxT("ChapterString") );
 	wxXmlNode* pChapterStringText = new wxXmlNode( pChapterString, wxXML_TEXT_NODE, wxEmptyString, sChapterString );
 
 	wxXmlNode* pChapterLanguage = new wxXmlNode( (wxXmlNode*)NULL, wxXML_ELEMENT_NODE, wxT("ChapterLanguage") );
 	wxXmlNode* pChapterLanguageText = new wxXmlNode( pChapterLanguage, wxXML_TEXT_NODE, wxEmptyString, sLang );
-	pChapterString->SetNext( pChapterLanguage );
+	pChapterDisplay->AddChild( pChapterLanguage );
 
+	pChapterAtom->AddChild( pChapterDisplay );
 	return pChapterDisplay;
-
 }
 
 static wxXmlNode* add_hidden_flag( wxXmlNode* pChapterAtom, bool bHiddenFlag )
@@ -134,15 +125,7 @@ static wxXmlNode* add_hidden_flag( wxXmlNode* pChapterAtom, bool bHiddenFlag )
 	wxXmlNode* pChapterHidden = new wxXmlNode( (wxXmlNode*)NULL, wxXML_ELEMENT_NODE, wxT("ChapterFlagHidden") );
 	wxXmlNode* pChapterHiddenText = new wxXmlNode( pChapterHidden, wxXML_TEXT_NODE, wxEmptyString, 
 		 bHiddenFlag? wxT("1") : wxT("0") );
-	wxXmlNode* pLastChild = get_last_child( pChapterAtom );
-	if ( pLastChild != (wxXmlNode*)NULL )
-	{
-		pLastChild->SetNext( pChapterHidden );
-	}
-	else
-	{
-		pChapterAtom->SetChildren( pChapterHidden );
-	}
+	pChapterAtom->AddChild( pChapterHidden );
 	return pChapterHidden;
 }
 
@@ -153,14 +136,16 @@ static wxXmlNode* add_idx_chapter_atom(
 	bool bHiddenIndexes
 )
 {
-	wxXmlNode* pIdxChapterAtom = new wxXmlNode( pChapterAtom, wxXML_ELEMENT_NODE, wxT("ChapterAtom") );
+	wxXmlNode* pIdxChapterAtom = new wxXmlNode( (wxXmlNode*)NULL, wxXML_ELEMENT_NODE, wxT("ChapterAtom") );
 	wxXmlNode* pChapterTimeStart = add_chapter_time_start( pIdxChapterAtom, idx );
 
 	wxString sChapterString;
 	sChapterString.Format( wxT("INDEX %02d"), idx.GetNumber() );
 
-	add_chapter_display( pChapterAtom, sChapterString, sLang );
-	add_hidden_flag( pChapterAtom, bHiddenIndexes );
+	add_chapter_display( pIdxChapterAtom, sChapterString, sLang );
+	add_hidden_flag( pIdxChapterAtom, bHiddenIndexes );
+
+	pChapterAtom->AddChild( pIdxChapterAtom );
 	return pIdxChapterAtom;
 }
 
