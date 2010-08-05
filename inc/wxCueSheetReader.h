@@ -38,7 +38,8 @@ protected:
 	wxArrayString m_cueLines;
 	wxCueSheet m_cueSheet;
 	bool m_bErrorsAsWarnings;
-	bool m_bPolishQuotationMarks;
+	bool m_bCorrectQuotationMarks;
+	wxString m_sLang;
 	wxFileName m_cueFileName;
 
 protected:
@@ -74,6 +75,10 @@ protected:
 	static const wxChar ENGLISH_SINGLE_QUOTES[];
 	static const wxChar POLISH_DOUBLE_QUOTES[];
 	static const wxChar POLISH_SINGLE_QUOTES[];
+	static const wxChar GERMAN_DOUBLE_QUOTES[];
+	static const wxChar GERMAN_SINGLE_QUOTES[];
+	static const wxChar FRENCH_DOUBLE_QUOTES[];
+	static const wxChar FRENCH_SINGLE_QUOTES[];
 
 	bool IsTrack() const;
 	wxTrack& GetLastTrack();
@@ -111,8 +116,7 @@ public:
 
 	bool ErrorsAsWarnings() const;
 	wxCueSheetReader& SetErrorsAsWarnings( bool = true );
-	void UsePolishQuotationMarks( bool = false );
-	bool UsesPolishQuotationMarks() const;
+	void CorrectQuotationMarks( bool, const wxString& );
 
 	const wxArrayString& GetCueLines() const;
 	const wxCueSheet& GetCueSheet() const;

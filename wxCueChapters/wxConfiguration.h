@@ -22,9 +22,11 @@ protected:
 	unsigned long m_nChapterOffset; // in frames
 	bool m_bUseDataFiles; // default=true
 	bool m_bEmbedded;
-	bool m_bPolishQuotationMarks;
+	bool m_bCorrectQuotationMarks;
 	bool m_bSaveCueSheet;
 	bool m_bGenerateTags;
+	bool m_bGenerateEditionUID;
+	bool m_bGenerateTagsFromComments;
 	bool m_bCueSheetFileUtf8Encoding;
 	bool m_bTrackOneIndexOne; // or zero
 	bool m_bAbortOnError;
@@ -44,8 +46,6 @@ protected:
 
 	wxSortedArrayString m_asLang;
 
-	wxMBConv* m_pConv;
-
 protected:
 
 	static bool ReadLanguagesStrings( wxSortedArrayString& );
@@ -64,7 +64,7 @@ public:
 	const wxString& GetTrackNameFormat() const;
 	const wxArrayInputFile& GetInputFiles() const;
 	bool IsEmbedded() const;
-	bool UsePolishQuotationMarks() const;
+	bool CorrectQuotationMarks() const;
 	bool SaveCueSheet() const;
 	bool TrackOneIndexOne() const;
 	bool AbortOnError() const;
@@ -74,6 +74,8 @@ public:
 	const wxString& MatroskaChaptersXmlExt() const;
 	const wxString& MatroskaTagsXmlExt() const;
 	bool GenerateTags() const;
+	bool GenerateEditionUID() const;
+	bool GenerateTagsFromComments() const;
 	bool IsCueSheetFileUtf8Encoding() const;
 	const wxMBConv& GetCueSheetFileEncoding();
 

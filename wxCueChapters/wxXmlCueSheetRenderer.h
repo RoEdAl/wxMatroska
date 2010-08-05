@@ -36,6 +36,8 @@ protected:
 	wxString m_sOutputFile;
 	wxString m_sTagsFile;
 
+	wxRegEx m_reCommentMeta;
+
 protected:
 
 	virtual bool OnPreRenderDisc( const wxCueSheet& );
@@ -51,6 +53,17 @@ protected:
 protected:
 
 	static wxULongLong GenerateUID();
+	void AddCdTextInfo( const wxCueComponent&, wxXmlNode* );
+	wxXmlNode* AddDiscTags(
+		const wxCueSheet&,
+		wxXmlNode*,
+		const wxULongLong&,
+		int = 50 );
+	wxXmlNode* AddTrackTags(
+		const wxTrack&,
+		const wxULongLong&,
+		wxXmlNode*,
+		int = 30 );
 
 public:
 

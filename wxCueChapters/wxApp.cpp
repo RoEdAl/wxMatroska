@@ -219,7 +219,7 @@ int wxMyApp::ProcessCueFile( wxCueSheetReader& reader, const wxInputFile& inputF
 int wxMyApp::OnRun()
 {
 	wxCueSheetReader reader;
-	reader.UsePolishQuotationMarks( m_cfg.UsePolishQuotationMarks() );
+	reader.CorrectQuotationMarks( m_cfg.CorrectQuotationMarks(), m_cfg.GetLang() );
 
 	int res = 0;
 	const wxArrayInputFile& inputFile = m_cfg.GetInputFiles();

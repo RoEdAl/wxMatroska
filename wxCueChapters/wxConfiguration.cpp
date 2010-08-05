@@ -76,27 +76,24 @@ wxConfiguration::wxConfiguration(void)
 	 m_sLang( wxT("eng") ),
 	 m_sTrackNameFormat( wxT("%dp% - %dt% - %tt%") ),
 	 m_bEmbedded(false),
-	 m_bPolishQuotationMarks(true),
+	 m_bCorrectQuotationMarks(true),
 	 m_bSaveCueSheet(false),
 	 m_bCueSheetFileUtf8Encoding(false),
 	 m_bGenerateTags(false),
+	 m_bGenerateEditionUID(false),
+	 m_bGenerateTagsFromComments(true),
 	 m_bTrackOneIndexOne(true),
 	 m_bAbortOnError(true),
 	 m_bRoundDownToFullFrames(false),
 	 m_sCueSheetExt(CUE_SHEET_EXT),
 	 m_sMatroskaChaptersXmlExt(MATROSKA_CHAPTERS_EXT),
-	 m_sMatroskaTagsXmlExt(MATROSKA_TAGS_EXT),
-	 m_pConv((wxMBConv*)NULL)
+	 m_sMatroskaTagsXmlExt(MATROSKA_TAGS_EXT)
 {
 	ReadLanguagesStrings( m_asLang );
 }
 
 wxConfiguration::~wxConfiguration(void)
 {
-	if ( m_pConv != (wxMBConv*)NULL )
-	{
-		delete m_pConv;
-	}
 }
 
 void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
@@ -119,7 +116,11 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddSwitch( wxT("c"), wxT("save-cue-sheet"), _("Save cue sheet instead of Matroska chapter file. This switch allows to extract embedded cue sheet when used with ec option."), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("m"), wxT("save-matroska-chapters"), _("Save Matroska chapter file (default)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("t"), wxT("generate-tags"), _("Generate tags file (default: no)"), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT("nt"), wxT("dont-generate-tags"), _("Generate tags file (default: no)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("nt"), wxT("dont-generate-tags"), _("Do not generate tags file"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("eu"), wxT("generate-edition_uid"), _("Generate edition UID (default: no)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("neu"), wxT("dont-generate-edition_uid"), _("Do not generate edition UID"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("tc"), wxT("generate-tags-from-comments"), _("Try to parse tags from cue sheet comments (default: yes)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("ntc"), wxT("dont-generate-tags-from-comments"), _("Do not try to parse tags from cue sheet comments"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("c8"), wxT("cue-sheet-utf8"), _("Save cue sheet using UTF-8 encoding (default: no - default encoding is used)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("nc8"), wxT("no-cue-sheet-utf8"), _("Save cue sheet using UTF-8 encoding (default: no - default encoding is used)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("t1i1"), wxT("track-01-index-01"), _("For first track assume index 01 as beginning of track (default)"), wxCMD_LINE_PARAM_OPTIONAL );
@@ -133,8 +134,8 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddOption( wxT("dce"), wxT("default-cue-sheet-file-extension"), wxString::Format( _("Default cue sheet file extension (default: %s)"), CUE_SHEET_EXT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxT("dme"), wxT("default-matroska-chapters-file-extension"), wxString::Format( _("Default Matroska chapters XML file extension (default: %s)"), MATROSKA_CHAPTERS_EXT) , wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxT("dte"), wxT("default-matroska-tags-file-extension"), wxString::Format( _("Default Matroska tags XML file extension (default: %s)"), MATROSKA_TAGS_EXT) , wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT("pqm"), wxT("polish-quotation-marks"), _("Convert \"simple 'quotation' marks\" to \u201Epolish \u201Aquotation\u2019 marks\u201D inside strings (default: on)"), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT("eqm"), wxT("english-quotation-marks"), _("Convert \"simple 'quotation' marks\" to \u201Cenglish \u2018quotation\u2019 marks\u201D inside strings"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("cq"), wxT("correct-quotation-marks"), _("Correct \"simple 'quotation' marks\" to \u201Cenglish \u2018quotation\u2019 marks\u201D inside strings (default: on)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("ncq"), wxT("dont-correct-quotation-marks"), _("Dont correct \"simple 'quotation' marks\" to \u201Cenglish \u2018quotation\u2019 marks\u201D inside strings"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddParam( _("<cue sheet>"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE|wxCMD_LINE_PARAM_OPTIONAL );
 }
 
@@ -187,8 +188,8 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	if ( cmdLine.Found( wxT("ec") ) ) m_bEmbedded = true;
 	if ( cmdLine.Found( wxT("nec") ) ) m_bEmbedded = false;
 
-	if ( cmdLine.Found( wxT("pqm") ) ) m_bPolishQuotationMarks = true;
-	if ( cmdLine.Found( wxT("eqm") ) ) m_bPolishQuotationMarks = false;
+	if ( cmdLine.Found( wxT("cq") ) ) m_bCorrectQuotationMarks = true;
+	if ( cmdLine.Found( wxT("ncq") ) ) m_bCorrectQuotationMarks = false;
 
 	if ( cmdLine.Found( wxT("c") ) ) m_bSaveCueSheet = true;
 	if ( cmdLine.Found( wxT("m") ) ) m_bSaveCueSheet = false;
@@ -210,6 +211,12 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	if ( cmdLine.Found( wxT("c8") ) ) m_bCueSheetFileUtf8Encoding = true;
 	if ( cmdLine.Found( wxT("nc8") ) ) m_bCueSheetFileUtf8Encoding = false;
+
+	if ( cmdLine.Found( wxT("eu") ) ) m_bGenerateEditionUID = true;
+	if ( cmdLine.Found( wxT("neu") ) ) m_bGenerateEditionUID = false;
+
+	if ( cmdLine.Found( wxT("tc") ) ) m_bGenerateTagsFromComments = true;
+	if ( cmdLine.Found( wxT("ntc") ) ) m_bGenerateTagsFromComments = false;
 
 	if ( cmdLine.Found( wxT("dce"), &s ) )
 	{
@@ -332,6 +339,8 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
 {
 	as.Add( wxString::Format( wxT("Save cue sheet: %s"), BoolToStr(m_bSaveCueSheet) ) );
 	as.Add( wxString::Format( wxT("Generate tags file: %s"), BoolToStr(m_bGenerateTags) ) );
+	as.Add( wxString::Format( wxT("Generate edition UID: %s"), BoolToStr(m_bGenerateEditionUID) ) );
+	as.Add( wxString::Format( wxT("Generate tags from comments: %s"), BoolToStr(m_bGenerateTagsFromComments) ) );
 	as.Add( wxString::Format( wxT("Cue sheet file encoding: %s"), (m_bCueSheetFileUtf8Encoding? wxT("UTF-8") : wxT("Default") ) ) );
 	as.Add( wxString::Format( wxT("Calculate end time of chapters: %s"), BoolToStr(m_bChapterTimeEnd) ) );
 	as.Add( wxString::Format( wxT("Read embedded cue sheet: %s"), BoolToStr(m_bEmbedded) ) );
@@ -348,14 +357,7 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
 	as.Add( wxString::Format( wxT("Default cue sheet file extension: %s"), m_sCueSheetExt ) );
 	as.Add( wxString::Format( wxT("Default Matroska chapters XML file extension: %s"), m_sMatroskaChaptersXmlExt ) );
 	as.Add( wxString::Format( wxT("Default Matroska tags XML file extension: %s"), m_sMatroskaTagsXmlExt ) );
-	if ( m_bPolishQuotationMarks )
-	{
-		as.Add( wxString::Format( wxT("Convert \"simple 'quotation' marks\" to \u201Epolish \u201Aquotation\u2019 marks\u201D inside strings") ) );
-	}
-	else
-	{
-		as.Add( wxString::Format( wxT("Convert \"simple 'quotation' marks\" to \u201Cenglish \u2018quotation\u2019 marks\u201D inside strings") ) );
-	}
+	as.Add( wxString::Format( wxT("Correct \"simple 'quotation' marks\" inside strings: %s"), BoolToStr(m_bCorrectQuotationMarks) ) );
 }
 
 void wxConfiguration::Dump() const
@@ -521,9 +523,9 @@ bool wxConfiguration::IsEmbedded() const
 	return m_bEmbedded;
 }
 
-bool wxConfiguration::UsePolishQuotationMarks() const
+bool wxConfiguration::CorrectQuotationMarks() const
 {
-	return m_bPolishQuotationMarks;
+	return m_bCorrectQuotationMarks;
 }
 
 bool wxConfiguration::SaveCueSheet() const
@@ -566,6 +568,16 @@ bool wxConfiguration::GenerateTags() const
 	return m_bGenerateTags;
 }
 
+bool wxConfiguration::GenerateEditionUID() const
+{
+	return m_bGenerateEditionUID;
+}
+
+bool wxConfiguration::GenerateTagsFromComments() const
+{
+	return m_bGenerateTagsFromComments;
+}
+
 bool wxConfiguration::IsCueSheetFileUtf8Encoding() const
 {
 	return m_bCueSheetFileUtf8Encoding;
@@ -573,20 +585,14 @@ bool wxConfiguration::IsCueSheetFileUtf8Encoding() const
 
 const wxMBConv& wxConfiguration::GetCueSheetFileEncoding()
 {
-	if ( m_pConv == (wxMBConv*)NULL )
+	if ( m_bCueSheetFileUtf8Encoding )
 	{
-		if ( m_bCueSheetFileUtf8Encoding )
-		{
-			m_pConv = new wxMBConvUTF8();
-		}
-		else
-		{
-			m_pConv = new wxConvAuto();
-		}
+		return wxConvUTF8;
 	}
-
-	wxASSERT( m_pConv != (wxMBConv*)NULL );
-	return (*m_pConv);
+	else
+	{
+		return wxConvLocal;
+	}
 }
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
