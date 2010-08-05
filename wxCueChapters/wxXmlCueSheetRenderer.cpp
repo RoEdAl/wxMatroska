@@ -139,10 +139,7 @@ static wxXmlNode* add_idx_chapter_atom(
 	wxXmlNode* pIdxChapterAtom = new wxXmlNode( (wxXmlNode*)NULL, wxXML_ELEMENT_NODE, wxT("ChapterAtom") );
 	wxXmlNode* pChapterTimeStart = add_chapter_time_start( pIdxChapterAtom, idx );
 
-	wxString sChapterString;
-	sChapterString.Format( wxT("INDEX %02d"), idx.GetNumber() );
-
-	add_chapter_display( pIdxChapterAtom, sChapterString, sLang );
+	add_chapter_display( pIdxChapterAtom, wxString::Format( wxT("INDEX %02d"), idx.GetNumber() ), sLang );
 	add_hidden_flag( pIdxChapterAtom, bHiddenIndexes );
 
 	pChapterAtom->AddChild( pIdxChapterAtom );
