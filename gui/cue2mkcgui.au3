@@ -4,7 +4,7 @@
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.10
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.11
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -671,6 +671,14 @@ If Not $CUE2MKC_EXE_EXISTS Then
 	;GUICtrlSetState($LabelPdftoppm, $GUI_DISABLE)
 	log_msg("Warning: cue2mkc tool not found.")
 EndIf
+
+$cq = "Try to correct ""simple 'quotation' marks"" inside strings." & @CRLF & _
+		"Examples:" & @CRLF & _
+		@TAB & "„polish ‚quotation’ marks”" & @CRLF & _
+		@TAB & "“english (U.S.) ‘quotation’ marks”" & @CRLF & _
+		@TAB & "« french ‹ angle › marks »" & @CRLF & _
+		@TAB & "„german ‚quotation‘ marks“"
+GUICtrlSetTip($CheckBoxCq, $cq, "Correct ""simple 'quotation' marks""", 1)
 
 If @Compiled Then
 	GUISetIcon(@ScriptFullPath, -1, $FormMain)
