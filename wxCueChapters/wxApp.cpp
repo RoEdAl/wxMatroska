@@ -15,6 +15,8 @@ const wxChar wxMyApp::APP_VERSION[] = wxT("0.1 beta");
 const wxChar wxMyApp::APP_AUTHOR[] = wxT("Edmunt Pienkowsky - roed@onet.eu");
 const wxChar wxMyApp::LICENSE_FILE_NAME[] = wxT("license.txt");
 
+static const size_t MAX_LICENSE_FILE_SIZE = 4 * 1024;
+
 wxIMPLEMENT_APP(wxMyApp);
 
 wxMyApp::wxMyApp(void)
@@ -102,7 +104,23 @@ bool wxMyApp::CheckLicense()
 	const wxStandardPaths& paths = wxStandardPaths::Get();
 	wxFileName fn( paths.GetExecutablePath() );
 	fn.SetFullName( LICENSE_FILE_NAME );
-	return fn.FileExists();
+	if ( !fn.FileExists() ) return false;
+
+	wxULongLong fs( fn.GetSize() );
+	if ( fs == wxInvalidSize )
+	{
+		wxLogInfo( wxT("Unable to read license \u201C%s\u201D."), fn.GetFullPath() );
+		return false;
+	}
+
+	wxULongLong maxSize( 0, MAX_LICENSE_FILE_SIZE );
+	if ( fs > maxSize )
+	{
+		wxLogInfo( wxT("License file \u201C%s\u201D is too big."), fn.GetFullPath() );
+		return false;
+	}
+
+	return true;
 #endif
 }
 
@@ -117,6 +135,20 @@ void wxMyApp::ShowLicense()
 		return;
 	}
 
+	wxULongLong fs( fn.GetSize() );
+	if ( fs == wxInvalidSize )
+	{
+		wxLogError( wxT("Unable to read license \u201C%s\u201D."), fn.GetFullPath() );
+		return;
+	}
+
+	wxULongLong maxSize( 0, MAX_LICENSE_FILE_SIZE );
+	if ( fs > maxSize )
+	{
+		wxLogError( wxT("License file \u201C%s\u201D is too big."), fn.GetFullPath() );
+		return;
+	}
+
 	wxFileInputStream fis( fn.GetFullPath() );
 	if ( !fis.IsOk() )
 	{
@@ -124,7 +156,7 @@ void wxMyApp::ShowLicense()
 		return;
 	}
 
-	wxTextInputStream tis( fis );
+	wxTextInputStream tis( fis, wxEmptyString, wxConvISO8859_1 );
 	while( !fis.Eof() )
 	{
 		wxPrintf( tis.ReadLine() );
@@ -166,7 +198,7 @@ bool wxMyApp::OnCmdLineParsed( wxCmdLineParser& cmdline )
 
 	 if ( !CheckLicense() )
 	 {
-		 wxLogError( "Cannot find license file." );
+		 wxLogError( "Cannot find or load license file." );
 		 return false;
 	 }
 
