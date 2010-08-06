@@ -4,7 +4,7 @@
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.7
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.8
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Edmunt Pienkowsky - roed@onet.eu
 #AutoIt3Wrapper_Res_Icon_Add=icons/cue_file.ico
@@ -668,7 +668,6 @@ EndIf
 
 If @Compiled Then
 	GUISetIcon(@ScriptFullPath, -1, $FormMain)
-	GUICtrlSetImage($ButtonOutputDirectory, @ScriptFullPath, 0)
 	GUICtrlSetStyle($ButtonInputAdd, $BS_ICON)
 	GUICtrlSetImage($ButtonInputAdd, @ScriptFullPath, -6, 0)
 	GUICtrlSetStyle($ButtonDataFile, $BS_ICON)
