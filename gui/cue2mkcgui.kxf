@@ -967,7 +967,7 @@
 								<property name="Width" vt="Int8">41</property>
 								<property name="Height" vt="Int8">29</property>
 								<property name="Hint" vt="String">Runs cue2mkc with --help option</property>
-								<property name="Caption" vt="String">&amp;?</property>
+								<property name="Caption" vt="String">&amp;Help</property>
 								<property name="TabOrder" vt="Int8">4</property>
 								<property name="Color" vt="Ident">clBtnFace</property>
 								<property name="CtrlStyle" vt="Int32">1342259200</property>
@@ -978,13 +978,29 @@
 						</object>
 						<object type="TACheckbox" name="CheckBoxVerbose">
 							<properties>
-								<property name="Left" vt="Int16">384</property>
+								<property name="Left" vt="Int16">308</property>
 								<property name="Top" vt="Int16">341</property>
 								<property name="Width" vt="Int8">97</property>
 								<property name="Height" vt="Int8">17</property>
 								<property name="Caption" vt="String">&amp;Verbose mode</property>
 								<property name="TabOrder" vt="Int8">5</property>
 								<property name="CtrlStyle" vt="Int32">1342242819</property>
+								<property name="CtrlExStyle" vt="Int8">0</property>
+								<property name="Resizing" vt="Set">DockRight, DockBottom, DockWidth, DockHeight</property>
+							</properties>
+							<components/>
+						</object>
+						<object type="TAButton" name="ButtonLicense">
+							<properties>
+								<property name="Left" vt="Int16">410</property>
+								<property name="Top" vt="Int16">335</property>
+								<property name="Width" vt="Int8">65</property>
+								<property name="Height" vt="Int8">29</property>
+								<property name="Hint" vt="String">Runs cue2mkc with --licese option</property>
+								<property name="Caption" vt="String">&amp;License</property>
+								<property name="TabOrder" vt="Int8">6</property>
+								<property name="Color" vt="Ident">clBtnFace</property>
+								<property name="CtrlStyle" vt="Int32">1342259200</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
 								<property name="Resizing" vt="Set">DockRight, DockBottom, DockWidth, DockHeight</property>
 							</properties>

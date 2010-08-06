@@ -38,6 +38,9 @@ protected:
 	static void AddFormatDescription( wxCmdLineParser& );
 	static void AddInputFileFormatDescription( wxCmdLineParser& );
 
+	static bool CheckLicense();
+	static void ShowLicense();
+
 protected:
 
 	virtual bool OnInit();
@@ -50,6 +53,7 @@ public:
 
 	static const wxChar APP_VERSION[];
 	static const wxChar APP_AUTHOR[];
+	static const wxChar LICENSE_FILE_NAME[];
 
 	wxMyApp(void);
 	virtual ~wxMyApp(void);

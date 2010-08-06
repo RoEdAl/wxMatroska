@@ -4,9 +4,11 @@
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.8
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.10
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=y
-#AutoIt3Wrapper_Res_LegalCopyright=Edmunt Pienkowsky - roed@onet.eu
+#AutoIt3Wrapper_Res_LegalCopyright=Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html
+#AutoIt3Wrapper_Res_SaveSource=y
+#AutoIt3Wrapper_Res_Field=Company|Edmunt Pienkowsky - roed@onet.eu
 #AutoIt3Wrapper_Res_Icon_Add=icons/cue_file.ico
 #AutoIt3Wrapper_Res_Icon_Add=icons/cue_file_add.ico
 #AutoIt3Wrapper_Res_Icon_Add=icons/cue_file_remove.ico
@@ -257,13 +259,17 @@ $ButtonClearLog = GUICtrlCreateButton("Clear", 75, 364, 61, 29, 0)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Clear log")
-$ButtonInfo = GUICtrlCreateButton("&?", 490, 364, 41, 29, 0)
+$ButtonInfo = GUICtrlCreateButton("&Help", 490, 364, 41, 29, 0)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Runs cue2mkc with --help option")
-$CheckBoxVerbose = GUICtrlCreateCheckbox("&Verbose mode", 392, 370, 97, 17)
+$CheckBoxVerbose = GUICtrlCreateCheckbox("&Verbose mode", 316, 370, 97, 17)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+$ButtonLicense = GUICtrlCreateButton("&License", 418, 364, 65, 29, 0)
+GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
+GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+GUICtrlSetTip(-1, "Runs cue2mkc with --licese option")
 GUICtrlCreateTabItem("")
 #EndRegion ### END Koda GUI section ###
 
@@ -754,6 +760,15 @@ While True
 
 		Case $ButtonInfo
 			$sCmd = StringFormat("""%s"" --help", $CUE2MKC_EXE)
+			$nRet = run_wait($sCmd)
+			If @error Then
+				log_msg("Error executing command.")
+			Else
+				log_msg(StringFormat($APP_EXIT_CODE, $nRet))
+			EndIf
+
+		Case $ButtonLicense
+			$sCmd = StringFormat("""%s"" --license", $CUE2MKC_EXE)
 			$nRet = run_wait($sCmd)
 			If @error Then
 				log_msg("Error executing command.")

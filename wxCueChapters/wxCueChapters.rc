@@ -35,8 +35,8 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_DEFAULT
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,1,0,1
- PRODUCTVERSION 0,1,0,1
+ FILEVERSION 0,1,0,2
+ PRODUCTVERSION 0,1,0,2
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -52,14 +52,14 @@ BEGIN
         BLOCK "000004b0"
         BEGIN
             VALUE "Comments", "This application converts cue sheet files to Matroska XML chapter files in a more advanced way than standard Matroska tools."
-            VALUE "CompanyName", "Edmunt Pienkowsky"
+            VALUE "CompanyName", "Edmunt Pienkowsky - roed@onet.eu"
             VALUE "FileDescription", "Cue sheet to Matroska XML chapter file convereter."
-            VALUE "FileVersion", "0, 1, 0, 1"
+            VALUE "FileVersion", "0, 1, 0, 2"
             VALUE "InternalName", "wxCueChapters"
-            VALUE "LegalCopyright", "Edmunt Pienkowsky - roed@onet.eu"
+            VALUE "LegalCopyright", "Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html"
             VALUE "OriginalFilename", "cue2mkc.exe"
             VALUE "ProductName", "cue2mkc"
-            VALUE "ProductVersion", "0, 1, 0, 1"
+            VALUE "ProductVersion", "0, 1, 0, 2"
         END
     END
     BLOCK "VarFileInfo"

@@ -13,6 +13,7 @@
 
 const wxChar wxMyApp::APP_VERSION[] = wxT("0.1 beta");
 const wxChar wxMyApp::APP_AUTHOR[] = wxT("Edmunt Pienkowsky - roed@onet.eu");
+const wxChar wxMyApp::LICENSE_FILE_NAME[] = wxT("license.txt");
 
 wxIMPLEMENT_APP(wxMyApp);
 
@@ -34,6 +35,7 @@ void wxMyApp::AddVersionInfos( wxCmdLineParser& cmdline )
 {
 	cmdline.AddUsageText( wxString::Format( wxT("Application version: %s"), APP_VERSION ) );
 	cmdline.AddUsageText( wxString::Format( wxT("Author: %s"), APP_AUTHOR ) );
+	cmdline.AddUsageText( wxT("License: Simplified BSD License - http://www.opensource.org/licenses/bsd-license.php") );
 	cmdline.AddUsageText( wxString::Format( wxT("Operating system: %s"), wxPlatformInfo::Get().GetOperatingSystemDescription() ) );
 	cmdline.AddUsageText( wxString::Format( wxT("wxWidgets version: %d.%d.%d"), wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER ) );
 }
@@ -80,6 +82,7 @@ void wxMyApp::AddFormatDescription( wxCmdLineParser& cmdline )
 void wxMyApp::OnInitCmdLine( wxCmdLineParser& cmdline )
 {
 	wxAppConsole::OnInitCmdLine( cmdline );
+	cmdline.AddSwitch( wxEmptyString, wxT("license"), _("Show license"), wxCMD_LINE_PARAM_OPTIONAL );
 	wxConfiguration::AddCmdLineParams( cmdline );
 	cmdline.SetLogo( _("This application converts cue sheet files to Matroska XML chapter files in a more advanced way than standard Matroska tools.") );
 	AddSeparator( cmdline );
@@ -91,10 +94,54 @@ void wxMyApp::OnInitCmdLine( wxCmdLineParser& cmdline )
 	AddSeparator( cmdline );
 }
 
+bool wxMyApp::CheckLicense()
+{
+#ifdef _DEBUG
+	return true;
+#else
+	const wxStandardPaths& paths = wxStandardPaths::Get();
+	wxFileName fn( paths.GetExecutablePath() );
+	fn.SetFullName( LICENSE_FILE_NAME );
+	return fn.FileExists();
+#endif
+}
+
+void wxMyApp::ShowLicense()
+{
+	const wxStandardPaths& paths = wxStandardPaths::Get();
+	wxFileName fn( paths.GetExecutablePath() );
+	fn.SetFullName( LICENSE_FILE_NAME );
+	if ( !fn.FileExists() )
+	{
+		wxLogError( wxT("Cannot find license file \u201C%s\u201D."), fn.GetFullPath() );
+		return;
+	}
+
+	wxFileInputStream fis( fn.GetFullPath() );
+	if ( !fis.IsOk() )
+	{
+		wxLogError( wxT("Cannot open license file \u201C%s\u201D"), fn.GetFullPath() );
+		return;
+	}
+
+	wxTextInputStream tis( fis );
+	while( !fis.Eof() )
+	{
+		wxPrintf( tis.ReadLine() );
+		wxPrintf( wxT("\n") );
+	}
+}
+
 bool wxMyApp::OnCmdLineParsed( wxCmdLineParser& cmdline )
 {
 	if ( !wxAppConsole::OnCmdLineParsed( cmdline ) )
 	{
+		return false;
+	}
+
+	if ( cmdline.Found( wxT("license") ) )
+	{
+		ShowLicense();
 		return false;
 	}
 
@@ -110,12 +157,18 @@ bool wxMyApp::OnCmdLineParsed( wxCmdLineParser& cmdline )
 
  bool wxMyApp::OnInit()
  {
-	 wxDateTime dt( wxDateTime::Now() );
-	 srand( dt.GetTicks() );
-
 	 SetAppName( wxT("cue2mkc") );
 	 SetVendorName( wxT("Edmunt Pienkowsky") );
 	 SetVendorDisplayName( APP_AUTHOR );
+
+	 wxDateTime dt( wxDateTime::Now() );
+	 srand( dt.GetTicks() );
+
+	 if ( !CheckLicense() )
+	 {
+		 wxLogError( "Cannot find license file." );
+		 return false;
+	 }
 
 	 if ( !wxAppConsole::OnInit() )
 	 {
