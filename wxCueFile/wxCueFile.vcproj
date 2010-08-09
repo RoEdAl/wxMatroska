@@ -212,6 +212,10 @@
 				RelativePath=".\wxTrack.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\wxUnquoter.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -224,6 +228,10 @@
 			</File>
 			<File
 				RelativePath=".\targetver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\wxUnquoter.h"
 				>
 			</File>
 		</Filter>

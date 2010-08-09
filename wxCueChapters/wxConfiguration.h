@@ -32,6 +32,7 @@ protected:
 	bool m_bAbortOnError;
 	bool m_bRoundDownToFullFrames;
 	bool m_bHiddenIndexes;
+	bool m_bMerge;
 
 	wxString m_sAlternateExtensions;
 	wxString m_sLang;
@@ -78,6 +79,7 @@ public:
 	bool GenerateTagsFromComments() const;
 	bool IsCueSheetFileUtf8Encoding() const;
 	const wxMBConv& GetCueSheetFileEncoding();
+	bool GetMerge() const;
 
 	wxString GetOutputFile( const wxInputFile& ) const;
 	void GetOutputFile( const wxInputFile&, wxString&, wxString& ) const;
@@ -97,7 +99,7 @@ public:
 	bool Read( const wxCmdLineParser& );
 
 	void Dump() const;
-	void BuildXmlComments( const wxInputFile&, const wxString&, wxXmlNode* ) const;
+	void BuildXmlComments( const wxString&, wxXmlNode* ) const;
 };
 
 #endif // _WX_CONFIGURATION_H

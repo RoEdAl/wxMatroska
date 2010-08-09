@@ -20,7 +20,8 @@ static const size_t MAX_LICENSE_FILE_SIZE = 4 * 1024;
 wxIMPLEMENT_APP(wxMyApp);
 
 wxMyApp::wxMyApp(void)
-	:m_sSeparator( wxT('='), 75 )
+	:m_sSeparator( wxT('='), 75 ),
+	 m_pRenderer((wxXmlCueSheetRenderer*)NULL)
 {
 }
 
@@ -232,19 +233,15 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, const wxCueSheet& cu
 	else
 	{
 		wxLogInfo( _("Converting cue scheet to XML format") );
-
-		wxXmlCueSheetRenderer renderer( m_cfg, inputFile );
-		wxLogInfo( _("Output file \u201C%s\u201D"), renderer.GetOutputFile() );
-		if ( m_cfg.GenerateTags() )
-		{
-			wxLogInfo( _("Tags file \u201C%s\u201D"), renderer.GetTagsFile() );
-		}
-
+		wxXmlCueSheetRenderer& renderer = GetXmlRenderer( inputFile );
 		if ( renderer.Render( cueSheet ) )
 		{
-			if ( !renderer.SaveXmlDoc() )
+			if ( !m_cfg.GetMerge() )
 			{
-				return 1;
+				if ( !renderer.SaveXmlDoc() )
+				{
+					return 1;
+				}
 			}
 		}
 		else
@@ -352,19 +349,80 @@ int wxMyApp::OnRun()
 				singleFile.SetInputFile( fn );
 
 				res = ProcessCueFile( reader, singleFile );
-				if ( (res != 0) && m_cfg.AbortOnError() ) break;
+				if ( (res != 0) && (m_cfg.AbortOnError() || m_cfg.GetMerge()) ) break;
 
 				if ( !dir.GetNext( &sInputFile ) ) break;
 			}
 		}
 	}
 
-	return m_cfg.AbortOnError()? res : 0;
+	if ( m_cfg.GetMerge() && (res==0) && HasXmlRenderer() )
+	{
+		wxXmlCueSheetRenderer& renderer = GetXmlRenderer();
+		if ( !renderer.SaveXmlDoc() )
+		{
+			res = 1;
+		}
+	}
+
+	return (m_cfg.AbortOnError() || m_cfg.GetMerge())? res : 0;
 }
 
 int wxMyApp::OnExit()
 {
 	int res = wxAppConsole::OnExit();
+	if ( m_pRenderer != (wxXmlCueSheetRenderer*)NULL )
+	{
+		delete m_pRenderer;
+	}
 	wxLogMessage( _("Bye") );
 	return res;
+}
+
+wxXmlCueSheetRenderer& wxMyApp::GetXmlRenderer(const wxInputFile& inputFile)
+{
+	bool bShowInfo = false;
+
+	if ( m_cfg.GetMerge() )
+	{
+		if ( m_pRenderer == (wxXmlCueSheetRenderer*)NULL )
+		{
+			m_pRenderer = new wxXmlCueSheetRenderer( m_cfg, inputFile );
+			bShowInfo = true;
+		}
+		else
+		{
+			m_pRenderer->SetInputFile( inputFile );
+		}
+	}
+	else
+	{
+		if ( m_pRenderer != (wxXmlCueSheetRenderer*)NULL )
+		{
+			delete m_pRenderer;
+		}
+		m_pRenderer = new wxXmlCueSheetRenderer( m_cfg, inputFile );
+		bShowInfo = true;
+	}
+
+	if ( bShowInfo )
+	{
+		wxLogInfo( _("Output file \u201C%s\u201D"), m_pRenderer->GetOutputFile() );
+		if ( m_cfg.GenerateTags() )
+		{
+			wxLogInfo( _("Tags file \u201C%s\u201D"), m_pRenderer->GetTagsFile() );
+		}
+	}
+	return *m_pRenderer;
+}
+
+bool wxMyApp::HasXmlRenderer() const
+{
+	return ( m_pRenderer != (wxXmlCueSheetRenderer*)NULL );
+}
+
+wxXmlCueSheetRenderer& wxMyApp::GetXmlRenderer()
+{
+	wxASSERT( HasXmlRenderer() );
+	return *m_pRenderer;
 }

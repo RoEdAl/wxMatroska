@@ -11,6 +11,10 @@
 #include "wxDatafile.h"
 #endif
 
+#ifndef _WX_UNQUOTER_H_
+#include "wxUnquoter.h"
+#endif
+
 class wxCueSheetReader :public wxObject
 {
 	DECLARE_DYNAMIC_CLASS(wxCueSheetReader)
@@ -25,9 +29,8 @@ protected:
 
 	wxRegEx m_reIndex;
 	wxRegEx m_reMsf;
-	wxRegEx m_reQuotes;
+	wxUnquoter m_unquoter;
 	wxRegEx m_reQuotesEx;
-	wxRegEx m_reDoubleQuotes;
 	wxRegEx m_reFlags;
 	wxRegEx m_reDataMode;
 	wxRegEx m_reDataFile;
@@ -38,7 +41,6 @@ protected:
 	wxArrayString m_cueLines;
 	wxCueSheet m_cueSheet;
 	bool m_bErrorsAsWarnings;
-	bool m_bCorrectQuotationMarks;
 	wxString m_sLang;
 	wxFileName m_cueFileName;
 
@@ -70,15 +72,6 @@ protected:
 
 	static PARSE_STRUCT parseArray[];
 	static size_t parseArraySize;
-
-	static const wxChar ENGLISH_DOUBLE_QUOTES[];
-	static const wxChar ENGLISH_SINGLE_QUOTES[];
-	static const wxChar POLISH_DOUBLE_QUOTES[];
-	static const wxChar POLISH_SINGLE_QUOTES[];
-	static const wxChar GERMAN_DOUBLE_QUOTES[];
-	static const wxChar GERMAN_SINGLE_QUOTES[];
-	static const wxChar FRENCH_DOUBLE_QUOTES[];
-	static const wxChar FRENCH_SINGLE_QUOTES[];
 
 	bool IsTrack() const;
 	wxTrack& GetLastTrack();

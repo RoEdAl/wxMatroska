@@ -4,7 +4,7 @@
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.11
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.12
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -144,7 +144,8 @@ GUICtrlSetFont(-1, 8, 800, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Run cue2mkc tool")
 $OptionsPane = GUICtrlCreateTabItem("Options")
-$GroupGeneral = GUICtrlCreateGroup("&General options", 8, 32, 293, 161, -1, $WS_EX_TRANSPARENT)
+GUICtrlSetState(-1, $GUI_SHOW)
+$GroupGeneral = GUICtrlCreateGroup("&General options", 8, 32, 293, 165, -1, $WS_EX_TRANSPARENT)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $CheckBoxEc = GUICtrlCreateCheckbox("Embedded cue sheet", 12, 48, 129, 17)
@@ -164,11 +165,14 @@ GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCK
 $ComboOutputFormat = GUICtrlCreateCombo("", 85, 105, 149, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 GUICtrlSetData(-1, "cue sheet|Matroska chapter xml file", "Matroska chapter xml file")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$CheckBoxT = GUICtrlCreateCheckbox("Generate tags file also", 28, 127, 137, 17)
+$CheckBoxT = GUICtrlCreateCheckbox("Generate tags file also", 28, 126, 137, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$CheckBoxCq = GUICtrlCreateCheckbox("Correct ""simple 'quotation' marks"" inside strings", 12, 147, 261, 17)
+$CheckBoxMerge = GUICtrlCreateCheckbox("Merge mode", 12, 142, 85, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$CheckBoxA = GUICtrlCreateCheckbox("Abort when conversion errors occurs", 12, 167, 201, 17)
+GUICtrlSetTip(-1, "Merge all input files into one chapter file (requires MediaInfo lubrary)")
+$CheckBoxCq = GUICtrlCreateCheckbox("Correct ""simple 'quotation' marks"" inside strings", 12, 159, 261, 17)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+$CheckBoxA = GUICtrlCreateCheckbox("Abort when conversion errors occurs", 12, 175, 201, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 $GroupChapterOptions = GUICtrlCreateGroup("&Chapter file generation options", 8, 200, 293, 193, -1, $WS_EX_TRANSPARENT)
@@ -419,6 +423,7 @@ Func set_default_options()
 	GUICtrlSetState($CheckBoxTc, $GUI_CHECKED)
 	GUICtrlSetState($CheckBoxA, $GUI_UNCHECKED)
 	GUICtrlSetState($CheckBoxVerbose, $GUI_UNCHECKED)
+	GUICtrlSetState($CheckBoxMerge, $GUI_UNCHECKED)
 EndFunc   ;==>set_default_options
 
 Func read_options()
@@ -430,6 +435,8 @@ Func read_options()
 	$s &= _Iif(GUICtrlRead($CheckBoxDf) = $GUI_CHECKED, "-df", "-ndf")
 	$s &= " "
 	$s &= _Iif(GUICtrlRead($CheckBoxUc) = $GUI_CHECKED, "-uc", "-nuc")
+	$s &= " "
+	$s &= _Iif(GUICtrlRead($CheckBoxMerge) = $GUI_CHECKED, "--merge", "--dont-merge")
 	$s &= " "
 
 	If GUICtrlRead($CheckBoxUc) = $GUI_CHECKED Then
@@ -708,6 +715,7 @@ set_output_mode(0)
 _GUICtrlListBox_SetHorizontalExtent($ListLog, 5000)
 GUICtrlSetState($TreeViewInputFiles, $GUI_DROPACCEPTED)
 GUICtrlSetState($CheckBoxSwitchToOutput, $GUI_CHECKED)
+GUICtrlSetState($PaneInputOutput, $GUI_SHOW)
 GUISetState(@SW_SHOW)
 
 While True

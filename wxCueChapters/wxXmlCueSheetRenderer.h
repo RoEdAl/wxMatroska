@@ -17,6 +17,10 @@ class wxInputFile;
 class wxConfiguration;
 #endif
 
+#ifndef _WX_UNQUOTER_H_
+#include "wxUnquoter.h"
+#endif
+
 class wxXmlCueSheetRenderer :public wxCueSheetRenderer
 {
 	DECLARE_CLASS(wxXmlCueSheetRenderer)
@@ -25,6 +29,7 @@ protected:
 
 	wxXmlDocument* m_pXmlDoc;
 	wxXmlNode* m_pChapterAtom;
+	wxXmlNode* m_pFirstChapterAtom;
 	wxXmlNode* m_pPrevChapterAtom;
 	wxXmlNode* m_pEditionEntry;
 
@@ -37,6 +42,10 @@ protected:
 	wxString m_sTagsFile;
 
 	wxRegEx m_reCommentMeta;
+	wxUnquoter m_unquoter;
+
+	wxULongLong m_offset;
+	size_t m_nTotalParts;
 
 protected:
 
@@ -59,16 +68,32 @@ protected:
 		wxXmlNode*,
 		const wxULongLong&,
 		int = 50 );
+	wxXmlNode* AppendDiscTags(
+		const wxCueSheet&,
+		wxXmlNode*,
+		long = 50 );
+	wxXmlNode* SetTotalParts(
+		wxXmlNode*,
+		long = 50 );
 	wxXmlNode* AddTrackTags(
 		const wxTrack&,
 		const wxULongLong&,
 		wxXmlNode*,
 		int = 30 );
 
+	wxXmlNode* AddChapterTimeStart( wxXmlNode*, const wxIndex& ) const;
+
+	wxXmlNode* AddChapterTimeEnd( wxXmlNode*, const wxTrack& ) const;
+	wxXmlNode* AddChapterTimeEnd( wxXmlNode*, const wxIndex& ) const;
+	wxXmlNode* AddChapterTimeEnd( wxXmlNode*, const wxULongLong& ) const;
+
+	wxXmlNode* AddIdxChapterAtom( wxXmlNode*, const wxIndex& ) const;
+
 public:
 
 	wxXmlCueSheetRenderer(const wxConfiguration&, const wxInputFile& );
 	virtual ~wxXmlCueSheetRenderer(void);
+	void SetInputFile( const wxInputFile& );
 
 	wxXmlDocument* GetXmlDoc() const;
 	wxXmlDocument* GetXmlTags() const;
@@ -77,6 +102,7 @@ public:
 	const wxString& GetTagsFile() const;
 
 	bool SaveXmlDoc();
+	bool IsOffsetValid() const;
 };
 
 #endif

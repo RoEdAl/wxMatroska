@@ -134,17 +134,27 @@ bool wxIndex::SetMsf( wxTimeSpan ts )
 		m_minutes, m_seconds, m_frames );
 }
 
-wxTimeSpan wxIndex::GetTimeSpan() const
+wxULongLong wxIndex::GetNumberOfFrames() const
 {
-	wxLongLong frames( 0, m_frames );
+	wxULongLong frames( 0, m_frames );
 	frames += (m_seconds * 75);
 	frames += (m_minutes * 60 * 75);
+	return frames;
+}
 
-	wxLongLong ms( frames );
+wxTimeSpan wxIndex::GetTimeSpan() const
+{
+	wxLongLong ms( GetNumberOfFrames().GetValue() );
 	ms *= 1000;
 	ms /= 75;
-
 	return wxTimeSpan::Milliseconds( ms );
+}
+
+wxULongLong wxIndex::GetNumberOfSamples() const
+{
+	wxULongLong samples( GetNumberOfFrames() );
+	samples *= wxULL(588);
+	return samples;
 }
 
 wxString wxIndex::ToString() const

@@ -21,12 +21,17 @@ class wxCueSheetReader;
 class wxCueSheet;
 #endif
 
+#ifndef _WX_XML_CUE_SHEET_RENDERER_H_
+class wxXmlCueSheetRenderer;
+#endif;
+
 class wxMyApp :public wxAppConsole
 {
 protected:
 
 	wxConfiguration m_cfg;
 	wxString m_sSeparator;
+	wxXmlCueSheetRenderer* m_pRenderer;
 
 protected:
 
@@ -40,6 +45,10 @@ protected:
 
 	static bool CheckLicense();
 	static void ShowLicense();
+
+	wxXmlCueSheetRenderer& GetXmlRenderer(const wxInputFile&);
+	bool HasXmlRenderer() const;
+	wxXmlCueSheetRenderer& GetXmlRenderer();
 
 protected:
 

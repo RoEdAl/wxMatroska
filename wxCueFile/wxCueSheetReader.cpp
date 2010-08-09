@@ -31,18 +31,6 @@ static const wxChar* INFOS[] = {
 
 static const size_t INFOS_SIZE = sizeof(INFOS)/sizeof(const wxChar*);
 
-const wxChar wxCueSheetReader::ENGLISH_DOUBLE_QUOTES[] = wxT("\u201C\\1\u201D");
-const wxChar wxCueSheetReader::ENGLISH_SINGLE_QUOTES[] = wxT("\u2018\\1\u2019");
-
-const wxChar wxCueSheetReader::POLISH_DOUBLE_QUOTES[] = wxT("\u201E\\1\u201D");
-const wxChar wxCueSheetReader::POLISH_SINGLE_QUOTES[] = wxT("\u201A\\1\u2019");
-
-const wxChar wxCueSheetReader::GERMAN_DOUBLE_QUOTES[] = wxT("\u201E\\1\u201C");
-const wxChar wxCueSheetReader::GERMAN_SINGLE_QUOTES[] = wxT("\u201A\\1\u2018");
-
-const wxChar wxCueSheetReader::FRENCH_DOUBLE_QUOTES[] = wxT("\u00AB\u2005\\1\u2005\u00BB");
-const wxChar wxCueSheetReader::FRENCH_SINGLE_QUOTES[] = wxT("\u2039\u2005\\1\u2005\u203A");
-
 wxString wxCueSheetReader::GetKeywordsRegExp()
 {
 	wxString sKeywordsRegExp(wxCueComponent::GetKeywordsRegExp());
@@ -81,31 +69,27 @@ wxCueSheetReader::wxCueSheetReader(void)
 	 m_reEmpty( wxT("\\A\\s*\\Z"), wxRE_ADVANCED ),
 	 m_reIndex( wxT("\\A\\s*(\\d{1,2})\\s+(\\S.*\\S)\\Z"), wxRE_ADVANCED ),
 	 m_reMsf( wxT("\\A(\\d{1,2}):(\\d{1,2}):(\\d{1,2})\\Z"), wxRE_ADVANCED ),
-	 m_reQuotes( wxT("\\'(([^\\']|\\\')*)\\'(?![[:alnum:]])"), wxRE_ADVANCED ),
 	 m_reQuotesEx( wxT("\\'(([^\\'\\u201E\\\u201D]|\\\')*)\\'(?![[:alnum:]])"), wxRE_ADVANCED ),
-	 m_reDoubleQuotes( wxT("\\\"(([^\\\"]|\\\\\")*)\\\""), wxRE_ADVANCED ),
 	 m_reFlags( wxT("\\s+"), wxRE_ADVANCED ),
 	 m_reDataMode( GetDataModeRegExp(), wxRE_ADVANCED ),
 	 m_reDataFile( GetDataFileRegExp(), wxRE_ADVANCED ),
 	 m_reCatalog( wxT("\\d{13}"), wxRE_ADVANCED|wxRE_NOSUB ),
 	 m_reIsrc( wxT("([[:upper:]]{2}|00)-{0,1}[[:upper:][:digit:]]{3}-{0,1}[[:digit:]]{5}"), wxRE_ADVANCED|wxRE_NOSUB ),
-	 m_bErrorsAsWarnings( true ),
-	 m_bCorrectQuotationMarks(true),
-	 m_sLang(wxT("eng"))
+	 m_bErrorsAsWarnings( true )
 {
 	wxASSERT( m_reKeywords.IsValid() );
 	wxASSERT( m_reCdTextInfo.IsValid() );
 	wxASSERT( m_reEmpty.IsValid() );
 	wxASSERT( m_reIndex.IsValid() );
 	wxASSERT( m_reMsf.IsValid() );
-	wxASSERT( m_reQuotes.IsValid() );
 	wxASSERT( m_reQuotesEx.IsValid() );
-	wxASSERT( m_reDoubleQuotes.IsValid() );
 	wxASSERT( m_reFlags.IsValid() );
 	wxASSERT( m_reDataMode.IsValid() );
 	wxASSERT( m_reDataFile.IsValid() );
 	wxASSERT( m_reCatalog.IsValid() );
 	wxASSERT( m_reIsrc.IsValid() );
+
+	m_unquoter.SetLang( wxT("unk") );
 }
 
 wxCueSheetReader::~wxCueSheetReader(void)
@@ -135,8 +119,7 @@ wxCueSheetReader& wxCueSheetReader::SetErrorsAsWarnings( bool bErrorsAsWarnings 
 
 void wxCueSheetReader::CorrectQuotationMarks( bool bCorrectQuotationMarks, const wxString& sLang )
 {
-	m_bCorrectQuotationMarks = bCorrectQuotationMarks;
-	m_sLang = sLang;
+	m_unquoter.SetLang( bCorrectQuotationMarks? sLang : wxEmptyString );
 }
 
 bool wxCueSheetReader::ReadCueSheet(const wxString& sCueFile)
@@ -177,8 +160,8 @@ bool wxCueSheetReader::ReadCueSheet( wxInputStream& stream, wxMBConv& conv )
 
 void wxCueSheetReader::ProcessMediaInfoCueSheet( wxString& sCueSheet )
 {
-	m_reDoubleQuotes.ReplaceAll( &sCueSheet, POLISH_DOUBLE_QUOTES );
-	m_reQuotesEx.ReplaceAll( &sCueSheet, POLISH_SINGLE_QUOTES );
+	m_unquoter.GetReDoubleQuotes().ReplaceAll( &sCueSheet, wxUnquoter::POLISH_DOUBLE_QUOTES );
+	m_reQuotesEx.ReplaceAll( &sCueSheet, wxUnquoter::POLISH_SINGLE_QUOTES );
 
 	// slash -> division slash inside quotes
 
@@ -372,82 +355,9 @@ bool wxCueSheetReader::CheckEntryType( wxCueComponent::ENTRY_TYPE et ) const
 	}
 }
 
-/*
-	http://en.wikipedia.org/wiki/Quotation_mark,_non-English_usage
-*/
-
-static bool correct_english_qm( const wxString& sLang )
-{
-	return sLang.CmpNoCase( wxT("eng") ) == 0;
-}
-
-static bool correct_german_qm( const wxString& sLang )
-{
-	return 
-		(sLang.CmpNoCase( wxT("ger") ) == 0) ||
-		(sLang.CmpNoCase( wxT("gem") ) == 0) ||
-		(sLang.CmpNoCase( wxT("cze") ) == 0) ||
-		(sLang.CmpNoCase( wxT("geo") ) == 0) ||
-		(sLang.CmpNoCase( wxT("est") ) == 0) ||
-		(sLang.CmpNoCase( wxT("ice") ) == 0) ||
-		(sLang.CmpNoCase( wxT("bul") ) == 0) ||
-		(sLang.CmpNoCase( wxT("srp") ) == 0) ||
-		(sLang.CmpNoCase( wxT("rus") ) == 0)
-	;
-}
-
-static bool correct_french_qm( const wxString& sLang )
-{
-	return sLang.CmpNoCase( wxT("fre") ) == 0;
-}
-
 wxString wxCueSheetReader::Unquote( const wxString& qs )
 {
-	wxString s;
-	if ( m_reQuotes.Matches( qs ) )
-	{
-		s = m_reQuotes.GetMatch( qs, 1 );
-		s.Replace( wxT("\\'"), wxT("'") );
-	}
-	else if ( m_reDoubleQuotes.Matches( qs ) )
-	{
-		s = m_reDoubleQuotes.GetMatch( qs, 1 );
-		s.Replace( wxT("\\\""), wxT("\"") );
-	}
-	else
-	{
-		//::wxLogDebug( wxT("Character data not quoted") );
-		s = qs;
-	}
-
-	if ( m_bCorrectQuotationMarks && !m_sLang.IsEmpty() )
-	{
-		if ( m_sLang.CmpNoCase( wxT("pol") ) == 0 )
-		{
-			m_reQuotes.ReplaceAll( &s, POLISH_SINGLE_QUOTES );
-			m_reDoubleQuotes.ReplaceAll( &s, POLISH_DOUBLE_QUOTES );
-		}
-		else if ( correct_english_qm( m_sLang ) )
-		{
-			m_reQuotes.ReplaceAll( &s, ENGLISH_SINGLE_QUOTES );
-			m_reDoubleQuotes.ReplaceAll( &s, ENGLISH_DOUBLE_QUOTES );
-		}
-		else if ( correct_german_qm( m_sLang ) )
-		{
-			m_reQuotes.ReplaceAll( &s, GERMAN_SINGLE_QUOTES );
-			m_reDoubleQuotes.ReplaceAll( &s, GERMAN_DOUBLE_QUOTES );
-		}
-		else if ( correct_french_qm( m_sLang ) )
-		{
-			m_reQuotes.ReplaceAll( &s, FRENCH_SINGLE_QUOTES );
-			m_reDoubleQuotes.ReplaceAll( &s, FRENCH_DOUBLE_QUOTES );
-		}
-		else
-		{
-			wxLogDebug( wxT("Converting quotation marks in language %s is not supported."), m_sLang );
-		}
-	}
-	return s;
+	return m_unquoter.UnquoteAndCorrect( qs );
 }
 
 void wxCueSheetReader::ParseLine( size_t WXUNUSED(nLine), const wxString& sToken, const wxString& sRest )

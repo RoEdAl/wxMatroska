@@ -30,6 +30,8 @@ public:
 	unsigned int GetFrames() const;
 
 	wxTimeSpan GetTimeSpan() const;
+	wxULongLong GetNumberOfFrames() const;
+	wxULongLong GetNumberOfSamples() const;
 
 	wxIndex& SetNumber( unsigned int );
 	wxIndex& SetMsf( unsigned int, unsigned int, unsigned int );

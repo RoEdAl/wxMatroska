@@ -73,7 +73,7 @@ wxConfiguration::wxConfiguration(void)
 	 m_nChapterOffset(150),
 	 m_bUseDataFiles(false),
 	 m_sAlternateExtensions( wxEmptyString ),
-	 m_sLang( wxT("eng") ),
+	 m_sLang( wxT("unk") ),
 	 m_sTrackNameFormat( wxT("%dp% - %dt% - %tt%") ),
 	 m_bEmbedded(false),
 	 m_bCorrectQuotationMarks(true),
@@ -87,7 +87,8 @@ wxConfiguration::wxConfiguration(void)
 	 m_bRoundDownToFullFrames(false),
 	 m_sCueSheetExt(CUE_SHEET_EXT),
 	 m_sMatroskaChaptersXmlExt(MATROSKA_CHAPTERS_EXT),
-	 m_sMatroskaTagsXmlExt(MATROSKA_TAGS_EXT)
+	 m_sMatroskaTagsXmlExt(MATROSKA_TAGS_EXT),
+	 m_bMerge(false)
 {
 	ReadLanguagesStrings( m_asLang );
 }
@@ -110,7 +111,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddOption( wxT("e"), wxT("alternate-extensions"), _("Comma-separated list of alternate extensions of data files (default: none)"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxT("f"), wxT("single-data-file"), _("Sets single data file to cue sheet (default: none)"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxT("tf"), wxT("track-title-format"), _("Track title format (default: %dp% - %dt% - %tt%)"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddOption( wxT("l"), wxT("language"), _("Set language of chapter's tilte (default: eng)"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( wxT("l"), wxT("language"), _("Set language of chapter's tilte (default: unk)"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("ec"), wxT("embedded-cue"), _("Try to read embedded cue sheet (requires MediaInfo library)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("nec"), wxT("no-embedded-cue"), _("Try to read embedded cue sheet"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("c"), wxT("save-cue-sheet"), _("Save cue sheet instead of Matroska chapter file. This switch allows to extract embedded cue sheet when used with ec option."), wxCMD_LINE_PARAM_OPTIONAL );
@@ -130,6 +131,8 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddSwitch( wxT("r"), wxT("round-down-to-full-frames"), _("Round down track end time to full frames (default: no)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("nr"), wxT("dont-round-down-to-full-frames"), _("Do not round down track end time to full frames"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("hi"), wxT("hidden-indexes"), _("Convert indexes to hidden (sub)chapters"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, wxT("merge"), _("Merge cue sheets (default: no)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, wxT("dont-merge"), _("Do not merge cue sheets"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("nhi"), wxT("no-hidden-indexes"), _("Convert indexes to normal (non-hidden) (sub)chapters (default)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxT("dce"), wxT("default-cue-sheet-file-extension"), wxString::Format( _("Default cue sheet file extension (default: %s)"), CUE_SHEET_EXT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxT("dme"), wxT("default-matroska-chapters-file-extension"), wxString::Format( _("Default Matroska chapters XML file extension (default: %s)"), MATROSKA_CHAPTERS_EXT) , wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
@@ -217,6 +220,9 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	if ( cmdLine.Found( wxT("tc") ) ) m_bGenerateTagsFromComments = true;
 	if ( cmdLine.Found( wxT("ntc") ) ) m_bGenerateTagsFromComments = false;
+
+	if ( cmdLine.Found( wxT("merge") ) ) m_bMerge = true;
+	if ( cmdLine.Found( wxT("dont-merge") ) ) m_bMerge = false;
 
 	if ( cmdLine.Found( wxT("dce"), &s ) )
 	{
@@ -353,6 +359,7 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
 	as.Add( wxString::Format( wxT("Chapter string language: %s"), m_sLang ) );
 	as.Add( wxString::Format( wxT("For track 01 assume index %s as beginning of track"), BoolToIdx(m_bTrackOneIndexOne) ) );
 	as.Add( wxString::Format( wxT("Round down track end time to full frames: %s"), BoolToStr(m_bRoundDownToFullFrames) ) );
+	as.Add( wxString::Format( wxT("Merge mode: %s"), BoolToStr(m_bMerge) ) );
 	as.Add( wxString::Format( wxT("Convert indexes to hidden subchapters: %s"), BoolToStr(m_bHiddenIndexes) ) );
 	as.Add( wxString::Format( wxT("Default cue sheet file extension: %s"), m_sCueSheetExt ) );
 	as.Add( wxString::Format( wxT("Default Matroska chapters XML file extension: %s"), m_sMatroskaChaptersXmlExt ) );
@@ -381,7 +388,7 @@ void wxConfiguration::Dump() const
 	}
 }
 
-void wxConfiguration::BuildXmlComments( const wxInputFile& inputFile, const wxString& sOutputFile, wxXmlNode* pNode ) const
+void wxConfiguration::BuildXmlComments( const wxString& sOutputFile, wxXmlNode* pNode ) const
 {
 	wxString sInit;
 	sInit.Printf( wxT("This file was created by %s tool"), wxGetApp().GetAppDisplayName() );
@@ -394,7 +401,6 @@ void wxConfiguration::BuildXmlComments( const wxInputFile& inputFile, const wxSt
 	as.Add( wxString::Format( wxT("Application version: %s"), wxGetApp().APP_VERSION ) );
 	as.Add( wxString::Format( wxT("Application vendor: %s"), wxGetApp().GetVendorDisplayName() ) );
 	as.Add( wxString::Format( wxT("Creation time: %s %s"), dtNow.FormatISODate(), dtNow.FormatISOTime() ) );
-	as.Add( wxString::Format( wxT("CUE file: \u201C%s\u201D"), inputFile.ToString(false) ) );
 	as.Add( wxString::Format( wxT("Output file: \u201C%s\u201D"), GetFileName(sOutputFile) ) );
 
 	FillArray( as );
@@ -593,6 +599,11 @@ const wxMBConv& wxConfiguration::GetCueSheetFileEncoding()
 	{
 		return wxConvLocal;
 	}
+}
+
+bool wxConfiguration::GetMerge() const
+{
+	return m_bMerge;
 }
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
