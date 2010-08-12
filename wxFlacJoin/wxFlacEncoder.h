@@ -9,12 +9,12 @@ class wxFlacEncoder :public FLAC::Encoder::Stream
 {
 public:
 
-	wxFlacEncoder( wxOutputStream& );
+	wxFlacEncoder( wxOutputStream* = (wxOutputStream*)NULL );
 	virtual ~wxFlacEncoder(void);
 
 protected:
 
-	wxOutputStream& m_outputStream;
+	wxOutputStream* m_outputStream;
 
 protected:
 

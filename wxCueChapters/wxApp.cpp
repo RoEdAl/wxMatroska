@@ -39,8 +39,8 @@ void wxMyApp::AddVersionInfos( wxCmdLineParser& cmdline )
 	cmdline.AddUsageText( wxString::Format( wxT("Application version: %s"), APP_VERSION ) );
 	cmdline.AddUsageText( wxString::Format( wxT("Author: %s"), APP_AUTHOR ) );
 	cmdline.AddUsageText( wxT("License: Simplified BSD License - http://www.opensource.org/licenses/bsd-license.php") );
+	cmdline.AddUsageText( wxString::Format( wxT("wxWidgets version %d.%d.%d Copyright (C) 1992-2008 Julian Smart, Robert Roebling, Vadim Zeitlin and other members of the wxWidgets team"), wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER ) );
 	cmdline.AddUsageText( wxString::Format( wxT("Operating system: %s"), wxPlatformInfo::Get().GetOperatingSystemDescription() ) );
-	cmdline.AddUsageText( wxString::Format( wxT("wxWidgets version: %d.%d.%d"), wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER ) );
 }
 
 void wxMyApp::AddInputFileFormatDescription( wxCmdLineParser& cmdline )

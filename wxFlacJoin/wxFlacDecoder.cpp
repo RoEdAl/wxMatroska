@@ -23,18 +23,31 @@ wxFlacDecoder::~wxFlacDecoder(void)
 
 ::FLAC__StreamDecoderSeekStatus wxFlacDecoder::seek_callback(FLAC__uint64 absolute_byte_offset)
 {
+	if ( !m_inputStream.IsSeekable() )
+	{
+		return FLAC__STREAM_DECODER_SEEK_STATUS_UNSUPPORTED;
+	}
 	wxFileOffset res = m_inputStream.SeekI( absolute_byte_offset );
 	return (res == wxInvalidOffset)? FLAC__STREAM_DECODER_SEEK_STATUS_ERROR : FLAC__STREAM_DECODER_SEEK_STATUS_OK;
 }
 
 ::FLAC__StreamDecoderTellStatus wxFlacDecoder::tell_callback(FLAC__uint64 *absolute_byte_offset)
 {
+	if ( !m_inputStream.IsSeekable() )
+	{
+		return FLAC__STREAM_DECODER_TELL_STATUS_UNSUPPORTED;
+	}
+
 	wxFileOffset pos = m_inputStream.TellI();
 	if (pos != wxInvalidOffset)
 	{
 		*absolute_byte_offset = pos;
+		return FLAC__STREAM_DECODER_TELL_STATUS_OK;
 	}
-	return (pos == wxInvalidOffset)? FLAC__STREAM_DECODER_TELL_STATUS_ERROR : FLAC__STREAM_DECODER_TELL_STATUS_OK;
+	else
+	{
+		return FLAC__STREAM_DECODER_TELL_STATUS_ERROR;
+	}
 }
 
 ::FLAC__StreamDecoderLengthStatus wxFlacDecoder::length_callback(FLAC__uint64 *stream_length)
@@ -44,7 +57,7 @@ wxFlacDecoder::~wxFlacDecoder(void)
 	{
 		*stream_length = len;
 	}
-	return (len == wxInvalidOffset)? FLAC__STREAM_DECODER_LENGTH_STATUS_ERROR : FLAC__STREAM_DECODER_LENGTH_STATUS_OK;
+	return (len == wxInvalidOffset)? FLAC__STREAM_DECODER_LENGTH_STATUS_UNSUPPORTED : FLAC__STREAM_DECODER_LENGTH_STATUS_OK;
 }
 
 bool wxFlacDecoder::eof_callback()
@@ -54,6 +67,7 @@ bool wxFlacDecoder::eof_callback()
 
 ::FLAC__StreamDecoderWriteStatus wxFlacDecoder::write_callback(const ::FLAC__Frame *frame, const FLAC__int32 * const buffer[])
 {
+	m_outputStream.Write( buffer, frame->header.blocksize );
 	return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 }
 
