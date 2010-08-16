@@ -5,6 +5,36 @@
 #ifndef _WX_CUE_COMPONENT_H
 #define _WX_CUE_COMPONENT_H
 
+class wxCueTag :public wxObject
+{
+	DECLARE_ABSTRACT_CLASS(wxCueTag)
+
+	public:
+
+	wxCueTag();
+	wxCueTag( const wxCueTag& );
+
+	const wxString& GetName() const;
+	const wxString& GetValue() const;
+
+	wxCueTag& SetName( const wxString& );
+	wxCueTag& SetValue( const wxString& );
+
+	bool operator==( const wxCueTag& );
+	wxCueTag& operator=( const wxCueTag& );
+
+	protected:
+
+	wxString m_sName;
+	wxString m_sValue;
+
+	protected:
+
+	void copy( const wxCueTag& );
+};
+
+WX_DECLARE_OBJARRAY(wxCueTag, wxArrayCueTag );
+
 class wxCueComponent :public wxObject
 {
 	DECLARE_ABSTRACT_CLASS(wxCueComponent)
@@ -67,6 +97,7 @@ public:
 	void ParseComment( const wxString& );
 	void ParseGarbage( const wxString& );
 	bool AddCdTextInfo( const wxString&, const wxString& );
+	void AddCdTextInfoEx( const wxString&, const wxString& );
 
 	bool CheckEntryType( ENTRY_TYPE ) const;
 
@@ -87,6 +118,8 @@ public:
 	static bool GetCdTextInfoFormat( const wxString&, ENTRY_FORMAT& );
 	static bool GetCdTextInfoType( const wxString&, ENTRY_TYPE& );
 	static bool GetEntryType( const wxString&, ENTRY_TYPE& );
+
+	void GetTagsFromComments( wxArrayCueTag&, bool = true ) const;
 
 	static wxString FormatCdTextData( const wxString&, const wxString& );
 

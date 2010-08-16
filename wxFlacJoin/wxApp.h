@@ -19,7 +19,7 @@ protected:
 protected:
 
 	static bool CheckLicense();
-	static void ShowLicense( bool = false );
+	static void ShowLicense( bool );
 	void AddSeparator( wxCmdLineParser& );
 	static void AddVersionInfos( wxCmdLineParser& );
 

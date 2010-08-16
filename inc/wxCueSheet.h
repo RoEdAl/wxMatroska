@@ -53,6 +53,8 @@ public:
 
 	wxTrack& GetTrack( size_t );
 	wxTrack& GetLastTrack();
+	bool HasTrack( unsigned long ) const;
+	wxTrack& GetTrackByNumber( unsigned long );
 	const wxTrack& GetTrackConst( size_t ) const;
 	const wxTrack& GetLastTrackConst() const;
 	wxCueSheet& AddTrack( const wxTrack& );

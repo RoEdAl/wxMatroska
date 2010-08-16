@@ -3,7 +3,7 @@
 */
 
 #include "StdWx.h"
-#include "wxFlacDecoder.h"
+#include <wxFlacDecoder.h>
 
 wxFlacDecoder::wxFlacDecoder(wxInputStream& inputStream, wxOutputStream& outputStream)
 	:m_inputStream(inputStream),m_outputStream(outputStream)

@@ -41,9 +41,6 @@ protected:
 	wxString m_sOutputFile;
 	wxString m_sTagsFile;
 
-	wxRegEx m_reCommentMeta;
-	wxUnquoter m_unquoter;
-
 	wxULongLong m_offset;
 	size_t m_nTotalParts;
 

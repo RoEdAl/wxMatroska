@@ -45,8 +45,8 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="..\inc;..\..\include,$(WXWIN)\include,$(WXWIN)\lib\vc_lib\mswud"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
+				AdditionalIncludeDirectories="..\inc;..\..\include;&quot;$(WXWIN)\include&quot;;&quot;$(WXWIN)\lib\vc_lib\mswud&quot;;&quot;$(FLACDIR)\include&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;FLAC__NO_DLL"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
@@ -108,8 +108,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\inc;..\..\include,$(WXWIN)\include,$(WXWIN)\lib\vc_lib\mswud"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
+				AdditionalIncludeDirectories="..\inc;..\..\include;&quot;$(WXWIN)\include&quot;;&quot;$(WXWIN)\lib\vc_lib\mswud&quot;;&quot;$(FLACDIR)\include&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;FLAC__NO_DLL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -197,6 +197,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\wxFlacDecoder.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\wxFlacMetaDataReader.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\wxIndex.cpp"
 				>
 			</File>
@@ -231,6 +239,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\wxFlacMetaDataReader.h"
+				>
+			</File>
+			<File
 				RelativePath=".\wxUnquoter.h"
 				>
 			</File>
@@ -256,6 +268,10 @@
 			</File>
 			<File
 				RelativePath="..\inc\wxDataFile.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inc\wxFlacDecoder.h"
 				>
 			</File>
 			<File

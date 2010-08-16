@@ -9,6 +9,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wxCueChapters", "wxCueChapt
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wxFlacJoin", "wxFlacJoin\wxFlacJoin.vcproj", "{9F70551C-EF45-41B9-AF67-634E25D3C9E3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4C560D24-C00B-49AC-9913-3ABB273E90AE} = {4C560D24-C00B-49AC-9913-3ABB273E90AE}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

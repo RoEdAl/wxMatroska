@@ -254,11 +254,9 @@ wxXmlCueSheetRenderer::wxXmlCueSheetRenderer(
 	m_pXmlTags((wxXmlDocument*)NULL),
 	m_cfg(cfg),
 	m_inputFile( inputFile ),
-	m_reCommentMeta( wxT("\\A([[:upper:][.hyphen.][.underscore.][.low-line.]]+)[[:space:]]+([^[:space:]].+)\\Z"), wxRE_ADVANCED ),
 	m_offset( wxULL(0) ),
 	m_nTotalParts(0)
 {
-	wxASSERT( m_reCommentMeta.IsValid() );
 	cfg.GetOutputFile( inputFile, m_sOutputFile, m_sTagsFile );
 }
 
@@ -401,7 +399,7 @@ void wxXmlCueSheetRenderer::AddCdTextInfo( const wxCueComponent& component, wxXm
 		wxCueComponent::GetCdTextInfoFormat( i->first, entryFormat );
 		wxCueComponent::GetCdTextInfoType( i->first, entryType );
 
-		if ( (entryFormat == wxCueComponent::CHARACTER) && component.CheckEntryType( entryType ) )
+		if ( ((entryFormat == wxCueComponent::CHARACTER) || (entryFormat == wxCueComponent::BINARY)) && component.CheckEntryType( entryType ) )
 		{ // we can save this entry
 			wxXmlNode* pSimple = create_simple_tag( i->first, i->second, m_cfg.GetLang() );
 			pTag->AddChild( pSimple );
@@ -414,16 +412,13 @@ void wxXmlCueSheetRenderer::AddCdTextInfo( const wxCueComponent& component, wxXm
 	}
 
 	const wxArrayString& comments = component.GetComments();
-	for( wxArrayString::const_iterator i = comments.begin(); i != comments.end(); i++ )
+	wxArrayCueTag tags;
+	component.GetTagsFromComments( tags );
+	size_t numTags = tags.Count();
+	for( size_t i = 0; i < numTags; i++ )
 	{
-		if ( m_reCommentMeta.Matches( *i ) )
-		{
-			wxString sName( m_reCommentMeta.GetMatch( *i, 1 ) );
-			wxString sContent( m_unquoter.Unquote( m_reCommentMeta.GetMatch( *i, 2 ) ) );
-
-			wxXmlNode* pSimple = create_simple_tag( sName, sContent, m_cfg.GetLang() );
-			pTag->AddChild( pSimple );
-		}
+		wxXmlNode* pSimple = create_simple_tag( tags[i].GetName(), tags[i].GetValue(), m_cfg.GetLang() );
+		pTag->AddChild( pSimple );
 	}
 }
 

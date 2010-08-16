@@ -3,7 +3,55 @@
 */
 
 #include "StdWx.h"
-#include "wxCueComponent.h"
+#include <wxCueComponent.h>
+#include <wxUnquoter.h>
+
+IMPLEMENT_CLASS( wxCueTag, wxObject )
+
+wxCueTag::wxCueTag()
+{
+}
+
+wxCueTag::wxCueTag( const wxCueTag& cueTag )
+{
+	copy( cueTag );
+}
+
+const wxString& wxCueTag::GetName() const
+{
+	return m_sName;
+}
+
+const wxString& wxCueTag::GetValue() const
+{
+	return m_sValue;
+}
+
+wxCueTag& wxCueTag::SetName(const wxString& sName )
+{
+	m_sName = sName;
+	return *this;
+}
+
+wxCueTag& wxCueTag::SetValue(const wxString& sValue)
+{
+	m_sValue = sValue;
+	return *this;
+}
+
+void wxCueTag::copy(const wxCueTag& cueTag )
+{
+	m_sName = cueTag.m_sName;
+	m_sValue = cueTag.m_sValue;
+}
+
+wxCueTag& wxCueTag::operator =(const wxCueTag& cueTag )
+{
+	copy( cueTag );
+	return *this;
+}
+
+// ================================================================================
 
 IMPLEMENT_ABSTRACT_CLASS( wxCueComponent, wxObject )
 
@@ -187,6 +235,37 @@ bool wxCueComponent::AddCdTextInfo( const wxString& sKeyword, const wxString& sB
 	return false;
 }
 
+void wxCueComponent::AddCdTextInfoEx( const wxString& sKeyword, const wxString& sBody )
+{
+	wxRegEx reSpace( wxT("[[:space:]]+"), wxRE_ADVANCED|wxRE_NOSUB );
+	wxASSERT( reSpace.IsValid() );
+
+	bool bAdd = false;
+	for( size_t i=0; i<CdTextFieldsSize; i++ )
+	{
+		if ( ( sKeyword.CmpNoCase( CdTextFields[i].keyword ) == 0 ) &&
+			 CheckEntryType( CdTextFields[i].type )
+		)
+		{
+			m_cdTextInfo[ CdTextFields[i].keyword ] = sBody;
+			bAdd = true;
+			break;
+		}
+	}
+
+	if ( !bAdd )
+	{
+		if ( reSpace.Matches( sKeyword ) )
+		{
+			ParseComment( wxString::Format( wxT("\"%s\" %s"), sKeyword.Upper(), sBody ) );
+		}
+		else
+		{
+			ParseComment( wxString::Format( wxT("%s %s"), sKeyword.Upper(), sBody ) );
+		}
+	}
+}
+
 void wxCueComponent::Clear()
 {
 	m_comments.Clear();
@@ -264,4 +343,52 @@ void wxCueComponent::GetReplacements( wxCueComponent::wxHashString& replacements
 bool wxCueComponent::IsTrack() const
 {
 	return m_bTrack;
+}
+
+#include <wx/arrimpl.cpp>
+WX_DEFINE_OBJARRAY(wxArrayCueTag);
+
+static bool find_tag( const wxArrayCueTag& tags, const wxCueTag& cueTag )
+{
+	size_t numTags = tags.Count();
+	for( size_t i=0; i<numTags; i++ )
+	{
+		if ( (cueTag.GetName().CmpNoCase( tags[i].GetName() ) == 0) &&
+			 (cueTag.GetValue().Cmp( tags[i].GetValue() ) == 0)
+		   )
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+void wxCueComponent::GetTagsFromComments( wxArrayCueTag& tags, bool bIgnoreDuplicates ) const
+{
+	wxUnquoter unquoter;
+	wxRegEx reCommentMeta( wxT("\\A([[.quotation-mark.]]{0,1})([[:upper:][.hyphen.][.underscore.][:space:][.low-line.]]+)\\1[[:space:]]+([^[:space:]].+)\\Z"), wxRE_ADVANCED );
+	wxASSERT( reCommentMeta.IsValid() );
+
+	tags.Clear();
+	wxCueTag cueTag;
+	for( wxArrayString::const_iterator i = m_comments.begin(); i != m_comments.end(); i++ )
+	{
+		if ( reCommentMeta.Matches( *i ) )
+		{
+			cueTag.SetName( reCommentMeta.GetMatch( *i, 2 ) );
+			cueTag.SetValue( unquoter.Unquote( reCommentMeta.GetMatch( *i, 3 ) ) );
+			
+			if ( bIgnoreDuplicates )
+			{
+				if ( !find_tag( tags, cueTag ) )
+				{
+					tags.Add( cueTag );
+				}
+			}
+			else
+			{
+				tags.Add( cueTag );
+			}
+		}
+	}
 }

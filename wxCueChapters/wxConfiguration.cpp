@@ -5,6 +5,7 @@
 #include "StdWx.h"
 #include "wxConfiguration.h"
 #include "wxApp.h"
+#include <wxCueSheetReader.h>
 
 const wxChar wxConfiguration::CUE_SHEET_EXT[] = wxT("cue");
 const wxChar wxConfiguration::MATROSKA_CHAPTERS_EXT[] = wxT("mkc.xml");
@@ -88,7 +89,8 @@ wxConfiguration::wxConfiguration(void)
 	 m_sCueSheetExt(CUE_SHEET_EXT),
 	 m_sMatroskaChaptersXmlExt(MATROSKA_CHAPTERS_EXT),
 	 m_sMatroskaTagsXmlExt(MATROSKA_TAGS_EXT),
-	 m_bMerge(false)
+	 m_bMerge(false),
+	 m_nEmbeddedModeFlags(wxCueSheetReader::EC_FALC_USE_VORBIS_COMMENTS|wxCueSheetReader::EC_FLAC_READ_TAG_FIRST_THEN_COMMENT)
 {
 	ReadLanguagesStrings( m_asLang );
 }
@@ -139,6 +141,13 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddOption( wxT("dte"), wxT("default-matroska-tags-file-extension"), wxString::Format( _("Default Matroska tags XML file extension (default: %s)"), MATROSKA_TAGS_EXT) , wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("cq"), wxT("correct-quotation-marks"), _("Correct \"simple 'quotation' marks\" to \u201Cenglish \u2018quotation\u2019 marks\u201D inside strings (default: on)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("ncq"), wxT("dont-correct-quotation-marks"), _("Dont correct \"simple 'quotation' marks\" to \u201Cenglish \u2018quotation\u2019 marks\u201D inside strings"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, wxT("flac-read-none"), _("Do not read cuesheet from FLAC container"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, wxT("flac-read-cuesheet-tag-first"), _("Try to read embedded cuesheet from FLAC container - first try read CUESHEET tag then try CUESHEET comment (default)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, wxT("flac-read-vorbis-comment-first"), _("Try to read embedded cuesheet from FLAC container - first try read CUESHEET comment then try CUESHEET tag"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, wxT("flac-read-cuesheet-tag-only"), _("Try to read embedded cuesheet from FLAC container - try read CUESHEET tag only"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, wxT("flac-read-vorbis-comment-only"), _("Try to read embedded cuesheet from FLAC container - try read CUESHEET comment only"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, wxT("flac-append-tags"), _("Append FLAC comments (default: yes)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, wxT("flac-dont-append-tags"), _("Don't append FLAC comments (default: yes)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddParam( _("<cue sheet>"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE|wxCMD_LINE_PARAM_OPTIONAL );
 }
 
@@ -322,6 +331,49 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 			bRes = false;
 		}
 	}
+
+	if ( cmdLine.Found( wxT("flac-read-none") ) )
+	{
+		m_nEmbeddedModeFlags &= ~wxCueSheetReader::EC_FLAC_READ_MASK;
+		m_nEmbeddedModeFlags |= wxCueSheetReader::EC_FLAC_READ_NONE;
+	}
+
+	if ( cmdLine.Found( wxT("flac-read-cuesheet-tag-first") ) )
+	{
+		m_nEmbeddedModeFlags &= ~wxCueSheetReader::EC_FLAC_READ_MASK;
+		m_nEmbeddedModeFlags |= wxCueSheetReader::EC_FLAC_READ_TAG_FIRST_THEN_COMMENT;
+	}
+
+	if ( cmdLine.Found( wxT("flac-read-vorbis-comment-first") ) )
+	{
+		m_nEmbeddedModeFlags &= ~wxCueSheetReader::EC_FLAC_READ_MASK;
+		m_nEmbeddedModeFlags |= wxCueSheetReader::EC_FLAC_READ_COMMENT_FIRST_THEN_TAG;
+	}
+
+	if ( cmdLine.Found( wxT("flac-read-cuesheet-tag-only") ) )
+	{
+		m_nEmbeddedModeFlags &= ~wxCueSheetReader::EC_FLAC_READ_MASK;
+		m_nEmbeddedModeFlags |= wxCueSheetReader::EC_FLAC_READ_TAG_ONLY;
+	}
+
+	if ( cmdLine.Found( wxT("flac-read-vorbis-comment-only") ) )
+	{
+		m_nEmbeddedModeFlags &= ~wxCueSheetReader::EC_FLAC_READ_MASK;
+		m_nEmbeddedModeFlags |= wxCueSheetReader::EC_FLAC_READ_COMMENT_ONLY;
+	}
+
+	if ( cmdLine.Found( wxT("flac-append-tags") ) )
+	{
+		m_nEmbeddedModeFlags &= ~wxCueSheetReader::EC_FALC_USE_VORBIS_COMMENTS;
+		m_nEmbeddedModeFlags |= wxCueSheetReader::EC_FALC_USE_VORBIS_COMMENTS;
+	}
+
+	if ( cmdLine.Found( wxT("flac-dont-append-tags") ) )
+	{
+		m_nEmbeddedModeFlags &= ~wxCueSheetReader::EC_FALC_USE_VORBIS_COMMENTS;
+		m_nEmbeddedModeFlags |= 0;
+	}
+
 	return bRes;
 }
 
@@ -604,6 +656,11 @@ const wxMBConv& wxConfiguration::GetCueSheetFileEncoding()
 bool wxConfiguration::GetMerge() const
 {
 	return m_bMerge;
+}
+
+unsigned int wxConfiguration::GetEmbeddedModeFlags() const
+{
+	return m_nEmbeddedModeFlags;
 }
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!

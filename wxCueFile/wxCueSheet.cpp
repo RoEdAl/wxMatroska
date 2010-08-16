@@ -66,6 +66,36 @@ wxTrack& wxCueSheet::GetTrack(size_t idx)
 	return m_tracks[idx];
 }
 
+bool wxCueSheet::HasTrack( unsigned long trackNo ) const
+{
+	size_t numTracks = m_tracks.Count();
+	for( size_t i=0; i<numTracks; i++ )
+	{
+		if ( m_tracks[i].GetNumber() == trackNo )
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+wxTrack& wxCueSheet::GetTrackByNumber( unsigned long trackNo )
+{
+	wxASSERT( HasTrack( trackNo ) );
+
+	size_t numTracks = m_tracks.Count();
+	for( size_t i=0; i<numTracks; i++ )
+	{
+		if ( m_tracks[i].GetNumber() == trackNo )
+		{
+			return m_tracks[i];
+		}
+	}
+
+	wxASSERT( false );
+	return m_tracks[0];
+}
+
 wxTrack& wxCueSheet::GetLastTrack()
 {
 	return m_tracks.Last();

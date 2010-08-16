@@ -25,4 +25,6 @@
 #include <wx/dynlib.h>
 #include <wx/filename.h>
 
+#include <FLAC++/all.h>
+
 #endif // _STD_WX_H

@@ -31,5 +31,7 @@
 #include <wx/stdpaths.h>
 #include <wx/tokenzr.h>
 
+#include <FLAC++/all.h>
+
 #endif // _STD_WX_H
 

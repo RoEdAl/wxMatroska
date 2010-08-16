@@ -7,8 +7,16 @@
 
 #include "wxCueSheet.h"
 
+#ifndef _WX_INDEX_H_
+class wxIndex;
+#endif
+
 #ifndef _WX_DATA_FILE_H_
 #include "wxDatafile.h"
+#endif
+
+#ifndef _WX_FLAC_META_DATA_READER_H_
+class wxFlacMetaDataReader;
 #endif
 
 #ifndef _WX_UNQUOTER_H_
@@ -18,6 +26,20 @@
 class wxCueSheetReader :public wxObject
 {
 	DECLARE_DYNAMIC_CLASS(wxCueSheetReader)
+
+public:
+
+	enum
+	{
+		EC_FLAC_READ_NONE = 0,
+		EC_FLAC_READ_TAG_FIRST_THEN_COMMENT = 1,
+		EC_FLAC_READ_COMMENT_FIRST_THEN_TAG = 2,
+		EC_FLAC_READ_COMMENT_ONLY = 3,
+		EC_FLAC_READ_TAG_ONLY = 4,
+		EC_FLAC_READ_MASK = 7,
+		EC_FALC_USE_VORBIS_COMMENTS = 8,
+		EC_FLAC_MASK = 15
+	};
 
 protected:
 
@@ -96,6 +118,11 @@ protected:
 
 	bool AddCdTextInfo( const wxString&, const wxString& );
 
+	bool ReadEmbeddedInFlacCueSheet( const wxString&, int );
+	bool ReadCueSheetFromVorbisComment( const wxFlacMetaDataReader&, bool );
+	bool ReadCueSheetFromCueSheetTag( const wxFlacMetaDataReader&, bool );
+	bool AppendFlacComments( const wxFlacMetaDataReader& );
+
 public:
 
 	wxCueSheetReader(void);
@@ -105,7 +132,7 @@ public:
 	bool ReadCueSheet( const wxString&, wxMBConv& );
 	bool ReadCueSheet( wxInputStream& );
 	bool ReadCueSheet( wxInputStream&, wxMBConv& );
-	bool ReadEmbeddedCueSheet( const wxString& );
+	bool ReadEmbeddedCueSheet( const wxString&, int = 0 );
 
 	bool ErrorsAsWarnings() const;
 	wxCueSheetReader& SetErrorsAsWarnings( bool = true );

@@ -33,6 +33,7 @@ protected:
 	bool m_bRoundDownToFullFrames;
 	bool m_bHiddenIndexes;
 	bool m_bMerge;
+	unsigned int m_nEmbeddedModeFlags;
 
 	wxString m_sAlternateExtensions;
 	wxString m_sLang;
@@ -80,6 +81,7 @@ public:
 	bool IsCueSheetFileUtf8Encoding() const;
 	const wxMBConv& GetCueSheetFileEncoding();
 	bool GetMerge() const;
+	unsigned int GetEmbeddedModeFlags() const;
 
 	wxString GetOutputFile( const wxInputFile& ) const;
 	void GetOutputFile( const wxInputFile&, wxString&, wxString& ) const;
