@@ -312,6 +312,7 @@ int wxMyApp::OnRun()
 {
 	wxCueSheetReader reader;
 	reader.CorrectQuotationMarks( m_cfg.CorrectQuotationMarks(), m_cfg.GetLang() );
+	reader.SetParseComments( m_cfg.GenerateTagsFromComments() );
 
 	int res = 0;
 	const wxArrayInputFile& inputFile = m_cfg.GetInputFiles();

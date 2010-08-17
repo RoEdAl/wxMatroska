@@ -13,6 +13,7 @@ class wxCueTag :public wxObject
 
 	wxCueTag();
 	wxCueTag( const wxCueTag& );
+	wxCueTag( const wxString&, const wxString& );
 
 	const wxString& GetName() const;
 	const wxString& GetValue() const;
@@ -77,11 +78,14 @@ protected:
 
 protected:
 
+	wxRegEx m_reCommentMeta;
+
 	bool m_bTrack;
 	wxArrayString m_comments;
 	wxArrayString m_garbage;
 
-	wxHashString m_cdTextInfo;
+	wxArrayCueTag m_cdTextTags;
+	wxArrayCueTag m_tags;
 
 protected:
 
@@ -92,9 +96,11 @@ public:
 	const wxArrayString& GetComments() const;
 	const wxArrayString& GetGarbage() const;
 	virtual bool HasGarbage() const;
-	const wxHashString& GetCdTextInfo() const;
+	const wxArrayCueTag& GetCdTextTags() const;
+	const wxArrayCueTag& GetTags() const;
+	void GetTags( wxArrayCueTag& ) const;
 
-	void ParseComment( const wxString& );
+	void ParseComment( const wxString&, bool = true );
 	void ParseGarbage( const wxString& );
 	bool AddCdTextInfo( const wxString&, const wxString& );
 	void AddCdTextInfoEx( const wxString&, const wxString& );
@@ -118,8 +124,6 @@ public:
 	static bool GetCdTextInfoFormat( const wxString&, ENTRY_FORMAT& );
 	static bool GetCdTextInfoType( const wxString&, ENTRY_TYPE& );
 	static bool GetEntryType( const wxString&, ENTRY_TYPE& );
-
-	void GetTagsFromComments( wxArrayCueTag&, bool = true ) const;
 
 	static wxString FormatCdTextData( const wxString&, const wxString& );
 

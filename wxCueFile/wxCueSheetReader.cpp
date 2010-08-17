@@ -82,7 +82,8 @@ wxCueSheetReader::wxCueSheetReader(void)
 	 m_reDataFile( GetDataFileRegExp(), wxRE_ADVANCED ),
 	 m_reCatalog( wxT("\\d{13}"), wxRE_ADVANCED|wxRE_NOSUB ),
 	 m_reIsrc( wxT("([[:upper:]]{2}|00)-{0,1}[[:upper:][:digit:]]{3}-{0,1}[[:digit:]]{5}"), wxRE_ADVANCED|wxRE_NOSUB ),
-	 m_bErrorsAsWarnings( true )
+	 m_bErrorsAsWarnings( true ),
+	 m_bParseComments( true )
 {
 	wxASSERT( m_reKeywords.IsValid() );
 	wxASSERT( m_reCdTextInfo.IsValid() );
@@ -121,6 +122,17 @@ bool wxCueSheetReader::ErrorsAsWarnings() const
 wxCueSheetReader& wxCueSheetReader::SetErrorsAsWarnings( bool bErrorsAsWarnings )
 {
 	m_bErrorsAsWarnings = bErrorsAsWarnings;
+	return *this;
+}
+
+bool wxCueSheetReader::ParseComments() const
+{
+	return m_bParseComments;
+}
+
+wxCueSheetReader& wxCueSheetReader::SetParseComments( bool bParseComments )
+{
+	m_bParseComments = bParseComments;
 	return *this;
 }
 
@@ -643,11 +655,11 @@ void wxCueSheetReader::ParseComment( const wxString& WXUNUSED(sToken), const wxS
 {
 	if ( IsTrack() )
 	{
-		GetLastTrack().ParseComment( sComment );
+		GetLastTrack().ParseComment( sComment, m_bParseComments );
 	}
 	else
 	{
-		m_cueSheet.ParseComment( sComment );
+		m_cueSheet.ParseComment( sComment, m_bParseComments );
 	}
 }
 

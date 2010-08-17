@@ -389,32 +389,26 @@ static wxXmlNode* create_simple_tag( const wxString& sName, const wxString& sVal
 
 void wxXmlCueSheetRenderer::AddCdTextInfo( const wxCueComponent& component, wxXmlNode* pTag )
 {
-	const wxCueComponent::wxHashString& cdTextInfo = component.GetCdTextInfo();
-	for( wxCueComponent::wxHashString::const_iterator i=cdTextInfo.begin();
-		i != cdTextInfo.end(); i++ )
+	const wxArrayCueTag& cdTextTags = component.GetCdTextTags();
+	size_t numTags = cdTextTags.Count();
+	for( size_t i=0; i<numTags; i++ )
 	{
 		wxCueComponent::ENTRY_FORMAT entryFormat;
 		wxCueComponent::ENTRY_TYPE entryType;
 
-		wxCueComponent::GetCdTextInfoFormat( i->first, entryFormat );
-		wxCueComponent::GetCdTextInfoType( i->first, entryType );
+		wxCueComponent::GetCdTextInfoFormat( cdTextTags[i].GetName(), entryFormat );
+		wxCueComponent::GetCdTextInfoType( cdTextTags[i].GetName(), entryType );
 
 		if ( ((entryFormat == wxCueComponent::CHARACTER) || (entryFormat == wxCueComponent::BINARY)) && component.CheckEntryType( entryType ) )
 		{ // we can save this entry
-			wxXmlNode* pSimple = create_simple_tag( i->first, i->second, m_cfg.GetLang() );
+			wxXmlNode* pSimple = create_simple_tag( cdTextTags[i].GetName(), cdTextTags[i].GetValue(), m_cfg.GetLang() );
 			pTag->AddChild( pSimple );
 		}
 	}
 
-	if ( !m_cfg.GenerateTagsFromComments() )
-	{
-		return;
-	}
-
-	const wxArrayString& comments = component.GetComments();
 	wxArrayCueTag tags;
-	component.GetTagsFromComments( tags );
-	size_t numTags = tags.Count();
+	component.GetTags( tags );
+	numTags = tags.Count();
 	for( size_t i = 0; i < numTags; i++ )
 	{
 		wxXmlNode* pSimple = create_simple_tag( tags[i].GetName(), tags[i].GetValue(), m_cfg.GetLang() );

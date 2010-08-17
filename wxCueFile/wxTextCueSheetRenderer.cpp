@@ -95,10 +95,11 @@ void wxTextCueSheetRenderer::InternalRenderComponent(const wxCueComponent& compo
 	}
 
 	// dump CT-TEXT info
-	wxCueComponent::wxHashString cdTextInfo = component.GetCdTextInfo();
-	for( wxCueComponent::wxHashString::const_iterator i=cdTextInfo.begin(); i != cdTextInfo.end(); i++ )
+	const wxArrayCueTag& tags = component.GetCdTextTags();
+	size_t numTags = tags.Count();
+	for( size_t i=0; i<numTags; i++ )
 	{
-		DumpComponentString( component, i->first, wxCueComponent::FormatCdTextData( i->first, i->second ) );
+		DumpComponentString( component, tags[i].GetName(), wxCueComponent::FormatCdTextData( tags[i].GetName(), tags[i].GetValue() ) );
 	}
 
 	// dump garbage

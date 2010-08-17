@@ -63,6 +63,7 @@ protected:
 	wxArrayString m_cueLines;
 	wxCueSheet m_cueSheet;
 	bool m_bErrorsAsWarnings;
+	bool m_bParseComments;
 	wxString m_sLang;
 	wxFileName m_cueFileName;
 
@@ -136,6 +137,8 @@ public:
 
 	bool ErrorsAsWarnings() const;
 	wxCueSheetReader& SetErrorsAsWarnings( bool = true );
+	bool ParseComments() const;
+	wxCueSheetReader& SetParseComments( bool = true );
 	void CorrectQuotationMarks( bool, const wxString& );
 
 	const wxArrayString& GetCueLines() const;
