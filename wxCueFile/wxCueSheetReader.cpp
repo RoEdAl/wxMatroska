@@ -342,6 +342,8 @@ bool wxCueSheetReader::AppendFlacComments( const wxFlacMetaDataReader& flacReade
 	for( wxFlacMetaDataReader::wxHashString::const_iterator i=comments.begin(); i!=comments.end(); i++ )
 	{
 		if ( i->first.CmpNoCase( wxT("CUESHEET") ) == 0 ) continue;
+		if ( i->first.CmpNoCase( wxT("TOTALTRACKS") ) == 0 ) continue;
+
 		if ( reTrackComment.Matches( i->first ) )
 		{
 			wxString sTagNumber( reTrackComment.GetMatch( i->first, 1 ) );
@@ -366,7 +368,7 @@ bool wxCueSheetReader::AppendFlacComments( const wxFlacMetaDataReader& flacReade
 		}
 		else
 		{
-			m_cueSheet.AddCdTextInfoEx( i->first.Upper(), i->second );
+			m_cueSheet.AddCdTextInfoEx( i->first, i->second );
 		}
 	}
 	return true;

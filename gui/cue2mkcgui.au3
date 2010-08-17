@@ -4,7 +4,7 @@
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.12
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.14
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -557,7 +557,7 @@ Func read_options()
 			$s &= " "
 	EndSwitch
 
-	$s &= _Iif(GUICtrlRead($CheckBoxFlacMetaData) = $GUI_CHECKED, "--flac-append-tags", "--flac-dont-append-tags")
+	$s &= _Iif(GUICtrlRead($CheckBoxFlacMetaData) = $GUI_CHECKED, "--flac-append-comments", "--flac-dont-append-comments")
 	$s &= " "
 
 	If GUICtrlRead($CheckBoxVerbose) = $GUI_CHECKED Then

@@ -146,8 +146,8 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddSwitch( wxEmptyString, wxT("flac-read-vorbis-comment-first"), _("Try to read embedded cuesheet from FLAC container - first try read CUESHEET comment then try CUESHEET tag"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxEmptyString, wxT("flac-read-cuesheet-tag-only"), _("Try to read embedded cuesheet from FLAC container - try read CUESHEET tag only"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxEmptyString, wxT("flac-read-vorbis-comment-only"), _("Try to read embedded cuesheet from FLAC container - try read CUESHEET comment only"), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxEmptyString, wxT("flac-append-tags"), _("Append FLAC comments (default: yes)"), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxEmptyString, wxT("flac-dont-append-tags"), _("Don't append FLAC comments (default: yes)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, wxT("flac-append-comments"), _("Append FLAC comments (default: yes)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, wxT("flac-dont-append-comments"), _("Don't append FLAC comments (default: yes)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddParam( _("<cue sheet>"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE|wxCMD_LINE_PARAM_OPTIONAL );
 }
 
@@ -362,13 +362,13 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		m_nEmbeddedModeFlags |= wxCueSheetReader::EC_FLAC_READ_COMMENT_ONLY;
 	}
 
-	if ( cmdLine.Found( wxT("flac-append-tags") ) )
+	if ( cmdLine.Found( wxT("flac-append-comments") ) )
 	{
 		m_nEmbeddedModeFlags &= ~wxCueSheetReader::EC_FALC_USE_VORBIS_COMMENTS;
 		m_nEmbeddedModeFlags |= wxCueSheetReader::EC_FALC_USE_VORBIS_COMMENTS;
 	}
 
-	if ( cmdLine.Found( wxT("flac-dont-append-tags") ) )
+	if ( cmdLine.Found( wxT("flac-dont-append-comments") ) )
 	{
 		m_nEmbeddedModeFlags &= ~wxCueSheetReader::EC_FALC_USE_VORBIS_COMMENTS;
 		m_nEmbeddedModeFlags |= 0;

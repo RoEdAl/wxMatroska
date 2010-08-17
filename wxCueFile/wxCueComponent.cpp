@@ -296,7 +296,10 @@ bool wxCueComponent::AddCdTextInfo( const wxString& sKeyword, const wxString& sB
 		)
 		{
 			wxCueTag newTag( sKeyword, sBody );
-			m_cdTextTags.Add( newTag );
+			if ( !find_tag( m_cdTextTags, newTag ) )
+			{
+				m_cdTextTags.Add( newTag );
+			}
 			return true;
 		}
 	}
@@ -314,7 +317,10 @@ void wxCueComponent::AddCdTextInfoEx( const wxString& sKeyword, const wxString& 
 		)
 		{
 			wxCueTag newTag( CdTextFields[i].keyword, sBody );
-			m_cdTextTags.Add( newTag );
+			if ( !find_tag( m_cdTextTags, newTag ) )
+			{
+				m_cdTextTags.Add( newTag );
+			}
 			bAdd = true;
 			break;
 		}
