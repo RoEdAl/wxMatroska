@@ -41,10 +41,11 @@ public:
 	{
 		DUMP_COMMENTS = 1,
 		DUMP_GARBAGE = 2,
-		DUMP_EMPTY_LINES = 4
+		DUMP_EMPTY_LINES = 4,
+		DUMP_TAGS = 8
 	};
 
-	wxTextCueSheetRenderer(wxTextOutputStream* = (wxTextOutputStream*)NULL, int = DUMP_COMMENTS );
+	wxTextCueSheetRenderer(wxTextOutputStream* = (wxTextOutputStream*)NULL, int = DUMP_COMMENTS|DUMP_TAGS );
 	virtual ~wxTextCueSheetRenderer(void);
 
 	void Assign( wxTextOutputStream*, int = DUMP_COMMENTS );
@@ -52,7 +53,7 @@ public:
 	wxTextOutputStream* GetOutputStream() const;
 	int GetDumpFlags() const;
 
-	static wxString ToString( const wxCueSheet&, int = DUMP_COMMENTS);
+	static wxString ToString( const wxCueSheet&, int = DUMP_COMMENTS|DUMP_TAGS );
 	
 };
 

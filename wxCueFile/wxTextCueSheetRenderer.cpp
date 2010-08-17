@@ -94,6 +94,27 @@ void wxTextCueSheetRenderer::InternalRenderComponent(const wxCueComponent& compo
 		}
 	}
 
+	// dump tags
+	if ( (m_nDumpFlags & DUMP_TAGS) != 0 )
+	{
+		wxRegEx reSpace( wxT("[[:space:]]+"), wxRE_ADVANCED|wxRE_NOSUB );
+		wxASSERT( reSpace.IsValid() );
+
+		const wxArrayCueTag& tags = component.GetTags();
+		size_t numTags = tags.Count();
+		for( size_t i=0; i<numTags; i++ )
+		{
+			if ( reSpace.Matches( tags[i].GetName() ) )
+			{
+				DumpComponentString( component, wxT("REM"), wxString::Format( wxT("\"%s\" %s"), tags[i].GetName(), tags[i].GetValue() ) );
+			}
+			else
+			{
+				DumpComponentString( component, wxT("REM"), wxString::Format( wxT("%s %s"), tags[i].GetName(), tags[i].GetValue() ) );
+			}
+		}
+	}
+
 	// dump CT-TEXT info
 	const wxArrayCueTag& tags = component.GetCdTextTags();
 	size_t numTags = tags.Count();

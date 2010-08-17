@@ -144,7 +144,6 @@ GUICtrlSetFont(-1, 8, 800, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Run cue2mkc tool")
 $OptionsPane = GUICtrlCreateTabItem("Options")
-GUICtrlSetState(-1, $GUI_SHOW)
 $GroupGeneral = GUICtrlCreateGroup("&General options", 8, 32, 293, 165, -1, $WS_EX_TRANSPARENT)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
@@ -175,39 +174,39 @@ GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCK
 $CheckBoxA = GUICtrlCreateCheckbox("Abort when conversion errors occurs", 12, 175, 201, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-$GroupChapterOptions = GUICtrlCreateGroup("&Chapter file generation options", 8, 200, 293, 193, -1, $WS_EX_TRANSPARENT)
+$GroupChapterOptions = GUICtrlCreateGroup("&Chapter file generation options", 8, 199, 293, 193, -1, $WS_EX_TRANSPARENT)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$CheckBoxCe = GUICtrlCreateCheckbox("Calculate end time of chapters if possible", 12, 218, 217, 17)
+$CheckBoxCe = GUICtrlCreateCheckbox("Calculate end time of chapters if possible", 12, 217, 217, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$CheckBoxUc = GUICtrlCreateCheckbox("Calculate chapter's end time from next chapter", 12, 234, 276, 17)
+$CheckBoxUc = GUICtrlCreateCheckbox("Calculate chapter's end time from next chapter", 12, 233, 276, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "If track's end time is unknown set it to next track position using frame offset")
-$LabelFo = GUICtrlCreateLabel("Offset:", 35, 255, 35, 17, $SS_CENTERIMAGE)
+$LabelFo = GUICtrlCreateLabel("Offset:", 35, 254, 35, 17, $SS_CENTERIMAGE)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$InputFo = GUICtrlCreateInput("150", 71, 255, 65, 21, BitOR($ES_AUTOHSCROLL, $ES_NUMBER))
+$InputFo = GUICtrlCreateInput("150", 71, 254, 65, 21, BitOR($ES_AUTOHSCROLL, $ES_NUMBER))
 GUICtrlSetLimit(-1, 4)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Frame offset")
-$LabelTrack01_1 = GUICtrlCreateLabel("For track 01 assume index", 12, 278, 128, 21, $SS_CENTERIMAGE)
+$LabelTrack01_1 = GUICtrlCreateLabel("For track 01 assume index", 12, 277, 128, 21, $SS_CENTERIMAGE)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$ComboTrack01 = GUICtrlCreateCombo("", 144, 278, 41, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+$ComboTrack01 = GUICtrlCreateCombo("", 144, 277, 41, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 GUICtrlSetData(-1, "00|01", "01")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelTrack01_2 = GUICtrlCreateLabel("as beginning of track", 189, 278, 103, 21, $SS_CENTERIMAGE)
+$LabelTrack01_2 = GUICtrlCreateLabel("as beginning of track", 189, 277, 103, 21, $SS_CENTERIMAGE)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$CheckBoxR = GUICtrlCreateCheckbox("Round down track end time to full frames", 12, 302, 217, 17)
+$CheckBoxR = GUICtrlCreateCheckbox("Round down track end time to full frames", 12, 301, 217, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$CheckBoxHi = GUICtrlCreateCheckbox("Convert indexes to hidden chapters", 12, 320, 217, 17)
+$CheckBoxHi = GUICtrlCreateCheckbox("Convert indexes to hidden chapters", 12, 319, 217, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelTf = GUICtrlCreateLabel("Track title format:", 12, 340, 86, 21, $SS_CENTERIMAGE)
+$LabelTf = GUICtrlCreateLabel("Track title format:", 12, 339, 86, 21, $SS_CENTERIMAGE)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$InputTf = GUICtrlCreateInput("%dp% - %dt% - %tt%", 100, 341, 113, 21)
+$InputTf = GUICtrlCreateInput("%dp% - %dt% - %tt%", 100, 340, 113, 21)
 GUICtrlSetLimit(-1, 150)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelLang = GUICtrlCreateLabel("Chapter's title language:", 12, 365, 117, 21, $SS_CENTERIMAGE)
+$LabelLang = GUICtrlCreateLabel("Chapter's title language:", 12, 364, 117, 21, $SS_CENTERIMAGE)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$InputLang = GUICtrlCreateInput("eng", 134, 365, 41, 21)
+$InputLang = GUICtrlCreateInput("eng", 134, 364, 41, 21)
 GUICtrlSetLimit(-1, 3)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "This option also affects tags file generation")
@@ -231,12 +230,25 @@ $InputDte = GUICtrlCreateInput("mkt.xml", 473, 97, 53, 21)
 GUICtrlSetLimit(-1, 50)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-$GroupTagFile = GUICtrlCreateGroup("&Tag file generation options", 308, 200, 225, 65, -1, $WS_EX_TRANSPARENT)
+$GroupFlacRead = GUICtrlCreateGroup("FLAC reading options", 308, 127, 225, 69)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$CheckBoxEu = GUICtrlCreateCheckbox("Generate edition UID", 312, 220, 129, 17)
+$LabelFlacMode = GUICtrlCreateLabel("Mode:", 312, 145, 35, 21, $SS_CENTERIMAGE)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$CheckBoxTc = GUICtrlCreateCheckbox("Parse tags from cue sheet comments", 312, 238, 197, 17)
+GUICtrlSetTip(-1, "Method of reading cue sheet from FLAC file")
+$ComboFlacMode = GUICtrlCreateCombo("", 353, 145, 165, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+GUICtrlSetData(-1, "use MediaInfo only|tag first|comment first|tag only|comment only||")
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+$CheckBoxFlacMetaData = GUICtrlCreateCheckbox("Read metadata", 312, 169, 101, 17)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+GUICtrlSetTip(-1, "Read metadata from FLAC container")
+GUICtrlCreateGroup("", -99, -99, 1, 1)
+$GroupTagFile = GUICtrlCreateGroup("&Tag file generation options", 308, 199, 225, 65, -1, $WS_EX_TRANSPARENT)
+GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+$CheckBoxEu = GUICtrlCreateCheckbox("Generate edition UID", 312, 219, 129, 17)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+$CheckBoxTc = GUICtrlCreateCheckbox("Parse tags from cue sheet comments", 312, 237, 197, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Try to parse tags from cue sheet comments")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
@@ -424,6 +436,8 @@ Func set_default_options()
 	GUICtrlSetState($CheckBoxA, $GUI_UNCHECKED)
 	GUICtrlSetState($CheckBoxVerbose, $GUI_UNCHECKED)
 	GUICtrlSetState($CheckBoxMerge, $GUI_UNCHECKED)
+	GUICtrlSetState($CheckBoxFlacMetaData, $GUI_CHECKED)
+	_GUICtrlComboBox_SetCurSel($ComboFlacMode, 1)
 EndFunc   ;==>set_default_options
 
 Func read_options()
@@ -522,6 +536,28 @@ Func read_options()
 	$s &= " "
 
 	$s &= _Iif(GUICtrlRead($CheckBoxA) = $GUI_CHECKED, "-a", "-na")
+	$s &= " "
+
+	$w = _GUICtrlComboBox_GetCurSel($ComboFlacMode)
+	Switch $w
+		Case 0
+			$s &= "--flac-read-none"
+			$s &= " "
+		Case 1
+			$s &= "--flac-read-cuesheet-tag-first"
+			$s &= " "
+		Case 2
+			$s &= "--flac-read-vorbis-comment-first"
+			$s &= " "
+		Case 3
+			$s &= "--flac-read-cuesheet-tag-only"
+			$s &= " "
+		Case 4
+			$s &= "--flac-read-vorbis-comment-only"
+			$s &= " "
+	EndSwitch
+
+	$s &= _Iif(GUICtrlRead($CheckBoxFlacMetaData) = $GUI_CHECKED, "--flac-append-tags", "--flac-dont-append-tags")
 	$s &= " "
 
 	If GUICtrlRead($CheckBoxVerbose) = $GUI_CHECKED Then
