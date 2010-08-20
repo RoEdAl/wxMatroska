@@ -1,0 +1,194 @@
+/*
+	wxSamplingInfo.cpp
+*/
+
+#include "StdWx.h"
+#include <wxSamplingInfo.h>
+#include <wxIndex.h>
+
+IMPLEMENT_DYNAMIC_CLASS( wxSamplingInfo, wxObject )
+
+const wxTimeSpan wxSamplingInfo::wxInvalidDuration = wxTimeSpan::Hours(-1);
+const wxULongLong wxSamplingInfo::wxInvalidNumberOfFrames = wxULongLong( 0xFFFFFFFF, 0xFFFFFFFF );
+
+wxSamplingInfo::wxSamplingInfo(void)
+	:m_nSamplingRate(44100),m_nNumChannels(2),m_nBitsPerSample(16)
+{
+}
+
+wxSamplingInfo::wxSamplingInfo(const wxSamplingInfo& si)
+{
+	copy( si );
+}
+
+wxSamplingInfo::wxSamplingInfo(unsigned long nSamplingRate, unsigned short nNumChannels, unsigned short nBitsPerSample )
+	:m_nSamplingRate(nSamplingRate),m_nNumChannels(nNumChannels),m_nBitsPerSample(nBitsPerSample)
+{
+
+}
+
+wxSamplingInfo::wxSamplingInfo(const FLAC::Metadata::StreamInfo& si )
+{
+	m_nSamplingRate = si.get_sample_rate();
+	m_nNumChannels = si.get_channels();
+	m_nBitsPerSample = si.get_bits_per_sample();
+}
+
+wxSamplingInfo& wxSamplingInfo::Assign(unsigned long nSamplingRate, unsigned short nNumChannels, unsigned short nBitsPerSample )
+{
+	m_nSamplingRate = nSamplingRate;
+	m_nNumChannels = nNumChannels;
+	m_nBitsPerSample = nBitsPerSample;
+	return *this;
+}
+
+wxSamplingInfo& wxSamplingInfo::Assign(const FLAC::Metadata::StreamInfo& si)
+{
+	m_nSamplingRate = si.get_sample_rate();
+	m_nNumChannels = si.get_channels();
+	m_nBitsPerSample = si.get_bits_per_sample();
+	return *this;
+}
+
+wxSamplingInfo& wxSamplingInfo::SetDefault()
+{
+	m_nSamplingRate = 44100;
+	m_nNumChannels = 2;
+	m_nBitsPerSample = 16;
+	return *this;
+}
+
+wxSamplingInfo::~wxSamplingInfo(void)
+{
+}
+
+wxSamplingInfo& wxSamplingInfo::operator=( const wxSamplingInfo& si )
+{
+	copy( si );
+	return *this;
+}
+
+void wxSamplingInfo::copy( const wxSamplingInfo& si )
+{
+	m_nSamplingRate = si.m_nSamplingRate;
+	m_nNumChannels = si.m_nNumChannels;
+	m_nBitsPerSample = si.m_nBitsPerSample;
+}
+
+unsigned long wxSamplingInfo::GetSamplingRate() const
+{
+	return m_nSamplingRate;
+}
+
+unsigned short wxSamplingInfo::GetNumberOfChannels() const
+{
+	return m_nNumChannels;
+}
+
+unsigned short wxSamplingInfo::GetBitsPerSample() const
+{
+	return m_nBitsPerSample;
+}
+
+wxSamplingInfo& wxSamplingInfo::SetSamplingRate( unsigned long nSamplingRate )
+{
+	m_nSamplingRate = nSamplingRate;
+	return *this;
+}
+
+wxSamplingInfo& wxSamplingInfo::SetNumberOfChannels( unsigned short nNumChannels )
+{
+	m_nNumChannels = nNumChannels;
+	return *this;
+}
+
+wxSamplingInfo& wxSamplingInfo::SetBitsPerSample( unsigned short nBitsPerSample )
+{
+	m_nBitsPerSample = nBitsPerSample;
+	return *this;
+}
+
+bool wxSamplingInfo::IsOK(bool bIgnoreBitsPerSample) const
+{
+	return
+		( m_nSamplingRate > 0 ) &&
+		( m_nNumChannels > 0 ) &&
+		( bIgnoreBitsPerSample? true : ( m_nBitsPerSample > 0 ) ) &&
+		( (m_nBitsPerSample % 8) == 0 );
+
+}
+
+wxULongLong wxSamplingInfo::GetNumberOfFramesFromBytes(const wxULongLong& bytes ) const
+{
+	wxASSERT( IsOK() );
+	wxULongLong bytesPerFrame( 0, m_nBitsPerSample * m_nNumChannels / 8 );
+
+	wxULongLong frames( bytes );
+	frames /= bytesPerFrame;
+	return frames;
+}
+
+wxTimeSpan wxSamplingInfo::GetDuration( wxULongLong frames )
+{
+	wxASSERT( IsOK(true) );
+
+	if ( frames == wxInvalidNumberOfFrames )
+	{
+		return wxInvalidDuration;
+	}
+
+	// samples -> duration
+	// 441(00) = 10(00) ms
+	wxULongLong duration( frames );
+	duration *= wxULL(1000);
+	wxULongLong longSamplesRate( 0, m_nSamplingRate );
+	duration /= longSamplesRate;
+	return wxTimeSpan::Milliseconds( duration.GetValue() );
+}
+
+void wxSamplingInfo::GetNumberOfCdFrames(
+	wxULongLong frames,
+	wxULongLong& cdFrames, wxUint32& rest ) const
+{
+	cdFrames = frames;
+	cdFrames *= wxULL(75);
+	wxULongLong samplingRate( 0, m_nSamplingRate );
+	wxULongLong urest( cdFrames % samplingRate );
+	cdFrames /= samplingRate;
+	rest = urest.GetLo();
+}
+
+wxULongLong wxSamplingInfo::GetNumberOfCdFrames( wxULongLong frames ) const
+{
+	wxULongLong cdFrames;
+	wxUint32 rest;
+	GetNumberOfCdFrames( frames, cdFrames, rest );
+	return cdFrames;
+}
+
+wxString wxSamplingInfo::GetSamplesStr( wxULongLong frames ) const
+{
+	// 1.0 = 44100
+	wxULongLong s( frames );
+	wxULongLong samplingRate( 0, m_nSamplingRate );
+	wxULongLong sr( frames % samplingRate );
+	double rest = sr.ToDouble() / m_nSamplingRate;
+
+	s -= sr;
+	s /= samplingRate;
+
+	// seconds
+	wxULongLong ss( s % 60 );
+	s -= ss;
+	s /= wxULL(60);
+	rest += ss.ToDouble();
+
+	// minutes
+	wxULongLong mm( s % 60 );
+	s -= mm;
+	s /= wxULL(60);
+
+	// hours
+
+	return wxIndex::GetTimeStr( s.GetLo(), mm.GetLo(), rest );
+}

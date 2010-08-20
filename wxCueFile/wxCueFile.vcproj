@@ -213,6 +213,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\wxSamplingInfo.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\wxTextCueSheetRenderer.cpp"
 				>
 			</File>
@@ -280,6 +284,10 @@
 			</File>
 			<File
 				RelativePath="..\inc\wxMediaInfo.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inc\wxSamplingInfo.h"
 				>
 			</File>
 			<File

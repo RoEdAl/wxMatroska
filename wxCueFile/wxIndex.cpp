@@ -8,12 +8,12 @@
 IMPLEMENT_DYNAMIC_CLASS( wxIndex, wxObject )
 
 wxIndex::wxIndex(void)
-	:m_number(0),m_minutes(0),m_seconds(0),m_frames(0)
+	:m_number(0),m_offset(0,0)
 {
 }
 
-wxIndex::wxIndex( unsigned int number, unsigned int minutes, unsigned int seconds, unsigned int frames)
-	:m_number(number),m_minutes(minutes),m_seconds(seconds),m_frames(frames)
+wxIndex::wxIndex( unsigned int number, wxULongLong offset )
+	:m_number(number),m_offset( offset )
 {
 }
 
@@ -35,9 +35,7 @@ wxIndex& wxIndex::operator=( const wxIndex& idx )
 void wxIndex::copy(const wxIndex& idx)
 {
 	m_number = idx.m_number;
-	m_minutes = idx.m_minutes;
-	m_seconds = idx.m_seconds;
-	m_frames = idx.m_frames;
+	m_offset = idx.m_offset;
 }
 
 unsigned int wxIndex::GetNumber() const
@@ -45,29 +43,16 @@ unsigned int wxIndex::GetNumber() const
 	return m_number;
 }
 
-unsigned int wxIndex::GetMinutes() const
+const wxULongLong& wxIndex::GetOffset() const
 {
-	return m_minutes;
-}
-
-unsigned int wxIndex::GetSeconds() const
-{
-	return m_seconds;
-}
-
-unsigned int wxIndex::GetFrames() const
-{
-	return m_frames;
+	return m_offset;
 }
 
 bool wxIndex::IsValid(bool bPrePost) const
 {
 	return
 		(bPrePost? (m_number==0u) : true) &&
-		(m_number<100u) &&
-		(m_minutes<85u) &&
-		(m_seconds<60u) &&
-		(m_frames<75u);
+		(m_number<100u);
 
 }
 
@@ -77,11 +62,17 @@ wxIndex& wxIndex::SetNumber( unsigned int number )
 	return *this;
 }
 
-wxIndex& wxIndex::SetMsf( unsigned int minutes, unsigned int seconds, unsigned int frames )
+wxIndex& wxIndex::SetOffset( wxULongLong offset )
 {
-	m_minutes = minutes;
-	m_seconds = seconds;
-	m_frames = frames;
+	m_offset = offset;
+	return *this;
+}
+
+wxIndex& wxIndex::SetMsf( unsigned long minutes, unsigned long seconds, unsigned long frames )
+{
+	m_offset = frames;
+	m_offset += wxULL(75) * seconds;
+	m_offset += wxULL(4500) * minutes;
 	return *this;
 }
 
@@ -112,36 +103,14 @@ bool wxIndex::TimeSpanToMsf( wxTimeSpan ts,
 	return true;
 }
 
-wxIndex& wxIndex::Assign( unsigned int number, unsigned int minutes, unsigned int seconds, unsigned int frames )
+wxIndex& wxIndex::Assign( unsigned int number, wxULongLong offset )
 {
 	m_number = number;
-	m_minutes = minutes;
-	m_seconds = seconds;
-	m_frames = frames;
+	m_offset = offset;
 	return *this;
 }
 
-bool wxIndex::Assign( unsigned int number, wxTimeSpan ts )
-{
-	m_number = number;
-	return TimeSpanToMsf( ts,
-		m_minutes, m_seconds, m_frames );
-}
-
-bool wxIndex::SetMsf( wxTimeSpan ts )
-{
-	return TimeSpanToMsf( ts,
-		m_minutes, m_seconds, m_frames );
-}
-
-wxULongLong wxIndex::GetNumberOfFrames() const
-{
-	wxULongLong frames( 0, m_frames );
-	frames += (m_seconds * 75);
-	frames += (m_minutes * 60 * 75);
-	return frames;
-}
-
+/*
 wxTimeSpan wxIndex::GetTimeSpan() const
 {
 	wxLongLong ms( GetNumberOfFrames().GetValue() );
@@ -149,21 +118,16 @@ wxTimeSpan wxIndex::GetTimeSpan() const
 	ms /= 75;
 	return wxTimeSpan::Milliseconds( ms );
 }
-
-wxULongLong wxIndex::GetNumberOfSamples() const
-{
-	wxULongLong samples( GetNumberOfFrames() );
-	samples *= wxULL(588);
-	return samples;
-}
+*/
 
 wxString wxIndex::ToString() const
 {
 	wxString s;
-	s.Printf( wxT("%02d:%02d:%02d"), m_minutes, m_seconds, m_frames );
+	//s.Printf( wxT("%02d:%02d:%02d"), m_minutes, m_seconds, m_frames );
 	return s;
 }
 
+/* TODO: move to wxSamplingInfo
 wxString wxIndex::GetTimeStr() const
 {
 	// 1.000 = 75
@@ -179,6 +143,7 @@ wxString wxIndex::GetTimeStr() const
 
 	return GetTimeStr( hours, minutes, seconds );
 }
+*/
 
 wxString wxIndex::GetTimeStr( unsigned int hours, unsigned int minutes, double seconds )
 {
@@ -203,8 +168,10 @@ void wxIndex::FixDecimalPoint( wxString& s )
     s.Replace(sep, ".");
 }
 
-wxIndex& wxIndex::operator -=(unsigned long frames)
+wxIndex& wxIndex::operator -=(wxULongLong frames)
 {
+	m_offset -= frames;
+	/*
 	wxULongLong totalFrames( m_minutes * wxULL(60) * wxULL(75) );
 	totalFrames += wxULL(75) * m_seconds;
 	totalFrames += m_frames;
@@ -221,6 +188,7 @@ wxIndex& wxIndex::operator -=(unsigned long frames)
 	m_minutes = totalFrames.GetLo();
 	m_seconds = ns.GetLo();
 	m_frames = nf.GetLo();
+	*/
 
 	return *this;
 }

@@ -12,9 +12,7 @@ class wxIndex :public wxObject
 protected:
 
 	unsigned int m_number;
-	unsigned int m_minutes;
-	unsigned int m_seconds;
-	unsigned int m_frames;
+	wxULongLong m_offset;
 
 protected:
 
@@ -25,32 +23,24 @@ public:
 	static int CompareFn( wxIndex**, wxIndex** );
 
 	unsigned int GetNumber() const;
-	unsigned int GetMinutes() const;
-	unsigned int GetSeconds() const;
-	unsigned int GetFrames() const;
-
-	wxTimeSpan GetTimeSpan() const;
-	wxULongLong GetNumberOfFrames() const;
-	wxULongLong GetNumberOfSamples() const;
+	const wxULongLong& GetOffset() const;
 
 	wxIndex& SetNumber( unsigned int );
-	wxIndex& SetMsf( unsigned int, unsigned int, unsigned int );
-	bool SetMsf( wxTimeSpan );
-	wxIndex& SetMsf( wxULongLong );
-	wxIndex& Assign( unsigned int, unsigned int, unsigned int, unsigned int );
-	bool Assign( unsigned int, wxTimeSpan );
+	wxIndex& SetOffset( wxULongLong );
+	wxIndex& Assign( unsigned int, wxULongLong );
+	wxIndex& SetMsf( unsigned long, unsigned long, unsigned long );
 
 	bool IsValid(bool = false) const;
 	wxString ToString() const;
 	wxString GetTimeStr() const;
 	static void FixDecimalPoint( wxString& );
 
-	wxIndex& operator-=( unsigned long );
+	wxIndex& operator-=( wxULongLong );
 
 public:
 
 	wxIndex(void);
-	wxIndex( unsigned int, unsigned int, unsigned int, unsigned int);
+	wxIndex( unsigned int, wxULongLong );
 	wxIndex( const wxIndex& );
 	wxIndex& operator=(const wxIndex&);
 	~wxIndex(void);

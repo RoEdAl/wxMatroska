@@ -3,8 +3,9 @@
 */
 
 #include "StdWx.h"
-#include "wxIndex.h"
-#include "wxDataFile.h"
+#include <wxSamplingInfo.h>
+#include <wxIndex.h>
+#include <wxDataFile.h>
 #include "wxMediaInfo.h"
 
 IMPLEMENT_DYNAMIC_CLASS( wxDataFile, wxObject )
@@ -21,8 +22,6 @@ static const wxChar* INFOS[] = {
 
 static const size_t INFOS_SIZE = sizeof(INFOS)/sizeof(const wxChar*);
 
-const wxTimeSpan wxDataFile::wxInvalidDuration = wxTimeSpan::Hours(-1);
-const wxULongLong wxDataFile::wxInvalidNumberOfSamples = wxULongLong( 0xFFFFFFFF, 0xFFFFFFFF );
 
 wxDataFile::wxDataFile(void)
 	:m_ftype(BINARY)
@@ -197,31 +196,28 @@ bool wxDataFile::FileExists( const wxString& sAlternateExt ) const
 	return FindFile( fn, sAlternateExt );
 }
 
-wxULongLong wxDataFile::GetNumberOfSamplesFromBinary( const wxFileName& fileName )
+wxULongLong wxDataFile::GetNumberOfFramesFromBinary( const wxFileName& fileName, const wxSamplingInfo& si )
 {
 	wxASSERT( fileName.FileExists() );
+	wxASSERT( si.IsOK() );
 
 	wxULongLong size = fileName.GetSize();
 
 	if ( size == wxInvalidSize )
 	{
-		return wxInvalidNumberOfSamples;
+		return wxSamplingInfo::wxInvalidNumberOfFrames;
 	}
-
-	// size -> samples
-	// 1 sample = 2 * 2 bytes;
-	size /= 4;
-	return size;
+	return si.GetNumberOfFramesFromBytes( size );
 }
 
-wxULongLong wxDataFile::GetNumberOfSamplesFromMediaInfo( const wxFileName& fileName )
+bool wxDataFile::GetFromMediaInfo( const wxFileName& fileName, wxULongLong& frames, wxSamplingInfo& si )
 {
 	// using MediaInfo to get basic information about media
 	wxMediaInfo dll;
 	if ( !dll.Load() )
 	{
 		wxLogError( _("Fail to load MediaInfo library") );
-		return wxInvalidNumberOfSamples;
+		return false;
 	}
 
 	wxArrayString as1;
@@ -234,7 +230,7 @@ wxULongLong wxDataFile::GetNumberOfSamplesFromMediaInfo( const wxFileName& fileN
 		wxLogError( _("MediaInfo - fail to open file") );
 		dll.MediaInfoDelete( handle );
 		dll.Unload();
-		return wxInvalidNumberOfSamples;
+		return false;
 	}
 
 	for( size_t i=0; i<INFOS_SIZE; i++ )
@@ -267,7 +263,6 @@ wxULongLong wxDataFile::GetNumberOfSamplesFromMediaInfo( const wxFileName& fileN
 
 	bool check = true;
 	unsigned long u;
-	wxULongLong samples( wxInvalidNumberOfSamples );
 
 	for( size_t i=0; i<INFOS_SIZE; i++ )
 	{
@@ -277,15 +272,7 @@ wxULongLong wxDataFile::GetNumberOfSamplesFromMediaInfo( const wxFileName& fileN
 			break;
 
 			case 1: // duration
-			if ( as1[i].ToULong( &u ) )
-			{
-				// duration to samples
-				// 10(00)ms = 441(00) samples
-				u *= wxULL(441);
-				u /= wxULL(10);
-				samples = u;
-			}
-			else
+			if ( !as1[i].ToULong( &u ) )
 			{
 				wxLogWarning( wxT("MediaInfo - Invalid duration - %s"), as1[i].GetData() );
 				check = false;
@@ -296,29 +283,45 @@ wxULongLong wxDataFile::GetNumberOfSamplesFromMediaInfo( const wxFileName& fileN
 			break;
 
 			case 3: // sampling rate
-			if ( !as1[i].ToULong( &u ) || (u != 44100u) )
+			if ( !as1[i].ToULong( &u ) || (u == 0u) )
 			{
 				wxLogWarning( wxT("MediaInfo - Invalid sample rate - %s"), as1[i].GetData() );
 				check = false;
+			}
+			else
+			{
+				si.SetSamplingRate( u );
 			}
 			break;
 
 			case 4: // bit depth
 			if ( !as1[i].IsEmpty() )
 			{
-				if ( !as1[i].ToULong( &u ) || (u != 16u) )
+				if ( !as1[i].ToULong( &u ) || (u == 0u) || (u>10000u) )
 				{
 					wxLogWarning( wxT("MediaInfo - Invalid bit depth - %s"), as1[i].GetData() );
 					check = false;
 				}
+				else
+				{
+					si.SetBitsPerSample( (unsigned short)u );
+				}
+			}
+			else
+			{
+				si.SetBitsPerSample(0); // unknown MP3
 			}
 			break;
 
 			case 5: // channels
-			if ( !as1[i].ToULong( &u ) || (u != 2) )
+			if ( !as1[i].ToULong( &u ) || (u == 0u) || (u > 128u) )
 			{
 				wxLogWarning( wxT("MediaInfo - Invalid number of channels - %s"), as1[i].GetData() );
 				check = false;
+			}
+			else
+			{
+				si.SetNumberOfChannels( (unsigned short)u );
 			}
 			break;
 
@@ -328,7 +331,7 @@ wxULongLong wxDataFile::GetNumberOfSamplesFromMediaInfo( const wxFileName& fileN
 				wxULongLong_t ul;
 				if ( as1[i].ToULongLong( &ul ) )
 				{ // calculate duration according to duration
-					samples = ul;
+					frames = ul;
 				}
 				else
 				{
@@ -340,102 +343,42 @@ wxULongLong wxDataFile::GetNumberOfSamplesFromMediaInfo( const wxFileName& fileN
 		}
 	}
 
-	if ( !check ) samples = wxInvalidNumberOfSamples;
-	return samples;
-}
-
-wxTimeSpan wxDataFile::GetDuration( wxULongLong samples )
-{
-	if ( samples == wxInvalidNumberOfSamples )
-	{
-		return wxInvalidDuration;
-	}
-
-	// samples -> duration
-	// 441(00) = 10(00) ms
-	wxULongLong duration( samples );
-	duration *= wxULL(10);
-	duration /= wxULL(441);
-
-	return wxTimeSpan::Milliseconds( duration.GetValue() );
+	return check;
 }
 
 wxTimeSpan wxDataFile::GetDuration( const wxString& sAlternateExt ) const
 {
-	return GetDuration( GetNumberOfSamples( sAlternateExt ) );
-}
-
-void wxDataFile::GetNumberOfFrames( wxULongLong samples, wxULongLong& frames, wxUint32& rest )
-{
-	// 44100 samples = 75 frames
-	// 588 samples = 1 frame
-	frames = samples;
-	wxULongLong urest( frames % wxULL(588) );
-	frames /= wxULL(588);
-	rest = urest.GetLo();
-}
-
-wxULongLong wxDataFile::GetNumberOfFrames( wxULongLong samples )
-{
+	wxSamplingInfo si;
 	wxULongLong frames;
-	wxUint32 rest;
-	GetNumberOfFrames( samples, frames, rest );
-	frames += (rest>294)? 1 : 0;
-	return frames;
+
+	if ( !GetInfo( si, frames, sAlternateExt ) )
+	{
+		return wxSamplingInfo::wxInvalidDuration;
+	}
+
+	return si.GetDuration( frames );
 }
 
-wxULongLong wxDataFile::GetNumberOfSamples( const wxString& sAlternateExt, bool bRoundDown ) const
+bool wxDataFile::GetInfo( wxSamplingInfo& si, wxULongLong& frames, const wxString& sAlternateExt ) const
 {
 	wxFileName fn;
 	if ( !FindFile( fn, sAlternateExt) )
 	{
-		return wxInvalidNumberOfSamples;
+		return false;
 	}
 
-	wxULongLong res;
+	bool res;
 	if ( m_ftype == BINARY )
 	{
-		res = GetNumberOfSamplesFromBinary(fn);
+		si.SetDefault();
+		frames = GetNumberOfFramesFromBinary(fn, si);
+		res = (frames != wxSamplingInfo::wxInvalidNumberOfFrames);
 	}
 	else
 	{
-		res = GetNumberOfSamplesFromMediaInfo(fn);
+		res = GetFromMediaInfo(fn, frames, si);
 	}
-
-	if ( (res != wxInvalidNumberOfSamples) && bRoundDown )
-	{
-		wxULongLong frames( GetNumberOfFrames( res ) );
-		res = frames;
-		res *= wxULL(588);
-	}
-
 	return res;
-}
-
-wxString wxDataFile::GetSamplesStr(wxULongLong samples)
-{
-	// 1.0 = 44100
-	wxULongLong s( samples );
-	wxULongLong sr = samples % wxULL(44100);
-	double rest = sr.ToDouble() / 44100;
-
-	s -= sr;
-	s /= wxULL(44100);
-
-	// seconds
-	wxULongLong ss = s % 60;
-	s -= ss;
-	s /= wxULL(60);
-	rest += ss.ToDouble();
-
-	// minutes
-	wxULongLong mm = s % 60;
-	s -= mm;
-	s /= wxULL(60);
-
-	// hours
-
-	return wxIndex::GetTimeStr( s.GetLo(), mm.GetLo(), rest );
 }
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!

@@ -3,8 +3,9 @@
 */
 
 #include "StdWx.h"
-#include "wxTrack.h"
-#include "wxCueSheet.h"
+#include <wxSamplingInfo.h>
+#include <wxTrack.h>
+#include <wxCueSheet.h>
 
 IMPLEMENT_DYNAMIC_CLASS( wxCueSheet, wxCueComponent )
 
@@ -121,6 +122,17 @@ bool wxCueSheet::HasGarbage() const
 		i++;
 	}
 	return bRes;
+}
+
+const wxSamplingInfo& wxCueSheet::GetSamplingInfo() const
+{
+	return m_samplingInfo;
+}
+
+wxCueSheet& wxCueSheet::SetSamplingInfo( const wxSamplingInfo& si )
+{
+	m_samplingInfo = si;
+	return *this;
 }
 
 void wxCueSheet::Clear(void)

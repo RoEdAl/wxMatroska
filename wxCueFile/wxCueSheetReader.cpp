@@ -3,9 +3,10 @@
 */
 
 #include "StdWx.h"
-#include "wxIndex.h"
-#include "wxTrack.h"
-#include "wxCueSheetReader.h"
+#include <wxSamplingInfo.h>
+#include <wxIndex.h>
+#include <wxTrack.h>
+#include <wxCueSheetReader.h>
 #include "wxMediaInfo.h"
 #include "wxFlacMetaDataReader.h"
 
@@ -277,13 +278,7 @@ bool wxCueSheetReader::ReadCueSheetFromCueSheetTag( const wxFlacMetaDataReader& 
 		{
 			::FLAC__StreamMetadata_CueSheet_Index flacIdx = flacTrack.get_index( j );
 
-			wxULongLong offset( flacTrack.get_offset() );
-			offset += flacIdx.offset;
-
-			wxIndex idx;
-			idx.SetNumber( flacIdx.number );
-			idx.SetMsf( wxDataFile::GetDuration( offset ) );
-
+			wxIndex idx( flacIdx.number, flacIdx.offset );
 			track.AddIndex( idx );
 		}
 
@@ -760,7 +755,7 @@ bool wxCueSheetReader::ParseMsf(const wxString& sBody, wxIndex& idx, bool bPrePo
 
 	if ( res )
 	{
-		res = idx.Assign( 0u, min, sec, frames ).IsValid(bPrePost);
+		res = idx.SetMsf( min, sec, frames ).IsValid(bPrePost);
 	}
 
 	return res;

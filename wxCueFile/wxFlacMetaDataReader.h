@@ -50,6 +50,7 @@ protected:
 	void metadata_callback(const ::FLAC__StreamMetadata* );
 	FLAC::Metadata::VorbisComment* m_pVorbisComment;
 	FLAC::Metadata::CueSheet* m_pCueSheet;
+	FLAC::Metadata::StreamInfo* m_pStreamInfo;
 	wxString m_sFlacFile;
 
 public:
@@ -63,6 +64,7 @@ public:
 
 	bool HasVorbisComment() const;
 	bool HasCueSheet() const;
+	bool HasStreamInfo() const;
 
 	WX_DECLARE_STRING_HASH_MAP( wxString, wxHashString );
 
@@ -71,7 +73,7 @@ public:
 	void ReadVorbisComments( wxHashString& ) const;
 
 	const FLAC::Metadata::CueSheet& GetCueSheet() const;
-
+	const FLAC::Metadata::StreamInfo& GetStreamInfo() const;
 };
 
 #endif

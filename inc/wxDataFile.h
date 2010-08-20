@@ -5,6 +5,10 @@
 #ifndef _WX_DATA_FILE_H_
 #define _WX_DATA_FILE_H_
 
+#ifndef _WX_SAMPLING_INFO_H_
+class wxSamplingInfo;
+#endif
+
 class wxDataFile :public wxObject
 {
 	DECLARE_DYNAMIC_CLASS(wxDataFile)
@@ -15,9 +19,6 @@ public:
     {
         BINARY, MOTOROLA, AIFF, WAVE, MP3
     } FileType;
-
-	static const wxTimeSpan wxInvalidDuration;
-	static const wxULongLong wxInvalidNumberOfSamples;
 
 protected:
 
@@ -39,8 +40,8 @@ protected:
 
 	void copy(const wxDataFile&);
 
-	static wxULongLong GetNumberOfSamplesFromBinary( const wxFileName& );
-	static wxULongLong GetNumberOfSamplesFromMediaInfo( const wxFileName& );
+	static wxULongLong GetNumberOfFramesFromBinary( const wxFileName&, const wxSamplingInfo& si );
+	static bool GetFromMediaInfo( const wxFileName&, wxULongLong&, wxSamplingInfo& );
 
 public:
 
@@ -49,7 +50,7 @@ public:
 
 	FileType GetFileType() const;
 	wxString GetFileTypeAsString() const;
-	static wxString GetSamplesStr( wxULongLong );
+	
 
 	bool IsEmpty() const;
 	wxDataFile& Assign( const wxString&, FileType = BINARY);
@@ -69,10 +70,8 @@ public:
 	bool FindFile( wxFileName&, const wxString& = wxEmptyString ) const;
 	bool FileExists( const wxString& = wxEmptyString ) const;
 
-	wxULongLong GetNumberOfSamples( const wxString& = wxEmptyString, bool = false ) const; // wxInvalidDuration if duration cannot be calculated
-	static wxTimeSpan GetDuration( wxULongLong );
-	static wxULongLong GetNumberOfFrames( wxULongLong );
-	static void GetNumberOfFrames( wxULongLong, wxULongLong&, wxUint32& );
+	bool GetInfo( wxSamplingInfo&, wxULongLong&, const wxString& = wxEmptyString ) const; // wxInvalidDuration if duration cannot be calculated
+
 	wxTimeSpan GetDuration( const wxString& = wxEmptyString ) const; // wxInvalidDuration if duration cannot be calculated
 
 	static wxString FileTypeToString( FileType );

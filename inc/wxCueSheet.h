@@ -14,6 +14,10 @@ WX_DECLARE_OBJARRAY( wxTrack, wxArrayTrack );
 #include "wxCueComponent.h"
 #endif
 
+#ifndef _WX_SAMPLING_INFO_H_
+class wxSamplingInfo;
+#endif
+
 class wxCueSheet :public wxCueComponent
 {
 	DECLARE_DYNAMIC_CLASS(wxCueSheet)
@@ -23,6 +27,7 @@ protected:
 	wxString m_sCatalog;
 	wxString m_sCdTextFile;
 	wxArrayTrack m_tracks;
+	wxSamplingInfo m_samplingInfo;
 
 protected:
 
@@ -50,6 +55,7 @@ public:
 	const wxString& GetCatalog() const;
 	const wxString& GetCdTextFile() const;
 	const wxArrayTrack& GetTracks() const;
+	const wxSamplingInfo& GetSamplingInfo() const;
 
 	wxTrack& GetTrack( size_t );
 	wxTrack& GetLastTrack();
@@ -62,6 +68,7 @@ public:
 
 	wxCueSheet& SetCatalog( const wxString& );
 	wxCueSheet& SetCdTextFile( const wxString& );
+	wxCueSheet& SetSamplingInfo( const wxSamplingInfo& );
 
 	void Clear(void);
 

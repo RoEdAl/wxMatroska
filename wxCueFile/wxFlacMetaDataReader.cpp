@@ -7,7 +7,8 @@
 
 wxFlacMetaDataReader::wxFlacMetaDataReader(void)
 :m_pVorbisComment((FLAC::Metadata::VorbisComment*)NULL),
- m_pCueSheet((FLAC::Metadata::CueSheet*)NULL)
+ m_pCueSheet((FLAC::Metadata::CueSheet*)NULL),
+ m_pStreamInfo((FLAC::Metadata::StreamInfo*)NULL)
 {
 }
 
@@ -22,6 +23,11 @@ wxFlacMetaDataReader::~wxFlacMetaDataReader(void)
 	{
 		delete m_pCueSheet;
 	}
+
+	if ( HasStreamInfo() )
+	{
+		delete m_pStreamInfo;
+	}
 }
 
 bool wxFlacMetaDataReader::HasVorbisComment() const
@@ -34,10 +40,21 @@ bool wxFlacMetaDataReader::HasCueSheet() const
 	return ( m_pCueSheet != (FLAC::Metadata::CueSheet*)NULL );
 }
 
+bool wxFlacMetaDataReader::HasStreamInfo() const
+{
+	return ( m_pStreamInfo != (FLAC::Metadata::StreamInfo*)NULL );
+}
+
 const FLAC::Metadata::VorbisComment& wxFlacMetaDataReader::GetVorbisComment() const
 {
 	wxASSERT( HasVorbisComment() );
 	return *m_pVorbisComment;
+}
+
+const FLAC::Metadata::StreamInfo& wxFlacMetaDataReader::GetStreamInfo() const
+{
+	wxASSERT( HasStreamInfo() );
+	return *m_pStreamInfo;
 }
 
 wxString wxFlacMetaDataReader::GetCueSheetFromVorbisComment() const
@@ -84,6 +101,13 @@ void wxFlacMetaDataReader::metadata_callback(const ::FLAC__StreamMetadata* metad
 {
 	switch( metadata->type )
 	{
+		case FLAC__METADATA_TYPE_STREAMINFO:
+		{
+			wxASSERT( !HasStreamInfo() );
+			m_pStreamInfo = new FLAC::Metadata::StreamInfo( (::FLAC__StreamMetadata*)metadata, true );
+		}
+		break;
+
 		case FLAC__METADATA_TYPE_VORBIS_COMMENT:
 		{
 			wxASSERT( !HasVorbisComment() );

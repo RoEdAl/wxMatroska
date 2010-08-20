@@ -3,9 +3,10 @@
 */
 
 #include "StdWx.h"
-#include "wxIndex.h"
-#include "wxTrack.h"
-#include "wxTextCueSheetRenderer.h"
+#include <wxSamplingInfo.h>
+#include <wxIndex.h>
+#include <wxTrack.h>
+#include <wxTextCueSheetRenderer.h>
 
 IMPLEMENT_CLASS( wxTextCueSheetRenderer, wxCueSheetRenderer )
 
