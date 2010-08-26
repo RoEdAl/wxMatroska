@@ -98,7 +98,7 @@ protected:
 
 	bool IsTrack() const;
 	wxTrack& GetLastTrack();
-	const wxTrack& GetLastTrackConst() const;
+	const wxTrack& GetLastTrack() const;
 
 	void ParseLine( size_t, const wxString&, const wxString& );
 	void ParseCdTextInfo( size_t, const wxString&, const wxString& );

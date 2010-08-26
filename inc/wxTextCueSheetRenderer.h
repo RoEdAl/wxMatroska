@@ -7,6 +7,10 @@
 
 #include "wxCueSheetRenderer.h"
 
+#ifndef _WX_SAMPLING_INFO_H_
+class wxSamplingInfo;
+#endif
+
 class wxTextCueSheetRenderer :public wxCueSheetRenderer
 {
 	DECLARE_CLASS(wxTextCueSheetRenderer)
@@ -15,24 +19,25 @@ protected:
 
 	wxTextOutputStream* m_pTextOutputStream;
 	int m_nDumpFlags;
+	wxSamplingInfo m_si;
 
 protected:
 
 	virtual bool OnPreRenderDisc( const wxCueSheet& );
 	virtual bool OnRenderDisc( const wxCueSheet& );
-	virtual bool OnRenderTrack( const wxTrack& );
-	virtual bool OnRenderIndex( const wxTrack&, const wxIndex& );
-	virtual bool OnRenderPreGap( const wxTrack&, const wxIndex& );
-	virtual bool OnRenderPostGap( const wxTrack&, const wxIndex& );
+	virtual bool OnRenderTrack( const wxCueSheet&, const wxTrack& );
+	virtual bool OnRenderIndex( const wxCueSheet&, const wxTrack&, const wxIndex& );
+	virtual bool OnRenderPreGap( const wxCueSheet&, const wxTrack&, const wxIndex& );
+	virtual bool OnRenderPostGap( const wxCueSheet&, const wxTrack&, const wxIndex& );
 
 private:
 
 	void DumpComponentString( const wxCueComponent&, const wxChar*, const wxString& );
 	void InternalRenderComponent(const wxCueComponent&);
 	void InternalRenderCueSheet(const wxCueSheet&);
-	void InternalRenderTrack(const wxTrack&);
-	void InternalRenderIndex( const wxIndex&, wxString );
-	void InternalRenderIndex( const wxIndex& );
+	void InternalRenderTrack(const wxCueSheet&, const wxTrack&);
+	void InternalRenderIndex( const wxCueSheet&, const wxTrack&, const wxIndex&, wxString );
+	void InternalRenderIndex( const wxCueSheet&, const wxTrack&, const wxIndex& );
 	void InternalRenderDataFile( const wxDataFile& );
 
 public:

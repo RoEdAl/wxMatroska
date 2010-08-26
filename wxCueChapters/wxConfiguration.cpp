@@ -3,9 +3,11 @@
 */
 
 #include "StdWx.h"
+#include <wxDataFile.h>
+#include <wxSamplingInfo.h>
+#include <wxCueSheetReader.h>
 #include "wxConfiguration.h"
 #include "wxApp.h"
-#include <wxCueSheetReader.h>
 
 const wxChar wxConfiguration::CUE_SHEET_EXT[] = wxT("cue");
 const wxChar wxConfiguration::MATROSKA_CHAPTERS_EXT[] = wxT("mkc.xml");

@@ -27,7 +27,6 @@ protected:
 	wxString m_sCatalog;
 	wxString m_sCdTextFile;
 	wxArrayTrack m_tracks;
-	wxSamplingInfo m_samplingInfo;
 
 protected:
 
@@ -55,20 +54,18 @@ public:
 	const wxString& GetCatalog() const;
 	const wxString& GetCdTextFile() const;
 	const wxArrayTrack& GetTracks() const;
-	const wxSamplingInfo& GetSamplingInfo() const;
 
 	wxTrack& GetTrack( size_t );
 	wxTrack& GetLastTrack();
 	bool HasTrack( unsigned long ) const;
 	wxTrack& GetTrackByNumber( unsigned long );
-	const wxTrack& GetTrackConst( size_t ) const;
-	const wxTrack& GetLastTrackConst() const;
+	const wxTrack& GetTrack( size_t ) const;
+	const wxTrack& GetLastTrack() const;
 	wxCueSheet& AddTrack( const wxTrack& );
 	wxArrayTrack& SortTracks();
 
 	wxCueSheet& SetCatalog( const wxString& );
 	wxCueSheet& SetCdTextFile( const wxString& );
-	wxCueSheet& SetSamplingInfo( const wxSamplingInfo& );
 
 	void Clear(void);
 

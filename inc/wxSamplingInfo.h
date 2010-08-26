@@ -5,6 +5,10 @@
 #ifndef _WX_SAMPLING_INFO_H_
 #define _WX_SAMPLING_INFO_H_
 
+#ifndef _WX_INDEX_H_
+class wxIndex;
+#endif
+
 class wxSamplingInfo :public wxObject
 {
 	DECLARE_DYNAMIC_CLASS(wxSamplingInfo)
@@ -43,6 +47,11 @@ public:
 	wxULongLong GetNumberOfCdFrames( wxULongLong ) const;
 
 	wxString GetSamplesStr( wxULongLong ) const;
+	wxString GetCdFramesStr( wxULongLong ) const;
+
+	wxULongLong GetFramesFromCdFrames( wxULongLong ) const;
+	wxULongLong GetIndexOffset( const wxIndex& ) const;
+	wxString GetIndexOffsetStr( const wxIndex& ) const;
 
 	wxString ToString() const;
 

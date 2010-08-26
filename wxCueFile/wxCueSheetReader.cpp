@@ -278,7 +278,7 @@ bool wxCueSheetReader::ReadCueSheetFromCueSheetTag( const wxFlacMetaDataReader& 
 		{
 			::FLAC__StreamMetadata_CueSheet_Index flacIdx = flacTrack.get_index( j );
 
-			wxIndex idx( flacIdx.number, flacIdx.offset );
+			wxIndex idx( flacIdx.number, flacTrack.get_offset() + flacIdx.offset );
 			track.AddIndex( idx );
 		}
 
@@ -521,10 +521,10 @@ wxTrack& wxCueSheetReader::GetLastTrack()
 	return m_cueSheet.GetLastTrack();
 }
 
-const wxTrack& wxCueSheetReader::GetLastTrackConst() const
+const wxTrack& wxCueSheetReader::GetLastTrack() const
 {
 	wxASSERT( IsTrack() );
-	return m_cueSheet.GetLastTrackConst();
+	return m_cueSheet.GetLastTrack();
 }
 
 
@@ -564,7 +564,7 @@ bool wxCueSheetReader::CheckEntryType( wxCueComponent::ENTRY_TYPE et ) const
 {
 	if ( IsTrack() )
 	{
-		return GetLastTrackConst().CheckEntryType( et );
+		return GetLastTrack().CheckEntryType( et );
 	}
 	else
 	{
@@ -755,7 +755,7 @@ bool wxCueSheetReader::ParseMsf(const wxString& sBody, wxIndex& idx, bool bPrePo
 
 	if ( res )
 	{
-		res = idx.SetMsf( min, sec, frames ).IsValid(bPrePost);
+		res = idx.Assign( 0, min, sec, frames ).IsValid(bPrePost);
 	}
 
 	return res;

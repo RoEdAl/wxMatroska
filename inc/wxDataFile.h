@@ -70,7 +70,7 @@ public:
 	bool FindFile( wxFileName&, const wxString& = wxEmptyString ) const;
 	bool FileExists( const wxString& = wxEmptyString ) const;
 
-	bool GetInfo( wxSamplingInfo&, wxULongLong&, const wxString& = wxEmptyString ) const; // wxInvalidDuration if duration cannot be calculated
+	bool GetInfo( wxSamplingInfo&, wxULongLong&, const wxString& = wxEmptyString ) const;
 
 	wxTimeSpan GetDuration( const wxString& = wxEmptyString ) const; // wxInvalidDuration if duration cannot be calculated
 

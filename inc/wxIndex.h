@@ -8,31 +8,32 @@
 class wxIndex :public wxObject
 {
 	DECLARE_DYNAMIC_CLASS(wxIndex)
+	friend class wxSamplingInfo;
 
 protected:
 
 	unsigned int m_number;
 	wxULongLong m_offset;
+	bool m_bCdFrames;
 
 protected:
 
 	void copy(const wxIndex&);
+	const wxULongLong& GetOffset() const;
 
 public:
 
 	static int CompareFn( wxIndex**, wxIndex** );
 
 	unsigned int GetNumber() const;
-	const wxULongLong& GetOffset() const;
+	bool HasCdFrames() const;
 
 	wxIndex& SetNumber( unsigned int );
 	wxIndex& SetOffset( wxULongLong );
 	wxIndex& Assign( unsigned int, wxULongLong );
-	wxIndex& SetMsf( unsigned long, unsigned long, unsigned long );
+	wxIndex& Assign( unsigned int, unsigned long, unsigned long, unsigned long );
 
 	bool IsValid(bool = false) const;
-	wxString ToString() const;
-	wxString GetTimeStr() const;
 	static void FixDecimalPoint( wxString& );
 
 	wxIndex& operator-=( wxULongLong );

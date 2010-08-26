@@ -43,28 +43,28 @@ bool wxTextCueSheetRenderer::OnRenderDisc( const wxCueSheet& cueSheet )
 	return wxCueSheetRenderer::OnRenderDisc( cueSheet );
 }
 
-bool wxTextCueSheetRenderer::OnRenderTrack( const wxTrack& track )
+bool wxTextCueSheetRenderer::OnRenderTrack( const wxCueSheet& cueSheet, const wxTrack& track )
 {
-	InternalRenderTrack( track );
-	return wxCueSheetRenderer::OnRenderTrack( track );
+	InternalRenderTrack( cueSheet, track );
+	return wxCueSheetRenderer::OnRenderTrack( cueSheet, track );
 }
 
-bool wxTextCueSheetRenderer::OnRenderIndex( const wxTrack& track, const wxIndex& index )
+bool wxTextCueSheetRenderer::OnRenderIndex( const wxCueSheet& cueSheet, const wxTrack& track, const wxIndex& index )
 {
-	InternalRenderIndex( index );
-	return wxCueSheetRenderer::OnRenderIndex( track, index );
+	InternalRenderIndex( cueSheet, track, index );
+	return wxCueSheetRenderer::OnRenderIndex( cueSheet, track, index );
 }
 
-bool wxTextCueSheetRenderer::OnRenderPreGap( const wxTrack& track, const wxIndex& preGap )
+bool wxTextCueSheetRenderer::OnRenderPreGap( const wxCueSheet& cueSheet, const wxTrack& track, const wxIndex& preGap )
 {
-	InternalRenderIndex( preGap, wxT("PREGAP") );
-	return wxCueSheetRenderer::OnRenderPreGap( track, preGap );
+	InternalRenderIndex( cueSheet, track, preGap, wxT("PREGAP") );
+	return wxCueSheetRenderer::OnRenderPreGap( cueSheet, track, preGap );
 }
 
-bool wxTextCueSheetRenderer::OnRenderPostGap( const wxTrack& track, const wxIndex& postGap )
+bool wxTextCueSheetRenderer::OnRenderPostGap( const wxCueSheet& cueSheet, const wxTrack& track, const wxIndex& postGap )
 {
-	InternalRenderIndex( postGap, wxT("POSTGAP") );
-	return wxCueSheetRenderer::OnRenderPostGap( track, postGap );
+	InternalRenderIndex( cueSheet, track, postGap, wxT("POSTGAP") );
+	return wxCueSheetRenderer::OnRenderPostGap( cueSheet, track, postGap );
 }
 
 void wxTextCueSheetRenderer::DumpComponentString(
@@ -148,7 +148,7 @@ void wxTextCueSheetRenderer::InternalRenderCueSheet(const wxCueSheet& cueSheet )
 	}
 }
 
-void wxTextCueSheetRenderer::InternalRenderTrack(const wxTrack& track)
+void wxTextCueSheetRenderer::InternalRenderTrack(const wxCueSheet& WXUNUSED(cueSheet), const wxTrack& track)
 {
 	wxString sLine;
 
@@ -173,17 +173,19 @@ void wxTextCueSheetRenderer::InternalRenderTrack(const wxTrack& track)
 	}
 }
 
-void wxTextCueSheetRenderer::InternalRenderIndex( const wxIndex& idx, wxString desc )
+void wxTextCueSheetRenderer::InternalRenderIndex( const wxCueSheet& cueSheet, const wxTrack& WXUNUSED(track), const wxIndex& idx, wxString desc )
 {
 	wxString sLine;
-	sLine.Printf( wxT("\t\t%s %02d:%02d:%02d\n"), desc, idx.GetMinutes(), idx.GetSeconds(), idx.GetFrames() );
+	wxString sIdx( m_si.GetIndexOffsetStr( idx ) );
+	sLine.Printf( wxT("\t\t%s %s\n"), desc, sIdx );
 	m_pTextOutputStream->WriteString( sLine );
 }
 
-void wxTextCueSheetRenderer::InternalRenderIndex( const wxIndex& idx )
+void wxTextCueSheetRenderer::InternalRenderIndex( const wxCueSheet& cueSheet, const wxTrack& WXUNUSED(track), const wxIndex& idx )
 {
 	wxString sLine;
-	sLine.Printf( wxT("\t\tINDEX %02d %02d:%02d:%02d\n"), idx.GetNumber(), idx.GetMinutes(), idx.GetSeconds(), idx.GetFrames() );
+	wxString sIdx( m_si.GetIndexOffsetStr( idx ) );
+	sLine.Printf( wxT("\t\tINDEX %02d %s\n"), idx.GetNumber(), sIdx );
 	m_pTextOutputStream->WriteString( sLine );
 }
 

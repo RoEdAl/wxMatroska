@@ -8,12 +8,12 @@
 IMPLEMENT_DYNAMIC_CLASS( wxIndex, wxObject )
 
 wxIndex::wxIndex(void)
-	:m_number(0),m_offset(0,0)
+	:m_number(0),m_offset(0,0),m_bCdFrames(false)
 {
 }
 
 wxIndex::wxIndex( unsigned int number, wxULongLong offset )
-	:m_number(number),m_offset( offset )
+	:m_number(number),m_offset( offset ),m_bCdFrames(false)
 {
 }
 
@@ -36,11 +36,17 @@ void wxIndex::copy(const wxIndex& idx)
 {
 	m_number = idx.m_number;
 	m_offset = idx.m_offset;
+	m_bCdFrames = idx.m_bCdFrames;
 }
 
 unsigned int wxIndex::GetNumber() const
 {
 	return m_number;
+}
+
+bool wxIndex::HasCdFrames() const
+{
+	return m_bCdFrames;
 }
 
 const wxULongLong& wxIndex::GetOffset() const
@@ -68,82 +74,25 @@ wxIndex& wxIndex::SetOffset( wxULongLong offset )
 	return *this;
 }
 
-wxIndex& wxIndex::SetMsf( unsigned long minutes, unsigned long seconds, unsigned long frames )
-{
-	m_offset = frames;
-	m_offset += wxULL(75) * seconds;
-	m_offset += wxULL(4500) * minutes;
-	return *this;
-}
-
-bool wxIndex::TimeSpanToMsf( wxTimeSpan ts, 
-	unsigned int& minutes, unsigned int& seconds, unsigned int& frames )
-{
-	if ( ts.IsNegative() ) return false;
-	if ( ts.IsLongerThan( wxTimeSpan::Hours(2) ) ) return false;
-
-	wxLongLong f( ts.GetMilliseconds() );
-	f *= 75;
-	f /= 1000;
-
-	frames = f.GetValue() % 75;
-	f -= frames;
-
-	seconds = f.GetValue() % (60 * 75);
-	f -= seconds;
-	seconds /= 75;
-
-	minutes = f.GetValue() % (60 * 60 * 75);
-	f -= minutes;
-	minutes /= (60*75);
-
-	unsigned int hours = f.GetValue() / (60 * 60 * 75);
-	minutes += hours * 60;
-
-	return true;
-}
-
 wxIndex& wxIndex::Assign( unsigned int number, wxULongLong offset )
 {
 	m_number = number;
 	m_offset = offset;
+	m_bCdFrames = false;
 	return *this;
 }
 
-/*
-wxTimeSpan wxIndex::GetTimeSpan() const
+wxIndex& wxIndex::Assign( unsigned int number, unsigned long minutes, unsigned long seconds, unsigned long frames )
 {
-	wxLongLong ms( GetNumberOfFrames().GetValue() );
-	ms *= 1000;
-	ms /= 75;
-	return wxTimeSpan::Milliseconds( ms );
+	m_number = number;
+	wxULongLong cdFrames( 0, minutes );
+	cdFrames *= wxULL(4500);
+	cdFrames += wxULL(75) * seconds;
+	cdFrames += frames;
+	m_offset = cdFrames;
+	m_bCdFrames = true;
+	return *this;
 }
-*/
-
-wxString wxIndex::ToString() const
-{
-	wxString s;
-	//s.Printf( wxT("%02d:%02d:%02d"), m_minutes, m_seconds, m_frames );
-	return s;
-}
-
-/* TODO: move to wxSamplingInfo
-wxString wxIndex::GetTimeStr() const
-{
-	// 1.000 = 75
-	// 0.040 = 3
-
-	double seconds = m_frames;
-	seconds *= 0.040;
-	seconds /= 3;
-	seconds += m_seconds;
-
-	unsigned int minutes = m_minutes % 60;
-	unsigned int hours = m_minutes / 60;
-
-	return GetTimeStr( hours, minutes, seconds );
-}
-*/
 
 wxString wxIndex::GetTimeStr( unsigned int hours, unsigned int minutes, double seconds )
 {
@@ -171,25 +120,6 @@ void wxIndex::FixDecimalPoint( wxString& s )
 wxIndex& wxIndex::operator -=(wxULongLong frames)
 {
 	m_offset -= frames;
-	/*
-	wxULongLong totalFrames( m_minutes * wxULL(60) * wxULL(75) );
-	totalFrames += wxULL(75) * m_seconds;
-	totalFrames += m_frames;
-
-	totalFrames -= frames;
-
-	wxULongLong nf = totalFrames % wxULL(75);
-	totalFrames -= nf;
-	totalFrames /= wxULL(75);
-	wxULongLong ns = totalFrames % wxULL(60);
-	totalFrames -= ns;
-	totalFrames /= wxULL(60);
-
-	m_minutes = totalFrames.GetLo();
-	m_seconds = ns.GetLo();
-	m_frames = nf.GetLo();
-	*/
-
 	return *this;
 }
 

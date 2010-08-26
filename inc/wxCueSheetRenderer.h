@@ -26,7 +26,7 @@ class wxCueSheetRenderer :public wxObject
 {
 	DECLARE_ABSTRACT_CLASS(wxCueSheetRenderer)
 
-public:
+protected:
 
 	virtual bool RenderDisc( const wxCueSheet& );
 
@@ -34,41 +34,41 @@ public:
 	virtual bool OnRenderDisc( const wxCueSheet& );
 	virtual bool OnPostRenderDisc( const wxCueSheet& );
 
-	virtual bool RenderTracks( const wxArrayTrack& );
+	virtual bool RenderTracks( const wxCueSheet&, const wxArrayTrack& );
 
-	virtual bool OnPreRenderTracks( const wxArrayTrack& );
-	virtual bool OnRenderTracks( const wxArrayTrack& );
-	virtual bool OnPostRenderTracks( const wxArrayTrack& );
+	virtual bool OnPreRenderTracks( const wxCueSheet&, const wxArrayTrack& );
+	virtual bool OnRenderTracks( const wxCueSheet&, const wxArrayTrack& );
+	virtual bool OnPostRenderTracks( const wxCueSheet&, const wxArrayTrack& );
 
-	virtual bool RenderTrack( const wxTrack& );
+	virtual bool RenderTrack( const wxCueSheet&, const wxTrack& );
 
-	virtual bool OnPreRenderTrack( const wxTrack& );
-	virtual bool OnRenderTrack( const wxTrack& );
-	virtual bool OnPostRenderTrack( const wxTrack& );
+	virtual bool OnPreRenderTrack( const wxCueSheet&, const wxTrack& );
+	virtual bool OnRenderTrack( const wxCueSheet&, const wxTrack& );
+	virtual bool OnPostRenderTrack( const wxCueSheet&, const wxTrack& );
 
-	virtual bool RenderIndexes( const wxTrack&, const wxArrayIndex& );
+	virtual bool RenderIndexes( const wxCueSheet&, const wxTrack&, const wxArrayIndex& );
 
-	virtual bool OnPreRenderIndexes( const wxTrack&, const wxArrayIndex& );
-	virtual bool OnRenderIndexes( const wxTrack&, const wxArrayIndex& );
-	virtual bool OnPostRenderIndexes( const wxTrack&, const wxArrayIndex& );
+	virtual bool OnPreRenderIndexes( const wxCueSheet&, const wxTrack&, const wxArrayIndex& );
+	virtual bool OnRenderIndexes( const wxCueSheet&, const wxTrack&, const wxArrayIndex& );
+	virtual bool OnPostRenderIndexes( const wxCueSheet&, const wxTrack&, const wxArrayIndex& );
 
-	virtual bool RenderIndex( const wxTrack&, const wxIndex& );
+	virtual bool RenderIndex( const wxCueSheet&, const wxTrack&, const wxIndex& );
 
-	virtual bool OnPreRenderIndex( const wxTrack&, const wxIndex& );
-	virtual bool OnRenderIndex( const wxTrack&, const wxIndex& );
-	virtual bool OnPostRenderIndex( const wxTrack&, const wxIndex& );
+	virtual bool OnPreRenderIndex( const wxCueSheet&, const wxTrack&, const wxIndex& );
+	virtual bool OnRenderIndex( const wxCueSheet&, const wxTrack&, const wxIndex& );
+	virtual bool OnPostRenderIndex( const wxCueSheet&, const wxTrack&, const wxIndex& );
 
-	virtual bool RenderPreGap( const wxTrack&, const wxIndex& );
+	virtual bool RenderPreGap( const wxCueSheet&, const wxTrack&, const wxIndex& );
 
-	virtual bool OnPreRenderPreGap( const wxTrack&, const wxIndex& );
-	virtual bool OnRenderPreGap( const wxTrack&, const wxIndex& );
-	virtual bool OnPostRenderPreGap( const wxTrack&, const wxIndex& );
+	virtual bool OnPreRenderPreGap( const wxCueSheet&, const wxTrack&, const wxIndex& );
+	virtual bool OnRenderPreGap( const wxCueSheet&, const wxTrack&, const wxIndex& );
+	virtual bool OnPostRenderPreGap( const wxCueSheet&, const wxTrack&, const wxIndex& );
 
-	virtual bool RenderPostGap( const wxTrack&, const wxIndex& );
+	virtual bool RenderPostGap( const wxCueSheet&, const wxTrack&, const wxIndex& );
 
-	virtual bool OnPreRenderPostGap( const wxTrack&, const wxIndex& );
-	virtual bool OnRenderPostGap( const wxTrack&, const wxIndex& );
-	virtual bool OnPostRenderPostGap( const wxTrack&, const wxIndex& );
+	virtual bool OnPreRenderPostGap( const wxCueSheet&, const wxTrack&, const wxIndex& );
+	virtual bool OnRenderPostGap( const wxCueSheet&, const wxTrack&, const wxIndex& );
+	virtual bool OnPostRenderPostGap( const wxCueSheet&, const wxTrack&, const wxIndex& );
 
 public:
 

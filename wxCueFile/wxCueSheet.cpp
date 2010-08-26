@@ -102,12 +102,12 @@ wxTrack& wxCueSheet::GetLastTrack()
 	return m_tracks.Last();
 }
 
-const wxTrack& wxCueSheet::GetTrackConst(size_t idx) const
+const wxTrack& wxCueSheet::GetTrack(size_t idx) const
 {
 	return m_tracks[idx];
 }
 
-const wxTrack& wxCueSheet::GetLastTrackConst() const
+const wxTrack& wxCueSheet::GetLastTrack() const
 {
 	return m_tracks.Last();
 }
@@ -122,17 +122,6 @@ bool wxCueSheet::HasGarbage() const
 		i++;
 	}
 	return bRes;
-}
-
-const wxSamplingInfo& wxCueSheet::GetSamplingInfo() const
-{
-	return m_samplingInfo;
-}
-
-wxCueSheet& wxCueSheet::SetSamplingInfo( const wxSamplingInfo& si )
-{
-	m_samplingInfo = si;
-	return *this;
 }
 
 void wxCueSheet::Clear(void)
@@ -210,7 +199,7 @@ wxString wxCueSheet::FormatTrack(size_t trackNo, const wxString& sFmt ) const
 {
 	wxHashString replacements;
 	GetReplacements( replacements );
-	const wxTrack& track = GetTrackConst( trackNo );
+	const wxTrack& track = GetTrack( trackNo );
 	track.GetReplacements( replacements );
 
 	wxString s( sFmt );

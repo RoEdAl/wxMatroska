@@ -50,7 +50,7 @@ bool wxCueSheetRenderer::OnPreRenderDisc(const wxCueSheet& WXUNUSED(cueSheet) )
 
 bool wxCueSheetRenderer::OnRenderDisc(const wxCueSheet& cueSheet)
 {
-	if ( !RenderTracks( cueSheet.GetTracks() ) )
+	if ( !RenderTracks( cueSheet, cueSheet.GetTracks() ) )
 	{
 		return false;
 	}	
@@ -64,19 +64,19 @@ bool wxCueSheetRenderer::OnPostRenderDisc(const wxCueSheet& WXUNUSED(cueSheet) )
 }
 
 
-bool wxCueSheetRenderer::RenderTracks( const wxArrayTrack& tracks )
+bool wxCueSheetRenderer::RenderTracks( const wxCueSheet& cueSheet, const wxArrayTrack& tracks )
 {
-	if ( !OnPreRenderTracks( tracks ) )
+	if ( !OnPreRenderTracks( cueSheet, tracks ) )
 	{
 		return false;
 	}
 
-	if ( !OnRenderTracks( tracks ) )
+	if ( !OnRenderTracks( cueSheet, tracks ) )
 	{
 		return false;
 	}
 
-	if ( !OnPostRenderTracks( tracks ) )
+	if ( !OnPostRenderTracks( cueSheet, tracks ) )
 	{
 		return false;
 	}
@@ -84,17 +84,17 @@ bool wxCueSheetRenderer::RenderTracks( const wxArrayTrack& tracks )
 	return true;
 }
 
-bool wxCueSheetRenderer::OnPreRenderTracks( const wxArrayTrack& WXUNUSED(tracks) )
+bool wxCueSheetRenderer::OnPreRenderTracks( const wxCueSheet& WXUNUSED(cueSheet), const wxArrayTrack& WXUNUSED(tracks) )
 {
 	return true;
 }
 
-bool wxCueSheetRenderer::OnRenderTracks( const wxArrayTrack& tracks )
+bool wxCueSheetRenderer::OnRenderTracks( const wxCueSheet& cueSheet, const wxArrayTrack& tracks )
 {
 	size_t tracksCnt = tracks.Count();
 	for( size_t i=0; i<tracksCnt; i++ )
 	{
-		if ( !RenderTrack( tracks[i] ) )
+		if ( !RenderTrack( cueSheet, tracks[i] ) )
 		{
 			return false;
 		}
@@ -103,39 +103,24 @@ bool wxCueSheetRenderer::OnRenderTracks( const wxArrayTrack& tracks )
 	return true;
 }
 
-bool wxCueSheetRenderer::OnPostRenderTracks( const wxArrayTrack& WXUNUSED(tracks) )
+bool wxCueSheetRenderer::OnPostRenderTracks( const wxCueSheet& WXUNUSED(cueSheet), const wxArrayTrack& WXUNUSED(tracks) )
 {
 	return true;
 }
 
-bool wxCueSheetRenderer::RenderTrack(const wxTrack& track)
+bool wxCueSheetRenderer::RenderTrack(const wxCueSheet& cueSheet, const wxTrack& track)
 {
-	if ( !OnPreRenderTrack(track) )
+	if ( !OnPreRenderTrack(cueSheet,track) )
 	{
 		return false;
 	}
 
-	if ( !OnRenderTrack(track) )
+	if ( !OnRenderTrack(cueSheet,track) )
 	{
 		return false;
 	}
 
-	if ( !OnPostRenderTrack(track) )
-	{
-		return false;
-	}
-
-	return true;
-}
-
-bool wxCueSheetRenderer::OnPreRenderTrack(const wxTrack& WXUNUSED(track) )
-{
-	return true;
-}
-
-bool wxCueSheetRenderer::OnRenderTrack(const wxTrack& track )
-{
-	if ( !RenderIndexes( track, track.GetIndexes() ) )
+	if ( !OnPostRenderTrack(cueSheet,track) )
 	{
 		return false;
 	}
@@ -143,24 +128,14 @@ bool wxCueSheetRenderer::OnRenderTrack(const wxTrack& track )
 	return true;
 }
 
-bool wxCueSheetRenderer::OnPostRenderTrack(const wxTrack& WXUNUSED(track) )
+bool wxCueSheetRenderer::OnPreRenderTrack(const wxCueSheet& WXUNUSED(cueSheet), const wxTrack& WXUNUSED(track) )
 {
 	return true;
 }
 
-bool wxCueSheetRenderer::RenderIndexes( const wxTrack& track, const wxArrayIndex& indexes )
+bool wxCueSheetRenderer::OnRenderTrack(const wxCueSheet& cueSheet, const wxTrack& track )
 {
-	if ( !OnPreRenderIndexes( track, indexes ) )
-	{
-		return false;
-	}
-
-	if ( !OnRenderIndexes( track, indexes ) )
-	{
-		return false;
-	}
-
-	if ( !OnPostRenderIndexes( track, indexes ) )
+	if ( !RenderIndexes( cueSheet, track, track.GetIndexes() ) )
 	{
 		return false;
 	}
@@ -168,16 +143,41 @@ bool wxCueSheetRenderer::RenderIndexes( const wxTrack& track, const wxArrayIndex
 	return true;
 }
 
-bool wxCueSheetRenderer::OnPreRenderIndexes( const wxTrack& WXUNUSED(track), const wxArrayIndex& WXUNUSED(indexes) )
+bool wxCueSheetRenderer::OnPostRenderTrack(const wxCueSheet& WXUNUSED(cueSheet), const wxTrack& WXUNUSED(track) )
 {
 	return true;
 }
 
-bool wxCueSheetRenderer::OnRenderIndexes( const wxTrack& track, const wxArrayIndex& indexes )
+bool wxCueSheetRenderer::RenderIndexes( const wxCueSheet& cueSheet, const wxTrack& track, const wxArrayIndex& indexes )
+{
+	if ( !OnPreRenderIndexes( cueSheet, track, indexes ) )
+	{
+		return false;
+	}
+
+	if ( !OnRenderIndexes( cueSheet, track, indexes ) )
+	{
+		return false;
+	}
+
+	if ( !OnPostRenderIndexes( cueSheet, track, indexes ) )
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool wxCueSheetRenderer::OnPreRenderIndexes( const wxCueSheet& WXUNUSED(cueSheet), const wxTrack& WXUNUSED(track), const wxArrayIndex& WXUNUSED(indexes) )
+{
+	return true;
+}
+
+bool wxCueSheetRenderer::OnRenderIndexes( const wxCueSheet& cueSheet, const wxTrack& track, const wxArrayIndex& indexes )
 {
 	if ( track.HasPreGap() )
 	{
-		if ( !RenderPreGap( track, track.GetPreGap() ) )
+		if ( !RenderPreGap( cueSheet, track, track.GetPreGap() ) )
 		{
 			return false;
 		}
@@ -185,7 +185,7 @@ bool wxCueSheetRenderer::OnRenderIndexes( const wxTrack& track, const wxArrayInd
 
 	for( size_t i=0; i<indexes.Count(); i++ )
 	{
-		if ( !RenderIndex( track, indexes[i] ) )
+		if ( !RenderIndex( cueSheet, track, indexes[i] ) )
 		{
 			return false;
 		}
@@ -193,7 +193,7 @@ bool wxCueSheetRenderer::OnRenderIndexes( const wxTrack& track, const wxArrayInd
 
 	if ( track.HasPostGap() )
 	{
-		if ( !RenderPostGap( track, track.GetPostGap() ) )
+		if ( !RenderPostGap( cueSheet, track, track.GetPostGap() ) )
 		{
 			return false;
 		}
@@ -202,59 +202,24 @@ bool wxCueSheetRenderer::OnRenderIndexes( const wxTrack& track, const wxArrayInd
 	return true;
 }
 
-bool wxCueSheetRenderer::OnPostRenderIndexes( const wxTrack& WXUNUSED(track), const wxArrayIndex& WXUNUSED(indexes) )
+bool wxCueSheetRenderer::OnPostRenderIndexes( const wxCueSheet& WXUNUSED(cueSheet), const wxTrack& WXUNUSED(track), const wxArrayIndex& WXUNUSED(indexes) )
 {
 	return true;
 }
 
-bool wxCueSheetRenderer::RenderIndex( const wxTrack& track, const wxIndex& index )
+bool wxCueSheetRenderer::RenderIndex( const wxCueSheet& cueSheet, const wxTrack& track, const wxIndex& index )
 {
-	if ( !OnPreRenderIndex( track, index ) )
+	if ( !OnPreRenderIndex( cueSheet, track, index ) )
 	{
 		return false;
 	}
 
-	if ( !OnRenderIndex( track, index ) )
+	if ( !OnRenderIndex( cueSheet, track, index ) )
 	{
 		return false;
 	}
 
-	if ( !OnPostRenderIndex( track, index ) )
-	{
-		return false;
-	}
-
-	return true;
-}
-
-bool wxCueSheetRenderer::OnPreRenderIndex( const wxTrack& WXUNUSED(track), const wxIndex& WXUNUSED(index) )
-{
-	return true;
-}
-
-bool wxCueSheetRenderer::OnRenderIndex( const wxTrack& WXUNUSED(track), const wxIndex& WXUNUSED(index) )
-{
-	return true;
-}
-
-bool wxCueSheetRenderer::OnPostRenderIndex( const wxTrack& WXUNUSED(track), const wxIndex& WXUNUSED(index) )
-{
-	return true;
-}
-
-bool wxCueSheetRenderer::RenderPreGap(const wxTrack& track, const wxIndex& preGap )
-{
-	if ( !OnPreRenderPreGap( track, preGap ) )
-	{
-		return false;
-	}
-
-	if ( !OnRenderPreGap( track, preGap ) )
-	{
-		return false;
-	}
-
-	if ( !OnPostRenderPreGap( track, preGap ) )
+	if ( !OnPostRenderIndex( cueSheet, track, index ) )
 	{
 		return false;
 	}
@@ -262,34 +227,34 @@ bool wxCueSheetRenderer::RenderPreGap(const wxTrack& track, const wxIndex& preGa
 	return true;
 }
 
-bool wxCueSheetRenderer::OnPreRenderPreGap(const wxTrack& WXUNUSED(track), const wxIndex& WXUNUSED(preGap) )
+bool wxCueSheetRenderer::OnPreRenderIndex( const wxCueSheet& WXUNUSED(cueSheet), const wxTrack& WXUNUSED(track), const wxIndex& WXUNUSED(index) )
 {
 	return true;
 }
 
-bool wxCueSheetRenderer::OnRenderPreGap(const wxTrack& WXUNUSED(track), const wxIndex& WXUNUSED(preGap) )
+bool wxCueSheetRenderer::OnRenderIndex( const wxCueSheet& WXUNUSED(cueSheet), const wxTrack& WXUNUSED(track), const wxIndex& WXUNUSED(index) )
 {
 	return true;
 }
 
-bool wxCueSheetRenderer::OnPostRenderPreGap(const wxTrack& WXUNUSED(track), const wxIndex& WXUNUSED(preGap) )
+bool wxCueSheetRenderer::OnPostRenderIndex( const wxCueSheet& WXUNUSED(cueSheet), const wxTrack& WXUNUSED(track), const wxIndex& WXUNUSED(index) )
 {
 	return true;
 }
 
-bool wxCueSheetRenderer::RenderPostGap(const wxTrack& track, const wxIndex& postGap )
+bool wxCueSheetRenderer::RenderPreGap( const wxCueSheet& cueSheet, const wxTrack& track, const wxIndex& preGap )
 {
-	if ( !OnPreRenderPostGap( track, postGap ) )
+	if ( !OnPreRenderPreGap( cueSheet, track, preGap ) )
 	{
 		return false;
 	}
 
-	if ( !OnRenderPostGap( track, postGap ) )
+	if ( !OnRenderPreGap( cueSheet, track, preGap ) )
 	{
 		return false;
 	}
 
-	if ( !OnPostRenderPostGap( track, postGap ) )
+	if ( !OnPostRenderPreGap( cueSheet, track, preGap ) )
 	{
 		return false;
 	}
@@ -297,17 +262,52 @@ bool wxCueSheetRenderer::RenderPostGap(const wxTrack& track, const wxIndex& post
 	return true;
 }
 
-bool wxCueSheetRenderer::OnPreRenderPostGap(const wxTrack& WXUNUSED(track), const wxIndex& WXUNUSED(preGap) )
+bool wxCueSheetRenderer::OnPreRenderPreGap( const wxCueSheet& WXUNUSED(cueSheet), const wxTrack& WXUNUSED(track), const wxIndex& WXUNUSED(preGap) )
 {
 	return true;
 }
 
-bool wxCueSheetRenderer::OnRenderPostGap(const wxTrack& WXUNUSED(track), const wxIndex& WXUNUSED(preGap) )
+bool wxCueSheetRenderer::OnRenderPreGap( const wxCueSheet& WXUNUSED(cueSheet), const wxTrack& WXUNUSED(track), const wxIndex& WXUNUSED(preGap) )
 {
 	return true;
 }
 
-bool wxCueSheetRenderer::OnPostRenderPostGap(const wxTrack& WXUNUSED(track), const wxIndex& WXUNUSED(preGap) )
+bool wxCueSheetRenderer::OnPostRenderPreGap( const wxCueSheet& WXUNUSED(cueSheet), const wxTrack& WXUNUSED(track), const wxIndex& WXUNUSED(preGap) )
+{
+	return true;
+}
+
+bool wxCueSheetRenderer::RenderPostGap(const wxCueSheet& cueSheet, const wxTrack& track, const wxIndex& postGap )
+{
+	if ( !OnPreRenderPostGap( cueSheet, track, postGap ) )
+	{
+		return false;
+	}
+
+	if ( !OnRenderPostGap( cueSheet, track, postGap ) )
+	{
+		return false;
+	}
+
+	if ( !OnPostRenderPostGap( cueSheet, track, postGap ) )
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool wxCueSheetRenderer::OnPreRenderPostGap(const wxCueSheet& WXUNUSED(cueSheet), const wxTrack& WXUNUSED(track), const wxIndex& WXUNUSED(preGap) )
+{
+	return true;
+}
+
+bool wxCueSheetRenderer::OnRenderPostGap(const wxCueSheet& WXUNUSED(cueSheet), const wxTrack& WXUNUSED(track), const wxIndex& WXUNUSED(preGap) )
+{
+	return true;
+}
+
+bool wxCueSheetRenderer::OnPostRenderPostGap(const wxCueSheet& WXUNUSED(cueSheet), const wxTrack& WXUNUSED(track), const wxIndex& WXUNUSED(preGap) )
 {
 	return true;
 }
