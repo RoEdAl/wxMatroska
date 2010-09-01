@@ -232,6 +232,20 @@ wxULongLong wxSamplingInfo::GetIndexOffset( const wxIndex& idx ) const
 	}
 }
 
+wxIndex wxSamplingInfo::ConvertIndex( const wxIndex& idx ) const
+{
+	wxIndex res;
+	if ( idx.HasCdFrames() )
+	{
+		res.SetNumber( idx.GetNumber() ).SetOffset( GetFramesFromCdFrames( idx.GetOffset() ) );
+	}
+	else
+	{
+		res = idx;
+	}
+	return res;
+}
+
 wxString wxSamplingInfo::GetIndexOffsetStr( const wxIndex& idx ) const
 {
 	return GetSamplesStr( GetIndexOffset( idx ) );

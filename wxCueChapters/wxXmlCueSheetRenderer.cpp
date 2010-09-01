@@ -345,7 +345,7 @@ wxXmlNode* wxXmlCueSheetRenderer::AddChapterTimeEnd( wxXmlNode* pChapterAtom, co
 
 wxXmlNode* wxXmlCueSheetRenderer::AddChapterTimeEnd( wxXmlNode* pChapterAtom, const wxTrack& track ) const
 {
-	wxIndex fidx( track.GetFirstIndex() );
+	wxIndex fidx( m_si.ConvertIndex( track.GetFirstIndex() ) );
 	fidx -= m_si.GetFramesFromCdFrames( m_cfg.GetChapterOffset() );
 	return AddChapterTimeEnd( pChapterAtom, fidx );
 }

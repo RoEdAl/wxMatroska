@@ -122,12 +122,12 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddSwitch( wxT("m"), wxT("save-matroska-chapters"), _("Save Matroska chapter file (default)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("t"), wxT("generate-tags"), _("Generate tags file (default: no)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("nt"), wxT("dont-generate-tags"), _("Do not generate tags file"), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT("eu"), wxT("generate-edition_uid"), _("Generate edition UID (default: no)"), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT("neu"), wxT("dont-generate-edition_uid"), _("Do not generate edition UID"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("eu"), wxT("generate-edition-uid"), _("Generate edition UID (default: no)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("neu"), wxT("dont-generate-edition-uid"), _("Do not generate edition UID"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("tc"), wxT("generate-tags-from-comments"), _("Try to parse tags from cue sheet comments (default: yes)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("ntc"), wxT("dont-generate-tags-from-comments"), _("Do not try to parse tags from cue sheet comments"), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT("c8"), wxT("cue-sheet-utf8"), _("Save cue sheet using UTF-8 encoding (default: no - default encoding is used)"), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT("nc8"), wxT("no-cue-sheet-utf8"), _("Save cue sheet using default encoding"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("c8"), wxT("cue-sheet-utf8"), _("Save cue sheet using UTF-8 encoding"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("nc8"), wxT("no-cue-sheet-utf8"), _("Save cue sheet using default encoding (default)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("t1i1"), wxT("track-01-index-01"), _("For first track assume index 01 as beginning of track (default)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("t1i0"), wxT("track-01-index-00"), _("For first track assume index 00 as beginning of track"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("a"), wxT("abort-on-error"), _("Abort when conversion errors occurs (default)"), wxCMD_LINE_PARAM_OPTIONAL );
