@@ -72,6 +72,8 @@ protected:
 
 public:
 
+	static wxCueSheetRenderer* const Null;
+
 	wxCueSheetRenderer(void);
 	~wxCueSheetRenderer(void);
 

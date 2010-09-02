@@ -10,6 +10,8 @@
 
 IMPLEMENT_ABSTRACT_CLASS( wxCueSheetRenderer, wxObject )
 
+wxCueSheetRenderer* const wxCueSheetRenderer::Null = (wxCueSheetRenderer* const)NULL;
+
 wxCueSheetRenderer::wxCueSheetRenderer(void)
 {
 }

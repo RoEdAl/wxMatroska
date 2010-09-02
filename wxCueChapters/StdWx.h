@@ -33,5 +33,8 @@
 
 #include <FLAC++/all.h>
 
+extern wxXmlNode* const wxNullXmlNode;
+extern wxXmlDocument* const wxNullXmlDocument;
+
 #endif // _STD_WX_H
 

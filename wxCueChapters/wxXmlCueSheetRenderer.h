@@ -89,6 +89,8 @@ protected:
 
 public:
 
+	static wxXmlCueSheetRenderer* const Null;
+
 	wxXmlCueSheetRenderer(const wxConfiguration&, const wxInputFile& );
 	virtual ~wxXmlCueSheetRenderer(void);
 	void SetInputFile( const wxInputFile& );

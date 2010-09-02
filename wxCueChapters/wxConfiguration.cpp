@@ -446,7 +446,7 @@ void wxConfiguration::BuildXmlComments( const wxString& sOutputFile, wxXmlNode* 
 {
 	wxString sInit;
 	sInit.Printf( wxT("This file was created by %s tool"), wxGetApp().GetAppDisplayName() );
-	wxXmlNode* pComment = new wxXmlNode( (wxXmlNode*)NULL, wxXML_COMMENT_NODE, wxEmptyString, sInit );
+	wxXmlNode* pComment = new wxXmlNode( wxNullXmlNode, wxXML_COMMENT_NODE, wxEmptyString, sInit );
 	pNode->AddChild( pComment );
 
 	wxArrayString as;
@@ -462,7 +462,7 @@ void wxConfiguration::BuildXmlComments( const wxString& sOutputFile, wxXmlNode* 
 	size_t strings = as.GetCount();
 	for( size_t i=0; i<strings; i++ )
 	{
-		wxXmlNode* pComment = new wxXmlNode( (wxXmlNode*)NULL, wxXML_COMMENT_NODE, wxEmptyString, as[i] );
+		wxXmlNode* pComment = new wxXmlNode( wxNullXmlNode, wxXML_COMMENT_NODE, wxEmptyString, as[i] );
 		pNode->AddChild( pComment );
 	}
 }

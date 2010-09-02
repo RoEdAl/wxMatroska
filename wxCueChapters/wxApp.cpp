@@ -23,7 +23,7 @@ wxIMPLEMENT_APP(wxMyApp);
 
 wxMyApp::wxMyApp(void)
 	:m_sSeparator( wxT('='), 75 ),
-	 m_pRenderer((wxXmlCueSheetRenderer*)NULL)
+	m_pRenderer(wxXmlCueSheetRenderer::Null)
 {
 }
 
@@ -383,7 +383,7 @@ int wxMyApp::OnRun()
 int wxMyApp::OnExit()
 {
 	int res = wxAppConsole::OnExit();
-	if ( m_pRenderer != (wxXmlCueSheetRenderer*)NULL )
+	if ( m_pRenderer != wxXmlCueSheetRenderer::Null )
 	{
 		delete m_pRenderer;
 	}
@@ -397,7 +397,7 @@ wxXmlCueSheetRenderer& wxMyApp::GetXmlRenderer(const wxInputFile& inputFile)
 
 	if ( m_cfg.GetMerge() )
 	{
-		if ( m_pRenderer == (wxXmlCueSheetRenderer*)NULL )
+		if ( m_pRenderer == wxXmlCueSheetRenderer::Null )
 		{
 			m_pRenderer = new wxXmlCueSheetRenderer( m_cfg, inputFile );
 			bShowInfo = true;
@@ -409,7 +409,7 @@ wxXmlCueSheetRenderer& wxMyApp::GetXmlRenderer(const wxInputFile& inputFile)
 	}
 	else
 	{
-		if ( m_pRenderer != (wxXmlCueSheetRenderer*)NULL )
+		if ( m_pRenderer != wxXmlCueSheetRenderer::Null )
 		{
 			delete m_pRenderer;
 		}
@@ -430,7 +430,7 @@ wxXmlCueSheetRenderer& wxMyApp::GetXmlRenderer(const wxInputFile& inputFile)
 
 bool wxMyApp::HasXmlRenderer() const
 {
-	return ( m_pRenderer != (wxXmlCueSheetRenderer*)NULL );
+	return ( m_pRenderer != wxXmlCueSheetRenderer::Null );
 }
 
 wxXmlCueSheetRenderer& wxMyApp::GetXmlRenderer()
