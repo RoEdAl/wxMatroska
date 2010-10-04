@@ -333,6 +333,11 @@ void wxCueComponent::AddCdTextInfoEx( const wxString& sKeyword, const wxString& 
 	}
 }
 
+void wxCueComponent::AddCdTextInfoEx( const wxCueTag& tag )
+{
+	AddCdTextInfoEx( tag.GetName(), tag.GetValue() );
+}
+
 void wxCueComponent::Clear()
 {
 	m_comments.Clear();

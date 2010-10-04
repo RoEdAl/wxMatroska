@@ -104,6 +104,7 @@ public:
 	void ParseGarbage( const wxString& );
 	bool AddCdTextInfo( const wxString&, const wxString& );
 	void AddCdTextInfoEx( const wxString&, const wxString& );
+	void AddCdTextInfoEx( const wxCueTag& );
 
 	bool CheckEntryType( ENTRY_TYPE ) const;
 

@@ -9,6 +9,10 @@
 #include <wxFlacDecoder.h>
 #endif
 
+#ifndef _WX_CUE_COMPONENT_H
+class wxArrayCueTag;
+#endif
+
 class wxFlacMetaDataReader :public wxObject
 {
 
@@ -66,11 +70,9 @@ public:
 	bool HasCueSheet() const;
 	bool HasStreamInfo() const;
 
-	WX_DECLARE_STRING_HASH_MAP( wxString, wxHashString );
-
 	const FLAC::Metadata::VorbisComment& GetVorbisComment() const;
 	wxString GetCueSheetFromVorbisComment() const;
-	void ReadVorbisComments( wxHashString& ) const;
+	void ReadVorbisComments( wxArrayCueTag& ) const;
 
 	const FLAC::Metadata::CueSheet& GetCueSheet() const;
 	const FLAC::Metadata::StreamInfo& GetStreamInfo() const;

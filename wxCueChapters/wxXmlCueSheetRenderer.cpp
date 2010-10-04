@@ -420,7 +420,7 @@ static bool is_simple( wxXmlNode* pNode, const wxString& sName, const wxString& 
 				wxXmlNode* pText = pChild->GetChildren();
 				if ( pText == wxNullXmlNode ) return false;
 				if ( pText->GetType() != wxXML_TEXT_NODE ) return false;
-				bValue = ( pText->GetContent() == sValue );			
+				bValue = ( pText->GetContent().Cmp( sValue ) == 0 );			
 			}
 		}
 

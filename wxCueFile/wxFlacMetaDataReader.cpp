@@ -3,6 +3,7 @@
 */
 
 #include "StdWx.h"
+#include <wxCueComponent.h>
 #include "wxFlacMetaDataReader.h"
 
 wxFlacMetaDataReader::wxFlacMetaDataReader(void)
@@ -76,10 +77,10 @@ wxString wxFlacMetaDataReader::GetCueSheetFromVorbisComment() const
 	return wxEmptyString;
 }
 
-void wxFlacMetaDataReader::ReadVorbisComments( wxFlacMetaDataReader::wxHashString& comments ) const
+void wxFlacMetaDataReader::ReadVorbisComments( wxArrayCueTag& comments ) const
 {
 	wxASSERT( HasVorbisComment() );
-	comments.clear();
+	comments.Empty();
 	const FLAC::Metadata::VorbisComment& vorbisComment = GetVorbisComment();
 	unsigned int numComments = vorbisComment.get_num_comments();
 	for( unsigned int i=0; i<numComments; i++ )
@@ -87,7 +88,8 @@ void wxFlacMetaDataReader::ReadVorbisComments( wxFlacMetaDataReader::wxHashStrin
 		FLAC::Metadata::VorbisComment::Entry entry = vorbisComment.get_comment(i);
 		wxString sEntryName( entry.get_field_name(), wxConvUTF8, entry.get_field_name_length() );
 		wxString sEntryValue( entry.get_field_value(), wxConvUTF8, entry.get_field_value_length() );
-		comments[sEntryName] = sEntryValue;
+		wxCueTag comment( sEntryName, sEntryValue );
+		comments.Add( comment );
 	}
 }
 

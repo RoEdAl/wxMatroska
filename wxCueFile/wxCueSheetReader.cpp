@@ -76,7 +76,7 @@ wxCueSheetReader::wxCueSheetReader(void)
 	 m_reCdTextInfo( GetCdTextInfoRegExp(), wxRE_ADVANCED ),
 	 m_reEmpty( wxT("\\A\\s*\\Z"), wxRE_ADVANCED ),
 	 m_reIndex( wxT("\\A\\s*(\\d{1,2})\\s+(\\S.*\\S)\\Z"), wxRE_ADVANCED ),
-	 m_reMsf( wxT("\\A(\\d{1,2}):(\\d{1,2}):(\\d{1,2})\\Z"), wxRE_ADVANCED ),
+	 m_reMsf( wxT("\\A(\\d{1,4}):(\\d{1,2}):(\\d{1,2})\\Z"), wxRE_ADVANCED ),
 	 m_reQuotesEx( wxT("\\'(([^\\'\\u201E\\\u201D]|\\\')*)\\'(?![[:alnum:]])"), wxRE_ADVANCED ),
 	 m_reFlags( wxT("\\s+"), wxRE_ADVANCED ),
 	 m_reDataMode( GetDataModeRegExp(), wxRE_ADVANCED ),
@@ -332,28 +332,31 @@ bool wxCueSheetReader::AppendFlacComments( const wxFlacMetaDataReader& flacReade
 {
 	wxRegEx reTrackComment( wxT("cue[[.hyphen.][.underscore.][.low-line.]]track([[:digit:]]{1,2})[[.underscore.][.low-line.]]([[:alpha:][.hyphen.][.underscore.][.low-line.]]+)"), wxRE_ADVANCED|wxRE_ICASE );
 	wxASSERT( reTrackComment.IsValid() );
-	wxFlacMetaDataReader::wxHashString comments;
+	wxArrayCueTag comments;
 	flacReader.ReadVorbisComments( comments );
-	for( wxFlacMetaDataReader::wxHashString::const_iterator i=comments.begin(); i!=comments.end(); i++ )
+	size_t nComments = comments.GetCount();
+	for( size_t i=0; i<nComments; i++ )
 	{
-		if ( i->first.CmpNoCase( wxT("CUESHEET") ) == 0 ) continue;
-		if ( i->first.CmpNoCase( wxT("TOTALTRACKS") ) == 0 ) continue;
+		const wxCueTag& comment = comments[i];
 
-		if ( reTrackComment.Matches( i->first ) )
+		if ( comment.GetName().CmpNoCase( wxT("CUESHEET") ) == 0 ) continue;
+		if ( comment.GetName().CmpNoCase( wxT("TOTALTRACKS") ) == 0 ) continue;
+
+		if ( reTrackComment.Matches( comment.GetName() ) )
 		{
-			wxString sTagNumber( reTrackComment.GetMatch( i->first, 1 ) );
-			wxString sTagName( reTrackComment.GetMatch( i->first, 2 ) );
+			wxString sTagNumber( reTrackComment.GetMatch( comment.GetName(), 1 ) );
+			wxString sTagName( reTrackComment.GetMatch( comment.GetName(), 2 ) );
 			unsigned long trackNumber;
 			if ( sTagNumber.ToULong( &trackNumber ) )
 			{
 				if ( m_cueSheet.HasTrack( trackNumber ) )
 				{
 					wxTrack& track = m_cueSheet.GetTrackByNumber( trackNumber );
-					track.AddCdTextInfoEx( sTagName, i->second );
+					track.AddCdTextInfoEx( sTagName, comment.GetValue() );
 				}
 				else
 				{
-					wxLogInfo( wxT("Skipping track comment %s - track %d not found"), i->first, trackNumber );
+					wxLogInfo( wxT("Skipping track comment %s - track %d not found"), comment.GetName(), trackNumber );
 				}
 			}
 			else
@@ -363,7 +366,7 @@ bool wxCueSheetReader::AppendFlacComments( const wxFlacMetaDataReader& flacReade
 		}
 		else
 		{
-			m_cueSheet.AddCdTextInfoEx( i->first, i->second );
+			m_cueSheet.AddCdTextInfoEx( comment );
 		}
 	}
 	return true;
