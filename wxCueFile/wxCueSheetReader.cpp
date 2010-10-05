@@ -330,7 +330,7 @@ bool wxCueSheetReader::ReadEmbeddedInFlacCueSheet( const wxString& sMediaFile, i
 
 bool wxCueSheetReader::AppendFlacComments( const wxFlacMetaDataReader& flacReader )
 {
-	wxRegEx reTrackComment( wxT("cue[[.hyphen.][.underscore.][.low-line.]]track([[:digit:]]{1,2})[[.underscore.][.low-line.]]([[:alpha:][.hyphen.][.underscore.][.low-line.]]+)"), wxRE_ADVANCED|wxRE_ICASE );
+	wxRegEx reTrackComment( wxT("cue[[.hyphen.][.underscore.][.low-line.]]track([[:digit:]]{1,2})[[.underscore.][.low-line.]]([[:alpha:][.hyphen.][.underscore.][.low-line.][.space.]]+)"), wxRE_ADVANCED|wxRE_ICASE );
 	wxASSERT( reTrackComment.IsValid() );
 	wxArrayCueTag comments;
 	flacReader.ReadVorbisComments( comments );
@@ -352,7 +352,7 @@ bool wxCueSheetReader::AppendFlacComments( const wxFlacMetaDataReader& flacReade
 				if ( m_cueSheet.HasTrack( trackNumber ) )
 				{
 					wxTrack& track = m_cueSheet.GetTrackByNumber( trackNumber );
-					track.AddCdTextInfoEx( sTagName, comment.GetValue() );
+					track.AddTag( sTagName, comment.GetValue() );
 				}
 				else
 				{
@@ -366,7 +366,7 @@ bool wxCueSheetReader::AppendFlacComments( const wxFlacMetaDataReader& flacReade
 		}
 		else
 		{
-			m_cueSheet.AddCdTextInfoEx( comment );
+			m_cueSheet.AddTag( comment );
 		}
 	}
 	return true;

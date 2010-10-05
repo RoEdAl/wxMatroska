@@ -4,6 +4,7 @@
 
 #include "StdWx.h"
 #include "wxConfiguration.h"
+#include <wxTagSynonims.h>
 #include <wxSamplingInfo.h>
 #include <wxIndex.h>
 #include <wxTrack.h>
@@ -261,7 +262,34 @@ wxXmlCueSheetRenderer::wxXmlCueSheetRenderer(
 	m_offset( wxULL(0) ),
 	m_nTotalParts(0)
 {
+	init_synonims();
 	cfg.GetOutputFile( inputFile, m_sOutputFile, m_sTagsFile );
+}
+
+void wxXmlCueSheetRenderer::init_synonims()
+{
+	wxArrayString as;
+
+	// DISC: TITLE = (TITLE,ALBUM)
+	as.Add( wxT("ALBUM") );
+	wxTagSynonims discSynonim1( wxT("TITLE"), as );
+	m_discCdTextSynonims.Add( discSynonim1 );
+
+	// DISC: TITLE = (TITLE,ALBUM)
+	m_discSynonims.Add( discSynonim1 );
+
+	as.Clear();
+	// DISC: ARTIST = (ARTIST,PERFORMER)
+	as.Add( wxT("PERFORMER") );
+	wxTagSynonims discSynonim2( wxT("ARTIST"), as );
+	m_discCdTextSynonims.Add( discSynonim2 );
+	m_trackCdTextSynonims.Add( discSynonim2 );
+
+	as.Clear();
+	// DISC: ARTIST = (ARTIST,ALBUM ARTIST)
+	as.Add( wxT("ALBUM ARTIST") );
+	wxTagSynonims discSynonim3( wxT("ARTIST"), as );
+	m_discSynonims.Add( discSynonim3 );
 }
 
 wxXmlCueSheetRenderer::~wxXmlCueSheetRenderer(void)
@@ -469,30 +497,39 @@ static wxXmlNode* add_simple_tag( wxXmlNode* pNode, const wxCueTag& tag, const w
 	return add_simple_tag( pNode, tag.GetName(), tag.GetValue(), sLanguage );
 }
 
-void wxXmlCueSheetRenderer::AddCdTextInfo( const wxCueComponent& component, wxXmlNode* pTag )
+void wxXmlCueSheetRenderer::AddTags(
+	const wxCueComponent& component,
+	const wxTagSynonimsCollection& cdTextSynonims,
+	const wxTagSynonimsCollection& synonims,
+	wxXmlNode* pTag )
 {
-	const wxArrayCueTag& cdTextTags = component.GetCdTextTags();
-	size_t numTags = cdTextTags.Count();
-	for( size_t i=0; i<numTags; i++ )
-	{
-		wxCueComponent::ENTRY_FORMAT entryFormat;
-		wxCueComponent::ENTRY_TYPE entryType;
+	wxArrayCueTag mappedTags;
+	wxArrayCueTag rest;
 
-		wxCueComponent::GetCdTextInfoFormat( cdTextTags[i].GetName(), entryFormat );
-		wxCueComponent::GetCdTextInfoType( cdTextTags[i].GetName(), entryType );
+	component.GetTags(  cdTextSynonims, synonims, mappedTags, rest );
 
-		if ( ((entryFormat == wxCueComponent::CHARACTER) || (entryFormat == wxCueComponent::BINARY)) && component.CheckEntryType( entryType ) )
-		{ // we can save this entry
-			wxXmlNode* pSimple = add_simple_tag( pTag, cdTextTags[i], m_cfg.GetLang() );
-		}
-	}
-
-	wxArrayCueTag tags;
-	component.GetTags( tags );
-	numTags = tags.Count();
+	size_t numTags = mappedTags.Count();
 	for( size_t i = 0; i < numTags; i++ )
 	{
-		wxXmlNode* pSimple = add_simple_tag( pTag, tags[i], m_cfg.GetLang() );
+		wxXmlNode* pSimple = add_simple_tag( pTag, mappedTags[i], m_cfg.GetLang() );
+	}
+
+	numTags = rest.Count();
+	for( size_t i = 0; i < numTags; i++ )
+	{
+		wxXmlNode* pSimple = add_simple_tag( pTag, rest[i], m_cfg.GetLang() );
+	}
+}
+
+void wxXmlCueSheetRenderer::AddCdTextInfo( const wxCueComponent& component, wxXmlNode* pTag )
+{
+	if ( component.IsTrack() )
+	{
+		AddTags( component, m_trackCdTextSynonims, m_trackSynonims, pTag );
+	}
+	else
+	{
+		AddTags( component, m_discCdTextSynonims, m_discSynonims, pTag );
 	}
 }
 

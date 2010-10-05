@@ -18,7 +18,11 @@ class wxConfiguration;
 #endif
 
 #ifndef _WX_UNQUOTER_H_
-#include "wxUnquoter.h"
+#include <wxUnquoter.h>
+#endif
+
+#ifndef _WX_TAG_SYNONIMS_H_
+class wxTagSynonimsCollection;
 #endif
 
 class wxXmlCueSheetRenderer :public wxCueSheetRenderer
@@ -45,6 +49,11 @@ protected:
 	size_t m_nTotalParts;
 	wxSamplingInfo m_si;
 
+	wxTagSynonimsCollection m_discCdTextSynonims;
+	wxTagSynonimsCollection m_discSynonims;
+	wxTagSynonimsCollection m_trackCdTextSynonims;
+	wxTagSynonimsCollection m_trackSynonims;
+
 protected:
 
 	virtual bool OnPreRenderDisc( const wxCueSheet& );
@@ -60,6 +69,11 @@ protected:
 protected:
 
 	static wxULongLong GenerateUID();
+	void AddTags(
+		const wxCueComponent&,
+		const wxTagSynonimsCollection&,
+		const wxTagSynonimsCollection&,
+		wxXmlNode* );
 	void AddCdTextInfo( const wxCueComponent&, wxXmlNode* );
 	wxXmlNode* AddDiscTags(
 		const wxCueSheet&,
@@ -86,6 +100,8 @@ protected:
 	wxXmlNode* AddChapterTimeEnd( wxXmlNode*, const wxULongLong& ) const;
 
 	wxXmlNode* AddIdxChapterAtom( wxXmlNode*, const wxIndex& ) const;
+
+	void init_synonims();
 
 public:
 

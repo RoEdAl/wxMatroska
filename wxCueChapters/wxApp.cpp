@@ -4,6 +4,7 @@
 
 #include "StdWx.h"
 #include "wxConfiguration.h"
+#include <wxTagSynonims.h>
 #include <wxSamplingInfo.h>
 #include <wxIndex.h>
 #include <wxTrack.h>
@@ -12,7 +13,7 @@
 #include "wxXmlCueSheetRenderer.h"
 #include "wxApp.h"
 
-const wxChar wxMyApp::APP_VERSION[] = wxT("0.2 beta");
+const wxChar wxMyApp::APP_VERSION[] = wxT("0.4 beta");
 const wxChar wxMyApp::APP_AUTHOR[] = wxT("Edmunt Pienkowsky - roed@onet.eu");
 const wxChar wxMyApp::LICENSE_FILE_NAME[] = wxT("license.txt");
 const wxChar wxMyApp::FLAC_LICENSE_FILE_NAME[] = wxT("flac_license.txt");
@@ -53,10 +54,10 @@ void wxMyApp::AddInputFileFormatDescription( wxCmdLineParser& cmdline )
 
 	cmdline.AddUsageText( _("Input file may be a wildcard:") );
 	cmdline.AddUsageText( _("\t*.cue") );
-	cmdline.AddUsageText( _("When -ec is used inmut file may be a path to media file with embedded cue sheet:") );
+	cmdline.AddUsageText( _("When -ec is used input file may be a path to media file with embedded cue sheet:") );
 	cmdline.AddUsageText( _("\t*.flac test.ape") );
 	cmdline.AddUsageText( _("To read embedded cue sheet MediaInfo library is used.") );
-
+	cmdline.AddUsageText( _("For FLAC files the native FLAC library is used to read cuesheet and metadata.") );
 	cmdline.AddUsageText( wxString::Format( _("You may also specify data files after cue file using %c as separator."), wxInputFile::SEPARATOR ) );
 	cmdline.AddUsageText( wxString::Format( _("\t\"test.cue%ctest.flac\""), wxInputFile::SEPARATOR ) );
 	cmdline.AddUsageText( _("This allow you to override data file specification in cue sheet file.") );

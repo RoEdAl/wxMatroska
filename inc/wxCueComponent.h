@@ -5,6 +5,10 @@
 #ifndef _WX_CUE_COMPONENT_H
 #define _WX_CUE_COMPONENT_H
 
+#ifndef _WX_TAG_SYNONIMS_H_
+class wxTagSynonimsCollection;
+#endif
+
 class wxCueTag :public wxObject
 {
 	DECLARE_ABSTRACT_CLASS(wxCueTag)
@@ -98,13 +102,17 @@ public:
 	virtual bool HasGarbage() const;
 	const wxArrayCueTag& GetCdTextTags() const;
 	const wxArrayCueTag& GetTags() const;
-	void GetTags( wxArrayCueTag& ) const;
+	void GetTags( 
+		const wxTagSynonimsCollection&,
+		const wxTagSynonimsCollection&,
+		wxArrayCueTag&,
+		wxArrayCueTag& ) const;
 
 	void ParseComment( const wxString&, bool = true );
 	void ParseGarbage( const wxString& );
 	bool AddCdTextInfo( const wxString&, const wxString& );
-	void AddCdTextInfoEx( const wxString&, const wxString& );
-	void AddCdTextInfoEx( const wxCueTag& );
+	void AddTag( const wxString&, const wxString& );
+	void AddTag( const wxCueTag& );
 
 	bool CheckEntryType( ENTRY_TYPE ) const;
 
