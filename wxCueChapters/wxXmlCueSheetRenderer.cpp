@@ -365,7 +365,7 @@ wxXmlNode* wxXmlCueSheetRenderer::AddChapterTimeEnd( wxXmlNode* pChapterAtom, co
 {
 	wxULongLong tframes( m_offset );
 	tframes += frames;
-	return add_chapter_time_end( pChapterAtom, m_si, frames );
+	return add_chapter_time_end( pChapterAtom, m_si, tframes );
 }
 
 wxXmlNode* wxXmlCueSheetRenderer::AddChapterTimeEnd( wxXmlNode* pChapterAtom, const wxIndex& idx ) const
