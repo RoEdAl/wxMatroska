@@ -13,7 +13,7 @@
 #include "wxXmlCueSheetRenderer.h"
 #include "wxApp.h"
 
-const wxChar wxMyApp::APP_VERSION[] = wxT("0.4 beta");
+const wxChar wxMyApp::APP_VERSION[] = wxT("0.5 beta");
 const wxChar wxMyApp::APP_AUTHOR[] = wxT("Edmunt Pienkowsky - roed@onet.eu");
 const wxChar wxMyApp::LICENSE_FILE_NAME[] = wxT("license.txt");
 const wxChar wxMyApp::FLAC_LICENSE_FILE_NAME[] = wxT("flac_license.txt");
