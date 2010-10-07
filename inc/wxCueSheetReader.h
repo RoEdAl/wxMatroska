@@ -38,7 +38,8 @@ public:
 		EC_FLAC_READ_TAG_ONLY = 4,
 		EC_FLAC_READ_MASK = 7,
 		EC_FALC_USE_VORBIS_COMMENTS = 8,
-		EC_FLAC_MASK = 15
+		EC_FLAC_MASK = 15,
+		EC_SINGLE_MEDIA_FILE = 16
 	};
 
 protected:
@@ -122,7 +123,8 @@ protected:
 	bool ReadEmbeddedInFlacCueSheet( const wxString&, int );
 	bool ReadCueSheetFromVorbisComment( const wxFlacMetaDataReader&, bool );
 	bool ReadCueSheetFromCueSheetTag( const wxFlacMetaDataReader&, bool );
-	bool AppendFlacComments( const wxFlacMetaDataReader& );
+	bool AppendFlacComments( const wxFlacMetaDataReader&, bool );
+	void BuildFromSingleMediaFile( const wxString& );
 
 public:
 

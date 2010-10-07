@@ -4,7 +4,7 @@
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.15
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.16
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -257,6 +257,13 @@ GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $CheckBoxC8 = GUICtrlCreateCheckbox("Set cue sheet file encoding to UTF-8", 312, 289, 201, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+GUICtrlCreateGroup("", -99, -99, 1, 1)
+$GroupEmbeddedFlags = GUICtrlCreateGroup("Embedded mode flags", 308, 319, 225, 49, -1, $WS_EX_TRANSPARENT)
+GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+$CheckBoxSingleMediaFile = GUICtrlCreateCheckbox("Media file(s) without cuesheet", 312, 340, 169, 17)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+GUICtrlSetTip(-1, "Assume input file(s) as media file without cuesheet")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 $OutputPane = GUICtrlCreateTabItem("&Output")
 $LabelLog = GUICtrlCreateLabel("&Messages:", 11, 29, 71, 17, $SS_CENTERIMAGE)
@@ -558,6 +565,9 @@ Func read_options()
 	EndSwitch
 
 	$s &= _Iif(GUICtrlRead($CheckBoxFlacMetaData) = $GUI_CHECKED, "--flac-append-comments", "--flac-dont-append-comments")
+	$s &= " "
+
+	$s &= _Iif(GUICtrlRead($CheckBoxSingleMediaFile) = $GUI_CHECKED, "--single-media-file", "--media-file-with-embedded-cuesheet")
 	$s &= " "
 
 	If GUICtrlRead($CheckBoxVerbose) = $GUI_CHECKED Then

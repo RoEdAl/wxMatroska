@@ -143,13 +143,18 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddOption( wxT("dte"), wxT("default-matroska-tags-file-extension"), wxString::Format( _("Default Matroska tags XML file extension (default: %s)"), MATROSKA_TAGS_EXT) , wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("cq"), wxT("correct-quotation-marks"), _("Correct \"simple 'quotation' marks\" to \u201Cenglish \u2018quotation\u2019 marks\u201D inside strings (default: on)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("ncq"), wxT("dont-correct-quotation-marks"), _("Dont correct \"simple 'quotation' marks\" to \u201Cenglish \u2018quotation\u2019 marks\u201D inside strings"), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxEmptyString, wxT("flac-read-none"), _("Do not read cuesheet from FLAC container"), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxEmptyString, wxT("flac-read-cuesheet-tag-first"), _("Try to read embedded cuesheet from FLAC container - first try read CUESHEET tag then try CUESHEET comment (default)"), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxEmptyString, wxT("flac-read-vorbis-comment-first"), _("Try to read embedded cuesheet from FLAC container - first try read CUESHEET comment then try CUESHEET tag"), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxEmptyString, wxT("flac-read-cuesheet-tag-only"), _("Try to read embedded cuesheet from FLAC container - try read CUESHEET tag only"), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxEmptyString, wxT("flac-read-vorbis-comment-only"), _("Try to read embedded cuesheet from FLAC container - try read CUESHEET comment only"), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxEmptyString, wxT("flac-append-comments"), _("Append FLAC comments (default: yes)"), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxEmptyString, wxT("flac-dont-append-comments"), _("Don't append FLAC comments (default: yes)"), wxCMD_LINE_PARAM_OPTIONAL );
+
+	// embedded mode flags
+	cmdLine.AddSwitch( wxEmptyString, wxT("single-media-file"), _("Embedded mode flag. Assume input as single media file without cuesheet (default: no, opposite to media-file-with-embedded-cuesheet)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, wxT("media-file-with-embedded-cuesheet"), _("Embedded mode flag. Assume input file as media file with embedded cuesheet (default: yes, opposite to single-media-file)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, wxT("flac-read-none"), _("Embedded mode flag - FLAC cuesheet read mode. Do not read cuesheet from FLAC container"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, wxT("flac-read-cuesheet-tag-first"), _("Embedded mode flag - FLAC cuesheet read mode. Try to read embedded cuesheet from FLAC container - first try read CUESHEET tag then try CUESHEET comment (default)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, wxT("flac-read-vorbis-comment-first"), _("Embedded mode flag - FLAC cuesheet read mode. Try to read embedded cuesheet from FLAC container - first try read CUESHEET comment then try CUESHEET tag"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, wxT("flac-read-cuesheet-tag-only"), _("Embedded mode flag - FLAC cuesheet read mode. Try to read embedded cuesheet from FLAC container - try read CUESHEET tag only"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, wxT("flac-read-vorbis-comment-only"), _("Embedded mode flag - FLAC cuesheet read mode. Try to read embedded cuesheet from FLAC container - try read CUESHEET comment only"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, wxT("flac-append-comments"), _("Embedded mode flag. Append FLAC comments (default: yes)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, wxT("flac-dont-append-comments"), _("Embedded mode flag. Don't append FLAC comments (default: no)"), wxCMD_LINE_PARAM_OPTIONAL );
+
 	cmdLine.AddParam( _("<cue sheet>"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE|wxCMD_LINE_PARAM_OPTIONAL );
 }
 
@@ -334,6 +339,18 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		}
 	}
 
+	if ( cmdLine.Found( wxT("single-media-file") ) )
+	{
+		m_nEmbeddedModeFlags &= ~wxCueSheetReader::EC_SINGLE_MEDIA_FILE;
+		m_nEmbeddedModeFlags |= wxCueSheetReader::EC_SINGLE_MEDIA_FILE;
+	}
+
+	if ( cmdLine.Found( wxT("media-file-with-embedded-cuesheet") ) )
+	{
+		m_nEmbeddedModeFlags &= ~wxCueSheetReader::EC_SINGLE_MEDIA_FILE;
+		m_nEmbeddedModeFlags |= 0;
+	}
+
 	if ( cmdLine.Found( wxT("flac-read-none") ) )
 	{
 		m_nEmbeddedModeFlags &= ~wxCueSheetReader::EC_FLAC_READ_MASK;
@@ -395,6 +412,53 @@ static wxString GetFileName( const wxString& sFileName )
 	return fn.GetFullName();
 }
 
+static wxString GetEmbeddedModeFlagsDesc( unsigned int flags )
+{
+	wxArrayString as;
+	as.Add( ( ( flags & wxCueSheetReader::EC_SINGLE_MEDIA_FILE ) != 0 )? wxT("single-media-file") : wxT("media-file-with-embedded-cuesheet") );
+
+	wxString s;
+	switch( flags & wxCueSheetReader::EC_FLAC_READ_MASK )
+	{
+		case wxCueSheetReader::EC_FLAC_READ_NONE:
+		s = wxT("flac-read-none");
+		break;
+
+		case wxCueSheetReader::EC_FLAC_READ_TAG_FIRST_THEN_COMMENT:
+		s = wxT("flac-read-cuesheet-tag-first");
+		break;
+
+		case wxCueSheetReader::EC_FLAC_READ_COMMENT_FIRST_THEN_TAG:
+		s = wxT("flac-read-vorbis-comment-first");
+		break;
+
+		case wxCueSheetReader::EC_FLAC_READ_COMMENT_ONLY:
+		s = wxT("flac-read-cuesheet-tag-only");
+		break;
+
+		case wxCueSheetReader::EC_FLAC_READ_TAG_ONLY:
+		s = wxT("flac-read-vorbis-comment-only");
+		break;
+
+		default:
+		s = wxT("flac_read_???");
+		break;
+	}
+	as.Add( s );
+
+	as.Add( ( ( flags & wxCueSheetReader::EC_FALC_USE_VORBIS_COMMENTS ) != 0 )? wxT("flac-append-comments") : wxT("flac-dont-append-comments") );
+
+	s.Empty();
+	size_t nItems = as.GetCount();
+	for( size_t i=0; i<nItems; i++ )
+	{
+		s += as[i];
+		s += wxT(',');
+	}
+
+	return s.RemoveLast();
+}
+
 void wxConfiguration::FillArray( wxArrayString& as ) const
 {
 	as.Add( wxString::Format( wxT("Save cue sheet: %s"), BoolToStr(m_bSaveCueSheet) ) );
@@ -419,6 +483,10 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
 	as.Add( wxString::Format( wxT("Default Matroska chapters XML file extension: %s"), m_sMatroskaChaptersXmlExt ) );
 	as.Add( wxString::Format( wxT("Default Matroska tags XML file extension: %s"), m_sMatroskaTagsXmlExt ) );
 	as.Add( wxString::Format( wxT("Correct \"simple 'quotation' marks\" inside strings: %s"), BoolToStr(m_bCorrectQuotationMarks) ) );
+	if ( m_bEmbedded )
+	{
+		as.Add( wxString::Format( wxT("Embedded mode flags: %s"), GetEmbeddedModeFlagsDesc(m_nEmbeddedModeFlags) ) );
+	}
 }
 
 void wxConfiguration::Dump() const
