@@ -15,13 +15,28 @@ class wxCueTag :public wxObject
 
 	public:
 
+	typedef enum _TAG_SOURCE
+	{
+		TAG_UNKNOWN,
+		TAG_CD_TEXT,
+		TAG_CUE_COMMENT,
+		TAG_MEDIA_METADATA,
+		TAG_AUTO_GENERATED
+	} TAG_SOURCE;
+
+	public:
+
 	wxCueTag();
 	wxCueTag( const wxCueTag& );
-	wxCueTag( const wxString&, const wxString& );
+	wxCueTag( TAG_SOURCE, const wxString&, const wxString& );
 
+	TAG_SOURCE GetSource() const;
+	wxString GetSourceAsString() const;
 	const wxString& GetName() const;
 	const wxString& GetValue() const;
+	bool IsMultiline() const;
 
+	wxCueTag& SetSource( TAG_SOURCE );
 	wxCueTag& SetName( const wxString& );
 	wxCueTag& SetValue( const wxString& );
 
@@ -30,8 +45,24 @@ class wxCueTag :public wxObject
 
 	protected:
 
+	TAG_SOURCE m_eSource;
 	wxString m_sName;
 	wxString m_sValue;
+
+	protected:
+
+	typedef struct _SOURCE2TEXT
+	{
+		TAG_SOURCE eSource;
+		wxChar* pText;
+	} SOURCE2TEXT;
+
+	static SOURCE2TEXT SOURCE2TEXT_MAPPING[];
+	static size_t SOURCE2TEXT_MAPPING_SIZE;
+
+	public:
+
+	static wxString SourceToString( TAG_SOURCE );
 
 	protected:
 
@@ -111,7 +142,7 @@ public:
 	void ParseComment( const wxString&, bool = true );
 	void ParseGarbage( const wxString& );
 	bool AddCdTextInfo( const wxString&, const wxString& );
-	void AddTag( const wxString&, const wxString& );
+	void AddTag( wxCueTag::TAG_SOURCE, const wxString&, const wxString& );
 	void AddTag( const wxCueTag& );
 
 	bool CheckEntryType( ENTRY_TYPE ) const;

@@ -88,7 +88,7 @@ void wxFlacMetaDataReader::ReadVorbisComments( wxArrayCueTag& comments ) const
 		FLAC::Metadata::VorbisComment::Entry entry = vorbisComment.get_comment(i);
 		wxString sEntryName( entry.get_field_name(), wxConvUTF8, entry.get_field_name_length() );
 		wxString sEntryValue( entry.get_field_value(), wxConvUTF8, entry.get_field_value_length() );
-		wxCueTag comment( sEntryName, sEntryValue );
+		wxCueTag comment( wxCueTag::TAG_MEDIA_METADATA, sEntryName, sEntryValue );
 		comments.Add( comment );
 	}
 }

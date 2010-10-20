@@ -126,6 +126,14 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddSwitch( wxT("neu"), wxT("dont-generate-edition-uid"), _("Do not generate edition UID"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("tc"), wxT("generate-tags-from-comments"), _("Try to parse tags from cue sheet comments (default: yes)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("ntc"), wxT("dont-generate-tags-from-comments"), _("Do not try to parse tags from cue sheet comments"), wxCMD_LINE_PARAM_OPTIONAL );
+
+	cmdLine.AddSwitch( wxEmptyString, wxT("ignore-cdtext-tags"), _("Ignore all CD-TEXT tags"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, wxT("use-cdtext-tags"), _("Use CD-TEXT tags (default)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, wxT("ignore-cue-comments-tags"), _("Ignore all tags from cuesheet comments"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, wxT("use-cue-comments-tags"), _("Use tags from cuesheet comments (default)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, wxT("ignore-media-tags"), _("Ignore all tagsfrom media file"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, wxT("use-media-tags"), _("Use tags from media file (default)"), wxCMD_LINE_PARAM_OPTIONAL );
+
 	cmdLine.AddSwitch( wxT("c8"), wxT("cue-sheet-utf8"), _("Save cue sheet using UTF-8 encoding"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("nc8"), wxT("no-cue-sheet-utf8"), _("Save cue sheet using default encoding (default)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("t1i1"), wxT("track-01-index-01"), _("For first track assume index 01 as beginning of track (default)"), wxCMD_LINE_PARAM_OPTIONAL );
@@ -339,6 +347,36 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		}
 	}
 
+	if ( cmdLine.Found( wxT("ignore-cdtext-tags") ) )
+	{
+		AddTagSourceToIgnore( wxCueTag::TAG_CD_TEXT );
+	}
+
+	if ( cmdLine.Found( wxT("use-cdtext-tags") ) )
+	{
+		RemoveTagSourceToIgnore( wxCueTag::TAG_CD_TEXT );
+	}
+
+	if ( cmdLine.Found( wxT("ignore-cue-comments-tags") ) )
+	{
+		AddTagSourceToIgnore( wxCueTag::TAG_CUE_COMMENT );
+	}
+
+	if ( cmdLine.Found( wxT("use-cue-comments-tags") ) )
+	{
+		RemoveTagSourceToIgnore( wxCueTag::TAG_CUE_COMMENT );
+	}
+
+	if ( cmdLine.Found( wxT("ignore-media-tags") ) )
+	{
+		AddTagSourceToIgnore( wxCueTag::TAG_MEDIA_METADATA );
+	}
+
+	if ( cmdLine.Found( wxT("use-media-tags") ) )
+	{
+		RemoveTagSourceToIgnore( wxCueTag::TAG_MEDIA_METADATA );
+	}
+
 	if ( cmdLine.Found( wxT("single-media-file") ) )
 	{
 		m_nEmbeddedModeFlags &= ~wxCueSheetReader::EC_SINGLE_MEDIA_FILE;
@@ -459,12 +497,29 @@ static wxString GetEmbeddedModeFlagsDesc( unsigned int flags )
 	return s.RemoveLast();
 }
 
+static wxString GetTagSourcesNames( const wxArrayTagSource& sources )
+{
+	wxString s;
+	size_t nSources = sources.GetCount();
+	wxASSERT( nSources > 0 );
+	for( size_t i=0; i<nSources; i++ )
+	{
+		s += wxCueTag::SourceToString( sources[i] );
+		s += wxT(',');
+	}
+	return s.RemoveLast();
+}
+
 void wxConfiguration::FillArray( wxArrayString& as ) const
 {
 	as.Add( wxString::Format( wxT("Save cue sheet: %s"), BoolToStr(m_bSaveCueSheet) ) );
 	as.Add( wxString::Format( wxT("Generate tags file: %s"), BoolToStr(m_bGenerateTags) ) );
 	as.Add( wxString::Format( wxT("Generate edition UID: %s"), BoolToStr(m_bGenerateEditionUID) ) );
 	as.Add( wxString::Format( wxT("Generate tags from comments: %s"), BoolToStr(m_bGenerateTagsFromComments) ) );
+	if ( !m_aeIgnoredSources.IsEmpty() )
+	{
+		as.Add( wxString::Format( wxT("Ignored tag sources: %s"), GetTagSourcesNames(m_aeIgnoredSources) ) );
+	}
 	as.Add( wxString::Format( wxT("Cue sheet file encoding: %s"), (m_bCueSheetFileUtf8Encoding? wxT("UTF-8") : wxT("Default") ) ) );
 	as.Add( wxString::Format( wxT("Calculate end time of chapters: %s"), BoolToStr(m_bChapterTimeEnd) ) );
 	as.Add( wxString::Format( wxT("Read embedded cue sheet: %s"), BoolToStr(m_bEmbedded) ) );
@@ -732,6 +787,29 @@ unsigned int wxConfiguration::GetEmbeddedModeFlags() const
 {
 	return m_nEmbeddedModeFlags;
 }
+
+void wxConfiguration::AddTagSourceToIgnore( wxCueTag::TAG_SOURCE eSource )
+{
+	if (m_aeIgnoredSources.Index( eSource ) == wxNOT_FOUND)
+	{
+		m_aeIgnoredSources.Add( eSource );
+	}
+}
+
+void wxConfiguration::RemoveTagSourceToIgnore( wxCueTag::TAG_SOURCE eSource )
+{
+	int nIdx = m_aeIgnoredSources.Index( eSource );
+	if ( nIdx != wxNOT_FOUND )
+	{
+		m_aeIgnoredSources.RemoveAt( nIdx );
+	}
+}
+
+bool wxConfiguration::ShouldIgnoreTag( const wxCueTag& tag ) const
+{
+	return (m_aeIgnoredSources.Index( tag.GetSource() ) != wxNOT_FOUND);
+}
+
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
 WX_DEFINE_OBJARRAY( wxArrayInputFile );

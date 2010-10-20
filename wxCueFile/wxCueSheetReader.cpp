@@ -361,7 +361,7 @@ bool wxCueSheetReader::AppendFlacComments( const wxFlacMetaDataReader& flacReade
 					if ( m_cueSheet.HasTrack( trackNumber ) )
 					{
 						wxTrack& track = m_cueSheet.GetTrackByNumber( trackNumber );
-						track.AddTag( sTagName, comment.GetValue() );
+						track.AddTag( wxCueTag::TAG_MEDIA_METADATA, sTagName, comment.GetValue() );
 					}
 					else
 					{

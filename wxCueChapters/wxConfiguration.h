@@ -9,7 +9,12 @@
 #include "wxInputFile.h"
 #endif
 
+#ifndef _WX_CUE_COMPONENT_H
+#include <wxCueComponent.h>
+#endif
+
 WX_DECLARE_OBJARRAY( wxInputFile, wxArrayInputFile );
+WX_DEFINE_ARRAY_INT( wxCueTag::TAG_SOURCE, wxArrayTagSource );
 
 class wxConfiguration :public wxObject
 {
@@ -34,6 +39,7 @@ protected:
 	bool m_bHiddenIndexes;
 	bool m_bMerge;
 	unsigned int m_nEmbeddedModeFlags;
+	wxArrayTagSource m_aeIgnoredSources;
 
 	wxString m_sAlternateExtensions;
 	wxString m_sLang;
@@ -53,6 +59,8 @@ protected:
 	static bool ReadLanguagesStrings( wxSortedArrayString& );
 	bool CheckLang( const wxString& ) const;
 	void FillArray( wxArrayString& as ) const;
+	void AddTagSourceToIgnore( wxCueTag::TAG_SOURCE );
+	void RemoveTagSourceToIgnore( wxCueTag::TAG_SOURCE );
 
 public:
 
@@ -82,6 +90,7 @@ public:
 	const wxMBConv& GetCueSheetFileEncoding();
 	bool GetMerge() const;
 	unsigned int GetEmbeddedModeFlags() const;
+	bool ShouldIgnoreTag( const wxCueTag& ) const;
 
 	wxString GetOutputFile( const wxInputFile& ) const;
 	void GetOutputFile( const wxInputFile&, wxString&, wxString& ) const;

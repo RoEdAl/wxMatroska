@@ -399,15 +399,37 @@ static wxXmlDocument* create_xml_document( const wxString& sRootNode )
 	return pXmlDoc;
 }
 
-static wxXmlNode* create_simple_tag( const wxString& sName, const wxString& sValue, const wxString& sLanguage )
+static bool is_multiline( const wxString& s )
+{
+	wxStringInputStream is( s );
+	wxTextInputStream tis( is, wxT(" \t"), wxConvUTF8 );
+	int nLines = 0;
+	while ( !( is.Eof() || (nLines>1) ) )
+	{
+		tis.ReadLine();
+		nLines += 1;
+	}
+	return (nLines>1);
+}
+
+static wxXmlNode* create_simple_tag( const wxCueTag& tag, const wxString& sLanguage )
 {
 	wxXmlNode* pSimple = new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, wxT("Simple") );
 
 	wxXmlNode* pName = new wxXmlNode( pSimple, wxXML_ELEMENT_NODE, wxT("Name") );
-	wxXmlNode* pNameText = new wxXmlNode( pName, wxXML_TEXT_NODE, wxEmptyString, sName );
+	wxXmlNode* pNameText = new wxXmlNode( pName, wxXML_TEXT_NODE, wxEmptyString, tag.GetName() );
+
+	if ( tag.GetSource() != wxCueTag::TAG_AUTO_GENERATED )
+	{
+		wxXmlNode* pComment = new wxXmlNode( wxNullXmlNode, wxXML_COMMENT_NODE, wxEmptyString,
+			wxString::Format( wxT("Source: %s"), tag.GetSourceAsString() ) );
+		pSimple->AddChild( pComment );
+	}
 
 	wxXmlNode* pValue = new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, wxT("String") );
-	wxXmlNode* pValueText = new wxXmlNode( pValue, wxXML_TEXT_NODE, wxEmptyString, sValue );
+	wxXmlNode* pValueText = new wxXmlNode( pValue, 
+		tag.IsMultiline()? wxXML_CDATA_SECTION_NODE : wxXML_TEXT_NODE,
+		wxEmptyString, tag.GetValue() );
 
 	pSimple->AddChild( pValue );
 
@@ -419,12 +441,7 @@ static wxXmlNode* create_simple_tag( const wxString& sName, const wxString& sVal
 	return pSimple;
 }
 
-static wxXmlNode* create_simple_tag( const wxCueTag& tag, const wxString& sLanguage )
-{
-	return create_simple_tag( tag.GetName(), tag.GetValue(), sLanguage );
-}
-
-static bool is_simple( wxXmlNode* pNode, const wxString& sName, const wxString& sValue )
+static bool is_simple( wxXmlNode* pNode, const wxCueTag& tag )
 {
 	wxASSERT( pNode != wxNullXmlNode );
 	wxXmlNode* pChild = pNode->GetChildren();
@@ -440,15 +457,15 @@ static bool is_simple( wxXmlNode* pNode, const wxString& sName, const wxString& 
 				wxXmlNode* pText = pChild->GetChildren();
 				if ( pText == wxNullXmlNode ) return false;
 				if ( pText->GetType() != wxXML_TEXT_NODE ) return false;
-				bName = ( pText->GetContent().CmpNoCase( sName ) == 0 );			
+				bName = ( pText->GetContent().CmpNoCase( tag.GetName() ) == 0 );			
 			}
 
 			if ( pChild->GetName().CmpNoCase( wxT("String") ) == 0 )
 			{
 				wxXmlNode* pText = pChild->GetChildren();
 				if ( pText == wxNullXmlNode ) return false;
-				if ( pText->GetType() != wxXML_TEXT_NODE ) return false;
-				bValue = ( pText->GetContent().Cmp( sValue ) == 0 );			
+				if ( !(( pText->GetType() == wxXML_TEXT_NODE ) || ( pText->GetType() == wxXML_CDATA_SECTION_NODE )) ) return false;
+				bValue = ( pText->GetContent().Cmp( tag.GetValue() ) == 0 );			
 			}
 		}
 
@@ -458,13 +475,13 @@ static bool is_simple( wxXmlNode* pNode, const wxString& sName, const wxString& 
 	return (bName && bValue);
 }
 
-static wxXmlNode* find_simple_tag( wxXmlNode* pNode, const wxString& sName, const wxString& sValue )
+static wxXmlNode* find_simple_tag( wxXmlNode* pNode, const wxCueTag& tag )
 {
 	wxASSERT( pNode != wxNullXmlNode );
 	wxXmlNode* pChild = pNode->GetChildren();
 	while( pChild != wxNullXmlNode )
 	{
-		if ( is_simple( pChild, sName, sValue ) )
+		if ( is_simple( pChild, tag ) )
 		{
 			return pChild;
 		}
@@ -475,26 +492,24 @@ static wxXmlNode* find_simple_tag( wxXmlNode* pNode, const wxString& sName, cons
 	return wxNullXmlNode;
 }
 
-static wxXmlNode* find_simple_tag( wxXmlNode* pNode, const wxCueTag& tag )
-{
-	return find_simple_tag( pNode, tag.GetName(), tag.GetValue() );
-}
-
 static wxXmlNode* add_simple_tag( wxXmlNode* pNode, const wxString& sName, const wxString& sValue, const wxString& sLanguage )
 {
-	wxASSERT( pNode != wxNullXmlNode );
-	wxXmlNode* pTagNode = find_simple_tag( pNode, sName, sValue );
-	if ( pTagNode == wxNullXmlNode )
-	{
-		pTagNode = create_simple_tag( sName, sValue, sLanguage );
-		pNode->AddChild( pTagNode );
-	}
+	wxCueTag tag( wxCueTag::TAG_AUTO_GENERATED, sName, sValue );
+	wxXmlNode* pTagNode = create_simple_tag( tag, sLanguage );
+	pNode->AddChild( pTagNode );
 	return pTagNode;
 }
 
 static wxXmlNode* add_simple_tag( wxXmlNode* pNode, const wxCueTag& tag, const wxString& sLanguage )
 {
-	return add_simple_tag( pNode, tag.GetName(), tag.GetValue(), sLanguage );
+	wxASSERT( pNode != wxNullXmlNode );
+	wxXmlNode* pTagNode = find_simple_tag( pNode, tag );
+	if ( pTagNode == wxNullXmlNode )
+	{
+		pTagNode = create_simple_tag( tag, sLanguage );
+		pNode->AddChild( pTagNode );
+	}
+	return pTagNode;
 }
 
 void wxXmlCueSheetRenderer::AddTags(
@@ -506,17 +521,19 @@ void wxXmlCueSheetRenderer::AddTags(
 	wxArrayCueTag mappedTags;
 	wxArrayCueTag rest;
 
-	component.GetTags(  cdTextSynonims, synonims, mappedTags, rest );
+	component.GetTags( cdTextSynonims, synonims, mappedTags, rest );
 
 	size_t numTags = mappedTags.Count();
 	for( size_t i = 0; i < numTags; i++ )
 	{
+		if ( m_cfg.ShouldIgnoreTag( mappedTags[i] ) ) continue;
 		wxXmlNode* pSimple = add_simple_tag( pTag, mappedTags[i], m_cfg.GetLang() );
 	}
 
 	numTags = rest.Count();
 	for( size_t i = 0; i < numTags; i++ )
 	{
+		if ( m_cfg.ShouldIgnoreTag( rest[i] ) ) continue;
 		wxXmlNode* pSimple = add_simple_tag( pTag, rest[i], m_cfg.GetLang() );
 	}
 }

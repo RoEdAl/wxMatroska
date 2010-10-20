@@ -88,6 +88,7 @@ bool wxTagSynonims::GetName(const wxCueTag& synonim, wxCueTag& cueTag) const
 {
 	if ( m_sName.CmpNoCase( synonim.GetName() ) == 0 )
 	{
+		cueTag.SetSource( synonim.GetSource() );
 		cueTag.SetName( m_sName );
 		cueTag.SetValue( synonim.GetValue() );
 		return true;
@@ -98,6 +99,7 @@ bool wxTagSynonims::GetName(const wxCueTag& synonim, wxCueTag& cueTag) const
 	{
 		if ( m_asSynonims[i].CmpNoCase( synonim.GetName() ) == 0 )
 		{
+			cueTag.SetSource( synonim.GetSource() );
 			cueTag.SetName( m_sName );
 			cueTag.SetValue( synonim.GetValue() );
 			return true;

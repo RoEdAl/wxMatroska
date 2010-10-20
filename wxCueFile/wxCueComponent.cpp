@@ -10,17 +10,52 @@
 IMPLEMENT_CLASS( wxCueTag, wxObject )
 
 wxCueTag::wxCueTag()
+	:m_eSource(TAG_UNKNOWN)
 {
 }
 
-wxCueTag::wxCueTag( const wxString& sName, const wxString& sValue )
-	:m_sName(sName.Upper()),m_sValue(sValue)
+wxCueTag::wxCueTag( wxCueTag::TAG_SOURCE eSource, const wxString& sName, const wxString& sValue )
+	:m_eSource(eSource),m_sName(sName.Upper()),m_sValue(sValue)
 {
 }
 
 wxCueTag::wxCueTag( const wxCueTag& cueTag )
 {
 	copy( cueTag );
+}
+
+wxCueTag::TAG_SOURCE wxCueTag::GetSource() const
+{
+	return m_eSource;
+}
+
+wxCueTag::SOURCE2TEXT wxCueTag::SOURCE2TEXT_MAPPING[] = {
+	{ TAG_UNKNOWN,			wxT("Unknown") },
+	{ TAG_CD_TEXT,			wxT("CD-TEXT") },
+	{ TAG_CUE_COMMENT,		wxT("CUE Comment") },
+	{ TAG_MEDIA_METADATA,	wxT("Media metadata") },
+	{ TAG_AUTO_GENERATED,	wxT("Automatically generated") }
+};
+
+size_t wxCueTag::SOURCE2TEXT_MAPPING_SIZE =
+	sizeof(wxCueTag::SOURCE2TEXT_MAPPING)/sizeof(wxCueTag::SOURCE2TEXT);
+
+
+wxString wxCueTag::SourceToString( wxCueTag::TAG_SOURCE eSource )
+{
+	for( size_t i=0; i<SOURCE2TEXT_MAPPING_SIZE; i++ )
+	{
+		if ( eSource == SOURCE2TEXT_MAPPING[i].eSource )
+		{
+			return SOURCE2TEXT_MAPPING[i].pText;
+		}
+	}
+	return wxEmptyString;
+}
+
+wxString wxCueTag::GetSourceAsString() const
+{
+	return SourceToString( m_eSource );
 }
 
 const wxString& wxCueTag::GetName() const
@@ -31,6 +66,12 @@ const wxString& wxCueTag::GetName() const
 const wxString& wxCueTag::GetValue() const
 {
 	return m_sValue;
+}
+
+wxCueTag& wxCueTag::SetSource( wxCueTag::TAG_SOURCE eSource )
+{
+	m_eSource = eSource;
+	return *this;
 }
 
 wxCueTag& wxCueTag::SetName(const wxString& sName )
@@ -47,6 +88,7 @@ wxCueTag& wxCueTag::SetValue(const wxString& sValue)
 
 void wxCueTag::copy(const wxCueTag& cueTag )
 {
+	m_eSource = cueTag.m_eSource;
 	m_sName = cueTag.m_sName.Upper();
 	m_sValue = cueTag.m_sValue;
 }
@@ -55,6 +97,19 @@ wxCueTag& wxCueTag::operator =(const wxCueTag& cueTag )
 {
 	copy( cueTag );
 	return *this;
+}
+
+bool wxCueTag::IsMultiline() const
+{
+	wxStringInputStream is( m_sValue );
+	wxTextInputStream tis( is, wxT(" \t"), wxConvUTF8 );
+	int nLines = 0;
+	while ( !( is.Eof() || (nLines>1) ) )
+	{
+		tis.ReadLine();
+		nLines += 1;
+	}
+	return (nLines>1);
 }
 
 // ================================================================================
@@ -221,6 +276,7 @@ void wxCueComponent::ParseComment( const wxString& sComment, bool bParse )
 	if ( reCommentMeta.Matches( sComment ) )
 	{
 		AddTag(
+			wxCueTag::TAG_CUE_COMMENT,
 			reCommentMeta.GetMatch( sComment, 2 ), 
 			unquoter.Unquote( reCommentMeta.GetMatch( sComment, 3 ) ) );
 	}
@@ -318,7 +374,7 @@ bool wxCueComponent::AddCdTextInfo( const wxString& sKeyword, const wxString& sB
 			 CheckEntryType( CdTextFields[i].type )
 		)
 		{
-			wxCueTag newTag( sKeyword, sBody );
+			wxCueTag newTag( wxCueTag::TAG_CD_TEXT, sKeyword, sBody );
 			add_tag( m_cdTextTags, newTag );
 			return true;
 		}
@@ -327,15 +383,15 @@ bool wxCueComponent::AddCdTextInfo( const wxString& sKeyword, const wxString& sB
 	return false;
 }
 
-void wxCueComponent::AddTag( const wxString& sKeyword, const wxString& sBody )
+void wxCueComponent::AddTag( wxCueTag::TAG_SOURCE eSource, const wxString& sKeyword, const wxString& sBody )
 {
-	wxCueTag newTag( sKeyword, sBody );
+	wxCueTag newTag( eSource, sKeyword, sBody );
 	add_tag( m_tags, newTag );
 }
 
 void wxCueComponent::AddTag( const wxCueTag& tag )
 {
-	AddTag( tag.GetName(), tag.GetValue() );
+	add_tag( m_tags, tag );
 }
 
 void wxCueComponent::Clear()
