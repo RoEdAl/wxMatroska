@@ -4,7 +4,7 @@
 		<property name="Left" vt="Int16">207</property>
 		<property name="Top" vt="Int8">122</property>
 		<property name="Width" vt="Int16">550</property>
-		<property name="Height" vt="Int16">460</property>
+		<property name="Height" vt="Int16">453</property>
 		<property name="Caption" vt="String">cue2mkc GUI</property>
 		<property name="Color" vt="Ident">clBtnFace</property>
 		<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
@@ -36,9 +36,9 @@
 			<properties>
 				<property name="Left" vt="Int8">0</property>
 				<property name="Top" vt="Int8">0</property>
-				<property name="Width" vt="Int16">533</property>
-				<property name="Height" vt="Int16">421</property>
-				<property name="ActivePage" vt="Ident">ChapterOptionsPane</property>
+				<property name="Width" vt="Int16">541</property>
+				<property name="Height" vt="Int16">417</property>
+				<property name="ActivePage" vt="Ident">OptionsPane</property>
 				<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
 				<property name="Font.Color" vt="Ident">clWindowText</property>
 				<property name="Font.Height" vt="Int8">-11</property>
@@ -46,7 +46,7 @@
 				<property name="Font.Style" vt="Set"/>
 				<property name="ParentFont" vt="False">False</property>
 				<property name="TabOrder" vt="Int8">0</property>
-				<property name="CtrlStyle" vt="Int32">1409352520</property>
+				<property name="CtrlStyle" vt="Int32">1409352256</property>
 				<property name="CtrlExStyle" vt="Int8">0</property>
 				<property name="Resizing" vt="Set">DockLeft, DockRight, DockTop, DockHeight</property>
 			</properties>
@@ -146,10 +146,10 @@
 							<properties>
 								<property name="Left" vt="Int8">1</property>
 								<property name="Top" vt="Int8">0</property>
-								<property name="Width" vt="Int8">40</property>
+								<property name="Width" vt="Int8">80</property>
 								<property name="Height" vt="Int8">21</property>
 								<property name="AutoSize" vt="False">False</property>
-								<property name="Caption" vt="String">&amp;File list: </property>
+								<property name="Caption" vt="String">&amp;Sources list:</property>
 								<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
 								<property name="Font.Color" vt="Ident">clWindowText</property>
 								<property name="Font.Height" vt="Int8">-11</property>
@@ -211,9 +211,9 @@
 						<object type="TATreeView" name="TreeViewInputFiles">
 							<properties>
 								<property name="Left" vt="Int8">0</property>
-								<property name="Top" vt="Int8">29</property>
+								<property name="Top" vt="Int8">25</property>
 								<property name="Width" vt="Int16">525</property>
-								<property name="Height" vt="Int16">230</property>
+								<property name="Height" vt="Int16">234</property>
 								<property name="Indent" vt="Int8">19</property>
 								<property name="TabOrder" vt="Int8">1</property>
 								<property name="CtrlStyle" vt="Int32">1342378035</property>
@@ -268,11 +268,11 @@
 						<object type="TALabel" name="LabelOutput">
 							<properties>
 								<property name="Left" vt="Int8">3</property>
-								<property name="Top" vt="Int16">283</property>
-								<property name="Width" vt="Int8">48</property>
-								<property name="Height" vt="Int8">21</property>
+								<property name="Top" vt="Int16">287</property>
+								<property name="Width" vt="Int8">80</property>
+								<property name="Height" vt="Int8">17</property>
 								<property name="AutoSize" vt="False">False</property>
-								<property name="Caption" vt="String">&amp;Output:</property>
+								<property name="Caption" vt="String">&amp;Destination:</property>
 								<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
 								<property name="Font.Color" vt="Ident">clWindowText</property>
 								<property name="Font.Height" vt="Int8">-11</property>
@@ -289,12 +289,12 @@
 						</object>
 						<object type="TACheckbox" name="CheckBoxSwitchToOutput">
 							<properties>
-								<property name="Left" vt="Int16">300</property>
+								<property name="Left" vt="Int16">292</property>
 								<property name="Top" vt="Int16">343</property>
-								<property name="Width" vt="Int16">137</property>
+								<property name="Width" vt="Int16">141</property>
 								<property name="Height" vt="Int8">17</property>
-								<property name="Hint" vt="String">Switch to output pane before running</property>
-								<property name="Caption" vt="String">&amp;Switch to output pane</property>
+								<property name="Hint" vt="String">Switch to messages pane before running</property>
+								<property name="Caption" vt="String">&amp;Switch to messages pane</property>
 								<property name="TabOrder" vt="Int8">10</property>
 								<property name="CtrlStyle" vt="Int32">1342242819</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
@@ -412,6 +412,7 @@
 								<property name="Top" vt="Int16">341</property>
 								<property name="Width" vt="Int8">97</property>
 								<property name="Height" vt="Int8">17</property>
+								<property name="Hint" vt="String">Be more verbose during cu22mkc execution</property>
 								<property name="Caption" vt="String">&amp;Verbose mode</property>
 								<property name="TabOrder" vt="Int8">5</property>
 								<property name="CtrlStyle" vt="Int32">1342242819</property>
@@ -454,7 +455,7 @@
 								<property name="Left" vt="Int8">0</property>
 								<property name="Top" vt="Int8">3</property>
 								<property name="Width" vt="Int16">265</property>
-								<property name="Height" vt="Int8">73</property>
+								<property name="Height" vt="Int8">89</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">32</property>
 								<property name="Caption" vt="String">&amp;General</property>
@@ -496,9 +497,24 @@
 										<property name="Top" vt="Int8">18</property>
 										<property name="Width" vt="Int8">85</property>
 										<property name="Height" vt="Int8">17</property>
-										<property name="Hint" vt="String">Merge all input files into one chapter file (requires MediaInfo lubrary)</property>
+										<property name="Hint" vt="String">Merge all input files into one cue sheet (requires MediaInfo lubrary)</property>
 										<property name="Caption" vt="String">Merge mode</property>
 										<property name="TabOrder" vt="Int8">0</property>
+										<property name="CtrlStyle" vt="Int32">1342242819</property>
+										<property name="CtrlExStyle" vt="Int8">0</property>
+										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+									</properties>
+									<components/>
+								</object>
+								<object type="TACheckbox" name="CheckBoxTc">
+									<properties>
+										<property name="Left" vt="Int8">4</property>
+										<property name="Top" vt="Int8">67</property>
+										<property name="Width" vt="Int16">197</property>
+										<property name="Height" vt="Int8">17</property>
+										<property name="Hint" vt="String">Try to parse tags from cue sheet comments</property>
+										<property name="Caption" vt="String">Parse tags from cue sheet comments</property>
+										<property name="TabOrder" vt="Int8">3</property>
 										<property name="CtrlStyle" vt="Int32">1342242819</property>
 										<property name="CtrlExStyle" vt="Int8">0</property>
 										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
@@ -510,20 +526,20 @@
 						<object type="TAGroup" name="GroupOutputOptions">
 							<properties>
 								<property name="Left" vt="Int8">0</property>
-								<property name="Top" vt="Int16">181</property>
+								<property name="Top" vt="Int16">197</property>
 								<property name="Width" vt="Int16">265</property>
-								<property name="Height" vt="Int8">65</property>
+								<property name="Height" vt="Int8">61</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
 								<property name="Caption" vt="String">&amp;Output</property>
 								<property name="TabOrder" vt="Int8">2</property>
-								<property name="Resizing" vt="Set"/>
+								<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
 							</properties>
 							<components>
 								<object type="TALabel" name="LabelOutputFormat">
 									<properties>
 										<property name="Left" vt="Int8">8</property>
-										<property name="Top" vt="Int8">19</property>
+										<property name="Top" vt="Int8">15</property>
 										<property name="Width" vt="Int8">43</property>
 										<property name="Height" vt="Int8">21</property>
 										<property name="AutoSize" vt="False">False</property>
@@ -539,17 +555,15 @@
 								<object type="TACombo" name="ComboOutputFormat">
 									<properties>
 										<property name="Left" vt="Int8">52</property>
-										<property name="Top" vt="Int8">19</property>
-										<property name="Width" vt="Int16">149</property>
+										<property name="Top" vt="Int8">15</property>
+										<property name="Width" vt="Int16">177</property>
 										<property name="Height" vt="Int8">25</property>
 										<property name="ItemHeight" vt="Int8">13</property>
-										<property name="ItemIndex" vt="Int8">2</property>
 										<property name="TabOrder" vt="Int8">1</property>
-										<property name="Text" vt="String">Matroska chapter xml file</property>
 										<property name="Items.Strings" vt="List">
 											<list>
 												<li vt="String">cue sheet</li>
-												<li vt="String">Matroska chapter xml file</li>
+												<li vt="String">Matroska chapters XML file</li>
 											</list>
 										</property>
 										<property name="CtrlStyle" vt="Int32">1342243395</property>
@@ -561,10 +575,10 @@
 								<object type="TACheckbox" name="CheckBoxT">
 									<properties>
 										<property name="Left" vt="Int8">22</property>
-										<property name="Top" vt="Int8">42</property>
-										<property name="Width" vt="Int16">137</property>
+										<property name="Top" vt="Int8">38</property>
+										<property name="Width" vt="Int16">157</property>
 										<property name="Height" vt="Int8">17</property>
-										<property name="Caption" vt="String">Generate tags file also</property>
+										<property name="Caption" vt="String">Generate tags XML file also</property>
 										<property name="TabOrder" vt="Int8">2</property>
 										<property name="CtrlStyle" vt="Int32">1342242819</property>
 										<property name="CtrlExStyle" vt="Int8">0</property>
@@ -577,14 +591,14 @@
 						<object type="TAGroup" name="GroupInputOptions">
 							<properties>
 								<property name="Left" vt="Int8">1</property>
-								<property name="Top" vt="Int8">76</property>
+								<property name="Top" vt="Int8">92</property>
 								<property name="Width" vt="Int16">265</property>
 								<property name="Height" vt="Int8">105</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
 								<property name="Caption" vt="String">&amp;Input</property>
 								<property name="TabOrder" vt="Int8">1</property>
-								<property name="Resizing" vt="Set"/>
+								<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
 							</properties>
 							<components>
 								<object type="TACheckbox" name="CheckBoxEc">
@@ -623,8 +637,8 @@
 										<property name="Top" vt="Int8">56</property>
 										<property name="Width" vt="Int8">97</property>
 										<property name="Height" vt="Int8">17</property>
-										<property name="Hint" vt="String">Use data file(s) to calculate end time of chapters</property>
-										<property name="Caption" vt="String">Use data file(s)</property>
+										<property name="Hint" vt="String">Use media file(s) to calculate end time of chapters</property>
+										<property name="Caption" vt="String">Use media file(s)</property>
 										<property name="TabOrder" vt="Int8">2</property>
 										<property name="CtrlStyle" vt="Int32">1342242819</property>
 										<property name="CtrlExStyle" vt="Int8">0</property>
@@ -636,10 +650,11 @@
 									<properties>
 										<property name="Left" vt="Int8">4</property>
 										<property name="Top" vt="Int8">74</property>
-										<property name="Width" vt="Int16">145</property>
+										<property name="Width" vt="Int16">153</property>
 										<property name="Height" vt="Int8">21</property>
+										<property name="Hint" vt="String">Comma separated list of alternate media extensions</property>
 										<property name="AutoSize" vt="False">False</property>
-										<property name="Caption" vt="String">Alternate data file extensions:</property>
+										<property name="Caption" vt="String">Alternate media files extensions:</property>
 										<property name="TabOrder" vt="Int8">3</property>
 										<property name="HaveVariable" vt="False">False</property>
 										<property name="CtrlStyle" vt="Int32">1342178048</property>
@@ -650,11 +665,11 @@
 								</object>
 								<object type="TAInput" name="InputAlternateExt">
 									<properties>
-										<property name="Left" vt="Int16">150</property>
+										<property name="Left" vt="Int16">158</property>
 										<property name="Top" vt="Int8">74</property>
 										<property name="Width" vt="Int8">101</property>
 										<property name="Height" vt="Int8">21</property>
-										<property name="Hint" vt="String">Comma-separated list of alternate extensions of data files</property>
+										<property name="Hint" vt="String">Comma-separated list of alternate extensions of media files</property>
 										<property name="MaxLength" vt="Int16">150</property>
 										<property name="TabOrder" vt="Int8">4</property>
 										<property name="CtrlStyle" vt="Int32">1342242944</property>
@@ -683,7 +698,7 @@
 								<property name="Left" vt="Int8">0</property>
 								<property name="Top" vt="Int8">0</property>
 								<property name="Width" vt="Int16">293</property>
-								<property name="Height" vt="Int16">193</property>
+								<property name="Height" vt="Int16">189</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">32</property>
 								<property name="Caption" vt="String">&amp;Chapters file</property>
@@ -699,7 +714,7 @@
 								<object type="TACheckbox" name="CheckBoxCe">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">18</property>
+										<property name="Top" vt="Int8">14</property>
 										<property name="Width" vt="Int16">217</property>
 										<property name="Height" vt="Int8">17</property>
 										<property name="Caption" vt="String">Calculate end time of chapters if possible</property>
@@ -713,7 +728,7 @@
 								<object type="TACheckbox" name="CheckBoxUc">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">34</property>
+										<property name="Top" vt="Int8">30</property>
 										<property name="Width" vt="Int16">276</property>
 										<property name="Height" vt="Int8">17</property>
 										<property name="Hint" vt="String">If track's end time is unknown set it to next track position using frame offset</property>
@@ -728,7 +743,7 @@
 								<object type="TALabel" name="LabelFo">
 									<properties>
 										<property name="Left" vt="Int8">20</property>
-										<property name="Top" vt="Int8">55</property>
+										<property name="Top" vt="Int8">51</property>
 										<property name="Width" vt="Int8">35</property>
 										<property name="Height" vt="Int8">17</property>
 										<property name="Caption" vt="String">Offset:</property>
@@ -743,7 +758,7 @@
 								<object type="TAInput" name="InputFo">
 									<properties>
 										<property name="Left" vt="Int8">57</property>
-										<property name="Top" vt="Int8">55</property>
+										<property name="Top" vt="Int8">51</property>
 										<property name="Width" vt="Int8">65</property>
 										<property name="Height" vt="Int8">21</property>
 										<property name="Hint" vt="String">Frame offset</property>
@@ -759,7 +774,7 @@
 								<object type="TALabel" name="LabelTrack01_1">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">78</property>
+										<property name="Top" vt="Int8">74</property>
 										<property name="Width" vt="Int16">128</property>
 										<property name="Height" vt="Int8">21</property>
 										<property name="AutoSize" vt="False">False</property>
@@ -775,7 +790,7 @@
 								<object type="TACombo" name="ComboTrack01">
 									<properties>
 										<property name="Left" vt="Int16">136</property>
-										<property name="Top" vt="Int8">78</property>
+										<property name="Top" vt="Int8">74</property>
 										<property name="Width" vt="Int8">41</property>
 										<property name="Height" vt="Int8">25</property>
 										<property name="ItemHeight" vt="Int8">13</property>
@@ -789,7 +804,7 @@
 											</list>
 										</property>
 										<property name="CtrlStyle" vt="Int32">1342243395</property>
-										<property name="CtrlExStyle" vt="Int8">0</property>
+										<property name="CtrlExStyle" vt="Int16">512</property>
 										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
 									</properties>
 									<components/>
@@ -797,7 +812,7 @@
 								<object type="TALabel" name="LabelTrack01_2">
 									<properties>
 										<property name="Left" vt="Int16">181</property>
-										<property name="Top" vt="Int8">78</property>
+										<property name="Top" vt="Int8">74</property>
 										<property name="Width" vt="Int8">103</property>
 										<property name="Height" vt="Int8">21</property>
 										<property name="AutoSize" vt="False">False</property>
@@ -813,7 +828,7 @@
 								<object type="TACheckbox" name="CheckBoxR">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">102</property>
+										<property name="Top" vt="Int8">98</property>
 										<property name="Width" vt="Int16">217</property>
 										<property name="Height" vt="Int8">17</property>
 										<property name="Caption" vt="String">Round down track end time to full frames</property>
@@ -827,7 +842,7 @@
 								<object type="TACheckbox" name="CheckBoxHi">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">120</property>
+										<property name="Top" vt="Int8">116</property>
 										<property name="Width" vt="Int16">217</property>
 										<property name="Height" vt="Int8">17</property>
 										<property name="Caption" vt="String">Convert indexes to hidden chapters</property>
@@ -841,7 +856,7 @@
 								<object type="TALabel" name="LabelTf">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int16">140</property>
+										<property name="Top" vt="Int16">136</property>
 										<property name="Width" vt="Int8">86</property>
 										<property name="Height" vt="Int8">21</property>
 										<property name="AutoSize" vt="False">False</property>
@@ -857,7 +872,7 @@
 								<object type="TAInput" name="InputTf">
 									<properties>
 										<property name="Left" vt="Int8">92</property>
-										<property name="Top" vt="Int16">141</property>
+										<property name="Top" vt="Int16">137</property>
 										<property name="Width" vt="Int8">113</property>
 										<property name="Height" vt="Int8">21</property>
 										<property name="MaxLength" vt="Int16">150</property>
@@ -872,7 +887,7 @@
 								<object type="TALabel" name="LabelLang">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int16">165</property>
+										<property name="Top" vt="Int16">161</property>
 										<property name="Width" vt="Int8">117</property>
 										<property name="Height" vt="Int8">21</property>
 										<property name="AutoSize" vt="False">False</property>
@@ -888,7 +903,7 @@
 								<object type="TAInput" name="InputLang">
 									<properties>
 										<property name="Left" vt="Int8">126</property>
-										<property name="Top" vt="Int16">165</property>
+										<property name="Top" vt="Int16">161</property>
 										<property name="Width" vt="Int8">41</property>
 										<property name="Height" vt="Int8">21</property>
 										<property name="Hint" vt="String">This option also affects tags file generation</property>
@@ -921,7 +936,7 @@
 								<property name="Left" vt="Int8">0</property>
 								<property name="Top" vt="Int8">-1</property>
 								<property name="Width" vt="Int16">225</property>
-								<property name="Height" vt="Int8">117</property>
+								<property name="Height" vt="Int8">37</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">32</property>
 								<property name="Caption" vt="String">&amp;Tags file</property>
@@ -937,7 +952,7 @@
 								<object type="TACheckbox" name="CheckBoxEu">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">20</property>
+										<property name="Top" vt="Int8">16</property>
 										<property name="Width" vt="Int16">129</property>
 										<property name="Height" vt="Int8">17</property>
 										<property name="Caption" vt="String">Generate edition UID</property>
@@ -948,30 +963,35 @@
 									</properties>
 									<components/>
 								</object>
-								<object type="TACheckbox" name="CheckBoxTc">
-									<properties>
-										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">38</property>
-										<property name="Width" vt="Int16">197</property>
-										<property name="Height" vt="Int8">17</property>
-										<property name="Hint" vt="String">Try to parse tags from cue sheet comments</property>
-										<property name="Caption" vt="String">Parse tags from cue sheet comments</property>
-										<property name="TabOrder" vt="Int8">1</property>
-										<property name="CtrlStyle" vt="Int32">1342242819</property>
-										<property name="CtrlExStyle" vt="Int8">0</property>
-										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
-									</properties>
-									<components/>
-								</object>
+							</components>
+						</object>
+						<object type="TAGroup" name="GroupIgnoredTags">
+							<properties>
+								<property name="Left" vt="Int8">0</property>
+								<property name="Top" vt="Int8">37</property>
+								<property name="Width" vt="Int16">225</property>
+								<property name="Height" vt="Int8">77</property>
+								<property name="CtrlStyle" vt="Int32">1342308359</property>
+								<property name="CtrlExStyle" vt="Int8">32</property>
+								<property name="Caption" vt="String">&amp;Ignored tags</property>
+								<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
+								<property name="Font.Color" vt="Ident">clWindowText</property>
+								<property name="Font.Height" vt="Int8">-11</property>
+								<property name="Font.Name" vt="String">Microsoft Sans Serif</property>
+								<property name="Font.Style" vt="Set"/>
+								<property name="TabOrder" vt="Int8">1</property>
+								<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+							</properties>
+							<components>
 								<object type="TACheckbox" name="CheckBoxTagIgnoreCdText">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">55</property>
+										<property name="Top" vt="Int8">16</property>
 										<property name="Width" vt="Int8">125</property>
 										<property name="Height" vt="Int8">17</property>
-										<property name="Hint" vt="String">Ignore all CD-TEXT tags.</property>
+										<property name="Hint" vt="String">Ignore all CD-TEXT tags</property>
 										<property name="Caption" vt="String">Ignore CD-TEXT tags</property>
-										<property name="TabOrder" vt="Int8">2</property>
+										<property name="TabOrder" vt="Int8">0</property>
 										<property name="CtrlStyle" vt="Int32">1342242819</property>
 										<property name="CtrlExStyle" vt="Int8">0</property>
 										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
@@ -981,12 +1001,12 @@
 								<object type="TACheckbox" name="CheckBoxTagIgnoreCueComments">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">74</property>
+										<property name="Top" vt="Int8">34</property>
 										<property name="Width" vt="Int16">205</property>
 										<property name="Height" vt="Int8">17</property>
 										<property name="Hint" vt="String">Ignore all tags taken from cuesheet comments</property>
 										<property name="Caption" vt="String">Ignore tags from cuesheet comments</property>
-										<property name="TabOrder" vt="Int8">3</property>
+										<property name="TabOrder" vt="Int8">1</property>
 										<property name="CtrlStyle" vt="Int32">1342242819</property>
 										<property name="CtrlExStyle" vt="Int8">0</property>
 										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
@@ -996,12 +1016,12 @@
 								<object type="TACheckbox" name="CheckBoxTagIgnoreFromMedia">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">93</property>
+										<property name="Top" vt="Int8">53</property>
 										<property name="Width" vt="Int16">161</property>
 										<property name="Height" vt="Int8">17</property>
 										<property name="Hint" vt="String">Ignore all tags taken from media's metadata</property>
 										<property name="Caption" vt="String">Ignore tags from media file(s)</property>
-										<property name="TabOrder" vt="Int8">4</property>
+										<property name="TabOrder" vt="Int8">2</property>
 										<property name="CtrlStyle" vt="Int32">1342242819</property>
 										<property name="CtrlExStyle" vt="Int8">0</property>
 										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
@@ -1028,7 +1048,7 @@
 								<property name="Left" vt="Int8">0</property>
 								<property name="Top" vt="Int8">0</property>
 								<property name="Width" vt="Int16">225</property>
-								<property name="Height" vt="Int8">93</property>
+								<property name="Height" vt="Int8">89</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">32</property>
 								<property name="Caption" vt="String">&amp;Files extensions</property>
@@ -1044,11 +1064,11 @@
 								<object type="TALabel" name="LabelDce">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">19</property>
-										<property name="Width" vt="Int8">119</property>
+										<property name="Top" vt="Int8">16</property>
+										<property name="Width" vt="Int8">67</property>
 										<property name="Height" vt="Int8">21</property>
 										<property name="AutoSize" vt="False">False</property>
-										<property name="Caption" vt="String">Cue sheet file extension:</property>
+										<property name="Caption" vt="String">Cue sheet:</property>
 										<property name="TabOrder" vt="Int8">0</property>
 										<property name="HaveVariable" vt="False">False</property>
 										<property name="CtrlStyle" vt="Int32">1342178048</property>
@@ -1060,7 +1080,7 @@
 								<object type="TAInput" name="InputDce">
 									<properties>
 										<property name="Left" vt="Int16">165</property>
-										<property name="Top" vt="Int8">19</property>
+										<property name="Top" vt="Int8">16</property>
 										<property name="Width" vt="Int8">53</property>
 										<property name="Height" vt="Int8">21</property>
 										<property name="MaxLength" vt="Int8">50</property>
@@ -1075,11 +1095,11 @@
 								<object type="TALabel" name="LabelDme">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">42</property>
-										<property name="Width" vt="Int16">159</property>
+										<property name="Top" vt="Int8">38</property>
+										<property name="Width" vt="Int8">95</property>
 										<property name="Height" vt="Int8">21</property>
 										<property name="AutoSize" vt="False">False</property>
-										<property name="Caption" vt="String">Matroska chapters file extension:</property>
+										<property name="Caption" vt="String">Matroska chapters:</property>
 										<property name="TabOrder" vt="Int8">2</property>
 										<property name="HaveVariable" vt="False">False</property>
 										<property name="CtrlStyle" vt="Int32">1342178048</property>
@@ -1091,7 +1111,7 @@
 								<object type="TAInput" name="InputDme">
 									<properties>
 										<property name="Left" vt="Int16">165</property>
-										<property name="Top" vt="Int8">42</property>
+										<property name="Top" vt="Int8">38</property>
 										<property name="Width" vt="Int8">53</property>
 										<property name="Height" vt="Int8">21</property>
 										<property name="MaxLength" vt="Int8">50</property>
@@ -1106,11 +1126,11 @@
 								<object type="TALabel" name="LabelDte">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">65</property>
-										<property name="Width" vt="Int16">159</property>
+										<property name="Top" vt="Int8">61</property>
+										<property name="Width" vt="Int8">95</property>
 										<property name="Height" vt="Int8">21</property>
 										<property name="AutoSize" vt="False">False</property>
-										<property name="Caption" vt="String">Matroska tags file extension:</property>
+										<property name="Caption" vt="String">Matroska tags:</property>
 										<property name="TabOrder" vt="Int8">4</property>
 										<property name="HaveVariable" vt="False">False</property>
 										<property name="CtrlStyle" vt="Int32">1342178048</property>
@@ -1122,7 +1142,7 @@
 								<object type="TAInput" name="InputDte">
 									<properties>
 										<property name="Left" vt="Int16">165</property>
-										<property name="Top" vt="Int8">65</property>
+										<property name="Top" vt="Int8">61</property>
 										<property name="Width" vt="Int8">53</property>
 										<property name="Height" vt="Int8">21</property>
 										<property name="MaxLength" vt="Int8">50</property>
@@ -1139,9 +1159,9 @@
 						<object type="TAGroup" name="GroupFlacRead">
 							<properties>
 								<property name="Left" vt="Int8">0</property>
-								<property name="Top" vt="Int8">96</property>
+								<property name="Top" vt="Int8">92</property>
 								<property name="Width" vt="Int16">225</property>
-								<property name="Height" vt="Int8">69</property>
+								<property name="Height" vt="Int8">65</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
 								<property name="Caption" vt="String">FLAC reading options</property>
@@ -1191,7 +1211,7 @@
 											</list>
 										</property>
 										<property name="CtrlStyle" vt="Int32">1342243395</property>
-										<property name="CtrlExStyle" vt="Int8">0</property>
+										<property name="CtrlExStyle" vt="Int16">512</property>
 										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
 									</properties>
 									<components/>
@@ -1216,9 +1236,9 @@
 						<object type="TAGroup" name="GroupCueSheet">
 							<properties>
 								<property name="Left" vt="Int8">1</property>
-								<property name="Top" vt="Int16">170</property>
+								<property name="Top" vt="Int16">158</property>
 								<property name="Width" vt="Int16">225</property>
-								<property name="Height" vt="Int8">49</property>
+								<property name="Height" vt="Int8">41</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">32</property>
 								<property name="Caption" vt="String">Cue &amp;sheet generation options</property>
@@ -1234,7 +1254,7 @@
 								<object type="TACheckbox" name="CheckBoxC8">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">21</property>
+										<property name="Top" vt="Int8">17</property>
 										<property name="Width" vt="Int16">129</property>
 										<property name="Height" vt="Int8">17</property>
 										<property name="Hint" vt="String">Genereate UTF-8 encoded cue sheet</property>
