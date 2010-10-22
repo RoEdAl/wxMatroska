@@ -38,7 +38,7 @@
 				<property name="Top" vt="Int8">0</property>
 				<property name="Width" vt="Int16">541</property>
 				<property name="Height" vt="Int16">417</property>
-				<property name="ActivePage" vt="Ident">ChapterOptionsPane</property>
+				<property name="ActivePage" vt="Ident">OutputPane</property>
 				<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
 				<property name="Font.Color" vt="Ident">clWindowText</property>
 				<property name="Font.Height" vt="Int8">-11</property>
@@ -460,11 +460,6 @@
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">32</property>
 								<property name="Caption" vt="String">&amp;General</property>
-								<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
-								<property name="Font.Color" vt="Ident">clWindowText</property>
-								<property name="Font.Height" vt="Int8">-11</property>
-								<property name="Font.Name" vt="String">Microsoft Sans Serif</property>
-								<property name="Font.Style" vt="Set"/>
 								<property name="TabOrder" vt="Int8">0</property>
 								<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
 							</properties>

@@ -4,7 +4,7 @@
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.21
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.22
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -144,6 +144,7 @@ GUICtrlSetFont(-1, 8, 800, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Run cue2mkc tool")
 $OutputPane = GUICtrlCreateTabItem("&Messages")
+GUICtrlSetState(-1, $GUI_SHOW)
 $LabelLog = GUICtrlCreateLabel("&Messages:", 4, 42, 71, 21, $SS_CENTERIMAGE)
 GUICtrlSetFont(-1, 8, 800, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
@@ -219,7 +220,6 @@ $CheckBoxT = GUICtrlCreateCheckbox("Generate tags XML file also", 26, 277, 157, 
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 $ChapterOptionsPane = GUICtrlCreateTabItem("&Chapters file generation options")
-GUICtrlSetState(-1, $GUI_SHOW)
 $GroupChapterOptions = GUICtrlCreateGroup("&Chapters file", 4, 42, 293, 189, -1, $WS_EX_TRANSPARENT)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
