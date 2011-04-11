@@ -66,11 +66,10 @@ wxString wxFlacMetaDataReader::GetCueSheetFromVorbisComment() const
 	for( unsigned int i=0; i<numComments; i++ )
 	{
 		FLAC::Metadata::VorbisComment::Entry entry = vorbisComment.get_comment(i);
-		wxString sEntryName( entry.get_field_name(), wxConvUTF8, entry.get_field_name_length() );
+		wxString sEntryName( wxString::FromUTF8( entry.get_field_name(), entry.get_field_name_length() ) );
 		if ( sEntryName.CmpNoCase( wxT("CUESHEET") ) == 0 )
 		{
-			wxString sCueSheet( entry.get_field_value(), wxConvUTF8, entry.get_field_value_length() );
-			return sCueSheet;
+			return wxString::FromUTF8( entry.get_field_value(), entry.get_field_value_length() );
 		}
 	}
 
@@ -86,8 +85,8 @@ void wxFlacMetaDataReader::ReadVorbisComments( wxArrayCueTag& comments ) const
 	for( unsigned int i=0; i<numComments; i++ )
 	{
 		FLAC::Metadata::VorbisComment::Entry entry = vorbisComment.get_comment(i);
-		wxString sEntryName( entry.get_field_name(), wxConvUTF8, entry.get_field_name_length() );
-		wxString sEntryValue( entry.get_field_value(), wxConvUTF8, entry.get_field_value_length() );
+		wxString sEntryName( wxString::FromUTF8( entry.get_field_name(), entry.get_field_name_length() ) );
+		wxString sEntryValue( wxString::FromUTF8( entry.get_field_value(), entry.get_field_value_length() ) );
 		wxCueTag comment( wxCueTag::TAG_MEDIA_METADATA, sEntryName, sEntryValue );
 		comments.Add( comment );
 	}

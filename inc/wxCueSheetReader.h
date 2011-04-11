@@ -37,12 +37,19 @@ public:
 		EC_FLAC_READ_COMMENT_ONLY = 3,
 		EC_FLAC_READ_TAG_ONLY = 4,
 		EC_FLAC_READ_MASK = 7,
-		EC_FALC_USE_VORBIS_COMMENTS = 8,
-		EC_FLAC_MASK = 15,
+		EC_MEDIA_READ_TAGS = 8,
+		EC_MEDIA_MASK = 15,
 		EC_SINGLE_MEDIA_FILE = 16
 	};
 
 protected:
+
+	typedef enum _MEDIA_TYPE
+	{
+		MEDIA_TYPE_UNKNOWN,
+		MEDIA_TYPE_FLAC,
+		MEDIA_TYPE_WAVPACK
+	} MEDIA_TYPE;
 
 	wxArrayString m_errors;
 
@@ -119,11 +126,16 @@ protected:
 	void ParseCdTextFile( const wxString&, const wxString& );
 
 	bool AddCdTextInfo( const wxString&, const wxString& );
+	void AppendComments( const wxArrayCueTag&, bool );
 
 	bool ReadEmbeddedInFlacCueSheet( const wxString&, int );
 	bool ReadCueSheetFromVorbisComment( const wxFlacMetaDataReader&, bool );
 	bool ReadCueSheetFromCueSheetTag( const wxFlacMetaDataReader&, bool );
 	bool AppendFlacComments( const wxFlacMetaDataReader&, bool );
+
+	bool ReadEmbeddedInWavpackCueSheet( const wxString&, int );
+	bool ReadEmbeddedInWavpackTags( const wxString&, bool );
+
 	void BuildFromSingleMediaFile( const wxString& );
 
 public:

@@ -26,5 +26,6 @@
 #include <wx/filename.h>
 
 #include <FLAC++/all.h>
+#include <wavpack.h>
 
 #endif // _STD_WX_H

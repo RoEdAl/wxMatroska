@@ -9,6 +9,7 @@
 #include <wxCueSheetReader.h>
 #include "wxMediaInfo.h"
 #include "wxFlacMetaDataReader.h"
+#include "wxWavpackTagReader.h"
 
 IMPLEMENT_DYNAMIC_CLASS( wxCueSheetReader, wxObject )
 
@@ -305,21 +306,21 @@ bool wxCueSheetReader::ReadEmbeddedInFlacCueSheet( const wxString& sMediaFile, i
 		return false;
 	}
 
-	bool bUseComments = ((nMode & EC_FALC_USE_VORBIS_COMMENTS) != 0);
+	bool bReadTags = ((nMode & EC_MEDIA_READ_TAGS) != 0);
 
 	switch( nMode & EC_FLAC_READ_MASK )
 	{
 		case EC_FLAC_READ_COMMENT_ONLY:
-		return ReadCueSheetFromVorbisComment( flacReader, bUseComments );
+		return ReadCueSheetFromVorbisComment( flacReader, bReadTags );
 
 		case EC_FLAC_READ_TAG_ONLY:
-		return ReadCueSheetFromCueSheetTag( flacReader, bUseComments );
+		return ReadCueSheetFromCueSheetTag( flacReader, bReadTags );
 
 		case EC_FLAC_READ_TAG_FIRST_THEN_COMMENT:
-		return ReadCueSheetFromCueSheetTag( flacReader, bUseComments ) || ReadCueSheetFromVorbisComment( flacReader, bUseComments );
+		return ReadCueSheetFromCueSheetTag( flacReader, bReadTags ) || ReadCueSheetFromVorbisComment( flacReader, bReadTags );
 
 		case EC_FLAC_READ_COMMENT_FIRST_THEN_TAG:
-		return ReadCueSheetFromVorbisComment( flacReader, bUseComments ) || ReadCueSheetFromCueSheetTag( flacReader, bUseComments );
+		return ReadCueSheetFromVorbisComment( flacReader, bReadTags ) || ReadCueSheetFromCueSheetTag( flacReader, bReadTags );
 
 		default:
 		return false;
@@ -328,12 +329,11 @@ bool wxCueSheetReader::ReadEmbeddedInFlacCueSheet( const wxString& sMediaFile, i
 	return true;
 }
 
-bool wxCueSheetReader::AppendFlacComments( const wxFlacMetaDataReader& flacReader, bool singleMediaFile )
+void wxCueSheetReader::AppendComments( const wxArrayCueTag& comments, bool singleMediaFile )
 {
 	wxRegEx reTrackComment( wxT("cue[[.hyphen.][.underscore.][.low-line.]]track([[:digit:]]{1,2})[[.underscore.][.low-line.]]([[:alpha:][.hyphen.][.underscore.][.low-line.][.space.]]+)"), wxRE_ADVANCED|wxRE_ICASE );
 	wxASSERT( reTrackComment.IsValid() );
-	wxArrayCueTag comments;
-	flacReader.ReadVorbisComments( comments );
+
 	size_t nComments = comments.GetCount();
 	for( size_t i=0; i<nComments; i++ )
 	{
@@ -379,7 +379,55 @@ bool wxCueSheetReader::AppendFlacComments( const wxFlacMetaDataReader& flacReade
 			}
 		}
 	}
+}
+
+bool wxCueSheetReader::AppendFlacComments( const wxFlacMetaDataReader& flacReader, bool singleMediaFile )
+{
+	wxArrayCueTag comments;
+	flacReader.ReadVorbisComments( comments );
+	AppendComments( comments, singleMediaFile );
 	return true;
+}
+
+bool wxCueSheetReader::ReadEmbeddedInWavpackTags( const wxString& sMediaFile, bool singleMediaFile )
+{
+	wxArrayCueTag comments;
+	if ( wxWavpackTagReader::ReadTags( sMediaFile, comments ) )
+	{
+		AppendComments( comments, singleMediaFile );
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool wxCueSheetReader::ReadEmbeddedInWavpackCueSheet( const wxString& sMediaFile, int nMode )
+{
+	wxString sCueSheet;
+	if ( !wxWavpackTagReader::ReadCueSheetTag( sMediaFile, sCueSheet ) )
+	{
+		return false;
+	}
+
+	wxStringInputStream is( sCueSheet );
+	bool res = ReadCueSheet( is, wxConvUTF8 );
+	if ( res )
+	{
+		m_cueSheet.SetSingleDataFile( sMediaFile );
+	}
+
+	if ( res )
+	{
+		bool bReadTags = ((nMode & EC_MEDIA_READ_TAGS) != 0);
+		if ( bReadTags )
+		{
+			res = ReadEmbeddedInWavpackTags( sMediaFile, false );
+		}
+	}
+
+	return res;
 }
 
 bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMode )
@@ -460,8 +508,8 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMo
 
 	bool check = true;
 	bool singleMediaFile = ((nMode & EC_SINGLE_MEDIA_FILE) != 0);
-	int nFlacMode = 0;
-	bool bFlac = false;
+	int nMode = 0;
+	MEDIA_TYPE eMediaType = MEDIA_TYPE_UNKNOWN;
 	unsigned long u;
 	wxString sCueSheet;
 
@@ -493,8 +541,13 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMo
 			case 2: // format
 			if ( as1[i].CmpNoCase( wxT("FLAC") ) == 0 )
 			{
-				bFlac = true;
-				nFlacMode = (nMode & EC_FLAC_MASK);
+				eMediaType = MEDIA_TYPE_FLAC;
+				nMode = (nMode & EC_MEDIA_MASK);
+			}
+			else if ( as1[i].CmpNoCase( wxT("WAVPACK") ) == 0 )
+			{
+				eMediaType = MEDIA_TYPE_WAVPACK;
+				nMode = (nMode & EC_MEDIA_MASK);
 			}
 			break;
 		}
@@ -506,25 +559,46 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMo
 	{
 		bool res = true;
 		BuildFromSingleMediaFile( sMediaFile );
-		if ( bFlac )
+		bool bReadTags = (( nMode & EC_MEDIA_READ_TAGS ) != 0);
+		if ( bReadTags )
 		{
-			bool useVorbisComments = (( nFlacMode & EC_FALC_USE_VORBIS_COMMENTS ) != 0);
-			if ( useVorbisComments )
+			switch( eMediaType )
 			{
-				wxFlacMetaDataReader flacReader;
-				if ( flacReader.ReadMetadata( sMediaFile ) && flacReader.HasVorbisComment() )
+				case MEDIA_TYPE_FLAC:
 				{
-					res = AppendFlacComments( flacReader, true );
+					wxFlacMetaDataReader flacReader;
+					if ( flacReader.ReadMetadata( sMediaFile ) && flacReader.HasVorbisComment() )
+					{
+						res = AppendFlacComments( flacReader, true );
+					}
 				}
+				break;
+
+				case MEDIA_TYPE_WAVPACK:
+				{
+					res = ReadEmbeddedInWavpackTags( sMediaFile, true );
+				}
+				break;
 			}
 		}
 		return res;
 	}
 	else
 	{
-		if ( (nFlacMode & EC_FLAC_READ_MASK) != EC_FLAC_READ_NONE )
+		if ( (nMode & EC_FLAC_READ_MASK) != EC_FLAC_READ_NONE )
 		{
-			return ReadEmbeddedInFlacCueSheet( sMediaFile, nFlacMode );
+			switch( eMediaType )
+			{
+				case MEDIA_TYPE_FLAC:
+				return ReadEmbeddedInFlacCueSheet( sMediaFile, nMode );
+
+				case MEDIA_TYPE_WAVPACK:
+				return ReadEmbeddedInWavpackCueSheet( sMediaFile, nMode );
+
+				default:
+				wxFAIL_MSG( wxT("Mask must be specified") );
+				return false;
+			}
 		}
 		else
 		{

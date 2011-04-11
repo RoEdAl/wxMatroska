@@ -45,7 +45,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="..\inc;..\..\include;&quot;$(WXWIN)\include&quot;;&quot;$(WXWIN)\lib\vc_lib\mswud&quot;;&quot;$(FLACDIR)\include&quot;"
+				AdditionalIncludeDirectories="..\inc;..\..\include;&quot;$(WXWIN)\include&quot;;&quot;$(WXWIN)\lib\vc_lib\mswud&quot;;&quot;$(FLACDIR)\include&quot;;&quot;$(WAVPACKDIR)\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;FLAC__NO_DLL"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
@@ -108,7 +108,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\inc;..\..\include;&quot;$(WXWIN)\include&quot;;&quot;$(WXWIN)\lib\vc_lib\mswud&quot;;&quot;$(FLACDIR)\include&quot;"
+				AdditionalIncludeDirectories="..\inc;..\..\include;&quot;$(WXWIN)\include&quot;;&quot;$(WXWIN)\lib\vc_lib\mswud&quot;;&quot;$(FLACDIR)\include&quot;;&quot;$(WAVPACKDIR)\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;FLAC__NO_DLL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -232,6 +232,14 @@
 				RelativePath=".\wxUnquoter.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\wxWavpackStream.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\wxWavpackTagReader.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -252,6 +260,14 @@
 			</File>
 			<File
 				RelativePath=".\wxUnquoter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\wxWavpackStream.h"
+				>
+			</File>
+			<File
+				RelativePath=".\wxWavpackTagReader.h"
 				>
 			</File>
 		</Filter>
