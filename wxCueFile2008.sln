@@ -8,11 +8,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wxCueChapters", "wxCueChapt
 		{4C560D24-C00B-49AC-9913-3ABB273E90AE} = {4C560D24-C00B-49AC-9913-3ABB273E90AE}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wxFlacJoin", "wxFlacJoin\wxFlacJoin.vcproj", "{9F70551C-EF45-41B9-AF67-634E25D3C9E3}"
-	ProjectSection(ProjectDependencies) = postProject
-		{4C560D24-C00B-49AC-9913-3ABB273E90AE} = {4C560D24-C00B-49AC-9913-3ABB273E90AE}
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,16 +38,6 @@ Global
 		{C4A85D3C-D2FC-4584-9699-276BD86AC3CA}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{C4A85D3C-D2FC-4584-9699-276BD86AC3CA}.Release|Win32.ActiveCfg = Release|Win32
 		{C4A85D3C-D2FC-4584-9699-276BD86AC3CA}.Release|Win32.Build.0 = Release|Win32
-		{9F70551C-EF45-41B9-AF67-634E25D3C9E3}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{9F70551C-EF45-41B9-AF67-634E25D3C9E3}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
-		{9F70551C-EF45-41B9-AF67-634E25D3C9E3}.Debug|Mixed Platforms.Build.0 = Debug|Win32
-		{9F70551C-EF45-41B9-AF67-634E25D3C9E3}.Debug|Win32.ActiveCfg = Debug|Win32
-		{9F70551C-EF45-41B9-AF67-634E25D3C9E3}.Debug|Win32.Build.0 = Debug|Win32
-		{9F70551C-EF45-41B9-AF67-634E25D3C9E3}.Release|Any CPU.ActiveCfg = Release|Win32
-		{9F70551C-EF45-41B9-AF67-634E25D3C9E3}.Release|Mixed Platforms.ActiveCfg = Release|Win32
-		{9F70551C-EF45-41B9-AF67-634E25D3C9E3}.Release|Mixed Platforms.Build.0 = Release|Win32
-		{9F70551C-EF45-41B9-AF67-634E25D3C9E3}.Release|Win32.ActiveCfg = Release|Win32
-		{9F70551C-EF45-41B9-AF67-634E25D3C9E3}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

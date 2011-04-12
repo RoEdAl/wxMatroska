@@ -5,6 +5,10 @@
 #ifndef _WX_WAVPACK_TAG_READER_H_
 #define _WX_WAVPACK_TAG_READER_H_
 
+#ifndef _WX_ABSTRACT_META_DATA_READER_H_
+#include "wxAbstractMetaDataReader.h"
+#endif
+
 #ifndef _WX_WAVPACK_STREAM_H_
 #include "wxWavpackStream.h"
 #endif
@@ -13,30 +17,17 @@
 class wxArrayCueTag;
 #endif
 
-class wxWavpackTagReader :public wxObject
+class wxWavpackTagReader :protected wxAbstractMetaDataReader
 {
-
-public:
-
-	wxWavpackTagReader(void);
-	~wxWavpackTagReader(void);
-
-	static bool ReadTags( const wxString&, wxArrayCueTag& );
-	static bool ReadCueSheetTag( const wxString&, wxString& );
 
 protected:
 
-	class wxNullOutputStream :public wxOutputStream
-	{
-		public:
+	wxWavpackTagReader(void);
 
-		wxNullOutputStream() {}
+public:
 
-		protected:
-
-		virtual size_t OnSysWrite(const void *WXUNUSED(buffer), size_t bufsize ) { return bufsize; }
-	};
-
+	static bool ReadTags( const wxString&, wxArrayCueTag& );
+	static bool ReadCueSheetTag( const wxString&, wxString& );
 };
 
 #endif

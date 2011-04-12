@@ -12,7 +12,7 @@ class wxIndex;
 #endif
 
 #ifndef _WX_DATA_FILE_H_
-#include "wxDatafile.h"
+#include "wxDataFile.h"
 #endif
 
 #ifndef _WX_FLAC_META_DATA_READER_H_

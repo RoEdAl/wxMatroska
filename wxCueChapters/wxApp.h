@@ -44,7 +44,7 @@ protected:
 	static void AddInputFileFormatDescription( wxCmdLineParser& );
 
 	static bool CheckLicense();
-	static void ShowLicense( bool );
+	static void ShowLicense();
 
 	wxXmlCueSheetRenderer& GetXmlRenderer(const wxInputFile&);
 	bool HasXmlRenderer() const;
@@ -63,7 +63,6 @@ public:
 	static const wxChar APP_VERSION[];
 	static const wxChar APP_AUTHOR[];
 	static const wxChar LICENSE_FILE_NAME[];
-	static const wxChar FLAC_LICENSE_FILE_NAME[];
 
 	wxMyApp(void);
 	virtual ~wxMyApp(void);

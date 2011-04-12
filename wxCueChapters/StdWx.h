@@ -32,6 +32,7 @@
 #include <wx/tokenzr.h>
 
 #include <FLAC++/all.h>
+#include <wavpack.h>
 
 extern wxXmlNode* const wxNullXmlNode;
 extern wxXmlDocument* const wxNullXmlDocument;

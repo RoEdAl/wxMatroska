@@ -13,10 +13,9 @@
 #include "wxXmlCueSheetRenderer.h"
 #include "wxApp.h"
 
-const wxChar wxMyApp::APP_VERSION[] = wxT("0.5 beta");
+const wxChar wxMyApp::APP_VERSION[] = wxT("0.6");
 const wxChar wxMyApp::APP_AUTHOR[] = wxT("Edmunt Pienkowsky - roed@onet.eu");
 const wxChar wxMyApp::LICENSE_FILE_NAME[] = wxT("license.txt");
-const wxChar wxMyApp::FLAC_LICENSE_FILE_NAME[] = wxT("flac_license.txt");
 
 static const size_t MAX_LICENSE_FILE_SIZE = 4 * 1024;
 
@@ -39,13 +38,15 @@ void wxMyApp::AddSeparator( wxCmdLineParser& cmdline )
 
 void wxMyApp::AddVersionInfos( wxCmdLineParser& cmdline )
 {
-	cmdline.AddUsageText( wxString::Format( wxT("Application version: %s"), APP_VERSION ) );
-	cmdline.AddUsageText( wxString::Format( wxT("Author: %s"), APP_AUTHOR ) );
-	cmdline.AddUsageText( wxT("License: Simplified BSD License - http://www.opensource.org/licenses/bsd-license.php") );
+	cmdline.AddUsageText( wxString::Format( _("Application version: %s"), APP_VERSION ) );
+	cmdline.AddUsageText( wxString::Format( _("Author: %s"), APP_AUTHOR ) );
+	cmdline.AddUsageText( _("License: Simplified BSD License - http://www.opensource.org/licenses/bsd-license.php") );
 	wxString sFlacVersion( FLAC__VERSION_STRING );
-	cmdline.AddUsageText( wxString::Format( wxT("FLAC library version %s Copyright (C) 2000,2001,2002,2003,2004,2005,2006,2007,2008,2009  Josh Coalson"), sFlacVersion ) );
-	cmdline.AddUsageText( wxString::Format( wxT("wxWidgets version %d.%d.%d Copyright (C) 1992-2008 Julian Smart, Robert Roebling, Vadim Zeitlin and other members of the wxWidgets team"), wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER ) );
-	cmdline.AddUsageText( wxString::Format( wxT("Operating system: %s"), wxPlatformInfo::Get().GetOperatingSystemDescription() ) );
+	wxString sWavpackVersion( wxString::FromUTF8( WavpackGetLibraryVersionString() ) );
+	cmdline.AddUsageText( wxString::Format( _("FLAC library version: %s. Copyright \u00A9 2000,2001,2002,2003,2004,2005,2006,2007,2008,2009  Josh Coalson"), sFlacVersion ) );
+	cmdline.AddUsageText( wxString::Format( _("WAVPACK library version: %s. Copyright \u00A9 1998 - 2006 Conifer Software"), sWavpackVersion ) );
+	cmdline.AddUsageText( wxString::Format( _("wxWidgets version: %d.%d.%d. Copyright \u00A9 1992-2008 Julian Smart, Robert Roebling, Vadim Zeitlin and other members of the wxWidgets team"), wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER ) );
+	cmdline.AddUsageText( wxString::Format( _("Operating system: %s"), wxPlatformInfo::Get().GetOperatingSystemDescription() ) );
 }
 
 void wxMyApp::AddInputFileFormatDescription( wxCmdLineParser& cmdline )
@@ -57,7 +58,7 @@ void wxMyApp::AddInputFileFormatDescription( wxCmdLineParser& cmdline )
 	cmdline.AddUsageText( _("When -ec is used input file may be a path to media file with embedded cue sheet:") );
 	cmdline.AddUsageText( _("\t*.flac test.ape") );
 	cmdline.AddUsageText( _("To read embedded cue sheet MediaInfo library is used.") );
-	cmdline.AddUsageText( _("For FLAC files the native FLAC library is used to read cuesheet and metadata.") );
+	cmdline.AddUsageText( _("For FLAC and Wavpack files the native libraries are used to read cuesheet and metadata.") );
 	cmdline.AddUsageText( wxString::Format( _("You may also specify data files after cue file using %c as separator."), wxInputFile::SEPARATOR ) );
 	cmdline.AddUsageText( wxString::Format( _("\t\"test.cue%ctest.flac\""), wxInputFile::SEPARATOR ) );
 	cmdline.AddUsageText( _("This allow you to override data file specification in cue sheet file.") );
@@ -91,7 +92,6 @@ void wxMyApp::OnInitCmdLine( wxCmdLineParser& cmdline )
 {
 	wxAppConsole::OnInitCmdLine( cmdline );
 	cmdline.AddSwitch( wxEmptyString, wxT("license"), _("Show license"), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdline.AddSwitch( wxEmptyString, wxT("flac-license"), _("Show FLAC library license"), wxCMD_LINE_PARAM_OPTIONAL );
 	wxConfiguration::AddCmdLineParams( cmdline );
 	cmdline.SetLogo( _("This application converts cue sheet files to Matroska XML chapter files in a more advanced way than standard Matroska tools.") );
 	AddSeparator( cmdline );
@@ -131,35 +131,35 @@ bool wxMyApp::CheckLicense()
 #endif
 }
 
-void wxMyApp::ShowLicense( bool bFlac )
+void wxMyApp::ShowLicense()
 {
 	const wxStandardPaths& paths = wxStandardPaths::Get();
 	wxFileName fn( paths.GetExecutablePath() );
-	fn.SetFullName( bFlac? FLAC_LICENSE_FILE_NAME: LICENSE_FILE_NAME );
+	fn.SetFullName( LICENSE_FILE_NAME );
 	if ( !fn.FileExists() )
 	{
-		wxLogError( wxT("Cannot find license file \u201C%s\u201D."), fn.GetFullPath() );
+		wxLogError( _("Cannot find license file \u201C%s\u201D."), fn.GetFullPath() );
 		return;
 	}
 
 	wxULongLong fs( fn.GetSize() );
 	if ( fs == wxInvalidSize )
 	{
-		wxLogError( wxT("Unable to read license \u201C%s\u201D."), fn.GetFullPath() );
+		wxLogError( _("Unable to read license \u201C%s\u201D."), fn.GetFullPath() );
 		return;
 	}
 
 	wxULongLong maxSize( 0, MAX_LICENSE_FILE_SIZE );
 	if ( fs > maxSize )
 	{
-		wxLogError( wxT("License file \u201C%s\u201D is too big."), fn.GetFullPath() );
+		wxLogError( _("License file \u201C%s\u201D is too big."), fn.GetFullPath() );
 		return;
 	}
 
 	wxFileInputStream fis( fn.GetFullPath() );
 	if ( !fis.IsOk() )
 	{
-		wxLogError( wxT("Cannot open license file \u201C%s\u201D"), fn.GetFullPath() );
+		wxLogError( _("Cannot open license file \u201C%s\u201D"), fn.GetFullPath() );
 		return;
 	}
 
@@ -180,13 +180,7 @@ bool wxMyApp::OnCmdLineParsed( wxCmdLineParser& cmdline )
 
 	if ( cmdline.Found( wxT("license") ) )
 	{
-		ShowLicense( false );
-		return false;
-	}
-
-	if ( cmdline.Found( wxT("flac-license") ) )
-	{
-		ShowLicense( true );
+		ShowLicense();
 		return false;
 	}
 
@@ -211,7 +205,7 @@ bool wxMyApp::OnCmdLineParsed( wxCmdLineParser& cmdline )
 
 	 if ( !CheckLicense() )
 	 {
-		 wxLogError( "Cannot find or load license file." );
+		 wxLogError( _("Cannot find or load license file.") );
 		 return false;
 	 }
 

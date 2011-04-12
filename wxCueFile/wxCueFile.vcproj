@@ -255,6 +255,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\wxAbstractMetaDataReader.h"
+				>
+			</File>
+			<File
 				RelativePath=".\wxFlacMetaDataReader.h"
 				>
 			</File>

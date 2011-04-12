@@ -29,7 +29,7 @@ size_t wxCueSheetReader::parseArraySize = sizeof(wxCueSheetReader::parseArray)/s
 
 static const wxChar* INFOS[] = {
 	wxT("AudioCount"),
-	wxT("cuesheet")
+	wxT("CUESHEET")
 };
 
 static const size_t INFOS_SIZE = sizeof(INFOS)/sizeof(const wxChar*);
@@ -218,14 +218,14 @@ bool wxCueSheetReader::ReadCueSheetFromVorbisComment( const wxFlacMetaDataReader
 {
 	if ( !flacReader.HasVorbisComment() )
 	{
-		wxLogWarning( wxT("Cannot find Vorbis comments inside FLAC file") );
+		wxLogWarning( _("Cannot find Vorbis comments inside FLAC file") );
 		return false;
 	}
 
 	wxString sCueSheet( flacReader.GetCueSheetFromVorbisComment() );
 	if ( sCueSheet.IsEmpty() )
 	{
-		wxLogWarning( wxT("Cannot find CUESHEET comment") );
+		wxLogWarning( _("Cannot find CUESHEET comment") );
 		return false;
 	}
 
@@ -248,7 +248,7 @@ bool wxCueSheetReader::ReadCueSheetFromCueSheetTag( const wxFlacMetaDataReader& 
 {
 	if ( !flacReader.HasCueSheet() )
 	{
-		wxLogWarning( wxT("Cannot find CueSheet tag inside FLAC file") );
+		wxLogWarning( _("Cannot find CueSheet tag inside FLAC file") );
 		return false;
 	}
 
@@ -365,7 +365,7 @@ void wxCueSheetReader::AppendComments( const wxArrayCueTag& comments, bool singl
 					}
 					else
 					{
-						wxLogInfo( wxT("Skipping track comment %s - track %d not found"), comment.GetName(), trackNumber );
+						wxLogInfo( _("Skipping track comment %s - track %d not found"), comment.GetName(), trackNumber );
 					}
 				}
 				else
@@ -508,7 +508,6 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMo
 
 	bool check = true;
 	bool singleMediaFile = ((nMode & EC_SINGLE_MEDIA_FILE) != 0);
-	int nMode = 0;
 	MEDIA_TYPE eMediaType = MEDIA_TYPE_UNKNOWN;
 	unsigned long u;
 	wxString sCueSheet;
@@ -520,7 +519,7 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMo
 			case 0: // count of audio streams
 			if ( !as1[i].ToULong( &u ) || !(u > 0) )
 			{
-				wxLogWarning( wxT("MediaInfo - cannot find audio stream") );
+				wxLogWarning( _("MediaInfo - cannot find audio stream") );
 				check = false;
 			}
 			break;
@@ -533,7 +532,7 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMo
 			}
 			else if ( !singleMediaFile )
 			{
-				wxLogWarning( wxT("MediaInfo - no cue sheet") );
+				wxLogWarning( _("MediaInfo - no cue sheet") );
 				check = false;
 			}
 			break;
@@ -542,12 +541,10 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMo
 			if ( as1[i].CmpNoCase( wxT("FLAC") ) == 0 )
 			{
 				eMediaType = MEDIA_TYPE_FLAC;
-				nMode = (nMode & EC_MEDIA_MASK);
 			}
 			else if ( as1[i].CmpNoCase( wxT("WAVPACK") ) == 0 )
 			{
 				eMediaType = MEDIA_TYPE_WAVPACK;
-				nMode = (nMode & EC_MEDIA_MASK);
 			}
 			break;
 		}
@@ -585,25 +582,19 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMo
 	}
 	else
 	{
-		if ( (nMode & EC_FLAC_READ_MASK) != EC_FLAC_READ_NONE )
+		switch( eMediaType )
 		{
-			switch( eMediaType )
+			case MEDIA_TYPE_FLAC:
+			return ReadEmbeddedInFlacCueSheet( sMediaFile, nMode );
+
+			case MEDIA_TYPE_WAVPACK:
+			return ReadEmbeddedInWavpackCueSheet( sMediaFile, nMode );
+
+			default:
 			{
-				case MEDIA_TYPE_FLAC:
-				return ReadEmbeddedInFlacCueSheet( sMediaFile, nMode );
-
-				case MEDIA_TYPE_WAVPACK:
-				return ReadEmbeddedInWavpackCueSheet( sMediaFile, nMode );
-
-				default:
-				wxFAIL_MSG( wxT("Mask must be specified") );
-				return false;
+				wxStringInputStream is( sCueSheet );
+				return ReadCueSheet( is, wxConvUTF8 );
 			}
-		}
-		else
-		{
-			wxStringInputStream is( sCueSheet );
-			return ReadCueSheet( is, wxConvUTF8 );
 		}
 	}
 }
@@ -666,16 +657,17 @@ void wxCueSheetReader::AddError( const wxChar* pszFormat, ... )
 
 void wxCueSheetReader::DumpErrors( size_t nLine ) const
 {
-	if ( m_errors.Count() > 0 ) {
+	if ( m_errors.Count() > 0 )
+	{
 		for( wxArrayString::const_iterator i=m_errors.begin(); i != m_errors.end(); i++ )
 		{
 			if ( m_bErrorsAsWarnings )
 			{
-				wxLogWarning( wxT("Line %d: %s"), nLine, i->GetData() );
+				wxLogWarning( _("Line %d: %s"), nLine, i->GetData() );
 			}
 			else
 			{
-				wxLogError( wxT("Line %d: %s"), nLine, i->GetData() );
+				wxLogError( _("Line %d: %s"), nLine, i->GetData() );
 			}
 		}
 	}
@@ -825,7 +817,7 @@ bool wxCueSheetReader::ParseCue()
 		}
 		else
 		{
-			wxLogWarning( wxT("Incorrect line %d: %s"), nLine, i->GetData() );
+			wxLogWarning( _("Incorrect line %d: %s"), nLine, i->GetData() );
 			ParseGarbage( *i );
 			res = false;
 		}

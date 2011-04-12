@@ -5,15 +5,19 @@
 #ifndef _WX_FLAC_META_DATA_READER_H_
 #define _WX_FLAC_META_DATA_READER_H_
 
+#ifndef _WX_ABSTRACT_META_DATA_READER_H_
+#include "wxAbstractMetaDataReader.h"
+#endif
+
 #ifndef _WX_FLAC_DECODER_H_
-#include <wxFlacDecoder.h>
+#include "wxFlacDecoder.h"
 #endif
 
 #ifndef _WX_CUE_COMPONENT_H
 class wxArrayCueTag;
 #endif
 
-class wxFlacMetaDataReader :public wxObject
+class wxFlacMetaDataReader :protected wxAbstractMetaDataReader
 {
 
 protected:
@@ -36,17 +40,6 @@ protected:
 
 		wxFlacMetaDataReader& m_fmtr;
 
-	};
-
-	class wxNullOutputStream :public wxOutputStream
-	{
-		public:
-
-		wxNullOutputStream() {}
-
-		protected:
-
-		virtual size_t OnSysWrite(const void *WXUNUSED(buffer), size_t bufsize ) { return bufsize; }
 	};
 
 protected:

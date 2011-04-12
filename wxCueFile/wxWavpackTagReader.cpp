@@ -11,10 +11,6 @@ wxWavpackTagReader::wxWavpackTagReader(void)
 {
 }
 
-wxWavpackTagReader::~wxWavpackTagReader(void)
-{
-}
-
 bool wxWavpackTagReader::ReadCueSheetTag( const wxString& sWavpackFile, wxString& sCueSheet )
 {
 	wxFileInputStream is( sWavpackFile );
@@ -62,7 +58,7 @@ bool wxWavpackTagReader::ReadCueSheetTag( const wxString& sWavpackFile, wxString
 		wxLogWarning( wxT("There's no CUESHEET tag in Wavpack file %s"), sWavpackFile );
 	}
 
-	WavpackFreeWrapper( pWvCtx );
+	WavpackCloseFile( pWvCtx );
 
 	if ( nSize > 0 )
 	{
@@ -145,6 +141,6 @@ bool wxWavpackTagReader::ReadTags( const wxString& sWavpackFile, wxArrayCueTag& 
 		}
 	}
 
-	WavpackFreeWrapper( pWvCtx );
+	WavpackCloseFile( pWvCtx );
 	return true;
 }

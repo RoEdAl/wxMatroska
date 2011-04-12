@@ -484,7 +484,7 @@ static wxString GetEmbeddedModeFlagsDesc( unsigned int flags )
 	}
 	as.Add( s );
 
-	as.Add( ( ( flags & wxCueSheetReader::EC_MEDIA_READ_TAGS ) != 0 )? wxT("media-read-tags") : wxT("dont-read-media-tags") );
+	as.Add( ( ( flags & wxCueSheetReader::EC_MEDIA_READ_TAGS ) != 0 )? wxT("read-media-tags") : wxT("dont-read-media-tags") );
 
 	s.Empty();
 	size_t nItems = as.GetCount();
