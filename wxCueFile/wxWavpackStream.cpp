@@ -114,10 +114,7 @@ int wxWavpackStream::push_back_byte(void *id, int c)
 
 int wxWavpackStream::push_back_byte(int c)
 {
-	m_outputStream.SeekO( 0, wxFromEnd );
-	wxInt8 buf = c;
-	m_outputStream.Write( &buf, 1 );
-	return c;
+	return m_inputStream.Ungetch( c )? c : EOF;
 }
 
 uint32_t wxWavpackStream::get_length(void *id)

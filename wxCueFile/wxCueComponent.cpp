@@ -7,6 +7,17 @@
 #include <wxCueComponent.h>
 #include <wxUnquoter.h>
 
+const wxChar* const wxCueTag::Name::CUESHEET = wxT("CUESHEET");
+const wxChar* const wxCueTag::Name::TOTALTRACKS = wxT("TOTALTRACKS");
+const wxChar* const wxCueTag::Name::ARRANGER = wxT("ARRANGER");
+const wxChar* const wxCueTag::Name::COMPOSER = wxT("COMPOSER");
+const wxChar* const wxCueTag::Name::ISRC = wxT("ISRC");
+const wxChar* const wxCueTag::Name::TITLE = wxT("TITLE");
+const wxChar* const wxCueTag::Name::ALBUM = wxT("ALBUM");
+const wxChar* const wxCueTag::Name::PERFORMER = wxT("PERFORMER");
+const wxChar* const wxCueTag::Name::ARTIST = wxT("ARTIST");
+const wxChar* const wxCueTag::Name::ALBUM_ARTIST = wxT("ALBUM ARTIST");
+
 IMPLEMENT_CLASS( wxCueTag, wxObject )
 
 wxCueTag::wxCueTag()

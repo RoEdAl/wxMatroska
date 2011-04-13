@@ -24,6 +24,22 @@ class wxCueTag :public wxObject
 		TAG_AUTO_GENERATED
 	} TAG_SOURCE;
 
+	static class Name
+	{
+		public:
+
+		static const wxChar* const CUESHEET;
+		static const wxChar* const TOTALTRACKS;
+		static const wxChar* const ARRANGER;
+		static const wxChar* const COMPOSER;
+		static const wxChar* const ISRC;
+		static const wxChar* const TITLE;
+		static const wxChar* const ALBUM;
+		static const wxChar* const PERFORMER;
+		static const wxChar* const ARTIST;
+		static const wxChar* const ALBUM_ARTIST;
+	};
+
 	public:
 
 	wxCueTag();
@@ -54,7 +70,7 @@ class wxCueTag :public wxObject
 	typedef struct _SOURCE2TEXT
 	{
 		TAG_SOURCE eSource;
-		wxChar* pText;
+		const wxChar* pText;
 	} SOURCE2TEXT;
 
 	static SOURCE2TEXT SOURCE2TEXT_MAPPING[];

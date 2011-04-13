@@ -54,6 +54,52 @@ protected:
 	wxTagSynonimsCollection m_trackCdTextSynonims;
 	wxTagSynonimsCollection m_trackSynonims;
 
+public:
+
+	static class Tag
+	{
+		public:
+
+		static const wxChar* const ORIGINAL_MEDIA_TYPE;
+		static const wxChar* const CATALOG_NUMBER;
+		static const wxChar* const TOTAL_PARTS;
+		static const wxChar* const PART_NUMBER;
+	};
+
+	static class Xml
+	{
+		public:
+
+		static const wxChar* const CHAPTER_UID;
+		static const wxChar* const EDITION_ENTRY;
+		static const wxChar* const EDITION_UID;
+		static const wxChar* const CHAPTER_TIME_START;
+		static const wxChar* const CHAPTER_TIME_END;
+		static const wxChar* const CHAPTER_DISPLAY;
+		static const wxChar* const CHAPTER_STRING;
+		static const wxChar* const CHAPTER_LANGUAGE;
+		static const wxChar* const CHAPTER_FLAG_HIDDEN;
+		static const wxChar* const CHAPTER_ATOM;
+		static const wxChar* const CHAPTERS;
+		static const wxChar* const TARGETS;
+		static const wxChar* const TAGS;
+		static const wxChar* const TARGET_TYPE_VALUE;
+		static const wxChar* const TARGET_TYPE;
+		static const wxChar* const TAG;
+		static const wxChar* const TAG_LANGUAGE;
+		static const wxChar* const NAME;
+		static const wxChar* const STRING;
+		static const wxChar* const SIMPLE;
+	};
+
+	static class XmlValue
+	{
+		public:
+
+		static const wxChar* const ALBUM;
+		static const wxChar* const TRACK;
+	};
+
 protected:
 
 	virtual bool OnPreRenderDisc( const wxCueSheet& );
@@ -102,6 +148,34 @@ protected:
 	wxXmlNode* AddIdxChapterAtom( wxXmlNode*, const wxIndex& ) const;
 
 	void init_synonims();
+
+protected:
+
+	static wxXmlNode* get_last_child( wxXmlNode* );
+	static wxXmlNode* add_chapter_uid( wxXmlNode*, const wxULongLong& uid );
+	static wxXmlNode* add_chapter_time_start( wxXmlNode*, const wxString& );
+	static wxXmlNode* add_chapter_time_start( wxXmlNode*, const wxSamplingInfo&, wxULongLong );
+	static wxXmlNode* find_chapter_time_start( wxXmlNode* );
+	static bool is_album_tag( wxXmlNode*, long );
+	static wxXmlNode* find_disc_tag_node( wxXmlNode*, long );
+	static bool is_total_parts( wxXmlNode* );
+	static bool set_total_parts( wxXmlNode*, size_t );
+	static wxXmlNode* find_total_parts_node( wxXmlNode* );
+	static wxXmlNode* add_chapter_time_end( wxXmlNode*, const wxString& );
+	static wxXmlNode* add_chapter_time_end( wxXmlNode*, const wxSamplingInfo&, wxULongLong );
+	static bool has_chapter_time_end( wxXmlNode* );
+	static wxXmlNode* add_chapter_display( wxXmlNode*, const wxString&, const wxString& );
+	static wxXmlNode* add_hidden_flag( wxXmlNode*, bool );
+	static wxXmlNode* add_idx_chapter_atom( wxXmlNode*, const wxSamplingInfo&, const wxULongLong&, unsigned int, const wxString&, bool );
+	static wxXmlNode* create_simple_tag( const wxCueTag&, const wxString& );
+	static bool is_multiline( const wxString& );
+	static wxXmlDocument* create_xml_document( const wxString& );
+	static bool is_simple( wxXmlNode*, const wxCueTag& );
+	static wxXmlNode* find_simple_tag( wxXmlNode*, const wxCueTag& );
+	static wxXmlNode* add_simple_tag( wxXmlNode*, const wxString&, const wxString&, const wxString& );
+	static wxXmlNode* add_simple_tag( wxXmlNode*, const wxCueTag&, const wxString& );
+	static wxXmlNode* create_comment_node( const wxString& );
+	static void add_comment_node( wxXmlNode*, const wxString& );
 
 public:
 

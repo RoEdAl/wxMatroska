@@ -29,7 +29,8 @@ size_t wxCueSheetReader::parseArraySize = sizeof(wxCueSheetReader::parseArray)/s
 
 static const wxChar* INFOS[] = {
 	wxT("AudioCount"),
-	wxT("CUESHEET")
+	wxT("CUESHEET"),
+	wxT("cuesheet")
 };
 
 static const size_t INFOS_SIZE = sizeof(INFOS)/sizeof(const wxChar*);
@@ -268,7 +269,7 @@ bool wxCueSheetReader::ReadCueSheetFromCueSheetTag( const wxFlacMetaDataReader& 
 		wxString sIsrc( flacTrack.get_isrc() );
 		if ( !sIsrc.IsEmpty() )
 		{
-			track.AddCdTextInfo( wxT("ISRC"), sIsrc );
+			track.AddCdTextInfo( wxCueTag::Name::ISRC, sIsrc );
 		}
 		if ( flacTrack.get_pre_emphasis() )
 		{
@@ -339,7 +340,7 @@ void wxCueSheetReader::AppendComments( const wxArrayCueTag& comments, bool singl
 	{
 		const wxCueTag& comment = comments[i];
 
-		if ( comment.GetName().CmpNoCase( wxT("CUESHEET") ) == 0 ) continue;
+		if ( comment.GetName().CmpNoCase( wxCueTag::Name::CUESHEET ) == 0 ) continue;
 
 		if ( singleMediaFile )
 		{ // just add to first track
@@ -349,7 +350,7 @@ void wxCueSheetReader::AppendComments( const wxArrayCueTag& comments, bool singl
 		}
 		else
 		{
-			if ( comment.GetName().CmpNoCase( wxT("TOTALTRACKS") ) == 0 ) continue;
+			if ( comment.GetName().CmpNoCase( wxCueTag::Name::TOTALTRACKS ) == 0 ) continue;
 
 			if ( reTrackComment.Matches( comment.GetName() ) )
 			{
@@ -511,6 +512,7 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMo
 	MEDIA_TYPE eMediaType = MEDIA_TYPE_UNKNOWN;
 	unsigned long u;
 	wxString sCueSheet;
+	bool bCueSheet = false;
 
 	for( size_t i=0; i<(INFOS_SIZE+AUDIO_INFOS_SIZE); i++ )
 	{
@@ -524,20 +526,31 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMo
 			}
 			break;
 
-			case 1: // cue sheet
-			if ( !as1[i].IsEmpty() )
+			case 1: // cue sheet #1
+			if ( !bCueSheet )
 			{
-				sCueSheet = as1[i];
-				ProcessMediaInfoCueSheet( sCueSheet );
-			}
-			else if ( !singleMediaFile )
-			{
-				wxLogWarning( _("MediaInfo - no cue sheet") );
-				check = false;
+				if ( !as1[i].IsEmpty() )
+				{
+					sCueSheet = as1[i];
+					bCueSheet = true;
+					ProcessMediaInfoCueSheet( sCueSheet );
+				}
 			}
 			break;
 
-			case 2: // format
+			case 2: // cue sheet #2
+			if ( !bCueSheet )
+			{
+				if ( !as1[i].IsEmpty() )
+				{
+					sCueSheet = as1[i];
+					bCueSheet = true;
+					ProcessMediaInfoCueSheet( sCueSheet );
+				}
+			}
+			break;
+
+			case 3: // format
 			if ( as1[i].CmpNoCase( wxT("FLAC") ) == 0 )
 			{
 				eMediaType = MEDIA_TYPE_FLAC;
@@ -547,6 +560,15 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMo
 				eMediaType = MEDIA_TYPE_WAVPACK;
 			}
 			break;
+		}
+	}
+
+	if ( !singleMediaFile )
+	{
+		if ( !bCueSheet )
+		{
+			wxLogWarning( _("MediaInfo - no cue sheet") );
+			check = false;
 		}
 	}
 
