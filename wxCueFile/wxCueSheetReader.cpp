@@ -10,6 +10,7 @@
 #include "wxMediaInfo.h"
 #include "wxFlacMetaDataReader.h"
 #include "wxWavpackTagReader.h"
+#include <wxEncodingDetection.h>
 
 IMPLEMENT_DYNAMIC_CLASS( wxCueSheetReader, wxObject )
 
@@ -146,7 +147,15 @@ void wxCueSheetReader::CorrectQuotationMarks( bool bCorrectQuotationMarks, const
 
 bool wxCueSheetReader::ReadCueSheet(const wxString& sCueFile)
 {
-	return ReadCueSheet( sCueFile, wxConvLocal ); 
+	wxSharedPtr<wxMBConv> pConv( wxEncodingDetection::GetFileEncoding( sCueFile ) );
+	if ( pConv )
+	{
+		return ReadCueSheet( sCueFile, *pConv ); 
+	}
+	else
+	{
+		return false;
+	}
 }
 
 bool wxCueSheetReader::ReadCueSheet(const wxString& sCueFile, wxMBConv& conv)

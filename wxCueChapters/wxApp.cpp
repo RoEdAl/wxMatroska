@@ -209,6 +209,8 @@ bool wxMyApp::OnCmdLineParsed( wxCmdLineParser& cmdline )
 		 return false;
 	 }
 
+	 CoInitializeEx( NULL, COINIT_MULTITHREADED|COINIT_DISABLE_OLE1DDE );
+
 	 if ( !wxAppConsole::OnInit() )
 	 {
 		 return false;
@@ -377,6 +379,8 @@ int wxMyApp::OnRun()
 
 int wxMyApp::OnExit()
 {
+	CoUninitialize();
+
 	int res = wxAppConsole::OnExit();
 	if ( m_pRenderer != wxXmlCueSheetRenderer::Null )
 	{

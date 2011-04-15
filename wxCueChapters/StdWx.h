@@ -6,7 +6,7 @@
 #define _STD_WX_H
 
 #ifdef WIN32
-#include "targetver.h"
+#include <targetver.h>
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 #endif
 
@@ -33,6 +33,8 @@
 
 #include <FLAC++/all.h>
 #include <wavpack.h>
+
+#include <objbase.h>
 
 extern wxXmlNode* const wxNullXmlNode;
 extern wxXmlDocument* const wxNullXmlDocument;
