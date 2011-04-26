@@ -11,7 +11,7 @@ class wxTagSynonimsCollection;
 
 class wxCueTag :public wxObject
 {
-	DECLARE_ABSTRACT_CLASS(wxCueTag)
+	wxDECLARE_DYNAMIC_CLASS(wxCueTag);
 
 	public:
 
@@ -89,7 +89,7 @@ WX_DECLARE_OBJARRAY(wxCueTag, wxArrayCueTag );
 
 class wxCueComponent :public wxObject
 {
-	DECLARE_ABSTRACT_CLASS(wxCueComponent)
+	wxDECLARE_ABSTRACT_CLASS(wxCueComponent);
 
 public:
 

@@ -13,7 +13,7 @@ WX_DECLARE_OBJARRAY( wxFileName, wxArrayFileName );
 
 class wxInputFile :public wxObject
 {
-	DECLARE_DYNAMIC_CLASS(wxInputFile)
+	wxDECLARE_DYNAMIC_CLASS(wxInputFile);
 
 protected:
 

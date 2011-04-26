@@ -5,7 +5,7 @@
 #include "StdWx.h"
 #include "wxUnquoter.h"
 
-IMPLEMENT_DYNAMIC_CLASS( wxUnquoter, wxObject )
+wxIMPLEMENT_DYNAMIC_CLASS( wxUnquoter, wxObject )
 
 const wxChar wxUnquoter::ENGLISH_DOUBLE_QUOTES[] = wxT("\u201C\\1\u201D");
 const wxChar wxUnquoter::ENGLISH_SINGLE_QUOTES[] = wxT("\u2018\\1\u2019");

@@ -9,6 +9,7 @@
 #include <wxIndex.h>
 #include <wxTrack.h>
 #include <wxCueSheetReader.h>
+#include <wxCueSheetRenderer.h>
 #include <wxTextCueSheetRenderer.h>
 #include "wxXmlCueSheetRenderer.h"
 #include "wxApp.h"
@@ -398,7 +399,8 @@ wxXmlCueSheetRenderer& wxMyApp::GetXmlRenderer(const wxInputFile& inputFile)
 	{
 		if ( m_pRenderer == wxXmlCueSheetRenderer::Null )
 		{
-			m_pRenderer = new wxXmlCueSheetRenderer( m_cfg, inputFile );
+			wxClassInfo* ci = wxCLASSINFO(wxXmlCueSheetRenderer);
+			m_pRenderer = wxXmlCueSheetRenderer::CreateObject( m_cfg, inputFile );
 			bShowInfo = true;
 		}
 		else
@@ -412,7 +414,7 @@ wxXmlCueSheetRenderer& wxMyApp::GetXmlRenderer(const wxInputFile& inputFile)
 		{
 			delete m_pRenderer;
 		}
-		m_pRenderer = new wxXmlCueSheetRenderer( m_cfg, inputFile );
+		m_pRenderer = wxXmlCueSheetRenderer::CreateObject( m_cfg, inputFile );
 		bShowInfo = true;
 	}
 

@@ -12,6 +12,7 @@
 
 
 #include <wx/wx.h>
+#include <wx/defs.h>
 #include <wx/log.h>
 #include <wx/dynarray.h>
 #include <wx/arrstr.h>

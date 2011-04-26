@@ -7,7 +7,7 @@
 #include "wxIndex.h"
 #include "wxTrack.h"
 
-IMPLEMENT_DYNAMIC_CLASS( wxTrack, wxCueComponent )
+wxIMPLEMENT_DYNAMIC_CLASS( wxTrack, wxCueComponent )
 
 wxTrack::wxTrack(void)
 	:wxCueComponent(true),m_pPreGap((wxIndex*)NULL),m_pPostGap((wxIndex*)NULL),m_number(0)

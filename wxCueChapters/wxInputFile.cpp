@@ -7,7 +7,7 @@
 
 const wxChar wxInputFile::SEPARATOR = wxT(';');
 
-IMPLEMENT_DYNAMIC_CLASS( wxInputFile, wxObject )
+wxIMPLEMENT_DYNAMIC_CLASS( wxInputFile, wxObject )
 
 void wxInputFile::copy( const wxInputFile& inputFile )
 {

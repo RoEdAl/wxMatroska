@@ -7,7 +7,38 @@
 
 #ifdef WIN32
 #include <targetver.h>
+
+/*
+	When Winuser.h is defined GetClassInfo is is a macro defined as:
+
+	#define GetClassInfo GetClassInfoW
+
+	wxWidgets macros such as:
+
+	wxDECLARE_..._CLASS
+
+	declares method GetClassInfo
+	so when Winuser.h is included this method GetClassInfo is renamed to GetClassInfoW.
+
+	That's why we define NOUSER.
+*/
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+#define NOUSER
+#define NOGDI
+#define NOMB
+#define NOCOMM
+
+/*
+	Dummy definition of MSG (LPMSG) to make
+
+	oleidl.h
+	ole2.h
+
+	happy.
+*/
+typedef struct tagMSG {
+} MSG, *LPMSG;
+
 #endif
 
 #include <wx/wx.h>
@@ -34,10 +65,12 @@
 #include <FLAC++/all.h>
 #include <wavpack.h>
 
-#include <objbase.h>
-
 extern wxXmlNode* const wxNullXmlNode;
 extern wxXmlDocument* const wxNullXmlDocument;
+
+#ifdef WIN32
+#include <objbase.h>
+#endif
 
 #endif // _STD_WX_H
 

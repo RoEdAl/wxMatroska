@@ -6,12 +6,12 @@
 #define _WX_SAMPLING_INFO_H_
 
 #ifndef _WX_INDEX_H_
-class wxIndex;
+#include <wxIndex.h>
 #endif
 
 class wxSamplingInfo :public wxObject
 {
-	DECLARE_DYNAMIC_CLASS(wxSamplingInfo)
+	wxDECLARE_DYNAMIC_CLASS(wxSamplingInfo);
 
 public:
 
@@ -53,6 +53,7 @@ public:
 	wxULongLong GetIndexOffset( const wxIndex& ) const;
 	wxIndex ConvertIndex( const wxIndex& index ) const;
 	wxString GetIndexOffsetStr( const wxIndex& ) const;
+	wxString GetIndexOffsetFramesStr( const wxIndex& ) const;
 
 	wxString ToString() const;
 

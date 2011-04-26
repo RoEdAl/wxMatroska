@@ -8,7 +8,7 @@
 #include <wxDataFile.h>
 #include "wxMediaInfo.h"
 
-IMPLEMENT_DYNAMIC_CLASS( wxDataFile, wxObject )
+wxIMPLEMENT_DYNAMIC_CLASS( wxDataFile, wxObject )
 
 static const wxChar* INFOS[] = {
 	wxT("StreamSize"),

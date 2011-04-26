@@ -5,7 +5,7 @@
 #include "StdWx.h"
 #include "wxIndex.h"
 
-IMPLEMENT_DYNAMIC_CLASS( wxIndex, wxObject )
+wxIMPLEMENT_DYNAMIC_CLASS( wxIndex, wxObject )
 
 wxIndex::wxIndex(void)
 	:m_number(0),m_offset(0,0),m_bCdFrames(false)

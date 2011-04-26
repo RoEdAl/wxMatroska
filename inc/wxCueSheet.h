@@ -6,21 +6,16 @@
 #define _WX_CUE_SHEET_H_
 
 #ifndef _WX_TRACK_H_
-class wxTrack;
-WX_DECLARE_OBJARRAY( wxTrack, wxArrayTrack );
+#include <wxTrack.h>
 #endif
 
 #ifndef _WX_CUE_COMPONENT_H
 #include "wxCueComponent.h"
 #endif
 
-#ifndef _WX_SAMPLING_INFO_H_
-class wxSamplingInfo;
-#endif
-
 class wxCueSheet :public wxCueComponent
 {
-	DECLARE_DYNAMIC_CLASS(wxCueSheet)
+	wxDECLARE_DYNAMIC_CLASS(wxCueSheet);
 
 protected:
 

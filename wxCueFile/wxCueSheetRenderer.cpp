@@ -6,9 +6,10 @@
 #include <wxSamplingInfo.h>
 #include <wxIndex.h>
 #include <wxTrack.h>
+#include <wxCueSheet.h>
 #include <wxCueSheetRenderer.h>
 
-IMPLEMENT_ABSTRACT_CLASS( wxCueSheetRenderer, wxObject )
+wxIMPLEMENT_ABSTRACT_CLASS( wxCueSheetRenderer, wxObject )
 
 wxCueSheetRenderer* const wxCueSheetRenderer::Null = (wxCueSheetRenderer* const)NULL;
 

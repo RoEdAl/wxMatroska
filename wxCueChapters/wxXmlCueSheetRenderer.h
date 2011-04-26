@@ -10,24 +10,36 @@
 #endif
 
 #ifndef _WX_INPUT_FILE_H_
-class wxInputFile;
+#include "wxInputFile.h"
 #endif
 
 #ifndef _WX_CONFIGURATION_H_
 class wxConfiguration;
 #endif
 
-#ifndef _WX_UNQUOTER_H_
-#include <wxUnquoter.h>
+#ifndef _WX_TAG_SYNONIMS_H_
+#include <wxTagSynonims.h>
 #endif
 
-#ifndef _WX_TAG_SYNONIMS_H_
-class wxTagSynonimsCollection;
+#ifndef _WX_SAMPLING_INFO_H_
+#include <wxSamplingInfo.h>
 #endif
 
 class wxXmlCueSheetRenderer :public wxCueSheetRenderer
 {
-	DECLARE_CLASS(wxXmlCueSheetRenderer)
+	wxDECLARE_DYNAMIC_CLASS(wxXmlCueSheetRenderer);
+
+protected:
+
+	virtual bool OnPreRenderDisc( const wxCueSheet& );
+	virtual bool OnPreRenderTrack( const wxCueSheet&, const wxTrack& );
+	virtual bool OnRenderTrack( const wxCueSheet&, const wxTrack& );
+	virtual bool OnPostRenderTrack( const wxCueSheet&, const wxTrack& );
+	virtual bool OnPostRenderDisc( const wxCueSheet& );
+
+	virtual bool OnRenderPreGap( const wxCueSheet&, const wxTrack&, const wxIndex& );
+	virtual bool OnRenderPostGap( const wxCueSheet&, const wxTrack&, const wxIndex& );
+	virtual bool OnRenderIndex( const wxCueSheet&, const wxTrack&, const wxIndex& );
 
 protected:
 
@@ -40,7 +52,7 @@ protected:
 	wxXmlDocument* m_pXmlTags;
 	wxXmlNode* m_pTags;
 
-	const wxConfiguration& m_cfg;
+	const wxConfiguration* m_pCfg;
 	wxInputFile m_inputFile;
 	wxString m_sOutputFile;
 	wxString m_sTagsFile;
@@ -55,6 +67,8 @@ protected:
 	wxTagSynonimsCollection m_trackSynonims;
 
 public:
+
+	static wxXmlCueSheetRenderer* const Null;
 
 	static class Tag
 	{
@@ -102,19 +116,6 @@ public:
 
 protected:
 
-	virtual bool OnPreRenderDisc( const wxCueSheet& );
-	virtual bool OnPreRenderTrack( const wxCueSheet&, const wxTrack& );
-	virtual bool OnRenderTrack( const wxCueSheet&, const wxTrack& );
-	virtual bool OnPostRenderTrack( const wxCueSheet&, const wxTrack& );
-	virtual bool OnPostRenderDisc( const wxCueSheet& );
-
-	virtual bool OnRenderPreGap( const wxCueSheet&, const wxTrack&, const wxIndex& );
-	virtual bool OnRenderPostGap( const wxCueSheet&, const wxTrack&, const wxIndex& );
-	virtual bool OnRenderIndex( const wxCueSheet&, const wxTrack&, const wxIndex& );
-
-protected:
-
-	static wxULongLong GenerateUID();
 	void AddTags(
 		const wxCueComponent&,
 		const wxTagSynonimsCollection&,
@@ -149,6 +150,9 @@ protected:
 
 	void init_synonims();
 
+	void SetConfiguration( const wxConfiguration& );
+	const wxConfiguration& GetConfig() const;
+
 protected:
 
 	static wxXmlNode* get_last_child( wxXmlNode* );
@@ -176,13 +180,15 @@ protected:
 	static wxXmlNode* add_simple_tag( wxXmlNode*, const wxCueTag&, const wxString& );
 	static wxXmlNode* create_comment_node( const wxString& );
 	static void add_comment_node( wxXmlNode*, const wxString& );
+	static wxULongLong GenerateUID();
 
 public:
 
-	static wxXmlCueSheetRenderer* const Null;
+	static wxXmlCueSheetRenderer* CreateObject( const wxConfiguration&, const wxInputFile& );
 
-	wxXmlCueSheetRenderer(const wxConfiguration&, const wxInputFile& );
-	virtual ~wxXmlCueSheetRenderer(void);
+	wxXmlCueSheetRenderer();
+	~wxXmlCueSheetRenderer(void);
+
 	void SetInputFile( const wxInputFile& );
 
 	wxXmlDocument* GetXmlDoc() const;

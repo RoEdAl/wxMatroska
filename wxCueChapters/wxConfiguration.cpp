@@ -17,7 +17,7 @@ static const size_t MAX_EXT_LEN = 20;
 static const wxChar LANG_FILE_URL[] = wxT("http://www.loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt");
 static const wxChar LANG_FILE_NAME[] = wxT("ISO-639-2_utf-8.txt");
 
-IMPLEMENT_CLASS( wxConfiguration, wxObject )
+wxIMPLEMENT_DYNAMIC_CLASS( wxConfiguration, wxObject )
 
 bool wxConfiguration::ReadLanguagesStrings( wxSortedArrayString& as )
 {

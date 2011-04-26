@@ -7,6 +7,7 @@
 
 #ifndef _WX_TRACK_H_
 class wxTrack;
+class wxArrayTrack;
 #endif
 
 #ifndef _WX_INDEX_H_
@@ -14,17 +15,13 @@ class wxIndex;
 class wxArrayIndex;
 #endif
 
-#ifndef _WX_DATA_FILE_H_
-#include "wxDataFile.h"
-#endif
-
 #ifndef _WX_CUE_SHEET_H_
-#include "wxCueSheet.h"
+class wxCueSheet;
 #endif
 
 class wxCueSheetRenderer :public wxObject
 {
-	DECLARE_ABSTRACT_CLASS(wxCueSheetRenderer)
+	wxDECLARE_ABSTRACT_CLASS(wxCueSheetRenderer);
 
 protected:
 

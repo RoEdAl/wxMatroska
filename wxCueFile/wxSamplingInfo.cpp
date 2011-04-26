@@ -6,7 +6,7 @@
 #include <wxSamplingInfo.h>
 #include <wxIndex.h>
 
-IMPLEMENT_DYNAMIC_CLASS( wxSamplingInfo, wxObject )
+wxIMPLEMENT_DYNAMIC_CLASS( wxSamplingInfo, wxObject )
 
 const wxTimeSpan wxSamplingInfo::wxInvalidDuration = wxTimeSpan::Hours(-1);
 const wxULongLong wxSamplingInfo::wxInvalidNumberOfFrames = wxULongLong( 0xFFFFFFFF, 0xFFFFFFFF );
@@ -249,4 +249,9 @@ wxIndex wxSamplingInfo::ConvertIndex( const wxIndex& idx ) const
 wxString wxSamplingInfo::GetIndexOffsetStr( const wxIndex& idx ) const
 {
 	return GetSamplesStr( GetIndexOffset( idx ) );
+}
+
+wxString wxSamplingInfo::GetIndexOffsetFramesStr( const wxIndex& idx ) const
+{
+	return GetCdFramesStr( GetIndexOffset( idx ) );
 }

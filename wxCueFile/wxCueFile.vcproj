@@ -46,7 +46,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="..\inc;..\..\include;&quot;$(WXWIN)\include&quot;;&quot;$(WXWIN)\lib\vc_lib\mswud&quot;;&quot;$(FLACDIR)\include&quot;;&quot;$(WAVPACKDIR)\include&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;FLAC__NO_DLL"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;wxUSE_GUI=0;__WXMSW__;FLAC__NO_DLL"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
@@ -109,7 +109,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\inc;..\..\include;&quot;$(WXWIN)\include&quot;;&quot;$(WXWIN)\lib\vc_lib\mswud&quot;;&quot;$(FLACDIR)\include&quot;;&quot;$(WAVPACKDIR)\include&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;FLAC__NO_DLL"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;wxUSE_GUI=0;__WXDEBUG__;WXDEBUG=1;__WXMSW__;FLAC__NO_DLL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -259,10 +259,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\wxUnquoter.h"
-				>
-			</File>
-			<File
 				RelativePath=".\wxWavpackStream.h"
 				>
 			</File>
@@ -295,10 +291,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\inc\wxFlacDecoder.h"
-				>
-			</File>
-			<File
 				RelativePath="..\inc\wxIndex.h"
 				>
 			</File>
@@ -320,6 +312,10 @@
 			</File>
 			<File
 				RelativePath="..\inc\wxTrack.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inc\wxUnquoter.h"
 				>
 			</File>
 		</Filter>

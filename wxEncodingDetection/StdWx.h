@@ -10,25 +10,12 @@
 #endif
 
 #include <wx/wx.h>
+#include <wx/defs.h>
 #include <wx/log.h>
 #include <wx/wfstream.h>
 #include <wx/txtstrm.h>
 #include <wx/filename.h>
 #include <wx/sharedptr.h>
-
-/*
-#include <wx/dynarray.h>
-#include <wx/arrstr.h>
-#include <wx/wfstream.h>
-#include <wx/txtstrm.h>
-#include <wx/sstream.h>
-#include <wx/regex.h>
-#include <wx/hashmap.h>
-#include <wx/tokenzr.h>
-#include <wx/datetime.h>
-#include <wx/dynlib.h>
-#include <wx/filename.h>
-*/
 
 #include <mlang.h>
 #include <shlwapi.h>

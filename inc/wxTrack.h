@@ -6,8 +6,7 @@
 #define _WX_TRACK_H_
 
 #ifndef _WX_INDEX_H_
-class wxIndex;
-WX_DECLARE_OBJARRAY( wxIndex, wxArrayIndex );
+#include "wxIndex.h"
 #endif
 
 #ifndef _WX_DATA_FILE_H_
@@ -19,12 +18,12 @@ WX_DECLARE_OBJARRAY( wxIndex, wxArrayIndex );
 #endif
 
 #ifndef _WX_DATA_FILE_H_
-#include "wxDatafile.h"
+#include "wxDataFile.h"
 #endif
 
 class wxTrack :public wxCueComponent
 {
-	DECLARE_DYNAMIC_CLASS(wxTrack)
+	wxDECLARE_DYNAMIC_CLASS(wxTrack);
 
 public:
 

@@ -18,7 +18,7 @@ WX_DEFINE_ARRAY_INT( wxCueTag::TAG_SOURCE, wxArrayTagSource );
 
 class wxConfiguration :public wxObject
 {
-	DECLARE_DYNAMIC_CLASS(wxConfiguration)
+	wxDECLARE_DYNAMIC_CLASS(wxConfiguration);
 
 protected:
 

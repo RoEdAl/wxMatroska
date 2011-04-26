@@ -10,7 +10,7 @@ class wxInputFile;
 #endif
 
 #ifndef _WX_CONFIGURATION_H_
-class wxConfiguration;
+#include "wxConfiguration.h"
 #endif
 
 #ifndef _WX_CUE_SHEET_READER_H_

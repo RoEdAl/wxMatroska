@@ -7,7 +7,7 @@
 
 class wxUnquoter :public wxObject
 {
-	DECLARE_DYNAMIC_CLASS(wxUnquoter)
+	wxDECLARE_DYNAMIC_CLASS(wxUnquoter);
 
 protected:
 

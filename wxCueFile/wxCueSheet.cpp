@@ -7,7 +7,7 @@
 #include <wxTrack.h>
 #include <wxCueSheet.h>
 
-IMPLEMENT_DYNAMIC_CLASS( wxCueSheet, wxCueComponent )
+wxIMPLEMENT_DYNAMIC_CLASS( wxCueSheet, wxCueComponent )
 
 wxCueSheet::wxCueSheet(void)
 {

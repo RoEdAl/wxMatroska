@@ -18,7 +18,7 @@ const wxChar* const wxCueTag::Name::PERFORMER = wxT("PERFORMER");
 const wxChar* const wxCueTag::Name::ARTIST = wxT("ARTIST");
 const wxChar* const wxCueTag::Name::ALBUM_ARTIST = wxT("ALBUM ARTIST");
 
-IMPLEMENT_CLASS( wxCueTag, wxObject )
+wxIMPLEMENT_DYNAMIC_CLASS( wxCueTag, wxObject )
 
 wxCueTag::wxCueTag()
 	:m_eSource(TAG_UNKNOWN)
@@ -125,7 +125,7 @@ bool wxCueTag::IsMultiline() const
 
 // ================================================================================
 
-IMPLEMENT_ABSTRACT_CLASS( wxCueComponent, wxObject )
+wxIMPLEMENT_ABSTRACT_CLASS( wxCueComponent, wxObject )
 
 wxCueComponent::CDTEXT_ENTRY wxCueComponent::CdTextFields[] = {
 	{ wxT("ARRANGER"),	wxCueComponent::ANY,	wxCueComponent::CHARACTER,		wxT('a') },

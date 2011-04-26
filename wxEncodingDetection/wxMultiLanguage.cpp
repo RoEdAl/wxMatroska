@@ -78,7 +78,7 @@ HRESULT wxMultiLanguage::DetectCodepageInStream(
 	wxASSERT( IsValid() );
 
 	IStream* pStream;
-	HRESULT hRes = SHCreateStreamOnFile( fn.GetFullPath() , STGM_READ, &pStream );
+	HRESULT hRes = SHCreateStreamOnFile( fn.GetFullPath(), STGM_READ, &pStream );
 	if ( hRes != S_OK )
 	{
 		return hRes;
@@ -91,5 +91,19 @@ HRESULT wxMultiLanguage::DetectCodepageInStream(
 		lpEncoding, pnScores );
 
 	pStream->Release();
+	return hRes;
+}
+
+HRESULT wxMultiLanguage::GetCodePageDescription(UINT nCodePage, wxString& sDescription )
+{
+	wxASSERT( IsValid() );
+
+	MIMECPINFO cpinfo;
+	LANGID langid = LANG_USER_DEFAULT;
+	HRESULT hRes = m_pMLang->GetCodePageInfo( nCodePage, langid, &cpinfo );
+	if ( hRes == S_OK )
+	{
+		sDescription = cpinfo.wszDescription;
+	}
 	return hRes;
 }

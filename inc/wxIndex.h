@@ -7,7 +7,7 @@
 
 class wxIndex :public wxObject
 {
-	DECLARE_DYNAMIC_CLASS(wxIndex)
+	wxDECLARE_DYNAMIC_CLASS(wxIndex);
 	friend class wxSamplingInfo;
 
 protected:

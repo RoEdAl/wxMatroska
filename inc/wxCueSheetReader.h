@@ -25,7 +25,7 @@ class wxFlacMetaDataReader;
 
 class wxCueSheetReader :public wxObject
 {
-	DECLARE_DYNAMIC_CLASS(wxCueSheetReader)
+	wxDECLARE_DYNAMIC_CLASS(wxCueSheetReader);
 
 public:
 

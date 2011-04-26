@@ -5,15 +5,17 @@
 #ifndef _WX_TEXT_CUE_SHEET_RENDERER_H_
 #define _WX_TEXT_CUE_SHEET_RENDERER_H_
 
-#include "wxCueSheetRenderer.h"
+#ifndef _WX_CUE_SHEET_RENDERER_H_
+#include <wxCueSheetRenderer.h>
+#endif
 
 #ifndef _WX_SAMPLING_INFO_H_
-class wxSamplingInfo;
+#include <wxSamplingInfo.h>
 #endif
 
 class wxTextCueSheetRenderer :public wxCueSheetRenderer
 {
-	DECLARE_CLASS(wxTextCueSheetRenderer)
+	wxDECLARE_DYNAMIC_CLASS(wxTextCueSheetRenderer);
 
 protected:
 

@@ -8,7 +8,7 @@
 static const wxChar MEDIA_INFO_LIBRARY[] = wxT("MediaInfo.dll");
 static const wxChar* SYMBOL_NAMES[] = {
 	wxT("MediaInfo_New"),
-	wxT("MediaInfo_Close"),
+	wxT("MediaInfo_Delete"),
 	wxT("MediaInfo_Open"),
 	wxT("MediaInfo_Close"),
 	wxT("MediaInfo_Get")

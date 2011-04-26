@@ -6,9 +6,10 @@
 #include <wxSamplingInfo.h>
 #include <wxIndex.h>
 #include <wxTrack.h>
+#include <wxCueSheet.h>
 #include <wxTextCueSheetRenderer.h>
 
-IMPLEMENT_CLASS( wxTextCueSheetRenderer, wxCueSheetRenderer )
+wxIMPLEMENT_DYNAMIC_CLASS( wxTextCueSheetRenderer, wxCueSheetRenderer )
 
 wxTextCueSheetRenderer::wxTextCueSheetRenderer(wxTextOutputStream* pTextOutputStream, int nDumpFlags)
 	:m_pTextOutputStream(pTextOutputStream),m_nDumpFlags(nDumpFlags)
@@ -176,7 +177,7 @@ void wxTextCueSheetRenderer::InternalRenderTrack(const wxCueSheet& WXUNUSED(cueS
 void wxTextCueSheetRenderer::InternalRenderIndex( const wxCueSheet& cueSheet, const wxTrack& WXUNUSED(track), const wxIndex& idx, wxString desc )
 {
 	wxString sLine;
-	wxString sIdx( m_si.GetIndexOffsetStr( idx ) );
+	wxString sIdx( m_si.GetIndexOffsetFramesStr( idx ) );
 	sLine.Printf( wxT("\t\t%s %s\n"), desc, sIdx );
 	m_pTextOutputStream->WriteString( sLine );
 }
@@ -184,7 +185,7 @@ void wxTextCueSheetRenderer::InternalRenderIndex( const wxCueSheet& cueSheet, co
 void wxTextCueSheetRenderer::InternalRenderIndex( const wxCueSheet& cueSheet, const wxTrack& WXUNUSED(track), const wxIndex& idx )
 {
 	wxString sLine;
-	wxString sIdx( m_si.GetIndexOffsetStr( idx ) );
+	wxString sIdx( m_si.GetIndexOffsetFramesStr( idx ) );
 	sLine.Printf( wxT("\t\tINDEX %02d %s\n"), idx.GetNumber(), sIdx );
 	m_pTextOutputStream->WriteString( sLine );
 }

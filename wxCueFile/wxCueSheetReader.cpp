@@ -12,7 +12,7 @@
 #include "wxWavpackTagReader.h"
 #include <wxEncodingDetection.h>
 
-IMPLEMENT_DYNAMIC_CLASS( wxCueSheetReader, wxObject )
+wxIMPLEMENT_DYNAMIC_CLASS( wxCueSheetReader, wxObject )
 
 wxCueSheetReader::PARSE_STRUCT wxCueSheetReader::parseArray[] = {
 	{  wxT("REM"), &wxCueSheetReader::ParseComment },
@@ -147,9 +147,11 @@ void wxCueSheetReader::CorrectQuotationMarks( bool bCorrectQuotationMarks, const
 
 bool wxCueSheetReader::ReadCueSheet(const wxString& sCueFile)
 {
-	wxSharedPtr<wxMBConv> pConv( wxEncodingDetection::GetFileEncoding( sCueFile ) );
+	wxString sCPDescription;
+	wxSharedPtr<wxMBConv> pConv( wxEncodingDetection::GetFileEncoding( sCueFile, sCPDescription ) );
 	if ( pConv )
 	{
+		wxLogInfo( _("Detected encoding of file \u201C%s\u201D file is \u201C%s\u201D"), sCueFile, sCPDescription );
 		return ReadCueSheet( sCueFile, *pConv ); 
 	}
 	else
@@ -165,13 +167,13 @@ bool wxCueSheetReader::ReadCueSheet(const wxString& sCueFile, wxMBConv& conv)
 
 	if ( !m_cueFileName.FileExists() || m_cueFileName.IsDir() )
 	{
-		wxLogError( _("Invalid path to CUE file %s."), sCueFile.GetData() );
+		wxLogError( _("Invalid path to CUE file \u201C%s\u201D."), sCueFile.GetData() );
 		return false;
 	}
 
 	wxFileInputStream fis( m_cueFileName.GetFullPath() );
 	if ( !fis.IsOk() ) {
-		wxLogError( _("Unable to open CUE file %s."), sCueFile.GetData() );
+		wxLogError( _("Unable to open CUE file \u201C%s\u201D."), sCueFile.GetData() );
 		return false;
 	}
 
@@ -457,7 +459,7 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMo
 	size_t res = dll.MediaInfoOpen( handle, sMediaFile );
 	if ( res == 0 )
 	{
-		wxLogError( _("MediaInfo - fail to open file %s"), sMediaFile.GetData() );
+		wxLogError( _("MediaInfo - fail to open file \u201C%s\u201D"), sMediaFile.GetData() );
 		dll.MediaInfoDelete( handle );
 		dll.Unload();
 		return false;
@@ -515,6 +517,7 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMo
 
 	dll.MediaInfoClose( handle );
 	dll.MediaInfoDelete( handle );
+	dll.Unload();
 
 	bool check = true;
 	bool singleMediaFile = ((nMode & EC_SINGLE_MEDIA_FILE) != 0);
