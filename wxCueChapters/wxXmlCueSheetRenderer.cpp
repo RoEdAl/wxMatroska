@@ -16,7 +16,8 @@ wxIMPLEMENT_DYNAMIC_CLASS( wxXmlCueSheetRenderer, wxCueSheetRenderer )
 
 // ===============================================================================
 
-wxXmlCueSheetRenderer* const wxXmlCueSheetRenderer::Null = (wxXmlCueSheetRenderer* const)wxCueSheetRenderer::Null;
+wxXmlCueSheetRenderer* const wxXmlCueSheetRenderer::Null = 
+	(wxXmlCueSheetRenderer* const)wxCueSheetRenderer::Null;
 
 // ===============================================================================
 

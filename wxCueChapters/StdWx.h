@@ -18,7 +18,7 @@
 	wxDECLARE_..._CLASS
 
 	declares method GetClassInfo
-	so when Winuser.h is included this method GetClassInfo is renamed to GetClassInfoW.
+	so when Winuser.h is included method GetClassInfo is renamed to GetClassInfoW.
 
 	That's why we define NOUSER.
 */
