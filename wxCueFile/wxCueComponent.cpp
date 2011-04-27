@@ -317,8 +317,9 @@ static bool find_tag( const wxArrayCueTag& tags, const wxCueTag& cueTag )
 	size_t numTags = tags.Count();
 	for( size_t i=0; i<numTags; i++ )
 	{
-		if ( (cueTag.GetName().CmpNoCase( tags[i].GetName() ) == 0) &&
-			 (cueTag.GetValue().Cmp( tags[i].GetValue() ) == 0)
+		if ( 
+			 ( cueTag.GetName().CmpNoCase( tags[i].GetName() ) == 0 ) &&
+			 ( cueTag.GetValue().Cmp( tags[i].GetValue() ) == 0 )
 		   )
 		{
 			return true;
@@ -335,6 +336,14 @@ static void add_tag( wxArrayCueTag& tags, const wxCueTag& cueTag )
 	}
 }
 
+static void add_tags( wxArrayCueTag& tags, const wxArrayCueTag& newTags )
+{
+	for( size_t i = 0; i < newTags.Count(); i++ )
+	{
+		add_tag( tags, newTags[i] );
+	}
+}
+
 void wxCueComponent::GetTags( 
 	const wxTagSynonimsCollection& cdTagsSynonims,
 	const wxTagSynonimsCollection& tagsSynonims,
@@ -344,17 +353,20 @@ void wxCueComponent::GetTags(
 	tags.Clear();
 	rest.Clear();
 
+	wxHashCueTag tagsHash;
+	wxHashCueTag restHash;
+
 	wxCueTag cueTag;
-	size_t nTags = m_cdTextTags.GetCount();
+	size_t nTags = m_cdTextTags.Count();
 	for( size_t i=0; i<nTags; i++ )
 	{
 		if ( cdTagsSynonims.GetName( m_cdTextTags[i], cueTag ) )
 		{
-			add_tag( tags, cueTag );
+			tagsHash[ cueTag.GetName() ].Add( cueTag );
 		}
 		else
 		{
-			add_tag( rest, cueTag );
+			restHash[ cueTag.GetName() ].Add( cueTag );
 		}
 	}
 
@@ -363,11 +375,64 @@ void wxCueComponent::GetTags(
 	{
 		if ( tagsSynonims.GetName( m_tags[i], cueTag ) )
 		{
-			add_tag( tags, cueTag );
+			tagsHash[ cueTag.GetName() ].Add( cueTag );
 		}
 		else
 		{
-			add_tag( rest, cueTag );
+			restHash[ cueTag.GetName() ].Add( cueTag );
+		}
+	}
+
+	wxRegEx reEmptyValue( wxT("\\A[[:space:][:punct:]]*\\Z"), wxRE_ADVANCED|wxRE_ICASE );
+	wxASSERT( reEmptyValue.IsValid() );
+
+	remove_duplicates( reEmptyValue, tagsHash );
+	remove_duplicates( reEmptyValue, restHash );
+
+	for( wxHashCueTag::const_iterator i = tagsHash.begin(); i != tagsHash.end(); i++ )
+	{
+		add_tags( tags, i->second );
+	}
+
+	for( wxHashCueTag::const_iterator i = restHash.begin(); i != restHash.end(); i++ )
+	{
+		add_tags( rest, i->second );
+	}
+}
+
+void wxCueComponent::remove_duplicates( const wxRegEx& reEmptyValue, wxCueComponent::wxHashCueTag& tagsHash )
+{
+	for( wxHashCueTag::iterator i = tagsHash.begin(); i != tagsHash.end(); i++ )
+	{
+		remove_duplicates( reEmptyValue, i->second );
+	}
+}
+
+void wxCueComponent::remove_duplicates( const wxRegEx& reEmptyValue, wxArrayCueTag& tags )
+{
+	for( size_t i = 0; i < tags.Count(); i += 1 )
+	{
+		wxString sValue( tags[i].GetValue() );
+		bool bRemove = false;
+		for( size_t j=0; j < tags.Count(); j++ )
+		{
+			if ( i == j ) continue;
+			size_t n = sValue.Replace( tags[j].GetValue(), wxEmptyString, false );
+			if ( n > 0 )
+			{
+				if ( reEmptyValue.Matches( sValue ) )
+				{
+					bRemove = true;
+					break;
+				}
+			}
+		}
+
+		if ( bRemove )
+		{
+			wxLogInfo( _("Removing tag \u201C%s\u201D - duplicated value \u201C%s\u201D"), tags[i].GetName(), tags[i].GetValue() );
+			tags.RemoveAt( i );
+			i -= 1;
 		}
 	}
 }
