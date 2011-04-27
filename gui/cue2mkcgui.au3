@@ -4,7 +4,7 @@
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.25
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.29
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -277,6 +277,7 @@ GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCK
 GUICtrlSetTip(-1, "Ignore all tags taken from media's metadata")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 $OtherOptionsPane = GUICtrlCreateTabItem("&Advanced options")
+GUICtrlSetState(-1, $GUI_SHOW)
 $GroupFileExtensions = GUICtrlCreateGroup("&Files extensions", 4, 42, 225, 89, -1, $WS_EX_TRANSPARENT)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
@@ -309,12 +310,14 @@ $CheckBoxReadMetadata = GUICtrlCreateCheckbox("Read metadata", 8, 152, 101, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Read metadata from media file")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-$GroupCueSheet = GUICtrlCreateGroup("Cue &sheet generation options", 5, 204, 225, 41, -1, $WS_EX_TRANSPARENT)
+$GroupCueSheet = GUICtrlCreateGroup("Cue &sheet generation options", 5, 204, 225, 57, -1, $WS_EX_TRANSPARENT)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$CheckBoxC8 = GUICtrlCreateCheckbox("UTF-8 file encoding", 9, 221, 129, 17)
+$LabelCueSheetEncoding = GUICtrlCreateLabel("Encoding:", 9, 225, 55, 21, $SS_CENTERIMAGE)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-GUICtrlSetTip(-1, "Genereate UTF-8 encoded cue sheet")
+$ComboCueSheetEncoding = GUICtrlCreateCombo("", 70, 225, 141, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL), $WS_EX_CLIENTEDGE)
+GUICtrlSetData(-1, "default|UTF-8|UTF-8 with BOM")
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
 #EndRegion ### END Koda GUI section ###
@@ -457,7 +460,7 @@ Func set_default_options()
 	GUICtrlSetData($InputDte, "mkt.xml")
 	_GUICtrlComboBox_SetCurSel($ComboOutputFormat, 1)
 	GUICtrlSetState($CheckBoxT, $GUI_UNCHECKED)
-	GUICtrlSetState($CheckBoxC8, $GUI_UNCHECKED)
+	_GUICtrlComboBox_SetCurSel($ComboCueSheetEncoding, 0)
 	generate_tags_enable(1)
 	_GUICtrlComboBox_SetCurSel($ComboTrack01, 1)
 	GUICtrlSetState($CheckBoxCq, $GUI_CHECKED)
@@ -472,6 +475,22 @@ Func set_default_options()
 	GUICtrlSetState($CheckBoxReadMetadata, $GUI_CHECKED)
 	_GUICtrlComboBox_SetCurSel($ComboFlacMode, 1)
 EndFunc   ;==>set_default_options
+
+Func get_encoding_str($nSel)
+	Local $sRet
+	Switch $nSel
+		Case 0
+			$sRet = "local"
+
+		Case 1
+			$sRet = "utf8"
+
+		Case 2
+			$sRet = "utf8_bom"
+	EndSwitch
+
+	Return SetError(0, 0, $sRet)
+EndFunc   ;==>get_encoding_str
 
 Func read_options()
 	Local $s = "", $w
@@ -543,9 +562,10 @@ Func read_options()
 	$w = _GUICtrlComboBox_GetCurSel($ComboOutputFormat)
 	Switch $w
 		Case 0
-			$s &= " -c "
-			$s &= _Iif(GUICtrlRead($CheckBoxC8) = $GUI_CHECKED, "-c8", "-nc8")
+			$s &= " -c -oce "
+			$s &= get_encoding_str(_GUICtrlComboBox_GetCurSel($ComboCueSheetEncoding))
 			$s &= " "
+
 		Case 1
 			$s &= " -m "
 			$s &= _Iif(GUICtrlRead($CheckBoxT) = $GUI_CHECKED, "-t", "-nt")

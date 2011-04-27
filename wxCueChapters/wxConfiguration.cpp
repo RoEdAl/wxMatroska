@@ -7,6 +7,7 @@
 #include <wxSamplingInfo.h>
 #include <wxCueSheetReader.h>
 #include "wxConfiguration.h"
+#include <wxUTF8TextOutputStream.h>
 #include "wxApp.h"
 
 const wxChar wxConfiguration::CUE_SHEET_EXT[] = wxT("cue");
@@ -18,6 +19,54 @@ static const wxChar LANG_FILE_URL[] = wxT("http://www.loc.gov/standards/iso639-2
 static const wxChar LANG_FILE_NAME[] = wxT("ISO-639-2_utf-8.txt");
 
 wxIMPLEMENT_DYNAMIC_CLASS( wxConfiguration, wxObject )
+
+wxString wxConfiguration::GetFileEncodingStr( wxConfiguration::FILE_ENCODING eFileEncoding )
+{
+	wxString s;
+	switch( eFileEncoding )
+	{
+		case ENCODING_LOCAL:
+		s = wxT("LOCAL");
+		break;
+
+		case ENCODING_UTF8:
+		s = wxT("UTF8");
+		break;
+
+		case ENCODING_UTF8_WITH_BOM:
+		s = wxT("UTF8 (BOM)");
+		break;
+
+		default:
+		s.Printf( wxT("UNKNOWN %d"), eFileEncoding );
+		break;
+	}
+
+	return s;
+}
+
+bool wxConfiguration::GetFileEncodingFromStr( const wxString& sFileEncoding, wxConfiguration::FILE_ENCODING& eFileEncoding )
+{
+	if ( sFileEncoding.CmpNoCase( wxT("local") ) == 0 )
+	{
+		eFileEncoding = ENCODING_LOCAL;
+		return true;
+	}
+	else if ( sFileEncoding.CmpNoCase( wxT("utf8") ) == 0 || sFileEncoding.CmpNoCase( wxT("utf-8") ) == 0 )
+	{
+		eFileEncoding = ENCODING_UTF8;
+		return true;
+	}
+	else if ( sFileEncoding.CmpNoCase( wxT("utf8_bom") ) == 0 || sFileEncoding.CmpNoCase( wxT("utf-8_bom") ) == 0 )
+	{
+		eFileEncoding = ENCODING_UTF8_WITH_BOM;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
 
 bool wxConfiguration::ReadLanguagesStrings( wxSortedArrayString& as )
 {
@@ -81,7 +130,7 @@ wxConfiguration::wxConfiguration(void)
 	 m_bEmbedded(false),
 	 m_bCorrectQuotationMarks(true),
 	 m_bSaveCueSheet(false),
-	 m_bCueSheetFileUtf8Encoding(false),
+	 m_eCueSheetFileEncoding(ENCODING_LOCAL),
 	 m_bGenerateTags(false),
 	 m_bGenerateEditionUID(false),
 	 m_bGenerateTagsFromComments(true),
@@ -134,8 +183,8 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddSwitch( wxEmptyString, wxT("ignore-media-tags"), _("Ignore all tagsfrom media file"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxEmptyString, wxT("use-media-tags"), _("Use tags from media file (default)"), wxCMD_LINE_PARAM_OPTIONAL );
 
-	cmdLine.AddSwitch( wxT("c8"), wxT("cue-sheet-utf8"), _("Save cue sheet using UTF-8 encoding"), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT("nc8"), wxT("no-cue-sheet-utf8"), _("Save cue sheet using default encoding (default)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( wxT("oce"), wxT("cue-sheet-encoding"), _("Output cue sheet file encoding - possible values are local (default), utf8 and utf8_bom"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+
 	cmdLine.AddSwitch( wxT("t1i1"), wxT("track-01-index-01"), _("For first track assume index 01 as beginning of track (default)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("t1i0"), wxT("track-01-index-00"), _("For first track assume index 00 as beginning of track"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("a"), wxT("abort-on-error"), _("Abort when conversion errors occurs (default)"), wxCMD_LINE_PARAM_OPTIONAL );
@@ -236,8 +285,14 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	if ( cmdLine.Found( wxT("t") ) ) m_bGenerateTags = true;
 	if ( cmdLine.Found( wxT("nt") ) ) m_bGenerateTags = false;
 
-	if ( cmdLine.Found( wxT("c8") ) ) m_bCueSheetFileUtf8Encoding = true;
-	if ( cmdLine.Found( wxT("nc8") ) ) m_bCueSheetFileUtf8Encoding = false;
+	if ( cmdLine.Found( wxT("oce"), &s ) )
+	{
+		if ( !GetFileEncodingFromStr( s, m_eCueSheetFileEncoding ) )
+		{
+			wxLogWarning( _("Wrong cue sheet file encoding %s"), s );
+			bRes = false;
+		}
+	}
 
 	if ( cmdLine.Found( wxT("eu") ) ) m_bGenerateEditionUID = true;
 	if ( cmdLine.Found( wxT("neu") ) ) m_bGenerateEditionUID = false;
@@ -520,7 +575,7 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
 	{
 		as.Add( wxString::Format( wxT("Ignored tag sources: %s"), GetTagSourcesNames(m_aeIgnoredSources) ) );
 	}
-	as.Add( wxString::Format( wxT("Cue sheet file encoding: %s"), (m_bCueSheetFileUtf8Encoding? wxT("UTF-8") : wxT("Default") ) ) );
+	as.Add( wxString::Format( wxT("Output cue sheet file encoding: %s"), GetFileEncodingStr(m_eCueSheetFileEncoding) ) );
 	as.Add( wxString::Format( wxT("Calculate end time of chapters: %s"), BoolToStr(m_bChapterTimeEnd) ) );
 	as.Add( wxString::Format( wxT("Read embedded cue sheet: %s"), BoolToStr(m_bEmbedded) ) );
 	as.Add( wxString::Format( wxT("Use data files to calculate end time of chapters: %s"), BoolToStr(m_bUseDataFiles) ) );
@@ -548,7 +603,7 @@ void wxConfiguration::Dump() const
 {
 	if ( wxLog::IsLevelEnabled( wxLOG_Info, wxLOG_COMPONENT ) && wxLog::GetVerbose() )
 	{
-		wxString sSeparator( wxT('='), 50 );
+		wxString sSeparator( wxT('='), 65 );
 		wxArrayString as;
 		as.Add( sSeparator );
 		as.Add( _("Configuration:") );
@@ -761,20 +816,23 @@ bool wxConfiguration::GenerateTagsFromComments() const
 	return m_bGenerateTagsFromComments;
 }
 
-bool wxConfiguration::IsCueSheetFileUtf8Encoding() const
+wxConfiguration::FILE_ENCODING wxConfiguration::GetCueSheetFileEncoding() const
 {
-	return m_bCueSheetFileUtf8Encoding;
+	return m_eCueSheetFileEncoding;
 }
 
-const wxMBConv& wxConfiguration::GetCueSheetFileEncoding()
+wxTextOutputStream* wxConfiguration::GetOutputTextStream( wxOutputStream& os )
 {
-	if ( m_bCueSheetFileUtf8Encoding )
+	switch( m_eCueSheetFileEncoding )
 	{
-		return wxConvUTF8;
-	}
-	else
-	{
-		return wxConvLocal;
+		case ENCODING_UTF8:
+		return new wxUTF8TextOutputStream( os, wxEOL_NATIVE, false );
+
+		case ENCODING_UTF8_WITH_BOM:
+		return new wxUTF8TextOutputStream( os, wxEOL_NATIVE, true );
+
+		default:
+		return new wxTextOutputStream( os, wxEOL_NATIVE, wxConvLocal );
 	}
 }
 

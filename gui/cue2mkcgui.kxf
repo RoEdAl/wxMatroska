@@ -38,7 +38,7 @@
 				<property name="Top" vt="Int8">0</property>
 				<property name="Width" vt="Int16">541</property>
 				<property name="Height" vt="Int16">417</property>
-				<property name="ActivePage" vt="Ident">PaneInputOutput</property>
+				<property name="ActivePage" vt="Ident">OtherOptionsPane</property>
 				<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
 				<property name="Font.Color" vt="Ident">clWindowText</property>
 				<property name="Font.Height" vt="Int8">-11</property>
@@ -1240,7 +1240,7 @@
 								<property name="Left" vt="Int8">1</property>
 								<property name="Top" vt="Int16">162</property>
 								<property name="Width" vt="Int16">225</property>
-								<property name="Height" vt="Int8">41</property>
+								<property name="Height" vt="Int8">57</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">32</property>
 								<property name="Caption" vt="String">Cue &amp;sheet generation options</property>
@@ -1253,17 +1253,39 @@
 								<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
 							</properties>
 							<components>
-								<object type="TACheckbox" name="CheckBoxC8">
+								<object type="TALabel" name="LabelCueSheetEncoding">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">17</property>
-										<property name="Width" vt="Int16">129</property>
-										<property name="Height" vt="Int8">17</property>
-										<property name="Hint" vt="String">Genereate UTF-8 encoded cue sheet</property>
-										<property name="Caption" vt="String">UTF-8 file encoding</property>
+										<property name="Top" vt="Int8">21</property>
+										<property name="Width" vt="Int8">55</property>
+										<property name="Height" vt="Int8">21</property>
+										<property name="AutoSize" vt="False">False</property>
+										<property name="Caption" vt="String">Encoding:</property>
 										<property name="TabOrder" vt="Int8">0</property>
-										<property name="CtrlStyle" vt="Int32">1342242819</property>
+										<property name="HaveVariable" vt="False">False</property>
+										<property name="CtrlStyle" vt="Int32">1342178048</property>
 										<property name="CtrlExStyle" vt="Int8">0</property>
+										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+									</properties>
+									<components/>
+								</object>
+								<object type="TACombo" name="ComboCueSheetEncoding">
+									<properties>
+										<property name="Left" vt="Int8">65</property>
+										<property name="Top" vt="Int8">21</property>
+										<property name="Width" vt="Int16">141</property>
+										<property name="Height" vt="Int8">25</property>
+										<property name="ItemHeight" vt="Int8">13</property>
+										<property name="TabOrder" vt="Int8">1</property>
+										<property name="Items.Strings" vt="List">
+											<list>
+												<li vt="String">default</li>
+												<li vt="String">UTF-8</li>
+												<li vt="String">UTF-8 with BOM</li>
+											</list>
+										</property>
+										<property name="CtrlStyle" vt="Int32">1342243395</property>
+										<property name="CtrlExStyle" vt="Int16">512</property>
 										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
 									</properties>
 									<components/>

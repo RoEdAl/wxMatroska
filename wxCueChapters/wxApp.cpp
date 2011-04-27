@@ -14,7 +14,7 @@
 #include "wxXmlCueSheetRenderer.h"
 #include "wxApp.h"
 
-const wxChar wxMyApp::APP_VERSION[] = wxT("0.6");
+const wxChar wxMyApp::APP_VERSION[] = wxT("0.61");
 const wxChar wxMyApp::APP_AUTHOR[] = wxT("Edmunt Pienkowsky - roed@onet.eu");
 const wxChar wxMyApp::LICENSE_FILE_NAME[] = wxT("license.txt");
 
@@ -232,8 +232,8 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, const wxCueSheet& cu
 			return 1;
 		}
 
-		wxTextOutputStream tos( fos, wxEOL_NATIVE, m_cfg.GetCueSheetFileEncoding() );
-		wxTextCueSheetRenderer renderer( &tos );
+		wxSharedPtr<wxTextOutputStream> pTos( m_cfg.GetOutputTextStream( fos ) );
+		wxTextCueSheetRenderer renderer( pTos.get() );
 		if ( !renderer.Render( cueSheet ) )
 		{
 			return 1;
@@ -399,7 +399,6 @@ wxXmlCueSheetRenderer& wxMyApp::GetXmlRenderer(const wxInputFile& inputFile)
 	{
 		if ( m_pRenderer == wxXmlCueSheetRenderer::Null )
 		{
-			wxClassInfo* ci = wxCLASSINFO(wxXmlCueSheetRenderer);
 			m_pRenderer = wxXmlCueSheetRenderer::CreateObject( m_cfg, inputFile );
 			bShowInfo = true;
 		}

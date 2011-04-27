@@ -20,6 +20,18 @@ class wxConfiguration :public wxObject
 {
 	wxDECLARE_DYNAMIC_CLASS(wxConfiguration);
 
+public:
+
+	typedef enum
+	{
+		ENCODING_LOCAL,
+		ENCODING_UTF8,
+		ENCODING_UTF8_WITH_BOM
+	} FILE_ENCODING;
+
+	static wxString GetFileEncodingStr( FILE_ENCODING );
+	static bool GetFileEncodingFromStr( const wxString&, FILE_ENCODING& );
+
 protected:
 
 	bool m_bChapterTimeEnd; // default=true
@@ -32,7 +44,7 @@ protected:
 	bool m_bGenerateTags;
 	bool m_bGenerateEditionUID;
 	bool m_bGenerateTagsFromComments;
-	bool m_bCueSheetFileUtf8Encoding;
+	FILE_ENCODING m_eCueSheetFileEncoding;
 	bool m_bTrackOneIndexOne; // or zero
 	bool m_bAbortOnError;
 	bool m_bRoundDownToFullFrames;
@@ -86,8 +98,8 @@ public:
 	bool GenerateTags() const;
 	bool GenerateEditionUID() const;
 	bool GenerateTagsFromComments() const;
-	bool IsCueSheetFileUtf8Encoding() const;
-	const wxMBConv& GetCueSheetFileEncoding();
+	FILE_ENCODING GetCueSheetFileEncoding() const;
+	wxTextOutputStream* GetOutputTextStream( wxOutputStream& );
 	bool GetMerge() const;
 	unsigned int GetEmbeddedModeFlags() const;
 	bool ShouldIgnoreTag( const wxCueTag& ) const;

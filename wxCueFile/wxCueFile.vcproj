@@ -233,6 +233,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\wxUTF8TextOutputStream.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\wxWavpackStream.cpp"
 				>
 			</File>
@@ -316,6 +320,10 @@
 			</File>
 			<File
 				RelativePath="..\inc\wxUnquoter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inc\wxUTF8TextOutputStream.h"
 				>
 			</File>
 		</Filter>

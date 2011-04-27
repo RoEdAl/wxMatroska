@@ -61,6 +61,7 @@ typedef struct tagMSG {
 #include <wx/dir.h>
 #include <wx/stdpaths.h>
 #include <wx/tokenzr.h>
+#include <wx/sharedptr.h>
 
 #include <FLAC++/all.h>
 #include <wavpack.h>
