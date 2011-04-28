@@ -2,6 +2,9 @@
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wxCueFile", "wxCueFile\wxCueFile.vcproj", "{4C560D24-C00B-49AC-9913-3ABB273E90AE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F05808A1-818F-4371-AB84-C8EFB9FD70FF} = {F05808A1-818F-4371-AB84-C8EFB9FD70FF}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wxCueChapters", "wxCueChapters\wxCueChapters.vcproj", "{C4A85D3C-D2FC-4584-9699-276BD86AC3CA}"
 	ProjectSection(ProjectDependencies) = postProject
