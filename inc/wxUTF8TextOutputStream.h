@@ -14,7 +14,6 @@ public:
         wxEOL = wxEOL_NATIVE,
 		bool bWriteBOM = false );
 
-	static const wxByte BOM[3];
 	static void WriteBOM( wxOutputStream& );
 
 };

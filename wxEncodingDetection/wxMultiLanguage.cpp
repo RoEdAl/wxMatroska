@@ -94,7 +94,7 @@ HRESULT wxMultiLanguage::DetectCodepageInStream(
 	return hRes;
 }
 
-HRESULT wxMultiLanguage::GetCodePageDescription(UINT nCodePage, wxString& sDescription )
+HRESULT wxMultiLanguage::GetCodePageDescription(UINT nCodePage, wxString& sDescription ) const
 {
 	wxASSERT( IsValid() );
 

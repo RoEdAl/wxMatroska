@@ -3,11 +3,8 @@
 */
 
 #include "StdWx.h"
+#include <wxEncodingDetection.h>
 #include <wxUTF8TextOutputStream.h>
-
-const wxByte wxUTF8TextOutputStream::BOM[3] = {
-	0xEF, 0xBB, 0xBF
-};
 
 wxUTF8TextOutputStream::wxUTF8TextOutputStream(
 	wxOutputStream& s,
@@ -23,5 +20,5 @@ wxUTF8TextOutputStream::wxUTF8TextOutputStream(
 
 void wxUTF8TextOutputStream::WriteBOM( wxOutputStream& s )
 {
-	s.Write( BOM, 3 );
+	s.Write( wxEncodingDetection::BOM_UTF8, 3 );
 }
