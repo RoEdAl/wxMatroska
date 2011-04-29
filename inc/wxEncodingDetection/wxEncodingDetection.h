@@ -34,6 +34,7 @@ class wxEncodingDetection :public wxObject
 		static const wxUint32 UTF8;
 	};
 
+	static bool GetBOM( wxUint32, wxByteBuffer& );
 	static wxMBConv* GetDefaultEncoding( bool, wxString& );
 	static wxMBConv* GetStandardMBConv( wxUint32, bool, wxString& );
 	static wxMBConv* GetFileEncodingFromBOM( const wxFileName&, bool, wxString& );

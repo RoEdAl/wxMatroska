@@ -184,7 +184,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\wxUTF8TextOutputStream.cpp"
+				RelativePath=".\wxTextOutputStreamWithBOM.cpp"
 				>
 			</File>
 		</Filter>
@@ -210,7 +210,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\inc\wxEncodingDetection\wxUTF8TextOutputStream.h"
+				RelativePath="..\inc\wxEncodingDetection\wxTextOutputStreamWithBOM.h"
 				>
 			</File>
 		</Filter>

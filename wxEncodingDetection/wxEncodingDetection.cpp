@@ -613,3 +613,36 @@ wxMBConv* wxEncodingDetection::GetFileEncoding( const wxFileName& fn, bool bUseM
 
 	return pRes;
 }
+
+bool wxEncodingDetection::GetBOM( wxUint32 nCodePage, wxByteBuffer& bom )
+{
+	bool bRet = true;
+	switch( nCodePage )
+	{
+		case CP::UTF32_BE:
+		bom = wxByteBuffer( BOM::UTF32_BE, 4 );
+		break;
+
+		case CP::UTF32_LE:
+		bom = wxByteBuffer( BOM::UTF32_LE, 4 );
+		break;
+
+		case CP::UTF16_BE:
+		bom = wxByteBuffer( BOM::UTF16_BE, 2 );
+		break;
+
+		case CP::UTF16_LE:
+		bom = wxByteBuffer( BOM::UTF16_LE, 2 );
+		break;
+
+		case CP::UTF8:
+		bom = wxByteBuffer( BOM::UTF8, 3 );
+		break;
+
+		default:
+		bRet = false;
+		break;
+	}
+
+	return bRet;
+}
