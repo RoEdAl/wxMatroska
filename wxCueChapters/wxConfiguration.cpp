@@ -6,7 +6,6 @@
 #include <wxCueFile/wxDataFile.h>
 #include <wxCueFile/wxSamplingInfo.h>
 #include <wxCueFile/wxCueSheetReader.h>
-#include <wxEncodingDetection/wxEncodingDetection.h>
 #include <wxEncodingDetection/wxTextOutputStreamWithBOM.h>
 #include "wxConfiguration.h"
 #include "wxApp.h"
