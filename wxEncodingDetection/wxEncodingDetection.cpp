@@ -381,7 +381,7 @@ wxMBConv* wxEncodingDetection::GetDefaultEncoding( bool bUseMLang, wxString& sDe
 wxMBConv* wxEncodingDetection::GetStandardMBConv( wxUint32 nCodePage, bool bUseMLang, wxString& sDescription )
 {
 	wxMBConv* pConv = wxNullMBConv;
-	if ( bUseMLang )
+	if ( !bUseMLang )
 	{
 		switch( nCodePage )
 		{
@@ -476,10 +476,11 @@ wxMBConv* wxEncodingDetection::GetFileEncodingFromBOM( const wxFileName& fn, boo
 		{
 			return wxMBConv_BOM::Create( BOM::UTF16_LE, 2, CP::UTF32_LE, bUseMLang, sDescription );
 		}
+		break;
 
 		case 0:
 		case 1:
-		wxLogError( _("Cannot read BOM - file %s is too small."), fn.GetName() );
+		wxLogError( _("Cannot read BOM - file \u201C%s\u201D is too small."), fn.GetName() );
 		break;
 	}
 
