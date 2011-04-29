@@ -1282,6 +1282,8 @@
 												<li vt="String">default</li>
 												<li vt="String">UTF-8</li>
 												<li vt="String">UTF-8 with BOM</li>
+												<li vt="String">UTF-16</li>
+												<li vt="String">UTF-16 with BOM</li>
 											</list>
 										</property>
 										<property name="CtrlStyle" vt="Int32">1342243395</property>

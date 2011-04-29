@@ -4,7 +4,7 @@
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.31
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.33
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -322,7 +322,7 @@ GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCK
 $LabelCueSheetEncoding = GUICtrlCreateLabel("Encoding:", 9, 273, 55, 21, $SS_CENTERIMAGE)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $ComboCueSheetEncoding = GUICtrlCreateCombo("", 70, 273, 141, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL), $WS_EX_CLIENTEDGE)
-GUICtrlSetData(-1, "default|UTF-8|UTF-8 with BOM")
+GUICtrlSetData(-1, "default|UTF-8|UTF-8 with BOM|UTF-16|UTF-16 with BOM")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
@@ -494,8 +494,13 @@ Func get_encoding_str($nSel)
 
 		Case 2
 			$sRet = "utf8_bom"
-	EndSwitch
 
+		Case 3
+			$sRet = "utf16"
+
+		Case 4
+			$sRet = "utf16_bom"
+	EndSwitch
 	Return SetError(0, 0, $sRet)
 EndFunc   ;==>get_encoding_str
 

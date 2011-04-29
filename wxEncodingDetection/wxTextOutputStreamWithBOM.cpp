@@ -48,6 +48,15 @@ wxTextOutputStream* wxTextOutputStreamWithBOMFactory::CreateUTF8( wxOutputStream
 	return Create( s, mode, bWriteBOM, wxEncodingDetection::CP::UTF8, bUseMLang );
 }
 
+wxTextOutputStream* wxTextOutputStreamWithBOMFactory::CreateUTF16( wxOutputStream& s, wxEOL mode, bool bWriteBOM, bool bUseMLang )
+{
+#if WORDS_BIGENDIAN
+	return Create( s, mode, bWriteBOM, wxEncodingDetection::CP::UTF16_BE, bUseMLang );
+#else
+	return Create( s, mode, bWriteBOM, wxEncodingDetection::CP::UTF16_LE, bUseMLang );
+#endif
+}
+
 void wxTextOutputStreamWithBOMFactory::WriteBOM( wxOutputStream& s, const wxEncodingDetection::wxByteBuffer& bom )
 {
 	s.Write( bom.data(), bom.length() );

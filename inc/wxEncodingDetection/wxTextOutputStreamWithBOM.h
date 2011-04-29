@@ -14,6 +14,7 @@ public:
 
 	static wxTextOutputStream* Create( wxOutputStream&, wxEOL, bool, wxUint32, bool );
 	static wxTextOutputStream* CreateUTF8( wxOutputStream&, wxEOL, bool, bool );
+	static wxTextOutputStream* CreateUTF16( wxOutputStream&, wxEOL, bool, bool );
 
 	static void WriteBOM( wxOutputStream&, const wxByteBuffer& );
 };
