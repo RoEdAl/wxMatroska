@@ -107,3 +107,17 @@ HRESULT wxMultiLanguage::GetCodePageDescription(UINT nCodePage, wxString& sDescr
 	}
 	return hRes;
 }
+
+bool wxMultiLanguage::GetDefaultCodePage( wxUint32& nCodePage )
+{
+	CPINFOEX cpInfo;
+	if ( GetCPInfoEx( CP_THREAD_ACP, 0, &cpInfo ) )
+	{
+		nCodePage = cpInfo.CodePage;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}

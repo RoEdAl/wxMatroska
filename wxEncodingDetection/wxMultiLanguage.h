@@ -31,6 +31,10 @@ public:
 	HRESULT DetectInputCodepage( DWORD, DWORD, const wxCharBuffer&, DetectEncodingInfo*, INT* );
 	HRESULT DetectCodepageInStream( DWORD, DWORD, const wxFileName&, DetectEncodingInfo*, INT* );
 	HRESULT GetCodePageDescription( UINT, wxString& ) const;
+
+public:
+
+	static bool GetDefaultCodePage( wxUint32& );
 };
 
 #endif

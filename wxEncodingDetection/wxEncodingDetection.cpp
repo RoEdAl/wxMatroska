@@ -511,6 +511,8 @@ wxMBConv* wxEncodingDetection::GetFileEncoding( const wxFileName& fn, bool bUseM
 	if ( bUseMLang )
 	{
 		wxMultiLanguage multiLanguage;
+		wxUint32 nDefCodePage = 0;
+		wxMultiLanguage::GetDefaultCodePage( nDefCodePage );
 
 		if ( !multiLanguage.IsValid() )
 		{
@@ -548,7 +550,7 @@ wxMBConv* wxEncodingDetection::GetFileEncoding( const wxFileName& fn, bool bUseM
 			int rest = 256 % nLastRead;
 			wxTmemcpy( newBuffer.data() + (nLastRead * steps), buffer.data(), rest );
 
-			HRESULT hRes = multiLanguage.DetectInputCodepage( 0, 0, newBuffer, dei, &nSize );
+			HRESULT hRes = multiLanguage.DetectInputCodepage( MLDETECTCP_NONE, nDefCodePage, newBuffer, dei, &nSize );
 			if ( hRes != S_OK )
 			{
 				wxLogError( _("Cannot determine encoding of file \u201C%s\u201D."), fn.GetName() );
@@ -575,7 +577,7 @@ wxMBConv* wxEncodingDetection::GetFileEncoding( const wxFileName& fn, bool bUseM
 				buffer.extend( nLastRead );
 			}
 
-			HRESULT hRes = multiLanguage.DetectInputCodepage( 0, 0, buffer, dei, &nSize );
+			HRESULT hRes = multiLanguage.DetectInputCodepage( MLDETECTCP_NONE, nDefCodePage, buffer, dei, &nSize );
 			if ( hRes != S_OK )
 			{
 				wxLogError( _("Cannot determine encoding of file \u201C%s\u201D."), fn.GetName() );
@@ -584,7 +586,7 @@ wxMBConv* wxEncodingDetection::GetFileEncoding( const wxFileName& fn, bool bUseM
 		}
 		else
 		{
-			HRESULT hRes = multiLanguage.DetectCodepageInStream( MLDETECTCP_NONE, 0, fn, dei, &nSize );
+			HRESULT hRes = multiLanguage.DetectCodepageInStream( MLDETECTCP_NONE, nDefCodePage, fn, dei, &nSize );
 			if ( hRes != S_OK )
 			{
 				wxLogError( _("Cannot determine encoding of file \u201C%s\u201D."), fn.GetName() );
@@ -604,7 +606,7 @@ wxMBConv* wxEncodingDetection::GetFileEncoding( const wxFileName& fn, bool bUseM
 		else
 		{
 			wxLogDebug( _("Cannot detect code page - using default encoding.") );
-			pRes = wxMBConv_MLang::Create( multiLanguage, CP_ACP, sDescription );
+			pRes = wxMBConv_MLang::Create( multiLanguage, nDefCodePage, sDescription );
 		}
 	}
 	else
