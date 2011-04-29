@@ -239,16 +239,8 @@ public:
 
 	static wxMBConv_BOM* Create( const wxByte* bom, size_t nLen, wxUint32 nCodePage, bool bUseMLang, wxString& sDescription )
 	{
-		if ( bUseMLang )
-		{
-			wxMBConv_MLang* pConvMLang = wxMBConv_MLang::Create( nCodePage, sDescription );
-			return new wxMBConv_BOM( bom, nLen, pConvMLang, true );
-		}
-		else
-		{
-			wxMBConv* pConvStd = wxEncodingDetection::GetStandardMBConv( nCodePage, sDescription );
-			return new wxMBConv_BOM( bom, nLen, pConvStd, true );
-		}
+		wxMBConv* pConvStd = wxEncodingDetection::GetStandardMBConv( nCodePage, bUseMLang, sDescription );
+		return new wxMBConv_BOM( bom, nLen, pConvStd, true );
 	}
 
 	static wxMBConv_BOM* Create( const wxByte* bom, size_t nLen, wxUint32 nCodePage, wxString& sDescription )
@@ -386,39 +378,46 @@ wxMBConv* wxEncodingDetection::GetDefaultEncoding( bool bUseMLang, wxString& sDe
 	}
 }
 
-wxMBConv* wxEncodingDetection::GetStandardMBConv( wxUint32 nCodePage, wxString& sDescription )
+wxMBConv* wxEncodingDetection::GetStandardMBConv( wxUint32 nCodePage, bool bUseMLang, wxString& sDescription )
 {
 	wxMBConv* pConv = wxNullMBConv;
-	switch( nCodePage )
+	if ( bUseMLang )
 	{
-		case CP::UTF32_BE:
-		pConv = new wxMBConvUTF32BE();
-		sDescription = _("UTF-32 BE (Native)");
-		break;
+		switch( nCodePage )
+		{
+			case CP::UTF32_BE:
+			pConv = new wxMBConvUTF32BE();
+			sDescription = _("UTF-32 BE (Native)");
+			break;
 
-		case CP::UTF32_LE:
-		pConv = new wxMBConvUTF32LE();
-		sDescription = _("UTF-32 LE (Native)");
-		break;
+			case CP::UTF32_LE:
+			pConv = new wxMBConvUTF32LE();
+			sDescription = _("UTF-32 LE (Native)");
+			break;
 
-		case CP::UTF16_BE:
-		pConv = new wxMBConvUTF16BE();
-		sDescription = _("UTF-16 BE (Native)");
-		break;
+			case CP::UTF16_BE:
+			pConv = new wxMBConvUTF16BE();
+			sDescription = _("UTF-16 BE (Native)");
+			break;
 
-		case CP::UTF16_LE:
-		pConv = new wxMBConvUTF16LE();
-		sDescription = _("UTF-16 LE (Native)");
-		break;
+			case CP::UTF16_LE:
+			pConv = new wxMBConvUTF16LE();
+			sDescription = _("UTF-16 LE (Native)");
+			break;
 
-		case CP::UTF8:
-		pConv = wxConvUTF8.Clone();
-		sDescription = _("UTF-8 (Native)");
-		break;
+			case CP::UTF8:
+			pConv = wxConvUTF8.Clone();
+			sDescription = _("UTF-8 (Native)");
+			break;
 
-		default:
-		wxFAIL_MSG( "Invalid nCodePage parameter" );
-		break;
+			default:
+			wxFAIL_MSG( "Invalid nCodePage parameter" );
+			break;
+		}
+	}
+	else
+	{
+		pConv = wxMBConv_MLang::Create( nCodePage, sDescription );
 	}
 
 	return pConv;

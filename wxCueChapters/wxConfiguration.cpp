@@ -6,7 +6,8 @@
 #include <wxCueFile/wxDataFile.h>
 #include <wxCueFile/wxSamplingInfo.h>
 #include <wxCueFile/wxCueSheetReader.h>
-#include <wxCueFile/wxUTF8TextOutputStream.h>
+#include <wxEncodingDetection/wxEncodingDetection.h>
+#include <wxEncodingDetection/wxUTF8TextOutputStream.h>
 #include "wxConfiguration.h"
 #include "wxApp.h"
 
@@ -845,10 +846,10 @@ wxTextOutputStream* wxConfiguration::GetOutputTextStream( wxOutputStream& os )
 	switch( m_eCueSheetFileEncoding )
 	{
 		case ENCODING_UTF8:
-		return new wxUTF8TextOutputStream( os, wxEOL_NATIVE, false );
+		return wxUTF8TextOutputStream::Create( os, wxEOL_NATIVE, false, m_bUseMLang );
 
 		case ENCODING_UTF8_WITH_BOM:
-		return new wxUTF8TextOutputStream( os, wxEOL_NATIVE, true );
+		return wxUTF8TextOutputStream::Create( os, wxEOL_NATIVE, true, m_bUseMLang );
 
 		default:
 		return new wxTextOutputStream( os, wxEOL_NATIVE, wxConvLocal );

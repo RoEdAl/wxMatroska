@@ -183,6 +183,10 @@
 				RelativePath=".\wxMultiLanguage.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\wxUTF8TextOutputStream.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -203,6 +207,10 @@
 			>
 			<File
 				RelativePath="..\inc\wxEncodingDetection\wxEncodingDetection.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inc\wxEncodingDetection\wxUTF8TextOutputStream.h"
 				>
 			</File>
 		</Filter>
