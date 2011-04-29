@@ -3,7 +3,7 @@
 */
 
 #include "StdWx.h"
-#include "wxMediaInfo.h"
+#include <wxCueFile/wxMediaInfo.h>
 
 static const wxChar MEDIA_INFO_LIBRARY[] = wxT("MediaInfo.dll");
 static const wxChar* SYMBOL_NAMES[] = {

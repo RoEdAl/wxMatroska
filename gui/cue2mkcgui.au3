@@ -4,7 +4,7 @@
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.29
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.31
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -90,7 +90,7 @@ Func get_directory($sPath)
 	Return SetError(0, 0, $sDirectory)
 EndFunc   ;==>get_directory
 
-#Region ### START Koda GUI section ### Form=D:\Temp\wxMatroska\gui\cue2mkcgui.kxf
+#Region ### START Koda GUI section ### Form=D:\Temp\wxMatroska.bitbucket\gui\cue2mkcgui.kxf
 $FormMain = GUICreate("cue2mkc GUI", 543, 427, -1, -1, BitOR($WS_MAXIMIZEBOX, $WS_MINIMIZEBOX, $WS_SIZEBOX, $WS_THICKFRAME, $WS_SYSMENU, $WS_CAPTION, $WS_OVERLAPPEDWINDOW, $WS_TILEDWINDOW, $WS_POPUP, $WS_POPUPWINDOW, $WS_GROUP, $WS_TABSTOP, $WS_BORDER, $WS_CLIPSIBLINGS), BitOR($WS_EX_ACCEPTFILES, $WS_EX_WINDOWEDGE))
 GUISetFont(8, 400, 0, "Microsoft Sans Serif")
 $DummyOutput = GUICtrlCreateDummy()
@@ -278,7 +278,7 @@ GUICtrlSetTip(-1, "Ignore all tags taken from media's metadata")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 $OtherOptionsPane = GUICtrlCreateTabItem("&Advanced options")
 GUICtrlSetState(-1, $GUI_SHOW)
-$GroupFileExtensions = GUICtrlCreateGroup("&Files extensions", 4, 42, 225, 89, -1, $WS_EX_TRANSPARENT)
+$GroupFileExtensions = GUICtrlCreateGroup("&File extensions", 4, 42, 225, 89, -1, $WS_EX_TRANSPARENT)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $LabelDce = GUICtrlCreateLabel("Cue sheet:", 8, 58, 67, 21, $SS_CENTERIMAGE)
@@ -297,25 +297,31 @@ $InputDte = GUICtrlCreateInput("mkt.xml", 109, 103, 53, 21)
 GUICtrlSetLimit(-1, 50)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-$GroupMetadaReadingOptions = GUICtrlCreateGroup("&Metadata reading options", 4, 134, 225, 69)
+$GroupMLang = GUICtrlCreateGroup("MLang", 4, 133, 225, 45)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelFlacCueSheetReadMode = GUICtrlCreateLabel("FLAC:", 8, 172, 35, 21, $SS_CENTERIMAGE)
+$CheckBoxMLang = GUICtrlCreateCheckbox("Use MLang library", 8, 151, 117, 17)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+GUICtrlCreateGroup("", -99, -99, 1, 1)
+$GroupMetadaReadingOptions = GUICtrlCreateGroup("&Metadata reading options", 4, 182, 225, 69)
+GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+$LabelFlacCueSheetReadMode = GUICtrlCreateLabel("FLAC:", 8, 220, 35, 21, $SS_CENTERIMAGE)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Method of reading cue sheet from FLAC container")
-$ComboFlacMode = GUICtrlCreateCombo("", 45, 172, 165, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL), $WS_EX_CLIENTEDGE)
+$ComboFlacMode = GUICtrlCreateCombo("", 45, 220, 165, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL), $WS_EX_CLIENTEDGE)
 GUICtrlSetData(-1, "use MediaInfo only|tag first|comment first|tag only|comment only||")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$CheckBoxReadMetadata = GUICtrlCreateCheckbox("Read metadata", 8, 152, 101, 17)
+$CheckBoxReadMetadata = GUICtrlCreateCheckbox("Read metadata", 8, 200, 101, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Read metadata from media file")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-$GroupCueSheet = GUICtrlCreateGroup("Cue &sheet generation options", 5, 204, 225, 57, -1, $WS_EX_TRANSPARENT)
+$GroupCueSheet = GUICtrlCreateGroup("Cue &sheet generation options", 5, 252, 225, 57, -1, $WS_EX_TRANSPARENT)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelCueSheetEncoding = GUICtrlCreateLabel("Encoding:", 9, 225, 55, 21, $SS_CENTERIMAGE)
+$LabelCueSheetEncoding = GUICtrlCreateLabel("Encoding:", 9, 273, 55, 21, $SS_CENTERIMAGE)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$ComboCueSheetEncoding = GUICtrlCreateCombo("", 70, 225, 141, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL), $WS_EX_CLIENTEDGE)
+$ComboCueSheetEncoding = GUICtrlCreateCombo("", 70, 273, 141, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL), $WS_EX_CLIENTEDGE)
 GUICtrlSetData(-1, "default|UTF-8|UTF-8 with BOM")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
@@ -474,6 +480,7 @@ Func set_default_options()
 	GUICtrlSetState($CheckBoxMerge, $GUI_UNCHECKED)
 	GUICtrlSetState($CheckBoxReadMetadata, $GUI_CHECKED)
 	_GUICtrlComboBox_SetCurSel($ComboFlacMode, 1)
+	GUICtrlSetState($CheckBoxMLang, $GUI_CHECKED)
 EndFunc   ;==>set_default_options
 
 Func get_encoding_str($nSel)
@@ -620,6 +627,9 @@ Func read_options()
 	$s &= " "
 
 	$s &= _Iif(GUICtrlRead($CheckBoxSingleMediaFile) = $GUI_CHECKED, "--single-media-file", "--media-file-with-embedded-cuesheet")
+	$s &= " "
+
+	$s &= _Iif(GUICtrlRead($CheckBoxMLang) = $GUI_CHECKED, "--use-mlang", "--dont-use-mlang")
 	$s &= " "
 
 	If GUICtrlRead($CheckBoxVerbose) = $GUI_CHECKED Then

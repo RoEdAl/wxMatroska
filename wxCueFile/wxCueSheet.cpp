@@ -3,9 +3,9 @@
 */
 
 #include "StdWx.h"
-#include <wxSamplingInfo.h>
-#include <wxTrack.h>
-#include <wxCueSheet.h>
+#include <wxCueFile/wxSamplingInfo.h>
+#include <wxCueFile/wxTrack.h>
+#include <wxCueFile/wxCueSheet.h>
 
 wxIMPLEMENT_DYNAMIC_CLASS( wxCueSheet, wxCueComponent )
 

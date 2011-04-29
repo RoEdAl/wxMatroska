@@ -202,7 +202,7 @@
 			Name="External Header Files"
 			>
 			<File
-				RelativePath="..\inc\wxEncodingDetection.h"
+				RelativePath="..\inc\wxEncodingDetection\wxEncodingDetection.h"
 				>
 			</File>
 		</Filter>

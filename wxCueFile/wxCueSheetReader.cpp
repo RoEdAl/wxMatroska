@@ -3,14 +3,14 @@
 */
 
 #include "StdWx.h"
-#include <wxSamplingInfo.h>
-#include <wxIndex.h>
-#include <wxTrack.h>
-#include <wxCueSheetReader.h>
-#include "wxMediaInfo.h"
+#include <wxCueFile/wxSamplingInfo.h>
+#include <wxCueFile/wxIndex.h>
+#include <wxCueFile/wxTrack.h>
+#include <wxCueFile/wxCueSheetReader.h>
+#include <wxCueFile/wxMediaInfo.h>
 #include "wxFlacMetaDataReader.h"
 #include "wxWavpackTagReader.h"
-#include <wxEncodingDetection.h>
+#include <wxEncodingDetection/wxEncodingDetection.h>
 
 wxIMPLEMENT_DYNAMIC_CLASS( wxCueSheetReader, wxObject )
 
@@ -145,10 +145,10 @@ void wxCueSheetReader::CorrectQuotationMarks( bool bCorrectQuotationMarks, const
 	m_unquoter.SetLang( bCorrectQuotationMarks? sLang : wxEmptyString );
 }
 
-bool wxCueSheetReader::ReadCueSheet(const wxString& sCueFile)
+bool wxCueSheetReader::ReadCueSheet(const wxString& sCueFile, bool bUseMLang )
 {
 	wxString sCPDescription;
-	wxSharedPtr<wxMBConv> pConv( wxEncodingDetection::GetFileEncoding( sCueFile, sCPDescription ) );
+	wxSharedPtr<wxMBConv> pConv( wxEncodingDetection::GetFileEncoding( sCueFile, bUseMLang, sCPDescription ) );
 	if ( pConv )
 	{
 		wxLogInfo( _("Detected encoding of file \u201C%s\u201D file is \u201C%s\u201D"), sCueFile, sCPDescription );

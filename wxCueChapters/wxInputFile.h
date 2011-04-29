@@ -6,7 +6,7 @@
 #define _WX_INPUT_FILE_H_
 
 #ifndef _WX_DATA_FILE_H_
-#include <wxDataFile.h>
+#include <wxCueFile/wxDataFile.h>
 #endif
 
 WX_DECLARE_OBJARRAY( wxFileName, wxArrayFileName );

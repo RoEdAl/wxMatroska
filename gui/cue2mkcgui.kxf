@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <object type="TAForm" name="FormMain">
 	<properties>
-		<property name="Left" vt="Int16">209</property>
-		<property name="Top" vt="Int8">120</property>
+		<property name="Left" vt="Int16">210</property>
+		<property name="Top" vt="Int16">134</property>
 		<property name="Width" vt="Int16">550</property>
 		<property name="Height" vt="Int16">453</property>
 		<property name="Caption" vt="String">cue2mkc GUI</property>
@@ -1053,7 +1053,7 @@
 								<property name="Height" vt="Int8">89</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">32</property>
-								<property name="Caption" vt="String">&amp;Files extensions</property>
+								<property name="Caption" vt="String">&amp;File extensions</property>
 								<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
 								<property name="Font.Color" vt="Ident">clWindowText</property>
 								<property name="Font.Height" vt="Int8">-11</property>
@@ -1161,7 +1161,7 @@
 						<object type="TAGroup" name="GroupMetadaReadingOptions">
 							<properties>
 								<property name="Left" vt="Int8">0</property>
-								<property name="Top" vt="Int8">92</property>
+								<property name="Top" vt="Int16">140</property>
 								<property name="Width" vt="Int16">225</property>
 								<property name="Height" vt="Int8">69</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
@@ -1172,7 +1172,7 @@
 								<property name="Font.Height" vt="Int8">-11</property>
 								<property name="Font.Name" vt="String">Microsoft Sans Serif</property>
 								<property name="Font.Style" vt="Set"/>
-								<property name="TabOrder" vt="Int8">1</property>
+								<property name="TabOrder" vt="Int8">2</property>
 								<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
 							</properties>
 							<components>
@@ -1238,7 +1238,7 @@
 						<object type="TAGroup" name="GroupCueSheet">
 							<properties>
 								<property name="Left" vt="Int8">1</property>
-								<property name="Top" vt="Int16">162</property>
+								<property name="Top" vt="Int16">210</property>
 								<property name="Width" vt="Int16">225</property>
 								<property name="Height" vt="Int8">57</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
@@ -1249,7 +1249,7 @@
 								<property name="Font.Height" vt="Int8">-11</property>
 								<property name="Font.Name" vt="String">Microsoft Sans Serif</property>
 								<property name="Font.Style" vt="Set"/>
-								<property name="TabOrder" vt="Int8">2</property>
+								<property name="TabOrder" vt="Int8">3</property>
 								<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
 							</properties>
 							<components>
@@ -1286,6 +1286,40 @@
 										</property>
 										<property name="CtrlStyle" vt="Int32">1342243395</property>
 										<property name="CtrlExStyle" vt="Int16">512</property>
+										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+									</properties>
+									<components/>
+								</object>
+							</components>
+						</object>
+						<object type="TAGroup" name="GroupMLang">
+							<properties>
+								<property name="Left" vt="Int8">0</property>
+								<property name="Top" vt="Int8">91</property>
+								<property name="Width" vt="Int16">225</property>
+								<property name="Height" vt="Int8">45</property>
+								<property name="CtrlStyle" vt="Int32">1342308359</property>
+								<property name="CtrlExStyle" vt="Int8">0</property>
+								<property name="Caption" vt="String">MLang</property>
+								<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
+								<property name="Font.Color" vt="Ident">clWindowText</property>
+								<property name="Font.Height" vt="Int8">-11</property>
+								<property name="Font.Name" vt="String">Microsoft Sans Serif</property>
+								<property name="Font.Style" vt="Set"/>
+								<property name="TabOrder" vt="Int8">1</property>
+								<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+							</properties>
+							<components>
+								<object type="TACheckbox" name="CheckBoxMLang">
+									<properties>
+										<property name="Left" vt="Int8">4</property>
+										<property name="Top" vt="Int8">18</property>
+										<property name="Width" vt="Int8">117</property>
+										<property name="Height" vt="Int8">17</property>
+										<property name="Caption" vt="String">Use MLang library</property>
+										<property name="TabOrder" vt="Int8">0</property>
+										<property name="CtrlStyle" vt="Int32">1342242819</property>
+										<property name="CtrlExStyle" vt="Int8">0</property>
 										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
 									</properties>
 									<components/>

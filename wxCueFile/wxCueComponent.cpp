@@ -3,9 +3,9 @@
 */
 
 #include "StdWx.h"
-#include <wxTagSynonims.h>
-#include <wxCueComponent.h>
-#include <wxUnquoter.h>
+#include <wxCueFile/wxTagSynonims.h>
+#include <wxCueFile/wxCueComponent.h>
+#include <wxCueFile/wxUnquoter.h>
 
 const wxChar* const wxCueTag::Name::CUESHEET = wxT("CUESHEET");
 const wxChar* const wxCueTag::Name::TOTALTRACKS = wxT("TOTALTRACKS");

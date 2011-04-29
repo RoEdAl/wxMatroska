@@ -3,18 +3,18 @@
 */
 
 #include "StdWx.h"
+#include <wxCueFile/wxTagSynonims.h>
+#include <wxCueFile/wxSamplingInfo.h>
+#include <wxCueFile/wxIndex.h>
+#include <wxCueFile/wxTrack.h>
+#include <wxCueFile/wxCueSheetReader.h>
+#include <wxCueFile/wxCueSheetRenderer.h>
+#include <wxCueFile/wxTextCueSheetRenderer.h>
 #include "wxConfiguration.h"
-#include <wxTagSynonims.h>
-#include <wxSamplingInfo.h>
-#include <wxIndex.h>
-#include <wxTrack.h>
-#include <wxCueSheetReader.h>
-#include <wxCueSheetRenderer.h>
-#include <wxTextCueSheetRenderer.h>
 #include "wxXmlCueSheetRenderer.h"
 #include "wxApp.h"
 
-const wxChar wxMyApp::APP_VERSION[] = wxT("0.61");
+const wxChar wxMyApp::APP_VERSION[] = wxT("0.62");
 const wxChar wxMyApp::APP_AUTHOR[] = wxT("Edmunt Pienkowsky - roed@onet.eu");
 const wxChar wxMyApp::LICENSE_FILE_NAME[] = wxT("license.txt");
 
@@ -279,7 +279,7 @@ int wxMyApp::ProcessCueFile( wxCueSheetReader& reader, const wxInputFile& inputF
 	else
 	{
 		wxLogInfo( _("Reading cue sheet from text file") );
-		if ( !reader.ReadCueSheet( sInputFile ) )
+		if ( !reader.ReadCueSheet( sInputFile, m_cfg.UseMLang() ) )
 		{
 			wxLogError( _("Fail to read or parse input cue file \u201C%s\u201D"), sInputFile );
 			return 1;

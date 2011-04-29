@@ -3,11 +3,11 @@
 */
 
 #include "StdWx.h"
-#include <wxSamplingInfo.h>
-#include <wxIndex.h>
-#include <wxTrack.h>
-#include <wxCueSheet.h>
-#include <wxTextCueSheetRenderer.h>
+#include <wxCueFile/wxSamplingInfo.h>
+#include <wxCueFile/wxIndex.h>
+#include <wxCueFile/wxTrack.h>
+#include <wxCueFile/wxCueSheet.h>
+#include <wxCueFile/wxTextCueSheetRenderer.h>
 
 wxIMPLEMENT_DYNAMIC_CLASS( wxTextCueSheetRenderer, wxCueSheetRenderer )
 

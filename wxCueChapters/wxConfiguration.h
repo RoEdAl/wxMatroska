@@ -52,6 +52,7 @@ protected:
 	bool m_bMerge;
 	unsigned int m_nEmbeddedModeFlags;
 	wxArrayTagSource m_aeIgnoredSources;
+	bool m_bUseMLang;
 
 	wxString m_sAlternateExtensions;
 	wxString m_sLang;
@@ -103,6 +104,7 @@ public:
 	bool GetMerge() const;
 	unsigned int GetEmbeddedModeFlags() const;
 	bool ShouldIgnoreTag( const wxCueTag& ) const;
+	bool UseMLang() const;
 
 	wxString GetOutputFile( const wxInputFile& ) const;
 	void GetOutputFile( const wxInputFile&, wxString&, wxString& ) const;

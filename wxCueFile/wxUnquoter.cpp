@@ -3,7 +3,7 @@
 */
 
 #include "StdWx.h"
-#include "wxUnquoter.h"
+#include <wxCueFile/wxUnquoter.h>
 
 wxIMPLEMENT_DYNAMIC_CLASS( wxUnquoter, wxObject )
 

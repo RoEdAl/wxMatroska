@@ -3,8 +3,8 @@
 */
 
 #include "StdWx.h"
-#include <wxTagSynonims.h>
-#include <wxCueComponent.h>
+#include <wxCueFile/wxTagSynonims.h>
+#include <wxCueFile/wxCueComponent.h>
 
 IMPLEMENT_DYNAMIC_CLASS( wxTagSynonims, wxObject )
 

@@ -15,7 +15,6 @@ public:
 		bool bWriteBOM = false );
 
 	static void WriteBOM( wxOutputStream& );
-
 };
 
 #endif

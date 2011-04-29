@@ -6,11 +6,11 @@
 #define _WX_TEXT_CUE_SHEET_RENDERER_H_
 
 #ifndef _WX_CUE_SHEET_RENDERER_H_
-#include <wxCueSheetRenderer.h>
+#include "wxCueSheetRenderer.h"
 #endif
 
 #ifndef _WX_SAMPLING_INFO_H_
-#include <wxSamplingInfo.h>
+#include "wxSamplingInfo.h"
 #endif
 
 class wxTextCueSheetRenderer :public wxCueSheetRenderer

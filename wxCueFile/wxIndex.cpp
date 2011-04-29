@@ -3,7 +3,7 @@
 */
 
 #include "StdWx.h"
-#include "wxIndex.h"
+#include <wxCueFile/wxIndex.h>
 
 wxIMPLEMENT_DYNAMIC_CLASS( wxIndex, wxObject )
 

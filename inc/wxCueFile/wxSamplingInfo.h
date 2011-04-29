@@ -6,7 +6,7 @@
 #define _WX_SAMPLING_INFO_H_
 
 #ifndef _WX_INDEX_H_
-#include <wxIndex.h>
+#include "wxIndex.h"
 #endif
 
 class wxSamplingInfo :public wxObject

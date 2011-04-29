@@ -143,7 +143,7 @@ public:
 	wxCueSheetReader(void);
 	virtual ~wxCueSheetReader(void);
 
-	bool ReadCueSheet( const wxString& );
+	bool ReadCueSheet( const wxString&, bool = true );
 	bool ReadCueSheet( const wxString&, wxMBConv& );
 	bool ReadCueSheet( wxInputStream& );
 	bool ReadCueSheet( wxInputStream&, wxMBConv& );

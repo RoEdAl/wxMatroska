@@ -6,7 +6,7 @@
 #define _WX_XML_CUE_SHEET_RENDERER_H_
 
 #ifndef _WX_CUE_SHEET_RENDERER_H_
-#include <wxCueSheetRenderer.h>
+#include <wxCueFile/wxCueSheetRenderer.h>
 #endif
 
 #ifndef _WX_INPUT_FILE_H_
@@ -18,11 +18,11 @@ class wxConfiguration;
 #endif
 
 #ifndef _WX_TAG_SYNONIMS_H_
-#include <wxTagSynonims.h>
+#include <wxCueFile/wxTagSynonims.h>
 #endif
 
 #ifndef _WX_SAMPLING_INFO_H_
-#include <wxSamplingInfo.h>
+#include <wxCueFile/wxSamplingInfo.h>
 #endif
 
 class wxXmlCueSheetRenderer :public wxCueSheetRenderer

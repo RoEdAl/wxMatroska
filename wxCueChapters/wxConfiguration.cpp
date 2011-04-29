@@ -3,11 +3,11 @@
 */
 
 #include "StdWx.h"
-#include <wxDataFile.h>
-#include <wxSamplingInfo.h>
-#include <wxCueSheetReader.h>
+#include <wxCueFile/wxDataFile.h>
+#include <wxCueFile/wxSamplingInfo.h>
+#include <wxCueFile/wxCueSheetReader.h>
+#include <wxCueFile/wxUTF8TextOutputStream.h>
 #include "wxConfiguration.h"
-#include <wxUTF8TextOutputStream.h>
 #include "wxApp.h"
 
 const wxChar wxConfiguration::CUE_SHEET_EXT[] = wxT("cue");
@@ -57,7 +57,10 @@ bool wxConfiguration::GetFileEncodingFromStr( const wxString& sFileEncoding, wxC
 		eFileEncoding = ENCODING_UTF8;
 		return true;
 	}
-	else if ( sFileEncoding.CmpNoCase( wxT("utf8_bom") ) == 0 || sFileEncoding.CmpNoCase( wxT("utf-8_bom") ) == 0 )
+	else if ( sFileEncoding.CmpNoCase( wxT("utf8_bom") ) == 0 ||
+		      sFileEncoding.CmpNoCase( wxT("utf-8_bom") ) == 0 ||
+			  sFileEncoding.CmpNoCase( wxT("utf-8-bom") ) == 0 
+			 )
 	{
 		eFileEncoding = ENCODING_UTF8_WITH_BOM;
 		return true;
@@ -141,7 +144,8 @@ wxConfiguration::wxConfiguration(void)
 	 m_sMatroskaChaptersXmlExt(MATROSKA_CHAPTERS_EXT),
 	 m_sMatroskaTagsXmlExt(MATROSKA_TAGS_EXT),
 	 m_bMerge(false),
-	 m_nEmbeddedModeFlags(wxCueSheetReader::EC_MEDIA_READ_TAGS|wxCueSheetReader::EC_FLAC_READ_TAG_FIRST_THEN_COMMENT)
+	 m_nEmbeddedModeFlags(wxCueSheetReader::EC_MEDIA_READ_TAGS|wxCueSheetReader::EC_FLAC_READ_TAG_FIRST_THEN_COMMENT),
+	 m_bUseMLang(true)
 {
 	ReadLanguagesStrings( m_asLang );
 }
@@ -211,6 +215,9 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddSwitch( wxEmptyString, wxT("flac-read-vorbis-comment-only"), _("Embedded mode flag - FLAC cuesheet read mode. Try to read embedded cuesheet from FLAC container - try read CUESHEET comment only"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxEmptyString, wxT("read-media-tags"), _("Embedded mode flag. Read tags from media file (default: yes)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxEmptyString, wxT("dont-read-media-tags"), _("Embedded mode flag. Don't read tags from media file"), wxCMD_LINE_PARAM_OPTIONAL );
+
+	cmdLine.AddSwitch( wxEmptyString, wxT("use-mlang"), _("Use MLang library (default)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, wxT("dont-use-mlang"), _("Don't use MLang library"), wxCMD_LINE_PARAM_OPTIONAL );
 
 	cmdLine.AddParam( _("<cue sheet>"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE|wxCMD_LINE_PARAM_OPTIONAL );
 }
@@ -486,6 +493,17 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		m_nEmbeddedModeFlags |= 0;
 	}
 
+	// MLang
+	if ( cmdLine.Found( wxT("use-mlang") ) )
+	{
+		m_bUseMLang = true;
+	}
+
+	if ( cmdLine.Found( wxT("dont-use-mlang") ) )
+	{
+		m_bUseMLang = false;
+	}
+
 	return bRes;
 }
 
@@ -597,6 +615,7 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
 	{
 		as.Add( wxString::Format( wxT("Embedded mode flags: %s"), GetEmbeddedModeFlagsDesc(m_nEmbeddedModeFlags) ) );
 	}
+	as.Add( wxString::Format( wxT("Use MLang library: %s"), BoolToStr(m_bUseMLang) ) );
 }
 
 void wxConfiguration::Dump() const
@@ -866,6 +885,11 @@ void wxConfiguration::RemoveTagSourceToIgnore( wxCueTag::TAG_SOURCE eSource )
 bool wxConfiguration::ShouldIgnoreTag( const wxCueTag& tag ) const
 {
 	return (m_aeIgnoredSources.Index( tag.GetSource() ) != wxNOT_FOUND);
+}
+
+bool wxConfiguration::UseMLang() const
+{
+	return m_bUseMLang;
 }
 
 

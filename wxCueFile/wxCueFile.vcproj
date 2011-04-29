@@ -275,55 +275,55 @@
 			Name="External Header Files"
 			>
 			<File
-				RelativePath="..\inc\wxCueComponent.h"
+				RelativePath="..\inc\wxCueFile\wxCueComponent.h"
 				>
 			</File>
 			<File
-				RelativePath="..\inc\wxCueSheet.h"
+				RelativePath="..\inc\wxCueFile\wxCueSheet.h"
 				>
 			</File>
 			<File
-				RelativePath="..\inc\wxCueSheetReader.h"
+				RelativePath="..\inc\wxCueFile\wxCueSheetReader.h"
 				>
 			</File>
 			<File
-				RelativePath="..\inc\wxCueSheetRenderer.h"
+				RelativePath="..\inc\wxCueFile\wxCueSheetRenderer.h"
 				>
 			</File>
 			<File
-				RelativePath="..\inc\wxDataFile.h"
+				RelativePath="..\inc\wxCueFile\wxDataFile.h"
 				>
 			</File>
 			<File
-				RelativePath="..\inc\wxIndex.h"
+				RelativePath="..\inc\wxCueFile\wxIndex.h"
 				>
 			</File>
 			<File
-				RelativePath="..\inc\wxMediaInfo.h"
+				RelativePath="..\inc\wxCueFile\wxMediaInfo.h"
 				>
 			</File>
 			<File
-				RelativePath="..\inc\wxSamplingInfo.h"
+				RelativePath="..\inc\wxCueFile\wxSamplingInfo.h"
 				>
 			</File>
 			<File
-				RelativePath="..\inc\wxTagSynonims.h"
+				RelativePath="..\inc\wxCueFile\wxTagSynonims.h"
 				>
 			</File>
 			<File
-				RelativePath="..\inc\wxTextCueSheetRenderer.h"
+				RelativePath="..\inc\wxCueFile\wxTextCueSheetRenderer.h"
 				>
 			</File>
 			<File
-				RelativePath="..\inc\wxTrack.h"
+				RelativePath="..\inc\wxCueFile\wxTrack.h"
 				>
 			</File>
 			<File
-				RelativePath="..\inc\wxUnquoter.h"
+				RelativePath="..\inc\wxCueFile\wxUnquoter.h"
 				>
 			</File>
 			<File
-				RelativePath="..\inc\wxUTF8TextOutputStream.h"
+				RelativePath="..\inc\wxCueFile\wxUTF8TextOutputStream.h"
 				>
 			</File>
 		</Filter>

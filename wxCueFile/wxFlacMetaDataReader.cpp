@@ -3,7 +3,7 @@
 */
 
 #include "StdWx.h"
-#include <wxCueComponent.h>
+#include <wxCueFile/wxCueComponent.h>
 #include "wxFlacMetaDataReader.h"
 
 wxFlacMetaDataReader::wxFlacMetaDataReader(void)

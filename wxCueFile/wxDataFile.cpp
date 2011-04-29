@@ -3,10 +3,10 @@
 */
 
 #include "StdWx.h"
-#include <wxSamplingInfo.h>
-#include <wxIndex.h>
-#include <wxDataFile.h>
-#include "wxMediaInfo.h"
+#include <wxCueFile/wxSamplingInfo.h>
+#include <wxCueFile/wxIndex.h>
+#include <wxCueFile/wxDataFile.h>
+#include <wxCueFile/wxMediaInfo.h>
 
 wxIMPLEMENT_DYNAMIC_CLASS( wxDataFile, wxObject )
 

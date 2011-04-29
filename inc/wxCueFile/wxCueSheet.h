@@ -6,7 +6,7 @@
 #define _WX_CUE_SHEET_H_
 
 #ifndef _WX_TRACK_H_
-#include <wxTrack.h>
+#include "wxTrack.h"
 #endif
 
 #ifndef _WX_CUE_COMPONENT_H

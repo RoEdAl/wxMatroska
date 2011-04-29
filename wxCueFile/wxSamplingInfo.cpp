@@ -3,8 +3,8 @@
 */
 
 #include "StdWx.h"
-#include <wxSamplingInfo.h>
-#include <wxIndex.h>
+#include <wxCueFile/wxSamplingInfo.h>
+#include <wxCueFile/wxIndex.h>
 
 wxIMPLEMENT_DYNAMIC_CLASS( wxSamplingInfo, wxObject )
 
