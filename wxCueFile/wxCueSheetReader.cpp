@@ -46,7 +46,7 @@ wxString wxCueSheetReader::GetKeywordsRegExp()
 {
 	wxString sKeywordsRegExp(wxCueComponent::GetKeywordsRegExp());
 	wxString s;
-	s.Printf( wxT("\\A\\s*%s\\s+(\\S.*\\S)\\s*\\Z"), sKeywordsRegExp.GetData() );
+	s.Printf( wxT("\\A\\s*%s\\s+(\\S.*\\S)\\s*\\Z"), sKeywordsRegExp );
 	return s;
 }
 
@@ -54,7 +54,7 @@ wxString wxCueSheetReader::GetDataModeRegExp()
 {
 	wxString sDataModeRegExp( wxTrack::GetDataModeRegExp() );
 	wxString s;
-	s.Printf( wxT("\\A(\\d{1,2})(?:\\s+%s){0,1}\\Z"), sDataModeRegExp.GetData() );
+	s.Printf( wxT("\\A(\\d{1,2})(?:\\s+%s){0,1}\\Z"), sDataModeRegExp );
 	return s;
 }
 
@@ -62,7 +62,7 @@ wxString wxCueSheetReader::GetCdTextInfoRegExp()
 {
 	wxString sRegExp(wxCueComponent::GetCdTextInfoRegExp());
 	wxString s;
-	s.Printf( wxT("\\A\\s*%s\\s+(\\S.*\\S)\\s*\\Z"), sRegExp.GetData() );
+	s.Printf( wxT("\\A\\s*%s\\s+(\\S.*\\S)\\s*\\Z"), sRegExp );
 	return s;
 }
 
@@ -70,7 +70,7 @@ wxString wxCueSheetReader::GetDataFileRegExp()
 {
 	wxString sRegExp(wxDataFile::GetFileTypeRegExp());
 	wxString s;
-	s.Printf( wxT("\\A((?:\\\".*\\\")|(?:\\'.*\\'))(?:\\s+%s){0,1}\\Z"), sRegExp.GetData() );
+	s.Printf( wxT("\\A((?:\\\".*\\\")|(?:\\'.*\\'))(?:\\s+%s){0,1}\\Z"), sRegExp );
 	return s;
 }
 
@@ -86,6 +86,7 @@ wxCueSheetReader::wxCueSheetReader(void)
 	 m_reDataFile( GetDataFileRegExp(), wxRE_ADVANCED ),
 	 m_reCatalog( wxT("\\d{13}"), wxRE_ADVANCED|wxRE_NOSUB ),
 	 m_reIsrc( wxT("([[:upper:]]{2}|00)-{0,1}[[:upper:][:digit:]]{3}-{0,1}[[:digit:]]{5}"), wxRE_ADVANCED|wxRE_NOSUB ),
+	 m_reTrackComment( wxT("cue[[.hyphen.][.underscore.][.low-line.]]track([[:digit:]]{1,2})[[.underscore.][.low-line.]]([[:alpha:][.hyphen.][.underscore.][.low-line.][.space.]]+)"), wxRE_ADVANCED|wxRE_ICASE ),
 	 m_bErrorsAsWarnings( true ),
 	 m_bParseComments( true )
 {
@@ -100,6 +101,7 @@ wxCueSheetReader::wxCueSheetReader(void)
 	wxASSERT( m_reDataFile.IsValid() );
 	wxASSERT( m_reCatalog.IsValid() );
 	wxASSERT( m_reIsrc.IsValid() );
+	wxASSERT( m_reTrackComment.IsValid() );
 
 	m_unquoter.SetLang( wxT("unk") );
 }
@@ -167,13 +169,13 @@ bool wxCueSheetReader::ReadCueSheet(const wxString& sCueFile, wxMBConv& conv)
 
 	if ( !m_cueFileName.FileExists() || m_cueFileName.IsDir() )
 	{
-		wxLogError( _("Invalid path to CUE file \u201C%s\u201D."), sCueFile.GetData() );
+		wxLogError( _("Invalid path to CUE file \u201C%s\u201D."), sCueFile );
 		return false;
 	}
 
 	wxFileInputStream fis( m_cueFileName.GetFullPath() );
 	if ( !fis.IsOk() ) {
-		wxLogError( _("Unable to open CUE file \u201C%s\u201D."), sCueFile.GetData() );
+		wxLogError( _("Unable to open CUE file \u201C%s\u201D."), sCueFile );
 		return false;
 	}
 
@@ -343,9 +345,6 @@ bool wxCueSheetReader::ReadEmbeddedInFlacCueSheet( const wxString& sMediaFile, i
 
 void wxCueSheetReader::AppendComments( const wxArrayCueTag& comments, bool singleMediaFile )
 {
-	wxRegEx reTrackComment( wxT("cue[[.hyphen.][.underscore.][.low-line.]]track([[:digit:]]{1,2})[[.underscore.][.low-line.]]([[:alpha:][.hyphen.][.underscore.][.low-line.][.space.]]+)"), wxRE_ADVANCED|wxRE_ICASE );
-	wxASSERT( reTrackComment.IsValid() );
-
 	size_t nComments = comments.GetCount();
 	for( size_t i=0; i<nComments; i++ )
 	{
@@ -363,10 +362,10 @@ void wxCueSheetReader::AppendComments( const wxArrayCueTag& comments, bool singl
 		{
 			if ( comment.GetName().CmpNoCase( wxCueTag::Name::TOTALTRACKS ) == 0 ) continue;
 
-			if ( reTrackComment.Matches( comment.GetName() ) )
+			if ( m_reTrackComment.Matches( comment.GetName() ) )
 			{
-				wxString sTagNumber( reTrackComment.GetMatch( comment.GetName(), 1 ) );
-				wxString sTagName( reTrackComment.GetMatch( comment.GetName(), 2 ) );
+				wxString sTagNumber( m_reTrackComment.GetMatch( comment.GetName(), 1 ) );
+				wxString sTagName( m_reTrackComment.GetMatch( comment.GetName(), 2 ) );
 				unsigned long trackNumber;
 				if ( sTagNumber.ToULong( &trackNumber ) )
 				{
@@ -459,7 +458,7 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMo
 	size_t res = dll.MediaInfoOpen( handle, sMediaFile );
 	if ( res == 0 )
 	{
-		wxLogError( _("MediaInfo - fail to open file \u201C%s\u201D"), sMediaFile.GetData() );
+		wxLogError( _("MediaInfo - fail to open file \u201C%s\u201D"), sMediaFile );
 		dll.MediaInfoDelete( handle );
 		dll.Unload();
 		return false;

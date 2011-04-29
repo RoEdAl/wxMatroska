@@ -66,6 +66,7 @@ protected:
 	wxRegEx m_reDataFile;
 	wxRegEx m_reCatalog;
 	wxRegEx m_reIsrc;
+	wxRegEx m_reTrackComment;
 
 	wxDataFile m_dataFile;
 	wxArrayString m_cueLines;
