@@ -1,81 +1,122 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="External Header Files">
+      <UniqueIdentifier>{8983174f-3120-4bc5-a8b5-0afb65e215cc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="StdWx.cpp">
-      <Filter>Source files</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="wxCueComponent.cpp">
-      <Filter>Source files</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="wxCueSheet.cpp">
-      <Filter>Source files</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="wxCueSheetReader.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="wxDataFile.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="wxIndex.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="wxMediaInfo.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="wxTrack.cpp">
-      <Filter>Source files</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="wxCueSheetRenderer.cpp">
-      <Filter>Source files</Filter>
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wxDataFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wxFlacDecoder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wxFlacMetaDataReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wxIndex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wxMediaInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wxSamplingInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wxTagSynonims.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="wxTextCueSheetRenderer.cpp">
-      <Filter>Source files</Filter>
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wxTrack.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wxUnquoter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wxWavpackStream.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wxWavpackTagReader.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdWx.h">
-      <Filter>Header files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Header files</Filter>
+    <ClInclude Include="wxAbstractMetaDataReader.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\inc\wxCueComponent.h">
-      <Filter>External header files</Filter>
+    <ClInclude Include="wxFlacMetaDataReader.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\inc\wxCueSheet.h">
-      <Filter>External header files</Filter>
+    <ClInclude Include="wxWavpackStream.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\inc\wxCueSheetReader.h">
-      <Filter>External header files</Filter>
+    <ClInclude Include="wxWavpackTagReader.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\inc\wxDataFile.h">
-      <Filter>External header files</Filter>
+    <ClInclude Include="..\inc\wxCueFile\wxCueComponent.h">
+      <Filter>External Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\inc\wxIndex.h">
-      <Filter>External header files</Filter>
+    <ClInclude Include="..\inc\wxCueFile\wxCueSheet.h">
+      <Filter>External Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\inc\wxMediaInfo.h">
-      <Filter>External header files</Filter>
+    <ClInclude Include="..\inc\wxCueFile\wxCueSheetReader.h">
+      <Filter>External Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\inc\wxTrack.h">
-      <Filter>External header files</Filter>
+    <ClInclude Include="..\inc\wxCueFile\wxCueSheetRenderer.h">
+      <Filter>External Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\inc\wxCueSheetRenderer.h">
-      <Filter>External header files</Filter>
+    <ClInclude Include="..\inc\wxCueFile\wxDataFile.h">
+      <Filter>External Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\inc\wxTextCueSheetRenderer.h">
-      <Filter>External header files</Filter>
+    <ClInclude Include="..\inc\wxCueFile\wxIndex.h">
+      <Filter>External Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="Header files">
-      <UniqueIdentifier>{eaaa8c86-443e-4844-b425-313041b8e074}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="External header files">
-      <UniqueIdentifier>{1860269b-19eb-4214-a7ce-86efbb9e6be1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source files">
-      <UniqueIdentifier>{721b4955-beab-4528-89af-b813c4082910}</UniqueIdentifier>
-    </Filter>
+    <ClInclude Include="..\inc\wxCueFile\wxMediaInfo.h">
+      <Filter>External Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\wxCueFile\wxSamplingInfo.h">
+      <Filter>External Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\wxCueFile\wxTagSynonims.h">
+      <Filter>External Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\wxCueFile\wxTextCueSheetRenderer.h">
+      <Filter>External Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\wxCueFile\wxTrack.h">
+      <Filter>External Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\wxCueFile\wxUnquoter.h">
+      <Filter>External Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

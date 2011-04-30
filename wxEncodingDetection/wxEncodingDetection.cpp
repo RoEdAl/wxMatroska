@@ -45,14 +45,14 @@ public:
 protected:
 
     wxMBConv_MLang()
-		:m_minMBCharWidth(0)
+		:m_minMBCharWidth(0), m_dwMode(0)
     {
 		wxASSERT( m_mlang.IsValid() );
 		m_nCodePage = GetACP();
     }
 
 	wxMBConv_MLang( wxUint32 nCodePage )
-		:m_nCodePage( nCodePage ),m_minMBCharWidth(0)
+		:m_nCodePage( nCodePage ), m_minMBCharWidth(0), m_dwMode(0)
     {
 		if( !m_mlang.IsValid() )
 		{
@@ -66,7 +66,7 @@ protected:
     }
 
 	wxMBConv_MLang( const wxMultiLanguage& ml, wxUint32 nCodePage = CP_ACP )
-		:m_mlang( ml ), m_nCodePage( nCodePage ), m_minMBCharWidth(0)
+		:m_mlang( ml ), m_nCodePage( nCodePage ), m_minMBCharWidth(0), m_dwMode(0)
     {
 		if ( nCodePage == CP_ACP )
 		{
@@ -76,7 +76,7 @@ protected:
 
     wxMBConv_MLang(const wxMBConv_MLang& conv)
 		:m_mlang( conv.m_mlang ),
-		 m_nCodePage( conv.m_nCodePage ),
+		 m_nCodePage( conv.m_nCodePage ), m_dwMode(0),
 		 m_minMBCharWidth( conv.m_minMBCharWidth )
     {
     }
@@ -87,12 +87,13 @@ public:
 	{
 		wxASSERT( m_mlang.IsValid() );
 
-		DWORD dwMode = 0;
 		UINT nSrcSize = srcLen;
 		UINT nDstSize = dstLen;
 
+		wxMBConv_MLang *self = const_cast<wxMBConv_MLang*>(this);
+
 		HRESULT hRes = m_mlang->ConvertStringToUnicodeEx(
-			&dwMode,
+			&self->m_dwMode,
 			m_nCodePage, 
 			const_cast<CHAR*>( src ), &nSrcSize,
 			dst, &nDstSize,
@@ -102,7 +103,15 @@ public:
 		{
 			if ( nDstSize > 0 )
 			{
-				return nDstSize;
+				if ( *dst == wxT('\uFFFD') && srcLen <= 3 )
+				{
+					wxLogDebug( wxT("Unicode replacement character - FFFE") );
+					return wxCONV_FAILED;
+				}
+				else
+				{
+					return nDstSize;
+				}
 			}
 			else
 			{
@@ -119,12 +128,13 @@ public:
 	{
 		wxASSERT( m_mlang.IsValid() );
 
-		DWORD dwMode = 0;
 		UINT nSrcSize = srcLen;
 		UINT nDstSize = dstLen;
 
+		wxMBConv_MLang *self = const_cast<wxMBConv_MLang*>(this);
+
 		HRESULT hRes = m_mlang->ConvertStringFromUnicodeEx( 
-			&dwMode,
+			&self->m_dwMode,
 			m_nCodePage,
 			const_cast<WCHAR*>(src),
 			&nSrcSize,
@@ -229,6 +239,7 @@ protected:
     // cached result of GetMBNulLen(), set to 0 initially meaning
     // "unknown"
     size_t m_minMBCharWidth;
+	DWORD m_dwMode;
 };
 
 class wxMBConv_BOM : public wxMBConv

@@ -50,8 +50,8 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>..\inc;..\..\include;$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswud;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\inc;..\..\include;$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswud;$(FLACDIR)\include;$(WAVPACKDIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;wxUSE_GUI=0;__WXMSW__;FLAC__NO_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -60,14 +60,14 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Lib>
-      <OutputFile>$(OutDir)$(ProjectName)u.lib</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\inc;..\..\include;$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswud;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\inc;..\..\include;$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswud;$(FLACDIR)\include;$(WAVPACKDIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;wxUSE_GUI=0;__WXDEBUG__;WXDEBUG=1;__WXMSW__;FLAC__NO_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -77,7 +77,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Lib>
-      <OutputFile>$(OutDir)$(ProjectName)ud.lib</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -90,23 +90,42 @@
     <ClCompile Include="wxCueSheetReader.cpp" />
     <ClCompile Include="wxCueSheetRenderer.cpp" />
     <ClCompile Include="wxDataFile.cpp" />
+    <ClCompile Include="wxFlacDecoder.cpp" />
+    <ClCompile Include="wxFlacMetaDataReader.cpp" />
     <ClCompile Include="wxIndex.cpp" />
     <ClCompile Include="wxMediaInfo.cpp" />
+    <ClCompile Include="wxSamplingInfo.cpp" />
+    <ClCompile Include="wxTagSynonims.cpp" />
     <ClCompile Include="wxTextCueSheetRenderer.cpp" />
     <ClCompile Include="wxTrack.cpp" />
+    <ClCompile Include="wxUnquoter.cpp" />
+    <ClCompile Include="wxWavpackStream.cpp" />
+    <ClCompile Include="wxWavpackTagReader.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\inc\wxCueSheetRenderer.h" />
-    <ClInclude Include="..\inc\wxTextCueSheetRenderer.h" />
     <ClInclude Include="StdWx.h" />
-    <ClInclude Include="targetver.h" />
-    <ClInclude Include="..\inc\wxCueComponent.h" />
-    <ClInclude Include="..\inc\wxCueSheet.h" />
-    <ClInclude Include="..\inc\wxCueSheetReader.h" />
-    <ClInclude Include="..\inc\wxDataFile.h" />
-    <ClInclude Include="..\inc\wxIndex.h" />
-    <ClInclude Include="..\inc\wxMediaInfo.h" />
-    <ClInclude Include="..\inc\wxTrack.h" />
+    <ClInclude Include="wxAbstractMetaDataReader.h" />
+    <ClInclude Include="wxFlacMetaDataReader.h" />
+    <ClInclude Include="wxWavpackStream.h" />
+    <ClInclude Include="wxWavpackTagReader.h" />
+    <ClInclude Include="..\inc\wxCueFile\wxCueComponent.h" />
+    <ClInclude Include="..\inc\wxCueFile\wxCueSheet.h" />
+    <ClInclude Include="..\inc\wxCueFile\wxCueSheetReader.h" />
+    <ClInclude Include="..\inc\wxCueFile\wxCueSheetRenderer.h" />
+    <ClInclude Include="..\inc\wxCueFile\wxDataFile.h" />
+    <ClInclude Include="..\inc\wxCueFile\wxIndex.h" />
+    <ClInclude Include="..\inc\wxCueFile\wxMediaInfo.h" />
+    <ClInclude Include="..\inc\wxCueFile\wxSamplingInfo.h" />
+    <ClInclude Include="..\inc\wxCueFile\wxTagSynonims.h" />
+    <ClInclude Include="..\inc\wxCueFile\wxTextCueSheetRenderer.h" />
+    <ClInclude Include="..\inc\wxCueFile\wxTrack.h" />
+    <ClInclude Include="..\inc\wxCueFile\wxUnquoter.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\wxEncodingDetection\wxEncodingDetection.vcxproj">
+      <Project>{f05808a1-818f-4371-ab84-c8efb9fd70ff}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
