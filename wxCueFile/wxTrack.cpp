@@ -257,7 +257,7 @@ wxString wxTrack::GetFlagRegExp()
 	s = s.RemoveLast();
 
 	wxString sResult;
-	sResult.Printf( wxT("(%s)"), s.GetData() );
+	sResult.Printf( wxT("(%s)"), s );
 	return sResult;
 }
 
@@ -312,7 +312,7 @@ wxString wxTrack::GetDataModeRegExp()
 	s = s.RemoveLast();
 
 	wxString sResult;
-	sResult.Printf( wxT("(%s)"), s.GetData() );
+	sResult.Printf( wxT("(%s)"), s );
 	return sResult;
 }
 

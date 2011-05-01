@@ -68,6 +68,12 @@
     <ClCompile Include="wxTrailingSpacesRemover.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="wxTextInputStreamOnString.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wxTextOutputStreamOnString.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdWx.h">
@@ -123,6 +129,12 @@
     </ClInclude>
     <ClInclude Include="..\inc\wxCueFile\wxTrailingSpacesRemover.h">
       <Filter>External Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="wxTextInputStreamOnString.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="wxTextOutputStreamOnString.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

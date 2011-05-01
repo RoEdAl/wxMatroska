@@ -97,6 +97,8 @@
     <ClCompile Include="wxSamplingInfo.cpp" />
     <ClCompile Include="wxTagSynonims.cpp" />
     <ClCompile Include="wxTextCueSheetRenderer.cpp" />
+    <ClCompile Include="wxTextInputStreamOnString.cpp" />
+    <ClCompile Include="wxTextOutputStreamOnString.cpp" />
     <ClCompile Include="wxTrack.cpp" />
     <ClCompile Include="wxTrailingSpacesRemover.cpp" />
     <ClCompile Include="wxUnquoter.cpp" />
@@ -108,6 +110,8 @@
     <ClInclude Include="StdWx.h" />
     <ClInclude Include="wxAbstractMetaDataReader.h" />
     <ClInclude Include="wxFlacMetaDataReader.h" />
+    <ClInclude Include="wxTextInputStreamOnString.h" />
+    <ClInclude Include="wxTextOutputStreamOnString.h" />
     <ClInclude Include="wxWavpackStream.h" />
     <ClInclude Include="wxWavpackTagReader.h" />
     <ClInclude Include="..\inc\wxCueFile\wxCueComponent.h" />

@@ -7,6 +7,8 @@
 #include <wxCueFile/wxCueComponent.h>
 #include <wxCueFile/wxUnquoter.h>
 #include <wxCueFile/wxTrailingSpacesRemover.h>
+#include "wxTextInputStreamOnString.h"
+#include "wxTextOutputStreamOnString.h"
 
 const wxChar* const wxCueTag::Name::CUESHEET = wxT("CUESHEET");
 const wxChar* const wxCueTag::Name::TOTALTRACKS = wxT("TOTALTRACKS");
@@ -84,16 +86,18 @@ wxString wxCueTag::GetFlattenValue() const
 {
 	wxASSERT( IsMultiline() );
 
-	wxStringInputStream is( m_sValue );
-	wxTextInputStream tis( is, wxT(" \t"), wxConvUTF8 );
-	wxString sRet;
+	wxTextInputStreamOnString tis( m_sValue );
 
-	while ( !is.Eof() )
+	wxTextOutputStreamOnString tos;
+
+	while ( !tis.Eof() )
 	{
-		sRet += tis.ReadLine();
-		sRet += wxT('/');
+		tos.GetStream() << tis.GetStream().ReadLine() << wxT('/');
 	}
-	return sRet.RemoveLast();
+	tos.Flush();
+
+	const wxString& sOut = tos.GetString();
+	return wxString( sOut, sOut.Length() - 1 );
 }
 
 wxCueTag& wxCueTag::SetSource( wxCueTag::TAG_SOURCE eSource )
@@ -129,12 +133,11 @@ wxCueTag& wxCueTag::operator =(const wxCueTag& cueTag )
 
 bool wxCueTag::IsMultiline() const
 {
-	wxStringInputStream is( m_sValue );
-	wxTextInputStream tis( is, wxT(" \t"), wxConvUTF8 );
+	wxTextInputStreamOnString tis( m_sValue );
 	int nLines = 0;
-	while ( !( is.Eof() || (nLines>1) ) )
+	while ( !( tis.Eof() || (nLines>1) ) )
 	{
-		tis.ReadLine();
+		tis.GetStream().ReadLine();
 		nLines += 1;
 	}
 	return (nLines>1);
@@ -192,7 +195,7 @@ wxString wxCueComponent::GetCdTextInfoRegExp()
 	s = s.RemoveLast();
 
 	wxString sResult;
-	sResult.Printf( wxT("(%s)"), s.GetData() );
+	sResult.Printf( wxT("(%s)"), s );
 	return sResult;
 }
 
@@ -207,7 +210,7 @@ wxString wxCueComponent::GetKeywordsRegExp()
 	s = s.RemoveLast();
 
 	wxString sResult;
-	sResult.Printf( wxT("(%s)"), s.GetData() );
+	sResult.Printf( wxT("(%s)"), s );
 	return sResult;
 }
 
