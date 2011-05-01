@@ -27,7 +27,6 @@ public:
 	wxTagSynonims(void);
 	wxTagSynonims(const wxString&, const wxArrayString& );
 	wxTagSynonims( const wxTagSynonims& );
-	~wxTagSynonims(void);
 	wxTagSynonims& operator=( const wxTagSynonims& );
 
 	const wxString& GetName() const;

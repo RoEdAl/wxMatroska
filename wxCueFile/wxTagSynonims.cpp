@@ -23,10 +23,6 @@ wxTagSynonims::wxTagSynonims(const wxTagSynonims& synonims)
 	copy( synonims );
 }
 
-wxTagSynonims::~wxTagSynonims()
-{
-}
-
 wxTagSynonims& wxTagSynonims::operator =(const wxTagSynonims& synonims)
 {
 	copy( synonims );

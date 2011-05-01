@@ -22,10 +22,6 @@ wxIndex::wxIndex(const wxIndex& idx)
 	copy( idx );
 }
 
-wxIndex::~wxIndex(void)
-{
-}
-
 wxIndex& wxIndex::operator=( const wxIndex& idx )
 {
 	copy( idx );

@@ -31,7 +31,6 @@ public:
 public:
 
 	wxUnquoter(void);
-	~wxUnquoter(void);
 
 	void SetLang( const wxString& );
 

@@ -62,7 +62,6 @@ public:
 	wxDataFile(const wxDataFile&);
 	wxDataFile(const wxString&, FileType = BINARY);
 	wxDataFile(const wxFileName&, FileType = BINARY);
-	~wxDataFile(void);
 
 	wxDataFile& operator=(const wxDataFile&);
 	void Clear();

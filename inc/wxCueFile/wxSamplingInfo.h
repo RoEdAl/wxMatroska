@@ -22,7 +22,6 @@ public:
 	wxSamplingInfo(const wxSamplingInfo&);
 	wxSamplingInfo(unsigned long, unsigned short, unsigned short);
 	wxSamplingInfo( const FLAC::Metadata::StreamInfo& );
-	~wxSamplingInfo(void);
 
 	bool IsOK(bool = false) const;
 

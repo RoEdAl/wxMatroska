@@ -49,10 +49,6 @@ wxDataFile& wxDataFile::operator =(const wxDataFile& df)
 	return *this;
 }
 
-wxDataFile::~wxDataFile(void)
-{
-}
-
 void wxDataFile::copy(const wxDataFile& df)
 {
 	m_fileName = df.m_fileName;

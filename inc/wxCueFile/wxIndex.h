@@ -44,7 +44,6 @@ public:
 	wxIndex( unsigned int, wxULongLong );
 	wxIndex( const wxIndex& );
 	wxIndex& operator=(const wxIndex&);
-	~wxIndex(void);
 
 	static bool TimeSpanToMsf( wxTimeSpan, unsigned int&, unsigned int&, unsigned int& );
 	static wxString GetTimeStr( unsigned int, unsigned int, double );

@@ -53,7 +53,6 @@ public:
 	};
 
 	wxTextCueSheetRenderer(wxTextOutputStream* = (wxTextOutputStream*)NULL, int = DUMP_COMMENTS|DUMP_TAGS );
-	virtual ~wxTextCueSheetRenderer(void);
 
 	void Assign( wxTextOutputStream*, int = DUMP_COMMENTS );
 
@@ -61,7 +60,6 @@ public:
 	int GetDumpFlags() const;
 
 	static wxString ToString( const wxCueSheet&, int = DUMP_COMMENTS|DUMP_TAGS );
-	
 };
 
 #endif

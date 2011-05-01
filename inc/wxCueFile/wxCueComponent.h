@@ -9,6 +9,10 @@
 class wxTagSynonimsCollection;
 #endif
 
+#ifndef _WX_TRAILING_SPACES_REMOVER_H_
+class wxTrailingSpacesRemover;
+#endif
+
 class wxCueTag :public wxObject
 {
 	wxDECLARE_DYNAMIC_CLASS(wxCueTag);
@@ -58,6 +62,8 @@ class wxCueTag :public wxObject
 
 	bool operator==( const wxCueTag& );
 	wxCueTag& operator=( const wxCueTag& );
+
+	void RemoveTrailingSpaces( const wxTrailingSpacesRemover& );
 
 	protected:
 

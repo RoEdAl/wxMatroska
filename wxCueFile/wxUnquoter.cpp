@@ -28,10 +28,6 @@ wxUnquoter::wxUnquoter(void)
 	wxASSERT( m_reDoubleQuotes.IsValid() );
 }
 
-wxUnquoter::~wxUnquoter(void)
-{
-}
-
 /*
 	http://en.wikipedia.org/wiki/Quotation_mark,_non-English_usage
 */

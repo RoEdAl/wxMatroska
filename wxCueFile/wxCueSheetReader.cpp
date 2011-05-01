@@ -106,10 +106,6 @@ wxCueSheetReader::wxCueSheetReader(void)
 	m_unquoter.SetLang( wxT("unk") );
 }
 
-wxCueSheetReader::~wxCueSheetReader(void)
-{
-}
-
 const wxCueSheet& wxCueSheetReader::GetCueSheet() const
 {
 	return m_cueSheet;
@@ -343,14 +339,17 @@ bool wxCueSheetReader::ReadEmbeddedInFlacCueSheet( const wxString& sMediaFile, i
 	return true;
 }
 
-void wxCueSheetReader::AppendComments( const wxArrayCueTag& comments, bool singleMediaFile )
+void wxCueSheetReader::AppendComments( wxArrayCueTag& comments, bool singleMediaFile )
 {
 	size_t nComments = comments.GetCount();
+
 	for( size_t i=0; i<nComments; i++ )
 	{
-		const wxCueTag& comment = comments[i];
+		wxCueTag& comment = comments[i];
 
 		if ( comment.GetName().CmpNoCase( wxCueTag::Name::CUESHEET ) == 0 ) continue;
+
+		comment.RemoveTrailingSpaces( m_spacesRemover );
 
 		if ( singleMediaFile )
 		{ // just add to first track
@@ -372,7 +371,8 @@ void wxCueSheetReader::AppendComments( const wxArrayCueTag& comments, bool singl
 					if ( m_cueSheet.HasTrack( trackNumber ) )
 					{
 						wxTrack& track = m_cueSheet.GetTrackByNumber( trackNumber );
-						track.AddTag( wxCueTag::TAG_MEDIA_METADATA, sTagName, comment.GetValue() );
+						wxCueTag trackTag( comment.GetSource(), sTagName, comment.GetValue() );
+						track.AddTag( trackTag );
 					}
 					else
 					{
@@ -864,11 +864,11 @@ bool wxCueSheetReader::AddCdTextInfo( const wxString& sToken, const wxString& sB
 {
 	if ( IsTrack() )
 	{
-		return GetLastTrack().AddCdTextInfo( sToken, sBody );
+		return GetLastTrack().AddCdTextInfo( sToken, m_spacesRemover.Remove( sBody ) );
 	}
 	else
 	{
-		return m_cueSheet.AddCdTextInfo( sToken, sBody );
+		return m_cueSheet.AddCdTextInfo( sToken, m_spacesRemover.Remove( sBody ) );
 	}
 }
 

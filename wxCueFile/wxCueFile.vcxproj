@@ -98,11 +98,13 @@
     <ClCompile Include="wxTagSynonims.cpp" />
     <ClCompile Include="wxTextCueSheetRenderer.cpp" />
     <ClCompile Include="wxTrack.cpp" />
+    <ClCompile Include="wxTrailingSpacesRemover.cpp" />
     <ClCompile Include="wxUnquoter.cpp" />
     <ClCompile Include="wxWavpackStream.cpp" />
     <ClCompile Include="wxWavpackTagReader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\inc\wxCueFile\wxTrailingSpacesRemover.h" />
     <ClInclude Include="StdWx.h" />
     <ClInclude Include="wxAbstractMetaDataReader.h" />
     <ClInclude Include="wxFlacMetaDataReader.h" />

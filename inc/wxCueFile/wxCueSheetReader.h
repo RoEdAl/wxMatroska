@@ -23,6 +23,10 @@ class wxFlacMetaDataReader;
 #include "wxUnquoter.h"
 #endif
 
+#ifndef _WX_TRAILING_SPACES_REMOVER_H_
+#include "wxTrailingSpacesRemover.h"
+#endif
+
 class wxCueSheetReader :public wxObject
 {
 	wxDECLARE_DYNAMIC_CLASS(wxCueSheetReader);
@@ -67,6 +71,7 @@ protected:
 	wxRegEx m_reCatalog;
 	wxRegEx m_reIsrc;
 	wxRegEx m_reTrackComment;
+	wxTrailingSpacesRemover m_spacesRemover;
 
 	wxDataFile m_dataFile;
 	wxArrayString m_cueLines;
@@ -127,7 +132,7 @@ protected:
 	void ParseCdTextFile( const wxString&, const wxString& );
 
 	bool AddCdTextInfo( const wxString&, const wxString& );
-	void AppendComments( const wxArrayCueTag&, bool );
+	void AppendComments( wxArrayCueTag&, bool );
 
 	bool ReadEmbeddedInFlacCueSheet( const wxString&, int );
 	bool ReadCueSheetFromVorbisComment( const wxFlacMetaDataReader&, bool );
@@ -142,7 +147,6 @@ protected:
 public:
 
 	wxCueSheetReader(void);
-	virtual ~wxCueSheetReader(void);
 
 	bool ReadCueSheet( const wxString&, bool = true );
 	bool ReadCueSheet( const wxString&, wxMBConv& );

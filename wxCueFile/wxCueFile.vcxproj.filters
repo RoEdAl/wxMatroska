@@ -65,6 +65,9 @@
     <ClCompile Include="wxWavpackTagReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="wxTrailingSpacesRemover.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdWx.h">
@@ -116,6 +119,9 @@
       <Filter>External Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\inc\wxCueFile\wxUnquoter.h">
+      <Filter>External Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\wxCueFile\wxTrailingSpacesRemover.h">
       <Filter>External Header Files</Filter>
     </ClInclude>
   </ItemGroup>

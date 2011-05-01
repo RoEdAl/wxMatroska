@@ -16,10 +16,6 @@ wxTextCueSheetRenderer::wxTextCueSheetRenderer(wxTextOutputStream* pTextOutputSt
 {
 }
 
-wxTextCueSheetRenderer::~wxTextCueSheetRenderer(void)
-{
-}
-
 void wxTextCueSheetRenderer::Assign( wxTextOutputStream* pTextOutputStream, int nDumpFlags )
 {
 	wxASSERT( pTextOutputStream != (wxTextOutputStream*)NULL );

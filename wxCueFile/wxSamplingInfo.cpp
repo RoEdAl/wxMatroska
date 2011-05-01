@@ -58,10 +58,6 @@ wxSamplingInfo& wxSamplingInfo::SetDefault()
 	return *this;
 }
 
-wxSamplingInfo::~wxSamplingInfo(void)
-{
-}
-
 wxSamplingInfo& wxSamplingInfo::operator=( const wxSamplingInfo& si )
 {
 	copy( si );

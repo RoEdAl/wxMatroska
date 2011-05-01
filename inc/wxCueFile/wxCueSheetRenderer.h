@@ -72,7 +72,6 @@ public:
 	static wxCueSheetRenderer* const Null;
 
 	wxCueSheetRenderer(void);
-	~wxCueSheetRenderer(void);
 
 	bool Render( const wxCueSheet& );
 };

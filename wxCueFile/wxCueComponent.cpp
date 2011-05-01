@@ -6,6 +6,7 @@
 #include <wxCueFile/wxTagSynonims.h>
 #include <wxCueFile/wxCueComponent.h>
 #include <wxCueFile/wxUnquoter.h>
+#include <wxCueFile/wxTrailingSpacesRemover.h>
 
 const wxChar* const wxCueTag::Name::CUESHEET = wxT("CUESHEET");
 const wxChar* const wxCueTag::Name::TOTALTRACKS = wxT("TOTALTRACKS");
@@ -41,11 +42,11 @@ wxCueTag::TAG_SOURCE wxCueTag::GetSource() const
 }
 
 wxCueTag::SOURCE2TEXT wxCueTag::SOURCE2TEXT_MAPPING[] = {
-	{ TAG_UNKNOWN,			wxT("Unknown") },
-	{ TAG_CD_TEXT,			wxT("CD-TEXT") },
-	{ TAG_CUE_COMMENT,		wxT("CUE Comment") },
-	{ TAG_MEDIA_METADATA,	wxT("Media metadata") },
-	{ TAG_AUTO_GENERATED,	wxT("Automatically generated") }
+	{ TAG_UNKNOWN,			_("Unknown") },
+	{ TAG_CD_TEXT,			_("CD-TEXT") },
+	{ TAG_CUE_COMMENT,		_("CUE Comment") },
+	{ TAG_MEDIA_METADATA,	_("Media metadata") },
+	{ TAG_AUTO_GENERATED,	_("Automatically generated") }
 };
 
 size_t wxCueTag::SOURCE2TEXT_MAPPING_SIZE =
@@ -121,6 +122,11 @@ bool wxCueTag::IsMultiline() const
 		nLines += 1;
 	}
 	return (nLines>1);
+}
+
+void wxCueTag::RemoveTrailingSpaces( const wxTrailingSpacesRemover& spacesRemover )
+{
+	m_sValue = spacesRemover.Remove( m_sValue );
 }
 
 // ================================================================================

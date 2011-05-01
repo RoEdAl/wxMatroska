@@ -17,10 +17,6 @@ wxCueSheetRenderer::wxCueSheetRenderer(void)
 {
 }
 
-wxCueSheetRenderer::~wxCueSheetRenderer(void)
-{
-}
-
 bool wxCueSheetRenderer::Render(const wxCueSheet& cueSheet)
 {
 	return RenderDisc( cueSheet );
