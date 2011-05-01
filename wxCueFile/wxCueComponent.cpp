@@ -80,6 +80,22 @@ const wxString& wxCueTag::GetValue() const
 	return m_sValue;
 }
 
+wxString wxCueTag::GetFlattenValue() const
+{
+	wxASSERT( IsMultiline() );
+
+	wxStringInputStream is( m_sValue );
+	wxTextInputStream tis( is, wxT(" \t"), wxConvUTF8 );
+	wxString sRet;
+
+	while ( !is.Eof() )
+	{
+		sRet += tis.ReadLine();
+		sRet += wxT('/');
+	}
+	return sRet.RemoveLast();
+}
+
 wxCueTag& wxCueTag::SetSource( wxCueTag::TAG_SOURCE eSource )
 {
 	m_eSource = eSource;

@@ -54,7 +54,9 @@ class wxCueTag :public wxObject
 	wxString GetSourceAsString() const;
 	const wxString& GetName() const;
 	const wxString& GetValue() const;
+
 	bool IsMultiline() const;
+	wxString GetFlattenValue() const;
 
 	wxCueTag& SetSource( TAG_SOURCE );
 	wxCueTag& SetName( const wxString& );

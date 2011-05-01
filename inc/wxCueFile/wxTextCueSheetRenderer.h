@@ -22,6 +22,7 @@ protected:
 	wxTextOutputStream* m_pTextOutputStream;
 	int m_nDumpFlags;
 	wxSamplingInfo m_si;
+	wxRegEx m_reSpace;
 
 protected:
 
@@ -35,6 +36,7 @@ protected:
 private:
 
 	void DumpComponentString( const wxCueComponent&, const wxChar*, const wxString& );
+	void DumpComponentTag( const wxCueComponent&, const wxCueTag& );
 	void InternalRenderComponent(const wxCueComponent&);
 	void InternalRenderCueSheet(const wxCueSheet&);
 	void InternalRenderTrack(const wxCueSheet&, const wxTrack&);

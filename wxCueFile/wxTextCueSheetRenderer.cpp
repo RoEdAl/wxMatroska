@@ -12,8 +12,11 @@
 wxIMPLEMENT_DYNAMIC_CLASS( wxTextCueSheetRenderer, wxCueSheetRenderer )
 
 wxTextCueSheetRenderer::wxTextCueSheetRenderer(wxTextOutputStream* pTextOutputStream, int nDumpFlags)
-	:m_pTextOutputStream(pTextOutputStream),m_nDumpFlags(nDumpFlags)
+	:m_pTextOutputStream(pTextOutputStream),
+	 m_nDumpFlags(nDumpFlags),
+	 m_reSpace( wxT("[[:space:]]+"), wxRE_ADVANCED|wxRE_NOSUB )
 {
+	wxASSERT( m_reSpace.IsValid() );
 }
 
 void wxTextCueSheetRenderer::Assign( wxTextOutputStream* pTextOutputStream, int nDumpFlags )
@@ -64,18 +67,44 @@ bool wxTextCueSheetRenderer::OnRenderPostGap( const wxCueSheet& cueSheet, const 
 	return wxCueSheetRenderer::OnRenderPostGap( cueSheet, track, postGap );
 }
 
+void wxTextCueSheetRenderer::DumpComponentTag(
+	const wxCueComponent& component, const wxCueTag& tag )
+{
+	wxString sName;
+	if ( m_reSpace.Matches( tag.GetName() ) )
+	{
+		sName = wxString::Format( wxT("\"%s\""), tag.GetName() );
+	}
+	else
+	{
+		sName = tag.GetName();
+	}
+
+	wxString sValue;
+	if ( tag.IsMultiline() )
+	{
+		sValue = tag.GetFlattenValue();
+	}
+	else
+	{
+		sValue = tag.GetValue();
+	}
+
+	DumpComponentString( component, wxT("REM"), wxString::Format( wxT("%s %s"), sName, sValue ) );
+}
+
 void wxTextCueSheetRenderer::DumpComponentString(
 	const wxCueComponent& component, const wxChar* szEntry, const wxString& text )
 {
 	if ( !text.IsEmpty() )
 	{
 		wxString sLine;
-		sLine.Printf( wxT("%s %s\n"), szEntry, text.GetData() );
+		sLine.Printf( wxT("%s %s"), szEntry, text );
 		if ( component.IsTrack() )
 		{
-			sLine = sLine.Prepend( wxT("\t") );
+			*m_pTextOutputStream << wxT("\t");
 		}
-		m_pTextOutputStream->WriteString( sLine );
+		*m_pTextOutputStream << sLine << endl;
 	}
 }
 
@@ -95,21 +124,11 @@ void wxTextCueSheetRenderer::InternalRenderComponent(const wxCueComponent& compo
 	// dump tags
 	if ( (m_nDumpFlags & DUMP_TAGS) != 0 )
 	{
-		wxRegEx reSpace( wxT("[[:space:]]+"), wxRE_ADVANCED|wxRE_NOSUB );
-		wxASSERT( reSpace.IsValid() );
-
 		const wxArrayCueTag& tags = component.GetTags();
 		size_t numTags = tags.Count();
 		for( size_t i=0; i<numTags; i++ )
 		{
-			if ( reSpace.Matches( tags[i].GetName() ) )
-			{
-				DumpComponentString( component, wxT("REM"), wxString::Format( wxT("\"%s\" %s"), tags[i].GetName(), tags[i].GetValue() ) );
-			}
-			else
-			{
-				DumpComponentString( component, wxT("REM"), wxString::Format( wxT("%s %s"), tags[i].GetName(), tags[i].GetValue() ) );
-			}
+			DumpComponentTag( component, tags[i] );
 		}
 	}
 
@@ -151,7 +170,7 @@ void wxTextCueSheetRenderer::InternalRenderTrack(const wxCueSheet& WXUNUSED(cueS
 
 	if ( (m_nDumpFlags & DUMP_EMPTY_LINES) != 0 )
 	{
-		m_pTextOutputStream->WriteString( wxT("\n") );
+		*m_pTextOutputStream << endl;
 	}
 
 	if ( track.HasDataFile() )
