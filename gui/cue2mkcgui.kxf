@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <object type="TAForm" name="FormMain">
 	<properties>
-		<property name="Left" vt="Int16">210</property>
-		<property name="Top" vt="Int16">134</property>
-		<property name="Width" vt="Int16">550</property>
-		<property name="Height" vt="Int16">453</property>
+		<property name="Left" vt="Int16">202</property>
+		<property name="Top" vt="Int8">125</property>
+		<property name="Width" vt="Int16">547</property>
+		<property name="Height" vt="Int16">466</property>
 		<property name="Caption" vt="String">cue2mkc GUI</property>
 		<property name="Color" vt="Ident">clBtnFace</property>
 		<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
@@ -37,8 +37,8 @@
 				<property name="Left" vt="Int8">0</property>
 				<property name="Top" vt="Int8">0</property>
 				<property name="Width" vt="Int16">541</property>
-				<property name="Height" vt="Int16">417</property>
-				<property name="ActivePage" vt="Ident">OtherOptionsPane</property>
+				<property name="Height" vt="Int16">377</property>
+				<property name="ActivePage" vt="Ident">OptionsPane</property>
 				<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
 				<property name="Font.Color" vt="Ident">clWindowText</property>
 				<property name="Font.Height" vt="Int8">-11</property>
@@ -117,28 +117,6 @@
 								<property name="CtrlStyle" vt="Int32">1342259200</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
 								<property name="Resizing" vt="Set">DockLeft, DockBottom, DockWidth, DockHeight</property>
-							</properties>
-							<components/>
-						</object>
-						<object type="TAButton" name="ButtonGo">
-							<properties>
-								<property name="Left" vt="Int16">441</property>
-								<property name="Top" vt="Int16">337</property>
-								<property name="Width" vt="Int8">85</property>
-								<property name="Height" vt="Int8">29</property>
-								<property name="Hint" vt="String">Run cue2mkc tool</property>
-								<property name="Caption" vt="String">&amp;Run</property>
-								<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
-								<property name="Font.Color" vt="Ident">clWindowText</property>
-								<property name="Font.Height" vt="Int8">-11</property>
-								<property name="Font.Name" vt="String">Microsoft Sans Serif</property>
-								<property name="Font.Style" vt="Set">fsBold</property>
-								<property name="ParentFont" vt="False">False</property>
-								<property name="TabOrder" vt="Int8">11</property>
-								<property name="Color" vt="Ident">clBtnFace</property>
-								<property name="CtrlStyle" vt="Int32">1342259200</property>
-								<property name="CtrlExStyle" vt="Int8">0</property>
-								<property name="Resizing" vt="Set">DockRight, DockBottom, DockWidth, DockHeight</property>
 							</properties>
 							<components/>
 						</object>
@@ -250,7 +228,7 @@
 								<property name="Top" vt="Int16">307</property>
 								<property name="Width" vt="Int16">137</property>
 								<property name="Height" vt="Int8">25</property>
-								<property name="ItemHeight" vt="Int8">13</property>
+								<property name="ItemHeight" vt="Int8">0</property>
 								<property name="TabOrder" vt="Int8">7</property>
 								<property name="Items.Strings" vt="List">
 									<list>
@@ -284,21 +262,6 @@
 								<property name="CtrlStyle" vt="Int32">1342178048</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
 								<property name="Resizing" vt="Set">DockLeft, DockBottom, DockWidth, DockHeight</property>
-							</properties>
-							<components/>
-						</object>
-						<object type="TACheckbox" name="CheckBoxSwitchToOutput">
-							<properties>
-								<property name="Left" vt="Int16">292</property>
-								<property name="Top" vt="Int16">343</property>
-								<property name="Width" vt="Int16">141</property>
-								<property name="Height" vt="Int8">17</property>
-								<property name="Hint" vt="String">Switch to messages pane before running</property>
-								<property name="Caption" vt="String">&amp;Switch to messages pane</property>
-								<property name="TabOrder" vt="Int8">10</property>
-								<property name="CtrlStyle" vt="Int32">1342242819</property>
-								<property name="CtrlExStyle" vt="Int8">0</property>
-								<property name="Resizing" vt="Set">DockRight, DockBottom, DockWidth, DockHeight</property>
 							</properties>
 							<components/>
 						</object>
@@ -342,7 +305,7 @@
 								<property name="Left" vt="Int8">0</property>
 								<property name="Top" vt="Int8">22</property>
 								<property name="Width" vt="Int16">529</property>
-								<property name="Height" vt="Int16">308</property>
+								<property name="Height" vt="Int16">276</property>
 								<property name="Hint" vt="String">Application messages</property>
 								<property name="Color" vt="Ident">clBtnFace</property>
 								<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
@@ -361,8 +324,8 @@
 						</object>
 						<object type="TAButton" name="ButtonMsgCopy">
 							<properties>
-								<property name="Left" vt="Int8">3</property>
-								<property name="Top" vt="Int16">335</property>
+								<property name="Left" vt="Int8">0</property>
+								<property name="Top" vt="Int16">301</property>
 								<property name="Width" vt="Int8">61</property>
 								<property name="Height" vt="Int8">29</property>
 								<property name="Hint" vt="String">Copy messages to clipboard</property>
@@ -377,8 +340,8 @@
 						</object>
 						<object type="TAButton" name="ButtonClearLog">
 							<properties>
-								<property name="Left" vt="Int8">67</property>
-								<property name="Top" vt="Int16">335</property>
+								<property name="Left" vt="Int8">64</property>
+								<property name="Top" vt="Int16">301</property>
 								<property name="Width" vt="Int8">61</property>
 								<property name="Height" vt="Int8">29</property>
 								<property name="Hint" vt="String">Clear log</property>
@@ -388,53 +351,6 @@
 								<property name="CtrlStyle" vt="Int32">1342259200</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
 								<property name="Resizing" vt="Set">DockLeft, DockBottom, DockWidth, DockHeight</property>
-							</properties>
-							<components/>
-						</object>
-						<object type="TAButton" name="ButtonInfo">
-							<properties>
-								<property name="Left" vt="Int16">482</property>
-								<property name="Top" vt="Int16">335</property>
-								<property name="Width" vt="Int8">41</property>
-								<property name="Height" vt="Int8">29</property>
-								<property name="Hint" vt="String">Runs cue2mkc with --help option</property>
-								<property name="Caption" vt="String">&amp;Help</property>
-								<property name="TabOrder" vt="Int8">4</property>
-								<property name="Color" vt="Ident">clBtnFace</property>
-								<property name="CtrlStyle" vt="Int32">1342259200</property>
-								<property name="CtrlExStyle" vt="Int8">0</property>
-								<property name="Resizing" vt="Set">DockRight, DockBottom, DockWidth, DockHeight</property>
-							</properties>
-							<components/>
-						</object>
-						<object type="TACheckbox" name="CheckBoxVerbose">
-							<properties>
-								<property name="Left" vt="Int16">308</property>
-								<property name="Top" vt="Int16">341</property>
-								<property name="Width" vt="Int8">97</property>
-								<property name="Height" vt="Int8">17</property>
-								<property name="Hint" vt="String">Be more verbose during cu2mkc execution</property>
-								<property name="Caption" vt="String">&amp;Verbose mode</property>
-								<property name="TabOrder" vt="Int8">5</property>
-								<property name="CtrlStyle" vt="Int32">1342242819</property>
-								<property name="CtrlExStyle" vt="Int8">0</property>
-								<property name="Resizing" vt="Set">DockRight, DockBottom, DockWidth, DockHeight</property>
-							</properties>
-							<components/>
-						</object>
-						<object type="TAButton" name="ButtonLicense">
-							<properties>
-								<property name="Left" vt="Int16">410</property>
-								<property name="Top" vt="Int16">335</property>
-								<property name="Width" vt="Int8">65</property>
-								<property name="Height" vt="Int8">29</property>
-								<property name="Hint" vt="String">Runs cue2mkc with --licese option</property>
-								<property name="Caption" vt="String">&amp;License</property>
-								<property name="TabOrder" vt="Int8">6</property>
-								<property name="Color" vt="Ident">clBtnFace</property>
-								<property name="CtrlStyle" vt="Int32">1342259200</property>
-								<property name="CtrlExStyle" vt="Int8">0</property>
-								<property name="Resizing" vt="Set">DockRight, DockBottom, DockWidth, DockHeight</property>
 							</properties>
 							<components/>
 						</object>
@@ -795,7 +711,7 @@
 										<property name="Top" vt="Int8">74</property>
 										<property name="Width" vt="Int8">41</property>
 										<property name="Height" vt="Int8">25</property>
-										<property name="ItemHeight" vt="Int8">13</property>
+										<property name="ItemHeight" vt="Int8">0</property>
 										<property name="ItemIndex" vt="Int8">2</property>
 										<property name="TabOrder" vt="Int8">5</property>
 										<property name="Text" vt="String">01</property>
@@ -1199,7 +1115,7 @@
 										<property name="Top" vt="Int8">38</property>
 										<property name="Width" vt="Int16">165</property>
 										<property name="Height" vt="Int8">25</property>
-										<property name="ItemHeight" vt="Int8">13</property>
+										<property name="ItemHeight" vt="Int8">0</property>
 										<property name="TabOrder" vt="Int8">1</property>
 										<property name="Items.Strings" vt="List">
 											<list>
@@ -1275,7 +1191,7 @@
 										<property name="Top" vt="Int8">21</property>
 										<property name="Width" vt="Int16">141</property>
 										<property name="Height" vt="Int8">25</property>
-										<property name="ItemHeight" vt="Int8">13</property>
+										<property name="ItemHeight" vt="Int8">0</property>
 										<property name="TabOrder" vt="Int8">1</property>
 										<property name="Items.Strings" vt="List">
 											<list>
@@ -1331,6 +1247,102 @@
 					</components>
 				</object>
 			</components>
+		</object>
+		<object type="TACheckbox" name="CheckBoxSwitchToOutput">
+			<properties>
+				<property name="Left" vt="Int8">2</property>
+				<property name="Top" vt="Int16">397</property>
+				<property name="Width" vt="Int16">141</property>
+				<property name="Height" vt="Int8">17</property>
+				<property name="Hint" vt="String">Switch to messages pane before running</property>
+				<property name="Caption" vt="String">&amp;Switch to messages pane</property>
+				<property name="TabOrder" vt="Int8">1</property>
+				<property name="CtrlStyle" vt="Int32">1342242819</property>
+				<property name="CtrlExStyle" vt="Int8">0</property>
+				<property name="Resizing" vt="Set">DockLeft, DockBottom, DockWidth, DockHeight</property>
+			</properties>
+			<components/>
+		</object>
+		<object type="TAButton" name="ButtonGo">
+			<properties>
+				<property name="Left" vt="Int16">452</property>
+				<property name="Top" vt="Int16">384</property>
+				<property name="Width" vt="Int8">85</property>
+				<property name="Height" vt="Int8">29</property>
+				<property name="Hint" vt="String">Run cue2mkc tool</property>
+				<property name="Caption" vt="String">&amp;Run</property>
+				<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
+				<property name="Font.Color" vt="Ident">clWindowText</property>
+				<property name="Font.Height" vt="Int8">-11</property>
+				<property name="Font.Name" vt="String">Microsoft Sans Serif</property>
+				<property name="Font.Style" vt="Set">fsBold</property>
+				<property name="ParentFont" vt="False">False</property>
+				<property name="TabOrder" vt="Int8">5</property>
+				<property name="Color" vt="Ident">clBtnFace</property>
+				<property name="CtrlStyle" vt="Int32">1342259200</property>
+				<property name="CtrlExStyle" vt="Int8">0</property>
+				<property name="Resizing" vt="Set">DockRight, DockBottom, DockWidth, DockHeight</property>
+			</properties>
+			<components/>
+		</object>
+		<object type="TACheckbox" name="CheckBoxVerbose">
+			<properties>
+				<property name="Left" vt="Int8">2</property>
+				<property name="Top" vt="Int16">380</property>
+				<property name="Width" vt="Int8">97</property>
+				<property name="Height" vt="Int8">17</property>
+				<property name="Hint" vt="String">Be more verbose during cu2mkc execution</property>
+				<property name="Caption" vt="String">&amp;Verbose mode</property>
+				<property name="TabOrder" vt="Int8">2</property>
+				<property name="CtrlStyle" vt="Int32">1342242819</property>
+				<property name="CtrlExStyle" vt="Int8">0</property>
+				<property name="Resizing" vt="Set">DockLeft, DockBottom, DockWidth, DockHeight</property>
+			</properties>
+			<components/>
+		</object>
+		<object type="TAButton" name="ButtonLicense">
+			<properties>
+				<property name="Left" vt="Int16">341</property>
+				<property name="Top" vt="Int16">384</property>
+				<property name="Width" vt="Int8">65</property>
+				<property name="Height" vt="Int8">29</property>
+				<property name="Hint" vt="String">Runs cue2mkc with --licese option</property>
+				<property name="Caption" vt="String">&amp;License</property>
+				<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
+				<property name="Font.Color" vt="Ident">clWindowText</property>
+				<property name="Font.Height" vt="Int8">-9</property>
+				<property name="Font.Name" vt="String">Microsoft Sans Serif</property>
+				<property name="Font.Style" vt="Set"/>
+				<property name="ParentFont" vt="False">False</property>
+				<property name="TabOrder" vt="Int8">3</property>
+				<property name="Color" vt="Ident">clBtnFace</property>
+				<property name="CtrlStyle" vt="Int32">1342259200</property>
+				<property name="CtrlExStyle" vt="Int8">0</property>
+				<property name="Resizing" vt="Set">DockRight, DockBottom, DockWidth, DockHeight</property>
+			</properties>
+			<components/>
+		</object>
+		<object type="TAButton" name="ButtonInfo">
+			<properties>
+				<property name="Left" vt="Int16">408</property>
+				<property name="Top" vt="Int16">384</property>
+				<property name="Width" vt="Int8">41</property>
+				<property name="Height" vt="Int8">29</property>
+				<property name="Hint" vt="String">Runs cue2mkc with --help option</property>
+				<property name="Caption" vt="String">&amp;Help</property>
+				<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
+				<property name="Font.Color" vt="Ident">clWindowText</property>
+				<property name="Font.Height" vt="Int8">-9</property>
+				<property name="Font.Name" vt="String">Microsoft Sans Serif</property>
+				<property name="Font.Style" vt="Set"/>
+				<property name="ParentFont" vt="False">False</property>
+				<property name="TabOrder" vt="Int8">4</property>
+				<property name="Color" vt="Ident">clBtnFace</property>
+				<property name="CtrlStyle" vt="Int32">1342259200</property>
+				<property name="CtrlExStyle" vt="Int8">0</property>
+				<property name="Resizing" vt="Set">DockRight, DockBottom, DockWidth, DockHeight</property>
+			</properties>
+			<components/>
 		</object>
 	</components>
 </object>
