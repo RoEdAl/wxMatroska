@@ -13,6 +13,11 @@
 const wxChar wxConfiguration::CUE_SHEET_EXT[] = wxT("cue");
 const wxChar wxConfiguration::MATROSKA_CHAPTERS_EXT[] = wxT("mkc.xml");
 const wxChar wxConfiguration::MATROSKA_TAGS_EXT[] = wxT("mkt.xml");
+const wxChar wxConfiguration::MATROSKA_OPTS_EXT[] = wxT("mmg.txt");
+const wxChar wxConfiguration::MATROSKA_AUDIO_EXT[] = wxT("mka");
+
+const wxChar wxConfiguration::TRACK_NAME_FORMAT[] = wxT("%dp% - %dt% - %tt%");
+const wxChar wxConfiguration::MATROSKA_NAME_FORMAT[] = wxT("%dp% - %dt%");
 
 static const size_t MAX_EXT_LEN = 20;
 static const wxChar LANG_FILE_URL[] = wxT("http://www.loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt");
@@ -161,12 +166,14 @@ wxConfiguration::wxConfiguration(void)
 	 m_bUseDataFiles(false),
 	 m_sAlternateExtensions( wxEmptyString ),
 	 m_sLang( wxT("unk") ),
-	 m_sTrackNameFormat( wxT("%dp% - %dt% - %tt%") ),
+	 m_sTrackNameFormat( TRACK_NAME_FORMAT ),
+	 m_sMatroskaNameFormat( MATROSKA_NAME_FORMAT ),
 	 m_bEmbedded(false),
 	 m_bCorrectQuotationMarks(true),
 	 m_bSaveCueSheet(false),
 	 m_eCueSheetFileEncoding(ENCODING_LOCAL),
 	 m_bGenerateTags(false),
+	 m_bGenerateMkvmergeOpts(false),
 	 m_bGenerateEditionUID(false),
 	 m_bGenerateTagsFromComments(true),
 	 m_bTrackOneIndexOne(true),
@@ -175,6 +182,7 @@ wxConfiguration::wxConfiguration(void)
 	 m_sCueSheetExt(CUE_SHEET_EXT),
 	 m_sMatroskaChaptersXmlExt(MATROSKA_CHAPTERS_EXT),
 	 m_sMatroskaTagsXmlExt(MATROSKA_TAGS_EXT),
+	 m_sMatroskaOptsExt(MATROSKA_OPTS_EXT),
 	 m_bMerge(false),
 	 m_nEmbeddedModeFlags(wxCueSheetReader::EC_MEDIA_READ_TAGS|wxCueSheetReader::EC_FLAC_READ_TAG_FIRST_THEN_COMMENT),
 	 m_bUseMLang(true)
@@ -199,7 +207,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddSwitch( wxT("ndf"), wxT("dont-use-data-files"), _("Don't use data file(s) to calculate end time of chapters (requires MediaInfo library)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxT("e"), wxT("alternate-extensions"), _("Comma-separated list of alternate extensions of data files (default: none)"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxT("f"), wxT("single-data-file"), _("Sets single data file to cue sheet (default: none)"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddOption( wxT("tf"), wxT("track-title-format"), _("Track title format (default: %dp% - %dt% - %tt%)"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( wxT("tf"), wxT("track-title-format"), wxString::Format( _("Track title format (default: %s)"), TRACK_NAME_FORMAT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxT("l"), wxT("language"), _("Set language of chapter's tilte (default: unk)"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("ec"), wxT("embedded-cue"), _("Try to read embedded cue sheet (requires MediaInfo library)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("nec"), wxT("no-embedded-cue"), _("Try to read embedded cue sheet"), wxCMD_LINE_PARAM_OPTIONAL );
@@ -207,6 +215,8 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddSwitch( wxT("m"), wxT("save-matroska-chapters"), _("Save Matroska chapter file (default)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("t"), wxT("generate-tags"), _("Generate tags file (default: no)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("nt"), wxT("dont-generate-tags"), _("Do not generate tags file"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("of"), wxT("generate-mkvmerge-options"), _("Generate file with mkvmerge options (default: no)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("nof"), wxT("dont-generate-mkvmerge-options"), _("Don't generate file with mkvmerge options"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("eu"), wxT("generate-edition-uid"), _("Generate edition UID (default: no)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("neu"), wxT("dont-generate-edition-uid"), _("Do not generate edition UID"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("tc"), wxT("generate-tags-from-comments"), _("Try to parse tags from cue sheet comments (default: yes)"), wxCMD_LINE_PARAM_OPTIONAL );
@@ -234,6 +244,8 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddOption( wxT("dce"), wxT("default-cue-sheet-file-extension"), wxString::Format( _("Default cue sheet file extension (default: %s)"), CUE_SHEET_EXT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxT("dme"), wxT("default-matroska-chapters-file-extension"), wxString::Format( _("Default Matroska chapters XML file extension (default: %s)"), MATROSKA_CHAPTERS_EXT) , wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxT("dte"), wxT("default-matroska-tags-file-extension"), wxString::Format( _("Default Matroska tags XML file extension (default: %s)"), MATROSKA_TAGS_EXT) , wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( wxT("doe"), wxT("default-mkvmerge-options-file-extension"), wxString::Format( _("Default file extension of mkvmerge options file (default: %s)"), MATROSKA_OPTS_EXT) , wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( wxT("mf"), wxT("matroska-title-format"), wxString::Format( _("Mtroska container's title format (default: %s)"), MATROSKA_NAME_FORMAT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("cq"), wxT("correct-quotation-marks"), _("Correct \"simple 'quotation' marks\" to \u201Cenglish \u2018quotation\u2019 marks\u201D inside strings (default: on)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("ncq"), wxT("dont-correct-quotation-marks"), _("Dont correct \"simple 'quotation' marks\" to \u201Cenglish \u2018quotation\u2019 marks\u201D inside strings"), wxCMD_LINE_PARAM_OPTIONAL );
 
@@ -324,6 +336,9 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	if ( cmdLine.Found( wxT("t") ) ) m_bGenerateTags = true;
 	if ( cmdLine.Found( wxT("nt") ) ) m_bGenerateTags = false;
 
+	if ( cmdLine.Found( wxT("of") ) ) m_bGenerateMkvmergeOpts = true;
+	if ( cmdLine.Found( wxT("nof") ) ) m_bGenerateMkvmergeOpts = false;
+
 	if ( cmdLine.Found( wxT("oce"), &s ) )
 	{
 		if ( !GetFileEncodingFromStr( s, m_eCueSheetFileEncoding ) )
@@ -381,6 +396,19 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		}
 	}
 
+	if ( cmdLine.Found( wxT("doe"), &s ) )
+	{
+		if ( check_ext( s ) )
+		{
+			m_sMatroskaOptsExt = s;
+		}
+		else
+		{
+			wxLogWarning( _("Invalid options file extension %s"), s );
+			bRes = false;
+		}
+	}
+
 	if ( cmdLine.Found( wxT("e"), &s ) )
 	{
 		m_sAlternateExtensions = s;
@@ -389,6 +417,11 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	if ( cmdLine.Found( wxT("tf"), &s ) )
 	{
 		m_sTrackNameFormat = s;
+	}
+
+	if ( cmdLine.Found( wxT("mf"), &s ) )
+	{
+		m_sMatroskaNameFormat = s;
 	}
 
 	if ( cmdLine.GetParamCount() > 0 )
@@ -619,6 +652,7 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
 {
 	as.Add( wxString::Format( wxT("Save cue sheet: %s"), BoolToStr(m_bSaveCueSheet) ) );
 	as.Add( wxString::Format( wxT("Generate tags file: %s"), BoolToStr(m_bGenerateTags) ) );
+	as.Add( wxString::Format( wxT("Generate mkvmerge options file: %s"), BoolToStr(m_bGenerateMkvmergeOpts) ) );
 	as.Add( wxString::Format( wxT("Generate edition UID: %s"), BoolToStr(m_bGenerateEditionUID) ) );
 	as.Add( wxString::Format( wxT("Generate tags from comments: %s"), BoolToStr(m_bGenerateTagsFromComments) ) );
 	if ( !m_aeIgnoredSources.IsEmpty() )
@@ -634,14 +668,16 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
 	as.Add( wxString::Format( wxT("Set chapter's end time to beginning of next chapter if track's end time cannot be calculated: %s"), BoolToStr(m_bUnknownChapterTimeEndToNextChapter) ) );
 	as.Add( wxString::Format( wxT("Chapter offset (frames): %d"), m_nChapterOffset ) );
 	as.Add( wxString::Format( wxT("Track name format: %s"), m_sTrackNameFormat ) );
+	as.Add( wxString::Format( wxT("Matroska container name format: %s"), m_sMatroskaNameFormat ) );
 	as.Add( wxString::Format( wxT("Chapter string language: %s"), m_sLang ) );
 	as.Add( wxString::Format( wxT("For track 01 assume index %s as beginning of track"), BoolToIdx(m_bTrackOneIndexOne) ) );
 	as.Add( wxString::Format( wxT("Round down track end time to full frames: %s"), BoolToStr(m_bRoundDownToFullFrames) ) );
 	as.Add( wxString::Format( wxT("Merge mode: %s"), BoolToStr(m_bMerge) ) );
 	as.Add( wxString::Format( wxT("Convert indexes to hidden subchapters: %s"), BoolToStr(m_bHiddenIndexes) ) );
 	as.Add( wxString::Format( wxT("Default cue sheet file extension: %s"), m_sCueSheetExt ) );
-	as.Add( wxString::Format( wxT("Default Matroska chapters XML file extension: %s"), m_sMatroskaChaptersXmlExt ) );
-	as.Add( wxString::Format( wxT("Default Matroska tags XML file extension: %s"), m_sMatroskaTagsXmlExt ) );
+	as.Add( wxString::Format( wxT("Matroska chapters XML file extension: %s"), m_sMatroskaChaptersXmlExt ) );
+	as.Add( wxString::Format( wxT("Matroska tags XML file extension: %s"), m_sMatroskaTagsXmlExt ) );
+	as.Add( wxString::Format( wxT("mkvmerge options file extension: %s"), m_sMatroskaOptsExt ) );
 	as.Add( wxString::Format( wxT("Correct \"simple 'quotation' marks\" inside strings: %s"), BoolToStr(m_bCorrectQuotationMarks) ) );
 	if ( m_bEmbedded )
 	{
@@ -731,6 +767,11 @@ const wxString& wxConfiguration::GetTrackNameFormat() const
 	return m_sTrackNameFormat;
 }
 
+const wxString& wxConfiguration::GetMatroskaNameFormat() const
+{
+	return m_sMatroskaNameFormat;
+}
+
 const wxString& wxConfiguration::GetLang() const
 {
 	return m_sLang;
@@ -765,9 +806,10 @@ wxString wxConfiguration::GetOutputFile( const wxInputFile& _inputFile ) const
 	return inputFile.GetFullPath();
 }
 
-void wxConfiguration::GetOutputFile( const wxInputFile& _inputFile,
+void wxConfiguration::GetOutputFile( 
+	const wxInputFile& _inputFile,
 	wxString& sOutputFile, wxString& sTagsFile
-	) const
+) const
 {
 	sOutputFile.Empty();
 	sTagsFile.Empty();
@@ -804,6 +846,45 @@ void wxConfiguration::GetOutputFile( const wxInputFile& _inputFile,
 			inputFile.SetExt( m_sMatroskaTagsXmlExt );
 			sTagsFile = inputFile.GetFullPath();
 		}
+	}
+}
+
+void wxConfiguration::GetOutputMatroskaFile( 
+	const wxInputFile& _inputFile,
+	wxString& sMatroskaFile, wxString& sOptionsFile
+) const
+{
+	sMatroskaFile.Empty();
+	sOptionsFile.Empty();
+
+	wxFileName inputFile( _inputFile.GetInputFile() );
+	if ( !inputFile.IsOk() ) return;
+	if ( !(!m_bSaveCueSheet && m_bGenerateMkvmergeOpts) ) return;
+
+	if ( !m_outputFile.IsOk() )
+	{
+		inputFile.SetExt( MATROSKA_AUDIO_EXT );
+		sMatroskaFile = inputFile.GetFullPath();
+
+		inputFile.SetExt( m_sMatroskaOptsExt );
+		sOptionsFile = inputFile.GetFullPath();
+	}
+	else
+	{
+		if ( m_outputFile.IsDir() )
+		{
+			inputFile.SetPath( m_outputFile.GetPath() );
+		}
+		else
+		{
+			inputFile = m_outputFile;
+		}
+
+		inputFile.SetExt( MATROSKA_AUDIO_EXT );
+		sMatroskaFile = inputFile.GetFullPath();
+
+		inputFile.SetExt( m_sMatroskaOptsExt );
+		sOptionsFile = inputFile.GetFullPath();
 	}
 }
 
@@ -855,6 +936,11 @@ const wxString& wxConfiguration::MatroskaChaptersXmlExt() const
 bool wxConfiguration::GenerateTags() const
 {
 	return m_bGenerateTags;
+}
+
+bool wxConfiguration::GenerateMkvmergeOpts() const
+{
+	return m_bGenerateMkvmergeOpts;
 }
 
 bool wxConfiguration::GenerateEditionUID() const
@@ -930,6 +1016,15 @@ bool wxConfiguration::UseMLang() const
 	return m_bUseMLang;
 }
 
+const wxString& wxConfiguration::MatroskaTagsXmlExt() const
+{
+	return m_sMatroskaTagsXmlExt;
+}
+
+const wxString& wxConfiguration::MatroskaOptsExt() const
+{
+	return m_sMatroskaOptsExt;
+}
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
 WX_DEFINE_OBJARRAY( wxArrayInputFile );

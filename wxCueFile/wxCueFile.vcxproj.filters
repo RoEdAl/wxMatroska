@@ -133,8 +133,8 @@
     <ClInclude Include="wxTextInputStreamOnString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="wxTextOutputStreamOnString.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\inc\wxCueFile\wxTextOutputStreamOnString.h">
+      <Filter>External Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

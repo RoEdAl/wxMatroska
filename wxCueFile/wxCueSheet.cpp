@@ -213,6 +213,22 @@ wxString wxCueSheet::FormatTrack(size_t trackNo, const wxString& sFmt ) const
 	return s;
 }
 
+wxString wxCueSheet::Format( const wxString& sFmt ) const
+{
+	wxHashString replacements;
+	GetReplacements( replacements );
+
+	wxString s( sFmt );
+	for( wxHashString::const_iterator i = replacements.begin(); i != replacements.end(); i++ )
+	{
+		wxString sFind( i->first );
+		sFind.Prepend( wxT("%") ).Append( wxT("%") );
+		s.Replace( sFind, i->second, true );
+	}
+
+	return s;
+}
+
 bool wxCueSheet::HasSingleDataFile( wxDataFile& dataFile ) const
 {
 	size_t tracks = m_tracks.Count();

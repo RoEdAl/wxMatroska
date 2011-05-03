@@ -4,7 +4,7 @@
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.34
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.35
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -188,7 +188,7 @@ GUICtrlSetLimit(-1, 150)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Comma-separated list of alternate extensions of media files")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-$GroupOutputOptions = GUICtrlCreateGroup("&Output", 4, 239, 265, 61)
+$GroupOutputOptions = GUICtrlCreateGroup("&Output", 4, 239, 265, 85)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $LabelOutputFormat = GUICtrlCreateLabel("Format:", 12, 254, 43, 21, $SS_CENTERIMAGE)
@@ -196,11 +196,13 @@ GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCK
 $ComboOutputFormat = GUICtrlCreateCombo("", 56, 254, 177, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 GUICtrlSetData(-1, "cue sheet|Matroska chapters XML file")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$CheckBoxT = GUICtrlCreateCheckbox("Generate tags XML file also", 26, 277, 157, 17)
+$CheckBoxT = GUICtrlCreateCheckbox("Generate tags XML file", 26, 277, 157, 17)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+$CheckBoxOf = GUICtrlCreateCheckbox("Generate options file for mkvmerge", 26, 297, 213, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 $ChapterOptionsPane = GUICtrlCreateTabItem("&Chapters file generation options")
-$GroupChapterOptions = GUICtrlCreateGroup("&Chapters file", 4, 42, 293, 189, -1, $WS_EX_TRANSPARENT)
+$GroupChapterOptions = GUICtrlCreateGroup("&Chapters file", 4, 42, 293, 141, -1, $WS_EX_TRANSPARENT)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $CheckBoxCe = GUICtrlCreateCheckbox("Calculate end time of chapters if possible", 8, 56, 217, 17)
@@ -225,14 +227,21 @@ $CheckBoxR = GUICtrlCreateCheckbox("Round down track end time to full frames", 8
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $CheckBoxHi = GUICtrlCreateCheckbox("Convert indexes to hidden chapters", 8, 158, 217, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelTf = GUICtrlCreateLabel("Track title format:", 8, 178, 86, 21, $SS_CENTERIMAGE)
+GUICtrlCreateGroup("", -99, -99, 1, 1)
+$GroupFormatting = GUICtrlCreateGroup("&Formatting", 4, 184, 289, 89)
+$LabelTf = GUICtrlCreateLabel("Track title format:", 9, 200, 86, 21, $SS_CENTERIMAGE)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$InputTf = GUICtrlCreateInput("%dp% - %dt% - %tt%", 96, 179, 113, 21)
+$InputTf = GUICtrlCreateInput("%dp% - %dt% - %tt%", 140, 200, 145, 21)
 GUICtrlSetLimit(-1, 150)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelLang = GUICtrlCreateLabel("Chapter's title language:", 8, 203, 117, 21, $SS_CENTERIMAGE)
+$LabelMf = GUICtrlCreateLabel("MKA tilte format:", 8, 224, 86, 21, $SS_CENTERIMAGE)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$InputLang = GUICtrlCreateInput("eng", 130, 203, 41, 21)
+$InputMf = GUICtrlCreateInput("%dp% - %dt%", 140, 224, 145, 21)
+GUICtrlSetLimit(-1, 150)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+$LabelLang = GUICtrlCreateLabel("Language:", 9, 247, 117, 21, $SS_CENTERIMAGE)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+$InputLang = GUICtrlCreateInput("eng", 140, 247, 41, 21)
 GUICtrlSetLimit(-1, 3)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "This option also affects tags file generation")
@@ -258,7 +267,7 @@ GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCK
 GUICtrlSetTip(-1, "Ignore all tags taken from media's metadata")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 $OtherOptionsPane = GUICtrlCreateTabItem("&Advanced options")
-$GroupFileExtensions = GUICtrlCreateGroup("&File extensions", 4, 42, 225, 89, -1, $WS_EX_TRANSPARENT)
+$GroupFileExtensions = GUICtrlCreateGroup("&File extensions", 4, 42, 225, 113, -1, $WS_EX_TRANSPARENT)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $LabelDce = GUICtrlCreateLabel("Cue sheet:", 8, 58, 67, 21, $SS_CENTERIMAGE)
@@ -276,42 +285,47 @@ GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCK
 $InputDte = GUICtrlCreateInput("mkt.xml", 109, 103, 53, 21)
 GUICtrlSetLimit(-1, 50)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+$LabelDoe = GUICtrlCreateLabel("mkvmerge options:", 8, 125, 95, 21, $SS_CENTERIMAGE)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+$InputDoe = GUICtrlCreateInput("mmc.txt", 109, 125, 53, 21)
+GUICtrlSetLimit(-1, 50)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-$GroupMLang = GUICtrlCreateGroup("MLang", 4, 133, 225, 45)
+$GroupMLang = GUICtrlCreateGroup("MLang", 4, 157, 225, 45)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$CheckBoxMLang = GUICtrlCreateCheckbox("Use MLang library", 8, 151, 117, 17)
+$CheckBoxMLang = GUICtrlCreateCheckbox("Use MLang library", 8, 175, 117, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-$GroupMetadaReadingOptions = GUICtrlCreateGroup("&Metadata reading options", 4, 182, 225, 69)
+$GroupMetadaReadingOptions = GUICtrlCreateGroup("&Metadata reading options", 4, 206, 225, 69)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelFlacCueSheetReadMode = GUICtrlCreateLabel("FLAC:", 8, 220, 35, 21, $SS_CENTERIMAGE)
+$LabelFlacCueSheetReadMode = GUICtrlCreateLabel("FLAC:", 8, 244, 35, 21, $SS_CENTERIMAGE)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Method of reading cue sheet from FLAC container")
-$ComboFlacMode = GUICtrlCreateCombo("", 45, 220, 165, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL), $WS_EX_CLIENTEDGE)
+$ComboFlacMode = GUICtrlCreateCombo("", 45, 244, 165, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL), $WS_EX_CLIENTEDGE)
 GUICtrlSetData(-1, "use MediaInfo only|tag first|comment first|tag only|comment only||")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$CheckBoxReadMetadata = GUICtrlCreateCheckbox("Read metadata", 8, 200, 101, 17)
+$CheckBoxReadMetadata = GUICtrlCreateCheckbox("Read metadata", 8, 224, 101, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Read metadata from media file")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-$GroupCueSheet = GUICtrlCreateGroup("Cue &sheet generation options", 5, 252, 225, 57, -1, $WS_EX_TRANSPARENT)
+$GroupCueSheet = GUICtrlCreateGroup("Cue &sheet generation options", 5, 276, 225, 57, -1, $WS_EX_TRANSPARENT)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelCueSheetEncoding = GUICtrlCreateLabel("Encoding:", 9, 273, 55, 21, $SS_CENTERIMAGE)
+$LabelCueSheetEncoding = GUICtrlCreateLabel("Encoding:", 9, 297, 55, 21, $SS_CENTERIMAGE)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$ComboCueSheetEncoding = GUICtrlCreateCombo("", 70, 273, 141, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL), $WS_EX_CLIENTEDGE)
+$ComboCueSheetEncoding = GUICtrlCreateCombo("", 70, 297, 141, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL), $WS_EX_CLIENTEDGE)
 GUICtrlSetData(-1, "default|UTF-8|UTF-8 with BOM|UTF-16|UTF-16 with BOM")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
-$CheckBoxSwitchToOutput = GUICtrlCreateCheckbox("&Switch to messages pane", 2, 397, 141, 17)
-GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-GUICtrlSetTip(-1, "Switch to messages pane before running")
 $CheckBoxVerbose = GUICtrlCreateCheckbox("&Verbose mode", 2, 380, 97, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Be more verbose during cu2mkc execution")
+$CheckBoxSwitchToOutput = GUICtrlCreateCheckbox("&Switch to messages pane", 2, 397, 141, 17)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+GUICtrlSetTip(-1, "Switch to messages pane before running")
 $ButtonLicense = GUICtrlCreateButton("&License", 341, 384, 65, 29, 0)
 GUICtrlSetFont(-1, 7, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
@@ -356,9 +370,11 @@ Func generate_tags_enable($nMode)
 	Switch $nMode
 		Case 0
 			GUICtrlSetState($CheckBoxT, $GUI_DISABLE)
+			GUICtrlSetState($CheckBoxOf, $GUI_DISABLE)
 
 		Case 1
 			GUICtrlSetState($CheckBoxT, $GUI_ENABLE)
+			GUICtrlSetState($CheckBoxOf, $GUI_ENABLE)
 	EndSwitch
 EndFunc   ;==>generate_tags_enable
 
@@ -456,14 +472,17 @@ Func set_default_options()
 	frame_offset_enable(False)
 	GUICtrlSetData($InputAlternateExt, "")
 	GUICtrlSetData($InputTf, "%dp% - %dt% - %tt%")
+	GUICtrlSetData($InputMf, "%dp% - %dt%")
 	GUICtrlSetData($InputLang, "eng")
 	GUICtrlSetState($CheckBoxR, $GUI_UNCHECKED)
 	GUICtrlSetState($CheckBoxHi, $GUI_CHECKED)
 	GUICtrlSetData($InputDce, "cue")
 	GUICtrlSetData($InputDme, "mkc.xml")
 	GUICtrlSetData($InputDte, "mkt.xml")
+	GUICtrlSetData($InputDoe, "mmc.txt")
 	_GUICtrlComboBox_SetCurSel($ComboOutputFormat, 1)
 	GUICtrlSetState($CheckBoxT, $GUI_UNCHECKED)
+	GUICtrlSetState($CheckBoxOf, $GUI_UNCHECKED)
 	_GUICtrlComboBox_SetCurSel($ComboCueSheetEncoding, 0)
 	generate_tags_enable(1)
 	_GUICtrlComboBox_SetCurSel($ComboTrack01, 1)
@@ -535,6 +554,13 @@ Func read_options()
 		$s &= """ "
 	EndIf
 
+	$w = GUICtrlRead($InputMf)
+	If StringLen($w) > 0 Then
+		$s &= "-mf """
+		$s &= $w
+		$s &= """ "
+	EndIf
+
 	$w = GUICtrlRead($InputLang)
 	If StringLen($w) > 0 Then
 		$s &= "-l "
@@ -569,6 +595,13 @@ Func read_options()
 		$s &= " "
 	EndIf
 
+	$w = GUICtrlRead($InputDoe)
+	If StringLen($w) > 0 Then
+		$s &= "-doe "
+		$s &= $w
+		$s &= " "
+	EndIf
+
 	$w = _GUICtrlComboBox_GetCurSel($ComboOutputFormat)
 	Switch $w
 		Case 0
@@ -579,6 +612,8 @@ Func read_options()
 		Case 1
 			$s &= " -m "
 			$s &= _Iif(GUICtrlRead($CheckBoxT) = $GUI_CHECKED, "-t", "-nt")
+			$s &= " "
+			$s &= _Iif(GUICtrlRead($CheckBoxOf) = $GUI_CHECKED, "-of", "-nof")
 			$s &= " "
 			$s &= _Iif(GUICtrlRead($CheckBoxEu) = $GUI_CHECKED, "-eu", "-neu")
 			$s &= " "

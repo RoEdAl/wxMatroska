@@ -64,6 +64,7 @@ public:
 
 	void Clear(void);
 
+	wxString Format( const wxString& ) const;
 	wxString FormatTrack( size_t, const wxString& ) const;
 };
 

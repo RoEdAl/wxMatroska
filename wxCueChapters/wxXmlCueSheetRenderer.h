@@ -52,10 +52,16 @@ protected:
 	wxXmlDocument* m_pXmlTags;
 	wxXmlNode* m_pTags;
 
+	wxArrayString m_asMmcPre;
+	wxArrayString m_asMmcPost;
+	wxArrayString m_asMmcInputFiles;
+
 	const wxConfiguration* m_pCfg;
 	wxInputFile m_inputFile;
 	wxString m_sOutputFile;
 	wxString m_sTagsFile;
+	wxString m_sMatroskaFile;
+	wxString m_sMatroskaOptsFile;
 
 	wxULongLong m_offset;
 	size_t m_nTotalParts;
@@ -172,7 +178,6 @@ protected:
 	static wxXmlNode* add_hidden_flag( wxXmlNode*, bool );
 	static wxXmlNode* add_idx_chapter_atom( wxXmlNode*, const wxSamplingInfo&, const wxULongLong&, unsigned int, const wxString&, bool );
 	static wxXmlNode* create_simple_tag( const wxCueTag&, const wxString& );
-	static bool is_multiline( const wxString& );
 	static wxXmlDocument* create_xml_document( const wxString& );
 	static bool is_simple( wxXmlNode*, const wxCueTag& );
 	static wxXmlNode* find_simple_tag( wxXmlNode*, const wxCueTag& );
@@ -182,11 +187,16 @@ protected:
 	static void add_comment_node( wxXmlNode*, const wxString& );
 	static wxULongLong GenerateUID();
 
+	static wxString mkvmerge_escape( const wxString& );
+	static void write_as( wxTextOutputStream&, const wxArrayString& );
+
+protected:
+
+	wxXmlCueSheetRenderer();
+
 public:
 
 	static wxXmlCueSheetRenderer* CreateObject( const wxConfiguration&, const wxInputFile& );
-
-	wxXmlCueSheetRenderer();
 	~wxXmlCueSheetRenderer(void);
 
 	void SetInputFile( const wxInputFile& );

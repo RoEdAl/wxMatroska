@@ -8,6 +8,7 @@
 #include <wxCueFile/wxIndex.h>
 #include <wxCueFile/wxTrack.h>
 #include <wxCueFile/wxCueSheet.h>
+#include <wxEncodingDetection/wxTextOutputStreamWithBOM.h>
 #include "wxConfiguration.h"
 #include "wxInputFile.h"
 #include "wxXmlCueSheetRenderer.h"
@@ -371,10 +372,9 @@ void wxXmlCueSheetRenderer::SetConfiguration( const wxConfiguration& cfg )
 
 void wxXmlCueSheetRenderer::SetInputFile( const wxInputFile& inputFile )
 {
-	wxASSERT( m_pCfg != (wxConfiguration*)NULL );
-
 	m_inputFile = inputFile;
-	m_pCfg->GetOutputFile( inputFile, m_sOutputFile, m_sTagsFile );
+	GetConfig().GetOutputFile( inputFile, m_sOutputFile, m_sTagsFile );
+	GetConfig().GetOutputMatroskaFile( inputFile, m_sMatroskaFile, m_sMatroskaOptsFile );
 }
 
 const wxConfiguration& wxXmlCueSheetRenderer::GetConfig() const
@@ -403,6 +403,26 @@ const wxString& wxXmlCueSheetRenderer::GetTagsFile() const
 	return m_sTagsFile;
 }
 
+wxString wxXmlCueSheetRenderer::mkvmerge_escape( const wxString& s )
+{
+	wxString sRes( s );
+	sRes.Replace( wxT("\\"), wxT("\\\\") );
+	sRes.Replace( wxT(""), wxT("\\s") );
+	sRes.Replace( wxT("\""), wxT("\\2") );
+	sRes.Replace( wxT(":"), wxT("\\c") );
+	sRes.Replace( wxT("#"), wxT("\\h") );
+
+	return sRes;
+}
+
+void wxXmlCueSheetRenderer::write_as( wxTextOutputStream& stream, const wxArrayString& as )
+{
+	for( wxArrayString::const_iterator i = as.begin(); i != as.end(); i++ )
+	{
+		stream << *i << endl;
+	}
+}
+
 bool wxXmlCueSheetRenderer::SaveXmlDoc()
 {
 	wxASSERT( m_pXmlDoc != wxNullXmlDocument );
@@ -420,6 +440,25 @@ bool wxXmlCueSheetRenderer::SaveXmlDoc()
 		if ( !m_pXmlTags->Save( m_sTagsFile ) )
 		{
 			wxLogError( _("Fail to save tags to \u201C%s\u201D"), m_sTagsFile );
+			return false;
+		}
+	}
+
+	if ( GetConfig().GenerateMkvmergeOpts() )
+	{
+		wxFileOutputStream os( m_sMatroskaOptsFile );
+		if ( os.IsOk() )
+		{
+			wxSharedPtr<wxTextOutputStream> pStream( wxTextOutputStreamWithBOMFactory::CreateUTF8( os, wxEOL_NATIVE, true, GetConfig().UseMLang() ) );
+			write_as( *pStream, m_asMmcPre );
+			write_as( *pStream, m_asMmcInputFiles );
+			write_as( *pStream, m_asMmcPost );
+			pStream->Flush();
+			return true;
+		}
+		else
+		{
+			wxLogError( _("Fail to save options to \u201C%s\u201D"), m_sMatroskaOptsFile );
 			return false;
 		}
 	}
@@ -470,19 +509,6 @@ wxXmlDocument* wxXmlCueSheetRenderer::create_xml_document( const wxString& sRoot
 	pXmlDoc->SetRoot( pRoot );
 
 	return pXmlDoc;
-}
-
-bool wxXmlCueSheetRenderer::is_multiline( const wxString& s )
-{
-	wxStringInputStream is( s );
-	wxTextInputStream tis( is, wxT(" \t"), wxConvUTF8 );
-	int nLines = 0;
-	while ( !( is.Eof() || (nLines>1) ) )
-	{
-		tis.ReadLine();
-		nLines += 1;
-	}
-	return (nLines>1);
 }
 
 wxXmlNode* wxXmlCueSheetRenderer::create_simple_tag( const wxCueTag& tag, const wxString& sLanguage )
@@ -796,6 +822,49 @@ bool wxXmlCueSheetRenderer::OnPreRenderDisc( const wxCueSheet& cueSheet )
 	add_comment_node( m_pTags, wxString::Format( wxT("CUE file: \u201C%s\u201D"), m_inputFile.ToString(false) ) );
 	add_comment_node( m_pTags, wxString::Format( wxT("Number of tracks: %d"), cueSheet.GetTracks().Count() ) );
 
+	if ( GetConfig().GenerateMkvmergeOpts() )
+	{
+		m_asMmcPre.Empty();
+		m_asMmcPre.Add( wxT("# Output file") );
+		m_asMmcPre.Add( wxT("-o") );
+		m_asMmcPre.Add( mkvmerge_escape( m_sMatroskaFile ) );
+		m_asMmcPre.Add( wxT("--language") );
+		m_asMmcPre.Add( mkvmerge_escape( wxString::Format( wxT("0:%s"), GetConfig().GetLang() ) ) );
+		m_asMmcPre.Add( wxT("--default-track") );
+		m_asMmcPre.Add( wxT("0:yes") );
+		m_asMmcPre.Add( wxT("--track-name") );
+		m_asMmcPre.Add( wxString::Format( wxT("0:%s"), cueSheet.Format( GetConfig().GetMatroskaNameFormat() ) ) );
+		m_asMmcPre.Add( wxT("# Input file(s)") );
+
+		const wxArrayTrack& tracks = cueSheet.GetTracks();
+		size_t nTracks = tracks.Count();
+		for( size_t i=0; i<nTracks; i++ )
+		{
+			if ( tracks[i].HasDataFile() )
+			{
+				bool bNext = !m_asMmcInputFiles.IsEmpty();
+
+				m_asMmcInputFiles.Add( wxT("-a") );
+				m_asMmcInputFiles.Add( wxT("0") );
+				m_asMmcInputFiles.Add( wxT("-D") );
+				m_asMmcInputFiles.Add( wxT("-S") );
+				m_asMmcInputFiles.Add( wxT("-T") );
+				m_asMmcInputFiles.Add( wxT("--no-global-tags") );
+				m_asMmcInputFiles.Add( wxT("--no-chapters" ) );
+				if ( bNext )
+				{
+					wxString sLine( tracks[i].GetDataFile().GetFullPath() );
+					sLine.Prepend( wxT('+') );
+					m_asMmcInputFiles.Add( mkvmerge_escape( sLine ) );
+				}
+				else
+				{
+					m_asMmcInputFiles.Add( mkvmerge_escape( tracks[i].GetDataFile().GetFullPath() ) );
+				}
+			}
+		}
+	}
+
 	return wxCueSheetRenderer::OnPreRenderDisc( cueSheet );
 }
 
@@ -998,6 +1067,22 @@ bool wxXmlCueSheetRenderer::OnPostRenderDisc( const wxCueSheet& cueSheet )
 	else
 	{
 		m_offset = wxSamplingInfo::wxInvalidNumberOfFrames;
+	}
+
+	if ( GetConfig().GenerateMkvmergeOpts() )
+	{
+		m_asMmcPost.Empty();
+		m_asMmcPost.Add( wxT("# General options") );
+		m_asMmcPost.Add( wxT("--title") );
+		m_asMmcPost.Add( cueSheet.Format( GetConfig().GetMatroskaNameFormat() ) );
+		m_asMmcPost.Add( wxT("--chapters") );
+		m_asMmcPost.Add( mkvmerge_escape(m_sOutputFile ) );
+
+		if ( GetConfig().GenerateTags() )
+		{
+			m_asMmcPost.Add( wxT("--global-tags") );
+			m_asMmcPost.Add( mkvmerge_escape( m_sTagsFile ) );
+		}
 	}
 
 	wxLogInfo( _("Conversion done") );

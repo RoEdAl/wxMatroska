@@ -7,8 +7,8 @@
 #include <wxCueFile/wxCueComponent.h>
 #include <wxCueFile/wxUnquoter.h>
 #include <wxCueFile/wxTrailingSpacesRemover.h>
+#include <wxCueFile/wxTextOutputStreamOnString.h>
 #include "wxTextInputStreamOnString.h"
-#include "wxTextOutputStreamOnString.h"
 
 const wxChar* const wxCueTag::Name::CUESHEET = wxT("CUESHEET");
 const wxChar* const wxCueTag::Name::TOTALTRACKS = wxT("TOTALTRACKS");

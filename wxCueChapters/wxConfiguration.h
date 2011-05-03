@@ -44,6 +44,7 @@ protected:
 	bool m_bCorrectQuotationMarks;
 	bool m_bSaveCueSheet;
 	bool m_bGenerateTags;
+	bool m_bGenerateMkvmergeOpts;
 	bool m_bGenerateEditionUID;
 	bool m_bGenerateTagsFromComments;
 	FILE_ENCODING m_eCueSheetFileEncoding;
@@ -59,6 +60,7 @@ protected:
 	wxString m_sAlternateExtensions;
 	wxString m_sLang;
 	wxString m_sTrackNameFormat;
+	wxString m_sMatroskaNameFormat;
 
 	wxArrayInputFile m_inputFile;
 	wxFileName m_outputFile;
@@ -66,6 +68,7 @@ protected:
 	wxString m_sCueSheetExt;
 	wxString m_sMatroskaChaptersXmlExt;
 	wxString m_sMatroskaTagsXmlExt;
+	wxString m_sMatroskaOptsExt;
 
 	wxSortedArrayString m_asLang;
 
@@ -87,6 +90,7 @@ public:
 	bool HasAlternateExtensions() const;
 	const wxString& GetLang() const;
 	const wxString& GetTrackNameFormat() const;
+	const wxString& GetMatroskaNameFormat() const;
 	const wxArrayInputFile& GetInputFiles() const;
 	bool IsEmbedded() const;
 	bool CorrectQuotationMarks() const;
@@ -98,7 +102,9 @@ public:
 	const wxString& CueSheetExt() const;
 	const wxString& MatroskaChaptersXmlExt() const;
 	const wxString& MatroskaTagsXmlExt() const;
+	const wxString& MatroskaOptsExt() const;
 	bool GenerateTags() const;
+	bool GenerateMkvmergeOpts() const;
 	bool GenerateEditionUID() const;
 	bool GenerateTagsFromComments() const;
 	FILE_ENCODING GetCueSheetFileEncoding() const;
@@ -110,12 +116,18 @@ public:
 
 	wxString GetOutputFile( const wxInputFile& ) const;
 	void GetOutputFile( const wxInputFile&, wxString&, wxString& ) const;
+	void GetOutputMatroskaFile( const wxInputFile&, wxString&, wxString& ) const;
 
 protected:
 
 	static const wxChar CUE_SHEET_EXT[];
 	static const wxChar MATROSKA_CHAPTERS_EXT[];
 	static const wxChar MATROSKA_TAGS_EXT[];
+	static const wxChar MATROSKA_OPTS_EXT[];
+	static const wxChar MATROSKA_AUDIO_EXT[];
+
+	static const wxChar MATROSKA_NAME_FORMAT[];
+	static const wxChar TRACK_NAME_FORMAT[];
 
 public:
 

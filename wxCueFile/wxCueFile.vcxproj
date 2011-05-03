@@ -106,12 +106,12 @@
     <ClCompile Include="wxWavpackTagReader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\inc\wxCueFile\wxTextOutputStreamOnString.h" />
     <ClInclude Include="..\inc\wxCueFile\wxTrailingSpacesRemover.h" />
     <ClInclude Include="StdWx.h" />
     <ClInclude Include="wxAbstractMetaDataReader.h" />
     <ClInclude Include="wxFlacMetaDataReader.h" />
     <ClInclude Include="wxTextInputStreamOnString.h" />
-    <ClInclude Include="wxTextOutputStreamOnString.h" />
     <ClInclude Include="wxWavpackStream.h" />
     <ClInclude Include="wxWavpackTagReader.h" />
     <ClInclude Include="..\inc\wxCueFile\wxCueComponent.h" />
