@@ -12,6 +12,7 @@ public:
 	wxTextInputStreamOnString( const wxString& );
 	const wxStringInputStream& GetStringStream() const;
 	wxTextInputStream& GetStream();
+	wxTextInputStream& operator *();
 	bool Eof() const;
 
 protected:

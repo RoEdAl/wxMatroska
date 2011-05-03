@@ -21,6 +21,11 @@ wxTextInputStream& wxTextInputStreamOnString::GetStream()
 	return m_textInputStream;
 }
 
+wxTextInputStream& wxTextInputStreamOnString::operator *()
+{
+	return m_textInputStream;
+}
+
 bool wxTextInputStreamOnString::Eof() const
 {
 	return m_inputStream.Eof();

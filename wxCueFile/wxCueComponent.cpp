@@ -92,9 +92,9 @@ wxString wxCueTag::GetFlattenValue() const
 
 	while ( !tis.Eof() )
 	{
-		tos.GetStream() << tis.GetStream().ReadLine() << wxT('/');
+		*tos << (*tis).ReadLine() << wxT('/');
 	}
-	tos.Flush();
+	(*tos).Flush();
 
 	const wxString& sOut = tos.GetString();
 	return wxString( sOut, sOut.Length() - 1 );

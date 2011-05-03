@@ -11,9 +11,9 @@ public:
 
 	const wxStringOutputStream& GetStringStream() const;
 	wxTextOutputStream& GetStream();
+	wxTextOutputStream& operator *();
 
 	const wxString& GetString() const;
-	void Flush();
 
 protected:
 

@@ -32,7 +32,7 @@ wxTextOutputStream& wxTextOutputStreamOnString::GetStream()
 	return m_textOutputStream;
 }
 
-void wxTextOutputStreamOnString::Flush()
+wxTextOutputStream& wxTextOutputStreamOnString::operator *()
 {
-	m_textOutputStream.Flush();
+	return m_textOutputStream;
 }

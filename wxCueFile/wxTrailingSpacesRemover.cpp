@@ -5,7 +5,7 @@
 #include "StdWx.h"
 #include <wxCueFile/wxTrailingSpacesRemover.h>
 
-const wxChar wxTrailingSpacesRemover::REG_EX[] = wxT("\\A[[:space:]]*([^[:space:]].*[^[:space:]])[[:space:]]*\\Z");
+const wxChar wxTrailingSpacesRemover::REG_EX[] = wxT("\\A[[:space:][.newline.][.carriage-return.]]*([^[:space:][.newline.][.carriage-return.]].*[^[:space:][.newline.][.carriage-return.]])[[:space:][.newline.][.carriage-return.]]*\\Z");
 
 wxTrailingSpacesRemover::wxTrailingSpacesRemover()
 	:m_reTrailingSpaces( REG_EX, wxRE_ADVANCED )
