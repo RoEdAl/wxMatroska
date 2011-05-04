@@ -4,7 +4,7 @@
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.41
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.42
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -515,7 +515,7 @@ Func set_default_options()
 	_GUICtrlComboBox_SetCurSel($ComboOutputFormat, 1)
 	GUICtrlSetState($CheckBoxT, $GUI_UNCHECKED)
 	GUICtrlSetState($CheckBoxOf, $GUI_UNCHECKED)
-	GUICtrlSetState($CheckBoxRunMkvmerge, $GUI_UNCHECKED)
+	GUICtrlSetState($CheckBoxRunMkvmerge, $GUI_CHECKED)
 	_GUICtrlComboBox_SetCurSel($ComboCueSheetEncoding, 0)
 	generate_tags_enable(1)
 	_GUICtrlComboBox_SetCurSel($ComboTrack01, 1)
@@ -618,28 +618,28 @@ Func read_options()
 
 	$w = GUICtrlRead($InputDce)
 	If StringLen($w) > 0 Then
-		$s &= "-dce "
+		$s &= "--cue-sheet-file-extension "
 		$s &= $w
 		$s &= " "
 	EndIf
 
 	$w = GUICtrlRead($InputDme)
 	If StringLen($w) > 0 Then
-		$s &= "-dme "
+		$s &= "--matroska-chapters-file-extension "
 		$s &= $w
 		$s &= " "
 	EndIf
 
 	$w = GUICtrlRead($InputDte)
 	If StringLen($w) > 0 Then
-		$s &= "-dte "
+		$s &= "--matroska-tags-file-extension "
 		$s &= $w
 		$s &= " "
 	EndIf
 
 	$w = GUICtrlRead($InputDoe)
 	If StringLen($w) > 0 Then
-		$s &= "-doe "
+		$s &= "--mkvmerge-options-file-extension "
 		$s &= $w
 		$s &= " "
 	EndIf
