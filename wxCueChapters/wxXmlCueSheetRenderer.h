@@ -189,6 +189,7 @@ protected:
 
 	static wxString mkvmerge_escape( const wxString& );
 	static void write_as( wxTextOutputStream&, const wxArrayString& );
+	static wxString get_file_name( const wxString& );
 
 protected:
 
@@ -206,6 +207,7 @@ public:
 
 	const wxString& GetOutputFile() const;
 	const wxString& GetTagsFile() const;
+	const wxString& GetMkvmergeOptionsFile() const;
 
 	bool SaveXmlDoc();
 	bool IsOffsetValid() const;

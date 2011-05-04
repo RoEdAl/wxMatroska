@@ -45,6 +45,7 @@ protected:
 	bool m_bSaveCueSheet;
 	bool m_bGenerateTags;
 	bool m_bGenerateMkvmergeOpts;
+	bool m_bRunMkvmerge;
 	bool m_bGenerateEditionUID;
 	bool m_bGenerateTagsFromComments;
 	FILE_ENCODING m_eCueSheetFileEncoding;
@@ -56,6 +57,7 @@ protected:
 	unsigned int m_nEmbeddedModeFlags;
 	wxArrayTagSource m_aeIgnoredSources;
 	bool m_bUseMLang;
+	bool m_bFullPaths;
 
 	wxString m_sAlternateExtensions;
 	wxString m_sLang;
@@ -64,6 +66,7 @@ protected:
 
 	wxArrayInputFile m_inputFile;
 	wxFileName m_outputFile;
+	wxFileName m_mkvmergeDir;
 
 	wxString m_sCueSheetExt;
 	wxString m_sMatroskaChaptersXmlExt;
@@ -105,6 +108,8 @@ public:
 	const wxString& MatroskaOptsExt() const;
 	bool GenerateTags() const;
 	bool GenerateMkvmergeOpts() const;
+	bool RunMkvmerge() const;
+	const wxFileName& GetMkvmergeDir() const;
 	bool GenerateEditionUID() const;
 	bool GenerateTagsFromComments() const;
 	FILE_ENCODING GetCueSheetFileEncoding() const;
@@ -113,6 +118,7 @@ public:
 	unsigned int GetEmbeddedModeFlags() const;
 	bool ShouldIgnoreTag( const wxCueTag& ) const;
 	bool UseMLang() const;
+	bool UseFullPaths() const;
 
 	wxString GetOutputFile( const wxInputFile& ) const;
 	void GetOutputFile( const wxInputFile&, wxString&, wxString& ) const;

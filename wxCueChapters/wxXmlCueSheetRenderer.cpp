@@ -12,6 +12,9 @@
 #include "wxConfiguration.h"
 #include "wxInputFile.h"
 #include "wxXmlCueSheetRenderer.h"
+#include "wxApp.h"
+
+// ===============================================================================
 
 wxIMPLEMENT_DYNAMIC_CLASS( wxXmlCueSheetRenderer, wxCueSheetRenderer )
 
@@ -407,11 +410,10 @@ wxString wxXmlCueSheetRenderer::mkvmerge_escape( const wxString& s )
 {
 	wxString sRes( s );
 	sRes.Replace( wxT("\\"), wxT("\\\\") );
-	sRes.Replace( wxT(""), wxT("\\s") );
+	sRes.Replace( wxT(" "), wxT("\\s") );
 	sRes.Replace( wxT("\""), wxT("\\2") );
 	sRes.Replace( wxT(":"), wxT("\\c") );
 	sRes.Replace( wxT("#"), wxT("\\h") );
-
 	return sRes;
 }
 
@@ -824,12 +826,25 @@ bool wxXmlCueSheetRenderer::OnPreRenderDisc( const wxCueSheet& cueSheet )
 
 	if ( GetConfig().GenerateMkvmergeOpts() )
 	{
+		wxDateTime dtNow( wxDateTime::Now() );
+
 		m_asMmcPre.Empty();
+		m_asMmcPre.Add( wxString::Format( wxT("# This file was created by %s tool"), wxGetApp().GetAppDisplayName() ) );
+		m_asMmcPre.Add( wxString::Format( wxT("# Application version: %s"), wxGetApp().APP_VERSION ) );
+		m_asMmcPre.Add( wxString::Format( wxT("# Application vendor: %s"), wxGetApp().GetVendorDisplayName() ) );
+		m_asMmcPre.Add( wxString::Format( wxT("# Creation time: %s %s"), dtNow.FormatISODate(), dtNow.FormatISOTime() ) );
 		m_asMmcPre.Add( wxT("# Output file") );
 		m_asMmcPre.Add( wxT("-o") );
-		m_asMmcPre.Add( mkvmerge_escape( m_sMatroskaFile ) );
+		if ( GetConfig().UseFullPaths() )
+		{
+			m_asMmcPre.Add( mkvmerge_escape( m_sMatroskaFile ) );
+		}
+		else
+		{
+			m_asMmcPre.Add( mkvmerge_escape( get_file_name( m_sMatroskaFile ) ) );
+		}
 		m_asMmcPre.Add( wxT("--language") );
-		m_asMmcPre.Add( mkvmerge_escape( wxString::Format( wxT("0:%s"), GetConfig().GetLang() ) ) );
+		m_asMmcPre.Add( wxString::Format( wxT("0:%s"), GetConfig().GetLang() ) );
 		m_asMmcPre.Add( wxT("--default-track") );
 		m_asMmcPre.Add( wxT("0:yes") );
 		m_asMmcPre.Add( wxT("--track-name") );
@@ -1073,15 +1088,31 @@ bool wxXmlCueSheetRenderer::OnPostRenderDisc( const wxCueSheet& cueSheet )
 	{
 		m_asMmcPost.Empty();
 		m_asMmcPost.Add( wxT("# General options") );
+		m_asMmcPost.Add( wxT("--default-language") );
+		m_asMmcPost.Add( GetConfig().GetLang() );
 		m_asMmcPost.Add( wxT("--title") );
 		m_asMmcPost.Add( cueSheet.Format( GetConfig().GetMatroskaNameFormat() ) );
 		m_asMmcPost.Add( wxT("--chapters") );
-		m_asMmcPost.Add( mkvmerge_escape(m_sOutputFile ) );
+		if ( GetConfig().UseFullPaths() )
+		{
+			m_asMmcPost.Add( mkvmerge_escape( m_sOutputFile ) );
+		}
+		else
+		{
+			m_asMmcPost.Add( mkvmerge_escape( get_file_name(m_sOutputFile) ) );
+		}
 
 		if ( GetConfig().GenerateTags() )
 		{
 			m_asMmcPost.Add( wxT("--global-tags") );
-			m_asMmcPost.Add( mkvmerge_escape( m_sTagsFile ) );
+			if ( GetConfig().UseFullPaths() )
+			{
+				m_asMmcPost.Add( mkvmerge_escape( m_sTagsFile ) );
+			}
+			else
+			{
+				m_asMmcPost.Add( mkvmerge_escape( get_file_name( m_sTagsFile ) ) );
+			}
 		}
 	}
 
@@ -1092,4 +1123,15 @@ bool wxXmlCueSheetRenderer::OnPostRenderDisc( const wxCueSheet& cueSheet )
 bool wxXmlCueSheetRenderer::IsOffsetValid() const
 {
 	return (m_offset != wxSamplingInfo::wxInvalidNumberOfFrames);
+}
+
+const wxString& wxXmlCueSheetRenderer::GetMkvmergeOptionsFile() const
+{
+	return m_sMatroskaOptsFile;
+}
+
+wxString wxXmlCueSheetRenderer::get_file_name( const wxString& sFullPath )
+{
+	wxFileName fn( sFullPath );
+	return fn.GetFullName();
 }

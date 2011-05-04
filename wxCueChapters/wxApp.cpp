@@ -14,21 +14,25 @@
 #include "wxXmlCueSheetRenderer.h"
 #include "wxApp.h"
 
-const wxChar wxMyApp::APP_VERSION[] = wxT("0.62");
+// ===============================================================================
+
+const wxChar wxMyApp::APP_NAME[] = wxT("cue2mkc");
+const wxChar wxMyApp::APP_VERSION[] = wxT("0.7");
+const wxChar wxMyApp::APP_VENDOR_NAME[] = wxT("Edmunt Pienkowsky");
 const wxChar wxMyApp::APP_AUTHOR[] = wxT("Edmunt Pienkowsky - roed@onet.eu");
 const wxChar wxMyApp::LICENSE_FILE_NAME[] = wxT("license.txt");
 
+// ===============================================================================
+
 static const size_t MAX_LICENSE_FILE_SIZE = 4 * 1024;
+
+// ===============================================================================
 
 wxIMPLEMENT_APP(wxMyApp);
 
 wxMyApp::wxMyApp(void)
 	:m_sSeparator( wxT('='), 75 ),
 	m_pRenderer(wxXmlCueSheetRenderer::Null)
-{
-}
-
-wxMyApp::~wxMyApp(void)
 {
 }
 
@@ -139,21 +143,21 @@ void wxMyApp::ShowLicense()
 	fn.SetFullName( LICENSE_FILE_NAME );
 	if ( !fn.FileExists() )
 	{
-		wxLogError( _("Cannot find license file \u201C%s\u201D."), fn.GetFullPath() );
+		wxLogError( _("Cannot find license file \u201C%s\u201D"), fn.GetFullPath() );
 		return;
 	}
 
 	wxULongLong fs( fn.GetSize() );
 	if ( fs == wxInvalidSize )
 	{
-		wxLogError( _("Unable to read license \u201C%s\u201D."), fn.GetFullPath() );
+		wxLogError( _("Unable to read license \u201C%s\u201D"), fn.GetFullPath() );
 		return;
 	}
 
 	wxULongLong maxSize( 0, MAX_LICENSE_FILE_SIZE );
 	if ( fs > maxSize )
 	{
-		wxLogError( _("License file \u201C%s\u201D is too big."), fn.GetFullPath() );
+		wxLogError( _("License file \u201C%s\u201D is too big"), fn.GetFullPath() );
 		return;
 	}
 
@@ -197,8 +201,8 @@ bool wxMyApp::OnCmdLineParsed( wxCmdLineParser& cmdline )
 
  bool wxMyApp::OnInit()
  {
-	 SetAppName( wxT("cue2mkc") );
-	 SetVendorName( wxT("Edmunt Pienkowsky") );
+	 SetAppName( APP_NAME );
+	 SetVendorName( APP_VENDOR_NAME );
 	 SetVendorDisplayName( APP_AUTHOR );
 
 	 wxDateTime dt( wxDateTime::Now() );
@@ -206,7 +210,7 @@ bool wxMyApp::OnCmdLineParsed( wxCmdLineParser& cmdline )
 
 	 if ( !CheckLicense() )
 	 {
-		 wxLogError( _("Cannot find or load license file.") );
+		 wxLogError( _("Cannot find or load license file") );
 		 return false;
 	 }
 
@@ -248,6 +252,13 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, const wxCueSheet& cu
 			if ( !m_cfg.GetMerge() )
 			{
 				if ( !renderer.SaveXmlDoc() )
+				{
+					return 1;
+				}
+
+				if ( m_cfg.GenerateMkvmergeOpts() &&
+					 m_cfg.RunMkvmerge() &&
+					 !RunMkvmerge( renderer.GetMkvmergeOptionsFile() ) )
 				{
 					return 1;
 				}
@@ -373,6 +384,13 @@ int wxMyApp::OnRun()
 		{
 			res = 1;
 		}
+
+		if ( m_cfg.GenerateMkvmergeOpts() &&
+			 m_cfg.RunMkvmerge() &&
+			 !RunMkvmerge( renderer.GetMkvmergeOptionsFile() ) )
+		{
+			res = 1;
+		}
 	}
 
 	return (m_cfg.AbortOnError() || m_cfg.GetMerge())? res : 0;
@@ -380,14 +398,13 @@ int wxMyApp::OnRun()
 
 int wxMyApp::OnExit()
 {
-	CoUninitialize();
-
 	int res = wxAppConsole::OnExit();
 	if ( m_pRenderer != wxXmlCueSheetRenderer::Null )
 	{
 		delete m_pRenderer;
 	}
-	wxLogMessage( _("Bye") );
+	CoUninitialize();
+	wxLogMessage( _("Done") );
 	return res;
 }
 
@@ -438,3 +455,42 @@ wxXmlCueSheetRenderer& wxMyApp::GetXmlRenderer()
 	wxASSERT( HasXmlRenderer() );
 	return *m_pRenderer;
 }
+
+bool wxMyApp::RunMkvmerge( const wxString& sOptionsFile )
+{
+	wxASSERT( m_cfg.GenerateMkvmergeOpts() );
+	wxASSERT( m_cfg.RunMkvmerge() );
+
+	wxString sCmdLine;
+	if ( m_cfg.GetMkvmergeDir().IsOk() )
+	{
+		wxFileName mkvmerge( m_cfg.GetMkvmergeDir().GetFullPath(), wxT("mkvmerge") );
+		sCmdLine.Printf( wxT("\"%s\" --quiet \"@%s\""), mkvmerge.GetFullPath(), sOptionsFile );
+	}
+	else
+	{
+		sCmdLine.Printf( wxT("mkvmerge --quiet \"@%s\""), sOptionsFile );
+	}
+
+	wxLogInfo( _("Running mkvmerge with options file \u201C%s\u201D"), sOptionsFile );
+	long nRes = wxExecute( sCmdLine, wxEXEC_SYNC|wxEXEC_NOEVENTS );
+	if ( nRes == -1 )
+	{
+		wxLogError( _T("Fail to execute mkvmerge tool") );
+		return false;
+	}
+	else
+	{
+		if ( nRes <= 1 )
+		{
+			wxLogInfo( _T("mkvmerge exit code: %d"), nRes );
+			return true;
+		}
+		else
+		{
+			wxLogError( _T("mkvmerge exit code: %d"), nRes );
+			return false;
+		}
+	}
+}
+

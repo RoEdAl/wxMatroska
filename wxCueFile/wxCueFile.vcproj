@@ -225,7 +225,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\wxTextInputStreamOnString.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\wxTextOutputStreamOnString.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\wxTrack.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\wxTrailingSpacesRemover.cpp"
 				>
 			</File>
 			<File
@@ -256,6 +268,10 @@
 			</File>
 			<File
 				RelativePath=".\wxFlacMetaDataReader.h"
+				>
+			</File>
+			<File
+				RelativePath=".\wxTextInputStreamOnString.h"
 				>
 			</File>
 			<File
@@ -311,7 +327,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inc\wxCueFile\wxTextOutputStreamOnString.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inc\wxCueFile\wxTrack.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inc\wxCueFile\wxTrailingSpacesRemover.h"
 				>
 			</File>
 			<File

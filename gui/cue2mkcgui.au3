@@ -4,7 +4,7 @@
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.35
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.41
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -20,6 +20,9 @@
 ;
 ; cue2mkcgui - simple frontend cue2mkc utility.
 ;
+
+AutoItSetOption("TrayIconHide", 1)
+AutoItSetOption("GUICloseOnESC", 0)
 
 #include <Constants.au3>
 #include <GUIConstantsEx.au3>
@@ -90,8 +93,17 @@ Func get_directory($sPath)
 	Return SetError(0, 0, $sDirectory)
 EndFunc   ;==>get_directory
 
-#Region ### START Koda GUI section ### Form=C:\Documents and Settings\VBox\My Documents\Visual Studio 2010\Projects\wxMatroska.bitbucket\gui\cue2mkcgui.kxf
-$FormMain = GUICreate("cue2mkc GUI", 540, 416, -1, -1, BitOR($WS_MAXIMIZEBOX, $WS_MINIMIZEBOX, $WS_SIZEBOX, $WS_THICKFRAME, $WS_SYSMENU, $WS_CAPTION, $WS_OVERLAPPEDWINDOW, $WS_TILEDWINDOW, $WS_POPUP, $WS_POPUPWINDOW, $WS_GROUP, $WS_TABSTOP, $WS_BORDER, $WS_CLIPSIBLINGS), BitOR($WS_EX_ACCEPTFILES, $WS_EX_WINDOWEDGE))
+Func get_mkvmerge_dir()
+	Local $sMkvmergeExecutable = RegRead("HKCU\Software\mkvmergeGUI\GUI", "mkvmerge_executable")
+	If @error Then
+		Return SetError(0, 1, "")
+	Else
+		Return get_directory($sMkvmergeExecutable)
+	EndIf
+EndFunc   ;==>get_mkvmerge_dir
+
+#Region ### START Koda GUI section ### Form=D:\Temp\wxMatroska.bitbucket\gui\cue2mkcgui.kxf
+$FormMain = GUICreate("cue2mkc GUI", 540, 424, -1, -1, BitOR($WS_MAXIMIZEBOX, $WS_MINIMIZEBOX, $WS_SIZEBOX, $WS_THICKFRAME, $WS_SYSMENU, $WS_CAPTION, $WS_OVERLAPPEDWINDOW, $WS_TILEDWINDOW, $WS_POPUP, $WS_POPUPWINDOW, $WS_GROUP, $WS_TABSTOP, $WS_BORDER, $WS_CLIPSIBLINGS), BitOR($WS_EX_ACCEPTFILES, $WS_EX_WINDOWEDGE))
 GUISetFont(8, 400, 0, "Microsoft Sans Serif")
 $DummyOutput = GUICtrlCreateDummy()
 $MainTab = GUICtrlCreateTab(0, 0, 541, 377, $TCS_MULTILINE)
@@ -141,7 +153,7 @@ GUICtrlSetFont(-1, 8, 800, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $ListLog = GUICtrlCreateList("", 4, 64, 529, 276, BitOR($LBS_USETABSTOPS, $LBS_NOINTEGRALHEIGHT, $LBS_NOSEL, $WS_HSCROLL, $WS_VSCROLL), $WS_EX_STATICEDGE)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
-GUICtrlSetBkColor(-1, 0xECE9D8)
+GUICtrlSetBkColor(-1, 0xD4D0C8)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKBOTTOM)
 GUICtrlSetTip(-1, "Application messages")
 $ButtonMsgCopy = GUICtrlCreateButton("&Copy", 4, 343, 61, 29, 0)
@@ -153,14 +165,13 @@ GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Clear log")
 $OptionsPane = GUICtrlCreateTabItem("&General options")
-GUICtrlSetState(-1, $GUI_SHOW)
 $GroupGeneral = GUICtrlCreateGroup("&General", 4, 45, 265, 89, -1, $WS_EX_TRANSPARENT)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $CheckBoxMerge = GUICtrlCreateCheckbox("Merge mode", 8, 63, 85, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Merge all input files into one cue sheet (requires MediaInfo lubrary)")
-$CheckBoxCq = GUICtrlCreateCheckbox("Correct ""simple 'quotation' marks"" inside strings", 8, 80, 261, 17)
+$CheckBoxCq = GUICtrlCreateCheckbox("Correct ""simple 'quotation' marks"" inside strings", 8, 80, 253, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $CheckBoxA = GUICtrlCreateCheckbox("Abort when conversion errors occurs", 8, 96, 201, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
@@ -188,7 +199,7 @@ GUICtrlSetLimit(-1, 150)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Comma-separated list of alternate extensions of media files")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-$GroupOutputOptions = GUICtrlCreateGroup("&Output", 4, 239, 265, 85)
+$GroupOutputOptions = GUICtrlCreateGroup("&Output", 4, 239, 265, 101)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $LabelOutputFormat = GUICtrlCreateLabel("Format:", 12, 254, 43, 21, $SS_CENTERIMAGE)
@@ -199,6 +210,8 @@ GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCK
 $CheckBoxT = GUICtrlCreateCheckbox("Generate tags XML file", 26, 277, 157, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $CheckBoxOf = GUICtrlCreateCheckbox("Generate options file for mkvmerge", 26, 297, 213, 17)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+$CheckBoxRunMkvmerge = GUICtrlCreateCheckbox("Run mkvmerge after options file generation", 26, 315, 229, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 $ChapterOptionsPane = GUICtrlCreateTabItem("&Chapters file generation options")
@@ -267,6 +280,7 @@ GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCK
 GUICtrlSetTip(-1, "Ignore all tags taken from media's metadata")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 $OtherOptionsPane = GUICtrlCreateTabItem("&Advanced options")
+GUICtrlSetState(-1, $GUI_SHOW)
 $GroupFileExtensions = GUICtrlCreateGroup("&File extensions", 4, 42, 225, 113, -1, $WS_EX_TRANSPARENT)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
@@ -287,7 +301,7 @@ GUICtrlSetLimit(-1, 50)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $LabelDoe = GUICtrlCreateLabel("mkvmerge options:", 8, 125, 95, 21, $SS_CENTERIMAGE)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$InputDoe = GUICtrlCreateInput("mmc.txt", 109, 125, 53, 21)
+$InputDoe = GUICtrlCreateInput("opt.txt", 109, 125, 53, 21)
 GUICtrlSetLimit(-1, 50)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
@@ -319,11 +333,27 @@ $ComboCueSheetEncoding = GUICtrlCreateCombo("", 70, 297, 141, 25, BitOR($CBS_DRO
 GUICtrlSetData(-1, "default|UTF-8|UTF-8 with BOM|UTF-16|UTF-16 with BOM")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
+$GroupMkvmerge = GUICtrlCreateGroup("mkvmerge", 236, 44, 277, 73)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+$LabelMkvmergeDir = GUICtrlCreateLabel("Location:", 242, 62, 55, 21, $SS_CENTERIMAGE)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+GUICtrlSetTip(-1, "Directory where mkvmerge tool resides")
+$InputMkvmergeDir = GUICtrlCreateInput("", 301, 62, 169, 21)
+GUICtrlSetLimit(-1, 50)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+$ButtonMkvmergeDir = GUICtrlCreateButton("&...", 476, 62, 25, 21, $WS_GROUP)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+$CheckBoxFullPaths = GUICtrlCreateCheckbox("Generate full paths in options file", 243, 91, 181, 17)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+GUICtrlSetTip(-1, "Read metadata from media file")
+GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
-$CheckBoxVerbose = GUICtrlCreateCheckbox("&Verbose mode", 2, 380, 97, 17)
+$CheckBoxVerbose = GUICtrlCreateCheckbox("&Verbose mode", 2, 380, 89, 17)
+GUICtrlSetFont(-1, 7, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Be more verbose during cu2mkc execution")
-$CheckBoxSwitchToOutput = GUICtrlCreateCheckbox("&Switch to messages pane", 2, 397, 141, 17)
+$CheckBoxSwitchToOutput = GUICtrlCreateCheckbox("&Switch to messages pane", 2, 397, 133, 17)
+GUICtrlSetFont(-1, 7, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Switch to messages pane before running")
 $ButtonLicense = GUICtrlCreateButton("&License", 341, 384, 65, 29, 0)
@@ -371,10 +401,12 @@ Func generate_tags_enable($nMode)
 		Case 0
 			GUICtrlSetState($CheckBoxT, $GUI_DISABLE)
 			GUICtrlSetState($CheckBoxOf, $GUI_DISABLE)
+			GUICtrlSetState($CheckBoxRunMkvmerge, $GUI_DISABLE)
 
 		Case 1
 			GUICtrlSetState($CheckBoxT, $GUI_ENABLE)
 			GUICtrlSetState($CheckBoxOf, $GUI_ENABLE)
+			GUICtrlSetState($CheckBoxRunMkvmerge, $GUI_ENABLE)
 	EndSwitch
 EndFunc   ;==>generate_tags_enable
 
@@ -479,10 +511,11 @@ Func set_default_options()
 	GUICtrlSetData($InputDce, "cue")
 	GUICtrlSetData($InputDme, "mkc.xml")
 	GUICtrlSetData($InputDte, "mkt.xml")
-	GUICtrlSetData($InputDoe, "mmc.txt")
+	GUICtrlSetData($InputDoe, "opt.txt")
 	_GUICtrlComboBox_SetCurSel($ComboOutputFormat, 1)
 	GUICtrlSetState($CheckBoxT, $GUI_UNCHECKED)
 	GUICtrlSetState($CheckBoxOf, $GUI_UNCHECKED)
+	GUICtrlSetState($CheckBoxRunMkvmerge, $GUI_UNCHECKED)
 	_GUICtrlComboBox_SetCurSel($ComboCueSheetEncoding, 0)
 	generate_tags_enable(1)
 	_GUICtrlComboBox_SetCurSel($ComboTrack01, 1)
@@ -498,6 +531,8 @@ Func set_default_options()
 	GUICtrlSetState($CheckBoxReadMetadata, $GUI_CHECKED)
 	_GUICtrlComboBox_SetCurSel($ComboFlacMode, 1)
 	GUICtrlSetState($CheckBoxMLang, $GUI_CHECKED)
+	GUICtrlSetData($InputMkvmergeDir, get_mkvmerge_dir())
+	GUICtrlSetState($CheckBoxFullPaths, $GUI_CHECKED)
 EndFunc   ;==>set_default_options
 
 Func get_encoding_str($nSel)
@@ -568,6 +603,13 @@ Func read_options()
 		$s &= " "
 	EndIf
 
+	$w = GUICtrlRead($InputMkvmergeDir)
+	If StringLen($w) > 0 Then
+		$s &= "--mkvmerge-directory """
+		$s &= $w
+		$s &= """ "
+	EndIf
+
 	$s &= _Iif(GUICtrlRead($CheckBoxR) = $GUI_CHECKED, "-r", "-nr")
 	$s &= " "
 
@@ -619,6 +661,8 @@ Func read_options()
 			$s &= " "
 			$s &= _Iif(GUICtrlRead($CheckBoxTc) = $GUI_CHECKED, "-tc", "-ntc")
 			$s &= " "
+			$s &= _Iif(GUICtrlRead($CheckBoxRunMkvmerge) = $GUI_CHECKED, "--run-mkvmerge", "--dont-run-mkvmerge")
+			$s &= " "
 			$s &= _Iif(GUICtrlRead($CheckBoxTagIgnoreCdText) = $GUI_CHECKED, "--ignore-cdtext-tags", "--use-cdtext-tags")
 			$s &= " "
 			$s &= _Iif(GUICtrlRead($CheckBoxTagIgnoreCueComments) = $GUI_CHECKED, "--ignore-cue-comments-tags", "--use-cue-comments-tags")
@@ -668,6 +712,9 @@ Func read_options()
 	$s &= " "
 
 	$s &= _Iif(GUICtrlRead($CheckBoxMLang) = $GUI_CHECKED, "--use-mlang", "--dont-use-mlang")
+	$s &= " "
+
+	$s &= _Iif(GUICtrlRead($CheckBoxFullPaths) = $GUI_CHECKED, "--full-paths", "--no-full-paths")
 	$s &= " "
 
 	If GUICtrlRead($CheckBoxVerbose) = $GUI_CHECKED Then
@@ -974,6 +1021,12 @@ While True
 						_GUICtrlTreeView_EndUpdate(GUICtrlGetHandle($TreeViewInputFiles))
 					EndIf
 				EndIf
+			EndIf
+
+		Case $ButtonMkvmergeDir
+			$s = FileSelectFolder("Specify directory where mkvmerge tool resides", "", 1 + 2 + 4, GUICtrlRead($InputMkvmergeDir), $FormMain)
+			If Not @error Then
+				GUICtrlSetData($InputMkvmergeDir, $s)
 			EndIf
 
 	EndSwitch

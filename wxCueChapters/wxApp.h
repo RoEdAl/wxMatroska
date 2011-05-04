@@ -49,6 +49,7 @@ protected:
 	wxXmlCueSheetRenderer& GetXmlRenderer(const wxInputFile&);
 	bool HasXmlRenderer() const;
 	wxXmlCueSheetRenderer& GetXmlRenderer();
+	bool RunMkvmerge( const wxString& );
 
 protected:
 
@@ -60,12 +61,13 @@ protected:
 
 public:
 
+	static const wxChar APP_NAME[];
+	static const wxChar APP_VENDOR_NAME[];
 	static const wxChar APP_VERSION[];
 	static const wxChar APP_AUTHOR[];
 	static const wxChar LICENSE_FILE_NAME[];
 
 	wxMyApp(void);
-	virtual ~wxMyApp(void);
 };
 
 wxDECLARE_APP(wxMyApp);
