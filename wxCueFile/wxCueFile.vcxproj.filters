@@ -74,6 +74,9 @@
     <ClCompile Include="wxTextOutputStreamOnString.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="wxEllipsizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdWx.h">
@@ -134,6 +137,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\inc\wxCueFile\wxTextOutputStreamOnString.h">
+      <Filter>External Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\wxCueFile\wxEllipsizer.h">
       <Filter>External Header Files</Filter>
     </ClInclude>
   </ItemGroup>

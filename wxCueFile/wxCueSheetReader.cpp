@@ -350,6 +350,7 @@ void wxCueSheetReader::AppendComments( wxArrayCueTag& comments, bool singleMedia
 		if ( comment.GetName().CmpNoCase( wxCueTag::Name::CUESHEET ) == 0 ) continue;
 
 		comment.RemoveTrailingSpaces( m_spacesRemover );
+		comment.Ellipsize( m_ellipsizer );
 
 		if ( singleMediaFile )
 		{ // just add to first track
@@ -862,13 +863,16 @@ bool wxCueSheetReader::ParseCue()
 
 bool wxCueSheetReader::AddCdTextInfo( const wxString& sToken, const wxString& sBody )
 {
+	wxString sModifiedBody( m_spacesRemover.Remove( sBody ) );
+	sModifiedBody = m_ellipsizer.Ellipsize( sModifiedBody );
+
 	if ( IsTrack() )
 	{
-		return GetLastTrack().AddCdTextInfo( sToken, m_spacesRemover.Remove( sBody ) );
+		return GetLastTrack().AddCdTextInfo( sToken, sModifiedBody );
 	}
 	else
 	{
-		return m_cueSheet.AddCdTextInfo( sToken, m_spacesRemover.Remove( sBody ) );
+		return m_cueSheet.AddCdTextInfo( sToken, sModifiedBody );
 	}
 }
 

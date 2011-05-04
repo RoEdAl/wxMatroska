@@ -10,6 +10,8 @@
 #include "wxConfiguration.h"
 #include "wxApp.h"
 
+// ===============================================================================
+
 const wxChar wxConfiguration::CUE_SHEET_EXT[] = wxT("cue");
 const wxChar wxConfiguration::MATROSKA_CHAPTERS_EXT[] = wxT("mkc.xml");
 const wxChar wxConfiguration::MATROSKA_TAGS_EXT[] = wxT("mkt.xml");
@@ -23,7 +25,11 @@ static const size_t MAX_EXT_LEN = 20;
 static const wxChar LANG_FILE_URL[] = wxT("http://www.loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt");
 static const wxChar LANG_FILE_NAME[] = wxT("ISO-639-2_utf-8.txt");
 
+// ===============================================================================
+
 wxIMPLEMENT_DYNAMIC_CLASS( wxConfiguration, wxObject )
+
+// ===============================================================================
 
 wxString wxConfiguration::GetFileEncodingStr( wxConfiguration::FILE_ENCODING eFileEncoding )
 {
@@ -141,7 +147,7 @@ bool wxConfiguration::ReadLanguagesStrings( wxSortedArrayString& as )
 			wxString sLang( tokenizer.GetNextToken() );
 			if ( sLang.IsEmpty() || (sLang.Length() > 3) )
 			{
-				wxLogDebug( _("Skipping language %s."), sLang );
+				wxLogDebug( _("Skipping language %s"), sLang );
 			}
 			else
 			{

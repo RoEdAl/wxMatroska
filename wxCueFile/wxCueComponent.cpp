@@ -8,6 +8,7 @@
 #include <wxCueFile/wxUnquoter.h>
 #include <wxCueFile/wxTrailingSpacesRemover.h>
 #include <wxCueFile/wxTextOutputStreamOnString.h>
+#include <wxCueFile/wxEllipsizer.h>
 #include "wxTextInputStreamOnString.h"
 
 const wxChar* const wxCueTag::Name::CUESHEET = wxT("CUESHEET");
@@ -146,6 +147,11 @@ bool wxCueTag::IsMultiline() const
 void wxCueTag::RemoveTrailingSpaces( const wxTrailingSpacesRemover& spacesRemover )
 {
 	m_sValue = spacesRemover.Remove( m_sValue );
+}
+
+void wxCueTag::Ellipsize( const wxEllipsizer& ellipsizer )
+{
+	ellipsizer.EllipsizeEx( m_sValue, m_sValue );
 }
 
 // ================================================================================

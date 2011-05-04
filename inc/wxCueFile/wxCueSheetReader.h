@@ -27,6 +27,10 @@ class wxFlacMetaDataReader;
 #include "wxTrailingSpacesRemover.h"
 #endif
 
+#ifndef _WX_ELLIPSIZER_H_
+#include "wxEllipsizer.h"
+#endif
+
 class wxCueSheetReader :public wxObject
 {
 	wxDECLARE_DYNAMIC_CLASS(wxCueSheetReader);
@@ -72,6 +76,7 @@ protected:
 	wxRegEx m_reIsrc;
 	wxRegEx m_reTrackComment;
 	wxTrailingSpacesRemover m_spacesRemover;
+	wxEllipsizer m_ellipsizer;
 
 	wxDataFile m_dataFile;
 	wxArrayString m_cueLines;

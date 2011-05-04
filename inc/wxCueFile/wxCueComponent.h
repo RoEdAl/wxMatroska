@@ -13,6 +13,10 @@ class wxTagSynonimsCollection;
 class wxTrailingSpacesRemover;
 #endif
 
+#ifndef _WX_ELLIPSIZER_H_
+class wxEllipsizer;
+#endif
+
 class wxCueTag :public wxObject
 {
 	wxDECLARE_DYNAMIC_CLASS(wxCueTag);
@@ -66,6 +70,7 @@ class wxCueTag :public wxObject
 	wxCueTag& operator=( const wxCueTag& );
 
 	void RemoveTrailingSpaces( const wxTrailingSpacesRemover& );
+	void Ellipsize( const wxEllipsizer& );
 
 	protected:
 
