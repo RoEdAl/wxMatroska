@@ -7,6 +7,12 @@
 
 wxIMPLEMENT_DYNAMIC_CLASS( wxUnquoter, wxObject )
 
+const wxChar wxUnquoter::SINGLE_QUOTES[] = wxT("\\'(([^\\']|\\\')*)\\'(?![[:alnum:]])");
+const wxChar wxUnquoter::DOUBLE_QUOTES[] = wxT("\\\"(([^\\\"]|\\\\\")*)\\\"");
+
+const wxChar wxUnquoter::FULL_SINGLE_QUOTES[] = wxT("\\A[[:space:]]*\\'(([^\\']|\\\')*)\\'[[:space:]]*\\Z");
+const wxChar wxUnquoter::FULL_DOUBLE_QUOTES[] = wxT("\\A[[:space:]]*\\\"(([^\\\"]|\\\\\")*)\\\"[[:space:]]*\\Z");
+
 const wxChar wxUnquoter::ENGLISH_DOUBLE_QUOTES[] = wxT("\u201C\\1\u201D");
 const wxChar wxUnquoter::ENGLISH_SINGLE_QUOTES[] = wxT("\u2018\\1\u2019");
 
@@ -21,11 +27,16 @@ const wxChar wxUnquoter::FRENCH_SINGLE_QUOTES[] = wxT("\u2039\u2005\\1\u2005\u20
 
 
 wxUnquoter::wxUnquoter(void)
-	:m_reQuotes( wxT("\\'(([^\\']|\\\')*)\\'(?![[:alnum:]])"), wxRE_ADVANCED ),
-	 m_reDoubleQuotes( wxT("\\\"(([^\\\"]|\\\\\")*)\\\""), wxRE_ADVANCED )
+	:m_reQuotes( SINGLE_QUOTES, wxRE_ADVANCED ),
+	 m_reDoubleQuotes( DOUBLE_QUOTES, wxRE_ADVANCED ),
+	 m_reFullQuotes( FULL_SINGLE_QUOTES, wxRE_ADVANCED ),
+	 m_reFullDoubleQuotes( FULL_DOUBLE_QUOTES, wxRE_ADVANCED )
 {
 	wxASSERT( m_reQuotes.IsValid() );
 	wxASSERT( m_reDoubleQuotes.IsValid() );
+
+	wxASSERT( m_reFullQuotes.IsValid() );
+	wxASSERT( m_reFullDoubleQuotes.IsValid() );
 }
 
 /*
@@ -89,14 +100,14 @@ void wxUnquoter::SetLang(const wxString& sLang)
 wxString wxUnquoter::Unquote( const wxString& qs ) const
 {
 	wxString s;
-	if ( m_reQuotes.Matches( qs ) )
+	if ( m_reFullQuotes.Matches( qs ) )
 	{
-		s = m_reQuotes.GetMatch( qs, 1 );
+		s = m_reFullQuotes.GetMatch( qs, 1 );
 		s.Replace( wxT("\\'"), wxT("'") );
 	}
-	else if ( m_reDoubleQuotes.Matches( qs ) )
+	else if ( m_reFullDoubleQuotes.Matches( qs ) )
 	{
-		s = m_reDoubleQuotes.GetMatch( qs, 1 );
+		s = m_reFullDoubleQuotes.GetMatch( qs, 1 );
 		s.Replace( wxT("\\\""), wxT("\"") );
 	}
 	else
@@ -128,4 +139,14 @@ const wxRegEx& wxUnquoter::GetReSingleQuotes() const
 const wxRegEx& wxUnquoter::GetReDoubleQuotes() const
 {
 	return m_reDoubleQuotes;
+}
+
+const wxRegEx& wxUnquoter::GetReFullSingleQuotes() const
+{
+	return m_reFullQuotes;
+}
+
+const wxRegEx& wxUnquoter::GetReFullDoubleQuotes() const
+{
+	return m_reFullDoubleQuotes;
 }
