@@ -1038,7 +1038,7 @@ bool wxXmlCueSheetRenderer::OnPostRenderDisc( const wxCueSheet& cueSheet )
 					wxULongLong frames;
 					if ( dataFile.GetInfo( si, frames, GetConfig().GetAlternateExtensions() ) )
 					{
-						wxLogDebug( _("Number of frames - %s"), frames.ToString() );
+						wxLogDebug( wxT("Number of frames - %s"), frames.ToString() );
 						AddChapterTimeEnd( pChapterAtom, frames );
 					}
 				}
@@ -1114,7 +1114,7 @@ bool wxXmlCueSheetRenderer::OnPostRenderDisc( const wxCueSheet& cueSheet )
 		}
 	}
 
-	wxLogInfo( _("Conversion done") );
+	wxLogInfo( _("XML document created") );
 	return wxCueSheetRenderer::OnPostRenderDisc( cueSheet );
 }
 
