@@ -170,8 +170,7 @@ void wxMyApp::ShowLicense()
 	wxTextInputStream tis( fis, wxEmptyString, wxConvISO8859_1 );
 	while( !fis.Eof() )
 	{
-		wxPrintf( tis.ReadLine() );
-		wxPrintf( wxT("\n") );
+		wxPrintf( wxT("%s\n"), tis.ReadLine() );
 	}
 }
 
@@ -464,7 +463,9 @@ bool wxMyApp::RunMkvmerge( const wxString& sOptionsFile )
 		sCmdLine.Printf( wxT("mkvmerge --quiet \"@%s\""), sOptionsFile );
 	}
 
-	wxLogMessage( _("Running mkvmerge with options file \u201C%s\u201D"), sOptionsFile );
+	wxLogMessage( _("Running mkvmerge with options file \u201C%s\u201D"), GetFileName( sOptionsFile ) );
+	wxLogDebug( wxT("Running commad: %s"), sCmdLine );
+
 	long nRes = wxExecute( sCmdLine, wxEXEC_SYNC|wxEXEC_NOEVENTS );
 	if ( nRes == -1 )
 	{
