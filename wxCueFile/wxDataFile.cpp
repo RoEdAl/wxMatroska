@@ -20,7 +20,7 @@ static const wxChar* INFOS[] = {
 	wxT("SamplingCount")
 };
 
-static const size_t INFOS_SIZE = sizeof(INFOS)/sizeof(const wxChar*);
+static const size_t INFOS_SIZE = WXSIZEOF(INFOS);
 
 
 wxDataFile::wxDataFile(void)

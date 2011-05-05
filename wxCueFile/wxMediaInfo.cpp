@@ -14,7 +14,7 @@ static const wxChar* SYMBOL_NAMES[] = {
 	wxT("MediaInfo_Get")
 };
 
-static const size_t SYMBOL_NAMES_SIZE = sizeof(SYMBOL_NAMES)/sizeof(const wxChar*);
+static const size_t SYMBOL_NAMES_SIZE = WXSIZEOF(SYMBOL_NAMES);
 
 static bool load_symbols( const wxDynamicLibrary& dll, wxArrayPtrVoid& pointers )
 {

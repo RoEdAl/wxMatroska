@@ -52,9 +52,7 @@ wxCueTag::SOURCE2TEXT wxCueTag::SOURCE2TEXT_MAPPING[] = {
 	{ TAG_AUTO_GENERATED,	_("Automatically generated") }
 };
 
-size_t wxCueTag::SOURCE2TEXT_MAPPING_SIZE =
-	sizeof(wxCueTag::SOURCE2TEXT_MAPPING)/sizeof(wxCueTag::SOURCE2TEXT);
-
+size_t wxCueTag::SOURCE2TEXT_MAPPING_SIZE =	WXSIZEOF(wxCueTag::SOURCE2TEXT_MAPPING);
 
 wxString wxCueTag::SourceToString( wxCueTag::TAG_SOURCE eSource )
 {

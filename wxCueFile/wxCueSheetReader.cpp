@@ -26,21 +26,19 @@ wxCueSheetReader::PARSE_STRUCT wxCueSheetReader::parseArray[] = {
 	{  wxT("CDTEXTFILE"), &wxCueSheetReader::ParseCdTextFile }
 };
 
-size_t wxCueSheetReader::parseArraySize = sizeof(wxCueSheetReader::parseArray)/sizeof(PARSE_STRUCT);
+size_t wxCueSheetReader::parseArraySize = WXSIZEOF(wxCueSheetReader::parseArray);
 
 static const wxChar* INFOS[] = {
 	wxT("AudioCount"),
 	wxT("CUESHEET"),
 	wxT("cuesheet")
 };
-
-static const size_t INFOS_SIZE = sizeof(INFOS)/sizeof(const wxChar*);
+static const size_t INFOS_SIZE = WXSIZEOF(INFOS);
 
 static const wxChar* AUDIO_INFOS[] = {
-	wxT("Format"),
+	wxT("Format")
 };
-
-static const size_t AUDIO_INFOS_SIZE = sizeof(AUDIO_INFOS)/sizeof(const wxChar*);
+static const size_t AUDIO_INFOS_SIZE = WXSIZEOF(AUDIO_INFOS);
 
 wxString wxCueSheetReader::GetKeywordsRegExp()
 {

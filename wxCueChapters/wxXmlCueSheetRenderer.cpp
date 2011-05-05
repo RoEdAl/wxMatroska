@@ -409,11 +409,11 @@ const wxString& wxXmlCueSheetRenderer::GetTagsFile() const
 wxString wxXmlCueSheetRenderer::mkvmerge_escape( const wxString& s )
 {
 	wxString sRes( s );
-	sRes.Replace( wxT("\\"), wxT("\\\\") );
-	sRes.Replace( wxT(" "), wxT("\\s") );
-	sRes.Replace( wxT("\""), wxT("\\2") );
-	sRes.Replace( wxT(":"), wxT("\\c") );
-	sRes.Replace( wxT("#"), wxT("\\h") );
+	sRes.Replace( wxT('\\'), wxT("\\\\") );
+	sRes.Replace( wxT(' '), wxT("\\s") );
+	sRes.Replace( wxT('\"'), wxT("\\2") );
+	sRes.Replace( wxT(':'), wxT("\\c") );
+	sRes.Replace( wxT('#'), wxT("\\h") );
 	return sRes;
 }
 
