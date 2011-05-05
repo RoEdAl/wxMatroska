@@ -4,7 +4,7 @@
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.45
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.53
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -75,6 +75,7 @@ Dim Const $XML_FILTER = "XML files (*.xml)|Matroska chapters XML files (*.mkc.xm
 Dim Const $MEDIA_FILTER = "Audio files (*.flac;*.ape;*.wv;*.wav;*.aiff;*.tta)|All files (*)"
 Dim Const $STILL_ACTIVE = 259
 Dim Const $APP_EXIT_CODE = "Exit code: %d."
+Dim Const $ELLIPSIS = ChrW(0x2026)
 
 Func is_directory($s)
 	If Not FileExists($s) Then
@@ -902,6 +903,7 @@ Else
 	GUICtrlSetImage($ButtonMakeMask, @ScriptDir & "\icons\file_mask.ico", 0, 0)
 EndIf
 set_default_options()
+GUICtrlSetData($ButtonMkvmergeDir, $ELLIPSIS)
 GUICtrlSetData($InputOuputDir, @MyDocumentsDir)
 _GUICtrlComboBox_SetCurSel($ComboOutput, 0)
 set_output_mode(0)
