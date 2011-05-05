@@ -100,19 +100,17 @@ void wxUnquoter::SetLang(const wxString& sLang)
 wxString wxUnquoter::Unquote( const wxString& qs ) const
 {
 	wxString s;
+
 	if ( m_reFullQuotes.Matches( qs ) )
 	{
 		s = m_reFullQuotes.GetMatch( qs, 1 );
-		s.Replace( wxT("\\'"), wxT("'") );
 	}
 	else if ( m_reFullDoubleQuotes.Matches( qs ) )
 	{
 		s = m_reFullDoubleQuotes.GetMatch( qs, 1 );
-		s.Replace( wxT("\\\""), wxT("\"") );
 	}
 	else
 	{
-		//::wxLogDebug( wxT("Character data not quoted") );
 		s = qs;
 	}
 
@@ -121,10 +119,15 @@ wxString wxUnquoter::Unquote( const wxString& qs ) const
 
 wxString wxUnquoter::UnquoteAndCorrect( const wxString& qs ) const
 {
-	wxString s( Unquote(qs) );
-	if ( !m_sSingleQuotes.IsEmpty() && !m_sDoubleQuotes.IsEmpty() )
+	wxString s( Unquote( qs ) );
+
+	if ( !m_sSingleQuotes.IsEmpty() )
 	{
 		m_reQuotes.ReplaceAll( &s, m_sSingleQuotes );
+	}
+
+	if ( m_sDoubleQuotes.IsEmpty() )
+	{
 		m_reDoubleQuotes.ReplaceAll( &s, m_sDoubleQuotes );
 	}
 
@@ -149,4 +152,9 @@ const wxRegEx& wxUnquoter::GetReFullSingleQuotes() const
 const wxRegEx& wxUnquoter::GetReFullDoubleQuotes() const
 {
 	return m_reFullDoubleQuotes;
+}
+
+bool wxUnquoter::IsQuoted( const wxString& s ) const
+{
+	return m_reQuotes.Matches( s ) || m_reDoubleQuotes.Matches( s );
 }

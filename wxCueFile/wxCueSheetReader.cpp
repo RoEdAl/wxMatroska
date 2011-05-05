@@ -722,7 +722,7 @@ bool wxCueSheetReader::CheckEntryType( wxCueComponent::ENTRY_TYPE et ) const
 
 wxString wxCueSheetReader::Unquote( const wxString& qs )
 {
-	return m_unquoter.UnquoteAndCorrect( qs );
+	return wxCueTag::UnEscape( m_unquoter.UnquoteAndCorrect( qs ) );
 }
 
 void wxCueSheetReader::ParseLine( size_t WXUNUSED(nLine), const wxString& sToken, const wxString& sRest )

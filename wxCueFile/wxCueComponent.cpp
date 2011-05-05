@@ -83,6 +83,18 @@ const wxString& wxCueTag::GetValue() const
 	return m_sValue;
 }
 
+wxString wxCueTag::GetQuotedValue( bool bEscape ) const
+{
+	if ( bEscape )
+	{
+		return Quote( Escape( m_sValue ) );
+	}
+	else
+	{
+		return Quote( m_sValue );
+	}
+}
+
 wxString wxCueTag::GetFlattenValue() const
 {
 	wxASSERT( IsMultiline() );
@@ -152,6 +164,29 @@ void wxCueTag::RemoveTrailingSpaces( const wxTrailingSpacesRemover& spacesRemove
 void wxCueTag::Ellipsize( const wxEllipsizer& ellipsizer )
 {
 	ellipsizer.EllipsizeEx( m_sValue, m_sValue );
+}
+
+wxString wxCueTag::Escape( const wxString& sValue )
+{
+	wxString s( sValue );
+	s.Replace( wxT('\"'), wxT("\\\"") );
+	s.Replace( wxT('\''), wxT("\\'") );
+	s.Replace( wxT('\\'), wxT("\\\\") );
+	return s;
+}
+
+wxString wxCueTag::UnEscape( const wxString& sValue )
+{
+	wxString s( sValue );
+	s.Replace( wxT("\\'"), wxT('\'') );
+	s.Replace( wxT("\\\""), wxT('\"') );
+	s.Replace( wxT("\\\\"), wxT('\\') );
+	return s;
+}
+
+wxString wxCueTag::Quote( const wxString& sValue )
+{
+	return wxString::Format( wxT("\"%s\""), sValue );
 }
 
 // ================================================================================
@@ -519,13 +554,7 @@ wxString wxCueComponent::FormatCdTextData(const wxString& sKeyword, const wxStri
 	}
 	else // characters
 	{
-		wxString s( sValue );
-		s.Replace( wxT("\""), wxT("\\\"") );
-		s.Replace( wxT("'"), wxT("\\'") );
-		s.Prepend( wxT('\"') );
-		s.Append( wxT('\"') );
-
-		return s;
+		return wxCueTag::Quote( wxCueTag::Escape( sValue ) );
 	}
 }
 

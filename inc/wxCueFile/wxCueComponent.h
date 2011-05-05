@@ -59,6 +59,12 @@ class wxCueTag :public wxObject
 	const wxString& GetName() const;
 	const wxString& GetValue() const;
 
+	static wxString Quote( const wxString& );
+	static wxString Escape( const wxString& );
+	static wxString UnEscape( const wxString& );
+
+	wxString GetQuotedValue( bool = true ) const;
+
 	bool IsMultiline() const;
 	wxString GetFlattenValue() const;
 

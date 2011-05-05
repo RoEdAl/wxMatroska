@@ -50,6 +50,8 @@ public:
 
 	const wxRegEx& GetReFullSingleQuotes() const;
 	const wxRegEx& GetReFullDoubleQuotes() const;
+
+	bool IsQuoted( const wxString& ) const;
 };
 
 #endif
