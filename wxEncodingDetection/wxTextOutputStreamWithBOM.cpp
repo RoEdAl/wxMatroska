@@ -8,6 +8,11 @@
 
 wxTextOutputStream* const wxTextOutputStreamWithBOMFactory::wxNullTextOutputStream = (wxTextOutputStream* const)NULL;
 
+void wxTextOutputStreamWithBOMFactory::WriteBOM( wxOutputStream& s, const wxEncodingDetection::wxByteBuffer& bom )
+{
+	s.Write( bom.data(), bom.length() );
+}
+
 class wxTextOutputStreamWithBOM :public wxTextOutputStream
 {
 public:
@@ -27,10 +32,9 @@ public:
 	}
 };
 
-
-wxSharedPtr<wxTextOutputStream> wxTextOutputStreamWithBOMFactory::Create( wxOutputStream& s, wxEOL mode, bool bWriteBOM, wxUint32 nCodePage, bool bUseMLang )
+wxTextOutputStreamWithBOMFactory::wxTextOutputStreamSharedPtr wxTextOutputStreamWithBOMFactory::Create( wxOutputStream& s, wxEOL mode, bool bWriteBOM, wxUint32 nCodePage, bool bUseMLang )
 {
-	wxSharedPtr<wxTextOutputStream> pRes;
+	wxTextOutputStreamSharedPtr pRes;
 	wxByteBuffer bom;
 	if ( wxEncodingDetection::GetBOM( nCodePage, bom ) )
 	{
@@ -41,21 +45,16 @@ wxSharedPtr<wxTextOutputStream> wxTextOutputStreamWithBOMFactory::Create( wxOutp
 	return pRes;
 }
 
-wxSharedPtr<wxTextOutputStream> wxTextOutputStreamWithBOMFactory::CreateUTF8( wxOutputStream& s, wxEOL mode, bool bWriteBOM, bool bUseMLang )
+wxTextOutputStreamWithBOMFactory::wxTextOutputStreamSharedPtr wxTextOutputStreamWithBOMFactory::CreateUTF8( wxOutputStream& s, wxEOL mode, bool bWriteBOM, bool bUseMLang )
 {
 	return Create( s, mode, bWriteBOM, wxEncodingDetection::CP::UTF8, bUseMLang );
 }
 
-wxSharedPtr<wxTextOutputStream> wxTextOutputStreamWithBOMFactory::CreateUTF16( wxOutputStream& s, wxEOL mode, bool bWriteBOM, bool bUseMLang )
+wxTextOutputStreamWithBOMFactory::wxTextOutputStreamSharedPtr wxTextOutputStreamWithBOMFactory::CreateUTF16( wxOutputStream& s, wxEOL mode, bool bWriteBOM, bool bUseMLang )
 {
 #if WORDS_BIGENDIAN
 	return Create( s, mode, bWriteBOM, wxEncodingDetection::CP::UTF16_BE, bUseMLang );
 #else
 	return Create( s, mode, bWriteBOM, wxEncodingDetection::CP::UTF16_LE, bUseMLang );
 #endif
-}
-
-void wxTextOutputStreamWithBOMFactory::WriteBOM( wxOutputStream& s, const wxEncodingDetection::wxByteBuffer& bom )
-{
-	s.Write( bom.data(), bom.length() );
 }

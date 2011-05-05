@@ -31,8 +31,7 @@ static const size_t MAX_LICENSE_FILE_SIZE = 4 * 1024;
 wxIMPLEMENT_APP(wxMyApp);
 
 wxMyApp::wxMyApp(void)
-	:m_sSeparator( wxT('='), 75 ),
-	m_pRenderer(wxXmlCueSheetRenderer::Null)
+	:m_sSeparator( wxT('='), 75 )
 {
 }
 
@@ -399,10 +398,7 @@ int wxMyApp::OnRun()
 int wxMyApp::OnExit()
 {
 	int res = wxAppConsole::OnExit();
-	if ( m_pRenderer != wxXmlCueSheetRenderer::Null )
-	{
-		delete m_pRenderer;
-	}
+	m_pRenderer.reset();
 	CoUninitialize();
 	wxLogMessage( _("Done") );
 	return res;
@@ -414,9 +410,9 @@ wxXmlCueSheetRenderer& wxMyApp::GetXmlRenderer(const wxInputFile& inputFile)
 
 	if ( m_cfg.GetMerge() )
 	{
-		if ( m_pRenderer == wxXmlCueSheetRenderer::Null )
+		if ( !HasXmlRenderer() )
 		{
-			m_pRenderer = wxXmlCueSheetRenderer::CreateObject( m_cfg, inputFile );
+			m_pRenderer.reset( wxXmlCueSheetRenderer::CreateObject( m_cfg, inputFile ) );
 			bShowInfo = true;
 		}
 		else
@@ -426,11 +422,7 @@ wxXmlCueSheetRenderer& wxMyApp::GetXmlRenderer(const wxInputFile& inputFile)
 	}
 	else
 	{
-		if ( m_pRenderer != wxXmlCueSheetRenderer::Null )
-		{
-			delete m_pRenderer;
-		}
-		m_pRenderer = wxXmlCueSheetRenderer::CreateObject( m_cfg, inputFile );
+		m_pRenderer.reset( wxXmlCueSheetRenderer::CreateObject( m_cfg, inputFile ) );
 		bShowInfo = true;
 	}
 
@@ -447,7 +439,7 @@ wxXmlCueSheetRenderer& wxMyApp::GetXmlRenderer(const wxInputFile& inputFile)
 
 bool wxMyApp::HasXmlRenderer() const
 {
-	return ( m_pRenderer != wxXmlCueSheetRenderer::Null );
+	return ( m_pRenderer.get() != wxXmlCueSheetRenderer::Null );
 }
 
 wxXmlCueSheetRenderer& wxMyApp::GetXmlRenderer()

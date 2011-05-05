@@ -993,23 +993,31 @@ wxConfiguration::FILE_ENCODING wxConfiguration::GetCueSheetFileEncoding() const
 
 wxSharedPtr<wxTextOutputStream> wxConfiguration::GetOutputTextStream( wxOutputStream& os )
 {
+	wxSharedPtr<wxTextOutputStream> pRes;
 	switch( m_eCueSheetFileEncoding )
 	{
 		case ENCODING_UTF8:
-		return wxTextOutputStreamWithBOMFactory::CreateUTF8( os, wxEOL_NATIVE, false, m_bUseMLang );
+		pRes = wxTextOutputStreamWithBOMFactory::CreateUTF8( os, wxEOL_NATIVE, false, m_bUseMLang );
+		break;
 
 		case ENCODING_UTF8_WITH_BOM:
-		return wxTextOutputStreamWithBOMFactory::CreateUTF8( os, wxEOL_NATIVE, true, m_bUseMLang );
+		pRes = wxTextOutputStreamWithBOMFactory::CreateUTF8( os, wxEOL_NATIVE, true, m_bUseMLang );
+		break;
 
 		case ENCODING_UTF16:
-		return wxTextOutputStreamWithBOMFactory::CreateUTF16( os, wxEOL_NATIVE, false, m_bUseMLang );
+		pRes = wxTextOutputStreamWithBOMFactory::CreateUTF16( os, wxEOL_NATIVE, false, m_bUseMLang );
+		break;
 
 		case ENCODING_UTF16_WITH_BOM:
-		return wxTextOutputStreamWithBOMFactory::CreateUTF16( os, wxEOL_NATIVE, true, m_bUseMLang );
+		pRes = wxTextOutputStreamWithBOMFactory::CreateUTF16( os, wxEOL_NATIVE, true, m_bUseMLang );
+		break;
 
 		default:
-		return wxSharedPtr<wxTextOutputStream>( new wxTextOutputStream( os, wxEOL_NATIVE, wxConvLocal ) );
+		pRes = new wxTextOutputStream( os, wxEOL_NATIVE, wxConvLocal );
+		break;
 	}
+
+	return pRes;
 }
 
 bool wxConfiguration::GetMerge() const

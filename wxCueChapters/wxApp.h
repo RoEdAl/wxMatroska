@@ -31,7 +31,7 @@ protected:
 
 	wxConfiguration m_cfg;
 	wxString m_sSeparator;
-	wxXmlCueSheetRenderer* m_pRenderer;
+	wxScopedPtr<wxXmlCueSheetRenderer> m_pRenderer;
 
 protected:
 
