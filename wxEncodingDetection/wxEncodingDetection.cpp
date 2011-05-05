@@ -56,7 +56,7 @@ protected:
     {
 		if( !m_mlang.IsValid() )
 		{
-			wxLogError( _("Cannot create MultiLanguage COM object.") );
+			wxLogError( _("Cannot create MultiLanguage COM object") );
 		}
 
 		if ( nCodePage == CP_ACP )
@@ -185,7 +185,7 @@ public:
 				switch ( nDstSize )
 				{
 					default:
-						wxLogDebug(wxT("Unexpected NUL length %d"), nDstSize);
+						wxLogDebug( wxT("Unexpected NUL length %d"), nDstSize );
 						self->m_minMBCharWidth = (size_t)-1;
 						break;
 
@@ -244,14 +244,16 @@ protected:
 
 class wxMBConv_BOM : public wxMBConv
 {
+	typedef wxSharedPtr<wxMBConv> wxMBConvSharedPtr;
+
 public:
 
 	typedef wxCharTypeBuffer<wxByte> wxByteBuffer;
 
 	static wxMBConv_BOM* Create( const wxByte* bom, size_t nLen, wxUint32 nCodePage, bool bUseMLang, wxString& sDescription )
 	{
-		wxMBConv* pConvStd = wxEncodingDetection::GetStandardMBConv( nCodePage, bUseMLang, sDescription );
-		return new wxMBConv_BOM( bom, nLen, pConvStd, true );
+		wxMBConvSharedPtr pConvStd( wxEncodingDetection::GetStandardMBConv( nCodePage, bUseMLang, sDescription ) );
+		return new wxMBConv_BOM( bom, nLen, pConvStd );
 	}
 
 	static wxMBConv_BOM* Create( const wxByte* bom, size_t nLen, wxUint32 nCodePage, wxString& sDescription )
@@ -261,36 +263,23 @@ public:
 
 protected:
 
-	wxMBConv_BOM( const wxByte* bom, size_t nLen, wxMBConv* pConv, bool bConvOwner )
-		:m_pConv( pConv ), m_bConvOwner( bConvOwner )
+	wxMBConv_BOM( const wxByte* bom, size_t nLen, wxMBConvSharedPtr pConv )
+		:m_bom( bom, nLen ),
+		 m_pConv( pConv ),
+		 m_bBOMConsumed( false )
 	{
-		wxASSERT( pConv != (wxMBConv*)NULL );
+		wxASSERT( pConv.get() != wxEncodingDetection::wxNullMBConv );
 		wxASSERT( nLen >= 2 );
-
-		wxByteBuffer bom_buf( bom, nLen );
-		m_bom = bom_buf;
-
-		m_bBOMConsumed = false;
 	}
 
 	wxMBConv_BOM( const wxMBConv_BOM& convBom )
-		:m_bom( convBom.m_bom )
+		:m_bom( convBom.m_bom ),
+		 m_pConv( convBom.m_pConv->Clone() ),
+		 m_bBOMConsumed( false )
 	{
-		m_pConv = convBom.m_pConv->Clone();
-		m_bConvOwner = true;
-
-		m_bBOMConsumed = false;
 	}
 
 public:
-
-	~wxMBConv_BOM()
-	{
-		if ( m_bConvOwner )
-		{
-			delete m_pConv;
-		}
-	}
 
 	virtual wxMBConv *Clone() const { return new wxMBConv_BOM(*this); }
 
@@ -369,29 +358,29 @@ protected:
 
 protected:
 
-	bool m_bConvOwner;
-	wxMBConv* m_pConv;
+	wxMBConvSharedPtr m_pConv;
 	wxByteBuffer m_bom;
-
 	bool m_bBOMConsumed;
 };
 
-wxMBConv* wxEncodingDetection::GetDefaultEncoding( bool bUseMLang, wxString& sDescription )
+wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetDefaultEncoding( bool bUseMLang, wxString& sDescription )
 {
+	wxMBConvSharedPtr pConv;
 	if ( bUseMLang )
 	{
-		return wxMBConv_MLang::Create( CP_ACP, sDescription );
+		pConv = wxMBConv_MLang::Create( CP_ACP, sDescription );
 	}
 	else
 	{
 		sDescription = _("Default (Native)");
-		return wxConvLocal.Clone();
+		pConv = wxConvLocal.Clone();
 	}
+	return pConv;
 }
 
-wxMBConv* wxEncodingDetection::GetStandardMBConv( wxUint32 nCodePage, bool bUseMLang, wxString& sDescription )
+wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetStandardMBConv( wxUint32 nCodePage, bool bUseMLang, wxString& sDescription )
 {
-	wxMBConv* pConv = wxNullMBConv;
+	wxMBConvSharedPtr pConv;
 	if ( !bUseMLang )
 	{
 		switch( nCodePage )
@@ -445,17 +434,18 @@ bool wxEncodingDetection::test_bom( const wxByteBuffer& buffer, const wxByte* bo
 	return bRes;
 }
 
-wxMBConv* wxEncodingDetection::GetFileEncodingFromBOM( const wxFileName& fn, bool bUseMLang, wxString& sDescription )
+wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncodingFromBOM( const wxFileName& fn, bool bUseMLang, wxString& sDescription )
 {
 	wxByteBuffer buffer( 4 );
 	size_t nLastRead = 0;
+	wxMBConvSharedPtr pRes;
 
 	{
 		wxFileInputStream fis( fn.GetFullPath() );
 		if ( !fis.IsOk() )
 		{
-			wxLogError( _("Cannot open file \u201C%s\u201D."), fn.GetName() );
-			return wxNullMBConv;
+			wxLogError( _("Cannot open file \u201C%s\u201D"), fn.GetName() );
+			return pRes;
 		}
 		nLastRead = fis.Read( buffer.data(), buffer.length() ).LastRead();
 	}
@@ -465,56 +455,60 @@ wxMBConv* wxEncodingDetection::GetFileEncodingFromBOM( const wxFileName& fn, boo
 		default: // 4 and more
 		if ( test_bom( buffer, BOM::UTF32_BE, 4 ) )
 		{
-			return wxMBConv_BOM::Create( BOM::UTF32_BE, 4, CP::UTF32_BE, bUseMLang, sDescription );
+			pRes = wxMBConvSharedPtr( wxMBConv_BOM::Create( BOM::UTF32_BE, 4, CP::UTF32_BE, bUseMLang, sDescription ) );
+			break;
 		}
 		else if ( test_bom( buffer, BOM::UTF32_LE, 4 ) )
 		{
-			return wxMBConv_BOM::Create( BOM::UTF32_LE, 4, CP::UTF16_LE, bUseMLang, sDescription );
+			pRes = wxMBConvSharedPtr( wxMBConv_BOM::Create( BOM::UTF32_LE, 4, CP::UTF16_LE, bUseMLang, sDescription ) );
+			break;
 		}
 
 		case 3: // UTF8
 		if ( test_bom( buffer, BOM::UTF8, 3 ) )
 		{
-			return wxMBConv_BOM::Create( BOM::UTF8, 3, CP::UTF8, bUseMLang, sDescription );
+			pRes = wxMBConvSharedPtr( wxMBConv_BOM::Create( BOM::UTF8, 3, CP::UTF8, bUseMLang, sDescription ) );
+			break;
 		}
 
 		case 2: // UTF16
 		if ( test_bom( buffer, BOM::UTF16_BE, 2 ) )
 		{
-			return wxMBConv_BOM::Create( BOM::UTF16_BE, 2, CP::UTF16_BE, bUseMLang, sDescription );
+			pRes = wxMBConvSharedPtr( wxMBConv_BOM::Create( BOM::UTF16_BE, 2, CP::UTF16_BE, bUseMLang, sDescription ) );
 		}
 		else if ( test_bom( buffer, BOM::UTF16_LE, 2 ) )
 		{
-			return wxMBConv_BOM::Create( BOM::UTF16_LE, 2, CP::UTF32_LE, bUseMLang, sDescription );
+			pRes = wxMBConvSharedPtr( wxMBConv_BOM::Create( BOM::UTF16_LE, 2, CP::UTF32_LE, bUseMLang, sDescription ) );
 		}
 		break;
 
 		case 0:
 		case 1:
-		wxLogError( _("Cannot read BOM - file \u201C%s\u201D is too small."), fn.GetName() );
+		wxLogError( _("Cannot read BOM - file \u201C%s\u201D is too small"), fn.GetName() );
 		break;
 	}
 
-	return wxNullMBConv;
+	return pRes;
 }
 
-wxMBConv* wxEncodingDetection::GetFileEncoding( const wxFileName& fn, bool bUseMLang, wxString& sDescription )
+wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( const wxFileName& fn, bool bUseMLang, wxString& sDescription )
 {
+	wxMBConvSharedPtr pRes;
 	wxULongLong nFileSize = fn.GetSize();
 	if ( nFileSize == wxInvalidSize )
 	{
-		wxLogError( _("Cannot determine size of file \u201C%s\u201D."), fn.GetName() );
-		return wxNullMBConv;
+		wxLogError( _("Cannot determine size of file \u201C%s\u201D"), fn.GetName() );
+		return pRes;
 	}
 
 	if ( nFileSize == wxULL(0) )
 	{
-		wxLogError( _("Cannot determine encoding of empty file \u201C%s\u201D."), fn.GetName() );
-		return wxNullMBConv;
+		wxLogError( _("Cannot determine encoding of empty file \u201C%s\u201D"), fn.GetName() );
+		return pRes;
 	}
 
-	wxMBConv* pRes = GetFileEncodingFromBOM( fn, bUseMLang, sDescription );
-	if ( pRes != (wxMBConv*)NULL )
+	pRes = GetFileEncodingFromBOM( fn, bUseMLang, sDescription );
+	if ( pRes.get() != wxNullMBConv )
 	{
 		return pRes;
 	}
@@ -527,8 +521,9 @@ wxMBConv* wxEncodingDetection::GetFileEncoding( const wxFileName& fn, bool bUseM
 
 		if ( !multiLanguage.IsValid() )
 		{
-			wxLogError( _("Cannot create MultiLanguage COM object.") );
-			return wxNullMBConv;
+			wxLogError( _("Cannot create MultiLanguage COM object") );
+			pRes.reset();
+			return pRes;
 		}
 
 		DetectEncodingInfo dei[10];
@@ -544,8 +539,9 @@ wxMBConv* wxEncodingDetection::GetFileEncoding( const wxFileName& fn, bool bUseM
 				wxFileInputStream fis( fn.GetFullPath() );
 				if ( !fis.IsOk() )
 				{
-					wxLogError( _("Cannot open file \u201C%s\u201D."), fn.GetName() );
-					return wxNullMBConv;
+					wxLogError( _("Cannot open file \u201C%s\u201D"), fn.GetName() );
+					pRes.reset();
+					return pRes;
 				}
 
 				nLastRead = fis.Read( buffer.data(), buffer.length() ).LastRead();
@@ -564,13 +560,14 @@ wxMBConv* wxEncodingDetection::GetFileEncoding( const wxFileName& fn, bool bUseM
 			HRESULT hRes = multiLanguage.DetectInputCodepage( MLDETECTCP_NONE, nDefCodePage, newBuffer, dei, &nSize );
 			if ( hRes != S_OK )
 			{
-				wxLogError( _("Cannot determine encoding of file \u201C%s\u201D."), fn.GetName() );
-				return wxNullMBConv;
+				wxLogError( _("Cannot determine encoding of file \u201C%s\u201D"), fn.GetName() );
+				pRes.reset();
+				return pRes;
 			}
 		}
 		else if ( nFileSize > wxULL(102400) ) // > 100k
 		{ // read only first 4k
-			wxLogWarning( _("File \u201C%s\u201D is really big - trying first 4kb only."), fn.GetName() );
+			wxLogWarning( _("File \u201C%s\u201D is really big - trying first 4kb only"), fn.GetName() );
 			wxCharBuffer buffer( 4 * 1024 );
 			size_t nLastRead;
 
@@ -578,8 +575,9 @@ wxMBConv* wxEncodingDetection::GetFileEncoding( const wxFileName& fn, bool bUseM
 				wxFileInputStream fis( fn.GetFullPath() );
 				if ( !fis.IsOk() )
 				{
-					wxLogError( _("Cannot open file \u201C%s\u201D."), fn.GetName() );
-					return wxNullMBConv;
+					wxLogError( _("Cannot open file \u201C%s\u201D"), fn.GetName() );
+					pRes.reset();
+					return pRes;
 				}
 
 				fis.Read( buffer.data(), buffer.length() );
@@ -591,8 +589,9 @@ wxMBConv* wxEncodingDetection::GetFileEncoding( const wxFileName& fn, bool bUseM
 			HRESULT hRes = multiLanguage.DetectInputCodepage( MLDETECTCP_NONE, nDefCodePage, buffer, dei, &nSize );
 			if ( hRes != S_OK )
 			{
-				wxLogError( _("Cannot determine encoding of file \u201C%s\u201D."), fn.GetName() );
-				return wxNullMBConv;
+				wxLogError( _("Cannot determine encoding of file \u201C%s\u201D"), fn.GetName() );
+				pRes.reset();
+				return pRes;
 			}
 		}
 		else
@@ -600,8 +599,9 @@ wxMBConv* wxEncodingDetection::GetFileEncoding( const wxFileName& fn, bool bUseM
 			HRESULT hRes = multiLanguage.DetectCodepageInStream( MLDETECTCP_NONE, nDefCodePage, fn, dei, &nSize );
 			if ( hRes != S_OK )
 			{
-				wxLogError( _("Cannot determine encoding of file \u201C%s\u201D."), fn.GetName() );
-				return wxNullMBConv;
+				wxLogError( _("Cannot determine encoding of file \u201C%s\u201D"), fn.GetName() );
+				pRes.reset();
+				return pRes;
 			}
 		}
 
@@ -609,14 +609,14 @@ wxMBConv* wxEncodingDetection::GetFileEncoding( const wxFileName& fn, bool bUseM
 		{
 			for( INT i=0; i< nSize; i++ )
 			{
-				wxLogDebug( _("Detected encoding of file \u201C%s\u201D is %d (%d%%)."), fn.GetName(), dei[i].nCodePage, dei[i].nDocPercent );
+				wxLogDebug( _("Detected encoding of file \u201C%s\u201D is %d (%d%%)"), fn.GetName(), dei[i].nCodePage, dei[i].nDocPercent );
 			}
 
 			pRes = wxMBConv_MLang::Create( multiLanguage, dei[0].nCodePage, sDescription );
 		}
 		else
 		{
-			wxLogDebug( _("Cannot detect code page - using default encoding.") );
+			wxLogDebug( wxT("Cannot detect code page - using default encoding") );
 			pRes = wxMBConv_MLang::Create( multiLanguage, nDefCodePage, sDescription );
 		}
 	}

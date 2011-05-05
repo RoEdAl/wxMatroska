@@ -146,7 +146,7 @@ void wxCueSheetReader::CorrectQuotationMarks( bool bCorrectQuotationMarks, const
 bool wxCueSheetReader::ReadCueSheet(const wxString& sCueFile, bool bUseMLang )
 {
 	wxString sCPDescription;
-	wxSharedPtr<wxMBConv> pConv( wxEncodingDetection::GetFileEncoding( sCueFile, bUseMLang, sCPDescription ) );
+	wxEncodingDetection::wxMBConvSharedPtr pConv( wxEncodingDetection::GetFileEncoding( sCueFile, bUseMLang, sCPDescription ) );
 	if ( pConv )
 	{
 		wxLogInfo( _("Detected encoding of file \u201C%s\u201D file is \u201C%s\u201D"), sCueFile, sCPDescription );
@@ -165,13 +165,14 @@ bool wxCueSheetReader::ReadCueSheet(const wxString& sCueFile, wxMBConv& conv)
 
 	if ( !m_cueFileName.FileExists() || m_cueFileName.IsDir() )
 	{
-		wxLogError( _("Invalid path to CUE file \u201C%s\u201D."), sCueFile );
+		wxLogError( _("Invalid path to CUE file \u201C%s\u201D"), sCueFile );
 		return false;
 	}
 
 	wxFileInputStream fis( m_cueFileName.GetFullPath() );
-	if ( !fis.IsOk() ) {
-		wxLogError( _("Unable to open CUE file \u201C%s\u201D."), sCueFile );
+	if ( !fis.IsOk() )
+	{
+		wxLogError( _("Unable to open CUE file \u201C%s\u201D"), sCueFile );
 		return false;
 	}
 
@@ -817,7 +818,7 @@ bool wxCueSheetReader::ParseCue()
     {
 		if ( m_reEmpty.Matches( *i ) )
 		{
-			wxLogDebug( wxT("Skipping empty line %d."), nLine );
+			wxLogDebug( wxT("Skipping empty line %d"), nLine );
 			continue;
 		}
 

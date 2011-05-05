@@ -189,7 +189,6 @@ protected:
 
 	static wxString mkvmerge_escape( const wxString& );
 	static void write_as( wxTextOutputStream&, const wxArrayString& );
-	static wxString get_file_name( const wxString& );
 
 protected:
 

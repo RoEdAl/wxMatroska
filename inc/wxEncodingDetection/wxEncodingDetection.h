@@ -10,6 +10,8 @@ class wxEncodingDetection :public wxObject
 	public:
 
 	typedef wxCharTypeBuffer<wxByte> wxByteBuffer;
+	typedef wxSharedPtr<wxMBConv> wxMBConvSharedPtr;
+
 	static wxMBConv* const wxNullMBConv;
 
 	static class BOM
@@ -35,10 +37,10 @@ class wxEncodingDetection :public wxObject
 	};
 
 	static bool GetBOM( wxUint32, wxByteBuffer& );
-	static wxMBConv* GetDefaultEncoding( bool, wxString& );
-	static wxMBConv* GetStandardMBConv( wxUint32, bool, wxString& );
-	static wxMBConv* GetFileEncodingFromBOM( const wxFileName&, bool, wxString& );
-	static wxMBConv* GetFileEncoding( const wxFileName&, bool, wxString& );
+	static wxMBConvSharedPtr GetDefaultEncoding( bool, wxString& );
+	static wxMBConvSharedPtr GetStandardMBConv( wxUint32, bool, wxString& );
+	static wxMBConvSharedPtr GetFileEncodingFromBOM( const wxFileName&, bool, wxString& );
+	static wxMBConvSharedPtr GetFileEncoding( const wxFileName&, bool, wxString& );
 
 	protected:
 

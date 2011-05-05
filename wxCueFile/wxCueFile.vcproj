@@ -197,6 +197,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\wxEllipsizer.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\wxFlacDecoder.cpp"
 				>
 			</File>
@@ -304,6 +308,10 @@
 			</File>
 			<File
 				RelativePath="..\inc\wxCueFile\wxDataFile.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inc\wxCueFile\wxEllipsizer.h"
 				>
 			</File>
 			<File

@@ -110,5 +110,5 @@ void wxFlacDecoder::metadata_callback(const ::FLAC__StreamMetadata *metadata)
 void wxFlacDecoder::error_callback(::FLAC__StreamDecoderErrorStatus status)
 {
 	wxString sFlacStatus( FLAC__StreamDecoderErrorStatusString[status] );
-	wxLogError( wxT("FLAC error %d: %s"), status, sFlacStatus );
+	wxLogError( _("FLAC error %d: %s"), status, sFlacStatus );
 }

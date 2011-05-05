@@ -121,14 +121,14 @@ bool wxMyApp::CheckLicense()
 	wxULongLong fs( fn.GetSize() );
 	if ( fs == wxInvalidSize )
 	{
-		wxLogInfo( wxT("Unable to read license \u201C%s\u201D."), fn.GetFullPath() );
+		wxLogInfo( wxT("Unable to read license \u201C%s\u201D"), fn.GetFullPath() );
 		return false;
 	}
 
 	wxULongLong maxSize( 0, MAX_LICENSE_FILE_SIZE );
 	if ( fs > maxSize )
 	{
-		wxLogInfo( wxT("License file \u201C%s\u201D is too big."), fn.GetFullPath() );
+		wxLogInfo( wxT("License file \u201C%s\u201D is too big"), fn.GetFullPath() );
 		return false;
 	}
 
@@ -472,7 +472,7 @@ bool wxMyApp::RunMkvmerge( const wxString& sOptionsFile )
 		sCmdLine.Printf( wxT("mkvmerge --quiet \"@%s\""), sOptionsFile );
 	}
 
-	wxLogInfo( _("Running mkvmerge with options file \u201C%s\u201D"), sOptionsFile );
+	wxLogMessage( _("Running mkvmerge with options file \u201C%s\u201D"), sOptionsFile );
 	long nRes = wxExecute( sCmdLine, wxEXEC_SYNC|wxEXEC_NOEVENTS );
 	if ( nRes == -1 )
 	{
@@ -494,3 +494,8 @@ bool wxMyApp::RunMkvmerge( const wxString& sOptionsFile )
 	}
 }
 
+wxString wxMyApp::GetFileName( const wxString& sFileName )
+{
+	wxFileName fn( sFileName );
+	return fn.GetFullName();
+}

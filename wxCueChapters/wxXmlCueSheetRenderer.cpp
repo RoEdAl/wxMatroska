@@ -506,10 +506,8 @@ wxXmlDocument* wxXmlCueSheetRenderer::create_xml_document( const wxString& sRoot
 	wxXmlDocument* pXmlDoc = new wxXmlDocument();
 	pXmlDoc->SetVersion( wxT("1.0") );
 	pXmlDoc->SetFileEncoding( wxT("utf-8") );
-
 	wxXmlNode* pRoot = new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, sRootNode );
 	pXmlDoc->SetRoot( pRoot );
-
 	return pXmlDoc;
 }
 
@@ -841,7 +839,7 @@ bool wxXmlCueSheetRenderer::OnPreRenderDisc( const wxCueSheet& cueSheet )
 		}
 		else
 		{
-			m_asMmcPre.Add( mkvmerge_escape( get_file_name( m_sMatroskaFile ) ) );
+			m_asMmcPre.Add( mkvmerge_escape( wxMyApp::GetFileName( m_sMatroskaFile ) ) );
 		}
 		m_asMmcPre.Add( wxT("--language") );
 		m_asMmcPre.Add( wxString::Format( wxT("0:%s"), GetConfig().GetLang() ) );
@@ -1099,7 +1097,7 @@ bool wxXmlCueSheetRenderer::OnPostRenderDisc( const wxCueSheet& cueSheet )
 		}
 		else
 		{
-			m_asMmcPost.Add( mkvmerge_escape( get_file_name(m_sOutputFile) ) );
+			m_asMmcPost.Add( mkvmerge_escape( wxMyApp::GetFileName(m_sOutputFile) ) );
 		}
 
 		if ( GetConfig().GenerateTags() )
@@ -1111,7 +1109,7 @@ bool wxXmlCueSheetRenderer::OnPostRenderDisc( const wxCueSheet& cueSheet )
 			}
 			else
 			{
-				m_asMmcPost.Add( mkvmerge_escape( get_file_name( m_sTagsFile ) ) );
+				m_asMmcPost.Add( mkvmerge_escape( wxMyApp::GetFileName( m_sTagsFile ) ) );
 			}
 		}
 	}
@@ -1128,10 +1126,4 @@ bool wxXmlCueSheetRenderer::IsOffsetValid() const
 const wxString& wxXmlCueSheetRenderer::GetMkvmergeOptionsFile() const
 {
 	return m_sMatroskaOptsFile;
-}
-
-wxString wxXmlCueSheetRenderer::get_file_name( const wxString& sFullPath )
-{
-	wxFileName fn( sFullPath );
-	return fn.GetFullName();
 }

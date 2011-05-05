@@ -113,7 +113,7 @@ public:
 	bool GenerateEditionUID() const;
 	bool GenerateTagsFromComments() const;
 	FILE_ENCODING GetCueSheetFileEncoding() const;
-	wxTextOutputStream* GetOutputTextStream( wxOutputStream& );
+	wxSharedPtr<wxTextOutputStream> GetOutputTextStream( wxOutputStream& );
 	bool GetMerge() const;
 	unsigned int GetEmbeddedModeFlags() const;
 	bool ShouldIgnoreTag( const wxCueTag& ) const;

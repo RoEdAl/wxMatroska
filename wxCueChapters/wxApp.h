@@ -67,6 +67,10 @@ public:
 	static const wxChar APP_AUTHOR[];
 	static const wxChar LICENSE_FILE_NAME[];
 
+	static wxString GetFileName( const wxString& );
+
+public:
+
 	wxMyApp(void);
 };
 

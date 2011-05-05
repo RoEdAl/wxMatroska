@@ -121,8 +121,8 @@ bool wxConfiguration::ReadLanguagesStrings( wxSortedArrayString& as )
 	fn.SetFullName( LANG_FILE_NAME );
 	if ( !fn.FileExists() )
 	{
-		wxLogInfo( wxT("Cannot find language file \u201C%s\u201D."), fn.GetFullPath() );
-		wxLogInfo( wxT("You can find this file at \u201C%s\u201D."), LANG_FILE_URL );
+		wxLogInfo( _("Cannot find language file \u201C%s\u201D"), fn.GetFullPath() );
+		wxLogInfo( _("You can find this file at \u201C%s\u201D"), LANG_FILE_URL );
 		return false;
 	}
 
@@ -147,7 +147,7 @@ bool wxConfiguration::ReadLanguagesStrings( wxSortedArrayString& as )
 			wxString sLang( tokenizer.GetNextToken() );
 			if ( sLang.IsEmpty() || (sLang.Length() > 3) )
 			{
-				wxLogDebug( _("Skipping language %s"), sLang );
+				wxLogDebug( wxT("Skipping language %s"), sLang );
 			}
 			else
 			{
@@ -157,7 +157,7 @@ bool wxConfiguration::ReadLanguagesStrings( wxSortedArrayString& as )
 
 		if ( n++ > 5000 )
 		{
-			wxLogError( _("Too many languages. File \u201C%s\u201D is corrupt."), fn.GetFullName() );
+			wxLogError( _("Too many languages. File \u201C%s\u201D is corrupt"), fn.GetFullName() );
 			as.Clear();
 			return false;
 		}
@@ -612,12 +612,6 @@ static wxString BoolToIdx( bool b )
 	return b? wxT("01") : wxT("00");
 }
 
-static wxString GetFileName( const wxString& sFileName )
-{
-	wxFileName fn( sFileName );
-	return fn.GetFullName();
-}
-
 static wxString GetEmbeddedModeFlagsDesc( unsigned int flags )
 {
 	wxArrayString as;
@@ -734,7 +728,7 @@ void wxConfiguration::Dump() const
 		as.Add( sSeparator );
 		as.Add( _("Configuration:") );
 		FillArray( as );
-		as.Add( wxString::Format( wxT("Output path: \u201C%s\u201D"), m_outputFile.GetFullPath() ) );
+		as.Add( wxString::Format( _("Output path: \u201C%s\u201D"), m_outputFile.GetFullPath() ) );
 		as.Add( sSeparator );
 		size_t strings = as.GetCount();
 		wxDateTime dt( wxDateTime::Now() );
@@ -759,7 +753,7 @@ void wxConfiguration::BuildXmlComments( const wxString& sOutputFile, wxXmlNode* 
 	as.Add( wxString::Format( wxT("Application version: %s"), wxGetApp().APP_VERSION ) );
 	as.Add( wxString::Format( wxT("Application vendor: %s"), wxGetApp().GetVendorDisplayName() ) );
 	as.Add( wxString::Format( wxT("Creation time: %s %s"), dtNow.FormatISODate(), dtNow.FormatISOTime() ) );
-	as.Add( wxString::Format( wxT("Output file: \u201C%s\u201D"), GetFileName(sOutputFile) ) );
+	as.Add( wxString::Format( wxT("Output file: \u201C%s\u201D"), wxMyApp::GetFileName(sOutputFile) ) );
 
 	FillArray( as );
 
@@ -997,7 +991,7 @@ wxConfiguration::FILE_ENCODING wxConfiguration::GetCueSheetFileEncoding() const
 	return m_eCueSheetFileEncoding;
 }
 
-wxTextOutputStream* wxConfiguration::GetOutputTextStream( wxOutputStream& os )
+wxSharedPtr<wxTextOutputStream> wxConfiguration::GetOutputTextStream( wxOutputStream& os )
 {
 	switch( m_eCueSheetFileEncoding )
 	{
@@ -1014,7 +1008,7 @@ wxTextOutputStream* wxConfiguration::GetOutputTextStream( wxOutputStream& os )
 		return wxTextOutputStreamWithBOMFactory::CreateUTF16( os, wxEOL_NATIVE, true, m_bUseMLang );
 
 		default:
-		return new wxTextOutputStream( os, wxEOL_NATIVE, wxConvLocal );
+		return wxSharedPtr<wxTextOutputStream>( new wxTextOutputStream( os, wxEOL_NATIVE, wxConvLocal ) );
 	}
 }
 

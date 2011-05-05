@@ -142,14 +142,14 @@ bool wxFlacMetaDataReader::ReadMetadata( const wxString& sFlacFile )
 	if ( status != FLAC__STREAM_DECODER_INIT_STATUS_OK )
 	{
 		wxString sStatusStr( FLAC__StreamDecoderInitStatusString[status] );
-		wxLogWarning( wxT("Fail to initialize FLAC decoder %d %s"), (int)status, sStatusStr );
+		wxLogWarning( _("Fail to initialize FLAC decoder %d %s"), (int)status, sStatusStr );
 		return false;
 	}
 
 	bool process = decoder.process_until_end_of_metadata();
 	if ( !process )
 	{
-		wxLogWarning( wxT("Fail to process FLAC metadata") );
+		wxLogWarning( _("Fail to process FLAC metadata") );
 		decoder.finish();
 		return false;
 	}

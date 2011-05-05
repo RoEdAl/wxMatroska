@@ -270,7 +270,7 @@ bool wxDataFile::GetFromMediaInfo( const wxFileName& fileName, wxULongLong& fram
 			case 1: // duration
 			if ( !as1[i].ToULong( &u ) )
 			{
-				wxLogWarning( wxT("MediaInfo - Invalid duration - %s"), as1[i] );
+				wxLogWarning( _("MediaInfo - Invalid duration - %s"), as1[i] );
 				check = false;
 			}
 			break;
@@ -281,7 +281,7 @@ bool wxDataFile::GetFromMediaInfo( const wxFileName& fileName, wxULongLong& fram
 			case 3: // sampling rate
 			if ( !as1[i].ToULong( &u ) || (u == 0u) )
 			{
-				wxLogWarning( wxT("MediaInfo - Invalid sample rate - %s"), as1[i] );
+				wxLogWarning( _("MediaInfo - Invalid sample rate - %s"), as1[i] );
 				check = false;
 			}
 			else
@@ -295,7 +295,7 @@ bool wxDataFile::GetFromMediaInfo( const wxFileName& fileName, wxULongLong& fram
 			{
 				if ( !as1[i].ToULong( &u ) || (u == 0u) || (u>10000u) )
 				{
-					wxLogWarning( wxT("MediaInfo - Invalid bit depth - %s"), as1[i] );
+					wxLogWarning( _("MediaInfo - Invalid bit depth - %s"), as1[i] );
 					check = false;
 				}
 				else
@@ -312,7 +312,7 @@ bool wxDataFile::GetFromMediaInfo( const wxFileName& fileName, wxULongLong& fram
 			case 5: // channels
 			if ( !as1[i].ToULong( &u ) || (u == 0u) || (u > 128u) )
 			{
-				wxLogWarning( wxT("MediaInfo - Invalid number of channels - %s"), as1[i] );
+				wxLogWarning( _("MediaInfo - Invalid number of channels - %s"), as1[i] );
 				check = false;
 			}
 			else
@@ -331,7 +331,7 @@ bool wxDataFile::GetFromMediaInfo( const wxFileName& fileName, wxULongLong& fram
 				}
 				else
 				{
-					wxLogWarning( wxT("MediaInfo - Invalid samples count - %s"), as1[i] );
+					wxLogWarning( _("MediaInfo - Invalid samples count - %s"), as1[i] );
 					check = false;
 				}
 			}
