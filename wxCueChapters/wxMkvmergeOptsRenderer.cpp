@@ -182,6 +182,7 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile, const wxC
 		wxFileName logFile;
 		if ( GetLogFile( inputFile.GetInputFile(), logFile ) )
 		{
+			wxLogInfo( _T("Found EAC log file \u201C%s\u201D"), logFile.GetFullPath() );
 			m_logFiles.Add( logFile );
 		}
 	}
@@ -223,6 +224,7 @@ bool wxMkvmergeOptsRenderer::Save()
 	wxFileOutputStream os( m_sMatroskaOptsFile );
 	if ( os.IsOk() )
 	{
+		wxLogInfo( _T("Creating mkvmerge options file \u201C%s\u201D"), wxMyApp::GetFileName( m_sMatroskaOptsFile ) );
 		wxSharedPtr<wxTextOutputStream> pStream( wxTextOutputStreamWithBOMFactory::CreateUTF8( os, wxEOL_NATIVE, true, m_cfg.UseMLang() ) );
 		write_as( *pStream, m_asMmcPre );
 		write_as( *pStream, m_asMmcInputFiles );
