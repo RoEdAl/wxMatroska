@@ -225,6 +225,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\wxMkvmergeOptsRenderer.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\wxXmlCueSheetRenderer.cpp"
 				>
 			</File>
@@ -248,6 +252,10 @@
 			</File>
 			<File
 				RelativePath=".\wxInputFile.h"
+				>
+			</File>
+			<File
+				RelativePath=".\wxMkvmergeOptsRenderer.h"
 				>
 			</File>
 			<File

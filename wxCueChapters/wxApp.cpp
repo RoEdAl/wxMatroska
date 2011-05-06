@@ -11,6 +11,7 @@
 #include <wxCueFile/wxCueSheetRenderer.h>
 #include <wxCueFile/wxTextCueSheetRenderer.h>
 #include "wxConfiguration.h"
+#include "wxMkvmergeOptsRenderer.h"
 #include "wxXmlCueSheetRenderer.h"
 #include "wxApp.h"
 
@@ -244,21 +245,38 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, const wxCueSheet& cu
 	else
 	{
 		wxLogInfo( _("Converting cue scheet to XML format") );
-		wxXmlCueSheetRenderer& renderer = GetXmlRenderer( inputFile );
-		if ( renderer.Render( cueSheet ) )
+		wxXmlCueSheetRenderer& xmlRenderer = GetXmlRenderer( inputFile );
+		if ( xmlRenderer.Render( cueSheet ) )
 		{
+
+			if ( m_cfg.GenerateMkvmergeOpts() )
+			{
+				wxMkvmergeOptsRenderer& optsRenderer = GetMkvmergeOptsRenderer();
+				optsRenderer.RenderDisc( inputFile, cueSheet );
+			}
+
 			if ( !m_cfg.GetMerge() )
 			{
-				if ( !renderer.SaveXmlDoc() )
+				if ( !xmlRenderer.SaveXmlDoc() )
 				{
 					return 1;
 				}
 
-				if ( m_cfg.GenerateMkvmergeOpts() &&
-					 m_cfg.RunMkvmerge() &&
-					 !RunMkvmerge( renderer.GetMkvmergeOptionsFile() ) )
+				if ( m_cfg.GenerateMkvmergeOpts() )
 				{
-					return 1;
+					wxMkvmergeOptsRenderer& optsRenderer = GetMkvmergeOptsRenderer( false );
+					if ( !optsRenderer.Save() )
+					{
+						return 1;
+					}
+
+					if ( m_cfg.RunMkvmerge() )
+					{
+						if ( !RunMkvmerge( optsRenderer.GetMkvmergeOptsFile() ) )
+						{
+							return 1;
+						}
+					}
 				}
 			}
 		}
@@ -385,11 +403,16 @@ int wxMyApp::OnRun()
 			res = 1;
 		}
 
-		if ( m_cfg.GenerateMkvmergeOpts() &&
-			 m_cfg.RunMkvmerge() &&
-			 !RunMkvmerge( renderer.GetMkvmergeOptionsFile() ) )
+		if ( m_cfg.GenerateMkvmergeOpts() )
 		{
-			res = 1;
+			wxMkvmergeOptsRenderer& optsRenderer = GetMkvmergeOptsRenderer();
+			if ( m_cfg.RunMkvmerge() )
+			{
+				if ( !RunMkvmerge( optsRenderer.GetMkvmergeOptsFile() ) )
+				{
+					res = 1;
+				}
+			}
 		}
 	}
 
@@ -400,6 +423,7 @@ int wxMyApp::OnExit()
 {
 	int res = wxAppConsole::OnExit();
 	m_pRenderer.reset();
+	m_pMkvmergeOptsRenderer.reset();
 	CoUninitialize();
 	wxLogMessage( _("Done") );
 	return res;
@@ -438,9 +462,40 @@ wxXmlCueSheetRenderer& wxMyApp::GetXmlRenderer(const wxInputFile& inputFile)
 	return *m_pRenderer;
 }
 
+wxMkvmergeOptsRenderer& wxMyApp::GetMkvmergeOptsRenderer( bool bCreate )
+{
+	bool bShowInfo = false;
+
+	if ( m_cfg.GetMerge() )
+	{
+		if ( !HasMkvmergeOptsRenderer() )
+		{
+			m_pMkvmergeOptsRenderer.reset( new wxMkvmergeOptsRenderer( m_cfg ) );
+		}
+	}
+	else
+	{
+		if ( bCreate )
+		{
+			m_pMkvmergeOptsRenderer.reset( new wxMkvmergeOptsRenderer( m_cfg ) );
+		}
+		else
+		{
+			wxASSERT( HasMkvmergeOptsRenderer() );
+		}
+	}
+
+	return *m_pMkvmergeOptsRenderer;
+}
+
 bool wxMyApp::HasXmlRenderer() const
 {
 	return ( m_pRenderer.get() != wxXmlCueSheetRenderer::Null );
+}
+
+bool wxMyApp::HasMkvmergeOptsRenderer() const
+{
+	return ( m_pMkvmergeOptsRenderer.get() != wxMkvmergeOptsRenderer::Null );
 }
 
 wxXmlCueSheetRenderer& wxMyApp::GetXmlRenderer()

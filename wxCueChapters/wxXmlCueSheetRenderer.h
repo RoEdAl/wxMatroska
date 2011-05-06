@@ -52,16 +52,10 @@ protected:
 	wxXmlDocument* m_pXmlTags;
 	wxXmlNode* m_pTags;
 
-	wxArrayString m_asMmcPre;
-	wxArrayString m_asMmcPost;
-	wxArrayString m_asMmcInputFiles;
-
 	const wxConfiguration* m_pCfg;
 	wxInputFile m_inputFile;
 	wxString m_sOutputFile;
 	wxString m_sTagsFile;
-	wxString m_sMatroskaFile;
-	wxString m_sMatroskaOptsFile;
 
 	wxULongLong m_offset;
 	size_t m_nTotalParts;
@@ -187,9 +181,6 @@ protected:
 	static void add_comment_node( wxXmlNode*, const wxString& );
 	static wxULongLong GenerateUID();
 
-	static wxString mkvmerge_escape( const wxString& );
-	static void write_as( wxTextOutputStream&, const wxArrayString& );
-
 protected:
 
 	wxXmlCueSheetRenderer();
@@ -206,7 +197,6 @@ public:
 
 	const wxString& GetOutputFile() const;
 	const wxString& GetTagsFile() const;
-	const wxString& GetMkvmergeOptionsFile() const;
 
 	bool SaveXmlDoc();
 	bool IsOffsetValid() const;
