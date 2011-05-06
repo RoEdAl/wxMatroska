@@ -5,7 +5,7 @@
 #include "StdWx.h"
 #include <wxCueFile/wxEllipsizer.h>
 
-const wxChar wxEllipsizer::REG_EX[] = wxT("(\\.\\.\\.)[[:space:]]*\\Z");
+const wxChar wxEllipsizer::REG_EX[] = wxT("([[:space:]]*\\.\\.\\.)[[:space:]]*\\Z");
 const wxChar wxEllipsizer::ELLIPSIS = wxT('\u2026');
 
 wxEllipsizer::wxEllipsizer()

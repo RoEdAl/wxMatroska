@@ -193,7 +193,8 @@ wxConfiguration::wxConfiguration(void)
 	 m_bMerge(false),
 	 m_nEmbeddedModeFlags(wxCueSheetReader::EC_MEDIA_READ_TAGS|wxCueSheetReader::EC_FLAC_READ_TAG_FIRST_THEN_COMMENT),
 	 m_bUseMLang(true),
-	 m_bFullPaths(false)
+	 m_bFullPaths(false),
+	 m_bEllipsizeTags(true)
 {
 	ReadLanguagesStrings( m_asLang );
 }
@@ -259,6 +260,8 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddOption( wxT("mf"), wxT("matroska-title-format"), wxString::Format( _("Mtroska container's title format (default: %s)"), MATROSKA_NAME_FORMAT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("cq"), wxT("correct-quotation-marks"), _("Correct \"simple 'quotation' marks\" to \u201Cenglish \u2018quotation\u2019 marks\u201D inside strings (default: on)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT("ncq"), wxT("dont-correct-quotation-marks"), _("Dont correct \"simple 'quotation' marks\" to \u201Cenglish \u2018quotation\u2019 marks\u201D inside strings"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("et"), wxT("ellipsize-tags"), wxString::Format( _("Ellipsize tags - convert last three dots to '%c' (default: on)"), wxEllipsizer::ELLIPSIS ), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT("net"), wxT("dont-ellipsize-tags"), _("Do not ellipsize tags"), wxCMD_LINE_PARAM_OPTIONAL );
 
 	// embedded mode flags
 	cmdLine.AddSwitch( wxEmptyString, wxT("single-media-file"), _("Embedded mode flag. Assume input as single media file without cuesheet (default: no, opposite to media-file-with-embedded-cuesheet)"), wxCMD_LINE_PARAM_OPTIONAL );
@@ -331,6 +334,9 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	if ( cmdLine.Found( wxT("cq") ) ) m_bCorrectQuotationMarks = true;
 	if ( cmdLine.Found( wxT("ncq") ) ) m_bCorrectQuotationMarks = false;
+
+	if ( cmdLine.Found( wxT("et") ) ) m_bEllipsizeTags = true;
+	if ( cmdLine.Found( wxT("net") ) ) m_bEllipsizeTags = false;
 
 	if ( cmdLine.Found( wxT("c") ) ) m_bSaveCueSheet = true;
 	if ( cmdLine.Found( wxT("m") ) ) m_bSaveCueSheet = false;
@@ -712,6 +718,7 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
 	as.Add( wxString::Format( wxT("Matroska tags XML file extension: %s"), m_sMatroskaTagsXmlExt ) );
 	as.Add( wxString::Format( wxT("mkvmerge options file extension: %s"), m_sMatroskaOptsExt ) );
 	as.Add( wxString::Format( wxT("Correct \"simple 'quotation' marks\" inside strings: %s"), BoolToStr(m_bCorrectQuotationMarks) ) );
+	as.Add( wxString::Format( wxT("Ellipsize tags: %s"), BoolToStr(m_bEllipsizeTags) ) );
 	if ( m_bEmbedded )
 	{
 		as.Add( wxString::Format( wxT("Embedded mode flags: %s"), GetEmbeddedModeFlagsDesc(m_nEmbeddedModeFlags) ) );
@@ -1080,6 +1087,11 @@ const wxFileName& wxConfiguration::GetMkvmergeDir() const
 bool wxConfiguration::UseFullPaths() const
 {
 	return m_bFullPaths;
+}
+
+bool wxConfiguration::EllipsizeTags() const
+{
+	return m_bEllipsizeTags;
 }
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!

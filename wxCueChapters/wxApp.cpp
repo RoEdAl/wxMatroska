@@ -17,7 +17,7 @@
 // ===============================================================================
 
 const wxChar wxMyApp::APP_NAME[] = wxT("cue2mkc");
-const wxChar wxMyApp::APP_VERSION[] = wxT("0.7");
+const wxChar wxMyApp::APP_VERSION[] = wxT("0.71");
 const wxChar wxMyApp::APP_VENDOR_NAME[] = wxT("Edmunt Pienkowsky");
 const wxChar wxMyApp::APP_AUTHOR[] = wxT("Edmunt Pienkowsky - roed@onet.eu");
 const wxChar wxMyApp::LICENSE_FILE_NAME[] = wxT("license.txt");
@@ -319,8 +319,10 @@ int wxMyApp::ProcessCueFile( wxCueSheetReader& reader, const wxInputFile& inputF
 int wxMyApp::OnRun()
 {
 	wxCueSheetReader reader;
-	reader.CorrectQuotationMarks( m_cfg.CorrectQuotationMarks(), m_cfg.GetLang() );
-	reader.SetParseComments( m_cfg.GenerateTagsFromComments() );
+	reader
+	.CorrectQuotationMarks( m_cfg.CorrectQuotationMarks(), m_cfg.GetLang() )
+	.SetParseComments( m_cfg.GenerateTagsFromComments() )
+	.SetEllipsizeTags( m_cfg.EllipsizeTags() );
 
 	int res = 0;
 	const wxArrayInputFile& inputFile = m_cfg.GetInputFiles();

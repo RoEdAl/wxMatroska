@@ -83,6 +83,7 @@ protected:
 	wxCueSheet m_cueSheet;
 	bool m_bErrorsAsWarnings;
 	bool m_bParseComments;
+	bool m_bEllipsizeTags;
 	wxString m_sLang;
 	wxFileName m_cueFileName;
 
@@ -163,7 +164,9 @@ public:
 	wxCueSheetReader& SetErrorsAsWarnings( bool = true );
 	bool ParseComments() const;
 	wxCueSheetReader& SetParseComments( bool = true );
-	void CorrectQuotationMarks( bool, const wxString& );
+	bool EllipsizeTags() const;
+	wxCueSheetReader& SetEllipsizeTags( bool = true );
+	wxCueSheetReader& CorrectQuotationMarks( bool, const wxString& );
 
 	const wxArrayString& GetCueLines() const;
 	const wxCueSheet& GetCueSheet() const;

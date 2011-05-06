@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <object type="TAForm" name="FormMain">
 	<properties>
-		<property name="Left" vt="Int16">202</property>
-		<property name="Top" vt="Int8">125</property>
+		<property name="Left" vt="Int16">197</property>
+		<property name="Top" vt="Int8">102</property>
 		<property name="Width" vt="Int16">547</property>
-		<property name="Height" vt="Int16">466</property>
+		<property name="Height" vt="Int16">450</property>
 		<property name="Caption" vt="String">cue2mkc GUI</property>
 		<property name="Color" vt="Ident">clBtnFace</property>
 		<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
@@ -37,7 +37,7 @@
 				<property name="Left" vt="Int8">0</property>
 				<property name="Top" vt="Int8">0</property>
 				<property name="Width" vt="Int16">541</property>
-				<property name="Height" vt="Int16">377</property>
+				<property name="Height" vt="Int16">369</property>
 				<property name="ActivePage" vt="Ident">OtherOptionsPane</property>
 				<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
 				<property name="Font.Color" vt="Ident">clWindowText</property>
@@ -372,7 +372,7 @@
 								<property name="Left" vt="Int8">0</property>
 								<property name="Top" vt="Int8">3</property>
 								<property name="Width" vt="Int16">265</property>
-								<property name="Height" vt="Int8">89</property>
+								<property name="Height" vt="Int8">53</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">32</property>
 								<property name="Caption" vt="String">&amp;General</property>
@@ -380,28 +380,14 @@
 								<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
 							</properties>
 							<components>
-								<object type="TACheckbox" name="CheckBoxCq">
-									<properties>
-										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">35</property>
-										<property name="Width" vt="Int16">253</property>
-										<property name="Height" vt="Int8">17</property>
-										<property name="Caption" vt="String">Correct &quot;&quot;simple 'quotation' marks&quot;&quot; inside strings</property>
-										<property name="TabOrder" vt="Int8">1</property>
-										<property name="CtrlStyle" vt="Int32">1342242819</property>
-										<property name="CtrlExStyle" vt="Int8">0</property>
-										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
-									</properties>
-									<components/>
-								</object>
 								<object type="TACheckbox" name="CheckBoxA">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">51</property>
+										<property name="Top" vt="Int8">31</property>
 										<property name="Width" vt="Int16">201</property>
 										<property name="Height" vt="Int8">17</property>
 										<property name="Caption" vt="String">Abort when conversion errors occurs</property>
-										<property name="TabOrder" vt="Int8">2</property>
+										<property name="TabOrder" vt="Int8">1</property>
 										<property name="CtrlStyle" vt="Int32">1342242819</property>
 										<property name="CtrlExStyle" vt="Int8">0</property>
 										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
@@ -411,7 +397,7 @@
 								<object type="TACheckbox" name="CheckBoxMerge">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">18</property>
+										<property name="Top" vt="Int8">16</property>
 										<property name="Width" vt="Int8">85</property>
 										<property name="Height" vt="Int8">17</property>
 										<property name="Hint" vt="String">Merge all input files into one cue sheet (requires MediaInfo lubrary)</property>
@@ -423,29 +409,14 @@
 									</properties>
 									<components/>
 								</object>
-								<object type="TACheckbox" name="CheckBoxTc">
-									<properties>
-										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">67</property>
-										<property name="Width" vt="Int16">197</property>
-										<property name="Height" vt="Int8">17</property>
-										<property name="Hint" vt="String">Try to parse tags from cue sheet comments</property>
-										<property name="Caption" vt="String">Parse tags from cue sheet comments</property>
-										<property name="TabOrder" vt="Int8">3</property>
-										<property name="CtrlStyle" vt="Int32">1342242819</property>
-										<property name="CtrlExStyle" vt="Int8">0</property>
-										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
-									</properties>
-									<components/>
-								</object>
 							</components>
 						</object>
 						<object type="TAGroup" name="GroupOutputOptions">
 							<properties>
 								<property name="Left" vt="Int8">0</property>
-								<property name="Top" vt="Int16">197</property>
+								<property name="Top" vt="Int16">149</property>
 								<property name="Width" vt="Int16">265</property>
-								<property name="Height" vt="Int8">101</property>
+								<property name="Height" vt="Int8">117</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
 								<property name="Caption" vt="String">&amp;Output</property>
@@ -455,7 +426,7 @@
 							<components>
 								<object type="TALabel" name="LabelOutputFormat">
 									<properties>
-										<property name="Left" vt="Int8">8</property>
+										<property name="Left" vt="Int8">4</property>
 										<property name="Top" vt="Int8">15</property>
 										<property name="Width" vt="Int8">43</property>
 										<property name="Height" vt="Int8">21</property>
@@ -506,7 +477,7 @@
 								<object type="TACheckbox" name="CheckBoxOf">
 									<properties>
 										<property name="Left" vt="Int8">22</property>
-										<property name="Top" vt="Int8">58</property>
+										<property name="Top" vt="Int8">54</property>
 										<property name="Width" vt="Int16">213</property>
 										<property name="Height" vt="Int8">17</property>
 										<property name="Caption" vt="String">Generate options file for mkvmerge</property>
@@ -517,16 +488,74 @@
 									</properties>
 									<components/>
 								</object>
-								<object type="TACheckbox" name="CheckBoxRunMkvmerge">
+								<object type="TALabel" name="LabelCueSheetEncoding">
+									<properties>
+										<property name="Left" vt="Int8">4</property>
+										<property name="Top" vt="Int8">93</property>
+										<property name="Width" vt="Int8">103</property>
+										<property name="Height" vt="Int8">21</property>
+										<property name="Hint" vt="String">Cue sheet file encoding</property>
+										<property name="AutoSize" vt="False">False</property>
+										<property name="Caption" vt="String">Cue sheet encoding:</property>
+										<property name="TabOrder" vt="Int8">6</property>
+										<property name="HaveVariable" vt="False">False</property>
+										<property name="CtrlStyle" vt="Int32">1342178048</property>
+										<property name="CtrlExStyle" vt="Int8">0</property>
+										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+									</properties>
+									<components/>
+								</object>
+								<object type="TACombo" name="ComboCueSheetEncoding">
+									<properties>
+										<property name="Left" vt="Int8">109</property>
+										<property name="Top" vt="Int8">93</property>
+										<property name="Width" vt="Int16">141</property>
+										<property name="Height" vt="Int8">25</property>
+										<property name="ItemHeight" vt="Int8">13</property>
+										<property name="TabOrder" vt="Int8">7</property>
+										<property name="Items.Strings" vt="List">
+											<list>
+												<li vt="String">default</li>
+												<li vt="String">UTF-8</li>
+												<li vt="String">UTF-8 with BOM</li>
+												<li vt="String">UTF-16</li>
+												<li vt="String">UTF-16 with BOM</li>
+											</list>
+										</property>
+										<property name="CtrlStyle" vt="Int32">1342243395</property>
+										<property name="CtrlExStyle" vt="Int16">512</property>
+										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+									</properties>
+									<components/>
+								</object>
+								<object type="TALabel" name="LabelLang">
 									<properties>
 										<property name="Left" vt="Int8">22</property>
-										<property name="Top" vt="Int8">76</property>
-										<property name="Width" vt="Int16">229</property>
-										<property name="Height" vt="Int8">17</property>
-										<property name="Caption" vt="String">Run mkvmerge after options file generation</property>
+										<property name="Top" vt="Int8">70</property>
+										<property name="Width" vt="Int8">53</property>
+										<property name="Height" vt="Int8">21</property>
+										<property name="AutoSize" vt="False">False</property>
+										<property name="Caption" vt="String">Language:</property>
 										<property name="TabOrder" vt="Int8">4</property>
-										<property name="CtrlStyle" vt="Int32">1342242819</property>
+										<property name="HaveVariable" vt="False">False</property>
+										<property name="CtrlStyle" vt="Int32">1342178048</property>
 										<property name="CtrlExStyle" vt="Int8">0</property>
+										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+									</properties>
+									<components/>
+								</object>
+								<object type="TAInput" name="InputLang">
+									<properties>
+										<property name="Left" vt="Int8">80</property>
+										<property name="Top" vt="Int8">70</property>
+										<property name="Width" vt="Int8">41</property>
+										<property name="Height" vt="Int8">21</property>
+										<property name="Hint" vt="String">This option also affects tags file generation</property>
+										<property name="MaxLength" vt="Int8">3</property>
+										<property name="TabOrder" vt="Int8">5</property>
+										<property name="Text" vt="String">eng</property>
+										<property name="CtrlStyle" vt="Int32">1342242944</property>
+										<property name="CtrlExStyle" vt="Int16">512</property>
 										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
 									</properties>
 									<components/>
@@ -536,9 +565,9 @@
 						<object type="TAGroup" name="GroupInputOptions">
 							<properties>
 								<property name="Left" vt="Int8">1</property>
-								<property name="Top" vt="Int8">92</property>
+								<property name="Top" vt="Int8">56</property>
 								<property name="Width" vt="Int16">265</property>
-								<property name="Height" vt="Int8">105</property>
+								<property name="Height" vt="Int8">93</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
 								<property name="Caption" vt="String">&amp;Input</property>
@@ -549,7 +578,7 @@
 								<object type="TACheckbox" name="CheckBoxEc">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">17</property>
+										<property name="Top" vt="Int8">16</property>
 										<property name="Width" vt="Int16">129</property>
 										<property name="Height" vt="Int8">17</property>
 										<property name="Hint" vt="String">Try to read embedded cue sheet (requires MediaInfo library)</property>
@@ -564,7 +593,7 @@
 								<object type="TACheckbox" name="CheckBoxSingleMediaFile">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">37</property>
+										<property name="Top" vt="Int8">32</property>
 										<property name="Width" vt="Int16">169</property>
 										<property name="Height" vt="Int8">17</property>
 										<property name="Hint" vt="String">Assume input file as media file without cue sheet</property>
@@ -579,7 +608,7 @@
 								<object type="TACheckbox" name="CheckBoxDf">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">56</property>
+										<property name="Top" vt="Int8">48</property>
 										<property name="Width" vt="Int8">97</property>
 										<property name="Height" vt="Int8">17</property>
 										<property name="Hint" vt="String">Use media file(s) to calculate end time of chapters</property>
@@ -594,7 +623,7 @@
 								<object type="TALabel" name="LabelAlternateExt">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">74</property>
+										<property name="Top" vt="Int8">66</property>
 										<property name="Width" vt="Int16">153</property>
 										<property name="Height" vt="Int8">21</property>
 										<property name="Hint" vt="String">Comma separated list of alternate media extensions</property>
@@ -610,15 +639,163 @@
 								</object>
 								<object type="TAInput" name="InputAlternateExt">
 									<properties>
-										<property name="Left" vt="Int16">158</property>
-										<property name="Top" vt="Int8">74</property>
-										<property name="Width" vt="Int8">101</property>
+										<property name="Left" vt="Int16">162</property>
+										<property name="Top" vt="Int8">66</property>
+										<property name="Width" vt="Int8">93</property>
 										<property name="Height" vt="Int8">21</property>
 										<property name="Hint" vt="String">Comma-separated list of alternate extensions of media files</property>
 										<property name="MaxLength" vt="Int16">150</property>
 										<property name="TabOrder" vt="Int8">4</property>
 										<property name="CtrlStyle" vt="Int32">1342242944</property>
 										<property name="CtrlExStyle" vt="Int16">512</property>
+										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+									</properties>
+									<components/>
+								</object>
+							</components>
+						</object>
+						<object type="TAGroup" name="GroupTags">
+							<properties>
+								<property name="Left" vt="Int8">0</property>
+								<property name="Top" vt="Int16">267</property>
+								<property name="Width" vt="Int16">265</property>
+								<property name="Height" vt="Int8">69</property>
+								<property name="CtrlStyle" vt="Int32">1342308359</property>
+								<property name="CtrlExStyle" vt="Int8">0</property>
+								<property name="Caption" vt="String">&amp;Tags parsing</property>
+								<property name="TabOrder" vt="Int8">3</property>
+								<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+							</properties>
+							<components>
+								<object type="TACheckbox" name="CheckBoxCq">
+									<properties>
+										<property name="Left" vt="Int8">4</property>
+										<property name="Top" vt="Int8">16</property>
+										<property name="Width" vt="Int16">249</property>
+										<property name="Height" vt="Int8">17</property>
+										<property name="Caption" vt="String">Correct &quot;&quot;simple 'quotation' marks&quot;&quot; inside strings</property>
+										<property name="TabOrder" vt="Int8">0</property>
+										<property name="CtrlStyle" vt="Int32">1342242819</property>
+										<property name="CtrlExStyle" vt="Int8">0</property>
+										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+									</properties>
+									<components/>
+								</object>
+								<object type="TACheckbox" name="CheckBoxTc">
+									<properties>
+										<property name="Left" vt="Int8">4</property>
+										<property name="Top" vt="Int8">32</property>
+										<property name="Width" vt="Int16">197</property>
+										<property name="Height" vt="Int8">17</property>
+										<property name="Hint" vt="String">Try to parse tags from cue sheet comments</property>
+										<property name="Caption" vt="String">Parse tags from cue sheet comments</property>
+										<property name="TabOrder" vt="Int8">1</property>
+										<property name="CtrlStyle" vt="Int32">1342242819</property>
+										<property name="CtrlExStyle" vt="Int8">0</property>
+										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+									</properties>
+									<components/>
+								</object>
+								<object type="TACheckbox" name="CheckBoxEt">
+									<properties>
+										<property name="Left" vt="Int8">4</property>
+										<property name="Top" vt="Int8">47</property>
+										<property name="Width" vt="Int8">97</property>
+										<property name="Height" vt="Int8">17</property>
+										<property name="Hint" vt="UTF8String">Replace last three dots [...] with ellipsis […] character</property>
+										<property name="Caption" vt="String">Ellipsize tags</property>
+										<property name="TabOrder" vt="Int8">2</property>
+										<property name="CtrlStyle" vt="Int32">1342242819</property>
+										<property name="CtrlExStyle" vt="Int8">0</property>
+										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+									</properties>
+									<components/>
+								</object>
+							</components>
+						</object>
+						<object type="TAGroup" name="GroupTagFile">
+							<properties>
+								<property name="Left" vt="Int16">275</property>
+								<property name="Top" vt="Int8">83</property>
+								<property name="Width" vt="Int16">225</property>
+								<property name="Height" vt="Int8">37</property>
+								<property name="CtrlStyle" vt="Int32">1342308359</property>
+								<property name="CtrlExStyle" vt="Int8">32</property>
+								<property name="Caption" vt="String">&amp;Tags file</property>
+								<property name="TabOrder" vt="Int8">5</property>
+								<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+							</properties>
+							<components>
+								<object type="TACheckbox" name="CheckBoxEu">
+									<properties>
+										<property name="Left" vt="Int8">4</property>
+										<property name="Top" vt="Int8">16</property>
+										<property name="Width" vt="Int16">129</property>
+										<property name="Height" vt="Int8">17</property>
+										<property name="Caption" vt="String">Generate edition UID</property>
+										<property name="TabOrder" vt="Int8">0</property>
+										<property name="CtrlStyle" vt="Int32">1342242819</property>
+										<property name="CtrlExStyle" vt="Int8">0</property>
+										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+									</properties>
+									<components/>
+								</object>
+							</components>
+						</object>
+						<object type="TAGroup" name="GroupIgnoredTags">
+							<properties>
+								<property name="Left" vt="Int16">275</property>
+								<property name="Top" vt="Int8">3</property>
+								<property name="Width" vt="Int16">225</property>
+								<property name="Height" vt="Int8">77</property>
+								<property name="CtrlStyle" vt="Int32">1342308359</property>
+								<property name="CtrlExStyle" vt="Int8">32</property>
+								<property name="Caption" vt="String">&amp;Ignored tags</property>
+								<property name="TabOrder" vt="Int8">4</property>
+								<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+							</properties>
+							<components>
+								<object type="TACheckbox" name="CheckBoxTagIgnoreCdText">
+									<properties>
+										<property name="Left" vt="Int8">4</property>
+										<property name="Top" vt="Int8">16</property>
+										<property name="Width" vt="Int8">125</property>
+										<property name="Height" vt="Int8">17</property>
+										<property name="Hint" vt="String">Ignore all CD-TEXT tags</property>
+										<property name="Caption" vt="String">Ignore CD-TEXT tags</property>
+										<property name="TabOrder" vt="Int8">0</property>
+										<property name="CtrlStyle" vt="Int32">1342242819</property>
+										<property name="CtrlExStyle" vt="Int8">0</property>
+										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+									</properties>
+									<components/>
+								</object>
+								<object type="TACheckbox" name="CheckBoxTagIgnoreCueComments">
+									<properties>
+										<property name="Left" vt="Int8">4</property>
+										<property name="Top" vt="Int8">34</property>
+										<property name="Width" vt="Int16">205</property>
+										<property name="Height" vt="Int8">17</property>
+										<property name="Hint" vt="String">Ignore all tags taken from cuesheet comments</property>
+										<property name="Caption" vt="String">Ignore tags from cuesheet comments</property>
+										<property name="TabOrder" vt="Int8">1</property>
+										<property name="CtrlStyle" vt="Int32">1342242819</property>
+										<property name="CtrlExStyle" vt="Int8">0</property>
+										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+									</properties>
+									<components/>
+								</object>
+								<object type="TACheckbox" name="CheckBoxTagIgnoreFromMedia">
+									<properties>
+										<property name="Left" vt="Int8">4</property>
+										<property name="Top" vt="Int8">53</property>
+										<property name="Width" vt="Int16">161</property>
+										<property name="Height" vt="Int8">17</property>
+										<property name="Hint" vt="String">Ignore all tags taken from media's metadata</property>
+										<property name="Caption" vt="String">Ignore tags from media file(s)</property>
+										<property name="TabOrder" vt="Int8">2</property>
+										<property name="CtrlStyle" vt="Int32">1342242819</property>
+										<property name="CtrlExStyle" vt="Int8">0</property>
 										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
 									</properties>
 									<components/>
@@ -643,7 +820,7 @@
 								<property name="Left" vt="Int8">0</property>
 								<property name="Top" vt="Int8">0</property>
 								<property name="Width" vt="Int16">293</property>
-								<property name="Height" vt="Int16">141</property>
+								<property name="Height" vt="Int16">133</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">32</property>
 								<property name="Caption" vt="String">&amp;Chapters file</property>
@@ -788,7 +965,7 @@
 								<object type="TACheckbox" name="CheckBoxHi">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">116</property>
+										<property name="Top" vt="Int8">113</property>
 										<property name="Width" vt="Int16">217</property>
 										<property name="Height" vt="Int8">17</property>
 										<property name="Caption" vt="String">Convert indexes to hidden chapters</property>
@@ -804,9 +981,9 @@
 						<object type="TAGroup" name="GroupFormatting">
 							<properties>
 								<property name="Left" vt="Int8">0</property>
-								<property name="Top" vt="Int16">142</property>
+								<property name="Top" vt="Int16">138</property>
 								<property name="Width" vt="Int16">289</property>
-								<property name="Height" vt="Int8">89</property>
+								<property name="Height" vt="Int8">69</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
 								<property name="Caption" vt="String">&amp;Formatting</property>
@@ -816,7 +993,7 @@
 							<components>
 								<object type="TALabel" name="LabelTf">
 									<properties>
-										<property name="Left" vt="Int8">5</property>
+										<property name="Left" vt="Int8">4</property>
 										<property name="Top" vt="Int8">16</property>
 										<property name="Width" vt="Int8">86</property>
 										<property name="Height" vt="Int8">21</property>
@@ -832,9 +1009,9 @@
 								</object>
 								<object type="TAInput" name="InputTf">
 									<properties>
-										<property name="Left" vt="Int16">136</property>
+										<property name="Left" vt="Int8">100</property>
 										<property name="Top" vt="Int8">16</property>
-										<property name="Width" vt="Int16">145</property>
+										<property name="Width" vt="Int16">181</property>
 										<property name="Height" vt="Int8">21</property>
 										<property name="MaxLength" vt="Int16">150</property>
 										<property name="TabOrder" vt="Int8">1</property>
@@ -863,159 +1040,15 @@
 								</object>
 								<object type="TAInput" name="InputMf">
 									<properties>
-										<property name="Left" vt="Int16">136</property>
+										<property name="Left" vt="Int8">100</property>
 										<property name="Top" vt="Int8">40</property>
-										<property name="Width" vt="Int16">145</property>
+										<property name="Width" vt="Int16">181</property>
 										<property name="Height" vt="Int8">21</property>
 										<property name="MaxLength" vt="Int16">150</property>
 										<property name="TabOrder" vt="Int8">3</property>
 										<property name="Text" vt="String">%dp% - %dt%</property>
 										<property name="CtrlStyle" vt="Int32">1342242944</property>
 										<property name="CtrlExStyle" vt="Int16">512</property>
-										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
-									</properties>
-									<components/>
-								</object>
-								<object type="TALabel" name="LabelLang">
-									<properties>
-										<property name="Left" vt="Int8">5</property>
-										<property name="Top" vt="Int8">63</property>
-										<property name="Width" vt="Int8">117</property>
-										<property name="Height" vt="Int8">21</property>
-										<property name="AutoSize" vt="False">False</property>
-										<property name="Caption" vt="String">Language:</property>
-										<property name="TabOrder" vt="Int8">4</property>
-										<property name="HaveVariable" vt="False">False</property>
-										<property name="CtrlStyle" vt="Int32">1342178048</property>
-										<property name="CtrlExStyle" vt="Int8">0</property>
-										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
-									</properties>
-									<components/>
-								</object>
-								<object type="TAInput" name="InputLang">
-									<properties>
-										<property name="Left" vt="Int16">136</property>
-										<property name="Top" vt="Int8">63</property>
-										<property name="Width" vt="Int8">41</property>
-										<property name="Height" vt="Int8">21</property>
-										<property name="Hint" vt="String">This option also affects tags file generation</property>
-										<property name="MaxLength" vt="Int8">3</property>
-										<property name="TabOrder" vt="Int8">5</property>
-										<property name="Text" vt="String">eng</property>
-										<property name="CtrlStyle" vt="Int32">1342242944</property>
-										<property name="CtrlExStyle" vt="Int16">512</property>
-										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
-									</properties>
-									<components/>
-								</object>
-							</components>
-						</object>
-					</components>
-				</object>
-				<object type="TTabSheet" name="TagOptionsPane">
-					<properties>
-						<property name="Caption" vt="String">&amp;Tags file generation options</property>
-						<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
-						<property name="Font.Color" vt="Ident">clWindowText</property>
-						<property name="Font.Height" vt="Int8">-11</property>
-						<property name="Font.Name" vt="String">MS Sans Serif</property>
-						<property name="Font.Style" vt="Set"/>
-						<property name="ParentFont" vt="False">False</property>
-					</properties>
-					<components>
-						<object type="TAGroup" name="GroupTagFile">
-							<properties>
-								<property name="Left" vt="Int8">0</property>
-								<property name="Top" vt="Int8">-1</property>
-								<property name="Width" vt="Int16">225</property>
-								<property name="Height" vt="Int8">37</property>
-								<property name="CtrlStyle" vt="Int32">1342308359</property>
-								<property name="CtrlExStyle" vt="Int8">32</property>
-								<property name="Caption" vt="String">&amp;Tags file</property>
-								<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
-								<property name="Font.Color" vt="Ident">clWindowText</property>
-								<property name="Font.Height" vt="Int8">-11</property>
-								<property name="Font.Name" vt="String">Microsoft Sans Serif</property>
-								<property name="Font.Style" vt="Set"/>
-								<property name="TabOrder" vt="Int8">0</property>
-								<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
-							</properties>
-							<components>
-								<object type="TACheckbox" name="CheckBoxEu">
-									<properties>
-										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">16</property>
-										<property name="Width" vt="Int16">129</property>
-										<property name="Height" vt="Int8">17</property>
-										<property name="Caption" vt="String">Generate edition UID</property>
-										<property name="TabOrder" vt="Int8">0</property>
-										<property name="CtrlStyle" vt="Int32">1342242819</property>
-										<property name="CtrlExStyle" vt="Int8">0</property>
-										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
-									</properties>
-									<components/>
-								</object>
-							</components>
-						</object>
-						<object type="TAGroup" name="GroupIgnoredTags">
-							<properties>
-								<property name="Left" vt="Int8">0</property>
-								<property name="Top" vt="Int8">37</property>
-								<property name="Width" vt="Int16">225</property>
-								<property name="Height" vt="Int8">77</property>
-								<property name="CtrlStyle" vt="Int32">1342308359</property>
-								<property name="CtrlExStyle" vt="Int8">32</property>
-								<property name="Caption" vt="String">&amp;Ignored tags</property>
-								<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
-								<property name="Font.Color" vt="Ident">clWindowText</property>
-								<property name="Font.Height" vt="Int8">-11</property>
-								<property name="Font.Name" vt="String">Microsoft Sans Serif</property>
-								<property name="Font.Style" vt="Set"/>
-								<property name="TabOrder" vt="Int8">1</property>
-								<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
-							</properties>
-							<components>
-								<object type="TACheckbox" name="CheckBoxTagIgnoreCdText">
-									<properties>
-										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">16</property>
-										<property name="Width" vt="Int8">125</property>
-										<property name="Height" vt="Int8">17</property>
-										<property name="Hint" vt="String">Ignore all CD-TEXT tags</property>
-										<property name="Caption" vt="String">Ignore CD-TEXT tags</property>
-										<property name="TabOrder" vt="Int8">0</property>
-										<property name="CtrlStyle" vt="Int32">1342242819</property>
-										<property name="CtrlExStyle" vt="Int8">0</property>
-										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
-									</properties>
-									<components/>
-								</object>
-								<object type="TACheckbox" name="CheckBoxTagIgnoreCueComments">
-									<properties>
-										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">34</property>
-										<property name="Width" vt="Int16">205</property>
-										<property name="Height" vt="Int8">17</property>
-										<property name="Hint" vt="String">Ignore all tags taken from cuesheet comments</property>
-										<property name="Caption" vt="String">Ignore tags from cuesheet comments</property>
-										<property name="TabOrder" vt="Int8">1</property>
-										<property name="CtrlStyle" vt="Int32">1342242819</property>
-										<property name="CtrlExStyle" vt="Int8">0</property>
-										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
-									</properties>
-									<components/>
-								</object>
-								<object type="TACheckbox" name="CheckBoxTagIgnoreFromMedia">
-									<properties>
-										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">53</property>
-										<property name="Width" vt="Int16">161</property>
-										<property name="Height" vt="Int8">17</property>
-										<property name="Hint" vt="String">Ignore all tags taken from media's metadata</property>
-										<property name="Caption" vt="String">Ignore tags from media file(s)</property>
-										<property name="TabOrder" vt="Int8">2</property>
-										<property name="CtrlStyle" vt="Int32">1342242819</property>
-										<property name="CtrlExStyle" vt="Int8">0</property>
 										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
 									</properties>
 									<components/>
@@ -1182,9 +1215,9 @@
 						<object type="TAGroup" name="GroupMetadaReadingOptions">
 							<properties>
 								<property name="Left" vt="Int8">0</property>
-								<property name="Top" vt="Int16">164</property>
+								<property name="Top" vt="Int8">116</property>
 								<property name="Width" vt="Int16">225</property>
-								<property name="Height" vt="Int8">69</property>
+								<property name="Height" vt="Int8">61</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
 								<property name="Caption" vt="String">&amp;Metadata reading options</property>
@@ -1193,14 +1226,14 @@
 								<property name="Font.Height" vt="Int8">-11</property>
 								<property name="Font.Name" vt="String">Microsoft Sans Serif</property>
 								<property name="Font.Style" vt="Set"/>
-								<property name="TabOrder" vt="Int8">2</property>
+								<property name="TabOrder" vt="Int8">1</property>
 								<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
 							</properties>
 							<components>
 								<object type="TALabel" name="LabelFlacCueSheetReadMode">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">38</property>
+										<property name="Top" vt="Int8">34</property>
 										<property name="Width" vt="Int8">35</property>
 										<property name="Height" vt="Int8">21</property>
 										<property name="Hint" vt="String">Method of reading cue sheet from FLAC container</property>
@@ -1217,7 +1250,7 @@
 								<object type="TACombo" name="ComboFlacMode">
 									<properties>
 										<property name="Left" vt="Int8">41</property>
-										<property name="Top" vt="Int8">38</property>
+										<property name="Top" vt="Int8">34</property>
 										<property name="Width" vt="Int16">165</property>
 										<property name="Height" vt="Int8">25</property>
 										<property name="ItemHeight" vt="Int8">13</property>
@@ -1242,7 +1275,7 @@
 								<object type="TACheckbox" name="CheckBoxReadMetadata">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">18</property>
+										<property name="Top" vt="Int8">16</property>
 										<property name="Width" vt="Int8">101</property>
 										<property name="Height" vt="Int8">17</property>
 										<property name="Hint" vt="String">Read metadata from media file</property>
@@ -1256,71 +1289,12 @@
 								</object>
 							</components>
 						</object>
-						<object type="TAGroup" name="GroupCueSheet">
-							<properties>
-								<property name="Left" vt="Int8">1</property>
-								<property name="Top" vt="Int16">234</property>
-								<property name="Width" vt="Int16">225</property>
-								<property name="Height" vt="Int8">57</property>
-								<property name="CtrlStyle" vt="Int32">1342308359</property>
-								<property name="CtrlExStyle" vt="Int8">32</property>
-								<property name="Caption" vt="String">Cue &amp;sheet generation options</property>
-								<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
-								<property name="Font.Color" vt="Ident">clWindowText</property>
-								<property name="Font.Height" vt="Int8">-11</property>
-								<property name="Font.Name" vt="String">Microsoft Sans Serif</property>
-								<property name="Font.Style" vt="Set"/>
-								<property name="TabOrder" vt="Int8">3</property>
-								<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
-							</properties>
-							<components>
-								<object type="TALabel" name="LabelCueSheetEncoding">
-									<properties>
-										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">21</property>
-										<property name="Width" vt="Int8">55</property>
-										<property name="Height" vt="Int8">21</property>
-										<property name="AutoSize" vt="False">False</property>
-										<property name="Caption" vt="String">Encoding:</property>
-										<property name="TabOrder" vt="Int8">0</property>
-										<property name="HaveVariable" vt="False">False</property>
-										<property name="CtrlStyle" vt="Int32">1342178048</property>
-										<property name="CtrlExStyle" vt="Int8">0</property>
-										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
-									</properties>
-									<components/>
-								</object>
-								<object type="TACombo" name="ComboCueSheetEncoding">
-									<properties>
-										<property name="Left" vt="Int8">65</property>
-										<property name="Top" vt="Int8">21</property>
-										<property name="Width" vt="Int16">141</property>
-										<property name="Height" vt="Int8">25</property>
-										<property name="ItemHeight" vt="Int8">13</property>
-										<property name="TabOrder" vt="Int8">1</property>
-										<property name="Items.Strings" vt="List">
-											<list>
-												<li vt="String">default</li>
-												<li vt="String">UTF-8</li>
-												<li vt="String">UTF-8 with BOM</li>
-												<li vt="String">UTF-16</li>
-												<li vt="String">UTF-16 with BOM</li>
-											</list>
-										</property>
-										<property name="CtrlStyle" vt="Int32">1342243395</property>
-										<property name="CtrlExStyle" vt="Int16">512</property>
-										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
-									</properties>
-									<components/>
-								</object>
-							</components>
-						</object>
 						<object type="TAGroup" name="GroupMLang">
 							<properties>
 								<property name="Left" vt="Int8">0</property>
-								<property name="Top" vt="Int8">115</property>
+								<property name="Top" vt="Int16">179</property>
 								<property name="Width" vt="Int16">225</property>
-								<property name="Height" vt="Int8">45</property>
+								<property name="Height" vt="Int8">37</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
 								<property name="Caption" vt="String">MLang</property>
@@ -1329,14 +1303,14 @@
 								<property name="Font.Height" vt="Int8">-11</property>
 								<property name="Font.Name" vt="String">Microsoft Sans Serif</property>
 								<property name="Font.Style" vt="Set"/>
-								<property name="TabOrder" vt="Int8">1</property>
+								<property name="TabOrder" vt="Int8">2</property>
 								<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
 							</properties>
 							<components>
 								<object type="TACheckbox" name="CheckBoxMLang">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">18</property>
+										<property name="Top" vt="Int8">16</property>
 										<property name="Width" vt="Int8">117</property>
 										<property name="Height" vt="Int8">17</property>
 										<property name="Caption" vt="String">Use MLang library</property>
@@ -1354,19 +1328,19 @@
 								<property name="Left" vt="Int16">232</property>
 								<property name="Top" vt="Int8">2</property>
 								<property name="Width" vt="Int16">277</property>
-								<property name="Height" vt="Int8">73</property>
+								<property name="Height" vt="Int8">77</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
 								<property name="Caption" vt="String">mkvmerge</property>
-								<property name="TabOrder" vt="Int8">4</property>
-								<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+								<property name="TabOrder" vt="Int8">3</property>
+								<property name="Resizing" vt="Set">DockLeft, DockRight, DockTop, DockHeight</property>
 							</properties>
 							<components>
 								<object type="TALabel" name="LabelMkvmergeDir">
 									<properties>
 										<property name="Left" vt="Int8">6</property>
-										<property name="Top" vt="Int8">18</property>
-										<property name="Width" vt="Int8">55</property>
+										<property name="Top" vt="Int8">16</property>
+										<property name="Width" vt="Int8">51</property>
 										<property name="Height" vt="Int8">21</property>
 										<property name="Hint" vt="String">Directory where mkvmerge tool resides</property>
 										<property name="AutoSize" vt="False">False</property>
@@ -1381,14 +1355,35 @@
 								</object>
 								<object type="TAInput" name="InputMkvmergeDir">
 									<properties>
-										<property name="Left" vt="Int8">65</property>
-										<property name="Top" vt="Int8">18</property>
-										<property name="Width" vt="Int16">169</property>
+										<property name="Left" vt="Int8">57</property>
+										<property name="Top" vt="Int8">16</property>
+										<property name="Width" vt="Int16">181</property>
 										<property name="Height" vt="Int8">21</property>
+										<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
+										<property name="Font.Color" vt="Ident">clWindowText</property>
+										<property name="Font.Height" vt="Int8">-11</property>
+										<property name="Font.Name" vt="String">MS Sans Serif</property>
+										<property name="Font.Style" vt="Set"/>
 										<property name="MaxLength" vt="Int8">50</property>
+										<property name="ParentFont" vt="False">False</property>
 										<property name="TabOrder" vt="Int8">1</property>
 										<property name="CtrlStyle" vt="Int32">1342242944</property>
 										<property name="CtrlExStyle" vt="Int16">512</property>
+										<property name="Resizing" vt="Set">DockLeft, DockRight, DockTop, DockHeight</property>
+									</properties>
+									<components/>
+								</object>
+								<object type="TACheckbox" name="CheckBoxFullPaths">
+									<properties>
+										<property name="Left" vt="Int8">7</property>
+										<property name="Top" vt="Int8">39</property>
+										<property name="Width" vt="Int16">181</property>
+										<property name="Height" vt="Int8">17</property>
+										<property name="Hint" vt="String">Read metadata from media file</property>
+										<property name="Caption" vt="String">Generate full paths in options file</property>
+										<property name="TabOrder" vt="Int8">3</property>
+										<property name="CtrlStyle" vt="Int32">1342242819</property>
+										<property name="CtrlExStyle" vt="Int8">0</property>
 										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
 									</properties>
 									<components/>
@@ -1396,27 +1391,33 @@
 								<object type="TAButton" name="ButtonMkvmergeDir">
 									<properties>
 										<property name="Left" vt="Int16">240</property>
-										<property name="Top" vt="Int8">18</property>
-										<property name="Width" vt="Int8">25</property>
+										<property name="Top" vt="Int8">16</property>
+										<property name="Width" vt="Int8">29</property>
 										<property name="Height" vt="Int8">21</property>
-										<property name="Caption" vt="String">&amp;...</property>
+										<property name="Hint" vt="String">Specify output directory or file</property>
+										<property name="Caption" vt="String">1</property>
+										<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
+										<property name="Font.Color" vt="Ident">clWindowText</property>
+										<property name="Font.Height" vt="Int8">-13</property>
+										<property name="Font.Name" vt="String">Wingdings</property>
+										<property name="Font.Style" vt="Set"/>
+										<property name="ParentFont" vt="False">False</property>
 										<property name="TabOrder" vt="Int8">2</property>
 										<property name="Color" vt="Ident">clBtnFace</property>
-										<property name="CtrlStyle" vt="Int32">1342390272</property>
+										<property name="CtrlStyle" vt="Int32">1342259200</property>
 										<property name="CtrlExStyle" vt="Int8">0</property>
-										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+										<property name="Resizing" vt="Set">DockRight, DockBottom, DockWidth, DockHeight</property>
 									</properties>
 									<components/>
 								</object>
-								<object type="TACheckbox" name="CheckBoxFullPaths">
+								<object type="TACheckbox" name="CheckBoxRunMkvmerge">
 									<properties>
 										<property name="Left" vt="Int8">7</property>
-										<property name="Top" vt="Int8">47</property>
-										<property name="Width" vt="Int16">181</property>
+										<property name="Top" vt="Int8">54</property>
+										<property name="Width" vt="Int16">229</property>
 										<property name="Height" vt="Int8">17</property>
-										<property name="Hint" vt="String">Read metadata from media file</property>
-										<property name="Caption" vt="String">Generate full paths in options file</property>
-										<property name="TabOrder" vt="Int8">3</property>
+										<property name="Caption" vt="String">Run mkvmerge after options file generation</property>
+										<property name="TabOrder" vt="Int8">4</property>
 										<property name="CtrlStyle" vt="Int32">1342242819</property>
 										<property name="CtrlExStyle" vt="Int8">0</property>
 										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
@@ -1432,7 +1433,7 @@
 		<object type="TACheckbox" name="CheckBoxSwitchToOutput">
 			<properties>
 				<property name="Left" vt="Int8">2</property>
-				<property name="Top" vt="Int16">397</property>
+				<property name="Top" vt="Int16">389</property>
 				<property name="Width" vt="Int16">133</property>
 				<property name="Height" vt="Int8">17</property>
 				<property name="Hint" vt="String">Switch to messages pane before running</property>
@@ -1453,7 +1454,7 @@
 		<object type="TAButton" name="ButtonGo">
 			<properties>
 				<property name="Left" vt="Int16">452</property>
-				<property name="Top" vt="Int16">384</property>
+				<property name="Top" vt="Int16">376</property>
 				<property name="Width" vt="Int8">85</property>
 				<property name="Height" vt="Int8">29</property>
 				<property name="Hint" vt="String">Run cue2mkc tool</property>
@@ -1475,7 +1476,7 @@
 		<object type="TACheckbox" name="CheckBoxVerbose">
 			<properties>
 				<property name="Left" vt="Int8">2</property>
-				<property name="Top" vt="Int16">380</property>
+				<property name="Top" vt="Int16">372</property>
 				<property name="Width" vt="Int8">89</property>
 				<property name="Height" vt="Int8">17</property>
 				<property name="Hint" vt="String">Be more verbose during cu2mkc execution</property>
@@ -1496,7 +1497,7 @@
 		<object type="TAButton" name="ButtonLicense">
 			<properties>
 				<property name="Left" vt="Int16">341</property>
-				<property name="Top" vt="Int16">384</property>
+				<property name="Top" vt="Int16">376</property>
 				<property name="Width" vt="Int8">65</property>
 				<property name="Height" vt="Int8">29</property>
 				<property name="Hint" vt="String">Runs cue2mkc with --licese option</property>
@@ -1518,7 +1519,7 @@
 		<object type="TAButton" name="ButtonInfo">
 			<properties>
 				<property name="Left" vt="Int16">408</property>
-				<property name="Top" vt="Int16">384</property>
+				<property name="Top" vt="Int16">376</property>
 				<property name="Width" vt="Int8">41</property>
 				<property name="Height" vt="Int8">29</property>
 				<property name="Hint" vt="String">Runs cue2mkc with --help option</property>

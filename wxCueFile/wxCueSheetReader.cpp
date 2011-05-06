@@ -86,7 +86,8 @@ wxCueSheetReader::wxCueSheetReader(void)
 	 m_reIsrc( wxT("([[:upper:]]{2}|00)-{0,1}[[:upper:][:digit:]]{3}-{0,1}[[:digit:]]{5}"), wxRE_ADVANCED|wxRE_NOSUB ),
 	 m_reTrackComment( wxT("cue[[.hyphen.][.underscore.][.low-line.]]track([[:digit:]]{1,2})[[.underscore.][.low-line.]]([[:alpha:][.hyphen.][.underscore.][.low-line.][.space.]]+)"), wxRE_ADVANCED|wxRE_ICASE ),
 	 m_bErrorsAsWarnings( true ),
-	 m_bParseComments( true )
+	 m_bParseComments( true ),
+	 m_bEllipsizeTags( true )
 {
 	wxASSERT( m_reKeywords.IsValid() );
 	wxASSERT( m_reCdTextInfo.IsValid() );
@@ -136,9 +137,21 @@ wxCueSheetReader& wxCueSheetReader::SetParseComments( bool bParseComments )
 	return *this;
 }
 
-void wxCueSheetReader::CorrectQuotationMarks( bool bCorrectQuotationMarks, const wxString& sLang )
+bool wxCueSheetReader::EllipsizeTags() const
+{
+	return m_bEllipsizeTags;
+}
+
+wxCueSheetReader& wxCueSheetReader::SetEllipsizeTags( bool bEllipsizeTags )
+{
+	m_bEllipsizeTags = bEllipsizeTags;
+	return *this;
+}
+
+wxCueSheetReader& wxCueSheetReader::CorrectQuotationMarks( bool bCorrectQuotationMarks, const wxString& sLang )
 {
 	m_unquoter.SetLang( bCorrectQuotationMarks? sLang : wxEmptyString );
+	return *this;
 }
 
 bool wxCueSheetReader::ReadCueSheet(const wxString& sCueFile, bool bUseMLang )
@@ -349,7 +362,10 @@ void wxCueSheetReader::AppendComments( wxArrayCueTag& comments, bool singleMedia
 		if ( comment.GetName().CmpNoCase( wxCueTag::Name::CUESHEET ) == 0 ) continue;
 
 		comment.RemoveTrailingSpaces( m_spacesRemover );
-		comment.Ellipsize( m_ellipsizer );
+		if ( m_bEllipsizeTags )
+		{
+			comment.Ellipsize( m_ellipsizer );
+		}
 
 		if ( singleMediaFile )
 		{ // just add to first track
@@ -863,7 +879,10 @@ bool wxCueSheetReader::ParseCue()
 bool wxCueSheetReader::AddCdTextInfo( const wxString& sToken, const wxString& sBody )
 {
 	wxString sModifiedBody( m_spacesRemover.Remove( sBody ) );
-	sModifiedBody = m_ellipsizer.Ellipsize( sModifiedBody );
+	if ( m_bEllipsizeTags )
+	{
+		sModifiedBody = m_ellipsizer.Ellipsize( sModifiedBody );
+	}
 
 	if ( IsTrack() )
 	{
