@@ -80,6 +80,12 @@ protected:
 protected:
 
 	static bool ReadLanguagesStrings( wxSortedArrayString& );
+	static bool check_ext( const wxString& );
+	static wxString BoolToStr( bool );
+	static wxString BoolToIdx( bool );
+	static wxString GetEmbeddedModeFlagsDesc( unsigned int );
+	static wxString GetTagSourcesNames( const wxArrayTagSource& );
+
 	bool CheckLang( const wxString& ) const;
 	void FillArray( wxArrayString& as ) const;
 	void AddTagSourceToIgnore( wxCueTag::TAG_SOURCE );

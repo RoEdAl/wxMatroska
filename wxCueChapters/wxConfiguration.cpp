@@ -287,7 +287,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddParam( _("<cue sheet>"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE|wxCMD_LINE_PARAM_OPTIONAL );
 }
 
-static bool check_ext( const wxString& sExt )
+bool wxConfiguration::check_ext( const wxString& sExt )
 {
 	return !sExt.IsEmpty() && (sExt.Length() < MAX_EXT_LEN);
 }
@@ -615,17 +615,17 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	return bRes;
 }
 
-static wxString BoolToStr( bool b )
+wxString wxConfiguration::BoolToStr( bool b )
 {
 	return b? wxT("yes") : wxT("no");
 }
 
-static wxString BoolToIdx( bool b )
+wxString wxConfiguration::BoolToIdx( bool b )
 {
 	return b? wxT("01") : wxT("00");
 }
 
-static wxString GetEmbeddedModeFlagsDesc( unsigned int flags )
+wxString wxConfiguration::GetEmbeddedModeFlagsDesc( unsigned int flags )
 {
 	wxArrayString as;
 	as.Add( ( ( flags & wxCueSheetReader::EC_SINGLE_MEDIA_FILE ) != 0 )? wxT("single-media-file") : wxT("media-file-with-embedded-cuesheet") );
@@ -672,7 +672,7 @@ static wxString GetEmbeddedModeFlagsDesc( unsigned int flags )
 	return s.RemoveLast();
 }
 
-static wxString GetTagSourcesNames( const wxArrayTagSource& sources )
+wxString wxConfiguration::GetTagSourcesNames( const wxArrayTagSource& sources )
 {
 	wxString s;
 	size_t nSources = sources.GetCount();
