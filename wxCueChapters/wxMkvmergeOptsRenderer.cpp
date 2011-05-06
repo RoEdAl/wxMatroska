@@ -15,6 +15,8 @@
 
 wxMkvmergeOptsRenderer* const wxMkvmergeOptsRenderer::Null = (wxMkvmergeOptsRenderer* const)NULL;
 
+const wxChar wxMkvmergeOptsRenderer::LOG_EXT[] = wxT("log");
+
 // ===============================================================================
 
 wxMkvmergeOptsRenderer::wxMkvmergeOptsRenderer( const wxConfiguration& cfg )
@@ -43,6 +45,72 @@ void wxMkvmergeOptsRenderer::write_as( wxTextOutputStream& stream, const wxArray
 	for( wxArrayString::const_iterator i = as.begin(); i != as.end(); i++ )
 	{
 		stream << *i << endl;
+	}
+}
+
+bool wxMkvmergeOptsRenderer::GetLogFile( const wxFileName& inputFile, wxFileName& logFile )
+{
+	wxASSERT( inputFile.IsOk() );
+	logFile = inputFile;
+	logFile.SetExt( LOG_EXT );
+	wxASSERT( logFile.IsOk() );
+	return logFile.FileExists();
+}
+
+void wxMkvmergeOptsRenderer::write_attachments( wxTextOutputStream& stream )
+{
+	size_t nAttachments = m_logFiles.GetCount();
+
+	switch( nAttachments )
+	{
+		case 0:
+		return;
+
+		case 1:
+		stream << 
+			wxT("# EAC log)") << endl <<
+			wxT("--attachment-name") << endl <<
+			wxT("eac.log") << endl <<
+			wxT("--attachment-description") << endl <<
+			m_logFiles[0].GetFullName() << endl <<
+			wxT("--attach-file") << endl <<
+			mkvmerge_escape( m_logFiles[0].GetFullPath() ) << endl;
+		break;
+
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+		case 6:
+		case 7:
+		case 8:
+		case 9:
+		stream << wxT("# EAC logs") << endl;
+		for( size_t i=0; i<nAttachments; i++ )
+		{
+			stream << 
+				wxT("--attachment-name") << endl <<
+				wxString::Format( wxT("eac%d.log"), i ) << endl <<
+				wxT("--attachment-description") << endl <<
+				m_logFiles[i].GetFullName() << endl <<
+				wxT("--attach-file") << endl <<
+				mkvmerge_escape( m_logFiles[i].GetFullPath() ) << endl;
+		}
+		break;
+
+		default:
+		stream << wxT("# EAC logs") << endl;
+		for( size_t i=0; i<nAttachments; i++ )
+		{
+			stream << 
+				wxT("--attachment-name") << endl <<
+				wxString::Format( wxT("eac%02d.log"), i ) << endl <<
+				wxT("--attachment-description") << endl <<
+				m_logFiles[i].GetFullName() << endl <<
+				wxT("--attach-file") << endl <<
+				mkvmerge_escape( m_logFiles[i].GetFullPath() ) << endl;
+		}
+		break;
 	}
 }
 
@@ -108,6 +176,16 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile, const wxC
 		}
 	}
 
+	// log
+	if ( m_cfg.AttachEacLog() )
+	{
+		wxFileName logFile;
+		if ( GetLogFile( inputFile.GetInputFile(), logFile ) )
+		{
+			m_logFiles.Add( logFile );
+		}
+	}
+
 	// poost
 	m_asMmcPost.Empty();
 	m_asMmcPost.Add( wxT("# General options") );
@@ -148,6 +226,7 @@ bool wxMkvmergeOptsRenderer::Save()
 		wxSharedPtr<wxTextOutputStream> pStream( wxTextOutputStreamWithBOMFactory::CreateUTF8( os, wxEOL_NATIVE, true, m_cfg.UseMLang() ) );
 		write_as( *pStream, m_asMmcPre );
 		write_as( *pStream, m_asMmcInputFiles );
+		write_attachments( *pStream );
 		write_as( *pStream, m_asMmcPost );
 		pStream->Flush();
 		return true;

@@ -26,6 +26,7 @@ protected:
 	wxArrayString m_asMmcPre;
 	wxArrayString m_asMmcPost;
 	wxArrayString m_asMmcInputFiles;
+	wxArrayFileName m_logFiles;
 
 	wxString m_sMatroskaOptsFile;
 
@@ -34,9 +35,15 @@ protected:
 	static wxString mkvmerge_escape( const wxString& );
 	static void write_as( wxTextOutputStream&, const wxArrayString& );
 
+	static bool GetLogFile( const wxFileName&, wxFileName& );
+
+	void write_attachments( wxTextOutputStream& );
+
 public:
 
 	static wxMkvmergeOptsRenderer* const Null;
+	static const wxChar LOG_EXT[];
+
 	wxMkvmergeOptsRenderer(const wxConfiguration&);
 
 	void RenderDisc( const wxInputFile&, const wxCueSheet& );

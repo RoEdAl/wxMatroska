@@ -1328,7 +1328,7 @@
 								<property name="Left" vt="Int16">232</property>
 								<property name="Top" vt="Int8">2</property>
 								<property name="Width" vt="Int16">277</property>
-								<property name="Height" vt="Int8">77</property>
+								<property name="Height" vt="Int8">93</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
 								<property name="Caption" vt="String">mkvmerge</property>
@@ -1375,7 +1375,7 @@
 								</object>
 								<object type="TACheckbox" name="CheckBoxFullPaths">
 									<properties>
-										<property name="Left" vt="Int8">7</property>
+										<property name="Left" vt="Int8">4</property>
 										<property name="Top" vt="Int8">39</property>
 										<property name="Width" vt="Int16">181</property>
 										<property name="Height" vt="Int8">17</property>
@@ -1412,12 +1412,27 @@
 								</object>
 								<object type="TACheckbox" name="CheckBoxRunMkvmerge">
 									<properties>
-										<property name="Left" vt="Int8">7</property>
+										<property name="Left" vt="Int8">4</property>
 										<property name="Top" vt="Int8">54</property>
 										<property name="Width" vt="Int16">229</property>
 										<property name="Height" vt="Int8">17</property>
 										<property name="Caption" vt="String">Run mkvmerge after options file generation</property>
 										<property name="TabOrder" vt="Int8">4</property>
+										<property name="CtrlStyle" vt="Int32">1342242819</property>
+										<property name="CtrlExStyle" vt="Int8">0</property>
+										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+									</properties>
+									<components/>
+								</object>
+								<object type="TACheckbox" name="CheckBoxEacLog">
+									<properties>
+										<property name="Left" vt="Int8">4</property>
+										<property name="Top" vt="Int8">69</property>
+										<property name="Width" vt="Int8">113</property>
+										<property name="Height" vt="Int8">17</property>
+										<property name="Hint" vt="String">Attach EAC log file(s) to generated MKA file</property>
+										<property name="Caption" vt="String">Attach EAC log(s)</property>
+										<property name="TabOrder" vt="Int8">5</property>
 										<property name="CtrlStyle" vt="Int32">1342242819</property>
 										<property name="CtrlExStyle" vt="Int8">0</property>
 										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>

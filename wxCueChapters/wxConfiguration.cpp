@@ -194,7 +194,8 @@ wxConfiguration::wxConfiguration(void)
 	 m_nEmbeddedModeFlags(wxCueSheetReader::EC_MEDIA_READ_TAGS|wxCueSheetReader::EC_FLAC_READ_TAG_FIRST_THEN_COMMENT),
 	 m_bUseMLang(true),
 	 m_bFullPaths(false),
-	 m_bEllipsizeTags(true)
+	 m_bEllipsizeTags(true),
+	 m_bAttachEacLog(true)
 {
 	ReadLanguagesStrings( m_asLang );
 }
@@ -279,6 +280,9 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 
 	cmdLine.AddSwitch( wxEmptyString, wxT("full-paths"), _("Use full paths in mkvmerge options file (default: yes)"), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxEmptyString, wxT("no-full-paths"), _("Don't use full paths in mkvmerge options file"), wxCMD_LINE_PARAM_OPTIONAL );
+
+	cmdLine.AddSwitch( wxEmptyString, wxT("attach-eac-log"), _("Attach EAC log file to mkvmerge options file (default: yes)"), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, wxT("dont-attach-eac-log"), _("Don't attach EAC log file to mkvmerge options file"), wxCMD_LINE_PARAM_OPTIONAL );
 
 	cmdLine.AddParam( _("<cue sheet>"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE|wxCMD_LINE_PARAM_OPTIONAL );
 }
@@ -605,6 +609,9 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		m_bUseMLang = false;
 	}
 
+	if ( cmdLine.Found( wxT("attach-eac-log") ) ) m_bAttachEacLog = true;
+	if ( cmdLine.Found( wxT("dont-attach-eac-log") ) ) m_bAttachEacLog = false;
+
 	return bRes;
 }
 
@@ -691,6 +698,7 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
 			as.Add( wxString::Format( wxT("mkvmerge dir: %s"), m_mkvmergeDir.GetFullPath() ) );
 		}
 		as.Add( wxString::Format( wxT("Generate full paths: %s"), BoolToStr(m_bFullPaths) ) );
+		as.Add( wxString::Format( wxT("Attach EAC log: %s"), BoolToStr(m_bAttachEacLog) ) );
 	}
 	as.Add( wxString::Format( wxT("Generate edition UID: %s"), BoolToStr(m_bGenerateEditionUID) ) );
 	as.Add( wxString::Format( wxT("Generate tags from comments: %s"), BoolToStr(m_bGenerateTagsFromComments) ) );
@@ -1092,6 +1100,11 @@ bool wxConfiguration::UseFullPaths() const
 bool wxConfiguration::EllipsizeTags() const
 {
 	return m_bEllipsizeTags;
+}
+
+bool wxConfiguration::AttachEacLog() const
+{
+	return m_bAttachEacLog;
 }
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!

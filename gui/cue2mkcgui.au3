@@ -4,7 +4,7 @@
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.55
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.56
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -334,7 +334,7 @@ GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCK
 $CheckBoxMLang = GUICtrlCreateCheckbox("Use MLang library", 8, 219, 117, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-$GroupMkvmerge = GUICtrlCreateGroup("mkvmerge", 236, 26, 277, 77)
+$GroupMkvmerge = GUICtrlCreateGroup("mkvmerge", 236, 26, 277, 93)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKHEIGHT)
 $LabelMkvmergeDir = GUICtrlCreateLabel("Location:", 242, 42, 51, 21, $SS_CENTERIMAGE)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
@@ -346,11 +346,14 @@ $ButtonMkvmergeDir = GUICtrlCreateButton("1", 476, 42, 29, 21, 0)
 GUICtrlSetFont(-1, 10, 400, 0, "Wingdings")
 GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Specify output directory or file")
-$CheckBoxFullPaths = GUICtrlCreateCheckbox("Generate full paths in options file", 243, 65, 181, 17)
+$CheckBoxFullPaths = GUICtrlCreateCheckbox("Generate full paths in options file", 240, 65, 181, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Read metadata from media file")
-$CheckBoxRunMkvmerge = GUICtrlCreateCheckbox("Run mkvmerge after options file generation", 243, 80, 229, 17)
+$CheckBoxRunMkvmerge = GUICtrlCreateCheckbox("Run mkvmerge after options file generation", 240, 80, 229, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+$CheckBoxEacLog = GUICtrlCreateCheckbox("Attach EAC log(s)", 240, 95, 113, 17)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+GUICtrlSetTip(-1, "Attach EAC log file(s) to generated MKA file")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
 $CheckBoxVerbose = GUICtrlCreateCheckbox("&Verbose mode", 2, 372, 89, 17)
@@ -544,6 +547,7 @@ Func set_default_options()
 	GUICtrlSetData($InputMkvmergeDir, get_mkvmerge_dir())
 	GUICtrlSetState($CheckBoxFullPaths, $GUI_CHECKED)
 	GUICtrlSetState($CheckBoxEt, $GUI_CHECKED)
+	GUICtrlSetState($CheckBoxEacLog, $GUI_CHECKED)
 EndFunc   ;==>set_default_options
 
 Func get_encoding_str($nSel)
@@ -666,18 +670,22 @@ Func read_options()
 			$s &= " -m "
 			$s &= _Iif(GUICtrlRead($CheckBoxT) = $GUI_CHECKED, "-t", "-nt")
 			$s &= " "
+
 			$s &= _Iif(GUICtrlRead($CheckBoxOf) = $GUI_CHECKED, "-of", "-nof")
 			$s &= " "
+
 			$s &= _Iif(GUICtrlRead($CheckBoxEu) = $GUI_CHECKED, "-eu", "-neu")
 			$s &= " "
+
 			$s &= _Iif(GUICtrlRead($CheckBoxTc) = $GUI_CHECKED, "-tc", "-ntc")
 			$s &= " "
-			$s &= _Iif(GUICtrlRead($CheckBoxRunMkvmerge) = $GUI_CHECKED, "--run-mkvmerge", "--dont-run-mkvmerge")
-			$s &= " "
+
 			$s &= _Iif(GUICtrlRead($CheckBoxTagIgnoreCdText) = $GUI_CHECKED, "--ignore-cdtext-tags", "--use-cdtext-tags")
 			$s &= " "
+
 			$s &= _Iif(GUICtrlRead($CheckBoxTagIgnoreCueComments) = $GUI_CHECKED, "--ignore-cue-comments-tags", "--use-cue-comments-tags")
 			$s &= " "
+
 			$s &= _Iif(GUICtrlRead($CheckBoxTagIgnoreFromMedia) = $GUI_CHECKED, "--ignore-media-tags", "--use-media-tags")
 			$s &= " "
 	EndSwitch
@@ -729,6 +737,12 @@ Func read_options()
 	$s &= " "
 
 	$s &= _Iif(GUICtrlRead($CheckBoxFullPaths) = $GUI_CHECKED, "--full-paths", "--no-full-paths")
+	$s &= " "
+
+	$s &= _Iif(GUICtrlRead($CheckBoxEacLog) = $GUI_CHECKED, "--attach-eac-log", "--dont-attach-eac-log")
+	$s &= " "
+
+	$s &= _Iif(GUICtrlRead($CheckBoxRunMkvmerge) = $GUI_CHECKED, "--run-mkvmerge", "--dont-run-mkvmerge")
 	$s &= " "
 
 	If GUICtrlRead($CheckBoxVerbose) = $GUI_CHECKED Then

@@ -59,6 +59,7 @@ protected:
 	bool m_bUseMLang;
 	bool m_bFullPaths;
 	bool m_bEllipsizeTags;
+	bool m_bAttachEacLog;
 
 	wxString m_sAlternateExtensions;
 	wxString m_sLang;
@@ -121,6 +122,7 @@ public:
 	bool UseMLang() const;
 	bool UseFullPaths() const;
 	bool EllipsizeTags() const;
+	bool AttachEacLog() const;
 
 	wxString GetOutputFile( const wxInputFile& ) const;
 	void GetOutputFile( const wxInputFile&, wxString&, wxString& ) const;
