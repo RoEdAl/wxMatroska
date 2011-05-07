@@ -406,7 +406,12 @@ int wxMyApp::OnRun()
 		if ( m_cfg.GenerateMkvmergeOpts() )
 		{
 			wxMkvmergeOptsRenderer& optsRenderer = GetMkvmergeOptsRenderer();
-			if ( m_cfg.RunMkvmerge() )
+
+			if ( !optsRenderer.Save() )
+			{
+				res = 1;
+			}
+			else if ( m_cfg.RunMkvmerge() )
 			{
 				if ( !RunMkvmerge( optsRenderer.GetMkvmergeOptsFile() ) )
 				{
@@ -513,11 +518,25 @@ bool wxMyApp::RunMkvmerge( const wxString& sOptionsFile )
 	if ( m_cfg.GetMkvmergeDir().IsOk() )
 	{
 		wxFileName mkvmerge( m_cfg.GetMkvmergeDir().GetFullPath(), wxT("mkvmerge") );
-		sCmdLine.Printf( wxT("\"%s\" --quiet \"@%s\""), mkvmerge.GetFullPath(), sOptionsFile );
+		if ( wxLog::GetVerbose() )
+		{
+			sCmdLine.Printf( wxT("\"%s\" \"@%s\""), mkvmerge.GetFullPath(), sOptionsFile );
+		}
+		else
+		{
+			sCmdLine.Printf( wxT("\"%s\" --quiet \"@%s\""), mkvmerge.GetFullPath(), sOptionsFile );
+		}
 	}
 	else
 	{
-		sCmdLine.Printf( wxT("mkvmerge --quiet \"@%s\""), sOptionsFile );
+		if ( wxLog::GetVerbose() )
+		{
+			sCmdLine.Printf( wxT("mkvmerge \"@%s\""), sOptionsFile );
+		}
+		else
+		{
+			sCmdLine.Printf( wxT("mkvmerge --quiet \"@%s\""), sOptionsFile );
+		}
 	}
 
 	wxLogMessage( _("Running mkvmerge with options file \u201C%s\u201D"), GetFileName( sOptionsFile ) );

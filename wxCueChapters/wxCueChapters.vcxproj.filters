@@ -44,6 +44,9 @@
     <ClCompile Include="wxXmlCueSheetRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="wxMkvmergeOptsRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -62,6 +65,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="wxXmlCueSheetRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="wxMkvmergeOptsRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
