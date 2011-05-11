@@ -35,7 +35,7 @@ void wxIndex::copy(const wxIndex& idx)
 	m_bCdFrames = idx.m_bCdFrames;
 }
 
-unsigned int wxIndex::GetNumber() const
+size_t wxIndex::GetNumber() const
 {
 	return m_number;
 }
@@ -50,7 +50,7 @@ const wxULongLong& wxIndex::GetOffset() const
 	return m_offset;
 }
 
-bool wxIndex::IsValid(bool bPrePost) const
+bool wxIndex::IsValid( bool bPrePost ) const
 {
 	return
 		(bPrePost? (m_number==0u) : true) &&
@@ -70,7 +70,7 @@ wxIndex& wxIndex::SetOffset( wxULongLong offset )
 	return *this;
 }
 
-wxIndex& wxIndex::Assign( unsigned int number, wxULongLong offset )
+wxIndex& wxIndex::Assign( size_t number, wxULongLong offset )
 {
 	m_number = number;
 	m_offset = offset;
@@ -78,7 +78,7 @@ wxIndex& wxIndex::Assign( unsigned int number, wxULongLong offset )
 	return *this;
 }
 
-wxIndex& wxIndex::Assign( unsigned int number, unsigned long minutes, unsigned long seconds, unsigned long frames )
+wxIndex& wxIndex::Assign( size_t number, unsigned long minutes, unsigned long seconds, unsigned long frames )
 {
 	m_number = number;
 	wxULongLong cdFrames( 0, minutes );
@@ -113,21 +113,21 @@ void wxIndex::FixDecimalPoint( wxString& s )
     s.Replace(sep, ".");
 }
 
-wxIndex& wxIndex::operator -=(wxULongLong frames)
+wxIndex& wxIndex::operator -=( wxULongLong frames )
 {
 	wxASSERT( !HasCdFrames() );
 	m_offset -= frames;
 	return *this;
 }
 
-wxIndex& wxIndex::operator +=(wxULongLong frames)
+wxIndex& wxIndex::operator +=( wxULongLong frames )
 {
 	wxASSERT( !HasCdFrames() );
 	m_offset += frames;
 	return *this;
 }
 
-int wxIndex::CompareFn(wxIndex** i1, wxIndex** i2)
+int wxIndex::CompareFn( wxIndex** i1, wxIndex** i2 )
 {
 	if ( (*i1)->GetNumber() < (*i2)->GetNumber() )
 	{

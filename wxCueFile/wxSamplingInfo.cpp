@@ -9,7 +9,7 @@
 wxIMPLEMENT_DYNAMIC_CLASS( wxSamplingInfo, wxObject )
 
 const wxTimeSpan wxSamplingInfo::wxInvalidDuration = wxTimeSpan::Hours(-1);
-const wxULongLong wxSamplingInfo::wxInvalidNumberOfFrames = wxULongLong( 0xFFFFFFFF, 0xFFFFFFFF );
+const wxUint64 wxSamplingInfo::wxInvalidNumberOfFrames = wxULL( 0xFFFFFFFFFFFFFFFF );
 
 wxSamplingInfo::wxSamplingInfo(void)
 	:m_nSamplingRate(44100),m_nNumChannels(2),m_nBitsPerSample(16)

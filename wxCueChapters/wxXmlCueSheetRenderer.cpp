@@ -865,13 +865,13 @@ bool wxXmlCueSheetRenderer::OnPostRenderDisc( const wxCueSheet& cueSheet )
 {
 	wxLogInfo( _("Calculating chapter names and end time from data file(s)") );
 
-	SetTotalParts( cueSheet.GetTags().Count(), m_pTags );
+	const wxArrayTrack& tracks = cueSheet.GetTracks();
+	size_t tracksCount = tracks.Count();
+	SetTotalParts( tracksCount, m_pTags );
 
 	wxASSERT( m_pFirstChapterAtom != wxNullXmlNode );
 	wxXmlNode* pChapterAtom = m_pFirstChapterAtom;
 
-	const wxArrayTrack& tracks = cueSheet.GetTracks();
-	size_t tracksCount = tracks.Count();
 	wxULongLong offset( wxULL(0) );
 
 	for( size_t i=0; i<tracksCount; i++ )
@@ -890,8 +890,9 @@ bool wxXmlCueSheetRenderer::OnPostRenderDisc( const wxCueSheet& cueSheet )
 					wxULongLong frames;
 					if ( dataFile.GetInfo( si, frames, GetConfig().GetAlternateExtensions() ) )
 					{
-						wxLogDebug( wxT("Number of frames - %s"), frames.ToString() );
-						AddChapterTimeEnd( pChapterAtom, frames );
+						offset += frames;
+						wxLogDebug( wxT("Offset: %s"), offset.ToString() );
+						AddChapterTimeEnd( pChapterAtom, offset );
 					}
 				}
 				else if ( GetConfig().GetUnknownChapterTimeEndToNextChapter() && ((i+1) < tracksCount) )

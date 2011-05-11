@@ -16,7 +16,7 @@ class wxSamplingInfo :public wxObject
 public:
 
 	static const wxTimeSpan wxInvalidDuration;
-	static const wxULongLong wxInvalidNumberOfFrames;
+	static const wxUint64 wxInvalidNumberOfFrames;
 
 	wxSamplingInfo(void);
 	wxSamplingInfo(const wxSamplingInfo&);

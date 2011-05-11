@@ -24,7 +24,7 @@ static const size_t INFOS_SIZE = WXSIZEOF(INFOS);
 
 
 wxDataFile::wxDataFile(void)
-	:m_ftype(BINARY)
+	:m_ftype(BINARY),m_nNumberOfSamples(wxSamplingInfo::wxInvalidNumberOfFrames)
 {
 }
 
@@ -34,25 +34,30 @@ wxDataFile::wxDataFile(const wxDataFile& df)
 }
 
 wxDataFile::wxDataFile(const wxString& sFilePath, wxDataFile::FileType ftype )
-	:m_fileName(sFilePath),m_ftype(ftype)
+	:m_fileName(sFilePath),
+	 m_ftype(ftype),
+	 m_nNumberOfSamples(wxSamplingInfo::wxInvalidNumberOfFrames)
 {
 }
 
 wxDataFile::wxDataFile(const wxFileName& fileName, wxDataFile::FileType ftype )
-	:m_fileName(fileName),m_ftype(ftype)
+	:m_fileName(fileName),
+	m_ftype(ftype),
+	m_nNumberOfSamples(wxSamplingInfo::wxInvalidNumberOfFrames)
 {
 }
 
-wxDataFile& wxDataFile::operator =(const wxDataFile& df)
+wxDataFile& wxDataFile::operator =( const wxDataFile& df )
 {
 	copy( df );
 	return *this;
 }
 
-void wxDataFile::copy(const wxDataFile& df)
+void wxDataFile::copy( const wxDataFile& df )
 {
 	m_fileName = df.m_fileName;
 	m_ftype = df.m_ftype;
+	m_nNumberOfSamples = df.m_nNumberOfSamples;
 }
 
 wxDataFile::FILE_TYPE_STR wxDataFile::FileTypeString[] = {
@@ -63,7 +68,7 @@ wxDataFile::FILE_TYPE_STR wxDataFile::FileTypeString[] = {
 	{ MP3, wxT("MP3") }
 };
 
-size_t wxDataFile::FileTypeStringSize = sizeof(wxDataFile::FileTypeString) / sizeof(wxDataFile::FILE_TYPE_STR);
+size_t wxDataFile::FileTypeStringSize = WXSIZEOF(wxDataFile::FileTypeString);
 
 wxString wxDataFile::GetFileTypeRegExp()
 {
@@ -132,10 +137,21 @@ bool wxDataFile::IsEmpty() const
 	return !m_fileName.IsOk();
 }
 
+bool wxDataFile::HasNumberOfSamples() const
+{
+	return ( m_nNumberOfSamples != wxSamplingInfo::wxInvalidNumberOfFrames );
+}
+
+wxUint64 wxDataFile::GetNumberOfSamples() const
+{
+	return m_nNumberOfSamples;
+}
+
 void wxDataFile::Clear()
 {
 	m_fileName.Clear();
 	m_ftype = BINARY;
+	m_nNumberOfSamples = wxSamplingInfo::wxInvalidNumberOfFrames;
 }
 
 wxDataFile& wxDataFile::Assign(const wxString& sFilePath, wxDataFile::FileType ftype)
@@ -324,7 +340,7 @@ bool wxDataFile::GetFromMediaInfo( const wxFileName& fileName, wxULongLong& fram
 			case 6: // SamplingCount
 			if ( !as1[i].IsEmpty() )
 			{
-				wxULongLong_t ul;
+				wxUint64 ul;
 				if ( as1[i].ToULongLong( &ul ) )
 				{ // calculate duration according to duration
 					frames = ul;
@@ -375,6 +391,20 @@ bool wxDataFile::GetInfo( wxSamplingInfo& si, wxULongLong& frames, const wxStrin
 		res = GetFromMediaInfo(fn, frames, si);
 	}
 	return res;
+}
+
+bool wxDataFile::CalculateNumberOfSamples( wxSamplingInfo& si, const wxString& sAlternateExt )
+{
+	wxULongLong frames;
+	if ( GetInfo( si, frames, sAlternateExt ) )
+	{
+		m_nNumberOfSamples = frames.GetValue();
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!

@@ -30,13 +30,13 @@ protected:
 protected:
 
 	void copy(const wxCueSheet&);
+	wxCueSheet& Append( const wxCueSheet&, wxULongLong, const wxSamplingInfo& );
 
 public:
 
 	wxCueSheet(void);
 	wxCueSheet(const wxCueSheet&);
 	wxCueSheet& operator=( const wxCueSheet& );
-	wxCueSheet& Append( const wxCueSheet&, wxULongLong, const wxSamplingInfo& );
 	bool Append( const wxCueSheet&, const wxString& );
 
 	virtual bool HasGarbage() const;
@@ -67,6 +67,8 @@ public:
 
 	wxCueSheet& SetCatalog( const wxString& );
 	wxCueSheet& SetCdTextFile( const wxString& );
+
+	static bool GetDuration( const wxCueSheet&, const wxString&, wxTimeSpan& );
 
 	void Clear(void);
 

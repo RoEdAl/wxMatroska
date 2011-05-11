@@ -35,6 +35,7 @@ protected:
 
 	wxFileName m_fileName;
 	FileType m_ftype;
+	wxUint64 m_nNumberOfSamples;
 
 protected:
 
@@ -50,7 +51,9 @@ public:
 
 	FileType GetFileType() const;
 	wxString GetFileTypeAsString() const;
-	
+
+	bool HasNumberOfSamples() const;
+	wxUint64 GetNumberOfSamples() const;
 
 	bool IsEmpty() const;
 	wxDataFile& Assign( const wxString&, FileType = BINARY);
@@ -70,6 +73,7 @@ public:
 	bool FileExists( const wxString& = wxEmptyString ) const;
 
 	bool GetInfo( wxSamplingInfo&, wxULongLong&, const wxString& = wxEmptyString ) const;
+	bool CalculateNumberOfSamples( wxSamplingInfo&, const wxString& = wxEmptyString );
 
 	wxTimeSpan GetDuration( const wxString& = wxEmptyString ) const; // wxInvalidDuration if duration cannot be calculated
 

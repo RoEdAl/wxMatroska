@@ -40,6 +40,29 @@ const wxString& wxCueSheet::GetCdTextFile() const
 	return m_sCdTextFile;
 }
 
+bool wxCueSheet::GetDuration( const wxCueSheet& cs, const wxString& sAlternateExt, wxTimeSpan& duration )
+{
+	size_t nLastTrack;
+	wxDataFile dataFile;
+	wxSamplingInfo si;
+
+	if ( !cs.GetLastDataFile( nLastTrack, dataFile ) )
+	{
+		return false;
+	}
+
+	wxULongLong frames;
+	if ( dataFile.GetInfo( si, frames, sAlternateExt ) )
+	{
+		duration = si.GetDuration( frames );
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 wxCueSheet& wxCueSheet::SetCdTextFile(const wxString& sCdTextFile)
 {
 	m_sCdTextFile = sCdTextFile;
@@ -150,8 +173,12 @@ wxCueSheet& wxCueSheet::Append( const wxCueSheet& cs, wxULongLong offset, const 
 		m_sCdTextFile = cs.m_sCdTextFile;
 	}
 
-	wxTrack& lastTrack = GetLastTrack();
-	size_t nNumberOffset = lastTrack.GetNumber() + 1;
+	size_t nNumberOffset = 0;
+	if ( !m_tracks.IsEmpty() )
+	{
+		wxTrack& lastTrack = GetLastTrack();
+		nNumberOffset = lastTrack.GetNumber();
+	}
 
 	wxArrayTrack tracks( cs.m_tracks );
 	for( size_t nCount = tracks.Count(), i = 0; i < nCount; i++ )
@@ -168,12 +195,14 @@ bool wxCueSheet::Append( const wxCueSheet& cs, const wxString& sAlternateExt )
 {
 	size_t nLastTrack;
 	wxDataFile dataFile;
-	if ( !cs.GetLastDataFile( nLastTrack, dataFile ) )
+	wxSamplingInfo si;
+
+	if ( !GetLastDataFile( nLastTrack, dataFile ) )
 	{
-		return false;
+		Append( cs, wxULL(0), si );
+		return true;
 	}
 
-	wxSamplingInfo si;
 	wxULongLong frames;
 	if ( dataFile.GetInfo( si, frames, sAlternateExt ) )
 	{
@@ -230,7 +259,7 @@ bool wxCueSheet::IsLastTrackForDataFile( size_t trackNo, wxDataFile& dataFile ) 
 	size_t tracks = m_tracks.Count();
 	if ( (trackNo+1) < tracks )
 	{
-		if ( !m_tracks[trackNo+1].GetDataFile().IsEmpty() )
+		if ( m_tracks[trackNo+1].HasDataFile() )
 		{
 			res = true;
 		}
@@ -245,7 +274,7 @@ bool wxCueSheet::IsLastTrackForDataFile( size_t trackNo, wxDataFile& dataFile ) 
 		bool found = false;
 		while( trackNo > 0 )
 		{
-			if ( !m_tracks[trackNo].GetDataFile().IsEmpty() )
+			if ( m_tracks[trackNo].HasDataFile() )
 			{
 				dataFile = m_tracks[trackNo].GetDataFile();
 				found = true;
@@ -256,7 +285,7 @@ bool wxCueSheet::IsLastTrackForDataFile( size_t trackNo, wxDataFile& dataFile ) 
 
 		if ( !found ) // zero
 		{
-			if ( !m_tracks[0].GetDataFile().IsEmpty() )
+			if ( m_tracks[0].HasDataFile() )
 			{
 				dataFile = m_tracks[0].GetDataFile();
 				found = true;

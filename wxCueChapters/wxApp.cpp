@@ -240,8 +240,6 @@ int wxMyApp::AppendCueSheet( const wxCueSheet& cueSheet )
 
 int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, const wxCueSheet& cueSheet )
 {
-	wxASSERT( !m_cfg.GetMerge() );
-
 	if ( m_cfg.SaveCueSheet() )
 	{
 		wxString sOutputFile( m_cfg.GetOutputFile( inputFile ) );
