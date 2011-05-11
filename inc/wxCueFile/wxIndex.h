@@ -37,6 +37,7 @@ public:
 	static void FixDecimalPoint( wxString& );
 
 	wxIndex& operator-=( wxULongLong );
+	wxIndex& operator+=( wxULongLong );
 
 public:
 

@@ -26,21 +26,21 @@ wxCueComponent::CDTEXT_ENTRY wxCueComponent::CdTextFields[] = {
 	{ wxT("TOC_INFO2"), wxCueComponent::ANY,	wxCueComponent::BINARY,			wxT('\000') }
 };
 
-size_t wxCueComponent::CdTextFieldsSize = sizeof(wxCueComponent::CdTextFields)/sizeof(wxCueComponent::CDTEXT_ENTRY);
+size_t wxCueComponent::CdTextFieldsSize = WXSIZEOF(wxCueComponent::CdTextFields);
 
 wxCueComponent::KEYWORD_ENTRY wxCueComponent::Keywords[] = {
-	{  wxT("REM"), wxCueComponent::ANY },
-	{  wxT("INDEX"), wxCueComponent::TRACK },
-	{  wxT("PREGAP"), wxCueComponent::TRACK },
-	{  wxT("POSTGAP"), wxCueComponent::TRACK },
-	{  wxT("FILE"), wxCueComponent::ANY },
-	{  wxT("FLAGS"), wxCueComponent::TRACK },
-	{  wxT("TRACK"), wxCueComponent::ANY },
-	{  wxT("CATALOG"), wxCueComponent::DISC },
-	{  wxT("CDTEXTFILE"), wxCueComponent::DISC }
+	{  wxT("REM"),			wxCueComponent::ANY },
+	{  wxT("INDEX"),		wxCueComponent::TRACK },
+	{  wxT("PREGAP"),		wxCueComponent::TRACK },
+	{  wxT("POSTGAP"),		wxCueComponent::TRACK },
+	{  wxT("FILE"),			wxCueComponent::ANY },
+	{  wxT("FLAGS"),		wxCueComponent::TRACK },
+	{  wxT("TRACK"),		wxCueComponent::ANY },
+	{  wxT("CATALOG"),		wxCueComponent::DISC },
+	{  wxT("CDTEXTFILE"),	wxCueComponent::DISC }
 };
 
-size_t wxCueComponent::KeywordsSize = sizeof(wxCueComponent::Keywords)/sizeof(wxCueComponent::KEYWORD_ENTRY);
+size_t wxCueComponent::KeywordsSize = WXSIZEOF(wxCueComponent::Keywords);
 
 wxString wxCueComponent::GetCdTextInfoRegExp()
 {
@@ -121,10 +121,6 @@ wxCueComponent::wxCueComponent(const wxCueComponent& component)
 	copy( component );
 }
 
-wxCueComponent::~wxCueComponent(void)
-{
-}
-
 wxCueComponent& wxCueComponent::operator =(const wxCueComponent& component)
 {
 	copy( component );
@@ -138,6 +134,22 @@ void wxCueComponent::copy(const wxCueComponent& component)
 	m_garbage = component.m_garbage;
 	m_cdTextTags = component.m_cdTextTags;
 	m_tags = component.m_tags;
+}
+
+wxCueComponent& wxCueComponent::Append(const wxCueComponent& component)
+{
+	wxASSERT( m_bTrack == component.m_bTrack );
+
+	WX_APPEND_ARRAY( m_comments, component.m_comments );
+	WX_APPEND_ARRAY( m_garbage, component.m_garbage );
+	WX_APPEND_ARRAY( m_cdTextTags, component.m_cdTextTags );
+	WX_APPEND_ARRAY( m_tags, component.m_tags );
+	return *this;
+}
+
+wxCueComponent& wxCueComponent::operator +=(const wxCueComponent& component)
+{
+	return Append( component );
 }
 
 bool wxCueComponent::HasGarbage() const

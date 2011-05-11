@@ -119,6 +119,12 @@ wxIndex& wxIndex::operator -=(wxULongLong frames)
 	return *this;
 }
 
+wxIndex& wxIndex::operator +=(wxULongLong frames)
+{
+	m_offset += frames;
+	return *this;
+}
+
 int wxIndex::CompareFn(wxIndex** i1, wxIndex** i2)
 {
 	if ( (*i1)->GetNumber() < (*i2)->GetNumber() )

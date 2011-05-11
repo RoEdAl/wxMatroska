@@ -100,7 +100,9 @@ public:
 	wxCueComponent(bool = false);
 	wxCueComponent(const wxCueComponent&);
 	wxCueComponent& operator=(const wxCueComponent&);
-	~wxCueComponent(void);
+
+	wxCueComponent& operator+=(const wxCueComponent&);
+	wxCueComponent& Append(const wxCueComponent&);
 
 	static wxString GetCdTextInfoRegExp();
 	static wxString GetKeywordsRegExp();

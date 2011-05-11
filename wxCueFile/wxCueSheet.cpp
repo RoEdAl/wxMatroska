@@ -18,11 +18,6 @@ wxCueSheet::wxCueSheet(const wxCueSheet& cs)
 	copy( cs );
 }
 
-
-wxCueSheet::~wxCueSheet(void)
-{
-}
-
 wxCueSheet& wxCueSheet::operator =(const wxCueSheet& cs)
 {
 	copy( cs );
@@ -117,7 +112,8 @@ bool wxCueSheet::HasGarbage() const
 	bool bRes = (m_garbage.Count() > 0 );
 	size_t nTracks = m_tracks.Count();
 	size_t i = 0;
-	while( !bRes && (i < nTracks) ) {
+	while( !bRes && (i < nTracks) )
+	{
 		bRes = bRes && m_tracks[i].HasGarbage();
 		i++;
 	}
@@ -140,10 +136,22 @@ void wxCueSheet::copy(const wxCueSheet& cs)
 	m_tracks = cs.m_tracks;
 }
 
+wxCueSheet& wxCueSheet::Append( const wxCueSheet& cs, wxULongLong offset)
+{
+	wxCueComponent::Append( cs );
+	wxArrayTrack tracks( cs.m_tracks );
+	for( size_t nCount = tracks.Count(), i = 0; i < nCount; i++ )
+	{
+		tracks[i] += offset;
+	}
+
+	WX_APPEND_ARRAY( m_tracks, tracks );
+	return *this;
+}
+
 wxArrayTrack& wxCueSheet::SortTracks()
 {
-	size_t tracks = m_tracks.Count();
-	for( size_t i=0; i<tracks; i++ )
+	for( size_t nCount = m_tracks.Count(), i=0; i < nCount; i++ )
 	{
 		m_tracks[i].SortIndicies();
 	}
@@ -272,15 +280,16 @@ wxCueSheet& wxCueSheet::SetSingleDataFile( const wxDataFile& dataFile )
 
 wxCueSheet& wxCueSheet::SetDataFiles( const wxArrayDataFile& dataFile )
 {
-	size_t tracks = m_tracks.Count();
 	size_t j=0;
-	for( size_t i=0; (i<tracks) && (j<dataFile.Count()); i++ )
+
+	for( size_t nCount = m_tracks.Count(), i=0; ( i < nCount ) && ( j<dataFile.Count() ); i++ )
 	{
 		if ( m_tracks[i].HasDataFile() )
 		{
 			m_tracks[i].SetDataFile( dataFile[j++] );
 		}
 	}
+
 	if ( j < dataFile.Count() )
 	{
 		wxLogWarning( _("Not all data files in cue sheet are replaced") );

@@ -9,33 +9,44 @@
 
 wxIMPLEMENT_DYNAMIC_CLASS( wxTrack, wxCueComponent )
 
+wxTrack::FLAG_STR wxTrack::FlagString[] = {
+	{ DCP, wxT("DCP") },
+	{ CH4, wxT("CH4") },
+	{ PRE, wxT("PRE") },
+	{ SCMS, wxT("SCMS") },
+	{ DATA, wxT("DATA") },
+	{ NONE, wxT("NONE") }
+};
+
+size_t wxTrack::FlagStringSize = WXSIZEOF(wxTrack::FlagString);
+
+wxTrack::DATA_MODE_STR wxTrack::DataModeString[] = {
+	{ AUDIO,			wxT("AUDIO") },
+	{ CDG,				wxT("CDG") },
+	{ MODE1_2048,		wxT("MODE1/2048") },
+	{ MODE1_2352,		wxT("MODE1/2352") },
+	{ MODE2_2336,		wxT("MODE2/2336") },
+	{ MODE2_2352,		wxT("MODE2/2352") },
+	{ CDI_2336,			wxT("CDI/2336") },
+	{ CDI_2352,			wxT("CDI/2352") }
+};
+
+size_t wxTrack::DataModeStringSize = WXSIZEOF(wxTrack::DataModeString);
+
 wxTrack::wxTrack(void)
-	:wxCueComponent(true),m_pPreGap((wxIndex*)NULL),m_pPostGap((wxIndex*)NULL),m_number(0)
+	:wxCueComponent(true),m_number(0)
 {
 }
 
 wxTrack::wxTrack(const wxTrack& track)
-	:wxCueComponent(true),m_pPreGap((wxIndex*)NULL),m_pPostGap((wxIndex*)NULL),m_dataMode(AUDIO)
+	:wxCueComponent(true),m_dataMode(AUDIO)
 {
 	copy(track);
 }
 
 wxTrack::wxTrack(unsigned long number)
-	:wxCueComponent(true),m_pPreGap((wxIndex*)NULL),m_pPostGap((wxIndex*)NULL),m_number(number),m_dataMode(AUDIO)
+	:wxCueComponent(true),m_number(number),m_dataMode(AUDIO)
 {
-}
-
-wxTrack::~wxTrack(void)
-{
-	if ( m_pPreGap != (wxIndex*)NULL )
-	{
-		delete m_pPreGap;
-	}
-
-	if ( m_pPostGap != (wxIndex*)NULL )
-	{
-		delete m_pPostGap;
-	}
 }
 
 wxTrack& wxTrack::operator =(const wxTrack& track)
@@ -101,17 +112,17 @@ void wxTrack::AddIndex(const wxIndex& idx)
 
 bool wxTrack::HasPreGap() const
 {
-	return (m_pPreGap != (const wxIndex*)NULL);
+	return m_pPreGap;
 }
 
 bool wxTrack::HasPostGap() const
 {
-	return (m_pPostGap != (const wxIndex*)NULL);
+	return m_pPostGap;
 }
 
 const wxIndex& wxTrack::GetPreGap() const
 {
-	if (m_pPreGap != (const wxIndex*)NULL)
+	if ( HasPreGap() )
 	{
 		return *m_pPreGap;
 	}
@@ -124,7 +135,7 @@ const wxIndex& wxTrack::GetPreGap() const
 
 const wxIndex& wxTrack::GetPostGap() const
 {
-	if (m_pPostGap != (const wxIndex*)NULL)
+	if ( HasPostGap() )
 	{
 		return *m_pPostGap;
 	}
@@ -137,32 +148,22 @@ const wxIndex& wxTrack::GetPostGap() const
 
 void wxTrack::ClearPreGap()
 {
-	if ( m_pPreGap != (wxIndex*)NULL )
-	{
-		delete m_pPreGap;
-		m_pPreGap = (wxIndex*)NULL;
-	}
+	m_pPreGap.reset();
 }
 
 void wxTrack::ClearPostGap()
 {
-	if ( m_pPostGap != (wxIndex*)NULL )
-	{
-		delete m_pPostGap;
-		m_pPostGap = (wxIndex*)NULL;
-	}
+	m_pPostGap.reset();
 }
 
 void wxTrack::SetPreGap(const wxIndex& preGap)
 {
-	ClearPreGap();
-	m_pPreGap = new wxIndex( preGap );
+	m_pPreGap.reset( new wxIndex( preGap ) );
 }
 
 void wxTrack::SetPostGap(const wxIndex& postGap)
 {
-	ClearPostGap();
-	m_pPostGap = new wxIndex( postGap );
+	m_pPostGap.reset( new wxIndex( postGap ) );
 }
 
 const wxDataFile& wxTrack::GetDataFile() const
@@ -180,7 +181,7 @@ const wxTrack::wxArrayFlag& wxTrack::GetFlags() const
 	return m_flags;
 }
 
-wxTrack& wxTrack::AddFlag(wxTrack::Flag flag )
+wxTrack& wxTrack::AddFlag( wxTrack::Flag flag )
 {
 	m_flags.Add( flag );
 	return *this;
@@ -234,18 +235,6 @@ bool wxTrack::HasFlag( wxTrack::Flag f ) const
 	return false;
 }
 
-wxTrack::FLAG_STR wxTrack::FlagString[] = {
-	{ DCP, wxT("DCP") },
-	{ CH4, wxT("CH4") },
-	{ PRE, wxT("PRE") },
-	{ SCMS, wxT("SCMS") },
-	{ DATA, wxT("DATA") },
-	{ NONE, wxT("NONE") }
-};
-
-size_t wxTrack::FlagStringSize = sizeof(wxTrack::FlagString) / sizeof(wxTrack::FLAG_STR);
-
-
 wxString wxTrack::GetFlagRegExp()
 {
 	wxString s;
@@ -287,19 +276,6 @@ bool wxTrack::StringToFlag( const wxString& s, wxTrack::Flag& flag )
 	}
 	return false;
 }
-
-wxTrack::DATA_MODE_STR wxTrack::DataModeString[] = {
-	{ AUDIO, wxT("AUDIO") },
-	{ CDG, wxT("CDG") },
-	{ MODE1_2048, wxT("MODE1/2048") },
-	{ MODE1_2352, wxT("MODE1/2352") },
-	{ MODE2_2336, wxT("MODE2/2336") },
-	{ MODE2_2352, wxT("MODE2/2352") },
-	{ CDI_2336, wxT("CDI/2336") },
-	{ CDI_2352, wxT("CDI/2352") }
-};
-
-size_t wxTrack::DataModeStringSize = sizeof(wxTrack::DataModeString) / sizeof(wxTrack::DATA_MODE_STR);
 
 wxString wxTrack::GetDataModeRegExp()
 {
@@ -420,6 +396,46 @@ void wxTrack::GetReplacements( wxHashString& replacements ) const
 	wxString sValue;
 	sValue.Printf( wxT("%02d"), m_number );
 	replacements[ wxT("tn") ] = sValue;
+}
+
+wxTrack& wxTrack::operator-=( wxULongLong frames )
+{
+	if ( HasPreGap() )
+	{
+		*m_pPreGap -= frames;
+	}
+
+	if ( HasPostGap() )
+	{
+		*m_pPostGap -= frames;
+	}
+
+	for( size_t nCount = m_indexes.GetCount(), i=0; i < nCount; i++ )
+	{
+		m_indexes[ i ] -= frames;
+	}
+
+	return *this;
+}
+
+wxTrack& wxTrack::operator+=( wxULongLong frames )
+{
+	if ( HasPreGap() )
+	{
+		*m_pPreGap += frames;
+	}
+
+	if ( HasPostGap() )
+	{
+		*m_pPostGap += frames;
+	}
+
+	for( size_t nCount = m_indexes.GetCount(), i=0; i < nCount; i++ )
+	{
+		m_indexes[ i ] += frames;
+	}
+
+	return *this;
 }
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!

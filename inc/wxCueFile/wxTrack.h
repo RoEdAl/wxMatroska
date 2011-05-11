@@ -44,8 +44,8 @@ protected:
 	unsigned long m_number;
 	DataMode m_dataMode;
 	wxArrayIndex m_indexes;
-	wxIndex* m_pPreGap;
-	wxIndex* m_pPostGap;
+	wxScopedPtr<wxIndex> m_pPreGap;
+	wxScopedPtr<wxIndex> m_pPostGap;
 	wxDataFile m_df;
 	wxArrayFlag m_flags;
 
@@ -122,9 +122,11 @@ public:
 
 	wxTrack(void);
 	wxTrack( unsigned long );
-	wxTrack(const wxTrack&);
-	virtual ~wxTrack(void);
-	wxTrack& operator=(const wxTrack&);
+	wxTrack( const wxTrack& );
+	wxTrack& operator=( const wxTrack& );
+
+	wxTrack& operator-=( wxULongLong );
+	wxTrack& operator+=( wxULongLong );
 
 	bool IsValid() const;
 

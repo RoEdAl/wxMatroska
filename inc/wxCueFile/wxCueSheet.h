@@ -31,8 +31,8 @@ public:
 
 	wxCueSheet(void);
 	wxCueSheet(const wxCueSheet&);
-	virtual ~wxCueSheet(void);
 	wxCueSheet& operator=( const wxCueSheet& );
+	wxCueSheet& Append( const wxCueSheet&, wxULongLong );
 
 	virtual bool HasGarbage() const;
 
