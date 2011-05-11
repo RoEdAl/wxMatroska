@@ -20,6 +20,8 @@ protected:
 
 	void copy(const wxIndex&);
 	const wxULongLong& GetOffset() const;
+	wxIndex& operator-=( wxULongLong );
+	wxIndex& operator+=( wxULongLong );
 
 public:
 
@@ -35,9 +37,6 @@ public:
 
 	bool IsValid(bool = false) const;
 	static void FixDecimalPoint( wxString& );
-
-	wxIndex& operator-=( wxULongLong );
-	wxIndex& operator+=( wxULongLong );
 
 public:
 

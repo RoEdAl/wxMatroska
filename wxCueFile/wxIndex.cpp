@@ -115,12 +115,14 @@ void wxIndex::FixDecimalPoint( wxString& s )
 
 wxIndex& wxIndex::operator -=(wxULongLong frames)
 {
+	wxASSERT( !HasCdFrames() );
 	m_offset -= frames;
 	return *this;
 }
 
 wxIndex& wxIndex::operator +=(wxULongLong frames)
 {
+	wxASSERT( !HasCdFrames() );
 	m_offset += frames;
 	return *this;
 }

@@ -9,6 +9,10 @@
 #include "wxTrack.h"
 #endif
 
+#ifndef _WX_SAMPLING_INFO_H_
+class wxSamplingInfo;
+#endif
+
 #ifndef _WX_CUE_COMPONENT_H
 #include "wxCueComponent.h"
 #endif
@@ -32,7 +36,8 @@ public:
 	wxCueSheet(void);
 	wxCueSheet(const wxCueSheet&);
 	wxCueSheet& operator=( const wxCueSheet& );
-	wxCueSheet& Append( const wxCueSheet&, wxULongLong );
+	wxCueSheet& Append( const wxCueSheet&, wxULongLong, const wxSamplingInfo& );
+	bool Append( const wxCueSheet&, const wxString& );
 
 	virtual bool HasGarbage() const;
 
@@ -42,6 +47,7 @@ public:
 	wxCueSheet& SetSingleDataFile( const wxDataFile& );
 	wxCueSheet& SetDataFiles( const wxArrayDataFile& );
 
+	bool GetLastDataFile( size_t&, wxDataFile& ) const;
 	bool IsLastTrackForDataFile( size_t, wxDataFile& ) const;
 
 public:

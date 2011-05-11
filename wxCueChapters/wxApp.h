@@ -13,12 +13,12 @@ class wxInputFile;
 #include "wxConfiguration.h"
 #endif
 
-#ifndef _WX_CUE_SHEET_READER_H_
-class wxCueSheetReader;
+#ifndef _WX_CUE_SHEET_H_
+#include <wxCueFile/wxCueSheet.h>
 #endif
 
-#ifndef _WX_CUE_SHEET_H_
-class wxCueSheet;
+#ifndef _WX_CUE_SHEET_READER_H_
+class wxCueSheetReader;
 #endif
 
 #ifndef _WX_XML_CUE_SHEET_RENDERER_H_
@@ -31,17 +31,19 @@ class wxMkvmergeOptsRenderer;
 
 class wxMyApp :public wxAppConsole
 {
+
 protected:
 
 	wxConfiguration m_cfg;
 	wxString m_sSeparator;
-	wxScopedPtr<wxXmlCueSheetRenderer> m_pRenderer;
 	wxScopedPtr<wxMkvmergeOptsRenderer> m_pMkvmergeOptsRenderer;
+	wxScopedPtr<wxCueSheet> m_pMergedCueSheet;
 
 protected:
 
 	int ProcessCueFile( wxCueSheetReader&, const wxInputFile& );
 	int ConvertCueSheet( const wxInputFile&, const wxCueSheet& );
+	int AppendCueSheet( const wxCueSheet& );
 
 	void AddSeparator( wxCmdLineParser& );
 	static void AddVersionInfos( wxCmdLineParser& );
@@ -51,12 +53,12 @@ protected:
 	static bool CheckLicense();
 	static void ShowLicense();
 
-	wxXmlCueSheetRenderer& GetXmlRenderer( const wxInputFile& );
-	wxXmlCueSheetRenderer& GetXmlRenderer();
+	wxSharedPtr<wxXmlCueSheetRenderer> GetXmlRenderer( const wxInputFile& );
 	wxMkvmergeOptsRenderer& GetMkvmergeOptsRenderer( bool = true );
+	wxCueSheet& GetMergedCueSheet();
 
-	bool HasXmlRenderer() const;
 	bool HasMkvmergeOptsRenderer() const;
+	bool HasMergedCueSheet() const;
 
 	bool RunMkvmerge( const wxString& );
 

@@ -242,6 +242,29 @@ wxIndex wxSamplingInfo::ConvertIndex( const wxIndex& idx ) const
 	return res;
 }
 
+wxIndex wxSamplingInfo::ConvertIndex( const wxIndex& idx, wxULongLong offset, bool bAdd ) const
+{
+	wxIndex res;
+	if ( idx.HasCdFrames() )
+	{
+		res.SetNumber( idx.GetNumber() ).SetOffset( GetFramesFromCdFrames( idx.GetOffset() ) );
+	}
+	else
+	{
+		res = idx;
+	}
+
+	if ( bAdd )
+	{
+		res += offset;
+	}
+	else
+	{
+		res -= offset;
+	}
+	return res;
+}
+
 wxString wxSamplingInfo::GetIndexOffsetStr( const wxIndex& idx ) const
 {
 	return GetSamplesStr( GetIndexOffset( idx ) );

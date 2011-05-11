@@ -6,6 +6,7 @@
 #include <wxCueFile/wxDataFile.h>
 #include <wxCueFile/wxIndex.h>
 #include <wxCueFile/wxTrack.h>
+#include <wxCueFile/wxSamplingInfo.h>
 
 wxIMPLEMENT_DYNAMIC_CLASS( wxTrack, wxCueComponent )
 
@@ -79,9 +80,15 @@ void wxTrack::copy(const wxTrack& track)
 	}
 }
 
-unsigned long wxTrack::GetNumber() const
+size_t wxTrack::GetNumber() const
 {
 	return m_number;
+}
+
+wxTrack& wxTrack::SetNumber( size_t nNumber )
+{
+	m_number = nNumber;
+	return *this;
 }
 
 wxTrack::DataMode wxTrack::GetMode() const
@@ -398,41 +405,21 @@ void wxTrack::GetReplacements( wxHashString& replacements ) const
 	replacements[ wxT("tn") ] = sValue;
 }
 
-wxTrack& wxTrack::operator-=( wxULongLong frames )
+wxTrack& wxTrack::Shift( wxULongLong frames, const wxSamplingInfo& si )
 {
 	if ( HasPreGap() )
 	{
-		*m_pPreGap -= frames;
+		SetPreGap( si.ConvertIndex( *m_pPreGap, frames, true ) );
 	}
 
 	if ( HasPostGap() )
 	{
-		*m_pPostGap -= frames;
+		SetPostGap( si.ConvertIndex( *m_pPostGap, frames, true ) );
 	}
 
 	for( size_t nCount = m_indexes.GetCount(), i=0; i < nCount; i++ )
 	{
-		m_indexes[ i ] -= frames;
-	}
-
-	return *this;
-}
-
-wxTrack& wxTrack::operator+=( wxULongLong frames )
-{
-	if ( HasPreGap() )
-	{
-		*m_pPreGap += frames;
-	}
-
-	if ( HasPostGap() )
-	{
-		*m_pPostGap += frames;
-	}
-
-	for( size_t nCount = m_indexes.GetCount(), i=0; i < nCount; i++ )
-	{
-		m_indexes[ i ] += frames;
+		m_indexes[ i ] = si.ConvertIndex( m_indexes[ i ], frames, true );
 	}
 
 	return *this;

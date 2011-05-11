@@ -57,8 +57,6 @@ protected:
 	wxString m_sOutputFile;
 	wxString m_sTagsFile;
 
-	wxULongLong m_offset;
-	size_t m_nTotalParts;
 	wxSamplingInfo m_si;
 
 	wxTagSynonimsCollection m_discCdTextSynonims;
@@ -132,6 +130,7 @@ protected:
 		wxXmlNode*,
 		long = 50 );
 	wxXmlNode* SetTotalParts(
+		size_t,
 		wxXmlNode*,
 		long = 50 );
 	wxXmlNode* AddTrackTags(
@@ -162,9 +161,7 @@ protected:
 	static wxXmlNode* find_chapter_time_start( wxXmlNode* );
 	static bool is_album_tag( wxXmlNode*, long );
 	static wxXmlNode* find_disc_tag_node( wxXmlNode*, long );
-	static bool is_total_parts( wxXmlNode* );
 	static bool set_total_parts( wxXmlNode*, size_t );
-	static wxXmlNode* find_total_parts_node( wxXmlNode* );
 	static wxXmlNode* add_chapter_time_end( wxXmlNode*, const wxString& );
 	static wxXmlNode* add_chapter_time_end( wxXmlNode*, const wxSamplingInfo&, wxULongLong );
 	static bool has_chapter_time_end( wxXmlNode* );
@@ -199,7 +196,6 @@ public:
 	const wxString& GetTagsFile() const;
 
 	bool SaveXmlDoc();
-	bool IsOffsetValid() const;
 };
 
 #endif

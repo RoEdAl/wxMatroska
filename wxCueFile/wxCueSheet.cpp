@@ -13,7 +13,7 @@ wxCueSheet::wxCueSheet(void)
 {
 }
 
-wxCueSheet::wxCueSheet(const wxCueSheet& cs)
+wxCueSheet::wxCueSheet( const wxCueSheet& cs )
 {
 	copy( cs );
 }
@@ -29,7 +29,7 @@ const wxString& wxCueSheet::GetCatalog() const
 	return m_sCatalog;
 }
 
-wxCueSheet& wxCueSheet::SetCatalog(const wxString& sCatalog)
+wxCueSheet& wxCueSheet::SetCatalog( const wxString& sCatalog )
 {
 	m_sCatalog = sCatalog;
 	return *this;
@@ -51,7 +51,7 @@ const wxArrayTrack& wxCueSheet::GetTracks() const
 	return m_tracks;
 }
 
-wxCueSheet& wxCueSheet::AddTrack(const wxTrack& track)
+wxCueSheet& wxCueSheet::AddTrack( const wxTrack& track )
 {
 	m_tracks.Add( track );
 	return *this;
@@ -97,7 +97,7 @@ wxTrack& wxCueSheet::GetLastTrack()
 	return m_tracks.Last();
 }
 
-const wxTrack& wxCueSheet::GetTrack(size_t idx) const
+const wxTrack& wxCueSheet::GetTrack( size_t idx ) const
 {
 	return m_tracks[idx];
 }
@@ -128,7 +128,7 @@ void wxCueSheet::Clear(void)
 	m_tracks.Clear();
 }
 
-void wxCueSheet::copy(const wxCueSheet& cs)
+void wxCueSheet::copy( const wxCueSheet& cs )
 {
 	wxCueComponent::copy( cs );
 	m_sCatalog = cs.m_sCatalog;
@@ -136,17 +136,55 @@ void wxCueSheet::copy(const wxCueSheet& cs)
 	m_tracks = cs.m_tracks;
 }
 
-wxCueSheet& wxCueSheet::Append( const wxCueSheet& cs, wxULongLong offset)
+wxCueSheet& wxCueSheet::Append( const wxCueSheet& cs, wxULongLong offset, const wxSamplingInfo& si )
 {
 	wxCueComponent::Append( cs );
+
+	if ( m_sCatalog.IsEmpty() )
+	{
+		m_sCatalog = cs.m_sCatalog;
+	}
+
+	if ( m_sCdTextFile.IsEmpty() )
+	{
+		m_sCdTextFile = cs.m_sCdTextFile;
+	}
+
+	wxTrack& lastTrack = GetLastTrack();
+	size_t nNumberOffset = lastTrack.GetNumber() + 1;
+
 	wxArrayTrack tracks( cs.m_tracks );
 	for( size_t nCount = tracks.Count(), i = 0; i < nCount; i++ )
 	{
-		tracks[i] += offset;
+		tracks[i].SetNumber( nNumberOffset + tracks[i].GetNumber() );
+		tracks[i].Shift( offset, si );
 	}
 
 	WX_APPEND_ARRAY( m_tracks, tracks );
 	return *this;
+}
+
+bool wxCueSheet::Append( const wxCueSheet& cs, const wxString& sAlternateExt )
+{
+	size_t nLastTrack;
+	wxDataFile dataFile;
+	if ( !cs.GetLastDataFile( nLastTrack, dataFile ) )
+	{
+		return false;
+	}
+
+	wxSamplingInfo si;
+	wxULongLong frames;
+	if ( dataFile.GetInfo( si, frames, sAlternateExt ) )
+	{
+		wxLogDebug( wxT("File: \u201C%s\u201D, frames: %s"), dataFile.GetFileName(), frames.ToString() );
+		Append( cs, frames, si );
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 wxArrayTrack& wxCueSheet::SortTracks()
@@ -157,6 +195,33 @@ wxArrayTrack& wxCueSheet::SortTracks()
 	}
 	m_tracks.Sort( wxTrack::CompareFn );
 	return m_tracks;
+}
+
+bool wxCueSheet::GetLastDataFile( size_t& trackNo, wxDataFile& dataFile ) const
+{
+	size_t tracks = m_tracks.Count();
+	if ( tracks == 0 ) return false;
+
+	for( size_t i = tracks - 1; i > 0; i -= 1 )
+	{
+		if ( m_tracks[i].HasDataFile() )
+		{
+			trackNo = i;
+			dataFile = m_tracks[i].GetDataFile();
+			return true;
+		}
+	}
+
+	if ( m_tracks[0].HasDataFile() )
+	{
+		trackNo = 0;
+		dataFile = m_tracks[0].GetDataFile();
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 bool wxCueSheet::IsLastTrackForDataFile( size_t trackNo, wxDataFile& dataFile ) const

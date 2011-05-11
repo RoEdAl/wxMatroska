@@ -21,6 +21,10 @@
 #include "wxDataFile.h"
 #endif
 
+#ifndef _WX_SAMPLING_INFO_H_
+class wxSamplingInfo;
+#endif
+
 class wxTrack :public wxCueComponent
 {
 	wxDECLARE_DYNAMIC_CLASS(wxTrack);
@@ -41,7 +45,7 @@ public:
 
 protected:
 
-	unsigned long m_number;
+	size_t m_number;
 	DataMode m_dataMode;
 	wxArrayIndex m_indexes;
 	wxScopedPtr<wxIndex> m_pPreGap;
@@ -77,7 +81,8 @@ public:
 
 	static int CompareFn( wxTrack**, wxTrack** );
 
-	unsigned long GetNumber() const;
+	size_t GetNumber() const;
+	wxTrack& SetNumber( size_t );
 
 	DataMode GetMode() const;
 	wxString GetModeAsString() const;
@@ -124,9 +129,7 @@ public:
 	wxTrack( unsigned long );
 	wxTrack( const wxTrack& );
 	wxTrack& operator=( const wxTrack& );
-
-	wxTrack& operator-=( wxULongLong );
-	wxTrack& operator+=( wxULongLong );
+	wxTrack& Shift( wxULongLong, const wxSamplingInfo& );
 
 	bool IsValid() const;
 

@@ -18,7 +18,7 @@
 // ===============================================================================
 
 const wxChar wxMyApp::APP_NAME[] = wxT("cue2mkc");
-const wxChar wxMyApp::APP_VERSION[] = wxT("0.71");
+const wxChar wxMyApp::APP_VERSION[] = wxT("0.72");
 const wxChar wxMyApp::APP_VENDOR_NAME[] = wxT("Edmunt Pienkowsky");
 const wxChar wxMyApp::APP_AUTHOR[] = wxT("Edmunt Pienkowsky - roed@onet.eu");
 const wxChar wxMyApp::LICENSE_FILE_NAME[] = wxT("license.txt");
@@ -222,8 +222,26 @@ bool wxMyApp::OnCmdLineParsed( wxCmdLineParser& cmdline )
 	 return true;
  }
 
+int wxMyApp::AppendCueSheet( const wxCueSheet& cueSheet )
+{
+	wxASSERT( m_cfg.GetMerge() );
+
+	wxCueSheet& mergedCueSheet = GetMergedCueSheet();
+	if ( mergedCueSheet.Append( cueSheet, m_cfg.GetAlternateExtensions() ) )
+	{
+		return 0;
+	}
+	else
+	{
+		wxLogError( _("Fail to merge cue sheet") );
+		return 1;
+	}
+}
+
 int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, const wxCueSheet& cueSheet )
 {
+	wxASSERT( !m_cfg.GetMerge() );
+
 	if ( m_cfg.SaveCueSheet() )
 	{
 		wxString sOutputFile( m_cfg.GetOutputFile( inputFile ) );
@@ -245,37 +263,33 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, const wxCueSheet& cu
 	else
 	{
 		wxLogInfo( _("Converting cue scheet to XML format") );
-		wxXmlCueSheetRenderer& xmlRenderer = GetXmlRenderer( inputFile );
-		if ( xmlRenderer.Render( cueSheet ) )
+		wxSharedPtr<wxXmlCueSheetRenderer> pXmlRenderer = GetXmlRenderer( inputFile );
+		if ( pXmlRenderer->Render( cueSheet ) )
 		{
-
 			if ( m_cfg.GenerateMkvmergeOpts() )
 			{
 				wxMkvmergeOptsRenderer& optsRenderer = GetMkvmergeOptsRenderer();
 				optsRenderer.RenderDisc( inputFile, cueSheet );
 			}
 
-			if ( !m_cfg.GetMerge() )
+			if ( !pXmlRenderer->SaveXmlDoc() )
 			{
-				if ( !xmlRenderer.SaveXmlDoc() )
+				return 1;
+			}
+
+			if ( m_cfg.GenerateMkvmergeOpts() )
+			{
+				wxMkvmergeOptsRenderer& optsRenderer = GetMkvmergeOptsRenderer( false );
+				if ( !optsRenderer.Save() )
 				{
 					return 1;
 				}
 
-				if ( m_cfg.GenerateMkvmergeOpts() )
+				if ( m_cfg.RunMkvmerge() )
 				{
-					wxMkvmergeOptsRenderer& optsRenderer = GetMkvmergeOptsRenderer( false );
-					if ( !optsRenderer.Save() )
+					if ( !RunMkvmerge( optsRenderer.GetMkvmergeOptsFile() ) )
 					{
 						return 1;
-					}
-
-					if ( m_cfg.RunMkvmerge() )
-					{
-						if ( !RunMkvmerge( optsRenderer.GetMkvmergeOptsFile() ) )
-						{
-							return 1;
-						}
 					}
 				}
 			}
@@ -319,18 +333,39 @@ int wxMyApp::ProcessCueFile( wxCueSheetReader& reader, const wxInputFile& inputF
 		wxArrayDataFile dataFiles;
 		inputFile.GetDataFiles( dataFiles, wxDataFile::WAVE );
 		cueSheet.SetDataFiles( dataFiles );
-		return ConvertCueSheet( inputFile, cueSheet );
+		if ( m_cfg.GetMerge() )
+		{
+			return AppendCueSheet( cueSheet );
+		}
+		else
+		{
+			return ConvertCueSheet( inputFile, cueSheet );
+		}
 	}
 	else if ( m_cfg.IsEmbedded() )
 	{
 		wxCueSheet cueSheet( reader.GetCueSheet() );
 		wxDataFile dataFile( sInputFile, wxDataFile::WAVE );
 		cueSheet.SetSingleDataFile( dataFile );
-		return ConvertCueSheet( inputFile, cueSheet );
+		if ( m_cfg.GetMerge() )
+		{
+			return AppendCueSheet( cueSheet );
+		}
+		else
+		{
+			return ConvertCueSheet( inputFile, cueSheet );
+		}
 	}
 	else
 	{
-		return ConvertCueSheet( inputFile, reader.GetCueSheet() );
+		if ( m_cfg.GetMerge() )
+		{
+			return AppendCueSheet( reader.GetCueSheet() );
+		}
+		else
+		{
+			return ConvertCueSheet( inputFile, reader.GetCueSheet() );
+		}
 	}
 }
 
@@ -341,6 +376,9 @@ int wxMyApp::OnRun()
 	.CorrectQuotationMarks( m_cfg.CorrectQuotationMarks(), m_cfg.GetLang() )
 	.SetParseComments( m_cfg.GenerateTagsFromComments() )
 	.SetEllipsizeTags( m_cfg.EllipsizeTags() );
+
+	wxInputFile firstInputFile;
+	bool bFirst = true;
 
 	int res = 0;
 	const wxArrayInputFile& inputFile = m_cfg.GetInputFiles();
@@ -379,6 +417,7 @@ int wxMyApp::OnRun()
 
 		wxString sFileSpec( fn.GetFullName() );
 		wxString sInputFile;
+
 		if ( dir.GetFirst( &sInputFile, sFileSpec, wxDIR_FILES ) )
 		{
 			wxInputFile singleFile( inputFile[i] );
@@ -386,6 +425,12 @@ int wxMyApp::OnRun()
 			{
 				fn.SetFullName( sInputFile );
 				singleFile.SetInputFile( fn );
+
+				if ( bFirst )
+				{
+					firstInputFile = singleFile;
+					bFirst = false;
+				}
 
 				res = ProcessCueFile( reader, singleFile );
 				if ( (res != 0) && (m_cfg.AbortOnError() || m_cfg.GetMerge()) ) break;
@@ -395,76 +440,29 @@ int wxMyApp::OnRun()
 		}
 	}
 
-	if ( m_cfg.GetMerge() && (res==0) && HasXmlRenderer() )
+	if ( m_cfg.GetMerge() && (res==0) )
 	{
-		wxXmlCueSheetRenderer& renderer = GetXmlRenderer();
-		if ( !renderer.SaveXmlDoc() )
-		{
-			res = 1;
-		}
-
-		if ( m_cfg.GenerateMkvmergeOpts() )
-		{
-			wxMkvmergeOptsRenderer& optsRenderer = GetMkvmergeOptsRenderer();
-
-			if ( !optsRenderer.Save() )
-			{
-				res = 1;
-			}
-			else if ( m_cfg.RunMkvmerge() )
-			{
-				if ( !RunMkvmerge( optsRenderer.GetMkvmergeOptsFile() ) )
-				{
-					res = 1;
-				}
-			}
-		}
+		wxASSERT( !bFirst );
+		res = ConvertCueSheet( firstInputFile, GetMergedCueSheet() );
 	}
 
-	return (m_cfg.AbortOnError() || m_cfg.GetMerge())? res : 0;
+	return ( m_cfg.AbortOnError() || m_cfg.GetMerge() )? res : 0;
 }
 
 int wxMyApp::OnExit()
 {
 	int res = wxAppConsole::OnExit();
-	m_pRenderer.reset();
 	m_pMkvmergeOptsRenderer.reset();
+	m_pMergedCueSheet.reset();
 	CoUninitialize();
 	wxLogMessage( _("Done") );
 	return res;
 }
 
-wxXmlCueSheetRenderer& wxMyApp::GetXmlRenderer(const wxInputFile& inputFile)
+wxSharedPtr<wxXmlCueSheetRenderer> wxMyApp::GetXmlRenderer( const wxInputFile& inputFile )
 {
-	bool bShowInfo = false;
-
-	if ( m_cfg.GetMerge() )
-	{
-		if ( !HasXmlRenderer() )
-		{
-			m_pRenderer.reset( wxXmlCueSheetRenderer::CreateObject( m_cfg, inputFile ) );
-			bShowInfo = true;
-		}
-		else
-		{
-			m_pRenderer->SetInputFile( inputFile );
-		}
-	}
-	else
-	{
-		m_pRenderer.reset( wxXmlCueSheetRenderer::CreateObject( m_cfg, inputFile ) );
-		bShowInfo = true;
-	}
-
-	if ( bShowInfo )
-	{
-		wxLogInfo( _("Output file \u201C%s\u201D"), m_pRenderer->GetOutputFile() );
-		if ( m_cfg.GenerateTags() )
-		{
-			wxLogInfo( _("Tags file \u201C%s\u201D"), m_pRenderer->GetTagsFile() );
-		}
-	}
-	return *m_pRenderer;
+	wxSharedPtr<wxXmlCueSheetRenderer> pRes( wxXmlCueSheetRenderer::CreateObject( m_cfg, inputFile ) );
+	return pRes;
 }
 
 wxMkvmergeOptsRenderer& wxMyApp::GetMkvmergeOptsRenderer( bool bCreate )
@@ -493,20 +491,26 @@ wxMkvmergeOptsRenderer& wxMyApp::GetMkvmergeOptsRenderer( bool bCreate )
 	return *m_pMkvmergeOptsRenderer;
 }
 
-bool wxMyApp::HasXmlRenderer() const
-{
-	return ( m_pRenderer.get() != wxXmlCueSheetRenderer::Null );
-}
-
 bool wxMyApp::HasMkvmergeOptsRenderer() const
 {
-	return ( m_pMkvmergeOptsRenderer.get() != wxMkvmergeOptsRenderer::Null );
+	return m_pMkvmergeOptsRenderer;
 }
 
-wxXmlCueSheetRenderer& wxMyApp::GetXmlRenderer()
+bool wxMyApp::HasMergedCueSheet() const
 {
-	wxASSERT( HasXmlRenderer() );
-	return *m_pRenderer;
+	return m_pMergedCueSheet;
+}
+
+wxCueSheet& wxMyApp::GetMergedCueSheet()
+{
+	if ( !HasMergedCueSheet() )
+	{
+		wxLogDebug( wxT("Creating empty cue sheet for merging") );
+		m_pMergedCueSheet.reset( new wxCueSheet() );
+	}
+
+	wxASSERT( HasMergedCueSheet() );
+	return *m_pMergedCueSheet;
 }
 
 bool wxMyApp::RunMkvmerge( const wxString& sOptionsFile )

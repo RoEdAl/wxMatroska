@@ -50,7 +50,8 @@ public:
 
 	wxULongLong GetFramesFromCdFrames( wxULongLong ) const;
 	wxULongLong GetIndexOffset( const wxIndex& ) const;
-	wxIndex ConvertIndex( const wxIndex& index ) const;
+	wxIndex ConvertIndex( const wxIndex& ) const;
+	wxIndex ConvertIndex( const wxIndex&, wxULongLong, bool ) const;
 	wxString GetIndexOffsetStr( const wxIndex& ) const;
 	wxString GetIndexOffsetFramesStr( const wxIndex& ) const;
 
