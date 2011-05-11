@@ -654,7 +654,7 @@ wxString wxConfiguration::GetEmbeddedModeFlagsDesc( unsigned int flags )
 		break;
 
 		default:
-		s = wxT("flac_read_???");
+		s.Printf( wxT("flac-read-<%08x>"), (flags & wxCueSheetReader::EC_FLAC_READ_MASK) );
 		break;
 	}
 	as.Add( s );

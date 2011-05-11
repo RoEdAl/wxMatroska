@@ -193,6 +193,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\wxCueTag.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\wxDataFile.cpp"
 				>
 			</File>
@@ -304,6 +308,10 @@
 			</File>
 			<File
 				RelativePath="..\inc\wxCueFile\wxCueSheetRenderer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inc\wxCueFile\wxCueTag.h"
 				>
 			</File>
 			<File
