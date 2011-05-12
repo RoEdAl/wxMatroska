@@ -42,6 +42,8 @@ class wxCueTag :public wxObject
 		static const wxChar* const PERFORMER;
 		static const wxChar* const ARTIST;
 		static const wxChar* const ALBUM_ARTIST;
+		static const wxChar* const CATALOG;
+		static const wxChar* const CDTEXTFILE;
 	};
 
 	public:

@@ -94,12 +94,12 @@ void wxTextCueSheetRenderer::DumpComponentTag(
 }
 
 void wxTextCueSheetRenderer::DumpComponentString(
-	const wxCueComponent& component, const wxChar* szEntry, const wxString& text )
+	const wxCueComponent& component, const wxString& sEntry, const wxString& text )
 {
 	if ( !text.IsEmpty() )
 	{
 		wxString sLine;
-		sLine.Printf( wxT("%s %s"), szEntry, text );
+		sLine.Printf( wxT("%s %s"), sEntry, text );
 		if ( component.IsTrack() )
 		{
 			*m_pTextOutputStream << wxT("\t");
@@ -154,13 +154,16 @@ void wxTextCueSheetRenderer::InternalRenderComponent(const wxCueComponent& compo
 void wxTextCueSheetRenderer::InternalRenderCueSheet(const wxCueSheet& cueSheet )
 {
 	InternalRenderComponent( cueSheet );
-	DumpComponentString( cueSheet, wxT("CATALOG"), cueSheet.GetCatalog() );
-
-	if ( !cueSheet.GetCdTextFile().IsEmpty() )
+	const wxArrayCueTag& catalogs = cueSheet.GetCatalog();
+	for( size_t nCount = catalogs.Count(), i = 0; i < nCount; i++ )
 	{
-		wxString sQuoted( cueSheet.GetCdTextFile() );
-		sQuoted.Prepend( wxT('"') ).Append( wxT('"') );
-		DumpComponentString( cueSheet, wxT("CDTEXTFILE"), sQuoted );
+		DumpComponentString( cueSheet, catalogs[i].GetName(), catalogs[i].GetValue() );
+	}
+
+	const wxArrayCueTag& cdtextfiles = cueSheet.GetCdTextFile();
+	for( size_t nCount = cdtextfiles.Count(), i = 0; i < nCount; i++ )
+	{
+		DumpComponentString( cueSheet, cdtextfiles[i].GetName(), wxCueTag::Quote( cdtextfiles[i].GetValue() ) );
 	}
 }
 

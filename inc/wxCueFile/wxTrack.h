@@ -5,6 +5,10 @@
 #ifndef _WX_TRACK_H_
 #define _WX_TRACK_H_
 
+#ifndef _WX_DURATION_H_
+class wxDuration;
+#endif
+
 #ifndef _WX_INDEX_H_
 #include "wxIndex.h"
 #endif
@@ -120,6 +124,7 @@ public:
 	bool HasDataFile() const;
 	void SetDataFile( const wxDataFile& );
 	void ClearDataFile();
+	bool CalculateDuration( const wxString& = wxEmptyString );
 
 	virtual void GetReplacements( wxHashString& ) const;
 
@@ -129,7 +134,7 @@ public:
 	wxTrack( unsigned long );
 	wxTrack( const wxTrack& );
 	wxTrack& operator=( const wxTrack& );
-	wxTrack& Shift( wxULongLong, const wxSamplingInfo& );
+	wxTrack& Shift( const wxDuration& );
 
 	bool IsValid() const;
 

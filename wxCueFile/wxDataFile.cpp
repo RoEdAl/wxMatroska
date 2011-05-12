@@ -4,6 +4,7 @@
 
 #include "StdWx.h"
 #include <wxCueFile/wxSamplingInfo.h>
+#include <wxCueFile/wxDuration.h>
 #include <wxCueFile/wxIndex.h>
 #include <wxCueFile/wxDataFile.h>
 #include <wxCueFile/wxMediaInfo.h>
@@ -24,7 +25,7 @@ static const size_t INFOS_SIZE = WXSIZEOF(INFOS);
 
 
 wxDataFile::wxDataFile(void)
-	:m_ftype(BINARY),m_nNumberOfSamples(wxSamplingInfo::wxInvalidNumberOfFrames)
+	:m_ftype(BINARY)
 {
 }
 
@@ -35,15 +36,13 @@ wxDataFile::wxDataFile(const wxDataFile& df)
 
 wxDataFile::wxDataFile(const wxString& sFilePath, wxDataFile::FileType ftype )
 	:m_fileName(sFilePath),
-	 m_ftype(ftype),
-	 m_nNumberOfSamples(wxSamplingInfo::wxInvalidNumberOfFrames)
+	 m_ftype(ftype)
 {
 }
 
 wxDataFile::wxDataFile(const wxFileName& fileName, wxDataFile::FileType ftype )
 	:m_fileName(fileName),
-	m_ftype(ftype),
-	m_nNumberOfSamples(wxSamplingInfo::wxInvalidNumberOfFrames)
+	m_ftype(ftype)
 {
 }
 
@@ -57,7 +56,14 @@ void wxDataFile::copy( const wxDataFile& df )
 {
 	m_fileName = df.m_fileName;
 	m_ftype = df.m_ftype;
-	m_nNumberOfSamples = df.m_nNumberOfSamples;
+	if ( df.HasDuration() )
+	{
+		SetDuration( df.GetDuration() );
+	}
+	else
+	{
+		ClearDuration();
+	}
 }
 
 wxDataFile::FILE_TYPE_STR wxDataFile::FileTypeString[] = {
@@ -137,21 +143,11 @@ bool wxDataFile::IsEmpty() const
 	return !m_fileName.IsOk();
 }
 
-bool wxDataFile::HasNumberOfSamples() const
-{
-	return ( m_nNumberOfSamples != wxSamplingInfo::wxInvalidNumberOfFrames );
-}
-
-wxUint64 wxDataFile::GetNumberOfSamples() const
-{
-	return m_nNumberOfSamples;
-}
 
 void wxDataFile::Clear()
 {
 	m_fileName.Clear();
 	m_ftype = BINARY;
-	m_nNumberOfSamples = wxSamplingInfo::wxInvalidNumberOfFrames;
 }
 
 wxDataFile& wxDataFile::Assign(const wxString& sFilePath, wxDataFile::FileType ftype)
@@ -358,19 +354,6 @@ bool wxDataFile::GetFromMediaInfo( const wxFileName& fileName, wxULongLong& fram
 	return check;
 }
 
-wxTimeSpan wxDataFile::GetDuration( const wxString& sAlternateExt ) const
-{
-	wxSamplingInfo si;
-	wxULongLong frames;
-
-	if ( !GetInfo( si, frames, sAlternateExt ) )
-	{
-		return wxSamplingInfo::wxInvalidDuration;
-	}
-
-	return si.GetDuration( frames );
-}
-
 bool wxDataFile::GetInfo( wxSamplingInfo& si, wxULongLong& frames, const wxString& sAlternateExt ) const
 {
 	wxFileName fn;
@@ -393,18 +376,30 @@ bool wxDataFile::GetInfo( wxSamplingInfo& si, wxULongLong& frames, const wxStrin
 	return res;
 }
 
-bool wxDataFile::CalculateNumberOfSamples( wxSamplingInfo& si, const wxString& sAlternateExt )
+bool wxDataFile::GetInfo( wxDuration& duration, const wxString& sAlternateExt ) const
 {
-	wxULongLong frames;
-	if ( GetInfo( si, frames, sAlternateExt ) )
+	wxSamplingInfo si;
+	wxULongLong numberOfSamples;
+
+	if ( GetInfo( si, numberOfSamples, sAlternateExt ) )
 	{
-		m_nNumberOfSamples = frames.GetValue();
+		duration.Assign( si, numberOfSamples );
 		return true;
 	}
 	else
 	{
 		return false;
 	}
+}
+
+const wxAbstractDurationHolder& wxDataFile::CalculateDuration( const wxString& sAlternateExt )
+{
+	wxDuration duration;
+	if ( GetInfo( duration, sAlternateExt ) )
+	{
+		SetDuration( duration );
+	}
+	return const_cast< const wxDataFile& >( *this );
 }
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!

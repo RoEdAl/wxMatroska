@@ -43,7 +43,7 @@ protected:
 
 	int ProcessCueFile( wxCueSheetReader&, const wxInputFile& );
 	int ConvertCueSheet( const wxInputFile&, const wxCueSheet& );
-	int AppendCueSheet( const wxCueSheet& );
+	int AppendCueSheet( wxCueSheet& );
 
 	void AddSeparator( wxCmdLineParser& );
 	static void AddVersionInfos( wxCmdLineParser& );

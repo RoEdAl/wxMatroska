@@ -7,6 +7,7 @@
 #include <wxCueFile/wxIndex.h>
 #include <wxCueFile/wxTrack.h>
 #include <wxCueFile/wxSamplingInfo.h>
+#include <wxCueFile/wxDuration.h>
 
 wxIMPLEMENT_DYNAMIC_CLASS( wxTrack, wxCueComponent )
 
@@ -181,6 +182,25 @@ const wxDataFile& wxTrack::GetDataFile() const
 bool wxTrack::HasDataFile() const
 {
 	return !m_df.IsEmpty();
+}
+
+bool wxTrack::CalculateDuration( const wxString& sAlternateExt )
+{
+	if ( HasDataFile() )
+	{
+		if ( m_df.HasDuration() )
+		{
+			return true;
+		}
+		else
+		{
+			return m_df.CalculateDuration( sAlternateExt ).HasDuration();
+		}
+	}
+	else
+	{
+		return false;
+	}
 }
 
 const wxTrack::wxArrayFlag& wxTrack::GetFlags() const
@@ -405,21 +425,21 @@ void wxTrack::GetReplacements( wxHashString& replacements ) const
 	replacements[ wxT("tn") ] = sValue;
 }
 
-wxTrack& wxTrack::Shift( wxULongLong frames, const wxSamplingInfo& si )
+wxTrack& wxTrack::Shift( const wxDuration& duration )
 {
 	if ( HasPreGap() )
 	{
-		SetPreGap( si.ConvertIndex( *m_pPreGap, frames, true ) );
+		SetPreGap( duration.ConvertIndex( *m_pPreGap, true ) );
 	}
 
 	if ( HasPostGap() )
 	{
-		SetPostGap( si.ConvertIndex( *m_pPostGap, frames, true ) );
+		SetPostGap( duration.ConvertIndex( *m_pPostGap, true ) );
 	}
 
 	for( size_t nCount = m_indexes.GetCount(), i=0; i < nCount; i++ )
 	{
-		m_indexes[ i ] = si.ConvertIndex( m_indexes[ i ], frames, true );
+		m_indexes[ i ] = duration.ConvertIndex( m_indexes[ i ], true );
 	}
 
 	return *this;

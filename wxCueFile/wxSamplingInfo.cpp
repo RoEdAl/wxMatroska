@@ -104,7 +104,7 @@ wxSamplingInfo& wxSamplingInfo::SetBitsPerSample( unsigned short nBitsPerSample 
 	return *this;
 }
 
-bool wxSamplingInfo::IsOK(bool bIgnoreBitsPerSample) const
+bool wxSamplingInfo::IsOK( bool bIgnoreBitsPerSample ) const
 {
 	return
 		( m_nSamplingRate > 0 ) &&
@@ -112,6 +112,25 @@ bool wxSamplingInfo::IsOK(bool bIgnoreBitsPerSample) const
 		( bIgnoreBitsPerSample? true : ( m_nBitsPerSample > 0 ) ) &&
 		( (m_nBitsPerSample % 8) == 0 );
 
+}
+
+bool wxSamplingInfo::Equals( const wxSamplingInfo& si, bool bIgnoreBitsPerSample ) const
+{
+	if ( !( IsOK( bIgnoreBitsPerSample ) || si.IsOK( bIgnoreBitsPerSample ) ) )
+	{
+		return true;
+	}
+	else if ( IsOK( bIgnoreBitsPerSample ) && si.IsOK( bIgnoreBitsPerSample ) )
+	{
+		return
+			( m_nSamplingRate == si.m_nSamplingRate ) &&
+			( m_nNumChannels == si.m_nNumChannels ) &&
+			( bIgnoreBitsPerSample? true : (m_nBitsPerSample == si.m_nBitsPerSample) );
+	}
+	else
+	{
+		return false;
+	}
 }
 
 wxULongLong wxSamplingInfo::GetNumberOfFramesFromBytes(const wxULongLong& bytes ) const
@@ -128,7 +147,7 @@ wxTimeSpan wxSamplingInfo::GetDuration( wxULongLong frames )
 {
 	wxASSERT( IsOK(true) );
 
-	if ( frames == wxInvalidNumberOfFrames )
+	if ( frames.GetValue() == wxInvalidNumberOfFrames )
 	{
 		return wxInvalidDuration;
 	}

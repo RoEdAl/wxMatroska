@@ -7,6 +7,7 @@
 #include <wxCueFile/wxCueTag.h>
 #include <wxCueFile/wxCueComponent.h>
 #include <wxCueFile/wxUnquoter.h>
+#include <wxCueFile/wxTextOutputStreamOnString.h>
 
 wxIMPLEMENT_ABSTRACT_CLASS( wxCueComponent, wxObject )
 
@@ -44,32 +45,28 @@ size_t wxCueComponent::KeywordsSize = WXSIZEOF(wxCueComponent::Keywords);
 
 wxString wxCueComponent::GetCdTextInfoRegExp()
 {
-	wxString s;
+	wxTextOutputStreamOnString tos;
 	for( size_t i=0; i<CdTextFieldsSize; i++ )
 	{
-		s += CdTextFields[i].keyword;
-		s += wxT('|');
+		*tos << CdTextFields[i].keyword << wxT('|');
 	}
-	s = s.RemoveLast();
-
-	wxString sResult;
-	sResult.Printf( wxT("(%s)"), s );
-	return sResult;
+	(*tos).Flush();
+	const wxString& s = tos.GetString();
+	wxASSERT( !s.IsEmpty() );
+	return wxString::Format( wxT("(%s)"), s.Left( s.Length() - 1 ) );
 }
 
 wxString wxCueComponent::GetKeywordsRegExp()
 {
-	wxString s;
+	wxTextOutputStreamOnString tos;
 	for( size_t i=0; i<KeywordsSize; i++ )
 	{
-		s += Keywords[i].keyword;
-		s += wxT('|');
+		*tos << Keywords[i].keyword << wxT('|');
 	}
-	s = s.RemoveLast();
-
-	wxString sResult;
-	sResult.Printf( wxT("(%s)"), s );
-	return sResult;
+	(*tos).Flush();
+	const wxString& s = tos.GetString();
+	wxASSERT( !s.IsEmpty() );
+	return wxString::Format( wxT("(%s)"), s.Left( s.Length() - 1 ) );
 }
 
 bool wxCueComponent::GetCdTextInfoFormat( const wxString& sKeyword, wxCueComponent::ENTRY_FORMAT& fmt )

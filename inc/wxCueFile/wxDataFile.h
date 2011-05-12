@@ -5,11 +5,11 @@
 #ifndef _WX_DATA_FILE_H_
 #define _WX_DATA_FILE_H_
 
-#ifndef _WX_SAMPLING_INFO_H_
-class wxSamplingInfo;
+#ifndef _WX_DURATION_H_
+#include "wxDuration.h"
 #endif
 
-class wxDataFile :public wxObject
+class wxDataFile :public wxObject, public wxDurationHolder
 {
 	wxDECLARE_DYNAMIC_CLASS(wxDataFile);
 
@@ -35,7 +35,6 @@ protected:
 
 	wxFileName m_fileName;
 	FileType m_ftype;
-	wxUint64 m_nNumberOfSamples;
 
 protected:
 
@@ -51,9 +50,6 @@ public:
 
 	FileType GetFileType() const;
 	wxString GetFileTypeAsString() const;
-
-	bool HasNumberOfSamples() const;
-	wxUint64 GetNumberOfSamples() const;
 
 	bool IsEmpty() const;
 	wxDataFile& Assign( const wxString&, FileType = BINARY);
@@ -73,9 +69,8 @@ public:
 	bool FileExists( const wxString& = wxEmptyString ) const;
 
 	bool GetInfo( wxSamplingInfo&, wxULongLong&, const wxString& = wxEmptyString ) const;
-	bool CalculateNumberOfSamples( wxSamplingInfo&, const wxString& = wxEmptyString );
-
-	wxTimeSpan GetDuration( const wxString& = wxEmptyString ) const; // wxInvalidDuration if duration cannot be calculated
+	bool GetInfo( wxDuration&, const wxString& = wxEmptyString ) const;
+	const wxAbstractDurationHolder& CalculateDuration( const wxString& = wxEmptyString );
 
 	static wxString FileTypeToString( FileType );
 	static bool StringToFileType( const wxString&, FileType& );

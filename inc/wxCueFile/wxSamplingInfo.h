@@ -19,11 +19,12 @@ public:
 	static const wxUint64 wxInvalidNumberOfFrames;
 
 	wxSamplingInfo(void);
-	wxSamplingInfo(const wxSamplingInfo&);
-	wxSamplingInfo(unsigned long, unsigned short, unsigned short);
+	wxSamplingInfo( const wxSamplingInfo& );
+	wxSamplingInfo( unsigned long, unsigned short, unsigned short );
 	wxSamplingInfo( const FLAC::Metadata::StreamInfo& );
 
-	bool IsOK(bool = false) const;
+	bool IsOK( bool = false ) const;
+	bool Equals( const wxSamplingInfo&, bool = false ) const;
 
 	wxSamplingInfo& operator=( const wxSamplingInfo& );
 

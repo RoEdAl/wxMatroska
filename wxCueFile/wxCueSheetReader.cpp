@@ -280,7 +280,7 @@ bool wxCueSheetReader::ReadCueSheetFromCueSheetTag( const wxFlacMetaDataReader& 
 	wxString sCatalog( cueSheet.get_media_catalog_number() );
 	if ( !sCatalog.IsEmpty() )
 	{
-		m_cueSheet.SetCatalog( sCatalog );
+		m_cueSheet.AddCatalog( sCatalog );
 	}
 
 	for( unsigned int i=0; i<cueSheet.get_num_tracks(); i++ )
@@ -1069,7 +1069,7 @@ void wxCueSheetReader::ParseCatalog( const wxString& WXUNUSED(sToken), const wxS
 {
 	if ( m_reCatalog.Matches( sBody ) )
 	{
-		m_cueSheet.SetCatalog( sBody );
+		m_cueSheet.AddCatalog( sBody );
 	}
 	else
 	{
@@ -1079,5 +1079,5 @@ void wxCueSheetReader::ParseCatalog( const wxString& WXUNUSED(sToken), const wxS
 
 void wxCueSheetReader::ParseCdTextFile( const wxString& WXUNUSED(sToken), const wxString& sBody )
 {
-	m_cueSheet.SetCdTextFile( Unquote( sBody ) );
+	m_cueSheet.AddCdTextFile( Unquote( sBody ) );
 }

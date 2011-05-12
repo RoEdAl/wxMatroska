@@ -144,6 +144,7 @@ protected:
 	wxXmlNode* AddChapterTimeEnd( wxXmlNode*, const wxTrack& ) const;
 	wxXmlNode* AddChapterTimeEnd( wxXmlNode*, const wxIndex& ) const;
 	wxXmlNode* AddChapterTimeEnd( wxXmlNode*, const wxULongLong& ) const;
+	wxXmlNode* AddChapterTimeEnd( wxXmlNode*, const wxDuration& ) const;
 
 	wxXmlNode* AddIdxChapterAtom( wxXmlNode*, const wxIndex& ) const;
 

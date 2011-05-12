@@ -5,39 +5,39 @@
 #ifndef _WX_CUE_SHEET_H_
 #define _WX_CUE_SHEET_H_
 
-#ifndef _WX_TRACK_H_
-#include "wxTrack.h"
+#ifndef _WX_DURATION_H_
+#include "wxDuration.h"
 #endif
 
-#ifndef _WX_SAMPLING_INFO_H_
-class wxSamplingInfo;
+#ifndef _WX_TRACK_H_
+#include "wxTrack.h"
 #endif
 
 #ifndef _WX_CUE_COMPONENT_H
 #include "wxCueComponent.h"
 #endif
 
-class wxCueSheet :public wxCueComponent
+class wxCueSheet :public wxCueComponent, public wxAbstractDurationHolder
 {
 	wxDECLARE_DYNAMIC_CLASS(wxCueSheet);
 
 protected:
 
-	wxString m_sCatalog;
-	wxString m_sCdTextFile;
+	wxArrayCueTag m_catalog;
+	wxArrayCueTag m_cdtextfile;
 	wxArrayTrack m_tracks;
 
 protected:
 
-	void copy(const wxCueSheet&);
-	wxCueSheet& Append( const wxCueSheet&, wxULongLong, const wxSamplingInfo& );
+	void copy( const wxCueSheet& );
+	wxCueSheet& Append( const wxCueSheet&, const wxDuration& );
 
 public:
 
 	wxCueSheet(void);
 	wxCueSheet(const wxCueSheet&);
 	wxCueSheet& operator=( const wxCueSheet& );
-	bool Append( const wxCueSheet&, const wxString& );
+	bool Append( const wxCueSheet& );
 
 	virtual bool HasGarbage() const;
 
@@ -47,14 +47,17 @@ public:
 	wxCueSheet& SetSingleDataFile( const wxDataFile& );
 	wxCueSheet& SetDataFiles( const wxArrayDataFile& );
 
-	bool GetLastDataFile( size_t&, wxDataFile& ) const;
 	bool IsLastTrackForDataFile( size_t, wxDataFile& ) const;
 
 public:
 
-	const wxString& GetCatalog() const;
-	const wxString& GetCdTextFile() const;
+	const wxArrayCueTag& GetCatalog() const;
+	const wxArrayCueTag& GetCdTextFile() const;
 	const wxArrayTrack& GetTracks() const;
+
+	virtual bool HasDuration() const;
+	virtual wxDuration GetDuration() const;
+	bool CalculateDuration( const wxString& = wxEmptyString );
 
 	wxTrack& GetTrack( size_t );
 	wxTrack& GetLastTrack();
@@ -65,10 +68,8 @@ public:
 	wxCueSheet& AddTrack( const wxTrack& );
 	wxArrayTrack& SortTracks();
 
-	wxCueSheet& SetCatalog( const wxString& );
-	wxCueSheet& SetCdTextFile( const wxString& );
-
-	static bool GetDuration( const wxCueSheet&, const wxString&, wxTimeSpan& );
+	wxCueSheet& AddCatalog( const wxString& );
+	wxCueSheet& AddCdTextFile( const wxString& );
 
 	void Clear(void);
 

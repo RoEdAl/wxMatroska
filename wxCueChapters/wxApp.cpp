@@ -222,12 +222,21 @@ bool wxMyApp::OnCmdLineParsed( wxCmdLineParser& cmdline )
 	 return true;
  }
 
-int wxMyApp::AppendCueSheet( const wxCueSheet& cueSheet )
+int wxMyApp::AppendCueSheet( wxCueSheet& cueSheet )
 {
 	wxASSERT( m_cfg.GetMerge() );
 
+	if ( !cueSheet.HasDuration() )
+	{
+		if ( !cueSheet.CalculateDuration( m_cfg.GetAlternateExtensions() ) )
+		{
+			wxLogError( _("Fail to calculate duration of cue sheet") );
+			return 1;
+		}
+	}
+
 	wxCueSheet& mergedCueSheet = GetMergedCueSheet();
-	if ( mergedCueSheet.Append( cueSheet, m_cfg.GetAlternateExtensions() ) )
+	if ( mergedCueSheet.Append( cueSheet ) )
 	{
 		return 0;
 	}
@@ -325,46 +334,40 @@ int wxMyApp::ProcessCueFile( wxCueSheetReader& reader, const wxInputFile& inputF
 		}
 	}
 
+	wxCueSheet cueSheet( reader.GetCueSheet() );
 	if ( inputFile.HasDataFiles() )
 	{
-		wxCueSheet cueSheet( reader.GetCueSheet() );
 		wxArrayDataFile dataFiles;
 		inputFile.GetDataFiles( dataFiles, wxDataFile::WAVE );
 		cueSheet.SetDataFiles( dataFiles );
-		if ( m_cfg.GetMerge() )
-		{
-			return AppendCueSheet( cueSheet );
-		}
-		else
-		{
-			return ConvertCueSheet( inputFile, cueSheet );
-		}
 	}
 	else if ( m_cfg.IsEmbedded() )
 	{
-		wxCueSheet cueSheet( reader.GetCueSheet() );
 		wxDataFile dataFile( sInputFile, wxDataFile::WAVE );
 		cueSheet.SetSingleDataFile( dataFile );
-		if ( m_cfg.GetMerge() )
+	}
+
+	if ( m_cfg.GetUseDataFiles() )
+	{
+		if ( !cueSheet.CalculateDuration( m_cfg.GetAlternateExtensions() ) )
 		{
-			return AppendCueSheet( cueSheet );
+			wxLogError( _("Fail to calculate duration of cue sheet \u201C%s\u201D or parse error"), sInputFile );
+			if ( m_cfg.AbortOnError() )
+			{
+				return 1;
+			}
 		}
-		else
-		{
-			return ConvertCueSheet( inputFile, cueSheet );
-		}
+	}
+
+	if ( m_cfg.GetMerge() )
+	{
+		return AppendCueSheet( cueSheet );
 	}
 	else
 	{
-		if ( m_cfg.GetMerge() )
-		{
-			return AppendCueSheet( reader.GetCueSheet() );
-		}
-		else
-		{
-			return ConvertCueSheet( inputFile, reader.GetCueSheet() );
-		}
+		return ConvertCueSheet( inputFile, cueSheet );
 	}
+
 }
 
 int wxMyApp::OnRun()

@@ -5,6 +5,7 @@
 #include "StdWx.h"
 #include <wxCueFile/wxTagSynonims.h>
 #include <wxCueFile/wxSamplingInfo.h>
+#include <wxCueFile/wxDuration.h>
 #include <wxCueFile/wxIndex.h>
 #include <wxCueFile/wxTrack.h>
 #include <wxCueFile/wxCueSheet.h>
@@ -399,6 +400,11 @@ wxXmlNode* wxXmlCueSheetRenderer::AddChapterTimeEnd( wxXmlNode* pChapterAtom, co
 	return add_chapter_time_end( pChapterAtom, m_si, frames );
 }
 
+wxXmlNode* wxXmlCueSheetRenderer::AddChapterTimeEnd( wxXmlNode* pChapterAtom, const wxDuration& duration ) const
+{
+	return add_chapter_time_end( pChapterAtom, duration.GetSamplingInfo(), duration.GetNumberOfSamples() );
+}
+
 wxXmlNode* wxXmlCueSheetRenderer::AddChapterTimeEnd( wxXmlNode* pChapterAtom, const wxIndex& idx ) const
 {
 	return AddChapterTimeEnd( pChapterAtom, m_si.GetIndexOffset( idx ) );
@@ -618,15 +624,15 @@ wxXmlNode* wxXmlCueSheetRenderer::AppendDiscTags(
 
 	AddCdTextInfo( cueSheet, pTag );
 
-	if ( !cueSheet.GetCatalog().IsEmpty() )
+	const wxArrayCueTag& catalogs = cueSheet.GetCatalog();
+	for( size_t nCount = catalogs.Count(), i=0; i < nCount; i++ )
 	{
 		wxXmlNode* pSimple = add_simple_tag( 
 			pTag,
 			Tag::CATALOG_NUMBER,
-			cueSheet.GetCatalog(),
+			catalogs[i].GetValue(),
 			GetConfig().GetLang() );
 	}
-
 	return pTag;
 }
 
@@ -743,12 +749,9 @@ bool wxXmlCueSheetRenderer::OnPreRenderTrack( const wxCueSheet& cueSheet, const 
 	
 	if ( (GetConfig().GetUseDataFiles() || GetConfig().IsEmbedded()) && track.HasDataFile() )
 	{
-		const wxDataFile& dataFile = track.GetDataFile();
-		wxSamplingInfo si;
-		wxULongLong frames;
-		if ( dataFile.GetInfo( si, frames, GetConfig().GetAlternateExtensions() ) )
+		if ( track.GetDataFile().HasDuration() )
 		{
-			m_si = si;
+			m_si = track.GetDataFile().GetDuration().GetSamplingInfo();
 		}
 		else
 		{
@@ -872,7 +875,8 @@ bool wxXmlCueSheetRenderer::OnPostRenderDisc( const wxCueSheet& cueSheet )
 	wxASSERT( m_pFirstChapterAtom != wxNullXmlNode );
 	wxXmlNode* pChapterAtom = m_pFirstChapterAtom;
 
-	wxULongLong offset( wxULL(0) );
+	wxDuration offset;
+	bool bFirst = true;
 
 	for( size_t i=0; i<tracksCount; i++ )
 	{
@@ -883,15 +887,24 @@ bool wxXmlCueSheetRenderer::OnPostRenderDisc( const wxCueSheet& cueSheet )
 		{
 			if ( !has_chapter_time_end( pChapterAtom ) )
 			{
-				if ( GetConfig().GetUseDataFiles() && bLastTrackForDataFile )
+				if ( GetConfig().GetUseDataFiles() && bLastTrackForDataFile && dataFile.HasDuration() )
 				{
 					wxLogInfo( _("Calculating end time for track %d using media file \u201C%s\u201D"), tracks[i].GetNumber(), dataFile.GetFileName() );
-					wxSamplingInfo si;
-					wxULongLong frames;
-					if ( dataFile.GetInfo( si, frames, GetConfig().GetAlternateExtensions() ) )
+					bool bAdd = true;
+					if ( bFirst )
 					{
-						offset += frames;
-						wxLogDebug( wxT("Offset: %s"), offset.ToString() );
+						offset = dataFile.GetDuration();
+						bFirst = false;
+					}
+					else if ( !offset.Add( dataFile.GetDuration() ) )
+					{
+						wxLogError( _T("Fail to calculate offset for track %d"), tracks[i].GetNumber() );
+						bAdd = false;
+					}
+
+					if ( bAdd )
+					{
+						wxLogDebug( wxT("Offset: %s"), offset.GetNumberOfSamples().ToString() );
 						AddChapterTimeEnd( pChapterAtom, offset );
 					}
 				}

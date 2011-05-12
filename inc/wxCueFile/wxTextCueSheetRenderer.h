@@ -35,7 +35,7 @@ protected:
 
 private:
 
-	void DumpComponentString( const wxCueComponent&, const wxChar*, const wxString& );
+	void DumpComponentString( const wxCueComponent&, const wxString&, const wxString& );
 	void DumpComponentTag( const wxCueComponent&, const wxCueTag& );
 	void InternalRenderComponent(const wxCueComponent&);
 	void InternalRenderCueSheet(const wxCueSheet&);

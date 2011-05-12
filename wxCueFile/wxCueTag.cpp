@@ -18,6 +18,8 @@ const wxChar* const wxCueTag::Name::ALBUM = wxT("ALBUM");
 const wxChar* const wxCueTag::Name::PERFORMER = wxT("PERFORMER");
 const wxChar* const wxCueTag::Name::ARTIST = wxT("ARTIST");
 const wxChar* const wxCueTag::Name::ALBUM_ARTIST = wxT("ALBUM ARTIST");
+const wxChar* const wxCueTag::Name::CATALOG = wxT("CATALOG");
+const wxChar* const wxCueTag::Name::CDTEXTFILE = wxT("CDTEXTFILE");
 
 wxIMPLEMENT_DYNAMIC_CLASS( wxCueTag, wxObject )
 
