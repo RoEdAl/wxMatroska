@@ -7,12 +7,18 @@
 
 class wxMediaInfo :public wxObject
 {
+	wxDECLARE_ABSTRACT_CLASS(wxMediaInfo);
 
 protected:
 
 	wxDynamicLibrary m_dll;
 
 public:
+
+	static const wxChar MEDIA_INFO_LIBRARY[];
+
+	static const wxChar* SYMBOL_NAMES[];
+	static const size_t SYMBOL_NAMES_SIZE;
 
 	/** @brief Kinds of Stream */
 	typedef enum MediaInfo_stream_t
@@ -54,6 +60,8 @@ protected:
 	MEDIAINFO_Close m_fnClose;
 	MEDIAINFO_Get m_fnGet;
 
+	static bool load_symbols( const wxDynamicLibrary&, wxArrayPtrVoid& );
+
 public:
 
 	void* MediaInfoNew();
@@ -65,7 +73,6 @@ public:
 public:
 
 	wxMediaInfo(void);
-	~wxMediaInfo(void);
 
 	bool Load();
 	bool IsLoaded() const;

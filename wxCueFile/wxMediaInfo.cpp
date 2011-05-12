@@ -5,8 +5,11 @@
 #include "StdWx.h"
 #include <wxCueFile/wxMediaInfo.h>
 
-static const wxChar MEDIA_INFO_LIBRARY[] = wxT("MediaInfo.dll");
-static const wxChar* SYMBOL_NAMES[] = {
+wxIMPLEMENT_ABSTRACT_CLASS( wxMediaInfo, wxObject )
+
+const wxChar wxMediaInfo::MEDIA_INFO_LIBRARY[] = wxT("MediaInfo.dll");
+
+const wxChar* wxMediaInfo::SYMBOL_NAMES[] = {
 	wxT("MediaInfo_New"),
 	wxT("MediaInfo_Delete"),
 	wxT("MediaInfo_Open"),
@@ -14,9 +17,9 @@ static const wxChar* SYMBOL_NAMES[] = {
 	wxT("MediaInfo_Get")
 };
 
-static const size_t SYMBOL_NAMES_SIZE = WXSIZEOF(SYMBOL_NAMES);
+const size_t wxMediaInfo::SYMBOL_NAMES_SIZE = WXSIZEOF(wxMediaInfo::SYMBOL_NAMES);
 
-static bool load_symbols( const wxDynamicLibrary& dll, wxArrayPtrVoid& pointers )
+bool wxMediaInfo::load_symbols( const wxDynamicLibrary& dll, wxArrayPtrVoid& pointers )
 {
 	pointers.Clear();
 	for( size_t i=0; i<SYMBOL_NAMES_SIZE; i++ )
@@ -35,10 +38,6 @@ static bool load_symbols( const wxDynamicLibrary& dll, wxArrayPtrVoid& pointers 
 }
 
 wxMediaInfo::wxMediaInfo(void)
-{
-}
-
-wxMediaInfo::~wxMediaInfo(void)
 {
 }
 

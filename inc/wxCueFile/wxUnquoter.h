@@ -27,6 +27,11 @@ public:
 	static const wxChar FULL_SINGLE_QUOTES[];
 	static const wxChar FULL_DOUBLE_QUOTES[];
 
+	static bool correct_polish_qm( const wxString& );
+	static bool correct_english_qm( const wxString& );
+	static bool correct_german_qm( const wxString& );
+	static bool correct_french_qm( const wxString& );
+
 	static const wxChar ENGLISH_DOUBLE_QUOTES[];
 	static const wxChar ENGLISH_SINGLE_QUOTES[];
 	static const wxChar POLISH_DOUBLE_QUOTES[];

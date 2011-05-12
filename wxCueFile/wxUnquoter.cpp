@@ -43,12 +43,17 @@ wxUnquoter::wxUnquoter(void)
 	http://en.wikipedia.org/wiki/Quotation_mark,_non-English_usage
 */
 
-static bool correct_english_qm( const wxString& sLang )
+bool wxUnquoter::correct_polish_qm( const wxString& sLang )
+{
+	return sLang.CmpNoCase( wxT("pol") ) == 0;
+}
+
+bool wxUnquoter::correct_english_qm( const wxString& sLang )
 {
 	return sLang.CmpNoCase( wxT("eng") ) == 0;
 }
 
-static bool correct_german_qm( const wxString& sLang )
+bool wxUnquoter::correct_german_qm( const wxString& sLang )
 {
 	return 
 		(sLang.CmpNoCase( wxT("ger") ) == 0) ||
@@ -63,14 +68,14 @@ static bool correct_german_qm( const wxString& sLang )
 	;
 }
 
-static bool correct_french_qm( const wxString& sLang )
+bool wxUnquoter::correct_french_qm( const wxString& sLang )
 {
 	return sLang.CmpNoCase( wxT("fre") ) == 0;
 }
 
 void wxUnquoter::SetLang(const wxString& sLang)
 {
-	if ( sLang.CmpNoCase( wxT("pol") ) == 0 )
+	if ( correct_polish_qm( sLang ) )
 	{
 		m_sSingleQuotes = POLISH_SINGLE_QUOTES;
 		m_sDoubleQuotes = POLISH_DOUBLE_QUOTES;
