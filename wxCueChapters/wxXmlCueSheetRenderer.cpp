@@ -22,7 +22,7 @@ wxIMPLEMENT_DYNAMIC_CLASS( wxXmlCueSheetRenderer, wxCueSheetRenderer )
 // ===============================================================================
 
 wxXmlCueSheetRenderer * const wxXmlCueSheetRenderer::Null =
-	( wxXmlCueSheetRenderer* const )wxCueSheetRenderer::Null;
+	(wxXmlCueSheetRenderer* const)wxCueSheetRenderer::Null;
 
 // ===============================================================================
 
@@ -291,7 +291,7 @@ wxXmlNode* wxXmlCueSheetRenderer::add_idx_chapter_atom(
 
 wxULongLong wxXmlCueSheetRenderer::GenerateUID()
 {
-	return wxULongLong( ( wxUint32 )rand(), ( wxUint32 )rand() );
+	return wxULongLong( (wxUint32)rand(), (wxUint32)rand() );
 }
 
 wxXmlCueSheetRenderer::wxXmlCueSheetRenderer()
@@ -353,7 +353,7 @@ wxXmlCueSheetRenderer::~wxXmlCueSheetRenderer( void )
 
 void wxXmlCueSheetRenderer::SetConfiguration( const wxConfiguration& cfg )
 {
-	wxASSERT( m_pCfg == ( wxConfiguration* )NULL );
+	wxASSERT( m_pCfg == (wxConfiguration*)NULL );
 	m_pCfg = &cfg;
 }
 
@@ -365,7 +365,7 @@ void wxXmlCueSheetRenderer::SetInputFile( const wxInputFile& inputFile )
 
 const wxConfiguration& wxXmlCueSheetRenderer::GetConfig() const
 {
-	wxASSERT( m_pCfg != ( wxConfiguration* )NULL );
+	wxASSERT( m_pCfg != (wxConfiguration*)NULL );
 	return *m_pCfg;
 }
 

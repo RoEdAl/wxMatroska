@@ -7,7 +7,7 @@
 #include "wxFlacMetaDataReader.h"
 
 wxFlacMetaDataReader::wxFlacMetaDataReader( void )
-	:m_pVorbisComment( ( FLAC::Metadata::VorbisComment* )NULL ),
+	: m_pVorbisComment( ( FLAC::Metadata::VorbisComment* )NULL ),
 	m_pCueSheet( ( FLAC::Metadata::CueSheet* )NULL ),
 	m_pStreamInfo( ( FLAC::Metadata::StreamInfo* )NULL )
 {}
@@ -32,17 +32,17 @@ wxFlacMetaDataReader::~wxFlacMetaDataReader( void )
 
 bool wxFlacMetaDataReader::HasVorbisComment() const
 {
-	return ( m_pVorbisComment != ( FLAC::Metadata::VorbisComment* )NULL );
+	return ( m_pVorbisComment != (FLAC::Metadata::VorbisComment*)NULL );
 }
 
 bool wxFlacMetaDataReader::HasCueSheet() const
 {
-	return ( m_pCueSheet != ( FLAC::Metadata::CueSheet* )NULL );
+	return ( m_pCueSheet != (FLAC::Metadata::CueSheet*)NULL );
 }
 
 bool wxFlacMetaDataReader::HasStreamInfo() const
 {
-	return ( m_pStreamInfo != ( FLAC::Metadata::StreamInfo* )NULL );
+	return ( m_pStreamInfo != (FLAC::Metadata::StreamInfo*)NULL );
 }
 
 const FLAC::Metadata::VorbisComment& wxFlacMetaDataReader::GetVorbisComment() const
@@ -104,21 +104,21 @@ void wxFlacMetaDataReader::metadata_callback( const::FLAC__StreamMetadata* metad
 		case FLAC__METADATA_TYPE_STREAMINFO:
 		{
 			wxASSERT( !HasStreamInfo() );
-			m_pStreamInfo = new FLAC::Metadata::StreamInfo( ( ::FLAC__StreamMetadata* )metadata, true );
+			m_pStreamInfo = new FLAC::Metadata::StreamInfo( (::FLAC__StreamMetadata*)metadata, true );
 			break;
 		}
 
 		case FLAC__METADATA_TYPE_VORBIS_COMMENT:
 		{
 			wxASSERT( !HasVorbisComment() );
-			m_pVorbisComment = new FLAC::Metadata::VorbisComment( ( ::FLAC__StreamMetadata* )metadata, true );
+			m_pVorbisComment = new FLAC::Metadata::VorbisComment( (::FLAC__StreamMetadata*)metadata, true );
 			break;
 		}
 
 		case FLAC__METADATA_TYPE_CUESHEET:
 		{
 			wxASSERT( !HasCueSheet() );
-			m_pCueSheet = new FLAC::Metadata::CueSheet( ( ::FLAC__StreamMetadata* )metadata, true );
+			m_pCueSheet = new FLAC::Metadata::CueSheet( (::FLAC__StreamMetadata*)metadata, true );
 			break;
 		}
 	}
@@ -141,7 +141,7 @@ bool wxFlacMetaDataReader::ReadMetadata( const wxString& sFlacFile )
 	if ( status != FLAC__STREAM_DECODER_INIT_STATUS_OK )
 	{
 		wxString sStatusStr( FLAC__StreamDecoderInitStatusString[ status ] );
-		wxLogWarning( _( "Fail to initialize FLAC decoder %d %s" ), ( int )status, sStatusStr );
+		wxLogWarning( _( "Fail to initialize FLAC decoder %d %s" ), (int)status, sStatusStr );
 		return false;
 	}
 

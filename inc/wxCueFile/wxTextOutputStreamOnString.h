@@ -5,7 +5,7 @@
 #ifndef _WX_TEXT_OUTPUT_STREAM_ON_STRING_H_
 #define _WX_TEXT_OUTPUT_STREAM_ON_STRING_H_
 
-class wxTextOutputStreamOnString:public wxObject
+class wxTextOutputStreamOnString: public wxObject
 {
 public:
 
@@ -14,7 +14,7 @@ public:
 
 	const wxStringOutputStream& GetStringStream() const;
 	wxTextOutputStream& GetStream();
-	wxTextOutputStream& operator*();
+	wxTextOutputStream& operator *();
 
 	const wxString& GetString() const;
 	bool SaveTo( const wxString&, bool ) const;

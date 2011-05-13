@@ -17,7 +17,7 @@ class wxCueSheet;
 class wxInputFile;
 #endif
 
-class wxMkvmergeOptsRenderer:public wxObject
+class wxMkvmergeOptsRenderer: public wxObject
 {
 protected:
 

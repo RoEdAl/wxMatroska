@@ -9,7 +9,7 @@ const wxChar wxEllipsizer::REG_EX[] = wxT( "([[:space:]]*\\.\\.\\.)[[:space:]]*\
 const wxChar wxEllipsizer::ELLIPSIS = wxT( '\u2026' );
 
 wxEllipsizer::wxEllipsizer()
-	:m_reEllipsis( REG_EX, wxRE_ADVANCED )
+	: m_reEllipsis( REG_EX, wxRE_ADVANCED )
 {
 	wxASSERT( m_reEllipsis.IsValid() );
 }

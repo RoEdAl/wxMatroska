@@ -9,8 +9,8 @@ class wxTextOutputStreamWithBOMFactory
 {
 public:
 
-	typedef wxCharTypeBuffer< wxByte > wxByteBuffer;
-	typedef wxSharedPtr< wxTextOutputStream > wxTextOutputStreamSharedPtr;
+	typedef wxCharTypeBuffer<wxByte> wxByteBuffer;
+	typedef wxSharedPtr<wxTextOutputStream> wxTextOutputStreamSharedPtr;
 
 	static wxTextOutputStream* const wxNullTextOutputStream;
 

@@ -18,10 +18,10 @@ wxDuration::wxDuration( const wxDuration& duration )
 }
 
 wxDuration::wxDuration( const wxSamplingInfo& si, wxULongLong numberOfSamples )
-	:m_si( si ), m_numberOfSamples( numberOfSamples )
+	: m_si( si ), m_numberOfSamples( numberOfSamples )
 {}
 
-wxDuration& wxDuration::operator=( const wxDuration& duration )
+wxDuration& wxDuration::operator =( const wxDuration& duration )
 {
 	copy( duration );
 	return *this;

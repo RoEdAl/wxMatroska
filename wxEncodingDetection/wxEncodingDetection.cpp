@@ -8,7 +8,7 @@
 
 // ===========================================================
 
-wxMBConv* const wxEncodingDetection::wxNullMBConv = ( wxMBConv* const )NULL;
+wxMBConv* const wxEncodingDetection::wxNullMBConv = (wxMBConv* const)NULL;
 
 const wxByte wxEncodingDetection::BOM::UTF32_BE[ 4 ] = { 0x00, 0x00, 0xFE, 0xEF };
 const wxByte wxEncodingDetection::BOM::UTF32_LE[ 4 ] = { 0xFF, 0xFE, 0x00, 0x00 };
@@ -24,7 +24,7 @@ const wxUint32 wxEncodingDetection::CP::UTF8	 = 65001;
 
 // ===========================================================
 
-class wxMBConv_MLang:public wxMBConv
+class wxMBConv_MLang: public wxMBConv
 {
 public:
 
@@ -45,14 +45,14 @@ public:
 protected:
 
 	wxMBConv_MLang()
-		:m_minMBCharWidth( 0 ), m_dwMode( 0 )
+		: m_minMBCharWidth( 0 ), m_dwMode( 0 )
 	{
 		wxASSERT( m_mlang.IsValid() );
 		m_nCodePage = GetACP();
 	}
 
 	wxMBConv_MLang( wxUint32 nCodePage )
-		:m_nCodePage( nCodePage ), m_minMBCharWidth( 0 ), m_dwMode( 0 )
+		: m_nCodePage( nCodePage ), m_minMBCharWidth( 0 ), m_dwMode( 0 )
 	{
 		if ( !m_mlang.IsValid() )
 		{
@@ -66,7 +66,7 @@ protected:
 	}
 
 	wxMBConv_MLang( const wxMultiLanguage& ml, wxUint32 nCodePage = CP_ACP )
-		:m_mlang( ml ), m_nCodePage( nCodePage ), m_minMBCharWidth( 0 ), m_dwMode( 0 )
+		: m_mlang( ml ), m_nCodePage( nCodePage ), m_minMBCharWidth( 0 ), m_dwMode( 0 )
 	{
 		if ( nCodePage == CP_ACP )
 		{
@@ -75,7 +75,7 @@ protected:
 	}
 
 	wxMBConv_MLang( const wxMBConv_MLang& conv )
-		:m_mlang( conv.m_mlang ),
+		: m_mlang( conv.m_mlang ),
 		m_nCodePage( conv.m_nCodePage ), m_dwMode( 0 ),
 		m_minMBCharWidth( conv.m_minMBCharWidth )
 	{}
@@ -89,12 +89,12 @@ public:
 		UINT nSrcSize = srcLen;
 		UINT nDstSize = dstLen;
 
-		wxMBConv_MLang* self = const_cast< wxMBConv_MLang* > ( this );
+		wxMBConv_MLang* self = const_cast<wxMBConv_MLang*> ( this );
 
 		HRESULT hRes = m_mlang->ConvertStringToUnicodeEx(
 			&self->m_dwMode,
 			m_nCodePage,
-			const_cast< CHAR* > ( src ), &nSrcSize,
+			const_cast<CHAR*> ( src ), &nSrcSize,
 			dst, &nDstSize,
 			0, NULL );
 
@@ -130,12 +130,12 @@ public:
 		UINT nSrcSize = srcLen;
 		UINT nDstSize = dstLen;
 
-		wxMBConv_MLang* self = const_cast< wxMBConv_MLang* > ( this );
+		wxMBConv_MLang* self = const_cast<wxMBConv_MLang*> ( this );
 
 		HRESULT hRes = m_mlang->ConvertStringFromUnicodeEx(
 			&self->m_dwMode,
 			m_nCodePage,
-			const_cast< WCHAR* > ( src ),
+			const_cast<WCHAR*> ( src ),
 			&nSrcSize,
 			dst,
 			&nDstSize,
@@ -185,11 +185,11 @@ public:
 				{
 					default:
 					wxLogDebug( wxT( "Unexpected NUL length %d" ), nDstSize );
-					self->m_minMBCharWidth = ( size_t )-1;
+					self->m_minMBCharWidth = (size_t)-1;
 					break;
 
 					case 0:
-					self->m_minMBCharWidth = ( size_t )-1;
+					self->m_minMBCharWidth = (size_t)-1;
 					break;
 
 					case 1:
@@ -201,7 +201,7 @@ public:
 			}
 			else
 			{
-				self->m_minMBCharWidth = ( size_t )-1;
+				self->m_minMBCharWidth = (size_t)-1;
 			}
 		}
 
@@ -242,13 +242,13 @@ protected:
 	DWORD m_dwMode;
 };
 
-class wxMBConv_BOM:public wxMBConv
+class wxMBConv_BOM: public wxMBConv
 {
-	typedef wxSharedPtr< wxMBConv > wxMBConvSharedPtr;
+	typedef wxSharedPtr<wxMBConv> wxMBConvSharedPtr;
 
 public:
 
-	typedef wxCharTypeBuffer< wxByte > wxByteBuffer;
+	typedef wxCharTypeBuffer<wxByte> wxByteBuffer;
 
 	static wxMBConv_BOM* Create( const wxByte* bom, size_t nLen, wxUint32 nCodePage, bool bUseMLang, wxString& sDescription )
 	{
@@ -264,7 +264,7 @@ public:
 protected:
 
 	wxMBConv_BOM( const wxByte* bom, size_t nLen, wxMBConvSharedPtr pConv )
-		:m_bom( bom, nLen ),
+		: m_bom( bom, nLen ),
 		m_pConv( pConv ),
 		m_bBOMConsumed( false )
 	{
@@ -273,7 +273,7 @@ protected:
 	}
 
 	wxMBConv_BOM( const wxMBConv_BOM& convBom )
-		:m_bom( convBom.m_bom ),
+		: m_bom( convBom.m_bom ),
 		m_pConv( convBom.m_pConv->Clone() ),
 		m_bBOMConsumed( false )
 	{}
@@ -284,7 +284,7 @@ public:
 
 	virtual size_t ToWChar( wchar_t* dst, size_t dstLen, const char* src, size_t srcLen ) const
 	{
-		wxMBConv_BOM* self = const_cast< wxMBConv_BOM* > ( this );
+		wxMBConv_BOM* self = const_cast<wxMBConv_BOM*> ( this );
 
 		if ( !m_bBOMConsumed )
 		{
@@ -323,7 +323,7 @@ protected:
 
 	bool SkipBOM( const char*& src, size_t& len ) const
 	{
-		size_t realLen = ( len != ( size_t )-1 )?len : wxStrnlen( src, 16 );
+		size_t realLen = ( len != (size_t)-1 )?len : wxStrnlen( src, 16 );
 		if ( realLen < m_bom.length() )
 		{ // still waiting
 			return false;
@@ -335,7 +335,7 @@ protected:
 		}
 
 		src += m_bom.length();
-		if ( len != ( size_t )-1 )
+		if ( len != (size_t)-1 )
 		{
 			len -= m_bom.length();
 		}
@@ -348,7 +348,7 @@ protected:
 		bool bRes = true;
 		for ( size_t i = 0 ; bRes && ( i < m_bom.length() ) ; i++ )
 		{
-			if ( m_bom[ i ] != ( wxByte )( src[ i ] ) )
+			if ( m_bom[ i ] != (wxByte)( src[ i ] ) )
 			{
 				bRes = false;
 			}

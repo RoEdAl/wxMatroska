@@ -5,7 +5,7 @@
 #ifndef _WX_MULTI_LANGUAGE_H_
 #define _WX_MULTI_LANGUAGE_H_
 
-class wxMultiLanguage:public wxObject
+class wxMultiLanguage: public wxObject
 {
 protected:
 
@@ -20,7 +20,7 @@ public:
 	bool IsValid() const;
 	void Close();
 
-	IMultiLanguage2* operator->() const
+	IMultiLanguage2* operator ->() const
 	{
 		return m_pMLang;
 	}

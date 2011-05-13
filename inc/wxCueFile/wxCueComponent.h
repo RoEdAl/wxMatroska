@@ -13,7 +13,7 @@ class wxTagSynonimsCollection;
 #include "wxCueTag.h"
 #endif
 
-class wxCueComponent:public wxObject
+class wxCueComponent: public wxObject
 {
 	wxDECLARE_ABSTRACT_CLASS( wxCueComponent );
 
@@ -99,9 +99,9 @@ public:
 
 	wxCueComponent( bool = false );
 	wxCueComponent( const wxCueComponent& );
-	wxCueComponent& operator=( const wxCueComponent& );
+	wxCueComponent& operator =( const wxCueComponent& );
 
-	wxCueComponent& operator+=( const wxCueComponent& );
+	wxCueComponent& operator +=( const wxCueComponent& );
 	wxCueComponent& Append( const wxCueComponent& );
 
 	static wxString GetCdTextInfoRegExp();

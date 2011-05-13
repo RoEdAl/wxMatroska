@@ -12,7 +12,7 @@ const wxTimeSpan wxSamplingInfo::wxInvalidDuration = wxTimeSpan::Hours( -1 );
 const wxUint64 wxSamplingInfo::wxInvalidNumberOfFrames = wxULL( 0xFFFFFFFFFFFFFFFF );
 
 wxSamplingInfo::wxSamplingInfo( void )
-	:m_nSamplingRate( 44100 ), m_nNumChannels( 2 ), m_nBitsPerSample( 16 )
+	: m_nSamplingRate( 44100 ), m_nNumChannels( 2 ), m_nBitsPerSample( 16 )
 {}
 
 wxSamplingInfo::wxSamplingInfo( const wxSamplingInfo& si )
@@ -21,7 +21,7 @@ wxSamplingInfo::wxSamplingInfo( const wxSamplingInfo& si )
 }
 
 wxSamplingInfo::wxSamplingInfo( unsigned long nSamplingRate, unsigned short nNumChannels, unsigned short nBitsPerSample )
-	:m_nSamplingRate( nSamplingRate ), m_nNumChannels( nNumChannels ), m_nBitsPerSample( nBitsPerSample )
+	: m_nSamplingRate( nSamplingRate ), m_nNumChannels( nNumChannels ), m_nBitsPerSample( nBitsPerSample )
 {}
 
 wxSamplingInfo::wxSamplingInfo( const FLAC::Metadata::StreamInfo& si )
@@ -55,7 +55,7 @@ wxSamplingInfo& wxSamplingInfo::SetDefault()
 	return *this;
 }
 
-wxSamplingInfo& wxSamplingInfo::operator=( const wxSamplingInfo& si )
+wxSamplingInfo& wxSamplingInfo::operator =( const wxSamplingInfo& si )
 {
 	copy( si );
 	return *this;

@@ -25,7 +25,7 @@ static const wxChar * INFOS[] =
 static const size_t INFOS_SIZE = WXSIZEOF( INFOS );
 
 wxDataFile::wxDataFile( void )
-	:m_ftype( BINARY )
+	: m_ftype( BINARY )
 {}
 
 wxDataFile::wxDataFile( const wxDataFile& df )
@@ -34,16 +34,16 @@ wxDataFile::wxDataFile( const wxDataFile& df )
 }
 
 wxDataFile::wxDataFile( const wxString& sFilePath, wxDataFile::FileType ftype )
-	:m_fileName( sFilePath ),
+	: m_fileName( sFilePath ),
 	m_ftype( ftype )
 {}
 
 wxDataFile::wxDataFile( const wxFileName& fileName, wxDataFile::FileType ftype )
-	:m_fileName( fileName ),
+	: m_fileName( fileName ),
 	m_ftype( ftype )
 {}
 
-wxDataFile& wxDataFile::operator=( const wxDataFile& df )
+wxDataFile& wxDataFile::operator =( const wxDataFile& df )
 {
 	copy( df );
 	return *this;
@@ -315,7 +315,7 @@ bool wxDataFile::GetFromMediaInfo( const wxFileName& fileName, wxULongLong& fram
 				}
 				else
 				{
-					si.SetBitsPerSample( ( unsigned short )u );
+					si.SetBitsPerSample( (unsigned short)u );
 				}
 			}
 			else
@@ -333,7 +333,7 @@ bool wxDataFile::GetFromMediaInfo( const wxFileName& fileName, wxULongLong& fram
 			}
 			else
 			{
-				si.SetNumberOfChannels( ( unsigned short )u );
+				si.SetNumberOfChannels( (unsigned short)u );
 			}
 
 			break;
@@ -407,7 +407,7 @@ const wxAbstractDurationHolder& wxDataFile::CalculateDuration( const wxString& s
 		SetDuration( duration );
 	}
 
-	return const_cast< const wxDataFile& > ( *this );
+	return const_cast<const wxDataFile&> ( *this );
 }
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!

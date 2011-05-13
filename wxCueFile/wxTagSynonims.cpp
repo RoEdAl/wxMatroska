@@ -12,7 +12,7 @@ wxTagSynonims::wxTagSynonims( void )
 {}
 
 wxTagSynonims::wxTagSynonims( const wxString& sName, const wxArrayString& asSynonims )
-	:m_sName( sName ), m_asSynonims( asSynonims )
+	: m_sName( sName ), m_asSynonims( asSynonims )
 {
 	wxASSERT( !sName.IsEmpty() );
 }
@@ -22,7 +22,7 @@ wxTagSynonims::wxTagSynonims( const wxTagSynonims& synonims )
 	copy( synonims );
 }
 
-wxTagSynonims& wxTagSynonims::operator=( const wxTagSynonims& synonims )
+wxTagSynonims& wxTagSynonims::operator =( const wxTagSynonims& synonims )
 {
 	copy( synonims );
 	return *this;
@@ -111,12 +111,12 @@ wxTagSynonimsCollection::wxTagSynonimsCollection( void )
 {}
 
 wxTagSynonimsCollection::wxTagSynonimsCollection( const wxTagSynonimsCollection& src )
-	:_wxArrayTagSynonims( src )
+	: _wxArrayTagSynonims( src )
 {}
 
-wxTagSynonimsCollection& wxTagSynonimsCollection::operator=( const wxTagSynonimsCollection& src )
+wxTagSynonimsCollection& wxTagSynonimsCollection::operator =( const wxTagSynonimsCollection& src )
 {
-	_wxArrayTagSynonims::operator=( src );
+	_wxArrayTagSynonims::operator =( src );
 	return *this;
 }
 

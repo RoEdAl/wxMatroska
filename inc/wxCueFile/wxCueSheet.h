@@ -17,7 +17,7 @@
 #include "wxCueComponent.h"
 #endif
 
-class wxCueSheet:public wxCueComponent, public wxAbstractDurationHolder
+class wxCueSheet: public wxCueComponent, public wxAbstractDurationHolder
 {
 	wxDECLARE_DYNAMIC_CLASS( wxCueSheet );
 
@@ -36,7 +36,7 @@ public:
 
 	wxCueSheet( void );
 	wxCueSheet( const wxCueSheet& );
-	wxCueSheet& operator=( const wxCueSheet& );
+	wxCueSheet& operator =( const wxCueSheet& );
 	bool Append( const wxCueSheet& );
 
 	virtual bool HasGarbage() const;

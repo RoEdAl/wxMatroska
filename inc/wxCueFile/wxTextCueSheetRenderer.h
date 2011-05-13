@@ -13,7 +13,7 @@
 #include "wxSamplingInfo.h"
 #endif
 
-class wxTextCueSheetRenderer:public wxCueSheetRenderer
+class wxTextCueSheetRenderer: public wxCueSheetRenderer
 {
 	wxDECLARE_DYNAMIC_CLASS( wxTextCueSheetRenderer );
 
@@ -55,7 +55,7 @@ public:
 		DUMP_TAGS		 = 8
 	};
 
-	wxTextCueSheetRenderer( wxTextOutputStream* = ( wxTextOutputStream* )NULL, int = DUMP_COMMENTS | DUMP_TAGS );
+	wxTextCueSheetRenderer( wxTextOutputStream* = (wxTextOutputStream*)NULL, int = DUMP_COMMENTS | DUMP_TAGS );
 
 	void Assign( wxTextOutputStream*, int = DUMP_COMMENTS );
 

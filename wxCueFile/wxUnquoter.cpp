@@ -26,7 +26,7 @@ const wxChar wxUnquoter::FRENCH_DOUBLE_QUOTES[] = wxT( "\u00AB\u2005\\1\u2005\u0
 const wxChar wxUnquoter::FRENCH_SINGLE_QUOTES[] = wxT( "\u2039\u2005\\1\u2005\u203A" );
 
 wxUnquoter::wxUnquoter( void )
-	:m_reQuotes( SINGLE_QUOTES, wxRE_ADVANCED ),
+	: m_reQuotes( SINGLE_QUOTES, wxRE_ADVANCED ),
 	m_reDoubleQuotes( DOUBLE_QUOTES, wxRE_ADVANCED ),
 	m_reFullQuotes( FULL_SINGLE_QUOTES, wxRE_ADVANCED ),
 	m_reFullDoubleQuotes( FULL_DOUBLE_QUOTES, wxRE_ADVANCED )

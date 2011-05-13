@@ -16,7 +16,7 @@
 WX_DECLARE_OBJARRAY( wxInputFile, wxArrayInputFile );
 WX_DEFINE_ARRAY_INT( wxCueTag::TAG_SOURCE, wxArrayTagSource );
 
-class wxConfiguration:public wxObject
+class wxConfiguration: public wxObject
 {
 	wxDECLARE_DYNAMIC_CLASS( wxConfiguration );
 
@@ -122,7 +122,7 @@ public:
 	bool GenerateTagsFromComments() const;
 	FILE_ENCODING GetCueSheetFileEncoding() const;
 
-	wxSharedPtr< wxTextOutputStream > GetOutputTextStream( wxOutputStream& );
+	wxSharedPtr<wxTextOutputStream> GetOutputTextStream( wxOutputStream& );
 	bool GetMerge() const;
 	unsigned int GetEmbeddedModeFlags() const;
 	bool ShouldIgnoreTag( const wxCueTag& ) const;

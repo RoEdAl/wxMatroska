@@ -170,7 +170,7 @@ bool wxConfiguration::ReadLanguagesStrings( wxSortedArrayString& as )
 }
 
 wxConfiguration::wxConfiguration( void )
-	:m_bChapterTimeEnd( true ),
+	: m_bChapterTimeEnd( true ),
 	m_bUnknownChapterTimeEndToNextChapter( false ),
 	m_nChapterOffset( 150 ),
 	m_bUseDataFiles( false ),
@@ -343,7 +343,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		}
 		else
 		{
-			m_nChapterOffset = ( unsigned long )v;
+			m_nChapterOffset = (unsigned long)v;
 		}
 	}
 
@@ -1162,9 +1162,9 @@ wxConfiguration::FILE_ENCODING wxConfiguration::GetCueSheetFileEncoding() const
 	return m_eCueSheetFileEncoding;
 }
 
-wxSharedPtr< wxTextOutputStream > wxConfiguration::GetOutputTextStream( wxOutputStream& os )
+wxSharedPtr<wxTextOutputStream> wxConfiguration::GetOutputTextStream( wxOutputStream& os )
 {
-	wxSharedPtr< wxTextOutputStream > pRes;
+	wxSharedPtr<wxTextOutputStream> pRes;
 	switch ( m_eCueSheetFileEncoding )
 	{
 		case ENCODING_UTF8:

@@ -76,7 +76,7 @@ wxString wxCueSheetReader::GetDataFileRegExp()
 }
 
 wxCueSheetReader::wxCueSheetReader( void )
-	:m_reKeywords( GetKeywordsRegExp(), wxRE_ADVANCED ),
+	: m_reKeywords( GetKeywordsRegExp(), wxRE_ADVANCED ),
 	m_reCdTextInfo( GetCdTextInfoRegExp(), wxRE_ADVANCED ),
 	m_reEmpty( wxT( "\\A\\s*\\Z" ), wxRE_ADVANCED ),
 	m_reIndex( wxT( "\\A\\s*(\\d{1,2})\\s+(\\S.*\\S)\\Z" ), wxRE_ADVANCED ),

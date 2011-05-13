@@ -56,11 +56,11 @@ bool wxMediaInfo::Load()
 		return false;
 	}
 
-	m_fnNew	   = ( MEDIAINFO_New )pointers[ 0 ];
-	m_fnDelete = ( MEDIAINFO_Delete )pointers[ 1 ];
-	m_fnOpen   = ( MEDIAINFO_Open )pointers[ 2 ];
-	m_fnClose  = ( MEDIAINFO_Close )pointers[ 3 ];
-	m_fnGet	   = ( MEDIAINFO_Get )pointers[ 4 ];
+	m_fnNew	   = (MEDIAINFO_New)pointers[ 0 ];
+	m_fnDelete = (MEDIAINFO_Delete)pointers[ 1 ];
+	m_fnOpen   = (MEDIAINFO_Open)pointers[ 2 ];
+	m_fnClose  = (MEDIAINFO_Close)pointers[ 3 ];
+	m_fnGet	   = (MEDIAINFO_Get)pointers[ 4 ];
 	return true;
 }
 

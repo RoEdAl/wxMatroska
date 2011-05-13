@@ -12,7 +12,7 @@
 wxIMPLEMENT_DYNAMIC_CLASS( wxTextCueSheetRenderer, wxCueSheetRenderer )
 
 wxTextCueSheetRenderer::wxTextCueSheetRenderer( wxTextOutputStream* pTextOutputStream, int nDumpFlags )
-	:m_pTextOutputStream( pTextOutputStream ),
+	: m_pTextOutputStream( pTextOutputStream ),
 	m_nDumpFlags( nDumpFlags ),
 	m_reSpace( wxT( "[[:space:]]+" ), wxRE_ADVANCED | wxRE_NOSUB )
 {
@@ -21,14 +21,14 @@ wxTextCueSheetRenderer::wxTextCueSheetRenderer( wxTextOutputStream* pTextOutputS
 
 void wxTextCueSheetRenderer::Assign( wxTextOutputStream* pTextOutputStream, int nDumpFlags )
 {
-	wxASSERT( pTextOutputStream != ( wxTextOutputStream* )NULL );
+	wxASSERT( pTextOutputStream != (wxTextOutputStream*)NULL );
 	m_pTextOutputStream = pTextOutputStream;
 	m_nDumpFlags		= nDumpFlags;
 }
 
 bool wxTextCueSheetRenderer::OnPreRenderDisc( const wxCueSheet& cueSheet )
 {
-	if ( m_pTextOutputStream == ( wxTextOutputStream* )NULL )
+	if ( m_pTextOutputStream == (wxTextOutputStream*)NULL )
 	{
 		wxLogError( _( "wxTextCueSheetRenderer: output stream not specified" ) );
 		return false;

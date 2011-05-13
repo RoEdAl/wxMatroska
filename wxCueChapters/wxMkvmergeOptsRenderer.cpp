@@ -13,14 +13,14 @@
 
 // ===============================================================================
 
-wxMkvmergeOptsRenderer* const wxMkvmergeOptsRenderer::Null = ( wxMkvmergeOptsRenderer* const )NULL;
+wxMkvmergeOptsRenderer* const wxMkvmergeOptsRenderer::Null = (wxMkvmergeOptsRenderer* const)NULL;
 
 const wxChar wxMkvmergeOptsRenderer::LOG_EXT[] = wxT( "log" );
 
 // ===============================================================================
 
 wxMkvmergeOptsRenderer::wxMkvmergeOptsRenderer( const wxConfiguration& cfg )
-	:m_cfg( cfg )
+	: m_cfg( cfg )
 {}
 
 const wxString& wxMkvmergeOptsRenderer::GetMkvmergeOptsFile() const
@@ -227,7 +227,7 @@ bool wxMkvmergeOptsRenderer::Save()
 	if ( os.IsOk() )
 	{
 		wxLogInfo( _T( "Creating mkvmerge options file \u201C%s\u201D" ), wxMyApp::GetFileName( m_sMatroskaOptsFile ) );
-		wxSharedPtr< wxTextOutputStream > pStream( wxTextOutputStreamWithBOMFactory::CreateUTF8( os, wxEOL_NATIVE, true, m_cfg.UseMLang() ) );
+		wxSharedPtr<wxTextOutputStream> pStream( wxTextOutputStreamWithBOMFactory::CreateUTF8( os, wxEOL_NATIVE, true, m_cfg.UseMLang() ) );
 		write_as( *pStream, m_asMmcPre );
 		write_as( *pStream, m_asMmcInputFiles );
 		write_attachments( *pStream );

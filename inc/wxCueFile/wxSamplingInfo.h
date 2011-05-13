@@ -9,7 +9,7 @@
 #include "wxIndex.h"
 #endif
 
-class wxSamplingInfo:public wxObject
+class wxSamplingInfo: public wxObject
 {
 	wxDECLARE_DYNAMIC_CLASS( wxSamplingInfo );
 
@@ -26,7 +26,7 @@ public:
 	bool IsOK( bool = false ) const;
 	bool Equals( const wxSamplingInfo&, bool = false ) const;
 
-	wxSamplingInfo& operator=( const wxSamplingInfo& );
+	wxSamplingInfo& operator =( const wxSamplingInfo& );
 
 	unsigned long GetSamplingRate() const;
 	unsigned short GetNumberOfChannels() const;

@@ -5,7 +5,7 @@
 #ifndef _WX_INDEX_H_
 #define _WX_INDEX_H_
 
-class wxIndex:public wxObject
+class wxIndex: public wxObject
 {
 	wxDECLARE_DYNAMIC_CLASS( wxIndex );
 	friend class wxSamplingInfo;
@@ -20,8 +20,8 @@ protected:
 
 	void copy( const wxIndex& );
 	const wxULongLong& GetOffset() const;
-	wxIndex& operator-=( wxULongLong );
-	wxIndex& operator+=( wxULongLong );
+	wxIndex& operator -=( wxULongLong );
+	wxIndex& operator +=( wxULongLong );
 
 public:
 
@@ -44,7 +44,7 @@ public:
 	wxIndex( void );
 	wxIndex( unsigned int, wxULongLong );
 	wxIndex( const wxIndex& );
-	wxIndex& operator=( const wxIndex& );
+	wxIndex& operator =( const wxIndex& );
 
 	static bool TimeSpanToMsf( wxTimeSpan, unsigned int &, unsigned int &, unsigned int & );
 	static wxString GetTimeStr( unsigned int, unsigned int, double );

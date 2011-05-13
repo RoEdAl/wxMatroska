@@ -5,7 +5,7 @@
 #ifndef _WX_UNQUOTER_H_
 #define _WX_UNQUOTER_H_
 
-class wxUnquoter:public wxObject
+class wxUnquoter: public wxObject
 {
 	wxDECLARE_DYNAMIC_CLASS( wxUnquoter );
 

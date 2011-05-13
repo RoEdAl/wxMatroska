@@ -7,24 +7,24 @@
 
 wxMultiLanguage::wxMultiLanguage( void )
 {
-	m_pMLang = ( IMultiLanguage2* )NULL;
+	m_pMLang = (IMultiLanguage2*)NULL;
 
 	HRESULT hRes = CoCreateInstance(
 		CLSID_CMultiLanguage,
 		NULL,
 		CLSCTX_INPROC_SERVER,
 		IID_IMultiLanguage2,
-		( LPVOID* )&m_pMLang
+		(LPVOID*)&m_pMLang
 		);
 
 	if ( hRes != S_OK )
 	{
-		m_pMLang = ( IMultiLanguage2* )NULL;
+		m_pMLang = (IMultiLanguage2*)NULL;
 	}
 }
 
 wxMultiLanguage::wxMultiLanguage( const wxMultiLanguage& ml  )
-	:m_pMLang( ml.m_pMLang )
+	: m_pMLang( ml.m_pMLang )
 {
 	if ( IsValid() )
 	{
@@ -39,7 +39,7 @@ wxMultiLanguage::~wxMultiLanguage( void )
 
 bool wxMultiLanguage::IsValid() const
 {
-	return ( m_pMLang != ( IMultiLanguage2* )NULL );
+	return ( m_pMLang != (IMultiLanguage2*)NULL );
 }
 
 void wxMultiLanguage::Close()
@@ -47,7 +47,7 @@ void wxMultiLanguage::Close()
 	if ( IsValid() )
 	{
 		m_pMLang->Release();
-		m_pMLang = ( IMultiLanguage2* )NULL;
+		m_pMLang = (IMultiLanguage2*)NULL;
 	}
 }
 
@@ -59,11 +59,11 @@ HRESULT wxMultiLanguage::DetectInputCodepage(
 {
 	wxASSERT( IsValid() );
 
-	INT nSize	 = ( INT )srcStr.length();
+	INT nSize	 = (INT)srcStr.length();
 	HRESULT hRes = m_pMLang->DetectInputCodepage(
 		dwFlag,
 		dwPrefWinCodePage,
-		const_cast< CHAR* > ( srcStr.data() ), &nSize,
+		const_cast<CHAR*> ( srcStr.data() ), &nSize,
 		lpEncoding, pnScores );
 
 	return hRes;

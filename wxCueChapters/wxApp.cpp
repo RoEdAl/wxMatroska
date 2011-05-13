@@ -32,7 +32,7 @@ static const size_t MAX_LICENSE_FILE_SIZE = 4 * 1024;
 wxIMPLEMENT_APP( wxMyApp );
 
 wxMyApp::wxMyApp( void )
-	:m_sSeparator( wxT( '=' ), 75 )
+	: m_sSeparator( wxT( '=' ), 75 )
 {}
 
 void wxMyApp::AddSeparator( wxCmdLineParser& cmdline )
@@ -265,7 +265,7 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, const wxCueSheet& cu
 			return 1;
 		}
 
-		wxSharedPtr< wxTextOutputStream > pTos( m_cfg.GetOutputTextStream( fos ) );
+		wxSharedPtr<wxTextOutputStream> pTos( m_cfg.GetOutputTextStream( fos ) );
 		wxTextCueSheetRenderer renderer( pTos.get() );
 		if ( !renderer.Render( cueSheet ) )
 		{
@@ -275,7 +275,7 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, const wxCueSheet& cu
 	else
 	{
 		wxLogInfo( _( "Converting cue scheet to XML format" ) );
-		wxSharedPtr< wxXmlCueSheetRenderer > pXmlRenderer = GetXmlRenderer( inputFile );
+		wxSharedPtr<wxXmlCueSheetRenderer> pXmlRenderer = GetXmlRenderer( inputFile );
 		if ( pXmlRenderer->Render( cueSheet ) )
 		{
 			if ( m_cfg.GenerateMkvmergeOpts() )
@@ -471,9 +471,9 @@ int wxMyApp::OnExit()
 	return res;
 }
 
-wxSharedPtr< wxXmlCueSheetRenderer > wxMyApp::GetXmlRenderer( const wxInputFile& inputFile )
+wxSharedPtr<wxXmlCueSheetRenderer> wxMyApp::GetXmlRenderer( const wxInputFile& inputFile )
 {
-	wxSharedPtr< wxXmlCueSheetRenderer > pRes( wxXmlCueSheetRenderer::CreateObject( m_cfg, inputFile ) );
+	wxSharedPtr<wxXmlCueSheetRenderer> pRes( wxXmlCueSheetRenderer::CreateObject( m_cfg, inputFile ) );
 	return pRes;
 }
 

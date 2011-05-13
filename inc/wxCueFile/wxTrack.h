@@ -29,7 +29,7 @@ class wxDuration;
 class wxSamplingInfo;
 #endif
 
-class wxTrack:public wxCueComponent
+class wxTrack: public wxCueComponent
 {
 	wxDECLARE_DYNAMIC_CLASS( wxTrack );
 
@@ -52,8 +52,8 @@ protected:
 	size_t m_number;
 	DataMode m_dataMode;
 	wxArrayIndex m_indexes;
-	wxScopedPtr< wxIndex > m_pPreGap;
-	wxScopedPtr< wxIndex > m_pPostGap;
+	wxScopedPtr<wxIndex> m_pPreGap;
+	wxScopedPtr<wxIndex> m_pPostGap;
 	wxDataFile m_df;
 	wxArrayFlag m_flags;
 
@@ -136,7 +136,7 @@ public:
 	wxTrack( void );
 	wxTrack( unsigned long );
 	wxTrack( const wxTrack& );
-	wxTrack& operator=( const wxTrack& );
+	wxTrack& operator =( const wxTrack& );
 	wxTrack& Shift( const wxDuration& );
 
 	bool IsValid() const;

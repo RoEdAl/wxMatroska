@@ -7,7 +7,7 @@
 #include "wxWavpackStream.h"
 
 wxWavpackStream::wxWavpackStream( wxInputStream& inputStream, wxOutputStream& outputStream )
-	:m_inputStream( inputStream ), m_outputStream( outputStream )
+	: m_inputStream( inputStream ), m_outputStream( outputStream )
 {}
 
 wxWavpackStream::~wxWavpackStream( void )
@@ -34,32 +34,32 @@ WavpackStreamReader* wxWavpackStream::GetStream()
 int32_t wxWavpackStream::read_bytes( void* id, void* data, int32_t bcount )
 {
 	wxASSERT( id != NULL );
-	wxWavpackStream* pThis = ( wxWavpackStream* )id;
+	wxWavpackStream* pThis = (wxWavpackStream*)id;
 	return pThis->read_bytes( data, bcount );
 }
 
 int32_t wxWavpackStream::read_bytes( void* data, int32_t bcount )
 {
 	m_inputStream.Read( data, bcount );
-	return ( int32_t )m_inputStream.LastRead();
+	return (int32_t)m_inputStream.LastRead();
 }
 
 uint32_t wxWavpackStream::get_pos( void* id )
 {
 	wxASSERT( id != NULL );
-	wxWavpackStream* pThis = ( wxWavpackStream* )id;
+	wxWavpackStream* pThis = (wxWavpackStream*)id;
 	return pThis->get_pos();
 }
 
 uint32_t wxWavpackStream::get_pos() const
 {
-	return ( uint32_t )m_inputStream.TellI();
+	return (uint32_t)m_inputStream.TellI();
 }
 
 int wxWavpackStream::set_pos_abs( void* id, uint32_t pos )
 {
 	wxASSERT( id != NULL );
-	wxWavpackStream* pThis = ( wxWavpackStream* )id;
+	wxWavpackStream* pThis = (wxWavpackStream*)id;
 	return pThis->set_pos_abs( pos );
 }
 
@@ -74,7 +74,7 @@ int wxWavpackStream::set_pos_abs( uint32_t pos )
 int wxWavpackStream::set_pos_rel( void* id, int32_t delta, int mode )
 {
 	wxASSERT( id != NULL );
-	wxWavpackStream* pThis = ( wxWavpackStream* )id;
+	wxWavpackStream* pThis = (wxWavpackStream*)id;
 	return pThis->set_pos_rel( delta, mode );
 }
 
@@ -106,7 +106,7 @@ int wxWavpackStream::set_pos_rel( int32_t delta, int mode )
 int wxWavpackStream::push_back_byte( void* id, int c )
 {
 	wxASSERT( id != NULL );
-	wxWavpackStream* pThis = ( wxWavpackStream* )id;
+	wxWavpackStream* pThis = (wxWavpackStream*)id;
 	return pThis->push_back_byte( c );
 }
 
@@ -118,19 +118,19 @@ int wxWavpackStream::push_back_byte( int c )
 uint32_t wxWavpackStream::get_length( void* id )
 {
 	wxASSERT( id != NULL );
-	wxWavpackStream* pThis = ( wxWavpackStream* )id;
+	wxWavpackStream* pThis = (wxWavpackStream*)id;
 	return pThis->get_length();
 }
 
 uint32_t wxWavpackStream::get_length() const
 {
-	return ( uint32_t )m_inputStream.GetLength();
+	return (uint32_t)m_inputStream.GetLength();
 }
 
 int wxWavpackStream::can_seek( void* id )
 {
 	wxASSERT( id != NULL );
-	wxWavpackStream* pThis = ( wxWavpackStream* )id;
+	wxWavpackStream* pThis = (wxWavpackStream*)id;
 	return pThis->can_seek();
 }
 
@@ -142,12 +142,12 @@ int wxWavpackStream::can_seek() const
 int32_t wxWavpackStream::write_bytes( void* id, void* data, int32_t bcount )
 {
 	wxASSERT( id != NULL );
-	wxWavpackStream* pThis = ( wxWavpackStream* )id;
+	wxWavpackStream* pThis = (wxWavpackStream*)id;
 	return pThis->write_bytes( data, bcount );
 }
 
 int32_t wxWavpackStream::write_bytes( void* data, int32_t bcount )
 {
 	m_outputStream.Write( data, bcount );
-	return ( int32_t )m_outputStream.LastWrite();
+	return (int32_t)m_outputStream.LastWrite();
 }

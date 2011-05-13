@@ -13,7 +13,7 @@
 #include "wxIndex.h"
 #endif
 
-class wxDuration:public wxObject
+class wxDuration: public wxObject
 {
 	wxDECLARE_DYNAMIC_CLASS( wxCueSheet );
 
@@ -28,7 +28,7 @@ public:
 	wxDuration( const wxSamplingInfo&, wxULongLong );
 	wxDuration( const wxDuration& );
 
-	wxDuration& operator=( const wxDuration& );
+	wxDuration& operator =( const wxDuration& );
 
 	wxDuration& Assign( const wxSamplingInfo &, wxULongLong );
 
@@ -55,11 +55,11 @@ public:
 	virtual wxDuration GetDuration() const = 0;
 };
 
-class wxDurationHolder:public wxAbstractDurationHolder
+class wxDurationHolder: public wxAbstractDurationHolder
 {
 protected:
 
-	wxScopedPtr< wxDuration > m_pDuration;
+	wxScopedPtr<wxDuration> m_pDuration;
 
 public:
 

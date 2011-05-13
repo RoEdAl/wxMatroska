@@ -38,20 +38,20 @@ wxTrack::DATA_MODE_STR wxTrack::DataModeString[] =
 size_t wxTrack::DataModeStringSize = WXSIZEOF( wxTrack::DataModeString );
 
 wxTrack::wxTrack( void )
-	:wxCueComponent( true ), m_number( 0 )
+	: wxCueComponent( true ), m_number( 0 )
 {}
 
 wxTrack::wxTrack( const wxTrack& track )
-	:wxCueComponent( true ), m_dataMode( AUDIO )
+	: wxCueComponent( true ), m_dataMode( AUDIO )
 {
 	copy( track );
 }
 
 wxTrack::wxTrack( unsigned long number )
-	:wxCueComponent( true ), m_number( number ), m_dataMode( AUDIO )
+	: wxCueComponent( true ), m_number( number ), m_dataMode( AUDIO )
 {}
 
-wxTrack& wxTrack::operator=( const wxTrack& track )
+wxTrack& wxTrack::operator =( const wxTrack& track )
 {
 	copy( track );
 	return *this;

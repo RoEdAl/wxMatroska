@@ -116,7 +116,7 @@ bool wxCueComponent::GetEntryType( const wxString& sKeyword, wxCueComponent::ENT
 }
 
 wxCueComponent::wxCueComponent( bool bTrack )
-	:m_bTrack( bTrack )
+	: m_bTrack( bTrack )
 {}
 
 wxCueComponent::wxCueComponent( const wxCueComponent& component )
@@ -124,7 +124,7 @@ wxCueComponent::wxCueComponent( const wxCueComponent& component )
 	copy( component );
 }
 
-wxCueComponent& wxCueComponent::operator=( const wxCueComponent& component )
+wxCueComponent& wxCueComponent::operator =( const wxCueComponent& component )
 {
 	copy( component );
 	return *this;
@@ -150,7 +150,7 @@ wxCueComponent& wxCueComponent::Append( const wxCueComponent& component )
 	return *this;
 }
 
-wxCueComponent& wxCueComponent::operator+=( const wxCueComponent& component )
+wxCueComponent& wxCueComponent::operator +=( const wxCueComponent& component )
 {
 	return Append( component );
 }

@@ -29,14 +29,14 @@ class wxXmlCueSheetRenderer;
 class wxMkvmergeOptsRenderer;
 #endif
 
-class wxMyApp:public wxAppConsole
+class wxMyApp: public wxAppConsole
 {
 protected:
 
 	wxConfiguration m_cfg;
 	wxString m_sSeparator;
-	wxScopedPtr< wxMkvmergeOptsRenderer > m_pMkvmergeOptsRenderer;
-	wxScopedPtr< wxCueSheet > m_pMergedCueSheet;
+	wxScopedPtr<wxMkvmergeOptsRenderer> m_pMkvmergeOptsRenderer;
+	wxScopedPtr<wxCueSheet> m_pMergedCueSheet;
 
 protected:
 
@@ -52,7 +52,7 @@ protected:
 	static bool CheckLicense();
 	static void ShowLicense();
 
-	wxSharedPtr< wxXmlCueSheetRenderer > GetXmlRenderer( const wxInputFile& );
+	wxSharedPtr<wxXmlCueSheetRenderer> GetXmlRenderer( const wxInputFile& );
 	wxMkvmergeOptsRenderer& GetMkvmergeOptsRenderer( bool = true );
 	wxCueSheet& GetMergedCueSheet();
 

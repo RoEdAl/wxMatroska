@@ -25,7 +25,7 @@ class wxConfiguration;
 #include <wxCueFile/wxSamplingInfo.h>
 #endif
 
-class wxXmlCueSheetRenderer:public wxCueSheetRenderer
+class wxXmlCueSheetRenderer: public wxCueSheetRenderer
 {
 	wxDECLARE_DYNAMIC_CLASS( wxXmlCueSheetRenderer );
 

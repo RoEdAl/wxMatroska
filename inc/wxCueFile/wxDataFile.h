@@ -9,7 +9,7 @@
 #include "wxDuration.h"
 #endif
 
-class wxDataFile:public wxObject, public wxDurationHolder
+class wxDataFile: public wxObject, public wxDurationHolder
 {
 	wxDECLARE_DYNAMIC_CLASS( wxDataFile );
 
@@ -63,7 +63,7 @@ public:
 	wxDataFile( const wxString&, FileType = BINARY );
 	wxDataFile( const wxFileName&, FileType = BINARY );
 
-	wxDataFile& operator=( const wxDataFile& );
+	wxDataFile& operator =( const wxDataFile& );
 	void Clear();
 
 	bool FindFile( wxFileName&, const wxString& = wxEmptyString ) const;

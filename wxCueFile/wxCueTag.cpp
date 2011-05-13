@@ -24,11 +24,11 @@ const wxChar* const wxCueTag::Name::CDTEXTFILE	 = wxT( "CDTEXTFILE" );
 wxIMPLEMENT_DYNAMIC_CLASS( wxCueTag, wxObject )
 
 wxCueTag::wxCueTag()
-	:m_eSource( TAG_UNKNOWN )
+	: m_eSource( TAG_UNKNOWN )
 {}
 
 wxCueTag::wxCueTag( wxCueTag::TAG_SOURCE eSource, const wxString& sName, const wxString& sValue )
-	:m_eSource( eSource ), m_sName( sName.Upper() ), m_sValue( sValue )
+	: m_eSource( eSource ), m_sName( sName.Upper() ), m_sValue( sValue )
 {}
 
 wxCueTag::wxCueTag( const wxCueTag& cueTag )
@@ -136,7 +136,7 @@ void wxCueTag::copy( const wxCueTag& cueTag )
 	m_sValue  = cueTag.m_sValue;
 }
 
-wxCueTag& wxCueTag::operator=( const wxCueTag& cueTag )
+wxCueTag& wxCueTag::operator =( const wxCueTag& cueTag )
 {
 	copy( cueTag );
 	return *this;

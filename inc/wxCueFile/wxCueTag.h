@@ -13,7 +13,7 @@ class wxTrailingSpacesRemover;
 class wxEllipsizer;
 #endif
 
-class wxCueTag:public wxObject
+class wxCueTag: public wxObject
 {
 	wxDECLARE_DYNAMIC_CLASS( wxCueTag );
 
@@ -70,8 +70,8 @@ public:
 	wxCueTag& SetName( const wxString& );
 	wxCueTag& SetValue( const wxString& );
 
-	bool operator==( const wxCueTag& );
-	wxCueTag& operator=( const wxCueTag& );
+	bool operator ==( const wxCueTag& );
+	wxCueTag& operator =( const wxCueTag& );
 
 	void RemoveTrailingSpaces( const wxTrailingSpacesRemover& );
 	void Ellipsize( const wxEllipsizer& );

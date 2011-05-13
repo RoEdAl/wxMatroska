@@ -8,7 +8,7 @@
 const wxChar wxTrailingSpacesRemover::REG_EX[] = wxT( "\\A[[:space:][.newline.][.carriage-return.]]*([^[:space:][.newline.][.carriage-return.]].*[^[:space:][.newline.][.carriage-return.]])[[:space:][.newline.][.carriage-return.]]*\\Z" );
 
 wxTrailingSpacesRemover::wxTrailingSpacesRemover()
-	:m_reTrailingSpaces( REG_EX, wxRE_ADVANCED )
+	: m_reTrailingSpaces( REG_EX, wxRE_ADVANCED )
 {
 	wxASSERT( m_reTrailingSpaces.IsValid() );
 }

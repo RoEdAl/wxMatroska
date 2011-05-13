@@ -17,16 +17,16 @@
 class wxArrayCueTag;
 #endif
 
-class wxFlacMetaDataReader:protected wxAbstractMetaDataReader
+class wxFlacMetaDataReader: protected wxAbstractMetaDataReader
 {
 protected:
 
-	class FlacDecoder:public wxFlacDecoder
+	class FlacDecoder: public wxFlacDecoder
 	{
 public:
 
 		FlacDecoder( wxInputStream& inputStream, wxOutputStream& outputStream, wxFlacMetaDataReader& fmtr )
-			:wxFlacDecoder( inputStream, outputStream ), m_fmtr( fmtr )
+			: wxFlacDecoder( inputStream, outputStream ), m_fmtr( fmtr )
 		{}
 
 protected:

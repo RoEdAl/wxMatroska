@@ -31,7 +31,7 @@ class wxFlacMetaDataReader;
 #include "wxEllipsizer.h"
 #endif
 
-class wxCueSheetReader:public wxObject
+class wxCueSheetReader: public wxObject
 {
 	wxDECLARE_DYNAMIC_CLASS( wxCueSheetReader );
 

@@ -5,7 +5,7 @@
 #ifndef _WX_FLAC_DECODER_H_
 #define _WX_FLAC_DECODER_H_
 
-class wxFlacDecoder:public FLAC::Decoder::Stream
+class wxFlacDecoder: public FLAC::Decoder::Stream
 {
 public:
 

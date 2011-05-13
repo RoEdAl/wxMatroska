@@ -6,7 +6,7 @@
 #include "wxFlacDecoder.h"
 
 wxFlacDecoder::wxFlacDecoder( wxInputStream& inputStream, wxOutputStream& outputStream )
-	:m_inputStream( inputStream ), m_outputStream( outputStream )
+	: m_inputStream( inputStream ), m_outputStream( outputStream )
 {}
 
 wxFlacDecoder::~wxFlacDecoder( void )

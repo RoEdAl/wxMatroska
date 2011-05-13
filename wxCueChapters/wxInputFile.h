@@ -11,7 +11,7 @@
 
 WX_DECLARE_OBJARRAY( wxFileName, wxArrayFileName );
 
-class wxInputFile:public wxObject
+class wxInputFile: public wxObject
 {
 	wxDECLARE_DYNAMIC_CLASS( wxInputFile );
 
@@ -31,7 +31,7 @@ public:
 	wxInputFile( void );
 	wxInputFile( const wxInputFile& );
 	wxInputFile( const wxString& );
-	wxInputFile& operator=( const wxInputFile& );
+	wxInputFile& operator =( const wxInputFile& );
 
 	virtual ~wxInputFile( void );
 

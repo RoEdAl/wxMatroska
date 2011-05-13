@@ -9,7 +9,7 @@
 
 // ==================================================
 
-WavpackContext* const wxWavpackTagReader::wxWavpackContext::Null = ( WavpackContext* const )NULL;
+WavpackContext* const wxWavpackTagReader::wxWavpackContext::Null = (WavpackContext* const)NULL;
 
 int wxWavpackTagReader::wxWavpackContext::GetNumTagItems()
 {

@@ -17,7 +17,7 @@
 class wxArrayCueTag;
 #endif
 
-class wxWavpackTagReader:protected wxAbstractMetaDataReader
+class wxWavpackTagReader: protected wxAbstractMetaDataReader
 {
 protected:
 
@@ -35,9 +35,9 @@ public:
 
 		static WavpackContext* const Null;
 
-		wxWavpackContext():m_pContext( Null ){}
+		wxWavpackContext(): m_pContext( Null ){}
 		wxWavpackContext( WavpackContext* pContext )
-			:m_pContext( pContext ){}
+			: m_pContext( pContext ){}
 		~wxWavpackContext()
 		{
 			if ( this->operator bool() )

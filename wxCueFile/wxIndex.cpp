@@ -8,11 +8,11 @@
 wxIMPLEMENT_DYNAMIC_CLASS( wxIndex, wxObject )
 
 wxIndex::wxIndex( void )
-	:m_number( 0 ), m_offset( 0, 0 ), m_bCdFrames( false )
+	: m_number( 0 ), m_offset( 0, 0 ), m_bCdFrames( false )
 {}
 
 wxIndex::wxIndex( unsigned int number, wxULongLong offset )
-	:m_number( number ), m_offset( offset ), m_bCdFrames( false )
+	: m_number( number ), m_offset( offset ), m_bCdFrames( false )
 {}
 
 wxIndex::wxIndex( const wxIndex& idx )
@@ -20,7 +20,7 @@ wxIndex::wxIndex( const wxIndex& idx )
 	copy( idx );
 }
 
-wxIndex& wxIndex::operator=( const wxIndex& idx )
+wxIndex& wxIndex::operator =( const wxIndex& idx )
 {
 	copy( idx );
 	return *this;
@@ -110,14 +110,14 @@ void wxIndex::FixDecimalPoint( wxString& s )
 	s.Replace( sep, "." );
 }
 
-wxIndex& wxIndex::operator-=( wxULongLong frames )
+wxIndex& wxIndex::operator -=( wxULongLong frames )
 {
 	wxASSERT( !HasCdFrames() );
 	m_offset -= frames;
 	return *this;
 }
 
-wxIndex& wxIndex::operator+=( wxULongLong frames )
+wxIndex& wxIndex::operator +=( wxULongLong frames )
 {
 	wxASSERT( !HasCdFrames() );
 	m_offset += frames;

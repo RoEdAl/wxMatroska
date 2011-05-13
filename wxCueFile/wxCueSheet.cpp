@@ -18,7 +18,7 @@ wxCueSheet::wxCueSheet( const wxCueSheet& cs )
 	copy( cs );
 }
 
-wxCueSheet& wxCueSheet::operator=( const wxCueSheet& cs )
+wxCueSheet& wxCueSheet::operator =( const wxCueSheet& cs )
 {
 	copy( cs );
 	return *this;

@@ -21,7 +21,7 @@ wxInputFile::wxInputFile( const wxInputFile& inputFile )
 	copy( inputFile );
 }
 
-wxInputFile& wxInputFile::operator=( const wxInputFile& inputFile )
+wxInputFile& wxInputFile::operator =( const wxInputFile& inputFile )
 {
 	copy( inputFile );
 	return *this;

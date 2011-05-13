@@ -5,12 +5,12 @@
 #ifndef _WX_ENCODING_DETECTION_H_
 #define _WX_ENCODING_DETECTION_H_
 
-class wxEncodingDetection:public wxObject
+class wxEncodingDetection: public wxObject
 {
 public:
 
-	typedef wxCharTypeBuffer< wxByte > wxByteBuffer;
-	typedef wxSharedPtr< wxMBConv > wxMBConvSharedPtr;
+	typedef wxCharTypeBuffer<wxByte> wxByteBuffer;
+	typedef wxSharedPtr<wxMBConv> wxMBConvSharedPtr;
 
 	static wxMBConv* const wxNullMBConv;
 
