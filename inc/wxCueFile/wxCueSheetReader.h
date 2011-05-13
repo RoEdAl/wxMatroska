@@ -1,6 +1,6 @@
 /*
-	wxCueSheetReader.h
-*/
+   wxCueSheetReader.h
+ */
 
 #ifndef _WX_CUE_SHEET_READER_H_
 #define _WX_CUE_SHEET_READER_H_
@@ -31,23 +31,23 @@ class wxFlacMetaDataReader;
 #include "wxEllipsizer.h"
 #endif
 
-class wxCueSheetReader :public wxObject
+class wxCueSheetReader:public wxObject
 {
-	wxDECLARE_DYNAMIC_CLASS(wxCueSheetReader);
+	wxDECLARE_DYNAMIC_CLASS( wxCueSheetReader );
 
 public:
 
 	enum
 	{
-		EC_FLAC_READ_NONE = 0,
+		EC_FLAC_READ_NONE					= 0,
 		EC_FLAC_READ_TAG_FIRST_THEN_COMMENT = 1,
 		EC_FLAC_READ_COMMENT_FIRST_THEN_TAG = 2,
-		EC_FLAC_READ_COMMENT_ONLY = 3,
-		EC_FLAC_READ_TAG_ONLY = 4,
-		EC_FLAC_READ_MASK = 7,
-		EC_MEDIA_READ_TAGS = 8,
-		EC_MEDIA_MASK = 15,
-		EC_SINGLE_MEDIA_FILE = 16
+		EC_FLAC_READ_COMMENT_ONLY			= 3,
+		EC_FLAC_READ_TAG_ONLY				= 4,
+		EC_FLAC_READ_MASK					= 7,
+		EC_MEDIA_READ_TAGS					= 8,
+		EC_MEDIA_MASK						= 15,
+		EC_SINGLE_MEDIA_FILE				= 16
 	};
 
 protected:
@@ -95,7 +95,8 @@ protected:
 	static wxString GetDataFileRegExp();
 
 	void AddError0( const wxString& );
-	void AddError( const wxChar *pszFormat, ...);
+	void AddError( const wxChar* pszFormat, ... );
+
 	void DumpErrors( size_t ) const;
 
 	bool CheckEntryType( wxCueComponent::ENTRY_TYPE ) const;
@@ -103,10 +104,10 @@ protected:
 protected:
 
 	bool internalReadCueSheet( wxInputStream& stream, wxMBConv& conv );
-	bool ParseCue(void);
+	bool ParseCue( void );
 	void ProcessMediaInfoCueSheet( wxString& );
 
-	typedef void (wxCueSheetReader::* PARSE_METHOD)( const wxString&, const wxString& );
+	typedef void ( wxCueSheetReader::* PARSE_METHOD )( const wxString&, const wxString& );
 	typedef struct _PARSE_STRUCT
 	{
 		const wxChar* token;
@@ -120,8 +121,8 @@ protected:
 	wxTrack& GetLastTrack();
 	const wxTrack& GetLastTrack() const;
 
-	void ParseLine( size_t, const wxString&, const wxString& );
-	void ParseCdTextInfo( size_t, const wxString&, const wxString& );
+	void ParseLine( size_t, const wxString &, const wxString & );
+	void ParseCdTextInfo( size_t, const wxString &, const wxString & );
 
 	void ParseGarbage( const wxString& );
 	void ParseComment( const wxString&, const wxString& );
@@ -152,7 +153,7 @@ protected:
 
 public:
 
-	wxCueSheetReader(void);
+	wxCueSheetReader( void );
 
 	bool ReadCueSheet( const wxString&, bool = true );
 	bool ReadCueSheet( const wxString&, wxMBConv& );

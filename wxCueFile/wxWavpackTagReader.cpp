@@ -1,6 +1,6 @@
 /*
-	wxWavpackTagReader.cpp
-*/
+   wxWavpackTagReader.cpp
+ */
 
 #include "StdWx.h"
 #include <wxCueFile/wxCueComponent.h>
@@ -9,7 +9,7 @@
 
 // ==================================================
 
-WavpackContext* const wxWavpackTagReader::wxWavpackContext::Null = (WavpackContext* const)NULL;
+WavpackContext* const wxWavpackTagReader::wxWavpackContext::Null = ( WavpackContext* const )NULL;
 
 int wxWavpackTagReader::wxWavpackContext::GetNumTagItems()
 {
@@ -17,13 +17,13 @@ int wxWavpackTagReader::wxWavpackContext::GetNumTagItems()
 	return WavpackGetNumTagItems( m_pContext );
 }
 
-size_t wxWavpackTagReader::wxWavpackContext::GetTagItemIndexed( 
+size_t wxWavpackTagReader::wxWavpackContext::GetTagItemIndexed(
 	int nItem,
 	wxWritableCharBuffer& itemBuffer,
 	wxWritableCharBuffer& valueBuffer,
 	wxString& sItem,
 	wxString& sValue
-)
+	)
 {
 	wxASSERT( this->operator bool() );
 
@@ -33,9 +33,9 @@ size_t wxWavpackTagReader::wxWavpackContext::GetTagItemIndexed(
 		return nSize;
 	}
 
-	if ( (nSize+1) > itemBuffer.length() )
+	if ( ( nSize + 1 ) > itemBuffer.length() )
 	{
-		itemBuffer.extend( nSize+1 );
+		itemBuffer.extend( nSize + 1 );
 	}
 
 	size_t nSize2 = WavpackGetTagItemIndexed( m_pContext, nItem, itemBuffer, itemBuffer.length() );
@@ -45,9 +45,9 @@ size_t wxWavpackTagReader::wxWavpackContext::GetTagItemIndexed(
 
 	nSize = WavpackGetTagItem( m_pContext, itemBuffer, NULL, 0 );
 	wxASSERT( nSize > 0 );
-	if ( (nSize+1) > valueBuffer.length() )
+	if ( ( nSize + 1 ) > valueBuffer.length() )
 	{
-		valueBuffer.extend( nSize+1 );
+		valueBuffer.extend( nSize + 1 );
 	}
 
 	nSize2 = WavpackGetTagItem( m_pContext, itemBuffer, valueBuffer, valueBuffer.length() );
@@ -66,12 +66,12 @@ size_t wxWavpackTagReader::wxWavpackContext::GetTagItem(
 
 	size_t nSize = WavpackGetTagItem( m_pContext, sItem.ToAscii(), NULL, 0 );
 	size_t nSize2;
-	
+
 	if ( nSize > 0 )
 	{
-		if ( (nSize+1) > valueBuffer.length() )
+		if ( ( nSize + 1 ) > valueBuffer.length() )
 		{
-			valueBuffer.extend( nSize+1 );
+			valueBuffer.extend( nSize + 1 );
 		}
 
 		nSize2 = WavpackGetTagItem( m_pContext, sItem.ToAscii(), valueBuffer, valueBuffer.length() );
@@ -81,15 +81,14 @@ size_t wxWavpackTagReader::wxWavpackContext::GetTagItem(
 	}
 	else
 	{
-		return nSize;		
+		return nSize;
 	}
 }
 
 // ==================================================
 
-wxWavpackTagReader::wxWavpackTagReader(void)
-{
-}
+wxWavpackTagReader::wxWavpackTagReader( void )
+{}
 
 bool wxWavpackTagReader::ReadCueSheetTag( const wxString& sWavpackFile, wxString& sCueSheet )
 {
@@ -100,7 +99,7 @@ bool wxWavpackTagReader::ReadCueSheetTag( const wxString& sWavpackFile, wxString
 		wxFileInputStream is( sWavpackFile );
 		if ( !is.IsOk() )
 		{
-			wxLogError( _("Fail to open Wavpack file %s."), sWavpackFile );
+			wxLogError( _( "Fail to open Wavpack file %s." ), sWavpackFile );
 			return false;
 		}
 
@@ -109,31 +108,31 @@ bool wxWavpackTagReader::ReadCueSheetTag( const wxString& sWavpackFile, wxString
 		wxWavpackStream wavpackStream( is, os );
 		wxWritableCharBuffer errBuffer;
 		errBuffer.extend( 80 );
-		wxWavpackContext ctx( 
+		wxWavpackContext ctx(
 			WavpackOpenFileInputEx(
 				wavpackStream.GetStream(),
 				&wavpackStream, NULL,
 				errBuffer,
 				OPEN_TAGS,
 				0
-			)
-		);
+				)
+			);
 
 		if ( !ctx )
 		{
 			wxString sErr( wxString::FromUTF8( errBuffer ) );
-			wxLogError( _("Fail to open (using WavpackOpenFileInputEx) Wavpack file %s. Error message: %s"), sWavpackFile, sErr );
+			wxLogError( _( "Fail to open (using WavpackOpenFileInputEx) Wavpack file %s. Error message: %s" ), sWavpackFile, sErr );
 			return false;
 		}
 
-		nSize = ctx.GetTagItem( wxT("CUESHEET"), valueBuffer );
+		nSize = ctx.GetTagItem( wxT( "CUESHEET" ), valueBuffer );
 	} // Wavpack file closed here
 
 	if ( nSize > 0 )
 	{
-		wxStringTokenizer valueTokenizer( 
+		wxStringTokenizer valueTokenizer(
 			wxString::FromUTF8( valueBuffer, nSize ),
-			wxT('\0'),
+			wxT( '\0' ),
 			wxTOKEN_DEFAULT );
 		if ( valueTokenizer.HasMoreTokens() )
 		{
@@ -142,13 +141,13 @@ bool wxWavpackTagReader::ReadCueSheetTag( const wxString& sWavpackFile, wxString
 		}
 		else
 		{
-			wxLogWarning( _("Invalid CUESHEET tag in Wavpack file %s"), sWavpackFile );
+			wxLogWarning( _( "Invalid CUESHEET tag in Wavpack file %s" ), sWavpackFile );
 			return false;
 		}
 	}
 	else
 	{
-		wxLogWarning( _("There's no CUESHEET tag in Wavpack file %s"), sWavpackFile );
+		wxLogWarning( _( "There's no CUESHEET tag in Wavpack file %s" ), sWavpackFile );
 		return false;
 	}
 }
@@ -158,7 +157,7 @@ bool wxWavpackTagReader::ReadTags( const wxString& sWavpackFile, wxArrayCueTag& 
 	wxFileInputStream is( sWavpackFile );
 	if ( !is.IsOk() )
 	{
-		wxLogError( _("Fail to open Wavpack file %s."), sWavpackFile );
+		wxLogError( _( "Fail to open Wavpack file %s." ), sWavpackFile );
 		return false;
 	}
 
@@ -168,18 +167,18 @@ bool wxWavpackTagReader::ReadTags( const wxString& sWavpackFile, wxArrayCueTag& 
 	wxWritableCharBuffer errBuffer;
 	errBuffer.extend( 80 );
 	wxWavpackContext ctx( WavpackOpenFileInputEx(
-			wavpackStream.GetStream(),
-			&wavpackStream, NULL,
-			errBuffer,
-			OPEN_TAGS,
-			0
-		)
-	);
+							  wavpackStream.GetStream(),
+							  &wavpackStream, NULL,
+							  errBuffer,
+							  OPEN_TAGS,
+							  0
+							  )
+						  );
 
 	if ( !ctx )
 	{
 		wxString sErr( wxString::FromUTF8( errBuffer ) );
-		wxLogError( _("Fail to open (using WavpackOpenFileInputEx) Wavpack file %s. Error message: %s"), sWavpackFile, sErr );
+		wxLogError( _( "Fail to open (using WavpackOpenFileInputEx) Wavpack file %s. Error message: %s" ), sWavpackFile, sErr );
 		return false;
 	}
 
@@ -190,14 +189,14 @@ bool wxWavpackTagReader::ReadTags( const wxString& sWavpackFile, wxArrayCueTag& 
 	wxString sItem;
 	wxString sValue;
 
-	for( int i=0; i<nItems; i++ )
+	for ( int i = 0 ; i < nItems ; i++ )
 	{
 		size_t nSize = ctx.GetTagItemIndexed( i, itemBuffer, valueBuffer, sItem, sValue );
 		wxASSERT( nSize > 0 );
 
-		wxStringTokenizer valueTokenizer( 
+		wxStringTokenizer valueTokenizer(
 			sValue,
-			wxT('\0'),
+			wxT( '\0' ),
 			wxTOKEN_DEFAULT );
 
 		while ( valueTokenizer.HasMoreTokens() )

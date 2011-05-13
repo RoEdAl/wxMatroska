@@ -1,6 +1,6 @@
 /*
-	wxInputFile.h
-*/
+   wxInputFile.h
+ */
 
 #ifndef _WX_INPUT_FILE_H_
 #define _WX_INPUT_FILE_H_
@@ -11,9 +11,9 @@
 
 WX_DECLARE_OBJARRAY( wxFileName, wxArrayFileName );
 
-class wxInputFile :public wxObject
+class wxInputFile:public wxObject
 {
-	wxDECLARE_DYNAMIC_CLASS(wxInputFile);
+	wxDECLARE_DYNAMIC_CLASS( wxInputFile );
 
 protected:
 
@@ -28,12 +28,12 @@ public:
 
 	static const wxChar SEPARATOR;
 
-	wxInputFile(void);
-	wxInputFile(const wxInputFile&);
-	wxInputFile(const wxString&);
+	wxInputFile( void );
+	wxInputFile( const wxInputFile& );
+	wxInputFile( const wxString& );
 	wxInputFile& operator=( const wxInputFile& );
 
-	virtual ~wxInputFile(void);
+	virtual ~wxInputFile( void );
 
 	bool IsOk() const;
 	const wxFileName& GetInputFile() const;
@@ -46,6 +46,5 @@ public:
 
 	wxString ToString( bool = false ) const;
 };
-
 
 #endif

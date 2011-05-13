@@ -1,17 +1,17 @@
 /*
-	wxTrailingSpacesRemover.h
-*/
+   wxTrailingSpacesRemover.h
+ */
 
 #ifndef _WX_TRAILING_SPACES_REMOVER_H_
 #define _WX_TRAILING_SPACES_REMOVER_H_
 
-class wxTrailingSpacesRemover :public wxObject
+class wxTrailingSpacesRemover:public wxObject
 {
 public:
 
 	static const wxChar REG_EX[];
 
-	wxTrailingSpacesRemover(void);
+	wxTrailingSpacesRemover( void );
 
 	wxString Remove( const wxString& ) const;
 	bool RemoveEx( const wxString&, wxString& ) const;
@@ -21,7 +21,6 @@ public:
 protected:
 
 	wxRegEx m_reTrailingSpaces;
-
 };
 
 #endif

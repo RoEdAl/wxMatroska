@@ -1,13 +1,13 @@
 /*
-	wxMediaInfo.h
-*/
+   wxMediaInfo.h
+ */
 
 #ifndef _WX_MEDIA_INFO_H
 #define _WX_MEDIA_INFO_H
 
-class wxMediaInfo :public wxObject
+class wxMediaInfo:public wxObject
 {
-	wxDECLARE_ABSTRACT_CLASS(wxMediaInfo);
+	wxDECLARE_ABSTRACT_CLASS( wxMediaInfo );
 
 protected:
 
@@ -46,11 +46,11 @@ public:
 		MediaInfo_Info_Max
 	} MediaInfo_info_C;
 
-	typedef void* (__stdcall *MEDIAINFO_New)();
-	typedef void (__stdcall *MEDIAINFO_Delete)(void*);
-	typedef size_t (__stdcall *MEDIAINFO_Open)(void*, const wxChar*);
-	typedef void (__stdcall *MEDIAINFO_Close)(void*);
-	typedef const wxChar* (__stdcall *MEDIAINFO_Get)(void*, MediaInfo_stream_C StreamKind, size_t StreamNumber, const wxChar* Parameter, MediaInfo_info_C KindOfInfo, MediaInfo_info_C KindOfSearch);
+	typedef void* ( __stdcall * MEDIAINFO_New )();
+	typedef void ( __stdcall * MEDIAINFO_Delete )( void* );
+	typedef size_t ( __stdcall * MEDIAINFO_Open )( void*, const wxChar* );
+	typedef void ( __stdcall * MEDIAINFO_Close )( void* );
+	typedef const wxChar* ( __stdcall * MEDIAINFO_Get )( void*, MediaInfo_stream_C StreamKind, size_t StreamNumber, const wxChar* Parameter, MediaInfo_info_C KindOfInfo, MediaInfo_info_C KindOfSearch );
 
 protected:
 
@@ -72,7 +72,7 @@ public:
 
 public:
 
-	wxMediaInfo(void);
+	wxMediaInfo( void );
 
 	bool Load();
 	bool IsLoaded() const;

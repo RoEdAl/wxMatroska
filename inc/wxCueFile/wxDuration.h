@@ -1,6 +1,6 @@
 /*
-	wxDuration.h
-*/
+   wxDuration.h
+ */
 
 #ifndef _WX_DURATION_H_
 #define _WX_DURATION_H_
@@ -13,9 +13,9 @@
 #include "wxIndex.h"
 #endif
 
-class wxDuration :public wxObject
+class wxDuration:public wxObject
 {
-	wxDECLARE_DYNAMIC_CLASS(wxCueSheet);
+	wxDECLARE_DYNAMIC_CLASS( wxCueSheet );
 
 protected:
 
@@ -30,7 +30,7 @@ public:
 
 	wxDuration& operator=( const wxDuration& );
 
-	wxDuration& Assign( const wxSamplingInfo&, wxULongLong );
+	wxDuration& Assign( const wxSamplingInfo &, wxULongLong );
 
 	const wxSamplingInfo& GetSamplingInfo() const;
 	const wxULongLong& GetNumberOfSamples() const;
@@ -49,26 +49,26 @@ protected:
 
 class wxAbstractDurationHolder
 {
-	public:
+public:
 
-	virtual bool HasDuration() const = 0;
+	virtual bool HasDuration() const	   = 0;
 	virtual wxDuration GetDuration() const = 0;
 };
 
-class wxDurationHolder :public wxAbstractDurationHolder
+class wxDurationHolder:public wxAbstractDurationHolder
 {
-	protected:
+protected:
 
-	wxScopedPtr<wxDuration> m_pDuration;
+	wxScopedPtr< wxDuration > m_pDuration;
 
-	public:
+public:
 
 	wxDurationHolder();
 
 	virtual bool HasDuration() const;
 	virtual wxDuration GetDuration() const;
 
-	protected:
+protected:
 
 	void SetDuration( const wxDuration& );
 	void ClearDuration();

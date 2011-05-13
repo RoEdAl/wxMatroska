@@ -1,6 +1,6 @@
 /*
-	StdWx.h
-*/
+        StdWx.h
+ */
 
 #ifndef _STD_WX_H
 #define _STD_WX_H
@@ -9,7 +9,6 @@
 #include <targetver.h>
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 #endif
-
 
 #include <wx/wx.h>
 #include <wx/defs.h>

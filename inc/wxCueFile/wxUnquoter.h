@@ -1,13 +1,13 @@
 /*
-	wxUnquoter.h
-*/
+   wxUnquoter.h
+ */
 
 #ifndef _WX_UNQUOTER_H_
 #define _WX_UNQUOTER_H_
 
-class wxUnquoter :public wxObject
+class wxUnquoter:public wxObject
 {
-	wxDECLARE_DYNAMIC_CLASS(wxUnquoter);
+	wxDECLARE_DYNAMIC_CLASS( wxUnquoter );
 
 protected:
 
@@ -43,7 +43,7 @@ public:
 
 public:
 
-	wxUnquoter(void);
+	wxUnquoter( void );
 
 	void SetLang( const wxString& );
 

@@ -1,6 +1,6 @@
 /*
-	StdWx.h
-*/
+   StdWx.h
+ */
 
 #ifndef _STD_WX_H
 #define _STD_WX_H

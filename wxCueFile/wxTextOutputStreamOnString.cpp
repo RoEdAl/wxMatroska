@@ -1,6 +1,6 @@
 /*
-	wxTextOutputStreamOnString.cpp
-*/
+   wxTextOutputStreamOnString.cpp
+ */
 
 #include "StdWx.h"
 #include <wxCueFile/wxTextOutputStreamOnString.h>
@@ -8,16 +8,14 @@
 #include "wxTextInputStreamOnString.h"
 
 wxTextOutputStreamOnString::wxTextOutputStreamOnString()
-	:m_outputStream( (wxString*)NULL, m_conv ),
-	 m_textOutputStream( m_outputStream, wxEOL_UNIX, m_conv )
-{
-}
+	:m_outputStream( ( wxString* )NULL, m_conv ),
+	m_textOutputStream( m_outputStream, wxEOL_UNIX, m_conv )
+{}
 
 wxTextOutputStreamOnString::wxTextOutputStreamOnString( wxString& s )
 	:m_outputStream( &s, m_conv ),
-	 m_textOutputStream( m_outputStream, wxEOL_UNIX, m_conv )
-{
-}
+	m_textOutputStream( m_outputStream, wxEOL_UNIX, m_conv )
+{}
 
 const wxString& wxTextOutputStreamOnString::GetString() const
 {
@@ -34,7 +32,7 @@ wxTextOutputStream& wxTextOutputStreamOnString::GetStream()
 	return m_textOutputStream;
 }
 
-wxTextOutputStream& wxTextOutputStreamOnString::operator *()
+wxTextOutputStream& wxTextOutputStreamOnString::operator*()
 {
 	return m_textOutputStream;
 }
@@ -44,7 +42,7 @@ bool wxTextOutputStreamOnString::SaveTo( const wxString& sOutputFile, bool bUseM
 	wxFileOutputStream os( sOutputFile );
 	if ( os.IsOk() )
 	{
-		wxSharedPtr<wxTextOutputStream> pStream( wxTextOutputStreamWithBOMFactory::CreateUTF8( os, wxEOL_NATIVE, true, bUseMLang ) );
+		wxSharedPtr< wxTextOutputStream > pStream( wxTextOutputStreamWithBOMFactory::CreateUTF8( os, wxEOL_NATIVE, true, bUseMLang ) );
 		pStream->WriteString( GetString() );
 		pStream->Flush();
 		return true;

@@ -1,6 +1,6 @@
 /*
-	wxApp.h
-*/
+   wxApp.h
+ */
 
 #ifndef _WX_MY_APP_H_
 #define _WX_MY_APP_H_
@@ -29,15 +29,14 @@ class wxXmlCueSheetRenderer;
 class wxMkvmergeOptsRenderer;
 #endif
 
-class wxMyApp :public wxAppConsole
+class wxMyApp:public wxAppConsole
 {
-
 protected:
 
 	wxConfiguration m_cfg;
 	wxString m_sSeparator;
-	wxScopedPtr<wxMkvmergeOptsRenderer> m_pMkvmergeOptsRenderer;
-	wxScopedPtr<wxCueSheet> m_pMergedCueSheet;
+	wxScopedPtr< wxMkvmergeOptsRenderer > m_pMkvmergeOptsRenderer;
+	wxScopedPtr< wxCueSheet > m_pMergedCueSheet;
 
 protected:
 
@@ -53,7 +52,7 @@ protected:
 	static bool CheckLicense();
 	static void ShowLicense();
 
-	wxSharedPtr<wxXmlCueSheetRenderer> GetXmlRenderer( const wxInputFile& );
+	wxSharedPtr< wxXmlCueSheetRenderer > GetXmlRenderer( const wxInputFile& );
 	wxMkvmergeOptsRenderer& GetMkvmergeOptsRenderer( bool = true );
 	wxCueSheet& GetMergedCueSheet();
 
@@ -65,7 +64,7 @@ protected:
 protected:
 
 	virtual bool OnInit();
-	virtual void OnInitCmdLine(	wxCmdLineParser& );
+	virtual void OnInitCmdLine(     wxCmdLineParser& );
 	virtual bool OnCmdLineParsed( wxCmdLineParser& );
 	virtual int OnRun();
 	virtual int OnExit();
@@ -82,9 +81,9 @@ public:
 
 public:
 
-	wxMyApp(void);
+	wxMyApp( void );
 };
 
-wxDECLARE_APP(wxMyApp);
+wxDECLARE_APP( wxMyApp );
 
 #endif

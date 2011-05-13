@@ -1,12 +1,12 @@
 /*
-	wxEllipsizer.cpp
-*/
+   wxEllipsizer.cpp
+ */
 
 #include "StdWx.h"
 #include <wxCueFile/wxEllipsizer.h>
 
-const wxChar wxEllipsizer::REG_EX[] = wxT("([[:space:]]*\\.\\.\\.)[[:space:]]*\\Z");
-const wxChar wxEllipsizer::ELLIPSIS = wxT('\u2026');
+const wxChar wxEllipsizer::REG_EX[] = wxT( "([[:space:]]*\\.\\.\\.)[[:space:]]*\\Z" );
+const wxChar wxEllipsizer::ELLIPSIS = wxT( '\u2026' );
 
 wxEllipsizer::wxEllipsizer()
 	:m_reEllipsis( REG_EX, wxRE_ADVANCED )
@@ -33,4 +33,3 @@ wxString wxEllipsizer::Ellipsize( const wxString& sIn ) const
 		return sIn;
 	}
 }
-

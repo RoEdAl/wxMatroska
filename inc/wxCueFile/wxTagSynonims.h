@@ -1,6 +1,6 @@
 /*
-	wxTagSynonims.h
-*/
+   wxTagSynonims.h
+ */
 
 #ifndef _WX_TAG_SYNONIMS_H_
 #define _WX_TAG_SYNONIMS_H_
@@ -9,9 +9,9 @@
 class wxCueTag;
 #endif
 
-class wxTagSynonims :public wxObject
+class wxTagSynonims:public wxObject
 {
-	wxDECLARE_DYNAMIC_CLASS(wxTagSynonims);
+	wxDECLARE_DYNAMIC_CLASS( wxTagSynonims );
 
 protected:
 
@@ -24,8 +24,8 @@ protected:
 
 public:
 
-	wxTagSynonims(void);
-	wxTagSynonims(const wxString&, const wxArrayString& );
+	wxTagSynonims( void );
+	wxTagSynonims( const wxString&, const wxArrayString& );
 	wxTagSynonims( const wxTagSynonims& );
 	wxTagSynonims& operator=( const wxTagSynonims& );
 
@@ -38,21 +38,20 @@ public:
 	wxTagSynonims& SetSynonims( const wxArrayString& );
 };
 
-WX_DECLARE_OBJARRAY(wxTagSynonims, _wxArrayTagSynonims );
+WX_DECLARE_OBJARRAY( wxTagSynonims, _wxArrayTagSynonims );
 
-class wxTagSynonimsCollection :public _wxArrayTagSynonims
+class wxTagSynonimsCollection:public _wxArrayTagSynonims
 {
-	public:
+public:
 
-	wxTagSynonimsCollection(void);
+	wxTagSynonimsCollection( void );
 	wxTagSynonimsCollection( const wxTagSynonimsCollection& );
 	wxTagSynonimsCollection& operator=( const wxTagSynonimsCollection& );
 
-	public:
+public:
 
 	bool GetName( const wxString&, wxString& ) const;
 	bool GetName( const wxCueTag&, wxCueTag& ) const;
-
 };
 
 #endif

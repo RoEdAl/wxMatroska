@@ -1,6 +1,6 @@
 /*
-	wxTagSynonims.cpp
-*/
+   wxTagSynonims.cpp
+ */
 
 #include "StdWx.h"
 #include <wxCueFile/wxTagSynonims.h>
@@ -8,9 +8,8 @@
 
 IMPLEMENT_DYNAMIC_CLASS( wxTagSynonims, wxObject )
 
-wxTagSynonims::wxTagSynonims(void)
-{
-}
+wxTagSynonims::wxTagSynonims( void )
+{}
 
 wxTagSynonims::wxTagSynonims( const wxString& sName, const wxArrayString& asSynonims )
 	:m_sName( sName ), m_asSynonims( asSynonims )
@@ -18,31 +17,31 @@ wxTagSynonims::wxTagSynonims( const wxString& sName, const wxArrayString& asSyno
 	wxASSERT( !sName.IsEmpty() );
 }
 
-wxTagSynonims::wxTagSynonims(const wxTagSynonims& synonims)
+wxTagSynonims::wxTagSynonims( const wxTagSynonims& synonims )
 {
 	copy( synonims );
 }
 
-wxTagSynonims& wxTagSynonims::operator =(const wxTagSynonims& synonims)
+wxTagSynonims& wxTagSynonims::operator=( const wxTagSynonims& synonims )
 {
 	copy( synonims );
 	return *this;
 }
 
-void wxTagSynonims::copy(const wxTagSynonims& synonims)
+void wxTagSynonims::copy( const wxTagSynonims& synonims )
 {
-	m_sName = synonims.m_sName;
+	m_sName		 = synonims.m_sName;
 	m_asSynonims = synonims.m_asSynonims;
 }
 
-wxTagSynonims& wxTagSynonims::SetName(const wxString& sName)
+wxTagSynonims& wxTagSynonims::SetName( const wxString& sName )
 {
 	wxASSERT( !sName.IsEmpty() );
 	m_sName = sName;
 	return *this;
 }
 
-wxTagSynonims& wxTagSynonims::SetSynonims(const wxArrayString& synonims)
+wxTagSynonims& wxTagSynonims::SetSynonims( const wxArrayString& synonims )
 {
 	m_asSynonims = synonims;
 	return *this;
@@ -58,7 +57,7 @@ const wxArrayString& wxTagSynonims::GetSynonims() const
 	return m_asSynonims;
 }
 
-bool wxTagSynonims::GetName(const wxString& sSynonim, wxString& sName) const
+bool wxTagSynonims::GetName( const wxString& sSynonim, wxString& sName ) const
 {
 	if ( m_sName.CmpNoCase( sSynonim ) == 0 )
 	{
@@ -67,11 +66,11 @@ bool wxTagSynonims::GetName(const wxString& sSynonim, wxString& sName) const
 	}
 
 	size_t nSynonims = m_asSynonims.GetCount();
-	for( size_t i=0; i<nSynonims; i++ )
+	for ( size_t i = 0 ; i < nSynonims ; i++ )
 	{
-		if ( m_asSynonims[i].CmpNoCase( sSynonim ) == 0 )
+		if ( m_asSynonims[ i ].CmpNoCase( sSynonim ) == 0 )
 		{
-			sName = m_asSynonims[i];
+			sName = m_asSynonims[ i ];
 			return true;
 		}
 	}
@@ -80,7 +79,7 @@ bool wxTagSynonims::GetName(const wxString& sSynonim, wxString& sName) const
 	return false;
 }
 
-bool wxTagSynonims::GetName(const wxCueTag& synonim, wxCueTag& cueTag) const
+bool wxTagSynonims::GetName( const wxCueTag& synonim, wxCueTag& cueTag ) const
 {
 	if ( m_sName.CmpNoCase( synonim.GetName() ) == 0 )
 	{
@@ -91,9 +90,9 @@ bool wxTagSynonims::GetName(const wxCueTag& synonim, wxCueTag& cueTag) const
 	}
 
 	size_t nSynonims = m_asSynonims.GetCount();
-	for( size_t i=0; i<nSynonims; i++ )
+	for ( size_t i = 0 ; i < nSynonims ; i++ )
 	{
-		if ( m_asSynonims[i].CmpNoCase( synonim.GetName() ) == 0 )
+		if ( m_asSynonims[ i ].CmpNoCase( synonim.GetName() ) == 0 )
 		{
 			cueTag.SetSource( synonim.GetSource() );
 			cueTag.SetName( m_sName );
@@ -108,27 +107,25 @@ bool wxTagSynonims::GetName(const wxCueTag& synonim, wxCueTag& cueTag) const
 
 // =================================================================================
 
-wxTagSynonimsCollection::wxTagSynonimsCollection(void)
-{
-}
+wxTagSynonimsCollection::wxTagSynonimsCollection( void )
+{}
 
 wxTagSynonimsCollection::wxTagSynonimsCollection( const wxTagSynonimsCollection& src )
 	:_wxArrayTagSynonims( src )
-{
-}
+{}
 
-wxTagSynonimsCollection& wxTagSynonimsCollection::operator =(const wxTagSynonimsCollection& src)
+wxTagSynonimsCollection& wxTagSynonimsCollection::operator=( const wxTagSynonimsCollection& src )
 {
-	_wxArrayTagSynonims::operator =(src);
+	_wxArrayTagSynonims::operator=( src );
 	return *this;
 }
 
-bool wxTagSynonimsCollection::GetName(const wxString& sSynonim, wxString& sName) const
+bool wxTagSynonimsCollection::GetName( const wxString& sSynonim, wxString& sName ) const
 {
 	size_t nSynonims = GetCount();
-	for( size_t i=0; i<nSynonims; i++ )
+	for ( size_t i = 0 ; i < nSynonims ; i++ )
 	{
-		if ( Item(i).GetName( sSynonim, sName ) )
+		if ( Item( i ).GetName( sSynonim, sName ) )
 		{
 			return true;
 		}
@@ -138,16 +135,17 @@ bool wxTagSynonimsCollection::GetName(const wxString& sSynonim, wxString& sName)
 	return false;
 }
 
-bool wxTagSynonimsCollection::GetName(const wxCueTag& synonim, wxCueTag& cueTag ) const
+bool wxTagSynonimsCollection::GetName( const wxCueTag& synonim, wxCueTag& cueTag ) const
 {
 	size_t nSynonims = GetCount();
-	for( size_t i=0; i<nSynonims; i++ )
+	for ( size_t i = 0 ; i < nSynonims ; i++ )
 	{
-		if ( Item(i).GetName( synonim, cueTag ) )
+		if ( Item( i ).GetName( synonim, cueTag ) )
 		{
 			return true;
 		}
 	}
+
 	cueTag = synonim;
 	return false;
 }

@@ -1,6 +1,6 @@
 /*
-	wxFlacMetaDataReader.h
-*/
+   wxFlacMetaDataReader.h
+ */
 
 #ifndef _WX_FLAC_META_DATA_READER_H_
 #define _WX_FLAC_META_DATA_READER_H_
@@ -17,34 +17,34 @@
 class wxArrayCueTag;
 #endif
 
-class wxFlacMetaDataReader :protected wxAbstractMetaDataReader
+class wxFlacMetaDataReader:protected wxAbstractMetaDataReader
 {
+protected:
+
+	class FlacDecoder:public wxFlacDecoder
+	{
+public:
+
+		FlacDecoder( wxInputStream& inputStream, wxOutputStream& outputStream, wxFlacMetaDataReader& fmtr )
+			:wxFlacDecoder( inputStream, outputStream ), m_fmtr( fmtr )
+		{}
 
 protected:
 
-	class FlacDecoder :public wxFlacDecoder
-	{
-		public:
-		FlacDecoder(wxInputStream& inputStream, wxOutputStream& outputStream, wxFlacMetaDataReader& fmtr )
-			:wxFlacDecoder( inputStream, outputStream ), m_fmtr(fmtr)
-		{}
-				
-		protected:
-
-		virtual void metadata_callback(const ::FLAC__StreamMetadata* metadata )
+		virtual void metadata_callback( const::FLAC__StreamMetadata* metadata )
 		{
 			m_fmtr.metadata_callback( metadata );
 		}
 
-		protected:
+protected:
 
 		wxFlacMetaDataReader& m_fmtr;
-
 	};
 
 protected:
 
-	void metadata_callback(const ::FLAC__StreamMetadata* );
+	void metadata_callback( const::FLAC__StreamMetadata* );
+
 	FLAC::Metadata::VorbisComment* m_pVorbisComment;
 	FLAC::Metadata::CueSheet* m_pCueSheet;
 	FLAC::Metadata::StreamInfo* m_pStreamInfo;
@@ -52,8 +52,8 @@ protected:
 
 public:
 
-	wxFlacMetaDataReader(void);
-	~wxFlacMetaDataReader(void);
+	wxFlacMetaDataReader( void );
+	~wxFlacMetaDataReader( void );
 
 	bool ReadMetadata( const wxString& );
 

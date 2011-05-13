@@ -1,6 +1,6 @@
 /*
-	wxCueSheet.h
-*/
+   wxCueSheet.h
+ */
 
 #ifndef _WX_CUE_SHEET_H_
 #define _WX_CUE_SHEET_H_
@@ -17,9 +17,9 @@
 #include "wxCueComponent.h"
 #endif
 
-class wxCueSheet :public wxCueComponent, public wxAbstractDurationHolder
+class wxCueSheet:public wxCueComponent, public wxAbstractDurationHolder
 {
-	wxDECLARE_DYNAMIC_CLASS(wxCueSheet);
+	wxDECLARE_DYNAMIC_CLASS( wxCueSheet );
 
 protected:
 
@@ -34,8 +34,8 @@ protected:
 
 public:
 
-	wxCueSheet(void);
-	wxCueSheet(const wxCueSheet&);
+	wxCueSheet( void );
+	wxCueSheet( const wxCueSheet& );
 	wxCueSheet& operator=( const wxCueSheet& );
 	bool Append( const wxCueSheet& );
 
@@ -47,7 +47,7 @@ public:
 	wxCueSheet& SetSingleDataFile( const wxDataFile& );
 	wxCueSheet& SetDataFiles( const wxArrayDataFile& );
 
-	bool IsLastTrackForDataFile( size_t, wxDataFile& ) const;
+	bool IsLastTrackForDataFile( size_t, wxDataFile & ) const;
 
 public:
 
@@ -63,6 +63,7 @@ public:
 	wxTrack& GetLastTrack();
 	bool HasTrack( unsigned long ) const;
 	wxTrack& GetTrackByNumber( unsigned long );
+
 	const wxTrack& GetTrack( size_t ) const;
 	const wxTrack& GetLastTrack() const;
 	wxCueSheet& AddTrack( const wxTrack& );
@@ -71,10 +72,11 @@ public:
 	wxCueSheet& AddCatalog( const wxString& );
 	wxCueSheet& AddCdTextFile( const wxString& );
 
-	void Clear(void);
+	void Clear( void );
 
 	wxString Format( const wxString& ) const;
-	wxString FormatTrack( size_t, const wxString& ) const;
+
+	wxString FormatTrack( size_t, const wxString & ) const;
 };
 
 #endif // _WX_CUE_SHEET_H_

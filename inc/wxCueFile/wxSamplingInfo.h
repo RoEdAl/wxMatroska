@@ -1,6 +1,6 @@
 /*
-	wxSamplingInfo.h
-*/
+   wxSamplingInfo.h
+ */
 
 #ifndef _WX_SAMPLING_INFO_H_
 #define _WX_SAMPLING_INFO_H_
@@ -9,16 +9,16 @@
 #include "wxIndex.h"
 #endif
 
-class wxSamplingInfo :public wxObject
+class wxSamplingInfo:public wxObject
 {
-	wxDECLARE_DYNAMIC_CLASS(wxSamplingInfo);
+	wxDECLARE_DYNAMIC_CLASS( wxSamplingInfo );
 
 public:
 
 	static const wxTimeSpan wxInvalidDuration;
 	static const wxUint64 wxInvalidNumberOfFrames;
 
-	wxSamplingInfo(void);
+	wxSamplingInfo( void );
 	wxSamplingInfo( const wxSamplingInfo& );
 	wxSamplingInfo( unsigned long, unsigned short, unsigned short );
 	wxSamplingInfo( const FLAC::Metadata::StreamInfo& );
@@ -41,9 +41,10 @@ public:
 	wxSamplingInfo& SetDefault();
 
 	wxULongLong GetNumberOfFramesFromBytes( const wxULongLong& ) const;
+
 	wxTimeSpan GetDuration( wxULongLong );
 
-	void GetNumberOfCdFrames( wxULongLong, wxULongLong&, wxUint32& ) const;
+	void GetNumberOfCdFrames( wxULongLong, wxULongLong &, wxUint32 & ) const;
 	wxULongLong GetNumberOfCdFrames( wxULongLong ) const;
 
 	wxString GetSamplesStr( wxULongLong ) const;
@@ -52,7 +53,8 @@ public:
 	wxULongLong GetFramesFromCdFrames( wxULongLong ) const;
 	wxULongLong GetIndexOffset( const wxIndex& ) const;
 	wxIndex ConvertIndex( const wxIndex& ) const;
-	wxIndex ConvertIndex( const wxIndex&, wxULongLong, bool ) const;
+
+	wxIndex ConvertIndex( const wxIndex &, wxULongLong, bool ) const;
 	wxString GetIndexOffsetStr( const wxIndex& ) const;
 	wxString GetIndexOffsetFramesStr( const wxIndex& ) const;
 
@@ -67,7 +69,6 @@ protected:
 protected:
 
 	void copy( const wxSamplingInfo& );
-
 };
 
 #endif

@@ -1,6 +1,6 @@
 /*
-	wxTrack.cpp
-*/
+   wxTrack.cpp
+ */
 
 #include "StdWx.h"
 #include <wxCueFile/wxDataFile.h>
@@ -11,64 +11,64 @@
 
 wxIMPLEMENT_DYNAMIC_CLASS( wxTrack, wxCueComponent )
 
-wxTrack::FLAG_STR wxTrack::FlagString[] = {
-	{ DCP, wxT("DCP") },
-	{ CH4, wxT("CH4") },
-	{ PRE, wxT("PRE") },
-	{ SCMS, wxT("SCMS") },
-	{ DATA, wxT("DATA") },
-	{ NONE, wxT("NONE") }
+wxTrack::FLAG_STR wxTrack::FlagString[] =
+{
+	{ DCP, wxT( "DCP" ) },
+	{ CH4, wxT( "CH4" ) },
+	{ PRE, wxT( "PRE" ) },
+	{ SCMS, wxT( "SCMS" ) },
+	{ DATA, wxT( "DATA" ) },
+	{ NONE, wxT( "NONE" ) }
 };
 
-size_t wxTrack::FlagStringSize = WXSIZEOF(wxTrack::FlagString);
+size_t wxTrack::FlagStringSize = WXSIZEOF( wxTrack::FlagString );
 
-wxTrack::DATA_MODE_STR wxTrack::DataModeString[] = {
-	{ AUDIO,			wxT("AUDIO") },
-	{ CDG,				wxT("CDG") },
-	{ MODE1_2048,		wxT("MODE1/2048") },
-	{ MODE1_2352,		wxT("MODE1/2352") },
-	{ MODE2_2336,		wxT("MODE2/2336") },
-	{ MODE2_2352,		wxT("MODE2/2352") },
-	{ CDI_2336,			wxT("CDI/2336") },
-	{ CDI_2352,			wxT("CDI/2352") }
+wxTrack::DATA_MODE_STR wxTrack::DataModeString[] =
+{
+	{ AUDIO, wxT( "AUDIO" ) },
+	{ CDG, wxT( "CDG" ) },
+	{ MODE1_2048, wxT( "MODE1/2048" ) },
+	{ MODE1_2352, wxT( "MODE1/2352" ) },
+	{ MODE2_2336, wxT( "MODE2/2336" ) },
+	{ MODE2_2352, wxT( "MODE2/2352" ) },
+	{ CDI_2336, wxT( "CDI/2336" ) },
+	{ CDI_2352, wxT( "CDI/2352" ) }
 };
 
-size_t wxTrack::DataModeStringSize = WXSIZEOF(wxTrack::DataModeString);
+size_t wxTrack::DataModeStringSize = WXSIZEOF( wxTrack::DataModeString );
 
-wxTrack::wxTrack(void)
-	:wxCueComponent(true),m_number(0)
+wxTrack::wxTrack( void )
+	:wxCueComponent( true ), m_number( 0 )
+{}
+
+wxTrack::wxTrack( const wxTrack& track )
+	:wxCueComponent( true ), m_dataMode( AUDIO )
 {
+	copy( track );
 }
 
-wxTrack::wxTrack(const wxTrack& track)
-	:wxCueComponent(true),m_dataMode(AUDIO)
-{
-	copy(track);
-}
+wxTrack::wxTrack( unsigned long number )
+	:wxCueComponent( true ), m_number( number ), m_dataMode( AUDIO )
+{}
 
-wxTrack::wxTrack(unsigned long number)
-	:wxCueComponent(true),m_number(number),m_dataMode(AUDIO)
-{
-}
-
-wxTrack& wxTrack::operator =(const wxTrack& track)
+wxTrack& wxTrack::operator=( const wxTrack& track )
 {
 	copy( track );
 	return *this;
 }
 
-void wxTrack::copy(const wxTrack& track)
+void wxTrack::copy( const wxTrack& track )
 {
 	wxCueComponent::copy( track );
 
 	ClearPreGap();
 	ClearPostGap();
 
-	m_number = track.m_number;
+	m_number   = track.m_number;
 	m_dataMode = track.m_dataMode;
-	m_indexes = track.m_indexes;
-	m_flags = track.m_flags;
-	m_df = track.m_df;
+	m_indexes  = track.m_indexes;
+	m_flags	   = track.m_flags;
+	m_df	   = track.m_df;
 
 	if ( track.HasPreGap() )
 	{
@@ -102,7 +102,7 @@ wxString wxTrack::GetModeAsString() const
 	return DataModeToString( m_dataMode );
 }
 
-wxTrack& wxTrack::SetMode(wxTrack::DataMode dataMode)
+wxTrack& wxTrack::SetMode( wxTrack::DataMode dataMode )
 {
 	m_dataMode = dataMode;
 	return *this;
@@ -113,7 +113,7 @@ const wxArrayIndex& wxTrack::GetIndexes() const
 	return m_indexes;
 }
 
-void wxTrack::AddIndex(const wxIndex& idx)
+void wxTrack::AddIndex( const wxIndex& idx )
 {
 	m_indexes.Add( idx );
 }
@@ -136,7 +136,7 @@ const wxIndex& wxTrack::GetPreGap() const
 	}
 	else
 	{
-		wxFAIL_MSG( wxT("Trying to access nonexistient pre-gap") );
+		wxFAIL_MSG( wxT( "Trying to access nonexistient pre-gap" ) );
 		return *m_pPreGap; // to make compiler happy
 	}
 }
@@ -149,7 +149,7 @@ const wxIndex& wxTrack::GetPostGap() const
 	}
 	else
 	{
-		wxFAIL_MSG( wxT("Trying to access nonexistient post-gap") );
+		wxFAIL_MSG( wxT( "Trying to access nonexistient post-gap" ) );
 		return *m_pPostGap; // to make compiler happy
 	}
 }
@@ -164,12 +164,12 @@ void wxTrack::ClearPostGap()
 	m_pPostGap.reset();
 }
 
-void wxTrack::SetPreGap(const wxIndex& preGap)
+void wxTrack::SetPreGap( const wxIndex& preGap )
 {
 	m_pPreGap.reset( new wxIndex( preGap ) );
 }
 
-void wxTrack::SetPostGap(const wxIndex& postGap)
+void wxTrack::SetPostGap( const wxIndex& postGap )
 {
 	m_pPostGap.reset( new wxIndex( postGap ) );
 }
@@ -237,26 +237,30 @@ wxString wxTrack::GetFlagsAsString() const
 {
 	wxString s;
 	size_t flags = m_flags.Count();
-	for( size_t i=0; i<flags; i++ )
+	for ( size_t i = 0 ; i < flags ; i++ )
 	{
-		s += FlagToString( m_flags[i] );
-		s += wxT(' ');
+		s += FlagToString( m_flags[ i ] );
+		s += wxT( ' ' );
 	}
+
 	s = s.RemoveLast();
 	return s;
 }
 
 bool wxTrack::HasFlags() const
 {
-	return (m_flags.Count() > 0u);
+	return ( m_flags.Count() > 0u );
 }
 
 bool wxTrack::HasFlag( wxTrack::Flag f ) const
 {
 	size_t flags = m_flags.Count();
-	for( size_t i=0; i<flags; i++ )
+	for ( size_t i = 0 ; i < flags ; i++ )
 	{
-		if ( m_flags[i] == f ) return true;
+		if ( m_flags[ i ] == f )
+		{
+			return true;
+		}
 	}
 
 	return false;
@@ -265,88 +269,94 @@ bool wxTrack::HasFlag( wxTrack::Flag f ) const
 wxString wxTrack::GetFlagRegExp()
 {
 	wxString s;
-	for( size_t i=0; i<FlagStringSize; i++ )
+	for ( size_t i = 0 ; i < FlagStringSize ; i++ )
 	{
-		s += FlagString[i].szName;
-		s += wxT('|');
+		s += FlagString[ i ].szName;
+		s += wxT( '|' );
 	}
+
 	s = s.RemoveLast();
 
 	wxString sResult;
-	sResult.Printf( wxT("(%s)"), s );
+	sResult.Printf( wxT( "(%s)" ), s );
 	return sResult;
 }
 
-wxString wxTrack::FlagToString(wxTrack::Flag flag)
+wxString wxTrack::FlagToString( wxTrack::Flag flag )
 {
 	wxString s;
-	for( size_t i=0; i<FlagStringSize; i++ )
+	for ( size_t i = 0 ; i < FlagStringSize ; i++ )
 	{
-		if ( FlagString[i].flag == flag )
+		if ( FlagString[ i ].flag == flag )
 		{
-			s = FlagString[i].szName;
+			s = FlagString[ i ].szName;
 			break;
 		}
 	}
+
 	return s;
 }
 
 bool wxTrack::StringToFlag( const wxString& s, wxTrack::Flag& flag )
 {
-	for( size_t i=0; i<FlagStringSize; i++ )
+	for ( size_t i = 0 ; i < FlagStringSize ; i++ )
 	{
-		if ( s.CmpNoCase( FlagString[i].szName ) == 0 )
+		if ( s.CmpNoCase( FlagString[ i ].szName ) == 0 )
 		{
-			flag = FlagString[i].flag;
+			flag = FlagString[ i ].flag;
 			return true;
 		}
 	}
+
 	return false;
 }
 
 wxString wxTrack::GetDataModeRegExp()
 {
 	wxString s;
-	for( size_t i=0; i<DataModeStringSize; i++ )
+	for ( size_t i = 0 ; i < DataModeStringSize ; i++ )
 	{
-		s += DataModeString[i].szName;
-		s += wxT('|');
+		s += DataModeString[ i ].szName;
+		s += wxT( '|' );
 	}
+
 	s = s.RemoveLast();
 
 	wxString sResult;
-	sResult.Printf( wxT("(%s)"), s );
+	sResult.Printf( wxT( "(%s)" ), s );
 	return sResult;
 }
 
-wxString wxTrack::DataModeToString(wxTrack::DataMode mode)
+wxString wxTrack::DataModeToString( wxTrack::DataMode mode )
 {
 	wxString s;
-	for( size_t i=0; i<DataModeStringSize; i++ )
+	for ( size_t i = 0 ; i < DataModeStringSize ; i++ )
 	{
-		if ( DataModeString[i].mode == mode )
+		if ( DataModeString[ i ].mode == mode )
 		{
-			s = DataModeString[i].szName;
+			s = DataModeString[ i ].szName;
 			break;
 		}
 	}
+
 	return s;
 }
 
 bool wxTrack::StringToDataMode( const wxString& s, wxTrack::DataMode& mode )
 {
-	for( size_t i=0; i<DataModeStringSize; i++ )
+	for ( size_t i = 0 ; i < DataModeStringSize ; i++ )
 	{
-		if ( s.CmpNoCase( DataModeString[i].szName ) == 0 )
+		if ( s.CmpNoCase( DataModeString[ i ].szName ) == 0 )
 		{
-			mode = DataModeString[i].mode;
+			mode = DataModeString[ i ].mode;
 			return true;
 		}
 	}
+
 	return false;
 }
 
-bool wxTrack::SetMode(const wxString& sMode)
+bool wxTrack::SetMode( const wxString& sMode )
 {
 	DataMode mode;
 	if ( sMode.IsEmpty() )
@@ -355,17 +365,17 @@ bool wxTrack::SetMode(const wxString& sMode)
 	}
 	else
 	{
-		if( !StringToDataMode( sMode, mode ) )
+		if ( !StringToDataMode( sMode, mode ) )
 		{
 			return false;
 		}
 	}
-	
+
 	m_dataMode = mode;
 	return true;
 }
 
-void wxTrack::SetDataFile(const wxDataFile& df)
+void wxTrack::SetDataFile( const wxDataFile& df )
 {
 	m_df = df;
 }
@@ -377,16 +387,16 @@ void wxTrack::ClearDataFile()
 
 bool wxTrack::IsValid() const
 {
-	return (m_number < 100);
+	return ( m_number < 100 );
 }
 
 int wxTrack::CompareFn( wxTrack** t1, wxTrack** t2 )
 {
-	if ( (*t1)->GetNumber() < (*t2)->GetNumber() )
+	if ( ( *t1 )->GetNumber() < ( *t2 )->GetNumber() )
 	{
 		return -1;
 	}
-	else if ( (*t1)->GetNumber() > (*t2)->GetNumber() )
+	else if ( ( *t1 )->GetNumber() > ( *t2 )->GetNumber() )
 	{
 		return 1;
 	}
@@ -405,24 +415,24 @@ wxArrayIndex& wxTrack::SortIndicies()
 const wxIndex& wxTrack::GetFirstIndex() const
 {
 	size_t idxs = m_indexes.Count();
-	for( size_t i=0; i<idxs; i++ )
+	for ( size_t i = 0 ; i < idxs ; i++ )
 	{
-		if ( m_indexes[i].GetNumber() == 1 )
+		if ( m_indexes[ i ].GetNumber() == 1 )
 		{
-			return m_indexes[i];
+			return m_indexes[ i ];
 		}
 	}
 
 	wxASSERT( false );
-	return m_indexes[0];
+	return m_indexes[ 0 ];
 }
 
 void wxTrack::GetReplacements( wxHashString& replacements ) const
 {
 	wxCueComponent::GetReplacements( replacements );
 	wxString sValue;
-	sValue.Printf( wxT("%02d"), m_number );
-	replacements[ wxT("tn") ] = sValue;
+	sValue.Printf( wxT( "%02d" ), m_number );
+	replacements[ wxT( "tn" ) ] = sValue;
 }
 
 wxTrack& wxTrack::Shift( const wxDuration& duration )
@@ -437,7 +447,7 @@ wxTrack& wxTrack::Shift( const wxDuration& duration )
 		SetPostGap( duration.ConvertIndex( *m_pPostGap, true ) );
 	}
 
-	for( size_t nCount = m_indexes.GetCount(), i=0; i < nCount; i++ )
+	for ( size_t nCount = m_indexes.GetCount(), i = 0 ; i < nCount ; i++ )
 	{
 		m_indexes[ i ] = duration.ConvertIndex( m_indexes[ i ], true );
 	}
@@ -447,4 +457,3 @@ wxTrack& wxTrack::Shift( const wxDuration& duration )
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
 WX_DEFINE_OBJARRAY( wxArrayTrack );
-

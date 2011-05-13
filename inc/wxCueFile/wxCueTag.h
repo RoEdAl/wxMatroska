@@ -1,6 +1,6 @@
 /*
-	wxCueTag.h
-*/
+   wxCueTag.h
+ */
 
 #ifndef _WX_CUE_TAG_H_
 #define _WX_CUE_TAG_H_
@@ -13,11 +13,11 @@ class wxTrailingSpacesRemover;
 class wxEllipsizer;
 #endif
 
-class wxCueTag :public wxObject
+class wxCueTag:public wxObject
 {
-	wxDECLARE_DYNAMIC_CLASS(wxCueTag);
+	wxDECLARE_DYNAMIC_CLASS( wxCueTag );
 
-	public:
+public:
 
 	typedef enum _TAG_SOURCE
 	{
@@ -30,7 +30,7 @@ class wxCueTag :public wxObject
 
 	static class Name
 	{
-		public:
+public:
 
 		static const wxChar* const CUESHEET;
 		static const wxChar* const TOTALTRACKS;
@@ -46,7 +46,7 @@ class wxCueTag :public wxObject
 		static const wxChar* const CDTEXTFILE;
 	};
 
-	public:
+public:
 
 	wxCueTag();
 	wxCueTag( const wxCueTag& );
@@ -76,13 +76,13 @@ class wxCueTag :public wxObject
 	void RemoveTrailingSpaces( const wxTrailingSpacesRemover& );
 	void Ellipsize( const wxEllipsizer& );
 
-	protected:
+protected:
 
 	TAG_SOURCE m_eSource;
 	wxString m_sName;
 	wxString m_sValue;
 
-	protected:
+protected:
 
 	typedef struct _SOURCE2TEXT
 	{
@@ -93,15 +93,15 @@ class wxCueTag :public wxObject
 	static SOURCE2TEXT SOURCE2TEXT_MAPPING[];
 	static size_t SOURCE2TEXT_MAPPING_SIZE;
 
-	public:
+public:
 
 	static wxString SourceToString( TAG_SOURCE );
 
-	protected:
+protected:
 
 	void copy( const wxCueTag& );
 };
 
-WX_DECLARE_OBJARRAY(wxCueTag, wxArrayCueTag );
+WX_DECLARE_OBJARRAY( wxCueTag, wxArrayCueTag );
 
 #endif

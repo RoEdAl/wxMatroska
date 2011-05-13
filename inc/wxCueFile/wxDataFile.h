@@ -1,6 +1,6 @@
 /*
-	wxDataFile.h
-*/
+   wxDataFile.h
+ */
 
 #ifndef _WX_DATA_FILE_H_
 #define _WX_DATA_FILE_H_
@@ -9,16 +9,16 @@
 #include "wxDuration.h"
 #endif
 
-class wxDataFile :public wxObject, public wxDurationHolder
+class wxDataFile:public wxObject, public wxDurationHolder
 {
-	wxDECLARE_DYNAMIC_CLASS(wxDataFile);
+	wxDECLARE_DYNAMIC_CLASS( wxDataFile );
 
 public:
 
 	typedef enum _FileType
-    {
-        BINARY, MOTOROLA, AIFF, WAVE, MP3
-    } FileType;
+	{
+		BINARY, MOTOROLA, AIFF, WAVE, MP3
+	} FileType;
 
 protected:
 
@@ -38,7 +38,7 @@ protected:
 
 protected:
 
-	void copy(const wxDataFile&);
+	void copy( const wxDataFile& );
 
 	static wxULongLong GetNumberOfFramesFromBinary( const wxFileName&, const wxSamplingInfo& si );
 	static bool GetFromMediaInfo( const wxFileName&, wxULongLong&, wxSamplingInfo& );
@@ -52,17 +52,18 @@ public:
 	wxString GetFileTypeAsString() const;
 
 	bool IsEmpty() const;
-	wxDataFile& Assign( const wxString&, FileType = BINARY);
-	wxDataFile& Assign( const wxFileName&, FileType = BINARY);
+
+	wxDataFile& Assign( const wxString&, FileType = BINARY );
+	wxDataFile& Assign( const wxFileName&, FileType = BINARY );
 
 public:
 
-	wxDataFile(void);
-	wxDataFile(const wxDataFile&);
-	wxDataFile(const wxString&, FileType = BINARY);
-	wxDataFile(const wxFileName&, FileType = BINARY);
+	wxDataFile( void );
+	wxDataFile( const wxDataFile& );
+	wxDataFile( const wxString&, FileType = BINARY );
+	wxDataFile( const wxFileName&, FileType = BINARY );
 
-	wxDataFile& operator=(const wxDataFile&);
+	wxDataFile& operator=( const wxDataFile& );
 	void Clear();
 
 	bool FindFile( wxFileName&, const wxString& = wxEmptyString ) const;

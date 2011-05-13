@@ -1,6 +1,6 @@
 /*
-	wxDataFile.cpp
-*/
+   wxDataFile.cpp
+ */
 
 #include "StdWx.h"
 #include <wxCueFile/wxSamplingInfo.h>
@@ -11,42 +11,39 @@
 
 wxIMPLEMENT_DYNAMIC_CLASS( wxDataFile, wxObject )
 
-static const wxChar* INFOS[] = {
-	wxT("StreamSize"),
-	wxT("Duration"),
-	wxT("Format"),
-	wxT("SamplingRate"),
-	wxT("BitDepth"),
-	wxT("Channel(s)"),
-	wxT("SamplingCount")
+static const wxChar * INFOS[] =
+{
+	wxT( "StreamSize" ),
+	wxT( "Duration" ),
+	wxT( "Format" ),
+	wxT( "SamplingRate" ),
+	wxT( "BitDepth" ),
+	wxT( "Channel(s)" ),
+	wxT( "SamplingCount" )
 };
 
-static const size_t INFOS_SIZE = WXSIZEOF(INFOS);
+static const size_t INFOS_SIZE = WXSIZEOF( INFOS );
 
+wxDataFile::wxDataFile( void )
+	:m_ftype( BINARY )
+{}
 
-wxDataFile::wxDataFile(void)
-	:m_ftype(BINARY)
-{
-}
-
-wxDataFile::wxDataFile(const wxDataFile& df)
+wxDataFile::wxDataFile( const wxDataFile& df )
 {
 	copy( df );
 }
 
-wxDataFile::wxDataFile(const wxString& sFilePath, wxDataFile::FileType ftype )
-	:m_fileName(sFilePath),
-	 m_ftype(ftype)
-{
-}
+wxDataFile::wxDataFile( const wxString& sFilePath, wxDataFile::FileType ftype )
+	:m_fileName( sFilePath ),
+	m_ftype( ftype )
+{}
 
-wxDataFile::wxDataFile(const wxFileName& fileName, wxDataFile::FileType ftype )
-	:m_fileName(fileName),
-	m_ftype(ftype)
-{
-}
+wxDataFile::wxDataFile( const wxFileName& fileName, wxDataFile::FileType ftype )
+	:m_fileName( fileName ),
+	m_ftype( ftype )
+{}
 
-wxDataFile& wxDataFile::operator =( const wxDataFile& df )
+wxDataFile& wxDataFile::operator=( const wxDataFile& df )
 {
 	copy( df );
 	return *this;
@@ -55,7 +52,7 @@ wxDataFile& wxDataFile::operator =( const wxDataFile& df )
 void wxDataFile::copy( const wxDataFile& df )
 {
 	m_fileName = df.m_fileName;
-	m_ftype = df.m_ftype;
+	m_ftype	   = df.m_ftype;
 	if ( df.HasDuration() )
 	{
 		SetDuration( df.GetDuration() );
@@ -66,55 +63,59 @@ void wxDataFile::copy( const wxDataFile& df )
 	}
 }
 
-wxDataFile::FILE_TYPE_STR wxDataFile::FileTypeString[] = {
-	{ BINARY, wxT("BINARY") },
-	{ MOTOROLA, wxT("MOTOROLA") },
-	{ AIFF, wxT("AIFF") },
-	{ WAVE, wxT("WAVE") },
-	{ MP3, wxT("MP3") }
+wxDataFile::FILE_TYPE_STR wxDataFile::FileTypeString[] =
+{
+	{ BINARY, wxT( "BINARY" ) },
+	{ MOTOROLA, wxT( "MOTOROLA" ) },
+	{ AIFF, wxT( "AIFF" ) },
+	{ WAVE, wxT( "WAVE" ) },
+	{ MP3, wxT( "MP3" ) }
 };
 
-size_t wxDataFile::FileTypeStringSize = WXSIZEOF(wxDataFile::FileTypeString);
+size_t wxDataFile::FileTypeStringSize = WXSIZEOF( wxDataFile::FileTypeString );
 
 wxString wxDataFile::GetFileTypeRegExp()
 {
 	wxString s;
-	for( size_t i=0; i<FileTypeStringSize; i++ )
+	for ( size_t i = 0 ; i < FileTypeStringSize ; i++ )
 	{
-		s += FileTypeString[i].szName;
-		s += wxT('|');
+		s += FileTypeString[ i ].szName;
+		s += wxT( '|' );
 	}
+
 	s = s.RemoveLast();
 
 	wxString sResult;
-	sResult.Printf( wxT("(%s)"), s );
+	sResult.Printf( wxT( "(%s)" ), s );
 	return sResult;
 }
 
-wxString wxDataFile::FileTypeToString(wxDataFile::FileType ftype)
+wxString wxDataFile::FileTypeToString( wxDataFile::FileType ftype )
 {
 	wxString s;
-	for( size_t i=0; i<FileTypeStringSize; i++ )
+	for ( size_t i = 0 ; i < FileTypeStringSize ; i++ )
 	{
-		if ( FileTypeString[i].ftype == ftype )
+		if ( FileTypeString[ i ].ftype == ftype )
 		{
-			s = FileTypeString[i].szName;
+			s = FileTypeString[ i ].szName;
 			break;
 		}
 	}
+
 	return s;
 }
 
 bool wxDataFile::StringToFileType( const wxString& s, wxDataFile::FileType& ftype )
 {
-	for( size_t i=0; i<FileTypeStringSize; i++ )
+	for ( size_t i = 0 ; i < FileTypeStringSize ; i++ )
 	{
-		if ( s.CmpNoCase( FileTypeString[i].szName ) == 0 )
+		if ( s.CmpNoCase( FileTypeString[ i ].szName ) == 0 )
 		{
-			ftype = FileTypeString[i].ftype;
+			ftype = FileTypeString[ i ].ftype;
 			return true;
 		}
 	}
+
 	return false;
 }
 
@@ -143,24 +144,23 @@ bool wxDataFile::IsEmpty() const
 	return !m_fileName.IsOk();
 }
 
-
 void wxDataFile::Clear()
 {
 	m_fileName.Clear();
 	m_ftype = BINARY;
 }
 
-wxDataFile& wxDataFile::Assign(const wxString& sFilePath, wxDataFile::FileType ftype)
+wxDataFile& wxDataFile::Assign( const wxString& sFilePath, wxDataFile::FileType ftype )
 {
 	m_fileName = sFilePath;
-	m_ftype = ftype;
+	m_ftype	   = ftype;
 	return *this;
 }
 
-wxDataFile& wxDataFile::Assign(const wxFileName& fileName, wxDataFile::FileType ftype)
+wxDataFile& wxDataFile::Assign( const wxFileName& fileName, wxDataFile::FileType ftype )
 {
 	m_fileName = fileName;
-	m_ftype = ftype;
+	m_ftype	   = ftype;
 	return *this;
 }
 
@@ -179,18 +179,18 @@ bool wxDataFile::FindFile( wxFileName& fn, const wxString& sAlternateExt ) const
 	}
 	else if ( m_ftype == MP3 )
 	{
-		sTokens = wxT("mp3");
+		sTokens = wxT( "mp3" );
 	}
 
 	wxFileName fnTry( m_fileName );
-	wxStringTokenizer tokenizer( sTokens, wxT(",") );
-	while( tokenizer.HasMoreTokens() )
+	wxStringTokenizer tokenizer( sTokens, wxT( "," ) );
+	while ( tokenizer.HasMoreTokens() )
 	{
 		fnTry.SetExt( tokenizer.GetNextToken() );
 		if ( fnTry.FileExists() )
 		{
 			fn = fnTry;
-			wxLogInfo( _("%s -> %s"), m_fileName.GetFullName(), fnTry.GetFullName() );
+			wxLogInfo( _( "%s -> %s" ), m_fileName.GetFullName(), fnTry.GetFullName() );
 			return true;
 		}
 	}
@@ -215,6 +215,7 @@ wxULongLong wxDataFile::GetNumberOfFramesFromBinary( const wxFileName& fileName,
 	{
 		return wxSamplingInfo::wxInvalidNumberOfFrames;
 	}
+
 	return si.GetNumberOfFramesFromBytes( size );
 }
 
@@ -224,7 +225,7 @@ bool wxDataFile::GetFromMediaInfo( const wxFileName& fileName, wxULongLong& fram
 	wxMediaInfo dll;
 	if ( !dll.Load() )
 	{
-		wxLogError( _("Fail to load MediaInfo library") );
+		wxLogError( _( "Fail to load MediaInfo library" ) );
 		return false;
 	}
 
@@ -232,35 +233,35 @@ bool wxDataFile::GetFromMediaInfo( const wxFileName& fileName, wxULongLong& fram
 	wxArrayString as2;
 
 	void* handle = dll.MediaInfoNew();
-	size_t res = dll.MediaInfoOpen( handle, fileName.GetFullPath() );
+	size_t res	 = dll.MediaInfoOpen( handle, fileName.GetFullPath() );
 	if ( res == 0 )
 	{
-		wxLogError( _("MediaInfo - fail to open file") );
+		wxLogError( _( "MediaInfo - fail to open file" ) );
 		dll.MediaInfoDelete( handle );
 		dll.Unload();
 		return false;
 	}
 
-	for( size_t i=0; i<INFOS_SIZE; i++ )
+	for ( size_t i = 0 ; i < INFOS_SIZE ; i++ )
 	{
-		wxString s1( 
-			dll.MediaInfoGet( 
+		wxString s1(
+			dll.MediaInfoGet(
 				handle,
 				wxMediaInfo::MediaInfo_Stream_Audio,
 				0,
-				INFOS[i]
-			)
-		);
+				INFOS[ i ]
+				)
+			);
 
-		wxString s2( 
-			dll.MediaInfoGet( 
+		wxString s2(
+			dll.MediaInfoGet(
 				handle,
 				wxMediaInfo::MediaInfo_Stream_Audio,
 				0,
-				INFOS[i],
+				INFOS[ i ],
 				wxMediaInfo::MediaInfo_Info_Measure
-			)
-		);
+				)
+			);
 
 		as1.Add( s1 );
 		as2.Add( s2 );
@@ -272,81 +273,86 @@ bool wxDataFile::GetFromMediaInfo( const wxFileName& fileName, wxULongLong& fram
 	bool check = true;
 	unsigned long u;
 
-	for( size_t i=0; i<INFOS_SIZE; i++ )
+	for ( size_t i = 0 ; i < INFOS_SIZE ; i++ )
 	{
-		switch( i )
+		switch ( i )
 		{
 			case 0: // stream size
 			break;
 
 			case 1: // duration
-			if ( !as1[i].ToULong( &u ) )
+			if ( !as1[ i ].ToULong( &u ) )
 			{
-				wxLogWarning( _("MediaInfo - Invalid duration - %s"), as1[i] );
+				wxLogWarning( _( "MediaInfo - Invalid duration - %s" ), as1[ i ] );
 				check = false;
 			}
+
 			break;
 
 			case 2: // format
 			break;
 
 			case 3: // sampling rate
-			if ( !as1[i].ToULong( &u ) || (u == 0u) )
+			if ( !as1[ i ].ToULong( &u ) || ( u == 0u ) )
 			{
-				wxLogWarning( _("MediaInfo - Invalid sample rate - %s"), as1[i] );
+				wxLogWarning( _( "MediaInfo - Invalid sample rate - %s" ), as1[ i ] );
 				check = false;
 			}
 			else
 			{
 				si.SetSamplingRate( u );
 			}
+
 			break;
 
 			case 4: // bit depth
-			if ( !as1[i].IsEmpty() )
+			if ( !as1[ i ].IsEmpty() )
 			{
-				if ( !as1[i].ToULong( &u ) || (u == 0u) || (u>10000u) )
+				if ( !as1[ i ].ToULong( &u ) || ( u == 0u ) || ( u > 10000u ) )
 				{
-					wxLogWarning( _("MediaInfo - Invalid bit depth - %s"), as1[i] );
+					wxLogWarning( _( "MediaInfo - Invalid bit depth - %s" ), as1[ i ] );
 					check = false;
 				}
 				else
 				{
-					si.SetBitsPerSample( (unsigned short)u );
+					si.SetBitsPerSample( ( unsigned short )u );
 				}
 			}
 			else
 			{
-				si.SetBitsPerSample(0); // unknown MP3
+				si.SetBitsPerSample( 0 ); // unknown MP3
 			}
+
 			break;
 
 			case 5: // channels
-			if ( !as1[i].ToULong( &u ) || (u == 0u) || (u > 128u) )
+			if ( !as1[ i ].ToULong( &u ) || ( u == 0u ) || ( u > 128u ) )
 			{
-				wxLogWarning( _("MediaInfo - Invalid number of channels - %s"), as1[i] );
+				wxLogWarning( _( "MediaInfo - Invalid number of channels - %s" ), as1[ i ] );
 				check = false;
 			}
 			else
 			{
-				si.SetNumberOfChannels( (unsigned short)u );
+				si.SetNumberOfChannels( ( unsigned short )u );
 			}
+
 			break;
 
 			case 6: // SamplingCount
-			if ( !as1[i].IsEmpty() )
+			if ( !as1[ i ].IsEmpty() )
 			{
 				wxUint64 ul;
-				if ( as1[i].ToULongLong( &ul ) )
+				if ( as1[ i ].ToULongLong( &ul ) )
 				{ // calculate duration according to duration
 					frames = ul;
 				}
 				else
 				{
-					wxLogWarning( _("MediaInfo - Invalid samples count - %s"), as1[i] );
+					wxLogWarning( _( "MediaInfo - Invalid samples count - %s" ), as1[ i ] );
 					check = false;
 				}
 			}
+
 			break;
 		}
 	}
@@ -357,7 +363,7 @@ bool wxDataFile::GetFromMediaInfo( const wxFileName& fileName, wxULongLong& fram
 bool wxDataFile::GetInfo( wxSamplingInfo& si, wxULongLong& frames, const wxString& sAlternateExt ) const
 {
 	wxFileName fn;
-	if ( !FindFile( fn, sAlternateExt) )
+	if ( !FindFile( fn, sAlternateExt ) )
 	{
 		return false;
 	}
@@ -366,13 +372,14 @@ bool wxDataFile::GetInfo( wxSamplingInfo& si, wxULongLong& frames, const wxStrin
 	if ( m_ftype == BINARY )
 	{
 		si.SetDefault();
-		frames = GetNumberOfFramesFromBinary(fn, si);
-		res = (frames != wxSamplingInfo::wxInvalidNumberOfFrames);
+		frames = GetNumberOfFramesFromBinary( fn, si );
+		res	   = ( frames != wxSamplingInfo::wxInvalidNumberOfFrames );
 	}
 	else
 	{
-		res = GetFromMediaInfo(fn, frames, si);
+		res = GetFromMediaInfo( fn, frames, si );
 	}
+
 	return res;
 }
 
@@ -399,7 +406,8 @@ const wxAbstractDurationHolder& wxDataFile::CalculateDuration( const wxString& s
 	{
 		SetDuration( duration );
 	}
-	return const_cast< const wxDataFile& >( *this );
+
+	return const_cast< const wxDataFile& > ( *this );
 }
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!

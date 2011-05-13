@@ -1,19 +1,19 @@
 /*
-	wxUTF8TextOutputStream.cpp
-*/
+   wxUTF8TextOutputStream.cpp
+ */
 
 #include "StdWx.h"
 #include <wxEncodingDetection/wxEncodingDetection.h>
 #include <wxEncodingDetection/wxTextOutputStreamWithBOM.h>
 
-wxTextOutputStream* const wxTextOutputStreamWithBOMFactory::wxNullTextOutputStream = (wxTextOutputStream* const)NULL;
+wxTextOutputStream* const wxTextOutputStreamWithBOMFactory::wxNullTextOutputStream = ( wxTextOutputStream* const )NULL;
 
 void wxTextOutputStreamWithBOMFactory::WriteBOM( wxOutputStream& s, const wxEncodingDetection::wxByteBuffer& bom )
 {
 	s.Write( bom.data(), bom.length() );
 }
 
-class wxTextOutputStreamWithBOM :public wxTextOutputStream
+class wxTextOutputStreamWithBOM:public wxTextOutputStream
 {
 public:
 
@@ -23,7 +23,7 @@ public:
 		bool bWriteBOM,
 		const wxMBConv& conv,
 		const wxTextOutputStreamWithBOMFactory::wxByteBuffer& bom )
-	:wxTextOutputStream( s, mode, conv )
+		:wxTextOutputStream( s, mode, conv )
 	{
 		if ( bWriteBOM )
 		{
@@ -39,9 +39,10 @@ wxTextOutputStreamWithBOMFactory::wxTextOutputStreamSharedPtr wxTextOutputStream
 	if ( wxEncodingDetection::GetBOM( nCodePage, bom ) )
 	{
 		wxString sDescription;
-		wxSharedPtr<wxMBConv> pConv( wxEncodingDetection::GetStandardMBConv( nCodePage, bUseMLang, sDescription ) );
+		wxSharedPtr< wxMBConv > pConv( wxEncodingDetection::GetStandardMBConv( nCodePage, bUseMLang, sDescription ) );
 		pRes = new wxTextOutputStreamWithBOM( s, mode, bWriteBOM, *pConv, bom );
 	}
+
 	return pRes;
 }
 
@@ -54,7 +55,9 @@ wxTextOutputStreamWithBOMFactory::wxTextOutputStreamSharedPtr wxTextOutputStream
 {
 #if WORDS_BIGENDIAN
 	return Create( s, mode, bWriteBOM, wxEncodingDetection::CP::UTF16_BE, bUseMLang );
+
 #else
 	return Create( s, mode, bWriteBOM, wxEncodingDetection::CP::UTF16_LE, bUseMLang );
+
 #endif
 }

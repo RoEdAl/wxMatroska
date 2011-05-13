@@ -1,6 +1,6 @@
 /*
-	wxTrack.h
-*/
+   wxTrack.h
+ */
 
 #ifndef _WX_TRACK_H_
 #define _WX_TRACK_H_
@@ -29,31 +29,31 @@ class wxDuration;
 class wxSamplingInfo;
 #endif
 
-class wxTrack :public wxCueComponent
+class wxTrack:public wxCueComponent
 {
-	wxDECLARE_DYNAMIC_CLASS(wxTrack);
+	wxDECLARE_DYNAMIC_CLASS( wxTrack );
 
 public:
 
-    typedef enum _Flag
-    {
-        DCP, CH4, PRE, SCMS, DATA, NONE
-    } Flag;
+	typedef enum _Flag
+	{
+		DCP, CH4, PRE, SCMS, DATA, NONE
+	} Flag;
 
-	WX_DEFINE_ARRAY_INT(Flag, wxArrayFlag);
+	WX_DEFINE_ARRAY_INT( Flag, wxArrayFlag );
 
-    typedef enum _DataMode
-    {
-        AUDIO , CDG , MODE1_2048 , MODE1_2352 , MODE2_2336 , MODE2_2352 , CDI_2336 , CDI_2352 
-    } DataMode;
+	typedef enum _DataMode
+	{
+		AUDIO, CDG, MODE1_2048, MODE1_2352, MODE2_2336, MODE2_2352, CDI_2336, CDI_2352
+	} DataMode;
 
 protected:
 
 	size_t m_number;
 	DataMode m_dataMode;
 	wxArrayIndex m_indexes;
-	wxScopedPtr<wxIndex> m_pPreGap;
-	wxScopedPtr<wxIndex> m_pPostGap;
+	wxScopedPtr< wxIndex > m_pPreGap;
+	wxScopedPtr< wxIndex > m_pPostGap;
 	wxDataFile m_df;
 	wxArrayFlag m_flags;
 
@@ -79,13 +79,14 @@ protected:
 
 protected:
 
-	void copy(const wxTrack&);
+	void copy( const wxTrack& );
 
 public:
 
 	static int CompareFn( wxTrack**, wxTrack** );
 
 	size_t GetNumber() const;
+
 	wxTrack& SetNumber( size_t );
 
 	DataMode GetMode() const;
@@ -114,10 +115,12 @@ public:
 
 	const wxArrayFlag& GetFlags() const;
 	wxString GetFlagsAsString() const;
+
 	wxTrack& AddFlag( Flag );
 	bool AddFlag( const wxString& );
 	void ClearFlags();
 	bool HasFlags() const;
+
 	bool HasFlag( Flag ) const;
 
 	const wxDataFile& GetDataFile() const;
@@ -130,7 +133,7 @@ public:
 
 public:
 
-	wxTrack(void);
+	wxTrack( void );
 	wxTrack( unsigned long );
 	wxTrack( const wxTrack& );
 	wxTrack& operator=( const wxTrack& );

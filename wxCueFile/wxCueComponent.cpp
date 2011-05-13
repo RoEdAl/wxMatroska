@@ -1,6 +1,6 @@
 /*
-	wxCueComponent.cpp
-*/
+   wxCueComponent.cpp
+ */
 
 #include "StdWx.h"
 #include <wxCueFile/wxTagSynonims.h>
@@ -11,129 +11,135 @@
 
 wxIMPLEMENT_ABSTRACT_CLASS( wxCueComponent, wxObject )
 
-wxCueComponent::CDTEXT_ENTRY wxCueComponent::CdTextFields[] = {
-	{ wxT("ARRANGER"),	wxCueComponent::ANY,	wxCueComponent::CHARACTER,		wxT('a') },
-	{ wxT("COMPOSER"),	wxCueComponent::ANY,	wxCueComponent::CHARACTER,		wxT('c') },
-	{ wxT("DISC_ID"),	wxCueComponent::ANY,	wxCueComponent::BINARY,			wxT('\000') },
-	{ wxT("GENRE"),		wxCueComponent::ANY,	wxCueComponent::BINARY,			wxT('\000') },
-	{ wxT("ISRC"),		wxCueComponent::TRACK,	wxCueComponent::BINARY,			wxT('\000') },
-	{ wxT("MESSAGE"),	wxCueComponent::ANY,	wxCueComponent::CHARACTER,		wxT('\000') },
-	{ wxT("PERFORMER"), wxCueComponent::ANY,	wxCueComponent::CHARACTER,		wxT('p') },
-	{ wxT("SONGWRITER"),wxCueComponent::ANY,	wxCueComponent::CHARACTER,		wxT('s') },
-	{ wxT("TITLE"),		wxCueComponent::ANY,	wxCueComponent::CHARACTER,		wxT('t') },
-	{ wxT("UPC_EAN"),	wxCueComponent::DISC,	wxCueComponent::CHARACTER,		wxT('\000') },	
-	{ wxT("SIZE_INFO"), wxCueComponent::ANY,	wxCueComponent::CHARACTER,		wxT('\000') },
-	{ wxT("TOC_INFO"),	wxCueComponent::ANY,	wxCueComponent::BINARY,			wxT('\000') },
-	{ wxT("TOC_INFO2"), wxCueComponent::ANY,	wxCueComponent::BINARY,			wxT('\000') }
+wxCueComponent::CDTEXT_ENTRY wxCueComponent::CdTextFields[] =
+{
+	{ wxT( "ARRANGER" ), wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( 'a' ) },
+	{ wxT( "COMPOSER" ), wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( 'c' ) },
+	{ wxT( "DISC_ID" ), wxCueComponent::ANY, wxCueComponent::BINARY, wxT( '\000' ) },
+	{ wxT( "GENRE" ), wxCueComponent::ANY, wxCueComponent::BINARY, wxT( '\000' ) },
+	{ wxT( "ISRC" ), wxCueComponent::TRACK, wxCueComponent::BINARY, wxT( '\000' ) },
+	{ wxT( "MESSAGE" ), wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( '\000' ) },
+	{ wxT( "PERFORMER" ), wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( 'p' ) },
+	{ wxT( "SONGWRITER" ), wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( 's' ) },
+	{ wxT( "TITLE" ), wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( 't' ) },
+	{ wxT( "UPC_EAN" ), wxCueComponent::DISC, wxCueComponent::CHARACTER, wxT( '\000' ) },
+	{ wxT( "SIZE_INFO" ), wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( '\000' ) },
+	{ wxT( "TOC_INFO" ), wxCueComponent::ANY, wxCueComponent::BINARY, wxT( '\000' ) },
+	{ wxT( "TOC_INFO2" ), wxCueComponent::ANY, wxCueComponent::BINARY, wxT( '\000' ) }
 };
 
-size_t wxCueComponent::CdTextFieldsSize = WXSIZEOF(wxCueComponent::CdTextFields);
+size_t wxCueComponent::CdTextFieldsSize = WXSIZEOF( wxCueComponent::CdTextFields );
 
-wxCueComponent::KEYWORD_ENTRY wxCueComponent::Keywords[] = {
-	{  wxT("REM"),			wxCueComponent::ANY },
-	{  wxT("INDEX"),		wxCueComponent::TRACK },
-	{  wxT("PREGAP"),		wxCueComponent::TRACK },
-	{  wxT("POSTGAP"),		wxCueComponent::TRACK },
-	{  wxT("FILE"),			wxCueComponent::ANY },
-	{  wxT("FLAGS"),		wxCueComponent::TRACK },
-	{  wxT("TRACK"),		wxCueComponent::ANY },
-	{  wxT("CATALOG"),		wxCueComponent::DISC },
-	{  wxT("CDTEXTFILE"),	wxCueComponent::DISC }
+wxCueComponent::KEYWORD_ENTRY wxCueComponent::Keywords[] =
+{
+	{  wxT( "REM" ), wxCueComponent::ANY },
+	{  wxT( "INDEX" ), wxCueComponent::TRACK },
+	{  wxT( "PREGAP" ), wxCueComponent::TRACK },
+	{  wxT( "POSTGAP" ), wxCueComponent::TRACK },
+	{  wxT( "FILE" ), wxCueComponent::ANY },
+	{  wxT( "FLAGS" ), wxCueComponent::TRACK },
+	{  wxT( "TRACK" ), wxCueComponent::ANY },
+	{  wxT( "CATALOG" ), wxCueComponent::DISC },
+	{  wxT( "CDTEXTFILE" ), wxCueComponent::DISC }
 };
 
-size_t wxCueComponent::KeywordsSize = WXSIZEOF(wxCueComponent::Keywords);
+size_t wxCueComponent::KeywordsSize = WXSIZEOF( wxCueComponent::Keywords );
 
 wxString wxCueComponent::GetCdTextInfoRegExp()
 {
 	wxTextOutputStreamOnString tos;
-	for( size_t i=0; i<CdTextFieldsSize; i++ )
+	for ( size_t i = 0 ; i < CdTextFieldsSize ; i++ )
 	{
-		*tos << CdTextFields[i].keyword << wxT('|');
+		*tos << CdTextFields[ i ].keyword << wxT( '|' );
 	}
-	(*tos).Flush();
+
+	( *tos ).Flush();
 	const wxString& s = tos.GetString();
 	wxASSERT( !s.IsEmpty() );
-	return wxString::Format( wxT("(%s)"), s.Left( s.Length() - 1 ) );
+	return wxString::Format( wxT( "(%s)" ), s.Left( s.Length() - 1 ) );
 }
 
 wxString wxCueComponent::GetKeywordsRegExp()
 {
 	wxTextOutputStreamOnString tos;
-	for( size_t i=0; i<KeywordsSize; i++ )
+	for ( size_t i = 0 ; i < KeywordsSize ; i++ )
 	{
-		*tos << Keywords[i].keyword << wxT('|');
+		*tos << Keywords[ i ].keyword << wxT( '|' );
 	}
-	(*tos).Flush();
+
+	( *tos ).Flush();
 	const wxString& s = tos.GetString();
 	wxASSERT( !s.IsEmpty() );
-	return wxString::Format( wxT("(%s)"), s.Left( s.Length() - 1 ) );
+	return wxString::Format( wxT( "(%s)" ), s.Left( s.Length() - 1 ) );
 }
 
 bool wxCueComponent::GetCdTextInfoFormat( const wxString& sKeyword, wxCueComponent::ENTRY_FORMAT& fmt )
 {
-	for( size_t i=0; i<CdTextFieldsSize; i++ )
+	for ( size_t i = 0 ; i < CdTextFieldsSize ; i++ )
 	{
-		if ( sKeyword.CmpNoCase( CdTextFields[i].keyword ) == 0 )
+		if ( sKeyword.CmpNoCase( CdTextFields[ i ].keyword ) == 0 )
 		{
-			fmt = CdTextFields[i].format;
+			fmt = CdTextFields[ i ].format;
 			return true;
 		}
 	}
+
 	return false;
 }
 
 bool wxCueComponent::GetCdTextInfoType( const wxString& sKeyword, wxCueComponent::ENTRY_TYPE& et )
 {
-	for( size_t i=0; i<CdTextFieldsSize; i++ )
+	for ( size_t i = 0 ; i < CdTextFieldsSize ; i++ )
 	{
-		if ( sKeyword.CmpNoCase( CdTextFields[i].keyword ) == 0 )
+		if ( sKeyword.CmpNoCase( CdTextFields[ i ].keyword ) == 0 )
 		{
-			et = CdTextFields[i].type;
+			et = CdTextFields[ i ].type;
 			return true;
 		}
 	}
+
 	return false;
 }
 
 bool wxCueComponent::GetEntryType( const wxString& sKeyword, wxCueComponent::ENTRY_TYPE& et )
 {
-	for( size_t i=0; i<KeywordsSize; i++ )
+	for ( size_t i = 0 ; i < KeywordsSize ; i++ )
 	{
-		if ( sKeyword.CmpNoCase( Keywords[i].keyword ) == 0 )
+		if ( sKeyword.CmpNoCase( Keywords[ i ].keyword ) == 0 )
 		{
-			et = Keywords[i].type;
+			et = Keywords[ i ].type;
 			return true;
 		}
 	}
+
 	return false;
 }
 
-wxCueComponent::wxCueComponent(bool bTrack)
-	:m_bTrack(bTrack)
-{
-}
+wxCueComponent::wxCueComponent( bool bTrack )
+	:m_bTrack( bTrack )
+{}
 
-wxCueComponent::wxCueComponent(const wxCueComponent& component)
+wxCueComponent::wxCueComponent( const wxCueComponent& component )
 {
 	copy( component );
 }
 
-wxCueComponent& wxCueComponent::operator =(const wxCueComponent& component)
+wxCueComponent& wxCueComponent::operator=( const wxCueComponent& component )
 {
 	copy( component );
 	return *this;
 }
 
-void wxCueComponent::copy(const wxCueComponent& component)
+void wxCueComponent::copy( const wxCueComponent& component )
 {
-	m_bTrack = component.m_bTrack;
-	m_comments = component.m_comments;
-	m_garbage = component.m_garbage;
+	m_bTrack	 = component.m_bTrack;
+	m_comments	 = component.m_comments;
+	m_garbage	 = component.m_garbage;
 	m_cdTextTags = component.m_cdTextTags;
-	m_tags = component.m_tags;
+	m_tags		 = component.m_tags;
 }
 
-wxCueComponent& wxCueComponent::Append(const wxCueComponent& component)
+wxCueComponent& wxCueComponent::Append( const wxCueComponent& component )
 {
 	wxASSERT( m_bTrack == component.m_bTrack );
 
@@ -144,14 +150,14 @@ wxCueComponent& wxCueComponent::Append(const wxCueComponent& component)
 	return *this;
 }
 
-wxCueComponent& wxCueComponent::operator +=(const wxCueComponent& component)
+wxCueComponent& wxCueComponent::operator+=( const wxCueComponent& component )
 {
 	return Append( component );
 }
 
 bool wxCueComponent::HasGarbage() const
 {
-	return (m_garbage.Count() > 0);
+	return ( m_garbage.Count() > 0 );
 }
 
 const wxArrayString& wxCueComponent::GetComments() const
@@ -173,14 +179,14 @@ void wxCueComponent::ParseComment( const wxString& sComment, bool bParse )
 	}
 
 	wxUnquoter unquoter;
-	wxRegEx reCommentMeta( wxT("\\A([[.quotation-mark.]]{0,1})([[:upper:][.hyphen.][.underscore.][:space:][.low-line.]]+)\\1[[:space:]]+([^[:space:]].+)\\Z"), wxRE_ADVANCED );
+	wxRegEx reCommentMeta( wxT( "\\A([[.quotation-mark.]]{0,1})([[:upper:][.hyphen.][.underscore.][:space:][.low-line.]]+)\\1[[:space:]]+([^[:space:]].+)\\Z" ), wxRE_ADVANCED );
 	wxASSERT( reCommentMeta.IsValid() );
 
 	if ( reCommentMeta.Matches( sComment ) )
 	{
 		AddTag(
 			wxCueTag::TAG_CUE_COMMENT,
-			reCommentMeta.GetMatch( sComment, 2 ), 
+			reCommentMeta.GetMatch( sComment, 2 ),
 			unquoter.Unquote( reCommentMeta.GetMatch( sComment, 3 ) ) );
 	}
 	else
@@ -207,16 +213,17 @@ const wxArrayCueTag& wxCueComponent::GetTags() const
 static bool find_tag( const wxArrayCueTag& tags, const wxCueTag& cueTag )
 {
 	size_t numTags = tags.Count();
-	for( size_t i=0; i<numTags; i++ )
+	for ( size_t i = 0 ; i < numTags ; i++ )
 	{
-		if ( 
-			 ( cueTag.GetName().CmpNoCase( tags[i].GetName() ) == 0 ) &&
-			 ( cueTag.GetValue().Cmp( tags[i].GetValue() ) == 0 )
-		   )
+		if (
+			( cueTag.GetName().CmpNoCase( tags[ i ].GetName() ) == 0 ) &&
+			( cueTag.GetValue().Cmp( tags[ i ].GetValue() ) == 0 )
+			)
 		{
 			return true;
 		}
 	}
+
 	return false;
 }
 
@@ -230,13 +237,13 @@ static void add_tag( wxArrayCueTag& tags, const wxCueTag& cueTag )
 
 static void add_tags( wxArrayCueTag& tags, const wxArrayCueTag& newTags )
 {
-	for( size_t i = 0; i < newTags.Count(); i++ )
+	for ( size_t i = 0 ; i < newTags.Count() ; i++ )
 	{
-		add_tag( tags, newTags[i] );
+		add_tag( tags, newTags[ i ] );
 	}
 }
 
-void wxCueComponent::GetTags( 
+void wxCueComponent::GetTags(
 	const wxTagSynonimsCollection& cdTagsSynonims,
 	const wxTagSynonimsCollection& tagsSynonims,
 	wxArrayCueTag& tags,
@@ -250,9 +257,9 @@ void wxCueComponent::GetTags(
 
 	wxCueTag cueTag;
 	size_t nTags = m_cdTextTags.Count();
-	for( size_t i=0; i<nTags; i++ )
+	for ( size_t i = 0 ; i < nTags ; i++ )
 	{
-		if ( cdTagsSynonims.GetName( m_cdTextTags[i], cueTag ) )
+		if ( cdTagsSynonims.GetName( m_cdTextTags[ i ], cueTag ) )
 		{
 			tagsHash[ cueTag.GetName() ].Add( cueTag );
 		}
@@ -263,9 +270,9 @@ void wxCueComponent::GetTags(
 	}
 
 	nTags = m_tags.GetCount();
-	for( size_t i=0; i<nTags; i++ )
+	for ( size_t i = 0 ; i < nTags ; i++ )
 	{
-		if ( tagsSynonims.GetName( m_tags[i], cueTag ) )
+		if ( tagsSynonims.GetName( m_tags[ i ], cueTag ) )
 		{
 			tagsHash[ cueTag.GetName() ].Add( cueTag );
 		}
@@ -275,18 +282,18 @@ void wxCueComponent::GetTags(
 		}
 	}
 
-	wxRegEx reEmptyValue( wxT("\\A[[:space:][:punct:]]*\\Z"), wxRE_ADVANCED|wxRE_ICASE );
+	wxRegEx reEmptyValue( wxT( "\\A[[:space:][:punct:]]*\\Z" ), wxRE_ADVANCED | wxRE_ICASE );
 	wxASSERT( reEmptyValue.IsValid() );
 
 	remove_duplicates( reEmptyValue, tagsHash );
 	remove_duplicates( reEmptyValue, restHash );
 
-	for( wxHashCueTag::const_iterator i = tagsHash.begin(); i != tagsHash.end(); i++ )
+	for ( wxHashCueTag::const_iterator i = tagsHash.begin() ; i != tagsHash.end() ; i++ )
 	{
 		add_tags( tags, i->second );
 	}
 
-	for( wxHashCueTag::const_iterator i = restHash.begin(); i != restHash.end(); i++ )
+	for ( wxHashCueTag::const_iterator i = restHash.begin() ; i != restHash.end() ; i++ )
 	{
 		add_tags( rest, i->second );
 	}
@@ -294,7 +301,7 @@ void wxCueComponent::GetTags(
 
 void wxCueComponent::remove_duplicates( const wxRegEx& reEmptyValue, wxCueComponent::wxHashCueTag& tagsHash )
 {
-	for( wxHashCueTag::iterator i = tagsHash.begin(); i != tagsHash.end(); i++ )
+	for ( wxHashCueTag::iterator i = tagsHash.begin() ; i != tagsHash.end() ; i++ )
 	{
 		remove_duplicates( reEmptyValue, i->second );
 	}
@@ -302,14 +309,18 @@ void wxCueComponent::remove_duplicates( const wxRegEx& reEmptyValue, wxCueCompon
 
 void wxCueComponent::remove_duplicates( const wxRegEx& reEmptyValue, wxArrayCueTag& tags )
 {
-	for( size_t i = 0; i < tags.Count(); i += 1 )
+	for ( size_t i = 0 ; i < tags.Count() ; i += 1 )
 	{
-		wxString sValue( tags[i].GetValue() );
+		wxString sValue( tags[ i ].GetValue() );
 		bool bRemove = false;
-		for( size_t j=0; j < tags.Count(); j++ )
+		for ( size_t j = 0 ; j < tags.Count() ; j++ )
 		{
-			if ( i == j ) continue;
-			size_t n = sValue.Replace( tags[j].GetValue(), wxEmptyString, false );
+			if ( i == j )
+			{
+				continue;
+			}
+
+			size_t n = sValue.Replace( tags[ j ].GetValue(), wxEmptyString, false );
 			if ( n > 0 )
 			{
 				if ( reEmptyValue.Matches( sValue ) )
@@ -322,7 +333,7 @@ void wxCueComponent::remove_duplicates( const wxRegEx& reEmptyValue, wxArrayCueT
 
 		if ( bRemove )
 		{
-			wxLogInfo( _("Removing tag \u201C%s\u201D - duplicated value \u201C%s\u201D"), tags[i].GetName(), tags[i].GetValue() );
+			wxLogInfo( _( "Removing tag \u201C%s\u201D - duplicated value \u201C%s\u201D" ), tags[ i ].GetName(), tags[ i ].GetValue() );
 			tags.RemoveAt( i );
 			i -= 1;
 		}
@@ -331,16 +342,16 @@ void wxCueComponent::remove_duplicates( const wxRegEx& reEmptyValue, wxArrayCueT
 
 bool wxCueComponent::CheckEntryType( wxCueComponent::ENTRY_TYPE ctype ) const
 {
-	return (ctype==ANY) || (m_bTrack? (ctype==TRACK) : (ctype==DISC));
+	return ( ctype == ANY ) || ( m_bTrack?( ctype == TRACK ) : ( ctype == DISC ) );
 }
 
 bool wxCueComponent::AddCdTextInfo( const wxString& sKeyword, const wxString& sBody )
 {
-	for( size_t i=0; i<CdTextFieldsSize; i++ )
+	for ( size_t i = 0 ; i < CdTextFieldsSize ; i++ )
 	{
-		if ( ( sKeyword.CmpNoCase( CdTextFields[i].keyword ) == 0 ) &&
-			 CheckEntryType( CdTextFields[i].type )
-		)
+		if ( ( sKeyword.CmpNoCase( CdTextFields[ i ].keyword ) == 0 ) &&
+			 CheckEntryType( CdTextFields[ i ].type )
+			  )
 		{
 			wxCueTag newTag( wxCueTag::TAG_CD_TEXT, sKeyword, sBody );
 			add_tag( m_cdTextTags, newTag );
@@ -370,10 +381,10 @@ void wxCueComponent::Clear()
 	m_tags.Clear();
 }
 
-wxString wxCueComponent::FormatCdTextData(const wxString& sKeyword, const wxString& sValue )
+wxString wxCueComponent::FormatCdTextData( const wxString& sKeyword, const wxString& sValue )
 {
 	ENTRY_FORMAT fmt;
-	wxCHECK( GetCdTextInfoFormat( sKeyword, fmt ), wxT("") );
+	wxCHECK( GetCdTextInfoFormat( sKeyword, fmt ), wxT( "" ) );
 	if ( fmt == BINARY )
 	{
 		return sValue;
@@ -387,9 +398,9 @@ wxString wxCueComponent::FormatCdTextData(const wxString& sKeyword, const wxStri
 static size_t find_keyword( const wxArrayCueTag& tags, const wxString& sKeyword )
 {
 	size_t numTags = tags.Count();
-	for( size_t i=0; i<numTags; i++ )
+	for ( size_t i = 0 ; i < numTags ; i++ )
 	{
-		if ( sKeyword.CmpNoCase( tags[i].GetName() ) == 0 )
+		if ( sKeyword.CmpNoCase( tags[ i ].GetName() ) == 0 )
 		{
 			return i;
 		}
@@ -400,37 +411,41 @@ static size_t find_keyword( const wxArrayCueTag& tags, const wxString& sKeyword 
 
 void wxCueComponent::GetReplacements( wxCueComponent::wxHashString& replacements ) const
 {
-	for( size_t i=0; i<CdTextFieldsSize; i++ )
+	for ( size_t i = 0 ; i < CdTextFieldsSize ; i++ )
 	{
-		if ( CdTextFields[i].replacement == wxT('\000') ) continue;
-
-		wxString sValue;
-		size_t idx = find_keyword( m_cdTextTags, CdTextFields[i].keyword );
-		if ( idx != -1 )
+		if ( CdTextFields[ i ].replacement == wxT( '\000' ) )
 		{
-			sValue = m_cdTextTags[idx].GetValue();
+			continue;
 		}
 
-		wxString s( CdTextFields[i].replacement );
-		s.Prepend( m_bTrack? wxT("t") : wxT("d") );
+		wxString sValue;
+		size_t idx = find_keyword( m_cdTextTags, CdTextFields[ i ].keyword );
+		if ( idx != -1 )
+		{
+			sValue = m_cdTextTags[ idx ].GetValue();
+		}
+
+		wxString s( CdTextFields[ i ].replacement );
+		s.Prepend( m_bTrack?wxT( "t" ) : wxT( "d" ) );
 
 		bool bAdd = false;
-		switch( CdTextFields[i].type )
+		switch ( CdTextFields[ i ].type )
 		{
 			case ANY:
 			{
 				bAdd = true;
-				wxString s( CdTextFields[i].replacement );
-				s.Prepend( wxT("a") );
+				wxString s( CdTextFields[ i ].replacement );
+				s.Prepend( wxT( "a" ) );
 				replacements[ s ] = sValue;
+				break;
 			}
-			break;
 
 			case TRACK:
 			if ( m_bTrack )
 			{
 				bAdd = true;
 			}
+
 			break;
 
 			case DISC:
@@ -438,6 +453,7 @@ void wxCueComponent::GetReplacements( wxCueComponent::wxHashString& replacements
 			{
 				bAdd = true;
 			}
+
 			break;
 		}
 
@@ -449,4 +465,3 @@ bool wxCueComponent::IsTrack() const
 {
 	return m_bTrack;
 }
-

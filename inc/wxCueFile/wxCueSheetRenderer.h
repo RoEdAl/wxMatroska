@@ -1,6 +1,6 @@
 /*
-	wxCueSheetRenderer.h
-*/
+   wxCueSheetRenderer.h
+ */
 
 #ifndef _WX_CUE_SHEET_RENDERER_H_
 #define _WX_CUE_SHEET_RENDERER_H_
@@ -19,9 +19,9 @@ class wxArrayIndex;
 class wxCueSheet;
 #endif
 
-class wxCueSheetRenderer :public wxObject
+class wxCueSheetRenderer:public wxObject
 {
-	wxDECLARE_ABSTRACT_CLASS(wxCueSheetRenderer);
+	wxDECLARE_ABSTRACT_CLASS( wxCueSheetRenderer );
 
 protected:
 
@@ -71,7 +71,7 @@ public:
 
 	static wxCueSheetRenderer* const Null;
 
-	wxCueSheetRenderer(void);
+	wxCueSheetRenderer( void );
 
 	bool Render( const wxCueSheet& );
 };

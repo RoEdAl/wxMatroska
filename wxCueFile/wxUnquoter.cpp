@@ -1,36 +1,35 @@
 /*
-	wxUnquoter.cpp
-*/
+   wxUnquoter.cpp
+ */
 
 #include "StdWx.h"
 #include <wxCueFile/wxUnquoter.h>
 
 wxIMPLEMENT_DYNAMIC_CLASS( wxUnquoter, wxObject )
 
-const wxChar wxUnquoter::SINGLE_QUOTES[] = wxT("\\'(([^\\']|\\\')*)\\'(?![[:alnum:]])");
-const wxChar wxUnquoter::DOUBLE_QUOTES[] = wxT("\\\"(([^\\\"]|\\\\\")*)\\\"");
+const wxChar wxUnquoter::SINGLE_QUOTES[] = wxT( "\\'(([^\\']|\\\')*)\\'(?![[:alnum:]])" );
+const wxChar wxUnquoter::DOUBLE_QUOTES[] = wxT( "\\\"(([^\\\"]|\\\\\")*)\\\"" );
 
-const wxChar wxUnquoter::FULL_SINGLE_QUOTES[] = wxT("\\A[[:space:]]*\\'(([^\\']|\\\')*)\\'[[:space:]]*\\Z");
-const wxChar wxUnquoter::FULL_DOUBLE_QUOTES[] = wxT("\\A[[:space:]]*\\\"(([^\\\"]|\\\\\")*)\\\"[[:space:]]*\\Z");
+const wxChar wxUnquoter::FULL_SINGLE_QUOTES[] = wxT( "\\A[[:space:]]*\\'(([^\\']|\\\')*)\\'[[:space:]]*\\Z" );
+const wxChar wxUnquoter::FULL_DOUBLE_QUOTES[] = wxT( "\\A[[:space:]]*\\\"(([^\\\"]|\\\\\")*)\\\"[[:space:]]*\\Z" );
 
-const wxChar wxUnquoter::ENGLISH_DOUBLE_QUOTES[] = wxT("\u201C\\1\u201D");
-const wxChar wxUnquoter::ENGLISH_SINGLE_QUOTES[] = wxT("\u2018\\1\u2019");
+const wxChar wxUnquoter::ENGLISH_DOUBLE_QUOTES[] = wxT( "\u201C\\1\u201D" );
+const wxChar wxUnquoter::ENGLISH_SINGLE_QUOTES[] = wxT( "\u2018\\1\u2019" );
 
-const wxChar wxUnquoter::POLISH_DOUBLE_QUOTES[] = wxT("\u201E\\1\u201D");
-const wxChar wxUnquoter::POLISH_SINGLE_QUOTES[] = wxT("\u201A\\1\u2019");
+const wxChar wxUnquoter::POLISH_DOUBLE_QUOTES[] = wxT( "\u201E\\1\u201D" );
+const wxChar wxUnquoter::POLISH_SINGLE_QUOTES[] = wxT( "\u201A\\1\u2019" );
 
-const wxChar wxUnquoter::GERMAN_DOUBLE_QUOTES[] = wxT("\u201E\\1\u201C");
-const wxChar wxUnquoter::GERMAN_SINGLE_QUOTES[] = wxT("\u201A\\1\u2018");
+const wxChar wxUnquoter::GERMAN_DOUBLE_QUOTES[] = wxT( "\u201E\\1\u201C" );
+const wxChar wxUnquoter::GERMAN_SINGLE_QUOTES[] = wxT( "\u201A\\1\u2018" );
 
-const wxChar wxUnquoter::FRENCH_DOUBLE_QUOTES[] = wxT("\u00AB\u2005\\1\u2005\u00BB");
-const wxChar wxUnquoter::FRENCH_SINGLE_QUOTES[] = wxT("\u2039\u2005\\1\u2005\u203A");
+const wxChar wxUnquoter::FRENCH_DOUBLE_QUOTES[] = wxT( "\u00AB\u2005\\1\u2005\u00BB" );
+const wxChar wxUnquoter::FRENCH_SINGLE_QUOTES[] = wxT( "\u2039\u2005\\1\u2005\u203A" );
 
-
-wxUnquoter::wxUnquoter(void)
+wxUnquoter::wxUnquoter( void )
 	:m_reQuotes( SINGLE_QUOTES, wxRE_ADVANCED ),
-	 m_reDoubleQuotes( DOUBLE_QUOTES, wxRE_ADVANCED ),
-	 m_reFullQuotes( FULL_SINGLE_QUOTES, wxRE_ADVANCED ),
-	 m_reFullDoubleQuotes( FULL_DOUBLE_QUOTES, wxRE_ADVANCED )
+	m_reDoubleQuotes( DOUBLE_QUOTES, wxRE_ADVANCED ),
+	m_reFullQuotes( FULL_SINGLE_QUOTES, wxRE_ADVANCED ),
+	m_reFullDoubleQuotes( FULL_DOUBLE_QUOTES, wxRE_ADVANCED )
 {
 	wxASSERT( m_reQuotes.IsValid() );
 	wxASSERT( m_reDoubleQuotes.IsValid() );
@@ -40,40 +39,39 @@ wxUnquoter::wxUnquoter(void)
 }
 
 /*
-	http://en.wikipedia.org/wiki/Quotation_mark,_non-English_usage
-*/
-
+        http://en.wikipedia.org/wiki/Quotation_mark,_non-English_usage
+ */
 bool wxUnquoter::correct_polish_qm( const wxString& sLang )
 {
-	return sLang.CmpNoCase( wxT("pol") ) == 0;
+	return sLang.CmpNoCase( wxT( "pol" ) ) == 0;
 }
 
 bool wxUnquoter::correct_english_qm( const wxString& sLang )
 {
-	return sLang.CmpNoCase( wxT("eng") ) == 0;
+	return sLang.CmpNoCase( wxT( "eng" ) ) == 0;
 }
 
 bool wxUnquoter::correct_german_qm( const wxString& sLang )
 {
-	return 
-		(sLang.CmpNoCase( wxT("ger") ) == 0) ||
-		(sLang.CmpNoCase( wxT("gem") ) == 0) ||
-		(sLang.CmpNoCase( wxT("cze") ) == 0) ||
-		(sLang.CmpNoCase( wxT("geo") ) == 0) ||
-		(sLang.CmpNoCase( wxT("est") ) == 0) ||
-		(sLang.CmpNoCase( wxT("ice") ) == 0) ||
-		(sLang.CmpNoCase( wxT("bul") ) == 0) ||
-		(sLang.CmpNoCase( wxT("srp") ) == 0) ||
-		(sLang.CmpNoCase( wxT("rus") ) == 0)
+	return
+		( sLang.CmpNoCase( wxT( "ger" ) ) == 0 ) ||
+		( sLang.CmpNoCase( wxT( "gem" ) ) == 0 ) ||
+		( sLang.CmpNoCase( wxT( "cze" ) ) == 0 ) ||
+		( sLang.CmpNoCase( wxT( "geo" ) ) == 0 ) ||
+		( sLang.CmpNoCase( wxT( "est" ) ) == 0 ) ||
+		( sLang.CmpNoCase( wxT( "ice" ) ) == 0 ) ||
+		( sLang.CmpNoCase( wxT( "bul" ) ) == 0 ) ||
+		( sLang.CmpNoCase( wxT( "srp" ) ) == 0 ) ||
+		( sLang.CmpNoCase( wxT( "rus" ) ) == 0 )
 	;
 }
 
 bool wxUnquoter::correct_french_qm( const wxString& sLang )
 {
-	return sLang.CmpNoCase( wxT("fre") ) == 0;
+	return sLang.CmpNoCase( wxT( "fre" ) ) == 0;
 }
 
-void wxUnquoter::SetLang(const wxString& sLang)
+void wxUnquoter::SetLang( const wxString& sLang )
 {
 	if ( correct_polish_qm( sLang ) )
 	{
@@ -97,7 +95,7 @@ void wxUnquoter::SetLang(const wxString& sLang)
 	}
 	else
 	{
-		wxLogDebug( wxT("Converting quotation marks in language %s is not supported."), sLang );
+		wxLogDebug( wxT( "Converting quotation marks in language %s is not supported." ), sLang );
 		m_sSingleQuotes = m_sDoubleQuotes = wxEmptyString;
 	}
 }

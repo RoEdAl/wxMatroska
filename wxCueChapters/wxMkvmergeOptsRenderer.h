@@ -1,6 +1,6 @@
 /*
-	wxMkvmergeOptsRenderer.h
-*/
+   wxMkvmergeOptsRenderer.h
+ */
 
 #ifndef _WX_MKVMERGE_OPTS_RENDERER_H_
 #define _WX_MKVMERGE_OPTS_RENDERER_H_
@@ -17,7 +17,7 @@ class wxCueSheet;
 class wxInputFile;
 #endif
 
-class wxMkvmergeOptsRenderer :public wxObject
+class wxMkvmergeOptsRenderer:public wxObject
 {
 protected:
 
@@ -44,12 +44,11 @@ public:
 	static wxMkvmergeOptsRenderer* const Null;
 	static const wxChar LOG_EXT[];
 
-	wxMkvmergeOptsRenderer(const wxConfiguration&);
+	wxMkvmergeOptsRenderer( const wxConfiguration& );
 
 	void RenderDisc( const wxInputFile&, const wxCueSheet& );
 	bool Save();
 	const wxString& GetMkvmergeOptsFile() const;
-
 };
 
 #endif

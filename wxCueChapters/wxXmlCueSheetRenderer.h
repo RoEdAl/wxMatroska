@@ -1,6 +1,6 @@
 /*
-	wxXmlCueSheetRenderer.h
-*/
+   wxXmlCueSheetRenderer.h
+ */
 
 #ifndef _WX_XML_CUE_SHEET_RENDERER_H_
 #define _WX_XML_CUE_SHEET_RENDERER_H_
@@ -25,9 +25,9 @@ class wxConfiguration;
 #include <wxCueFile/wxSamplingInfo.h>
 #endif
 
-class wxXmlCueSheetRenderer :public wxCueSheetRenderer
+class wxXmlCueSheetRenderer:public wxCueSheetRenderer
 {
-	wxDECLARE_DYNAMIC_CLASS(wxXmlCueSheetRenderer);
+	wxDECLARE_DYNAMIC_CLASS( wxXmlCueSheetRenderer );
 
 protected:
 
@@ -70,7 +70,7 @@ public:
 
 	static class Tag
 	{
-		public:
+public:
 
 		static const wxChar* const ORIGINAL_MEDIA_TYPE;
 		static const wxChar* const CATALOG_NUMBER;
@@ -80,7 +80,7 @@ public:
 
 	static class Xml
 	{
-		public:
+public:
 
 		static const wxChar* const CHAPTER_UID;
 		static const wxChar* const EDITION_ENTRY;
@@ -106,7 +106,7 @@ public:
 
 	static class XmlValue
 	{
-		public:
+public:
 
 		static const wxChar* const ALBUM;
 		static const wxChar* const TRACK;
@@ -129,9 +129,10 @@ protected:
 		const wxCueSheet&,
 		wxXmlNode*,
 		long = 50 );
+
 	wxXmlNode* SetTotalParts(
 		size_t,
-		wxXmlNode*,
+		wxXmlNode *,
 		long = 50 );
 	wxXmlNode* AddTrackTags(
 		const wxTrack&,
@@ -158,13 +159,16 @@ protected:
 	static wxXmlNode* get_last_child( wxXmlNode* );
 	static wxXmlNode* add_chapter_uid( wxXmlNode*, const wxULongLong& uid );
 	static wxXmlNode* add_chapter_time_start( wxXmlNode*, const wxString& );
-	static wxXmlNode* add_chapter_time_start( wxXmlNode*, const wxSamplingInfo&, wxULongLong );
+
+	static wxXmlNode* add_chapter_time_start( wxXmlNode *, const wxSamplingInfo &, wxULongLong );
 	static wxXmlNode* find_chapter_time_start( wxXmlNode* );
 	static bool is_album_tag( wxXmlNode*, long );
 	static wxXmlNode* find_disc_tag_node( wxXmlNode*, long );
-	static bool set_total_parts( wxXmlNode*, size_t );
+
+	static bool set_total_parts( wxXmlNode *, size_t );
 	static wxXmlNode* add_chapter_time_end( wxXmlNode*, const wxString& );
-	static wxXmlNode* add_chapter_time_end( wxXmlNode*, const wxSamplingInfo&, wxULongLong );
+
+	static wxXmlNode* add_chapter_time_end( wxXmlNode *, const wxSamplingInfo &, wxULongLong );
 	static bool has_chapter_time_end( wxXmlNode* );
 	static wxXmlNode* add_chapter_display( wxXmlNode*, const wxString&, const wxString& );
 	static wxXmlNode* add_hidden_flag( wxXmlNode*, bool );
@@ -186,7 +190,8 @@ protected:
 public:
 
 	static wxXmlCueSheetRenderer* CreateObject( const wxConfiguration&, const wxInputFile& );
-	~wxXmlCueSheetRenderer(void);
+
+	~wxXmlCueSheetRenderer( void );
 
 	void SetInputFile( const wxInputFile& );
 

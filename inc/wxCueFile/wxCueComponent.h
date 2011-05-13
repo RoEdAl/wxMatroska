@@ -1,6 +1,6 @@
 /*
-	wxCueComponent.h
-*/
+   wxCueComponent.h
+ */
 
 #ifndef _WX_CUE_COMPONENT_H
 #define _WX_CUE_COMPONENT_H
@@ -13,9 +13,9 @@ class wxTagSynonimsCollection;
 #include "wxCueTag.h"
 #endif
 
-class wxCueComponent :public wxObject
+class wxCueComponent:public wxObject
 {
-	wxDECLARE_ABSTRACT_CLASS(wxCueComponent);
+	wxDECLARE_ABSTRACT_CLASS( wxCueComponent );
 
 public:
 
@@ -65,7 +65,7 @@ protected:
 
 protected:
 
-	void copy(const wxCueComponent&);
+	void copy( const wxCueComponent& );
 	static void remove_duplicates( const wxRegEx&, wxHashCueTag& );
 	static void remove_duplicates( const wxRegEx&, wxArrayCueTag& );
 
@@ -76,7 +76,7 @@ public:
 	virtual bool HasGarbage() const;
 	const wxArrayCueTag& GetCdTextTags() const;
 	const wxArrayCueTag& GetTags() const;
-	void GetTags( 
+	void GetTags(
 		const wxTagSynonimsCollection&,
 		const wxTagSynonimsCollection&,
 		wxArrayCueTag&,
@@ -90,19 +90,19 @@ public:
 
 	bool CheckEntryType( ENTRY_TYPE ) const;
 
-	void Clear(void);
+	void Clear( void );
 	bool IsTrack() const;
 
 	virtual void GetReplacements( wxHashString& ) const;
 
 public:
 
-	wxCueComponent(bool = false);
-	wxCueComponent(const wxCueComponent&);
-	wxCueComponent& operator=(const wxCueComponent&);
+	wxCueComponent( bool = false );
+	wxCueComponent( const wxCueComponent& );
+	wxCueComponent& operator=( const wxCueComponent& );
 
-	wxCueComponent& operator+=(const wxCueComponent&);
-	wxCueComponent& Append(const wxCueComponent&);
+	wxCueComponent& operator+=( const wxCueComponent& );
+	wxCueComponent& Append( const wxCueComponent& );
 
 	static wxString GetCdTextInfoRegExp();
 	static wxString GetKeywordsRegExp();
@@ -111,7 +111,6 @@ public:
 	static bool GetEntryType( const wxString&, ENTRY_TYPE& );
 
 	static wxString FormatCdTextData( const wxString&, const wxString& );
-
 };
 
 #endif

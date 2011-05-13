@@ -1,6 +1,6 @@
 /*
-	wxEncodingDetection.cpp
-*/
+   wxEncodingDetection.cpp
+ */
 
 #include "StdWx.h"
 #include "wxMultiLanguage.h"
@@ -8,23 +8,23 @@
 
 // ===========================================================
 
-wxMBConv* const wxEncodingDetection::wxNullMBConv = (wxMBConv* const)NULL;
+wxMBConv* const wxEncodingDetection::wxNullMBConv = ( wxMBConv* const )NULL;
 
-const wxByte wxEncodingDetection::BOM::UTF32_BE[4] =	{ 0x00, 0x00, 0xFE, 0xEF };
-const wxByte wxEncodingDetection::BOM::UTF32_LE[4] =	{ 0xFF, 0xFE, 0x00, 0x00 };
-const wxByte wxEncodingDetection::BOM::UTF16_BE[2] =	{ 0xFE, 0xFF };
-const wxByte wxEncodingDetection::BOM::UTF16_LE[2] =	{ 0xFF, 0xFE };
-const wxByte wxEncodingDetection::BOM::UTF8[3] =		{ 0xEF, 0xBB, 0xBF };
+const wxByte wxEncodingDetection::BOM::UTF32_BE[ 4 ] = { 0x00, 0x00, 0xFE, 0xEF };
+const wxByte wxEncodingDetection::BOM::UTF32_LE[ 4 ] = { 0xFF, 0xFE, 0x00, 0x00 };
+const wxByte wxEncodingDetection::BOM::UTF16_BE[ 2 ] = { 0xFE, 0xFF };
+const wxByte wxEncodingDetection::BOM::UTF16_LE[ 2 ] = { 0xFF, 0xFE };
+const wxByte wxEncodingDetection::BOM::UTF8[ 3 ] = { 0xEF, 0xBB, 0xBF };
 
-const wxUint32 wxEncodingDetection::CP::UTF32_BE =	12001;
-const wxUint32 wxEncodingDetection::CP::UTF32_LE =	12000;
-const wxUint32 wxEncodingDetection::CP::UTF16_BE =	1201;
-const wxUint32 wxEncodingDetection::CP::UTF16_LE =	1200;
-const wxUint32 wxEncodingDetection::CP::UTF8 =		65001;
+const wxUint32 wxEncodingDetection::CP::UTF32_BE = 12001;
+const wxUint32 wxEncodingDetection::CP::UTF32_LE = 12000;
+const wxUint32 wxEncodingDetection::CP::UTF16_BE = 1201;
+const wxUint32 wxEncodingDetection::CP::UTF16_LE = 1200;
+const wxUint32 wxEncodingDetection::CP::UTF8	 = 65001;
 
 // ===========================================================
 
-class wxMBConv_MLang : public wxMBConv
+class wxMBConv_MLang:public wxMBConv
 {
 public:
 
@@ -44,58 +44,57 @@ public:
 
 protected:
 
-    wxMBConv_MLang()
-		:m_minMBCharWidth(0), m_dwMode(0)
-    {
+	wxMBConv_MLang()
+		:m_minMBCharWidth( 0 ), m_dwMode( 0 )
+	{
 		wxASSERT( m_mlang.IsValid() );
 		m_nCodePage = GetACP();
-    }
+	}
 
 	wxMBConv_MLang( wxUint32 nCodePage )
-		:m_nCodePage( nCodePage ), m_minMBCharWidth(0), m_dwMode(0)
-    {
-		if( !m_mlang.IsValid() )
+		:m_nCodePage( nCodePage ), m_minMBCharWidth( 0 ), m_dwMode( 0 )
+	{
+		if ( !m_mlang.IsValid() )
 		{
-			wxLogError( _("Cannot create MultiLanguage COM object") );
+			wxLogError( _( "Cannot create MultiLanguage COM object" ) );
 		}
 
 		if ( nCodePage == CP_ACP )
 		{
 			m_nCodePage = GetACP();
 		}
-    }
+	}
 
 	wxMBConv_MLang( const wxMultiLanguage& ml, wxUint32 nCodePage = CP_ACP )
-		:m_mlang( ml ), m_nCodePage( nCodePage ), m_minMBCharWidth(0), m_dwMode(0)
-    {
+		:m_mlang( ml ), m_nCodePage( nCodePage ), m_minMBCharWidth( 0 ), m_dwMode( 0 )
+	{
 		if ( nCodePage == CP_ACP )
 		{
 			m_nCodePage = GetACP();
 		}
-    }
+	}
 
-    wxMBConv_MLang(const wxMBConv_MLang& conv)
+	wxMBConv_MLang( const wxMBConv_MLang& conv )
 		:m_mlang( conv.m_mlang ),
-		 m_nCodePage( conv.m_nCodePage ), m_dwMode(0),
-		 m_minMBCharWidth( conv.m_minMBCharWidth )
-    {
-    }
+		m_nCodePage( conv.m_nCodePage ), m_dwMode( 0 ),
+		m_minMBCharWidth( conv.m_minMBCharWidth )
+	{}
 
 public:
 
-	virtual size_t ToWChar(wchar_t *dst, size_t dstLen, const char *src, size_t srcLen = wxNO_LEN) const
+	virtual size_t ToWChar( wchar_t* dst, size_t dstLen, const char* src, size_t srcLen = wxNO_LEN ) const
 	{
 		wxASSERT( m_mlang.IsValid() );
 
 		UINT nSrcSize = srcLen;
 		UINT nDstSize = dstLen;
 
-		wxMBConv_MLang *self = const_cast<wxMBConv_MLang*>(this);
+		wxMBConv_MLang* self = const_cast< wxMBConv_MLang* > ( this );
 
 		HRESULT hRes = m_mlang->ConvertStringToUnicodeEx(
 			&self->m_dwMode,
-			m_nCodePage, 
-			const_cast<CHAR*>( src ), &nSrcSize,
+			m_nCodePage,
+			const_cast< CHAR* > ( src ), &nSrcSize,
 			dst, &nDstSize,
 			0, NULL );
 
@@ -103,9 +102,9 @@ public:
 		{
 			if ( nDstSize > 0 )
 			{
-				if ( *dst == wxT('\uFFFD') && srcLen <= 3 )
+				if ( *dst == wxT( '\uFFFD' ) && srcLen <= 3 )
 				{
-					wxLogDebug( wxT("Unicode replacement character - FFFE") );
+					wxLogDebug( wxT( "Unicode replacement character - FFFE" ) );
 					return wxCONV_FAILED;
 				}
 				else
@@ -124,19 +123,19 @@ public:
 		}
 	}
 
-    virtual size_t FromWChar(char *dst, size_t dstLen, const wchar_t *src, size_t srcLen = wxNO_LEN) const
+	virtual size_t FromWChar( char* dst, size_t dstLen, const wchar_t* src, size_t srcLen = wxNO_LEN ) const
 	{
 		wxASSERT( m_mlang.IsValid() );
 
 		UINT nSrcSize = srcLen;
 		UINT nDstSize = dstLen;
 
-		wxMBConv_MLang *self = const_cast<wxMBConv_MLang*>(this);
+		wxMBConv_MLang* self = const_cast< wxMBConv_MLang* > ( this );
 
-		HRESULT hRes = m_mlang->ConvertStringFromUnicodeEx( 
+		HRESULT hRes = m_mlang->ConvertStringFromUnicodeEx(
 			&self->m_dwMode,
 			m_nCodePage,
-			const_cast<WCHAR*>(src),
+			const_cast< WCHAR* > ( src ),
 			&nSrcSize,
 			dst,
 			&nDstSize,
@@ -160,17 +159,17 @@ public:
 		}
 	}
 
-    virtual size_t GetMBNulLen() const
-    {
+	virtual size_t GetMBNulLen() const
+	{
 		wxASSERT( m_mlang.IsValid() );
 
 		if ( m_minMBCharWidth == 0 )
 		{
-			DWORD dwMode = 0;
+			DWORD dwMode  = 0;
 			UINT nSrcSize = 1;
 			UINT nDstSize = 0;
 
-			HRESULT hRes = m_mlang->ConvertStringFromUnicodeEx( 
+			HRESULT hRes = m_mlang->ConvertStringFromUnicodeEx(
 				&dwMode,
 				m_nCodePage,
 				L"", &nSrcSize,
@@ -178,40 +177,40 @@ public:
 				0,
 				NULL );
 
-			wxMBConv_MLang* const self = wxConstCast(this, wxMBConv_MLang);
+			wxMBConv_MLang* const self = wxConstCast( this, wxMBConv_MLang );
 
 			if ( hRes == S_OK )
 			{
 				switch ( nDstSize )
 				{
 					default:
-						wxLogDebug( wxT("Unexpected NUL length %d"), nDstSize );
-						self->m_minMBCharWidth = (size_t)-1;
-						break;
+					wxLogDebug( wxT( "Unexpected NUL length %d" ), nDstSize );
+					self->m_minMBCharWidth = ( size_t )-1;
+					break;
 
 					case 0:
-						self->m_minMBCharWidth = (size_t)-1;
-						break;
+					self->m_minMBCharWidth = ( size_t )-1;
+					break;
 
 					case 1:
 					case 2:
 					case 4:
-						self->m_minMBCharWidth = nDstSize;
-						break;
+					self->m_minMBCharWidth = nDstSize;
+					break;
 				}
 			}
 			else
 			{
-				self->m_minMBCharWidth = (size_t)-1;
+				self->m_minMBCharWidth = ( size_t )-1;
 			}
 		}
 
 		return m_minMBCharWidth;
-    }
+	}
 
-    virtual wxMBConv *Clone() const { return new wxMBConv_MLang(*this); }
+	virtual wxMBConv* Clone() const { return new wxMBConv_MLang( *this ); }
 
-	bool IsOk() const { return m_mlang.IsValid() && (m_nCodePage != CP_ACP); }
+	bool IsOk() const { return m_mlang.IsValid() && ( m_nCodePage != CP_ACP ); }
 
 	wxString GetDescription() const
 	{
@@ -220,12 +219,13 @@ public:
 		HRESULT hRes = m_mlang.GetCodePageDescription( m_nCodePage, sCPDescription );
 		if ( hRes == S_OK )
 		{
-			sDescription.Printf( wxT("%s [CP:%d]"), sCPDescription, m_nCodePage );
+			sDescription.Printf( wxT( "%s [CP:%d]" ), sCPDescription, m_nCodePage );
 		}
 		else
 		{
-			sDescription.Printf( wxT("<ERR:%08x> [CP:%d]"), hRes, m_nCodePage );
+			sDescription.Printf( wxT( "<ERR:%08x> [CP:%d]" ), hRes, m_nCodePage );
 		}
+
 		return sDescription;
 	}
 
@@ -233,22 +233,22 @@ protected:
 
 	wxMultiLanguage m_mlang;
 
-    // the code page we're working with
-    wxUint32 m_nCodePage;
+	// the code page we're working with
+	wxUint32 m_nCodePage;
 
-    // cached result of GetMBNulLen(), set to 0 initially meaning
-    // "unknown"
-    size_t m_minMBCharWidth;
+	// cached result of GetMBNulLen(), set to 0 initially meaning
+	// "unknown"
+	size_t m_minMBCharWidth;
 	DWORD m_dwMode;
 };
 
-class wxMBConv_BOM : public wxMBConv
+class wxMBConv_BOM:public wxMBConv
 {
-	typedef wxSharedPtr<wxMBConv> wxMBConvSharedPtr;
+	typedef wxSharedPtr< wxMBConv > wxMBConvSharedPtr;
 
 public:
 
-	typedef wxCharTypeBuffer<wxByte> wxByteBuffer;
+	typedef wxCharTypeBuffer< wxByte > wxByteBuffer;
 
 	static wxMBConv_BOM* Create( const wxByte* bom, size_t nLen, wxUint32 nCodePage, bool bUseMLang, wxString& sDescription )
 	{
@@ -265,8 +265,8 @@ protected:
 
 	wxMBConv_BOM( const wxByte* bom, size_t nLen, wxMBConvSharedPtr pConv )
 		:m_bom( bom, nLen ),
-		 m_pConv( pConv ),
-		 m_bBOMConsumed( false )
+		m_pConv( pConv ),
+		m_bBOMConsumed( false )
 	{
 		wxASSERT( pConv.get() != wxEncodingDetection::wxNullMBConv );
 		wxASSERT( nLen >= 2 );
@@ -274,22 +274,21 @@ protected:
 
 	wxMBConv_BOM( const wxMBConv_BOM& convBom )
 		:m_bom( convBom.m_bom ),
-		 m_pConv( convBom.m_pConv->Clone() ),
-		 m_bBOMConsumed( false )
-	{
-	}
+		m_pConv( convBom.m_pConv->Clone() ),
+		m_bBOMConsumed( false )
+	{}
 
 public:
 
-	virtual wxMBConv *Clone() const { return new wxMBConv_BOM(*this); }
+	virtual wxMBConv* Clone() const { return new wxMBConv_BOM( *this ); }
 
-	virtual size_t ToWChar(wchar_t *dst, size_t dstLen, const char *src, size_t srcLen) const
+	virtual size_t ToWChar( wchar_t* dst, size_t dstLen, const char* src, size_t srcLen ) const
 	{
-		wxMBConv_BOM *self = const_cast<wxMBConv_BOM*>(this);
+		wxMBConv_BOM* self = const_cast< wxMBConv_BOM* > ( this );
 
 		if ( !m_bBOMConsumed )
 		{
-			if ( !SkipBOM(src, srcLen) )
+			if ( !SkipBOM( src, srcLen ) )
 			{
 				return wxCONV_FAILED;
 			}
@@ -299,7 +298,7 @@ public:
 			}
 		}
 
-		size_t rc = m_pConv->ToWChar(dst, dstLen, src, srcLen);
+		size_t rc = m_pConv->ToWChar( dst, dstLen, src, srcLen );
 
 		// don't skip the BOM again the next time if we really consumed it
 		if ( rc != wxCONV_FAILED && dst && !m_bBOMConsumed )
@@ -310,9 +309,9 @@ public:
 		return rc;
 	}
 
-	virtual size_t FromWChar(char *dst, size_t dstLen, const wchar_t *src, size_t srcLen) const
+	virtual size_t FromWChar( char* dst, size_t dstLen, const wchar_t* src, size_t srcLen ) const
 	{
-		return m_pConv->FromWChar(dst, dstLen, src, srcLen);
+		return m_pConv->FromWChar( dst, dstLen, src, srcLen );
 	}
 
 	virtual size_t GetMBNulLen() const
@@ -324,7 +323,7 @@ protected:
 
 	bool SkipBOM( const char*& src, size_t& len ) const
 	{
-		size_t realLen = (len != (size_t)-1)? len : wxStrnlen( src, 16 );
+		size_t realLen = ( len != ( size_t )-1 )?len : wxStrnlen( src, 16 );
 		if ( realLen < m_bom.length() )
 		{ // still waiting
 			return false;
@@ -336,23 +335,25 @@ protected:
 		}
 
 		src += m_bom.length();
-		if ( len != (size_t)-1 )
+		if ( len != ( size_t )-1 )
 		{
 			len -= m_bom.length();
 		}
+
 		return true;
 	}
 
 	bool check_bom( const char* src ) const
 	{
 		bool bRes = true;
-		for( size_t i = 0; bRes && (i < m_bom.length()); i++ )
+		for ( size_t i = 0 ; bRes && ( i < m_bom.length() ) ; i++ )
 		{
-			if ( m_bom[i] != (wxByte)( src[i] ) )
+			if ( m_bom[ i ] != ( wxByte )( src[ i ] ) )
 			{
 				bRes = false;
 			}
 		}
+
 		return bRes;
 	}
 
@@ -372,9 +373,10 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetDefaultEncoding( 
 	}
 	else
 	{
-		sDescription = _("Default (Native)");
-		pConv = wxConvLocal.Clone();
+		sDescription = _( "Default (Native)" );
+		pConv		 = wxConvLocal.Clone();
 	}
+
 	return pConv;
 }
 
@@ -383,31 +385,31 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetStandardMBConv( w
 	wxMBConvSharedPtr pConv;
 	if ( !bUseMLang )
 	{
-		switch( nCodePage )
+		switch ( nCodePage )
 		{
 			case CP::UTF32_BE:
-			pConv = new wxMBConvUTF32BE();
-			sDescription = _("UTF-32 BE (Native)");
+			pConv		 = new wxMBConvUTF32BE();
+			sDescription = _( "UTF-32 BE (Native)" );
 			break;
 
 			case CP::UTF32_LE:
-			pConv = new wxMBConvUTF32LE();
-			sDescription = _("UTF-32 LE (Native)");
+			pConv		 = new wxMBConvUTF32LE();
+			sDescription = _( "UTF-32 LE (Native)" );
 			break;
 
 			case CP::UTF16_BE:
-			pConv = new wxMBConvUTF16BE();
-			sDescription = _("UTF-16 BE (Native)");
+			pConv		 = new wxMBConvUTF16BE();
+			sDescription = _( "UTF-16 BE (Native)" );
 			break;
 
 			case CP::UTF16_LE:
-			pConv = new wxMBConvUTF16LE();
-			sDescription = _("UTF-16 LE (Native)");
+			pConv		 = new wxMBConvUTF16LE();
+			sDescription = _( "UTF-16 LE (Native)" );
 			break;
 
 			case CP::UTF8:
-			pConv = wxConvUTF8.Clone();
-			sDescription = _("UTF-8 (Native)");
+			pConv		 = wxConvUTF8.Clone();
+			sDescription = _( "UTF-8 (Native)" );
 			break;
 
 			default:
@@ -427,10 +429,14 @@ bool wxEncodingDetection::test_bom( const wxByteBuffer& buffer, const wxByte* bo
 {
 	wxASSERT( nLen >= 2 );
 	bool bRes = true;
-	for( size_t i=0; bRes && (i < nLen); i++ )
+	for ( size_t i = 0 ; bRes && ( i < nLen ) ; i++ )
 	{
-		if ( buffer[i] != bom[i] ) bRes = false;
+		if ( buffer[ i ] != bom[ i ] )
+		{
+			bRes = false;
+		}
 	}
+
 	return bRes;
 }
 
@@ -444,13 +450,14 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncodingFromB
 		wxFileInputStream fis( fn.GetFullPath() );
 		if ( !fis.IsOk() )
 		{
-			wxLogError( _("Cannot open file \u201C%s\u201D"), fn.GetName() );
+			wxLogError( _( "Cannot open file \u201C%s\u201D" ), fn.GetName() );
 			return pRes;
 		}
+
 		nLastRead = fis.Read( buffer.data(), buffer.length() ).LastRead();
 	}
 
-	switch( nLastRead )
+	switch ( nLastRead )
 	{
 		default: // 4 and more
 		if ( test_bom( buffer, BOM::UTF32_BE, 4 ) )
@@ -480,11 +487,12 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncodingFromB
 		{
 			pRes = wxMBConvSharedPtr( wxMBConv_BOM::Create( BOM::UTF16_LE, 2, CP::UTF32_LE, bUseMLang, sDescription ) );
 		}
+
 		break;
 
 		case 0:
 		case 1:
-		wxLogError( _("Cannot read BOM - file \u201C%s\u201D is too small"), fn.GetName() );
+		wxLogError( _( "Cannot read BOM - file \u201C%s\u201D is too small" ), fn.GetName() );
 		break;
 	}
 
@@ -497,13 +505,13 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 	wxULongLong nFileSize = fn.GetSize();
 	if ( nFileSize == wxInvalidSize )
 	{
-		wxLogError( _("Cannot determine size of file \u201C%s\u201D"), fn.GetName() );
+		wxLogError( _( "Cannot determine size of file \u201C%s\u201D" ), fn.GetName() );
 		return pRes;
 	}
 
-	if ( nFileSize == wxULL(0) )
+	if ( nFileSize == wxULL( 0 ) )
 	{
-		wxLogError( _("Cannot determine encoding of empty file \u201C%s\u201D"), fn.GetName() );
+		wxLogError( _( "Cannot determine encoding of empty file \u201C%s\u201D" ), fn.GetName() );
 		return pRes;
 	}
 
@@ -521,15 +529,15 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 
 		if ( !multiLanguage.IsValid() )
 		{
-			wxLogError( _("Cannot create MultiLanguage COM object") );
+			wxLogError( _( "Cannot create MultiLanguage COM object" ) );
 			pRes.reset();
 			return pRes;
 		}
 
-		DetectEncodingInfo dei[10];
+		DetectEncodingInfo dei[ 10 ];
 		INT nSize = 10;
 
-		if ( nFileSize < wxULL(256) )
+		if ( nFileSize < wxULL( 256 ) )
 		{
 			wxCharBuffer buffer( nFileSize.GetLo() );
 			wxCharBuffer newBuffer( 256 );
@@ -539,7 +547,7 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 				wxFileInputStream fis( fn.GetFullPath() );
 				if ( !fis.IsOk() )
 				{
-					wxLogError( _("Cannot open file \u201C%s\u201D"), fn.GetName() );
+					wxLogError( _( "Cannot open file \u201C%s\u201D" ), fn.GetName() );
 					pRes.reset();
 					return pRes;
 				}
@@ -549,25 +557,25 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 			}
 
 			int steps = 256 / nLastRead;
-			for( int i=0; i<steps; i++ )
+			for ( int i = 0 ; i < steps ; i++ )
 			{
-				wxTmemcpy( newBuffer.data() + (nLastRead * i), buffer.data(), nLastRead );
+				wxTmemcpy( newBuffer.data() + ( nLastRead * i ), buffer.data(), nLastRead );
 			}
 
 			int rest = 256 % nLastRead;
-			wxTmemcpy( newBuffer.data() + (nLastRead * steps), buffer.data(), rest );
+			wxTmemcpy( newBuffer.data() + ( nLastRead * steps ), buffer.data(), rest );
 
 			HRESULT hRes = multiLanguage.DetectInputCodepage( MLDETECTCP_NONE, nDefCodePage, newBuffer, dei, &nSize );
 			if ( hRes != S_OK )
 			{
-				wxLogError( _("Cannot determine encoding of file \u201C%s\u201D"), fn.GetName() );
+				wxLogError( _( "Cannot determine encoding of file \u201C%s\u201D" ), fn.GetName() );
 				pRes.reset();
 				return pRes;
 			}
 		}
-		else if ( nFileSize > wxULL(102400) ) // > 100k
+		else if ( nFileSize > wxULL( 102400 ) ) // > 100k
 		{ // read only first 4k
-			wxLogWarning( _("File \u201C%s\u201D is really big - trying first 4kb only"), fn.GetName() );
+			wxLogWarning( _( "File \u201C%s\u201D is really big - trying first 4kb only" ), fn.GetName() );
 			wxCharBuffer buffer( 4 * 1024 );
 			size_t nLastRead;
 
@@ -575,7 +583,7 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 				wxFileInputStream fis( fn.GetFullPath() );
 				if ( !fis.IsOk() )
 				{
-					wxLogError( _("Cannot open file \u201C%s\u201D"), fn.GetName() );
+					wxLogError( _( "Cannot open file \u201C%s\u201D" ), fn.GetName() );
 					pRes.reset();
 					return pRes;
 				}
@@ -589,7 +597,7 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 			HRESULT hRes = multiLanguage.DetectInputCodepage( MLDETECTCP_NONE, nDefCodePage, buffer, dei, &nSize );
 			if ( hRes != S_OK )
 			{
-				wxLogError( _("Cannot determine encoding of file \u201C%s\u201D"), fn.GetName() );
+				wxLogError( _( "Cannot determine encoding of file \u201C%s\u201D" ), fn.GetName() );
 				pRes.reset();
 				return pRes;
 			}
@@ -599,7 +607,7 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 			HRESULT hRes = multiLanguage.DetectCodepageInStream( MLDETECTCP_NONE, nDefCodePage, fn, dei, &nSize );
 			if ( hRes != S_OK )
 			{
-				wxLogError( _("Cannot determine encoding of file \u201C%s\u201D"), fn.GetName() );
+				wxLogError( _( "Cannot determine encoding of file \u201C%s\u201D" ), fn.GetName() );
 				pRes.reset();
 				return pRes;
 			}
@@ -607,16 +615,16 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 
 		if ( nSize > 0 )
 		{
-			for( INT i=0; i< nSize; i++ )
+			for ( INT i = 0 ; i < nSize ; i++ )
 			{
-				wxLogDebug( _("Detected encoding of file \u201C%s\u201D is %d (%d%%)"), fn.GetName(), dei[i].nCodePage, dei[i].nDocPercent );
+				wxLogDebug( _( "Detected encoding of file \u201C%s\u201D is %d (%d%%)" ), fn.GetName(), dei[ i ].nCodePage, dei[ i ].nDocPercent );
 			}
 
-			pRes = wxMBConv_MLang::Create( multiLanguage, dei[0].nCodePage, sDescription );
+			pRes = wxMBConv_MLang::Create( multiLanguage, dei[ 0 ].nCodePage, sDescription );
 		}
 		else
 		{
-			wxLogDebug( wxT("Cannot detect code page - using default encoding") );
+			wxLogDebug( wxT( "Cannot detect code page - using default encoding" ) );
 			pRes = wxMBConv_MLang::Create( multiLanguage, nDefCodePage, sDescription );
 		}
 	}
@@ -631,7 +639,7 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 bool wxEncodingDetection::GetBOM( wxUint32 nCodePage, wxByteBuffer& bom )
 {
 	bool bRet = true;
-	switch( nCodePage )
+	switch ( nCodePage )
 	{
 		case CP::UTF32_BE:
 		bom = wxByteBuffer( BOM::UTF32_BE, 4 );

@@ -1,6 +1,6 @@
 /*
-	wxWavpackTagReader.h
-*/
+   wxWavpackTagReader.h
+ */
 
 #ifndef _WX_WAVPACK_TAG_READER_H_
 #define _WX_WAVPACK_TAG_READER_H_
@@ -17,28 +17,27 @@
 class wxArrayCueTag;
 #endif
 
-class wxWavpackTagReader :protected wxAbstractMetaDataReader
+class wxWavpackTagReader:protected wxAbstractMetaDataReader
 {
-
 protected:
 
-	wxWavpackTagReader(void);
+	wxWavpackTagReader( void );
 
 protected:
 
 	class wxWavpackContext
 	{
-		protected:
+protected:
 
 		WavpackContext* m_pContext;
 
-		public:
+public:
 
 		static WavpackContext* const Null;
 
-		wxWavpackContext() :m_pContext( Null ) {}
+		wxWavpackContext():m_pContext( Null ){}
 		wxWavpackContext( WavpackContext* pContext )
-			:m_pContext( pContext ) {}
+			:m_pContext( pContext ){}
 		~wxWavpackContext()
 		{
 			if ( this->operator bool() )

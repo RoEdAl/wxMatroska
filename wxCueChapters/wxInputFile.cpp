@@ -1,11 +1,11 @@
 /*
-	wxInputFile.cpp
-*/
+   wxInputFile.cpp
+ */
 
 #include "StdWx.h"
 #include "wxInputFile.h"
 
-const wxChar wxInputFile::SEPARATOR = wxT(';');
+const wxChar wxInputFile::SEPARATOR = wxT( ';' );
 
 wxIMPLEMENT_DYNAMIC_CLASS( wxInputFile, wxObject )
 
@@ -16,38 +16,37 @@ void wxInputFile::copy( const wxInputFile& inputFile )
 	WX_APPEND_ARRAY( m_dataFile, inputFile.m_dataFile );
 }
 
-wxInputFile::wxInputFile(const wxInputFile& inputFile)
+wxInputFile::wxInputFile( const wxInputFile& inputFile )
 {
 	copy( inputFile );
 }
 
-wxInputFile& wxInputFile::operator=(const wxInputFile& inputFile)
+wxInputFile& wxInputFile::operator=( const wxInputFile& inputFile )
 {
 	copy( inputFile );
 	return *this;
 }
 
-wxInputFile::wxInputFile(const wxString& sInputFile)
+wxInputFile::wxInputFile( const wxString& sInputFile )
 {
 	wxStringTokenizer tokenizer( sInputFile, SEPARATOR );
 	if ( tokenizer.HasMoreTokens() )
 	{
 		m_inputFile.Assign( tokenizer.GetNextToken() );
 	}
-	while( tokenizer.HasMoreTokens() )
+
+	while ( tokenizer.HasMoreTokens() )
 	{
 		wxFileName dataFile( tokenizer.GetNextToken() );
 		m_dataFile.Add( dataFile );
 	}
 }
 
-wxInputFile::wxInputFile(void)
-{
-}
+wxInputFile::wxInputFile( void )
+{}
 
-wxInputFile::~wxInputFile(void)
-{
-}
+wxInputFile::~wxInputFile( void )
+{}
 
 bool wxInputFile::IsOk() const
 {
@@ -73,9 +72,9 @@ void wxInputFile::GetDataFiles( wxArrayDataFile& dataFile, wxDataFile::FileType 
 {
 	dataFile.Clear();
 	size_t count = m_dataFile.Count();
-	for( size_t i=0; i<count; i++ )
+	for ( size_t i = 0 ; i < count ; i++ )
 	{
-		wxDataFile df( m_dataFile[i].GetFullPath(), fileType );
+		wxDataFile df( m_dataFile[ i ].GetFullPath(), fileType );
 		dataFile.Add( df );
 	}
 }
@@ -99,13 +98,13 @@ wxString wxInputFile::ToString( bool bLongPath ) const
 
 	if ( m_inputFile.IsOk() )
 	{
-		s.Append( bLongPath? m_inputFile.GetFullPath() : m_inputFile.GetFullName() );
+		s.Append( bLongPath?m_inputFile.GetFullPath() : m_inputFile.GetFullName() );
 		s.Append( SEPARATOR );
 	}
 
-	for( size_t i=0; i<m_dataFile.Count(); i++ )
+	for ( size_t i = 0 ; i < m_dataFile.Count() ; i++ )
 	{
-		s.Append( bLongPath? m_dataFile[i].GetFullPath() : m_dataFile[i].GetFullName() );
+		s.Append( bLongPath?m_dataFile[ i ].GetFullPath() : m_dataFile[ i ].GetFullName() );
 		s.Append( SEPARATOR );
 	}
 
