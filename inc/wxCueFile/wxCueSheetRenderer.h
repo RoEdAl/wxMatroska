@@ -19,7 +19,8 @@ class wxArrayIndex;
 class wxCueSheet;
 #endif
 
-class wxCueSheetRenderer: public wxObject
+class wxCueSheetRenderer:
+	public wxObject
 {
 	wxDECLARE_ABSTRACT_CLASS( wxCueSheetRenderer );
 
@@ -77,4 +78,3 @@ public:
 };
 
 #endif
-

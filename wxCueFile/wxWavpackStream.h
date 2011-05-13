@@ -5,7 +5,8 @@
 #ifndef _WX_WAVPACK_STREAM_H_
 #define _WX_WAVPACK_STREAM_H_
 
-class wxWavpackStream: public wxObject
+class wxWavpackStream:
+	public wxObject
 {
 public:
 
@@ -36,7 +37,7 @@ public:
 
 		WavpackStreamReader* GetStream() const
 		{
-			return const_cast<WavpackStreamReader*> ( &m_wavpackStreamReader );
+			return const_cast<WavpackStreamReader*>( &m_wavpackStreamReader );
 		}
 	};
 
@@ -72,4 +73,3 @@ protected:
 };
 
 #endif
-

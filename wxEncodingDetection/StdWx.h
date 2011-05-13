@@ -21,4 +21,3 @@
 #include <shlwapi.h>
 
 #endif // _STD_WX_H
-

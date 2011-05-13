@@ -37,18 +37,18 @@ wxTrack::DATA_MODE_STR wxTrack::DataModeString[] =
 
 size_t wxTrack::DataModeStringSize = WXSIZEOF( wxTrack::DataModeString );
 
-wxTrack::wxTrack( void )
-	: wxCueComponent( true ), m_number( 0 )
+wxTrack::wxTrack( void ):
+	wxCueComponent( true ), m_number( 0 )
 {}
 
-wxTrack::wxTrack( const wxTrack& track )
-	: wxCueComponent( true ), m_dataMode( AUDIO )
+wxTrack::wxTrack( const wxTrack& track ):
+	wxCueComponent( true ), m_dataMode( AUDIO )
 {
 	copy( track );
 }
 
-wxTrack::wxTrack( unsigned long number )
-	: wxCueComponent( true ), m_number( number ), m_dataMode( AUDIO )
+wxTrack::wxTrack( unsigned long number ):
+	wxCueComponent( true ), m_number( number ), m_dataMode( AUDIO )
 {}
 
 wxTrack& wxTrack::operator =( const wxTrack& track )
@@ -217,6 +217,7 @@ wxTrack& wxTrack::AddFlag( wxTrack::Flag flag )
 bool wxTrack::AddFlag( const wxString& sFlag )
 {
 	Flag flag;
+
 	if ( wxTrack::StringToFlag( sFlag, flag ) )
 	{
 		m_flags.Add( flag );
@@ -237,6 +238,7 @@ wxString wxTrack::GetFlagsAsString() const
 {
 	wxString s;
 	size_t	 flags = m_flags.Count();
+
 	for ( size_t i = 0; i < flags; i++ )
 	{
 		s += FlagToString( m_flags[ i ] );
@@ -255,6 +257,7 @@ bool wxTrack::HasFlags() const
 bool wxTrack::HasFlag( wxTrack::Flag f ) const
 {
 	size_t flags = m_flags.Count();
+
 	for ( size_t i = 0; i < flags; i++ )
 	{
 		if ( m_flags[ i ] == f )
@@ -269,6 +272,7 @@ bool wxTrack::HasFlag( wxTrack::Flag f ) const
 wxString wxTrack::GetFlagRegExp()
 {
 	wxString s;
+
 	for ( size_t i = 0; i < FlagStringSize; i++ )
 	{
 		s += FlagString[ i ].szName;
@@ -285,6 +289,7 @@ wxString wxTrack::GetFlagRegExp()
 wxString wxTrack::FlagToString( wxTrack::Flag flag )
 {
 	wxString s;
+
 	for ( size_t i = 0; i < FlagStringSize; i++ )
 	{
 		if ( FlagString[ i ].flag == flag )
@@ -314,6 +319,7 @@ bool wxTrack::StringToFlag( const wxString& s, wxTrack::Flag& flag )
 wxString wxTrack::GetDataModeRegExp()
 {
 	wxString s;
+
 	for ( size_t i = 0; i < DataModeStringSize; i++ )
 	{
 		s += DataModeString[ i ].szName;
@@ -330,6 +336,7 @@ wxString wxTrack::GetDataModeRegExp()
 wxString wxTrack::DataModeToString( wxTrack::DataMode mode )
 {
 	wxString s;
+
 	for ( size_t i = 0; i < DataModeStringSize; i++ )
 	{
 		if ( DataModeString[ i ].mode == mode )
@@ -359,6 +366,7 @@ bool wxTrack::StringToDataMode( const wxString& s, wxTrack::DataMode& mode )
 bool wxTrack::SetMode( const wxString& sMode )
 {
 	DataMode mode;
+
 	if ( sMode.IsEmpty() )
 	{
 		mode = AUDIO;
@@ -415,6 +423,7 @@ wxArrayIndex& wxTrack::SortIndicies()
 const wxIndex& wxTrack::GetFirstIndex() const
 {
 	size_t idxs = m_indexes.Count();
+
 	for ( size_t i = 0; i < idxs; i++ )
 	{
 		if ( m_indexes[ i ].GetNumber() == 1 )
@@ -457,4 +466,3 @@ wxTrack& wxTrack::Shift( const wxDuration& duration )
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
 WX_DEFINE_OBJARRAY( wxArrayTrack );
-

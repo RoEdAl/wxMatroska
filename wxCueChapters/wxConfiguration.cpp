@@ -34,6 +34,7 @@ wxIMPLEMENT_DYNAMIC_CLASS( wxConfiguration, wxObject )
 wxString wxConfiguration::GetFileEncodingStr( wxConfiguration::FILE_ENCODING eFileEncoding )
 {
 	wxString s;
+
 	switch ( eFileEncoding )
 	{
 		case ENCODING_LOCAL:
@@ -118,6 +119,7 @@ bool wxConfiguration::ReadLanguagesStrings( wxSortedArrayString& as )
 {
 	const wxStandardPaths& paths = wxStandardPaths::Get();
 	wxFileName			   fn( paths.GetExecutablePath() );
+
 	fn.SetFullName( LANG_FILE_NAME );
 	if ( !fn.FileExists() )
 	{
@@ -169,8 +171,8 @@ bool wxConfiguration::ReadLanguagesStrings( wxSortedArrayString& as )
 	return true;
 }
 
-wxConfiguration::wxConfiguration( void )
-	: m_bChapterTimeEnd( true ),
+wxConfiguration::wxConfiguration( void ):
+	m_bChapterTimeEnd( true ),
 	m_bUnknownChapterTimeEndToNextChapter( false ),
 	m_nChapterOffset( 150 ),
 	m_bUseDataFiles( false ),
@@ -764,6 +766,7 @@ wxString wxConfiguration::BoolToIdx( bool b )
 wxString wxConfiguration::GetEmbeddedModeFlagsDesc( unsigned int flags )
 {
 	wxArrayString as;
+
 	as.Add( ( ( flags & wxCueSheetReader::EC_SINGLE_MEDIA_FILE ) != 0 )?wxT( "single-media-file" ) : wxT( "media-file-with-embedded-cuesheet" ) );
 
 	wxString s;
@@ -813,6 +816,7 @@ wxString wxConfiguration::GetTagSourcesNames( const wxArrayTagSource& sources )
 {
 	wxString s;
 	size_t	 nSources = sources.GetCount();
+
 	wxASSERT( nSources > 0 );
 	for ( size_t i = 0; i < nSources; i++ )
 	{
@@ -900,6 +904,7 @@ void wxConfiguration::Dump() const
 void wxConfiguration::BuildXmlComments( const wxString& sOutputFile, wxXmlNode* pNode ) const
 {
 	wxString sInit;
+
 	sInit.Printf( wxT( "This file was created by %s tool" ), wxGetApp().GetAppDisplayName() );
 	wxXmlNode* pComment = new wxXmlNode( wxNullXmlNode, wxXML_COMMENT_NODE, wxEmptyString, sInit );
 	pNode->AddChild( pComment );
@@ -975,6 +980,7 @@ const wxArrayInputFile& wxConfiguration::GetInputFiles() const
 wxString wxConfiguration::GetOutputFile( const wxInputFile& _inputFile ) const
 {
 	wxFileName inputFile( _inputFile.GetInputFile() );
+
 	if ( !inputFile.IsOk() )
 	{
 		return wxEmptyString;
@@ -1212,6 +1218,7 @@ void wxConfiguration::AddTagSourceToIgnore( wxCueTag::TAG_SOURCE eSource )
 void wxConfiguration::RemoveTagSourceToIgnore( wxCueTag::TAG_SOURCE eSource )
 {
 	int nIdx = m_aeIgnoredSources.Index( eSource );
+
 	if ( nIdx != wxNOT_FOUND )
 	{
 		m_aeIgnoredSources.RemoveAt( nIdx );
@@ -1265,4 +1272,3 @@ bool wxConfiguration::AttachEacLog() const
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
 WX_DEFINE_OBJARRAY( wxArrayInputFile );
-

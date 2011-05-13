@@ -155,6 +155,7 @@ bool wxWavpackTagReader::ReadCueSheetTag( const wxString& sWavpackFile, wxString
 bool wxWavpackTagReader::ReadTags( const wxString& sWavpackFile, wxArrayCueTag& comments )
 {
 	wxFileInputStream is( sWavpackFile );
+
 	if ( !is.IsOk() )
 	{
 		wxLogError( _( "Fail to open Wavpack file %s." ), sWavpackFile );
@@ -208,4 +209,3 @@ bool wxWavpackTagReader::ReadTags( const wxString& sWavpackFile, wxArrayCueTag& 
 
 	return true;
 }
-

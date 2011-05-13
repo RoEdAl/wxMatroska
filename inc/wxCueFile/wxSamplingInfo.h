@@ -9,7 +9,8 @@
 #include "wxIndex.h"
 #endif
 
-class wxSamplingInfo: public wxObject
+class wxSamplingInfo:
+	public wxObject
 {
 	wxDECLARE_DYNAMIC_CLASS( wxSamplingInfo );
 
@@ -72,4 +73,3 @@ protected:
 };
 
 #endif
-

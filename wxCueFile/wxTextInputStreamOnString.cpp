@@ -5,8 +5,8 @@
 #include "StdWx.h"
 #include "wxTextInputStreamOnString.h"
 
-wxTextInputStreamOnString::wxTextInputStreamOnString( const wxString& s )
-	: m_inputStream( s ),
+wxTextInputStreamOnString::wxTextInputStreamOnString( const wxString& s ):
+	m_inputStream( s ),
 	m_textInputStream( m_inputStream, wxT( " \t" ), wxConvUTF8 )
 {}
 
@@ -29,4 +29,3 @@ bool wxTextInputStreamOnString::Eof() const
 {
 	return m_inputStream.Eof();
 }
-

@@ -5,7 +5,8 @@
 #ifndef _WX_MEDIA_INFO_H
 #define _WX_MEDIA_INFO_H
 
-class wxMediaInfo: public wxObject
+class wxMediaInfo:
+	public wxObject
 {
 	wxDECLARE_ABSTRACT_CLASS( wxMediaInfo );
 
@@ -80,4 +81,3 @@ public:
 };
 
 #endif
-

@@ -7,13 +7,13 @@
 #include <wxEncodingDetection/wxTextOutputStreamWithBOM.h>
 #include "wxTextInputStreamOnString.h"
 
-wxTextOutputStreamOnString::wxTextOutputStreamOnString()
-	: m_outputStream( ( wxString* )NULL, m_conv ),
+wxTextOutputStreamOnString::wxTextOutputStreamOnString():
+	m_outputStream( ( wxString* )NULL, m_conv ),
 	m_textOutputStream( m_outputStream, wxEOL_UNIX, m_conv )
 {}
 
-wxTextOutputStreamOnString::wxTextOutputStreamOnString( wxString& s )
-	: m_outputStream( &s, m_conv ),
+wxTextOutputStreamOnString::wxTextOutputStreamOnString( wxString& s ):
+	m_outputStream( &s, m_conv ),
 	m_textOutputStream( m_outputStream, wxEOL_UNIX, m_conv )
 {}
 
@@ -40,6 +40,7 @@ wxTextOutputStream& wxTextOutputStreamOnString::operator *()
 bool wxTextOutputStreamOnString::SaveTo( const wxString& sOutputFile, bool bUseMLang ) const
 {
 	wxFileOutputStream os( sOutputFile );
+
 	if ( os.IsOk() )
 	{
 		wxSharedPtr<wxTextOutputStream> pStream( wxTextOutputStreamWithBOMFactory::CreateUTF8( os, wxEOL_NATIVE, true, bUseMLang ) );
@@ -52,4 +53,3 @@ bool wxTextOutputStreamOnString::SaveTo( const wxString& sOutputFile, bool bUseM
 		return false;
 	}
 }
-

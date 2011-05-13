@@ -29,7 +29,8 @@ class wxDuration;
 class wxSamplingInfo;
 #endif
 
-class wxTrack: public wxCueComponent
+class wxTrack:
+	public wxCueComponent
 {
 	wxDECLARE_DYNAMIC_CLASS( wxTrack );
 
@@ -153,4 +154,3 @@ public:
 WX_DECLARE_OBJARRAY( wxTrack, wxArrayTrack );
 
 #endif
-

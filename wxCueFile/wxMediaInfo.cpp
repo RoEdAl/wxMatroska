@@ -106,4 +106,3 @@ const wxChar* wxMediaInfo::MediaInfoGet( void* handle, MediaInfo_stream_C Stream
 	wxASSERT( IsLoaded() );
 	return m_fnGet( handle, StreamKind, StreamNumber, Parameter, KindOfInfo, KindOfSearch );
 }
-

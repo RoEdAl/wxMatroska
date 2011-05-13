@@ -30,4 +30,3 @@
 #include <wavpack.h>
 
 #endif // _STD_WX_H
-

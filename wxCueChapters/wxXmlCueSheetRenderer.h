@@ -25,7 +25,8 @@ class wxConfiguration;
 #include <wxCueFile/wxSamplingInfo.h>
 #endif
 
-class wxXmlCueSheetRenderer: public wxCueSheetRenderer
+class wxXmlCueSheetRenderer:
+	public wxCueSheetRenderer
 {
 	wxDECLARE_DYNAMIC_CLASS( wxXmlCueSheetRenderer );
 
@@ -108,31 +109,27 @@ public:
 
 protected:
 
-	void AddTags(
-		const wxCueComponent&,
-		const wxTagSynonimsCollection&,
-		const wxTagSynonimsCollection&,
-		wxXmlNode* );
+	void AddTags( const wxCueComponent&,
+				  const wxTagSynonimsCollection&,
+				  const wxTagSynonimsCollection&,
+				  wxXmlNode* );
 	void AddCdTextInfo( const wxCueComponent&, wxXmlNode* );
-	wxXmlNode* AddDiscTags(
-		const wxCueSheet&,
-		wxXmlNode*,
-		const wxULongLong&,
-		int = 50 );
-	wxXmlNode* AppendDiscTags(
-		const wxCueSheet&,
-		wxXmlNode*,
-		long = 50 );
+	wxXmlNode* AddDiscTags( const wxCueSheet&,
+							wxXmlNode*,
+							const wxULongLong&,
+							int = 50 );
+	wxXmlNode* AppendDiscTags( const wxCueSheet&,
+							   wxXmlNode*,
+							   long = 50 );
 
 	wxXmlNode* SetTotalParts(
 		size_t,
 		wxXmlNode *,
 		long = 50 );
-	wxXmlNode* AddTrackTags(
-		const wxTrack&,
-		const wxULongLong&,
-		wxXmlNode*,
-		int = 30 );
+	wxXmlNode* AddTrackTags( const wxTrack&,
+							 const wxULongLong&,
+							 wxXmlNode*,
+							 int = 30 );
 
 	wxXmlNode* AddChapterTimeStart( wxXmlNode*, const wxIndex& ) const;
 
@@ -200,4 +197,3 @@ public:
 };
 
 #endif
-

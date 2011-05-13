@@ -5,7 +5,8 @@
 #ifndef _WX_ELLIPSIZER_H_
 #define _WX_ELLIPSIZER_H_
 
-class wxEllipsizer: public wxObject
+class wxEllipsizer:
+	public wxObject
 {
 public:
 
@@ -23,4 +24,3 @@ protected:
 };
 
 #endif
-

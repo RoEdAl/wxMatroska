@@ -11,8 +11,8 @@ wxIMPLEMENT_DYNAMIC_CLASS( wxSamplingInfo, wxObject )
 const wxTimeSpan wxSamplingInfo::wxInvalidDuration = wxTimeSpan::Hours( -1 );
 const wxUint64 wxSamplingInfo::wxInvalidNumberOfFrames = wxULL( 0xFFFFFFFFFFFFFFFF );
 
-wxSamplingInfo::wxSamplingInfo( void )
-	: m_nSamplingRate( 44100 ), m_nNumChannels( 2 ), m_nBitsPerSample( 16 )
+wxSamplingInfo::wxSamplingInfo( void ):
+	m_nSamplingRate( 44100 ), m_nNumChannels( 2 ), m_nBitsPerSample( 16 )
 {}
 
 wxSamplingInfo::wxSamplingInfo( const wxSamplingInfo& si )
@@ -20,8 +20,8 @@ wxSamplingInfo::wxSamplingInfo( const wxSamplingInfo& si )
 	copy( si );
 }
 
-wxSamplingInfo::wxSamplingInfo( unsigned long nSamplingRate, unsigned short nNumChannels, unsigned short nBitsPerSample )
-	: m_nSamplingRate( nSamplingRate ), m_nNumChannels( nNumChannels ), m_nBitsPerSample( nBitsPerSample )
+wxSamplingInfo::wxSamplingInfo( unsigned long nSamplingRate, unsigned short nNumChannels, unsigned short nBitsPerSample ):
+	m_nSamplingRate( nSamplingRate ), m_nNumChannels( nNumChannels ), m_nBitsPerSample( nBitsPerSample )
 {}
 
 wxSamplingInfo::wxSamplingInfo( const FLAC::Metadata::StreamInfo& si )
@@ -173,6 +173,7 @@ wxULongLong wxSamplingInfo::GetNumberOfCdFrames( wxULongLong frames ) const
 {
 	wxULongLong cdFrames;
 	wxUint32	rest;
+
 	GetNumberOfCdFrames( frames, cdFrames, rest );
 	return cdFrames;
 }
@@ -209,6 +210,7 @@ wxString wxSamplingInfo::GetCdFramesStr( wxULongLong frames ) const
 	wxULongLong cdFrames( GetNumberOfCdFrames( frames ) );
 
 	wxULongLong nf( cdFrames % wxULL( 75 ) );
+
 	cdFrames -= nf;
 	cdFrames /= wxULL( 75 );
 	wxULongLong ns = cdFrames % wxULL( 60 );
@@ -226,6 +228,7 @@ wxULongLong wxSamplingInfo::GetFramesFromCdFrames( wxULongLong cdFrames ) const
 {
 	wxULongLong samplingRate( 0, m_nSamplingRate );
 	wxULongLong res( cdFrames );
+
 	res *= samplingRate;
 	res /= wxULL( 75 );
 	return res;
@@ -246,6 +249,7 @@ wxULongLong wxSamplingInfo::GetIndexOffset( const wxIndex& idx ) const
 wxIndex wxSamplingInfo::ConvertIndex( const wxIndex& idx ) const
 {
 	wxIndex res;
+
 	if ( idx.HasCdFrames() )
 	{
 		res.SetNumber( idx.GetNumber() ).SetOffset( GetFramesFromCdFrames( idx.GetOffset() ) );
@@ -261,6 +265,7 @@ wxIndex wxSamplingInfo::ConvertIndex( const wxIndex& idx ) const
 wxIndex wxSamplingInfo::ConvertIndex( const wxIndex& idx, wxULongLong offset, bool bAdd ) const
 {
 	wxIndex res;
+
 	if ( idx.HasCdFrames() )
 	{
 		res.SetNumber( idx.GetNumber() ).SetOffset( GetFramesFromCdFrames( idx.GetOffset() ) );
@@ -291,4 +296,3 @@ wxString wxSamplingInfo::GetIndexOffsetFramesStr( const wxIndex& idx ) const
 {
 	return GetCdFramesStr( GetIndexOffset( idx ) );
 }
-

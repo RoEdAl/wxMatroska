@@ -9,10 +9,8 @@
 #include <wxCueFile/wxCueSheet.h>
 #include <wxCueFile/wxTextCueSheetRenderer.h>
 
-wxIMPLEMENT_DYNAMIC_CLASS( wxTextCueSheetRenderer, wxCueSheetRenderer )
-
-wxTextCueSheetRenderer::wxTextCueSheetRenderer( wxTextOutputStream* pTextOutputStream, int nDumpFlags )
-	: m_pTextOutputStream( pTextOutputStream ),
+wxIMPLEMENT_DYNAMIC_CLASS( wxTextCueSheetRenderer, wxCueSheetRenderer ) wxTextCueSheetRenderer::wxTextCueSheetRenderer( wxTextOutputStream* pTextOutputStream, int nDumpFlags ):
+	m_pTextOutputStream( pTextOutputStream ),
 	m_nDumpFlags( nDumpFlags ),
 	m_reSpace( wxT( "[[:space:]]+" ), wxRE_ADVANCED | wxRE_NOSUB )
 {
@@ -71,6 +69,7 @@ void wxTextCueSheetRenderer::DumpComponentTag(
 	const wxCueComponent& component, const wxCueTag& tag )
 {
 	wxString sName;
+
 	if ( m_reSpace.Matches( tag.GetName() ) )
 	{
 		sName = wxCueTag::Quote( tag.GetName() );
@@ -196,6 +195,7 @@ void wxTextCueSheetRenderer::InternalRenderIndex( const wxCueSheet& cueSheet, co
 {
 	wxString s;
 	wxString sIdx( m_si.GetIndexOffsetFramesStr( idx ) );
+
 	s.Printf( wxT( "%s %s" ), desc, sIdx );
 	*m_pTextOutputStream << wxT( "\t\t" ) << s << endl;
 }
@@ -204,6 +204,7 @@ void wxTextCueSheetRenderer::InternalRenderIndex( const wxCueSheet& cueSheet, co
 {
 	wxString s;
 	wxString sIdx( m_si.GetIndexOffsetFramesStr( idx ) );
+
 	s.Printf( wxT( "INDEX %02d %s" ), idx.GetNumber(), sIdx );
 	*m_pTextOutputStream << wxT( "\t\t" ) << s << endl;
 }
@@ -211,6 +212,7 @@ void wxTextCueSheetRenderer::InternalRenderIndex( const wxCueSheet& cueSheet, co
 void wxTextCueSheetRenderer::InternalRenderDataFile( const wxDataFile& dataFile )
 {
 	wxString s;
+
 	s.Printf( wxT( "FILE \"%s\" %s" ), dataFile.GetFileName(), dataFile.GetFileTypeAsString() );
 	*m_pTextOutputStream << s << endl;
 }
@@ -220,6 +222,7 @@ wxString wxTextCueSheetRenderer::ToString( const wxCueSheet& cueSheet, int nDump
 	wxStringOutputStream   sout;
 	wxTextOutputStream	   ts( sout );
 	wxTextCueSheetRenderer renderer( &ts, nDumpFlags );
+
 	if ( renderer.Render( cueSheet ) )
 	{
 		return sout.GetString();
@@ -229,4 +232,3 @@ wxString wxTextCueSheetRenderer::ToString( const wxCueSheet& cueSheet, int nDump
 		return wxEmptyString;
 	}
 }
-

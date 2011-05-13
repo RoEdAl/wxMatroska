@@ -72,4 +72,3 @@ extern wxXmlNode* const wxNullXmlNode;
 #endif
 
 #endif // _STD_WX_H
-

@@ -24,8 +24,8 @@ static const wxChar * INFOS[] =
 
 static const size_t INFOS_SIZE = WXSIZEOF( INFOS );
 
-wxDataFile::wxDataFile( void )
-	: m_ftype( BINARY )
+wxDataFile::wxDataFile( void ):
+	m_ftype( BINARY )
 {}
 
 wxDataFile::wxDataFile( const wxDataFile& df )
@@ -33,13 +33,13 @@ wxDataFile::wxDataFile( const wxDataFile& df )
 	copy( df );
 }
 
-wxDataFile::wxDataFile( const wxString& sFilePath, wxDataFile::FileType ftype )
-	: m_fileName( sFilePath ),
+wxDataFile::wxDataFile( const wxString& sFilePath, wxDataFile::FileType ftype ):
+	m_fileName( sFilePath ),
 	m_ftype( ftype )
 {}
 
-wxDataFile::wxDataFile( const wxFileName& fileName, wxDataFile::FileType ftype )
-	: m_fileName( fileName ),
+wxDataFile::wxDataFile( const wxFileName& fileName, wxDataFile::FileType ftype ):
+	m_fileName( fileName ),
 	m_ftype( ftype )
 {}
 
@@ -77,6 +77,7 @@ size_t wxDataFile::FileTypeStringSize = WXSIZEOF( wxDataFile::FileTypeString );
 wxString wxDataFile::GetFileTypeRegExp()
 {
 	wxString s;
+
 	for ( size_t i = 0; i < FileTypeStringSize; i++ )
 	{
 		s += FileTypeString[ i ].szName;
@@ -93,6 +94,7 @@ wxString wxDataFile::GetFileTypeRegExp()
 wxString wxDataFile::FileTypeToString( wxDataFile::FileType ftype )
 {
 	wxString s;
+
 	for ( size_t i = 0; i < FileTypeStringSize; i++ )
 	{
 		if ( FileTypeString[ i ].ftype == ftype )
@@ -166,8 +168,8 @@ wxDataFile& wxDataFile::Assign( const wxFileName& fileName, wxDataFile::FileType
 
 bool wxDataFile::FindFile( wxFileName& fn, const wxString& sAlternateExt ) const
 {
-	if ( m_fileName.FileExists() )
-	{ // file just exists
+	if ( m_fileName.FileExists() ) // file just exists
+	{
 		fn = m_fileName;
 		return true;
 	}
@@ -201,6 +203,7 @@ bool wxDataFile::FindFile( wxFileName& fn, const wxString& sAlternateExt ) const
 bool wxDataFile::FileExists( const wxString& sAlternateExt ) const
 {
 	wxFileName fn;
+
 	return FindFile( fn, sAlternateExt );
 }
 
@@ -223,6 +226,7 @@ bool wxDataFile::GetFromMediaInfo( const wxFileName& fileName, wxULongLong& fram
 {
 	// using MediaInfo to get basic information about media
 	wxMediaInfo dll;
+
 	if ( !dll.Load() )
 	{
 		wxLogError( _( "Fail to load MediaInfo library" ) );
@@ -342,8 +346,8 @@ bool wxDataFile::GetFromMediaInfo( const wxFileName& fileName, wxULongLong& fram
 			if ( !as1[ i ].IsEmpty() )
 			{
 				wxUint64 ul;
-				if ( as1[ i ].ToULongLong( &ul ) )
-				{ // calculate duration according to duration
+				if ( as1[ i ].ToULongLong( &ul ) ) // calculate duration according to duration
+				{
 					frames = ul;
 				}
 				else
@@ -363,6 +367,7 @@ bool wxDataFile::GetFromMediaInfo( const wxFileName& fileName, wxULongLong& fram
 bool wxDataFile::GetInfo( wxSamplingInfo& si, wxULongLong& frames, const wxString& sAlternateExt ) const
 {
 	wxFileName fn;
+
 	if ( !FindFile( fn, sAlternateExt ) )
 	{
 		return false;
@@ -402,14 +407,14 @@ bool wxDataFile::GetInfo( wxDuration& duration, const wxString& sAlternateExt ) 
 const wxAbstractDurationHolder& wxDataFile::CalculateDuration( const wxString& sAlternateExt )
 {
 	wxDuration duration;
+
 	if ( GetInfo( duration, sAlternateExt ) )
 	{
 		SetDuration( duration );
 	}
 
-	return const_cast<const wxDataFile&> ( *this );
+	return const_cast<const wxDataFile&>( *this );
 }
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
 WX_DEFINE_OBJARRAY( wxArrayDataFile );
-

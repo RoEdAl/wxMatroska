@@ -5,7 +5,8 @@
 #ifndef _WX_TEXT_OUTPUT_STREAM_ON_STRING_H_
 #define _WX_TEXT_OUTPUT_STREAM_ON_STRING_H_
 
-class wxTextOutputStreamOnString: public wxObject
+class wxTextOutputStreamOnString:
+	public wxObject
 {
 public:
 
@@ -27,4 +28,3 @@ protected:
 };
 
 #endif
-

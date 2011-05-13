@@ -5,8 +5,8 @@
 #include "StdWx.h"
 #include "wxFlacDecoder.h"
 
-wxFlacDecoder::wxFlacDecoder( wxInputStream& inputStream, wxOutputStream& outputStream )
-	: m_inputStream( inputStream ), m_outputStream( outputStream )
+wxFlacDecoder::wxFlacDecoder( wxInputStream& inputStream, wxOutputStream& outputStream ):
+	m_inputStream( inputStream ), m_outputStream( outputStream )
 {}
 
 wxFlacDecoder::~wxFlacDecoder( void )
@@ -52,6 +52,7 @@ wxFlacDecoder::~wxFlacDecoder( void )
 ::FLAC__StreamDecoderLengthStatus wxFlacDecoder::length_callback( FLAC__uint64* stream_length )
 {
 	wxFileOffset len = m_inputStream.GetLength();
+
 	if ( len != wxInvalidOffset )
 	{
 		*stream_length = len;
@@ -110,6 +111,6 @@ void wxFlacDecoder::metadata_callback( const::FLAC__StreamMetadata* metadata )
 void wxFlacDecoder::error_callback( ::FLAC__StreamDecoderErrorStatus status )
 {
 	wxString sFlacStatus( FLAC__StreamDecoderErrorStatusString[ status ] );
+
 	wxLogError( _( "FLAC error %d: %s" ), status, sFlacStatus );
 }
-

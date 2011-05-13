@@ -13,17 +13,17 @@ void wxTextOutputStreamWithBOMFactory::WriteBOM( wxOutputStream& s, const wxEnco
 	s.Write( bom.data(), bom.length() );
 }
 
-class wxTextOutputStreamWithBOM: public wxTextOutputStream
+class wxTextOutputStreamWithBOM:
+	public wxTextOutputStream
 {
 public:
 
-	wxTextOutputStreamWithBOM(
-		wxOutputStream& s,
-		wxEOL mode,
-		bool bWriteBOM,
-		const wxMBConv& conv,
-		const wxTextOutputStreamWithBOMFactory::wxByteBuffer& bom )
-		: wxTextOutputStream( s, mode, conv )
+	wxTextOutputStreamWithBOM( wxOutputStream& s,
+							   wxEOL mode,
+							   bool bWriteBOM,
+							   const wxMBConv& conv,
+							   const wxTextOutputStreamWithBOMFactory::wxByteBuffer& bom ):
+		wxTextOutputStream( s, mode, conv )
 	{
 		if ( bWriteBOM )
 		{
@@ -36,6 +36,7 @@ wxTextOutputStreamWithBOMFactory::wxTextOutputStreamSharedPtr wxTextOutputStream
 {
 	wxTextOutputStreamSharedPtr pRes;
 	wxByteBuffer				bom;
+
 	if ( wxEncodingDetection::GetBOM( nCodePage, bom ) )
 	{
 		wxString			  sDescription;
@@ -60,4 +61,3 @@ wxTextOutputStreamWithBOMFactory::wxTextOutputStreamSharedPtr wxTextOutputStream
 	return Create( s, mode, bWriteBOM, wxEncodingDetection::CP::UTF16_LE, bUseMLang );
 #endif
 }
-

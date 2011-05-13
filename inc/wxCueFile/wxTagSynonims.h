@@ -9,7 +9,8 @@
 class wxCueTag;
 #endif
 
-class wxTagSynonims: public wxObject
+class wxTagSynonims:
+	public wxObject
 {
 	wxDECLARE_DYNAMIC_CLASS( wxTagSynonims );
 
@@ -40,7 +41,8 @@ public:
 
 WX_DECLARE_OBJARRAY( wxTagSynonims, _wxArrayTagSynonims );
 
-class wxTagSynonimsCollection: public _wxArrayTagSynonims
+class wxTagSynonimsCollection:
+	public _wxArrayTagSynonims
 {
 public:
 
@@ -55,4 +57,3 @@ public:
 };
 
 #endif
-

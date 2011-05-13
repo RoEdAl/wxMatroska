@@ -21,14 +21,12 @@ const wxChar* const wxCueTag::Name::ALBUM_ARTIST = wxT( "ALBUM ARTIST" );
 const wxChar* const wxCueTag::Name::CATALOG		 = wxT( "CATALOG" );
 const wxChar* const wxCueTag::Name::CDTEXTFILE	 = wxT( "CDTEXTFILE" );
 
-wxIMPLEMENT_DYNAMIC_CLASS( wxCueTag, wxObject )
-
-wxCueTag::wxCueTag()
-	: m_eSource( TAG_UNKNOWN )
+wxIMPLEMENT_DYNAMIC_CLASS( wxCueTag, wxObject ) wxCueTag::wxCueTag():
+	m_eSource( TAG_UNKNOWN )
 {}
 
-wxCueTag::wxCueTag( wxCueTag::TAG_SOURCE eSource, const wxString& sName, const wxString& sValue )
-	: m_eSource( eSource ), m_sName( sName.Upper() ), m_sValue( sValue )
+wxCueTag::wxCueTag( wxCueTag::TAG_SOURCE eSource, const wxString& sName, const wxString& sValue ):
+	m_eSource( eSource ), m_sName( sName.Upper() ), m_sValue( sValue )
 {}
 
 wxCueTag::wxCueTag( const wxCueTag& cueTag )
@@ -146,6 +144,7 @@ bool wxCueTag::IsMultiline() const
 {
 	wxTextInputStreamOnString tis( m_sValue );
 	int						  nLines = 0;
+
 	while ( !( tis.Eof() || ( nLines > 1 ) ) )
 	{
 		tis.GetStream().ReadLine();
@@ -168,6 +167,7 @@ void wxCueTag::Ellipsize( const wxEllipsizer& ellipsizer )
 wxString wxCueTag::Escape( const wxString& sValue )
 {
 	wxString s( sValue );
+
 	s.Replace( wxT( '\"' ), wxT( "\\\"" ) );
 	s.Replace( wxT( '\'' ), wxT( "\\'" ) );
 	s.Replace( wxT( '\\' ), wxT( "\\\\" ) );
@@ -177,6 +177,7 @@ wxString wxCueTag::Escape( const wxString& sValue )
 wxString wxCueTag::UnEscape( const wxString& sValue )
 {
 	wxString s( sValue );
+
 	s.Replace( wxT( "\\'" ), wxT( '\'' ) );
 	s.Replace( wxT( "\\\"" ), wxT( '\"' ) );
 	s.Replace( wxT( "\\\\" ), wxT( '\\' ) );
@@ -190,4 +191,3 @@ wxString wxCueTag::Quote( const wxString& sValue )
 
 #include <wx/arrimpl.cpp>
 WX_DEFINE_OBJARRAY( wxArrayCueTag );
-

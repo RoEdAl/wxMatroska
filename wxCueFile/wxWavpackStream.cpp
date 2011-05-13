@@ -6,8 +6,8 @@
 #include <wavpack.h>
 #include "wxWavpackStream.h"
 
-wxWavpackStream::wxWavpackStream( wxInputStream& inputStream, wxOutputStream& outputStream )
-	: m_inputStream( inputStream ), m_outputStream( outputStream )
+wxWavpackStream::wxWavpackStream( wxInputStream& inputStream, wxOutputStream& outputStream ):
+	m_inputStream( inputStream ), m_outputStream( outputStream )
 {}
 
 wxWavpackStream::~wxWavpackStream( void )
@@ -28,6 +28,7 @@ void wxWavpackStream::InitWavpackStreamReader( WavpackStreamReader& wavpackStrea
 WavpackStreamReader* wxWavpackStream::GetStream()
 {
 	static WavpackStreamReaderWrapper stream;
+
 	return stream.GetStream();
 }
 
@@ -151,4 +152,3 @@ int32_t wxWavpackStream::write_bytes( void* data, int32_t bcount )
 	m_outputStream.Write( data, bcount );
 	return (int32_t)m_outputStream.LastWrite();
 }
-

@@ -19,8 +19,8 @@ const wxChar wxMkvmergeOptsRenderer::LOG_EXT[] = wxT( "log" );
 
 // ===============================================================================
 
-wxMkvmergeOptsRenderer::wxMkvmergeOptsRenderer( const wxConfiguration& cfg )
-	: m_cfg( cfg )
+wxMkvmergeOptsRenderer::wxMkvmergeOptsRenderer( const wxConfiguration& cfg ):
+	m_cfg( cfg )
 {}
 
 const wxString& wxMkvmergeOptsRenderer::GetMkvmergeOptsFile() const
@@ -31,6 +31,7 @@ const wxString& wxMkvmergeOptsRenderer::GetMkvmergeOptsFile() const
 wxString wxMkvmergeOptsRenderer::mkvmerge_escape( const wxString& s )
 {
 	wxString sRes( s );
+
 	sRes.Replace( wxT( '\\' ), wxT( "\\\\" ) );
 	sRes.Replace( wxT( ' ' ), wxT( "\\s" ) );
 	sRes.Replace( wxT( '\"' ), wxT( "\\2" ) );
@@ -241,4 +242,3 @@ bool wxMkvmergeOptsRenderer::Save()
 		return false;
 	}
 }
-

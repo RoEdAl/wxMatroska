@@ -16,15 +16,15 @@ wxIMPLEMENT_DYNAMIC_CLASS( wxCueSheetReader, wxObject )
 
 wxCueSheetReader::PARSE_STRUCT wxCueSheetReader::parseArray[] =
 {
-	{  wxT( "REM" ), &wxCueSheetReader::ParseComment },
-	{  wxT( "INDEX" ), &wxCueSheetReader::ParseIndex },
-	{  wxT( "PREGAP" ), &wxCueSheetReader::ParsePreGap },
-	{  wxT( "POSTGAP" ), &wxCueSheetReader::ParsePostGap },
-	{  wxT( "FILE" ), &wxCueSheetReader::ParseFile },
-	{  wxT( "FLAGS" ), &wxCueSheetReader::ParseFlags },
-	{  wxT( "TRACK" ), &wxCueSheetReader::ParseTrack },
-	{  wxT( "CATALOG" ), &wxCueSheetReader::ParseCatalog },
-	{  wxT( "CDTEXTFILE" ), &wxCueSheetReader::ParseCdTextFile }
+	{ wxT( "REM" ), &wxCueSheetReader::ParseComment },
+	{ wxT( "INDEX" ), &wxCueSheetReader::ParseIndex },
+	{ wxT( "PREGAP" ), &wxCueSheetReader::ParsePreGap },
+	{ wxT( "POSTGAP" ), &wxCueSheetReader::ParsePostGap },
+	{ wxT( "FILE" ), &wxCueSheetReader::ParseFile },
+	{ wxT( "FLAGS" ), &wxCueSheetReader::ParseFlags },
+	{ wxT( "TRACK" ), &wxCueSheetReader::ParseTrack },
+	{ wxT( "CATALOG" ), &wxCueSheetReader::ParseCatalog },
+	{ wxT( "CDTEXTFILE" ), &wxCueSheetReader::ParseCdTextFile }
 };
 
 size_t wxCueSheetReader::parseArraySize = WXSIZEOF( wxCueSheetReader::parseArray );
@@ -47,6 +47,7 @@ wxString wxCueSheetReader::GetKeywordsRegExp()
 {
 	wxString sKeywordsRegExp( wxCueComponent::GetKeywordsRegExp() );
 	wxString s;
+
 	s.Printf( wxT( "\\A\\s*%s\\s+(\\S.*\\S)\\s*\\Z" ), sKeywordsRegExp );
 	return s;
 }
@@ -55,6 +56,7 @@ wxString wxCueSheetReader::GetDataModeRegExp()
 {
 	wxString sDataModeRegExp( wxTrack::GetDataModeRegExp() );
 	wxString s;
+
 	s.Printf( wxT( "\\A(\\d{1,2})(?:\\s+%s){0,1}\\Z" ), sDataModeRegExp );
 	return s;
 }
@@ -63,6 +65,7 @@ wxString wxCueSheetReader::GetCdTextInfoRegExp()
 {
 	wxString sRegExp( wxCueComponent::GetCdTextInfoRegExp() );
 	wxString s;
+
 	s.Printf( wxT( "\\A\\s*%s\\s+(\\S.*\\S)\\s*\\Z" ), sRegExp );
 	return s;
 }
@@ -71,12 +74,13 @@ wxString wxCueSheetReader::GetDataFileRegExp()
 {
 	wxString sRegExp( wxDataFile::GetFileTypeRegExp() );
 	wxString s;
+
 	s.Printf( wxT( "\\A((?:\\\".*\\\")|(?:\\'.*\\'))(?:\\s+%s){0,1}\\Z" ), sRegExp );
 	return s;
 }
 
-wxCueSheetReader::wxCueSheetReader( void )
-	: m_reKeywords( GetKeywordsRegExp(), wxRE_ADVANCED ),
+wxCueSheetReader::wxCueSheetReader( void ):
+	m_reKeywords( GetKeywordsRegExp(), wxRE_ADVANCED ),
 	m_reCdTextInfo( GetCdTextInfoRegExp(), wxRE_ADVANCED ),
 	m_reEmpty( wxT( "\\A\\s*\\Z" ), wxRE_ADVANCED ),
 	m_reIndex( wxT( "\\A\\s*(\\d{1,2})\\s+(\\S.*\\S)\\Z" ), wxRE_ADVANCED ),
@@ -330,6 +334,7 @@ bool wxCueSheetReader::ReadCueSheetFromCueSheetTag( const wxFlacMetaDataReader& 
 bool wxCueSheetReader::ReadEmbeddedInFlacCueSheet( const wxString& sMediaFile, int nMode )
 {
 	wxFlacMetaDataReader flacReader;
+
 	if ( !flacReader.ReadMetadata( sMediaFile ) )
 	{
 		return false;
@@ -377,8 +382,8 @@ void wxCueSheetReader::AppendComments( wxArrayCueTag& comments, bool singleMedia
 			comment.Ellipsize( m_ellipsizer );
 		}
 
-		if ( singleMediaFile )
-		{ // just add to first track
+		if ( singleMediaFile ) // just add to first track
+		{
 			wxASSERT( m_cueSheet.HasTrack( 1 ) );
 			wxTrack& firstTrack = m_cueSheet.GetTrackByNumber( 1 );
 			firstTrack.AddTag( comment );
@@ -425,6 +430,7 @@ void wxCueSheetReader::AppendComments( wxArrayCueTag& comments, bool singleMedia
 bool wxCueSheetReader::AppendFlacComments( const wxFlacMetaDataReader& flacReader, bool singleMediaFile )
 {
 	wxArrayCueTag comments;
+
 	flacReader.ReadVorbisComments( comments );
 	AppendComments( comments, singleMediaFile );
 	return true;
@@ -433,6 +439,7 @@ bool wxCueSheetReader::AppendFlacComments( const wxFlacMetaDataReader& flacReade
 bool wxCueSheetReader::ReadEmbeddedInWavpackTags( const wxString& sMediaFile, bool singleMediaFile )
 {
 	wxArrayCueTag comments;
+
 	if ( wxWavpackTagReader::ReadTags( sMediaFile, comments ) )
 	{
 		AppendComments( comments, singleMediaFile );
@@ -447,6 +454,7 @@ bool wxCueSheetReader::ReadEmbeddedInWavpackTags( const wxString& sMediaFile, bo
 bool wxCueSheetReader::ReadEmbeddedInWavpackCueSheet( const wxString& sMediaFile, int nMode )
 {
 	wxString sCueSheet;
+
 	if ( !wxWavpackTagReader::ReadCueSheetTag( sMediaFile, sCueSheet ) )
 	{
 		return false;
@@ -476,6 +484,7 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMo
 {
 	// using MediaInfo to get basic information about media
 	wxMediaInfo dll;
+
 	if ( !dll.Load() )
 	{
 		wxLogError( _( "Fail to load MediaInfo library" ) );
@@ -673,8 +682,8 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMo
 	}
 }
 
-void wxCueSheetReader::BuildFromSingleMediaFile( const wxString& sMediaFile )
-{ // one track, one index
+void wxCueSheetReader::BuildFromSingleMediaFile( const wxString& sMediaFile ) // one track, one index
+{
 	m_cueSheet.Clear();
 	wxTrack singleTrack( 1 );
 	wxIndex singleIdx( 1, wxULL( 0 ) );
@@ -686,6 +695,7 @@ void wxCueSheetReader::BuildFromSingleMediaFile( const wxString& sMediaFile )
 bool wxCueSheetReader::internalReadCueSheet( wxInputStream& stream, wxMBConv& conv )
 {
 	wxTextInputStream tis( stream, wxT( " \t" ), conv );
+
 	m_cueSheet.Clear();
 	m_cueLines.Clear();
 	while ( !stream.Eof() )
@@ -722,6 +732,7 @@ void wxCueSheetReader::AddError0( const wxString& sMsg )
 void wxCueSheetReader::AddError( const wxChar* pszFormat, ... )
 {
 	va_list argptr;
+
 	va_start( argptr, pszFormat );
 	wxString s;
 	s.PrintfV( pszFormat, argptr );
@@ -794,6 +805,7 @@ void wxCueSheetReader::ParseLine( size_t WXUNUSED( nLine ), const wxString& sTok
 void wxCueSheetReader::ParseCdTextInfo( size_t WXUNUSED( nLine ), const wxString& sToken, const wxString& sBody )
 {
 	wxCueComponent::ENTRY_FORMAT fmt;
+
 	wxCueComponent::GetCdTextInfoFormat( sToken, fmt );
 	wxString s;
 	if ( fmt == wxCueComponent::CHARACTER )
@@ -905,6 +917,7 @@ bool wxCueSheetReader::ParseCue()
 bool wxCueSheetReader::AddCdTextInfo( const wxString& sToken, const wxString& sBody )
 {
 	wxString sModifiedBody( m_spacesRemover.Remove( sBody ) );
+
 	if ( m_bEllipsizeTags )
 	{
 		sModifiedBody = m_ellipsizer.Ellipsize( sModifiedBody );
@@ -958,6 +971,7 @@ bool wxCueSheetReader::ParseMsf( const wxString& sBody, wxIndex& idx, bool bPreP
 void wxCueSheetReader::ParsePreGap( const wxString& WXUNUSED( sToken ), const wxString& sBody )
 {
 	wxIndex idx;
+
 	if ( ParseMsf( sBody, idx, true ) )
 	{
 		GetLastTrack().SetPreGap( idx );
@@ -971,6 +985,7 @@ void wxCueSheetReader::ParsePreGap( const wxString& WXUNUSED( sToken ), const wx
 void wxCueSheetReader::ParsePostGap( const wxString& WXUNUSED( sToken ), const wxString& sBody )
 {
 	wxIndex idx;
+
 	if ( ParseMsf( sBody, idx, true ) )
 	{
 		GetLastTrack().SetPostGap( idx );
@@ -1044,6 +1059,7 @@ void wxCueSheetReader::ParseFile( const wxString& WXUNUSED( sToken ), const wxSt
 void wxCueSheetReader::ParseFlags( const wxString& WXUNUSED( sToken ), const wxString& sBody )
 {
 	wxString sFlags( sBody );
+
 	m_reFlags.ReplaceAll( &sFlags, wxT( '|' ) );
 	wxStringTokenizer tokenizer( sFlags, wxT( "|" ) );
 	while ( tokenizer.HasMoreTokens() )
@@ -1107,4 +1123,3 @@ void wxCueSheetReader::ParseCdTextFile( const wxString& WXUNUSED( sToken ), cons
 {
 	m_cueSheet.AddCdTextFile( Unquote( sBody ) );
 }
-

@@ -8,9 +8,7 @@
 #include <wxCueFile/wxTrack.h>
 #include <wxCueFile/wxCueSheet.h>
 
-wxIMPLEMENT_DYNAMIC_CLASS( wxCueSheet, wxCueComponent )
-
-wxCueSheet::wxCueSheet( void )
+wxIMPLEMENT_DYNAMIC_CLASS( wxCueSheet, wxCueComponent ) wxCueSheet::wxCueSheet( void )
 {}
 
 wxCueSheet::wxCueSheet( const wxCueSheet& cs )
@@ -65,6 +63,7 @@ wxTrack& wxCueSheet::GetTrack( size_t idx )
 bool wxCueSheet::HasTrack( unsigned long trackNo ) const
 {
 	size_t numTracks = m_tracks.Count();
+
 	for ( size_t i = 0; i < numTracks; i++ )
 	{
 		if ( m_tracks[ i ].GetNumber() == trackNo )
@@ -113,6 +112,7 @@ bool wxCueSheet::HasGarbage() const
 	bool   bRes	   = ( m_garbage.Count() > 0 );
 	size_t nTracks = m_tracks.Count();
 	size_t i	   = 0;
+
 	while ( !bRes && ( i < nTracks ) )
 	{
 		bRes = bRes && m_tracks[ i ].HasGarbage();
@@ -188,6 +188,7 @@ bool wxCueSheet::IsLastTrackForDataFile( size_t trackNo, wxDataFile& dataFile ) 
 {
 	bool   res	  = false;
 	size_t tracks = m_tracks.Count();
+
 	if ( ( trackNo + 1 ) < tracks )
 	{
 		if ( m_tracks[ trackNo + 1 ].HasDataFile() )
@@ -236,6 +237,7 @@ bool wxCueSheet::IsLastTrackForDataFile( size_t trackNo, wxDataFile& dataFile ) 
 wxString wxCueSheet::FormatTrack( size_t trackNo, const wxString& sFmt ) const
 {
 	wxHashString replacements;
+
 	GetReplacements( replacements );
 	const wxTrack& track = GetTrack( trackNo );
 	track.GetReplacements( replacements );
@@ -254,6 +256,7 @@ wxString wxCueSheet::FormatTrack( size_t trackNo, const wxString& sFmt ) const
 wxString wxCueSheet::Format( const wxString& sFmt ) const
 {
 	wxHashString replacements;
+
 	GetReplacements( replacements );
 
 	wxString s( sFmt );
@@ -272,6 +275,7 @@ bool wxCueSheet::HasSingleDataFile( wxDataFile& dataFile ) const
 	size_t tracks	= m_tracks.Count();
 	size_t nCounter = 0;
 	bool   bFirst	= false;
+
 	for ( size_t i = 0; ( i < tracks ) && ( nCounter < 2 ); i++ )
 	{
 		if ( ( m_tracks[ i ].GetNumber() == 1 ) && m_tracks[ i ].HasDataFile() )
@@ -292,12 +296,14 @@ bool wxCueSheet::HasSingleDataFile( wxDataFile& dataFile ) const
 bool wxCueSheet::HasSingleDataFile() const
 {
 	wxDataFile dummy;
+
 	return HasSingleDataFile( dummy );
 }
 
 wxCueSheet& wxCueSheet::SetSingleDataFile( const wxDataFile& dataFile )
 {
 	size_t tracks = m_tracks.Count();
+
 	for ( size_t i = 0; i < tracks; i++ )
 	{
 		if ( m_tracks[ i ].GetNumber() == 1 )
@@ -337,6 +343,7 @@ wxCueSheet& wxCueSheet::SetDataFiles( const wxArrayDataFile& dataFile )
 bool wxCueSheet::HasDuration() const
 {
 	bool bRes = true;
+
 	for ( size_t nCount = m_tracks.Count(), i = 0; ( i < nCount ) && bRes; i++ )
 	{
 		if ( m_tracks[ i ].HasDataFile() )
@@ -388,6 +395,7 @@ wxDuration wxCueSheet::GetDuration() const
 bool wxCueSheet::CalculateDuration( const wxString& sAlternateExt )
 {
 	bool bRes = true;
+
 	for ( size_t nCount = m_tracks.Count(), i = 0; i < nCount; i++ )
 	{
 		if ( m_tracks[ i ].HasDataFile() )
@@ -402,4 +410,3 @@ bool wxCueSheet::CalculateDuration( const wxString& sAlternateExt )
 
 	return bRes;
 }
-

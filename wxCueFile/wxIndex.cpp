@@ -5,14 +5,12 @@
 #include "StdWx.h"
 #include <wxCueFile/wxIndex.h>
 
-wxIMPLEMENT_DYNAMIC_CLASS( wxIndex, wxObject )
-
-wxIndex::wxIndex( void )
-	: m_number( 0 ), m_offset( 0, 0 ), m_bCdFrames( false )
+wxIMPLEMENT_DYNAMIC_CLASS( wxIndex, wxObject ) wxIndex::wxIndex( void ):
+	m_number( 0 ), m_offset( 0, 0 ), m_bCdFrames( false )
 {}
 
-wxIndex::wxIndex( unsigned int number, wxULongLong offset )
-	: m_number( number ), m_offset( offset ), m_bCdFrames( false )
+wxIndex::wxIndex( unsigned int number, wxULongLong offset ):
+	m_number( number ), m_offset( offset ), m_bCdFrames( false )
 {}
 
 wxIndex::wxIndex( const wxIndex& idx )
@@ -90,6 +88,7 @@ wxIndex& wxIndex::Assign( size_t number, unsigned long minutes, unsigned long se
 wxString wxIndex::GetTimeStr( unsigned int hours, unsigned int minutes, double seconds )
 {
 	wxString s;
+
 	s.Printf( wxT( "%02d:%02d:%012.9f" ), hours, minutes, seconds );
 	FixDecimalPoint( s );
 	return s;
@@ -142,4 +141,3 @@ int wxIndex::CompareFn( wxIndex** i1, wxIndex** i2 )
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
 WX_DEFINE_OBJARRAY( wxArrayIndex );
-

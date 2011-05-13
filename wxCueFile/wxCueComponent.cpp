@@ -32,15 +32,15 @@ size_t wxCueComponent::CdTextFieldsSize = WXSIZEOF( wxCueComponent::CdTextFields
 
 wxCueComponent::KEYWORD_ENTRY wxCueComponent::Keywords[] =
 {
-	{  wxT( "REM" ), wxCueComponent::ANY },
-	{  wxT( "INDEX" ), wxCueComponent::TRACK },
-	{  wxT( "PREGAP" ), wxCueComponent::TRACK },
-	{  wxT( "POSTGAP" ), wxCueComponent::TRACK },
-	{  wxT( "FILE" ), wxCueComponent::ANY },
-	{  wxT( "FLAGS" ), wxCueComponent::TRACK },
-	{  wxT( "TRACK" ), wxCueComponent::ANY },
-	{  wxT( "CATALOG" ), wxCueComponent::DISC },
-	{  wxT( "CDTEXTFILE" ), wxCueComponent::DISC }
+	{ wxT( "REM" ), wxCueComponent::ANY },
+	{ wxT( "INDEX" ), wxCueComponent::TRACK },
+	{ wxT( "PREGAP" ), wxCueComponent::TRACK },
+	{ wxT( "POSTGAP" ), wxCueComponent::TRACK },
+	{ wxT( "FILE" ), wxCueComponent::ANY },
+	{ wxT( "FLAGS" ), wxCueComponent::TRACK },
+	{ wxT( "TRACK" ), wxCueComponent::ANY },
+	{ wxT( "CATALOG" ), wxCueComponent::DISC },
+	{ wxT( "CDTEXTFILE" ), wxCueComponent::DISC }
 };
 
 size_t wxCueComponent::KeywordsSize = WXSIZEOF( wxCueComponent::Keywords );
@@ -48,6 +48,7 @@ size_t wxCueComponent::KeywordsSize = WXSIZEOF( wxCueComponent::Keywords );
 wxString wxCueComponent::GetCdTextInfoRegExp()
 {
 	wxTextOutputStreamOnString tos;
+
 	for ( size_t i = 0; i < CdTextFieldsSize; i++ )
 	{
 		*tos << CdTextFields[ i ].keyword << wxT( '|' );
@@ -62,6 +63,7 @@ wxString wxCueComponent::GetCdTextInfoRegExp()
 wxString wxCueComponent::GetKeywordsRegExp()
 {
 	wxTextOutputStreamOnString tos;
+
 	for ( size_t i = 0; i < KeywordsSize; i++ )
 	{
 		*tos << Keywords[ i ].keyword << wxT( '|' );
@@ -115,8 +117,8 @@ bool wxCueComponent::GetEntryType( const wxString& sKeyword, wxCueComponent::ENT
 	return false;
 }
 
-wxCueComponent::wxCueComponent( bool bTrack )
-	: m_bTrack( bTrack )
+wxCueComponent::wxCueComponent( bool bTrack ):
+	m_bTrack( bTrack )
 {}
 
 wxCueComponent::wxCueComponent( const wxCueComponent& component )
@@ -213,6 +215,7 @@ const wxArrayCueTag& wxCueComponent::GetTags() const
 static bool find_tag( const wxArrayCueTag& tags, const wxCueTag& cueTag )
 {
 	size_t numTags = tags.Count();
+
 	for ( size_t i = 0; i < numTags; i++ )
 	{
 		if (
@@ -365,6 +368,7 @@ bool wxCueComponent::AddCdTextInfo( const wxString& sKeyword, const wxString& sB
 void wxCueComponent::AddTag( wxCueTag::TAG_SOURCE eSource, const wxString& sKeyword, const wxString& sBody )
 {
 	wxCueTag newTag( eSource, sKeyword, sBody );
+
 	add_tag( m_tags, newTag );
 }
 
@@ -384,6 +388,7 @@ void wxCueComponent::Clear()
 wxString wxCueComponent::FormatCdTextData( const wxString& sKeyword, const wxString& sValue )
 {
 	ENTRY_FORMAT fmt;
+
 	wxCHECK( GetCdTextInfoFormat( sKeyword, fmt ), wxT( "" ) );
 	if ( fmt == BINARY )
 	{
@@ -398,6 +403,7 @@ wxString wxCueComponent::FormatCdTextData( const wxString& sKeyword, const wxStr
 static size_t find_keyword( const wxArrayCueTag& tags, const wxString& sKeyword )
 {
 	size_t numTags = tags.Count();
+
 	for ( size_t i = 0; i < numTags; i++ )
 	{
 		if ( sKeyword.CmpNoCase( tags[ i ].GetName() ) == 0 )
@@ -465,4 +471,3 @@ bool wxCueComponent::IsTrack() const
 {
 	return m_bTrack;
 }
-

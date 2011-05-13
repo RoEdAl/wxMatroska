@@ -13,7 +13,8 @@ class wxTagSynonimsCollection;
 #include "wxCueTag.h"
 #endif
 
-class wxCueComponent: public wxObject
+class wxCueComponent:
+	public wxObject
 {
 	wxDECLARE_ABSTRACT_CLASS( wxCueComponent );
 
@@ -76,11 +77,10 @@ public:
 	virtual bool HasGarbage() const;
 	const wxArrayCueTag& GetCdTextTags() const;
 	const wxArrayCueTag& GetTags() const;
-	void GetTags(
-		const wxTagSynonimsCollection&,
-		const wxTagSynonimsCollection&,
-		wxArrayCueTag&,
-		wxArrayCueTag& ) const;
+	void GetTags( const wxTagSynonimsCollection&,
+				  const wxTagSynonimsCollection&,
+				  wxArrayCueTag&,
+				  wxArrayCueTag& ) const;
 
 	void ParseComment( const wxString&, bool = true );
 	void ParseGarbage( const wxString& );
@@ -114,4 +114,3 @@ public:
 };
 
 #endif
-

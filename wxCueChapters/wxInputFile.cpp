@@ -30,6 +30,7 @@ wxInputFile& wxInputFile::operator =( const wxInputFile& inputFile )
 wxInputFile::wxInputFile( const wxString& sInputFile )
 {
 	wxStringTokenizer tokenizer( sInputFile, SEPARATOR );
+
 	if ( tokenizer.HasMoreTokens() )
 	{
 		m_inputFile.Assign( tokenizer.GetNextToken() );
@@ -68,7 +69,7 @@ const wxArrayFileName& wxInputFile::GetDataFiles() const
 	return m_dataFile;
 }
 
-void wxInputFile::GetDataFiles( wxArrayDataFile& dataFile, wxDataFile::FileType fileType  ) const
+void wxInputFile::GetDataFiles( wxArrayDataFile& dataFile, wxDataFile::FileType fileType ) const
 {
 	dataFile.Clear();
 	size_t count = m_dataFile.Count();
@@ -118,4 +119,3 @@ wxString wxInputFile::ToString( bool bLongPath ) const
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
 WX_DEFINE_OBJARRAY( wxArrayFileName );
-

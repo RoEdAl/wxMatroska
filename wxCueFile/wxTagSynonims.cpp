@@ -6,13 +6,11 @@
 #include <wxCueFile/wxTagSynonims.h>
 #include <wxCueFile/wxCueComponent.h>
 
-IMPLEMENT_DYNAMIC_CLASS( wxTagSynonims, wxObject )
-
-wxTagSynonims::wxTagSynonims( void )
+IMPLEMENT_DYNAMIC_CLASS( wxTagSynonims, wxObject ) wxTagSynonims::wxTagSynonims( void )
 {}
 
-wxTagSynonims::wxTagSynonims( const wxString& sName, const wxArrayString& asSynonims )
-	: m_sName( sName ), m_asSynonims( asSynonims )
+wxTagSynonims::wxTagSynonims( const wxString& sName, const wxArrayString& asSynonims ):
+	m_sName( sName ), m_asSynonims( asSynonims )
 {
 	wxASSERT( !sName.IsEmpty() );
 }
@@ -110,8 +108,8 @@ bool wxTagSynonims::GetName( const wxCueTag& synonim, wxCueTag& cueTag ) const
 wxTagSynonimsCollection::wxTagSynonimsCollection( void )
 {}
 
-wxTagSynonimsCollection::wxTagSynonimsCollection( const wxTagSynonimsCollection& src )
-	: _wxArrayTagSynonims( src )
+wxTagSynonimsCollection::wxTagSynonimsCollection( const wxTagSynonimsCollection& src ):
+	_wxArrayTagSynonims( src )
 {}
 
 wxTagSynonimsCollection& wxTagSynonimsCollection::operator =( const wxTagSynonimsCollection& src )
@@ -123,6 +121,7 @@ wxTagSynonimsCollection& wxTagSynonimsCollection::operator =( const wxTagSynonim
 bool wxTagSynonimsCollection::GetName( const wxString& sSynonim, wxString& sName ) const
 {
 	size_t nSynonims = GetCount();
+
 	for ( size_t i = 0; i < nSynonims; i++ )
 	{
 		if ( Item( i ).GetName( sSynonim, sName ) )
@@ -138,6 +137,7 @@ bool wxTagSynonimsCollection::GetName( const wxString& sSynonim, wxString& sName
 bool wxTagSynonimsCollection::GetName( const wxCueTag& synonim, wxCueTag& cueTag ) const
 {
 	size_t nSynonims = GetCount();
+
 	for ( size_t i = 0; i < nSynonims; i++ )
 	{
 		if ( Item( i ).GetName( synonim, cueTag ) )
@@ -152,4 +152,3 @@ bool wxTagSynonimsCollection::GetName( const wxCueTag& synonim, wxCueTag& cueTag
 
 #include <wx/arrimpl.cpp>
 WX_DEFINE_OBJARRAY( _wxArrayTagSynonims );
-

@@ -5,7 +5,8 @@
 #ifndef _WX_INDEX_H_
 #define _WX_INDEX_H_
 
-class wxIndex: public wxObject
+class wxIndex:
+	public wxObject
 {
 	wxDECLARE_DYNAMIC_CLASS( wxIndex );
 	friend class wxSamplingInfo;
@@ -53,4 +54,3 @@ public:
 WX_DECLARE_OBJARRAY( wxIndex, wxArrayIndex );
 
 #endif // _WX_INDEX_H_
-

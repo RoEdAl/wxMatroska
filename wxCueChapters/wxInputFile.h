@@ -11,7 +11,8 @@
 
 WX_DECLARE_OBJARRAY( wxFileName, wxArrayFileName );
 
-class wxInputFile: public wxObject
+class wxInputFile:
+	public wxObject
 {
 	wxDECLARE_DYNAMIC_CLASS( wxInputFile );
 
@@ -48,4 +49,3 @@ public:
 };
 
 #endif
-

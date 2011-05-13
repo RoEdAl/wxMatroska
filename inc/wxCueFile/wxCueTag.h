@@ -13,7 +13,8 @@ class wxTrailingSpacesRemover;
 class wxEllipsizer;
 #endif
 
-class wxCueTag: public wxObject
+class wxCueTag:
+	public wxObject
 {
 	wxDECLARE_DYNAMIC_CLASS( wxCueTag );
 
@@ -105,4 +106,3 @@ protected:
 WX_DECLARE_OBJARRAY( wxCueTag, wxArrayCueTag );
 
 #endif
-

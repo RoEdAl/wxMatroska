@@ -6,8 +6,8 @@
 #include <wxCueFile/wxCueComponent.h>
 #include "wxFlacMetaDataReader.h"
 
-wxFlacMetaDataReader::wxFlacMetaDataReader( void )
-	: m_pVorbisComment( ( FLAC::Metadata::VorbisComment* )NULL ),
+wxFlacMetaDataReader::wxFlacMetaDataReader( void ):
+	m_pVorbisComment( ( FLAC::Metadata::VorbisComment* )NULL ),
 	m_pCueSheet( ( FLAC::Metadata::CueSheet* )NULL ),
 	m_pStreamInfo( ( FLAC::Metadata::StreamInfo* )NULL )
 {}
@@ -127,6 +127,7 @@ void wxFlacMetaDataReader::metadata_callback( const::FLAC__StreamMetadata* metad
 bool wxFlacMetaDataReader::ReadMetadata( const wxString& sFlacFile )
 {
 	wxFileInputStream is( sFlacFile );
+
 	if ( !is.IsOk() )
 	{
 		return false;
@@ -162,4 +163,3 @@ const wxString& wxFlacMetaDataReader::GetFlacFile() const
 {
 	return m_sFlacFile;
 }
-

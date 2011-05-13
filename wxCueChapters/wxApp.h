@@ -29,7 +29,8 @@ class wxXmlCueSheetRenderer;
 class wxMkvmergeOptsRenderer;
 #endif
 
-class wxMyApp: public wxAppConsole
+class wxMyApp:
+	public wxAppConsole
 {
 protected:
 
@@ -87,4 +88,3 @@ public:
 wxDECLARE_APP( wxMyApp );
 
 #endif
-

@@ -13,7 +13,8 @@
 #include "wxSamplingInfo.h"
 #endif
 
-class wxTextCueSheetRenderer: public wxCueSheetRenderer
+class wxTextCueSheetRenderer:
+	public wxCueSheetRenderer
 {
 	wxDECLARE_DYNAMIC_CLASS( wxTextCueSheetRenderer );
 
@@ -66,4 +67,3 @@ public:
 };
 
 #endif
-

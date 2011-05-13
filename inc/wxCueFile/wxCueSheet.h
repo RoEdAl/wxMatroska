@@ -17,7 +17,8 @@
 #include "wxCueComponent.h"
 #endif
 
-class wxCueSheet: public wxCueComponent, public wxAbstractDurationHolder
+class wxCueSheet:
+	public wxCueComponent, public wxAbstractDurationHolder
 {
 	wxDECLARE_DYNAMIC_CLASS( wxCueSheet );
 
@@ -80,4 +81,3 @@ public:
 };
 
 #endif // _WX_CUE_SHEET_H_
-

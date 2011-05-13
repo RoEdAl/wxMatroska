@@ -9,7 +9,8 @@
 #include "wxDuration.h"
 #endif
 
-class wxDataFile: public wxObject, public wxDurationHolder
+class wxDataFile:
+	public wxObject, public wxDurationHolder
 {
 	wxDECLARE_DYNAMIC_CLASS( wxDataFile );
 
@@ -81,4 +82,3 @@ public:
 WX_DECLARE_OBJARRAY( wxDataFile, wxArrayDataFile );
 
 #endif // _WX_DATA_FILE_H_
-

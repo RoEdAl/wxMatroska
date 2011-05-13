@@ -5,7 +5,8 @@
 #ifndef _WX_TRAILING_SPACES_REMOVER_H_
 #define _WX_TRAILING_SPACES_REMOVER_H_
 
-class wxTrailingSpacesRemover: public wxObject
+class wxTrailingSpacesRemover:
+	public wxObject
 {
 public:
 
@@ -24,4 +25,3 @@ protected:
 };
 
 #endif
-

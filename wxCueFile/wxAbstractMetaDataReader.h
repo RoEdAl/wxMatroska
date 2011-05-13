@@ -5,11 +5,13 @@
 #ifndef _WX_ABSTRACT_META_DATA_READER_H_
 #define _WX_ABSTRACT_META_DATA_READER_H_
 
-class wxAbstractMetaDataReader: public wxObject
+class wxAbstractMetaDataReader:
+	public wxObject
 {
 public:
 
-	class wxNullOutputStream: public wxOutputStream
+	class wxNullOutputStream:
+		public wxOutputStream
 	{
 public:
 
@@ -22,4 +24,3 @@ protected:
 };
 
 #endif
-

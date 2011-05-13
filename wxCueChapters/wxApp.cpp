@@ -31,8 +31,8 @@ static const size_t MAX_LICENSE_FILE_SIZE = 4 * 1024;
 
 wxIMPLEMENT_APP( wxMyApp );
 
-wxMyApp::wxMyApp( void )
-	: m_sSeparator( wxT( '=' ), 75 )
+wxMyApp::wxMyApp( void ):
+	m_sSeparator( wxT( '=' ), 75 )
 {}
 
 void wxMyApp::AddSeparator( wxCmdLineParser& cmdline )
@@ -134,7 +134,6 @@ bool wxMyApp::CheckLicense()
 		wxLogInfo( wxT( "License file \u201C%s\u201D is too big" ), fn.GetFullPath() );
 		return false;
 	}
-
 	return true;
 #endif
 }
@@ -143,6 +142,7 @@ void wxMyApp::ShowLicense()
 {
 	const wxStandardPaths& paths = wxStandardPaths::Get();
 	wxFileName			   fn( paths.GetExecutablePath() );
+
 	fn.SetFullName( LICENSE_FILE_NAME );
 	if ( !fn.FileExists() )
 	{
@@ -318,6 +318,7 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, const wxCueSheet& cu
 int wxMyApp::ProcessCueFile( wxCueSheetReader& reader, const wxInputFile& inputFile )
 {
 	wxString sInputFile( inputFile.GetInputFile().GetFullPath() );
+
 	wxLogMessage( _( "Processing \u201C%s\u201D" ), sInputFile );
 
 	if ( m_cfg.IsEmbedded() )
@@ -377,6 +378,7 @@ int wxMyApp::ProcessCueFile( wxCueSheetReader& reader, const wxInputFile& inputF
 int wxMyApp::OnRun()
 {
 	wxCueSheetReader reader;
+
 	reader
 	.CorrectQuotationMarks( m_cfg.CorrectQuotationMarks(), m_cfg.GetLang() )
 	.SetParseComments( m_cfg.GenerateTagsFromComments() )
@@ -463,6 +465,7 @@ int wxMyApp::OnRun()
 int wxMyApp::OnExit()
 {
 	int res = wxAppConsole::OnExit();
+
 	m_pMkvmergeOptsRenderer.reset();
 	m_pMergedCueSheet.reset();
 	CoUninitialize();
@@ -581,6 +584,6 @@ bool wxMyApp::RunMkvmerge( const wxString& sOptionsFile )
 wxString wxMyApp::GetFileName( const wxString& sFileName )
 {
 	wxFileName fn( sFileName );
+
 	return fn.GetFullName();
 }
-

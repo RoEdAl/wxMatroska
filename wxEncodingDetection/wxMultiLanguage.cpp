@@ -23,8 +23,8 @@ wxMultiLanguage::wxMultiLanguage( void )
 	}
 }
 
-wxMultiLanguage::wxMultiLanguage( const wxMultiLanguage& ml  )
-	: m_pMLang( ml.m_pMLang )
+wxMultiLanguage::wxMultiLanguage( const wxMultiLanguage& ml ):
+	m_pMLang( ml.m_pMLang )
 {
 	if ( IsValid() )
 	{
@@ -63,7 +63,7 @@ HRESULT wxMultiLanguage::DetectInputCodepage(
 	HRESULT hRes  = m_pMLang->DetectInputCodepage(
 		dwFlag,
 		dwPrefWinCodePage,
-		const_cast<CHAR*> ( srcStr.data() ), &nSize,
+		const_cast<CHAR*>( srcStr.data() ), &nSize,
 		lpEncoding, pnScores );
 
 	return hRes;
@@ -112,6 +112,7 @@ HRESULT wxMultiLanguage::GetCodePageDescription( UINT nCodePage, wxString& sDesc
 bool wxMultiLanguage::GetDefaultCodePage( wxUint32& nCodePage )
 {
 	CPINFOEX cpInfo;
+
 	if ( GetCPInfoEx( CP_THREAD_ACP, 0, &cpInfo ) )
 	{
 		nCodePage = cpInfo.CodePage;
@@ -122,4 +123,3 @@ bool wxMultiLanguage::GetDefaultCodePage( wxUint32& nCodePage )
 		return false;
 	}
 }
-

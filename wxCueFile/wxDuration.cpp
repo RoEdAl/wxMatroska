@@ -7,9 +7,7 @@
 #include <wxCueFile/wxIndex.h>
 #include <wxCueFile/wxDuration.h>
 
-wxIMPLEMENT_ABSTRACT_CLASS( wxDuration, wxObject )
-
-wxDuration::wxDuration( void )
+wxIMPLEMENT_ABSTRACT_CLASS( wxDuration, wxObject ) wxDuration::wxDuration( void )
 {}
 
 wxDuration::wxDuration( const wxDuration& duration )
@@ -17,8 +15,8 @@ wxDuration::wxDuration( const wxDuration& duration )
 	copy( duration );
 }
 
-wxDuration::wxDuration( const wxSamplingInfo& si, wxULongLong numberOfSamples )
-	: m_si( si ), m_numberOfSamples( numberOfSamples )
+wxDuration::wxDuration( const wxSamplingInfo& si, wxULongLong numberOfSamples ):
+	m_si( si ), m_numberOfSamples( numberOfSamples )
 {}
 
 wxDuration& wxDuration::operator =( const wxDuration& duration )
@@ -108,4 +106,3 @@ void wxDurationHolder::ClearDuration()
 {
 	m_pDuration.reset();
 }
-
