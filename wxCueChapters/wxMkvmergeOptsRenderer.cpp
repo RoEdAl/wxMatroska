@@ -90,7 +90,7 @@ void wxMkvmergeOptsRenderer::write_attachments( wxTextOutputStream& stream )
 		{
 			stream << 
 				wxT("--attachment-name") << endl <<
-				wxString::Format( wxT("eac%d.log"), i ) << endl <<
+				wxString::Format( wxT("eac%d.log"), i+1 ) << endl <<
 				wxT("--attachment-description") << endl <<
 				m_logFiles[i].GetFullName() << endl <<
 				wxT("--attach-file") << endl <<
@@ -104,7 +104,7 @@ void wxMkvmergeOptsRenderer::write_attachments( wxTextOutputStream& stream )
 		{
 			stream << 
 				wxT("--attachment-name") << endl <<
-				wxString::Format( wxT("eac%02d.log"), i ) << endl <<
+				wxString::Format( wxT("eac%02d.log"), i+1 ) << endl <<
 				wxT("--attachment-description") << endl <<
 				m_logFiles[i].GetFullName() << endl <<
 				wxT("--attach-file") << endl <<
