@@ -65,7 +65,7 @@ wxTrack& wxCueSheet::GetTrack( size_t idx )
 bool wxCueSheet::HasTrack( unsigned long trackNo ) const
 {
 	size_t numTracks = m_tracks.Count();
-	for ( size_t i = 0 ; i < numTracks ; i++ )
+	for ( size_t i = 0; i < numTracks; i++ )
 	{
 		if ( m_tracks[ i ].GetNumber() == trackNo )
 		{
@@ -81,7 +81,7 @@ wxTrack& wxCueSheet::GetTrackByNumber( unsigned long trackNo )
 	wxASSERT( HasTrack( trackNo ) );
 
 	size_t numTracks = m_tracks.Count();
-	for ( size_t i = 0 ; i < numTracks ; i++ )
+	for ( size_t i = 0; i < numTracks; i++ )
 	{
 		if ( m_tracks[ i ].GetNumber() == trackNo )
 		{
@@ -110,7 +110,7 @@ const wxTrack& wxCueSheet::GetLastTrack() const
 
 bool wxCueSheet::HasGarbage() const
 {
-	bool bRes	   = ( m_garbage.Count() > 0 );
+	bool   bRes	   = ( m_garbage.Count() > 0 );
 	size_t nTracks = m_tracks.Count();
 	size_t i	   = 0;
 	while ( !bRes && ( i < nTracks ) )
@@ -152,7 +152,7 @@ wxCueSheet& wxCueSheet::Append( const wxCueSheet& cs, const wxDuration& offset )
 	}
 
 	wxArrayTrack tracks( cs.m_tracks );
-	for ( size_t nCount = tracks.Count(), i = 0 ; i < nCount ; i++ )
+	for ( size_t nCount = tracks.Count(), i = 0; i < nCount; i++ )
 	{
 		tracks[ i ].SetNumber( nNumberOffset + tracks[ i ].GetNumber() );
 		tracks[ i ].Shift( offset );
@@ -175,7 +175,7 @@ bool wxCueSheet::Append( const wxCueSheet& cs )
 
 wxArrayTrack& wxCueSheet::SortTracks()
 {
-	for ( size_t nCount = m_tracks.Count(), i = 0 ; i < nCount ; i++ )
+	for ( size_t nCount = m_tracks.Count(), i = 0; i < nCount; i++ )
 	{
 		m_tracks[ i ].SortIndicies();
 	}
@@ -186,7 +186,7 @@ wxArrayTrack& wxCueSheet::SortTracks()
 
 bool wxCueSheet::IsLastTrackForDataFile( size_t trackNo, wxDataFile& dataFile ) const
 {
-	bool res	  = false;
+	bool   res	  = false;
 	size_t tracks = m_tracks.Count();
 	if ( ( trackNo + 1 ) < tracks )
 	{
@@ -241,7 +241,7 @@ wxString wxCueSheet::FormatTrack( size_t trackNo, const wxString& sFmt ) const
 	track.GetReplacements( replacements );
 
 	wxString s( sFmt );
-	for ( wxHashString::const_iterator i = replacements.begin() ; i != replacements.end() ; i++ )
+	for ( wxHashString::const_iterator i = replacements.begin(); i != replacements.end(); i++ )
 	{
 		wxString sFind( i->first );
 		sFind.Prepend( wxT( "%" ) ).Append( wxT( "%" ) );
@@ -257,7 +257,7 @@ wxString wxCueSheet::Format( const wxString& sFmt ) const
 	GetReplacements( replacements );
 
 	wxString s( sFmt );
-	for ( wxHashString::const_iterator i = replacements.begin() ; i != replacements.end() ; i++ )
+	for ( wxHashString::const_iterator i = replacements.begin(); i != replacements.end(); i++ )
 	{
 		wxString sFind( i->first );
 		sFind.Prepend( wxT( "%" ) ).Append( wxT( "%" ) );
@@ -271,8 +271,8 @@ bool wxCueSheet::HasSingleDataFile( wxDataFile& dataFile ) const
 {
 	size_t tracks	= m_tracks.Count();
 	size_t nCounter = 0;
-	bool bFirst		= false;
-	for ( size_t i = 0 ; ( i < tracks ) && ( nCounter < 2 ) ; i++ )
+	bool   bFirst	= false;
+	for ( size_t i = 0; ( i < tracks ) && ( nCounter < 2 ); i++ )
 	{
 		if ( ( m_tracks[ i ].GetNumber() == 1 ) && m_tracks[ i ].HasDataFile() )
 		{
@@ -298,7 +298,7 @@ bool wxCueSheet::HasSingleDataFile() const
 wxCueSheet& wxCueSheet::SetSingleDataFile( const wxDataFile& dataFile )
 {
 	size_t tracks = m_tracks.Count();
-	for ( size_t i = 0 ; i < tracks ; i++ )
+	for ( size_t i = 0; i < tracks; i++ )
 	{
 		if ( m_tracks[ i ].GetNumber() == 1 )
 		{
@@ -317,7 +317,7 @@ wxCueSheet& wxCueSheet::SetDataFiles( const wxArrayDataFile& dataFile )
 {
 	size_t j = 0;
 
-	for ( size_t nCount = m_tracks.Count(), i = 0 ; ( i < nCount ) && ( j < dataFile.Count() ) ; i++ )
+	for ( size_t nCount = m_tracks.Count(), i = 0; ( i < nCount ) && ( j < dataFile.Count() ); i++ )
 	{
 		if ( m_tracks[ i ].HasDataFile() )
 		{
@@ -337,7 +337,7 @@ wxCueSheet& wxCueSheet::SetDataFiles( const wxArrayDataFile& dataFile )
 bool wxCueSheet::HasDuration() const
 {
 	bool bRes = true;
-	for ( size_t nCount = m_tracks.Count(), i = 0 ; ( i < nCount ) && bRes ; i++ )
+	for ( size_t nCount = m_tracks.Count(), i = 0; ( i < nCount ) && bRes; i++ )
 	{
 		if ( m_tracks[ i ].HasDataFile() )
 		{
@@ -353,10 +353,10 @@ wxDuration wxCueSheet::GetDuration() const
 	wxASSERT( HasDuration() );
 
 	wxDuration duration;
-	bool bFirst = true;
-	bool bStop	= false;
+	bool	   bFirst = true;
+	bool	   bStop  = false;
 
-	for ( size_t nCount = m_tracks.Count(), i = 0 ; i < nCount ; i++ )
+	for ( size_t nCount = m_tracks.Count(), i = 0; i < nCount; i++ )
 	{
 		if ( m_tracks[ i ].HasDataFile() )
 		{
@@ -388,7 +388,7 @@ wxDuration wxCueSheet::GetDuration() const
 bool wxCueSheet::CalculateDuration( const wxString& sAlternateExt )
 {
 	bool bRes = true;
-	for ( size_t nCount = m_tracks.Count(), i = 0 ; i < nCount ; i++ )
+	for ( size_t nCount = m_tracks.Count(), i = 0; i < nCount; i++ )
 	{
 		if ( m_tracks[ i ].HasDataFile() )
 		{
@@ -402,3 +402,4 @@ bool wxCueSheet::CalculateDuration( const wxString& sAlternateExt )
 
 	return bRes;
 }
+

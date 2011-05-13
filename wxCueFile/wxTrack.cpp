@@ -236,8 +236,8 @@ void wxTrack::ClearFlags()
 wxString wxTrack::GetFlagsAsString() const
 {
 	wxString s;
-	size_t flags = m_flags.Count();
-	for ( size_t i = 0 ; i < flags ; i++ )
+	size_t	 flags = m_flags.Count();
+	for ( size_t i = 0; i < flags; i++ )
 	{
 		s += FlagToString( m_flags[ i ] );
 		s += wxT( ' ' );
@@ -255,7 +255,7 @@ bool wxTrack::HasFlags() const
 bool wxTrack::HasFlag( wxTrack::Flag f ) const
 {
 	size_t flags = m_flags.Count();
-	for ( size_t i = 0 ; i < flags ; i++ )
+	for ( size_t i = 0; i < flags; i++ )
 	{
 		if ( m_flags[ i ] == f )
 		{
@@ -269,7 +269,7 @@ bool wxTrack::HasFlag( wxTrack::Flag f ) const
 wxString wxTrack::GetFlagRegExp()
 {
 	wxString s;
-	for ( size_t i = 0 ; i < FlagStringSize ; i++ )
+	for ( size_t i = 0; i < FlagStringSize; i++ )
 	{
 		s += FlagString[ i ].szName;
 		s += wxT( '|' );
@@ -285,7 +285,7 @@ wxString wxTrack::GetFlagRegExp()
 wxString wxTrack::FlagToString( wxTrack::Flag flag )
 {
 	wxString s;
-	for ( size_t i = 0 ; i < FlagStringSize ; i++ )
+	for ( size_t i = 0; i < FlagStringSize; i++ )
 	{
 		if ( FlagString[ i ].flag == flag )
 		{
@@ -299,7 +299,7 @@ wxString wxTrack::FlagToString( wxTrack::Flag flag )
 
 bool wxTrack::StringToFlag( const wxString& s, wxTrack::Flag& flag )
 {
-	for ( size_t i = 0 ; i < FlagStringSize ; i++ )
+	for ( size_t i = 0; i < FlagStringSize; i++ )
 	{
 		if ( s.CmpNoCase( FlagString[ i ].szName ) == 0 )
 		{
@@ -314,7 +314,7 @@ bool wxTrack::StringToFlag( const wxString& s, wxTrack::Flag& flag )
 wxString wxTrack::GetDataModeRegExp()
 {
 	wxString s;
-	for ( size_t i = 0 ; i < DataModeStringSize ; i++ )
+	for ( size_t i = 0; i < DataModeStringSize; i++ )
 	{
 		s += DataModeString[ i ].szName;
 		s += wxT( '|' );
@@ -330,7 +330,7 @@ wxString wxTrack::GetDataModeRegExp()
 wxString wxTrack::DataModeToString( wxTrack::DataMode mode )
 {
 	wxString s;
-	for ( size_t i = 0 ; i < DataModeStringSize ; i++ )
+	for ( size_t i = 0; i < DataModeStringSize; i++ )
 	{
 		if ( DataModeString[ i ].mode == mode )
 		{
@@ -344,7 +344,7 @@ wxString wxTrack::DataModeToString( wxTrack::DataMode mode )
 
 bool wxTrack::StringToDataMode( const wxString& s, wxTrack::DataMode& mode )
 {
-	for ( size_t i = 0 ; i < DataModeStringSize ; i++ )
+	for ( size_t i = 0; i < DataModeStringSize; i++ )
 	{
 		if ( s.CmpNoCase( DataModeString[ i ].szName ) == 0 )
 		{
@@ -415,7 +415,7 @@ wxArrayIndex& wxTrack::SortIndicies()
 const wxIndex& wxTrack::GetFirstIndex() const
 {
 	size_t idxs = m_indexes.Count();
-	for ( size_t i = 0 ; i < idxs ; i++ )
+	for ( size_t i = 0; i < idxs; i++ )
 	{
 		if ( m_indexes[ i ].GetNumber() == 1 )
 		{
@@ -447,7 +447,7 @@ wxTrack& wxTrack::Shift( const wxDuration& duration )
 		SetPostGap( duration.ConvertIndex( *m_pPostGap, true ) );
 	}
 
-	for ( size_t nCount = m_indexes.GetCount(), i = 0 ; i < nCount ; i++ )
+	for ( size_t nCount = m_indexes.GetCount(), i = 0; i < nCount; i++ )
 	{
 		m_indexes[ i ] = duration.ConvertIndex( m_indexes[ i ], true );
 	}
@@ -457,3 +457,4 @@ wxTrack& wxTrack::Shift( const wxDuration& duration )
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
 WX_DEFINE_OBJARRAY( wxArrayTrack );
+

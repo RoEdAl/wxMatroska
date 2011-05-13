@@ -65,27 +65,27 @@ protected:
 	wxRegEx m_reCdTextInfo;
 	wxRegEx m_reEmpty;
 
-	wxRegEx m_reIndex;
-	wxRegEx m_reMsf;
-	wxUnquoter m_unquoter;
-	wxRegEx m_reQuotesEx;
-	wxRegEx m_reFlags;
-	wxRegEx m_reDataMode;
-	wxRegEx m_reDataFile;
-	wxRegEx m_reCatalog;
-	wxRegEx m_reIsrc;
-	wxRegEx m_reTrackComment;
+	wxRegEx					m_reIndex;
+	wxRegEx					m_reMsf;
+	wxUnquoter				m_unquoter;
+	wxRegEx					m_reQuotesEx;
+	wxRegEx					m_reFlags;
+	wxRegEx					m_reDataMode;
+	wxRegEx					m_reDataFile;
+	wxRegEx					m_reCatalog;
+	wxRegEx					m_reIsrc;
+	wxRegEx					m_reTrackComment;
 	wxTrailingSpacesRemover m_spacesRemover;
-	wxEllipsizer m_ellipsizer;
+	wxEllipsizer			m_ellipsizer;
 
-	wxDataFile m_dataFile;
+	wxDataFile	  m_dataFile;
 	wxArrayString m_cueLines;
-	wxCueSheet m_cueSheet;
-	bool m_bErrorsAsWarnings;
-	bool m_bParseComments;
-	bool m_bEllipsizeTags;
-	wxString m_sLang;
-	wxFileName m_cueFileName;
+	wxCueSheet	  m_cueSheet;
+	bool		  m_bErrorsAsWarnings;
+	bool		  m_bParseComments;
+	bool		  m_bEllipsizeTags;
+	wxString	  m_sLang;
+	wxFileName	  m_cueFileName;
 
 protected:
 
@@ -115,10 +115,10 @@ protected:
 	} PARSE_STRUCT;
 
 	static PARSE_STRUCT parseArray[];
-	static size_t parseArraySize;
+	static size_t		parseArraySize;
 
 	bool IsTrack() const;
-	wxTrack& GetLastTrack();
+	wxTrack&	   GetLastTrack();
 	const wxTrack& GetLastTrack() const;
 
 	void ParseLine( size_t, const wxString &, const wxString & );
@@ -170,7 +170,8 @@ public:
 	wxCueSheetReader& CorrectQuotationMarks( bool, const wxString& );
 
 	const wxArrayString& GetCueLines() const;
-	const wxCueSheet& GetCueSheet() const;
+	const wxCueSheet&	 GetCueSheet() const;
 };
 
 #endif
+

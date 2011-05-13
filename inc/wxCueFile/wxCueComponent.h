@@ -43,7 +43,7 @@ protected:
 	} CDTEXT_ENTRY;
 
 	static CDTEXT_ENTRY CdTextFields[];
-	static size_t CdTextFieldsSize;
+	static size_t		CdTextFieldsSize;
 
 	typedef struct _KEYWORD_ENTRY
 	{
@@ -114,3 +114,4 @@ public:
 };
 
 #endif
+

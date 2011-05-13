@@ -44,7 +44,7 @@ public:
 
 	wxTimeSpan GetDuration( wxULongLong );
 
-	void GetNumberOfCdFrames( wxULongLong, wxULongLong &, wxUint32 & ) const;
+	void		GetNumberOfCdFrames( wxULongLong, wxULongLong &, wxUint32 & ) const;
 	wxULongLong GetNumberOfCdFrames( wxULongLong ) const;
 
 	wxString GetSamplesStr( wxULongLong ) const;
@@ -62,7 +62,7 @@ public:
 
 protected:
 
-	unsigned long m_nSamplingRate;
+	unsigned long  m_nSamplingRate;
 	unsigned short m_nNumChannels;
 	unsigned short m_nBitsPerSample;
 
@@ -72,3 +72,4 @@ protected:
 };
 
 #endif
+

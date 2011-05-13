@@ -49,13 +49,13 @@ public:
 
 protected:
 
-	size_t m_number;
-	DataMode m_dataMode;
-	wxArrayIndex m_indexes;
+	size_t				 m_number;
+	DataMode			 m_dataMode;
+	wxArrayIndex		 m_indexes;
 	wxScopedPtr<wxIndex> m_pPreGap;
 	wxScopedPtr<wxIndex> m_pPostGap;
-	wxDataFile m_df;
-	wxArrayFlag m_flags;
+	wxDataFile			 m_df;
+	wxArrayFlag			 m_flags;
 
 protected:
 
@@ -66,7 +66,7 @@ protected:
 	} FLAG_STR;
 
 	static FLAG_STR FlagString[];
-	static size_t FlagStringSize;
+	static size_t	FlagStringSize;
 
 	typedef struct _DATA_MODE_STR
 	{
@@ -96,7 +96,7 @@ public:
 	bool SetMode( const wxString& );
 
 	const wxArrayIndex& GetIndexes() const;
-	const wxIndex& GetFirstIndex() const;
+	const wxIndex&		GetFirstIndex() const;
 	void AddIndex( const wxIndex& );
 
 	bool HasPreGap() const;
@@ -153,3 +153,4 @@ public:
 WX_DECLARE_OBJARRAY( wxTrack, wxArrayTrack );
 
 #endif
+

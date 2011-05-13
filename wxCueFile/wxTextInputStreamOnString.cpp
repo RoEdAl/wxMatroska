@@ -29,3 +29,4 @@ bool wxTextInputStreamOnString::Eof() const
 {
 	return m_inputStream.Eof();
 }
+

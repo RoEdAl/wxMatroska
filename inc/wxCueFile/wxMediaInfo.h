@@ -18,7 +18,7 @@ public:
 	static const wxChar MEDIA_INFO_LIBRARY[];
 
 	static const wxChar* SYMBOL_NAMES[];
-	static const size_t SYMBOL_NAMES_SIZE;
+	static const size_t	 SYMBOL_NAMES_SIZE;
 
 	/** @brief Kinds of Stream */
 	typedef enum MediaInfo_stream_t
@@ -54,11 +54,11 @@ public:
 
 protected:
 
-	MEDIAINFO_New m_fnNew;
+	MEDIAINFO_New	 m_fnNew;
 	MEDIAINFO_Delete m_fnDelete;
-	MEDIAINFO_Open m_fnOpen;
-	MEDIAINFO_Close m_fnClose;
-	MEDIAINFO_Get m_fnGet;
+	MEDIAINFO_Open	 m_fnOpen;
+	MEDIAINFO_Close	 m_fnClose;
+	MEDIAINFO_Get	 m_fnGet;
 
 	static bool load_symbols( const wxDynamicLibrary&, wxArrayPtrVoid& );
 
@@ -80,3 +80,4 @@ public:
 };
 
 #endif
+

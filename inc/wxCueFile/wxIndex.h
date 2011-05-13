@@ -20,8 +20,8 @@ protected:
 
 	void copy( const wxIndex& );
 	const wxULongLong& GetOffset() const;
-	wxIndex& operator -=( wxULongLong );
-	wxIndex& operator +=( wxULongLong );
+	wxIndex&		   operator -=( wxULongLong );
+	wxIndex&		   operator +=( wxULongLong );
 
 public:
 
@@ -53,3 +53,4 @@ public:
 WX_DECLARE_OBJARRAY( wxIndex, wxArrayIndex );
 
 #endif // _WX_INDEX_H_
+

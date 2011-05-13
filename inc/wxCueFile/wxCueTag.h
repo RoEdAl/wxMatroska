@@ -79,8 +79,8 @@ public:
 protected:
 
 	TAG_SOURCE m_eSource;
-	wxString m_sName;
-	wxString m_sValue;
+	wxString   m_sName;
+	wxString   m_sValue;
 
 protected:
 
@@ -91,7 +91,7 @@ protected:
 	} SOURCE2TEXT;
 
 	static SOURCE2TEXT SOURCE2TEXT_MAPPING[];
-	static size_t SOURCE2TEXT_MAPPING_SIZE;
+	static size_t	   SOURCE2TEXT_MAPPING_SIZE;
 
 public:
 
@@ -105,3 +105,4 @@ protected:
 WX_DECLARE_OBJARRAY( wxCueTag, wxArrayCueTag );
 
 #endif
+

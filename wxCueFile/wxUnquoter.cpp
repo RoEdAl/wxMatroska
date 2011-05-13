@@ -161,3 +161,4 @@ bool wxUnquoter::IsQuoted( const wxString& s ) const
 {
 	return m_reQuotes.Matches( s ) || m_reDoubleQuotes.Matches( s );
 }
+

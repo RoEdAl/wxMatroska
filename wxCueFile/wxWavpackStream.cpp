@@ -151,3 +151,4 @@ int32_t wxWavpackStream::write_bytes( void* data, int32_t bcount )
 	m_outputStream.Write( data, bcount );
 	return (int32_t)m_outputStream.LastWrite();
 }
+

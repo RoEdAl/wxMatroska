@@ -36,30 +36,30 @@ public:
 
 protected:
 
-	bool m_bChapterTimeEnd; // default=true
-	bool m_bUnknownChapterTimeEndToNextChapter; // default=false
-	unsigned long m_nChapterOffset; // in frames
-	bool m_bUseDataFiles; // default=true
-	bool m_bEmbedded;
-	bool m_bCorrectQuotationMarks;
-	bool m_bSaveCueSheet;
-	bool m_bGenerateTags;
-	bool m_bGenerateMkvmergeOpts;
-	bool m_bRunMkvmerge;
-	bool m_bGenerateEditionUID;
-	bool m_bGenerateTagsFromComments;
-	FILE_ENCODING m_eCueSheetFileEncoding;
-	bool m_bTrackOneIndexOne; // or zero
-	bool m_bAbortOnError;
-	bool m_bRoundDownToFullFrames;
-	bool m_bHiddenIndexes;
-	bool m_bMerge;
-	unsigned int m_nEmbeddedModeFlags;
+	bool			 m_bChapterTimeEnd; // default=true
+	bool			 m_bUnknownChapterTimeEndToNextChapter; // default=false
+	unsigned long	 m_nChapterOffset; // in frames
+	bool			 m_bUseDataFiles; // default=true
+	bool			 m_bEmbedded;
+	bool			 m_bCorrectQuotationMarks;
+	bool			 m_bSaveCueSheet;
+	bool			 m_bGenerateTags;
+	bool			 m_bGenerateMkvmergeOpts;
+	bool			 m_bRunMkvmerge;
+	bool			 m_bGenerateEditionUID;
+	bool			 m_bGenerateTagsFromComments;
+	FILE_ENCODING	 m_eCueSheetFileEncoding;
+	bool			 m_bTrackOneIndexOne; // or zero
+	bool			 m_bAbortOnError;
+	bool			 m_bRoundDownToFullFrames;
+	bool			 m_bHiddenIndexes;
+	bool			 m_bMerge;
+	unsigned int	 m_nEmbeddedModeFlags;
 	wxArrayTagSource m_aeIgnoredSources;
-	bool m_bUseMLang;
-	bool m_bFullPaths;
-	bool m_bEllipsizeTags;
-	bool m_bAttachEacLog;
+	bool			 m_bUseMLang;
+	bool			 m_bFullPaths;
+	bool			 m_bEllipsizeTags;
+	bool			 m_bAttachEacLog;
 
 	wxString m_sAlternateExtensions;
 	wxString m_sLang;
@@ -67,8 +67,8 @@ protected:
 	wxString m_sMatroskaNameFormat;
 
 	wxArrayInputFile m_inputFile;
-	wxFileName m_outputFile;
-	wxFileName m_mkvmergeDir;
+	wxFileName		 m_outputFile;
+	wxFileName		 m_mkvmergeDir;
 
 	wxString m_sCueSheetExt;
 	wxString m_sMatroskaChaptersXmlExt;
@@ -99,9 +99,9 @@ public:
 	bool GetUseDataFiles() const;
 	const wxString& GetAlternateExtensions() const;
 	bool HasAlternateExtensions() const;
-	const wxString& GetLang() const;
-	const wxString& GetTrackNameFormat() const;
-	const wxString& GetMatroskaNameFormat() const;
+	const wxString&			GetLang() const;
+	const wxString&			GetTrackNameFormat() const;
+	const wxString&			GetMatroskaNameFormat() const;
 	const wxArrayInputFile& GetInputFiles() const;
 	bool IsEmbedded() const;
 	bool CorrectQuotationMarks() const;
@@ -159,3 +159,4 @@ public:
 };
 
 #endif // _WX_CONFIGURATION_H
+

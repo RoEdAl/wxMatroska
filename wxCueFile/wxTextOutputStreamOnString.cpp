@@ -52,3 +52,4 @@ bool wxTextOutputStreamOnString::SaveTo( const wxString& sOutputFile, bool bUseM
 		return false;
 	}
 }
+

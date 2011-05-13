@@ -23,9 +23,9 @@ protected:
 
 	const wxConfiguration& m_cfg;
 
-	wxArrayString m_asMmcPre;
-	wxArrayString m_asMmcPost;
-	wxArrayString m_asMmcInputFiles;
+	wxArrayString	m_asMmcPre;
+	wxArrayString	m_asMmcPost;
+	wxArrayString	m_asMmcInputFiles;
 	wxArrayFileName m_logFiles;
 
 	wxString m_sMatroskaOptsFile;
@@ -42,7 +42,7 @@ protected:
 public:
 
 	static wxMkvmergeOptsRenderer* const Null;
-	static const wxChar LOG_EXT[];
+	static const wxChar					 LOG_EXT[];
 
 	wxMkvmergeOptsRenderer( const wxConfiguration& );
 
@@ -52,3 +52,4 @@ public:
 };
 
 #endif
+

@@ -23,7 +23,7 @@ const size_t wxMediaInfo::SYMBOL_NAMES_SIZE = WXSIZEOF( wxMediaInfo::SYMBOL_NAME
 bool wxMediaInfo::load_symbols( const wxDynamicLibrary& dll, wxArrayPtrVoid& pointers )
 {
 	pointers.Clear();
-	for ( size_t i = 0 ; i < SYMBOL_NAMES_SIZE ; i++ )
+	for ( size_t i = 0; i < SYMBOL_NAMES_SIZE; i++ )
 	{
 		if ( !dll.HasSymbol( SYMBOL_NAMES[ i ] ) )
 		{
@@ -106,3 +106,4 @@ const wxChar* wxMediaInfo::MediaInfoGet( void* handle, MediaInfo_stream_C Stream
 	wxASSERT( IsLoaded() );
 	return m_fnGet( handle, StreamKind, StreamNumber, Parameter, KindOfInfo, KindOfSearch );
 }
+

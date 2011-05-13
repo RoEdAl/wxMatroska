@@ -20,9 +20,9 @@ class wxTextCueSheetRenderer: public wxCueSheetRenderer
 protected:
 
 	wxTextOutputStream* m_pTextOutputStream;
-	int m_nDumpFlags;
-	wxSamplingInfo m_si;
-	wxRegEx m_reSpace;
+	int					m_nDumpFlags;
+	wxSamplingInfo		m_si;
+	wxRegEx				m_reSpace;
 
 protected:
 
@@ -66,3 +66,4 @@ public:
 };
 
 #endif
+

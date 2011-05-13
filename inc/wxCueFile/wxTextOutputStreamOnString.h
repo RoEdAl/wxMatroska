@@ -13,17 +13,18 @@ public:
 	wxTextOutputStreamOnString( wxString& );
 
 	const wxStringOutputStream& GetStringStream() const;
-	wxTextOutputStream& GetStream();
-	wxTextOutputStream& operator *();
+	wxTextOutputStream&			GetStream();
+	wxTextOutputStream&			operator *();
 
 	const wxString& GetString() const;
 	bool SaveTo( const wxString&, bool ) const;
 
 protected:
 
-	wxMBConvUTF16 m_conv;
+	wxMBConvUTF16		 m_conv;
 	wxStringOutputStream m_outputStream;
-	wxTextOutputStream m_textOutputStream;
+	wxTextOutputStream	 m_textOutputStream;
 };
 
 #endif
+

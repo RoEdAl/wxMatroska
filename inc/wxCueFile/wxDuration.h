@@ -33,7 +33,7 @@ public:
 	wxDuration& Assign( const wxSamplingInfo &, wxULongLong );
 
 	const wxSamplingInfo& GetSamplingInfo() const;
-	const wxULongLong& GetNumberOfSamples() const;
+	const wxULongLong&	  GetNumberOfSamples() const;
 
 	bool IsValid() const;
 	void Clear();
@@ -75,3 +75,4 @@ protected:
 };
 
 #endif
+

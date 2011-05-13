@@ -172,7 +172,7 @@ void wxSamplingInfo::GetNumberOfCdFrames(
 wxULongLong wxSamplingInfo::GetNumberOfCdFrames( wxULongLong frames ) const
 {
 	wxULongLong cdFrames;
-	wxUint32 rest;
+	wxUint32	rest;
 	GetNumberOfCdFrames( frames, cdFrames, rest );
 	return cdFrames;
 }
@@ -183,7 +183,7 @@ wxString wxSamplingInfo::GetSamplesStr( wxULongLong frames ) const
 	wxULongLong s( frames );
 	wxULongLong samplingRate( 0, m_nSamplingRate );
 	wxULongLong sr( frames % samplingRate );
-	double rest = sr.ToDouble() / m_nSamplingRate;
+	double		rest = sr.ToDouble() / m_nSamplingRate;
 
 	s -= sr;
 	s /= samplingRate;
@@ -291,3 +291,4 @@ wxString wxSamplingInfo::GetIndexOffsetFramesStr( const wxIndex& idx ) const
 {
 	return GetCdFramesStr( GetIndexOffset( idx ) );
 }
+

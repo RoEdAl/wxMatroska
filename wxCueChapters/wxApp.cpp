@@ -114,7 +114,7 @@ bool wxMyApp::CheckLicense()
 
 #else
 	const wxStandardPaths& paths = wxStandardPaths::Get();
-	wxFileName fn( paths.GetExecutablePath() );
+	wxFileName			   fn( paths.GetExecutablePath() );
 	fn.SetFullName( LICENSE_FILE_NAME );
 	if ( !fn.FileExists() )
 	{
@@ -136,14 +136,13 @@ bool wxMyApp::CheckLicense()
 	}
 
 	return true;
-
 #endif
 }
 
 void wxMyApp::ShowLicense()
 {
 	const wxStandardPaths& paths = wxStandardPaths::Get();
-	wxFileName fn( paths.GetExecutablePath() );
+	wxFileName			   fn( paths.GetExecutablePath() );
 	fn.SetFullName( LICENSE_FILE_NAME );
 	if ( !fn.FileExists() )
 	{
@@ -266,7 +265,7 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, const wxCueSheet& cu
 		}
 
 		wxSharedPtr<wxTextOutputStream> pTos( m_cfg.GetOutputTextStream( fos ) );
-		wxTextCueSheetRenderer renderer( pTos.get() );
+		wxTextCueSheetRenderer			renderer( pTos.get() );
 		if ( !renderer.Render( cueSheet ) )
 		{
 			return 1;
@@ -384,11 +383,11 @@ int wxMyApp::OnRun()
 	.SetEllipsizeTags( m_cfg.EllipsizeTags() );
 
 	wxInputFile firstInputFile;
-	bool bFirst = true;
+	bool		bFirst = true;
 
-	int res							  = 0;
+	int						res		  = 0;
 	const wxArrayInputFile& inputFile = m_cfg.GetInputFiles();
-	for ( size_t i = 0 ; i < inputFile.Count() ; i++ )
+	for ( size_t i = 0; i < inputFile.Count(); i++ )
 	{
 		wxFileName fn( inputFile[ i ].GetInputFile() );
 
@@ -584,3 +583,4 @@ wxString wxMyApp::GetFileName( const wxString& sFileName )
 	wxFileName fn( sFileName );
 	return fn.GetFullName();
 }
+

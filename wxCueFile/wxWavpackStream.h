@@ -16,7 +16,7 @@ public:
 
 protected:
 
-	wxInputStream& m_inputStream;
+	wxInputStream&	m_inputStream;
 	wxOutputStream& m_outputStream;
 
 protected:
@@ -72,3 +72,4 @@ protected:
 };
 
 #endif
+

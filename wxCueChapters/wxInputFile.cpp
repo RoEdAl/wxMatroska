@@ -72,7 +72,7 @@ void wxInputFile::GetDataFiles( wxArrayDataFile& dataFile, wxDataFile::FileType 
 {
 	dataFile.Clear();
 	size_t count = m_dataFile.Count();
-	for ( size_t i = 0 ; i < count ; i++ )
+	for ( size_t i = 0; i < count; i++ )
 	{
 		wxDataFile df( m_dataFile[ i ].GetFullPath(), fileType );
 		dataFile.Add( df );
@@ -102,7 +102,7 @@ wxString wxInputFile::ToString( bool bLongPath ) const
 		s.Append( SEPARATOR );
 	}
 
-	for ( size_t i = 0 ; i < m_dataFile.Count() ; i++ )
+	for ( size_t i = 0; i < m_dataFile.Count(); i++ )
 	{
 		s.Append( bLongPath?m_dataFile[ i ].GetFullPath() : m_dataFile[ i ].GetFullName() );
 		s.Append( SEPARATOR );
@@ -118,3 +118,4 @@ wxString wxInputFile::ToString( bool bLongPath ) const
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
 WX_DEFINE_OBJARRAY( wxArrayFileName );
+

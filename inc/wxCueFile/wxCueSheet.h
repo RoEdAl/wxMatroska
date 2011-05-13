@@ -53,7 +53,7 @@ public:
 
 	const wxArrayCueTag& GetCatalog() const;
 	const wxArrayCueTag& GetCdTextFile() const;
-	const wxArrayTrack& GetTracks() const;
+	const wxArrayTrack&	 GetTracks() const;
 
 	virtual bool HasDuration() const;
 	virtual wxDuration GetDuration() const;
@@ -66,8 +66,8 @@ public:
 
 	const wxTrack& GetTrack( size_t ) const;
 	const wxTrack& GetLastTrack() const;
-	wxCueSheet& AddTrack( const wxTrack& );
-	wxArrayTrack& SortTracks();
+	wxCueSheet&	   AddTrack( const wxTrack& );
+	wxArrayTrack&  SortTracks();
 
 	wxCueSheet& AddCatalog( const wxString& );
 	wxCueSheet& AddCdTextFile( const wxString& );
@@ -80,3 +80,4 @@ public:
 };
 
 #endif // _WX_CUE_SHEET_H_
+

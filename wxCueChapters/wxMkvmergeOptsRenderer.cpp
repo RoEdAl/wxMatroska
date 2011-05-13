@@ -41,7 +41,7 @@ wxString wxMkvmergeOptsRenderer::mkvmerge_escape( const wxString& s )
 
 void wxMkvmergeOptsRenderer::write_as( wxTextOutputStream& stream, const wxArrayString& as )
 {
-	for ( wxArrayString::const_iterator i = as.begin() ; i != as.end() ; i++ )
+	for ( wxArrayString::const_iterator i = as.begin(); i != as.end(); i++ )
 	{
 		stream << *i << endl;
 	}
@@ -85,7 +85,7 @@ void wxMkvmergeOptsRenderer::write_attachments( wxTextOutputStream& stream )
 		case 8:
 		case 9:
 		stream << wxT( "# EAC logs" ) << endl;
-		for ( size_t i = 0 ; i < nAttachments ; i++ )
+		for ( size_t i = 0; i < nAttachments; i++ )
 		{
 			stream <<
 			wxT( "--attachment-name" ) << endl <<
@@ -100,7 +100,7 @@ void wxMkvmergeOptsRenderer::write_attachments( wxTextOutputStream& stream )
 
 		default:
 		stream << wxT( "# EAC logs" ) << endl;
-		for ( size_t i = 0 ; i < nAttachments ; i++ )
+		for ( size_t i = 0; i < nAttachments; i++ )
 		{
 			stream <<
 			wxT( "--attachment-name" ) << endl <<
@@ -150,9 +150,9 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile, const wxC
 	m_asMmcPre.Add( wxT( "# Input file(s)" ) );
 
 	// tracks
-	const wxArrayTrack& tracks = cueSheet.GetTracks();
-	size_t nTracks			   = tracks.Count();
-	for ( size_t i = 0 ; i < nTracks ; i++ )
+	const wxArrayTrack& tracks	= cueSheet.GetTracks();
+	size_t				nTracks = tracks.Count();
+	for ( size_t i = 0; i < nTracks; i++ )
 	{
 		if ( tracks[ i ].HasDataFile() )
 		{
@@ -241,3 +241,4 @@ bool wxMkvmergeOptsRenderer::Save()
 		return false;
 	}
 }
+

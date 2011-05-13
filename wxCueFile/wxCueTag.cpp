@@ -54,7 +54,7 @@ size_t wxCueTag::SOURCE2TEXT_MAPPING_SIZE = WXSIZEOF( wxCueTag::SOURCE2TEXT_MAPP
 
 wxString wxCueTag::SourceToString( wxCueTag::TAG_SOURCE eSource )
 {
-	for ( size_t i = 0 ; i < SOURCE2TEXT_MAPPING_SIZE ; i++ )
+	for ( size_t i = 0; i < SOURCE2TEXT_MAPPING_SIZE; i++ )
 	{
 		if ( eSource == SOURCE2TEXT_MAPPING[ i ].eSource )
 		{
@@ -145,7 +145,7 @@ wxCueTag& wxCueTag::operator =( const wxCueTag& cueTag )
 bool wxCueTag::IsMultiline() const
 {
 	wxTextInputStreamOnString tis( m_sValue );
-	int nLines = 0;
+	int						  nLines = 0;
 	while ( !( tis.Eof() || ( nLines > 1 ) ) )
 	{
 		tis.GetStream().ReadLine();
@@ -190,3 +190,4 @@ wxString wxCueTag::Quote( const wxString& sValue )
 
 #include <wx/arrimpl.cpp>
 WX_DEFINE_OBJARRAY( wxArrayCueTag );
+

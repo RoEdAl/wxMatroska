@@ -66,10 +66,10 @@ typedef struct tagMSG
 #include <wavpack.h>
 
 extern wxXmlNode* const wxNullXmlNode;
-extern wxXmlDocument* const wxNullXmlDocument;
 
 #ifdef WIN32
 #include <objbase.h>
 #endif
 
 #endif // _STD_WX_H
+

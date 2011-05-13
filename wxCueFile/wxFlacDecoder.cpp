@@ -112,3 +112,4 @@ void wxFlacDecoder::error_callback( ::FLAC__StreamDecoderErrorStatus status )
 	wxString sFlacStatus( FLAC__StreamDecoderErrorStatusString[ status ] );
 	wxLogError( _( "FLAC error %d: %s" ), status, sFlacStatus );
 }
+

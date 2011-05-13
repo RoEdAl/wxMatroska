@@ -43,19 +43,19 @@ protected:
 
 protected:
 
-	wxXmlDocument* m_pXmlDoc;
-	wxXmlNode* m_pChapterAtom;
-	wxXmlNode* m_pFirstChapterAtom;
-	wxXmlNode* m_pPrevChapterAtom;
-	wxXmlNode* m_pEditionEntry;
+	wxScopedPtr<wxXmlDocument> m_pXmlDoc;
+	wxXmlNode*				   m_pChapterAtom;
+	wxXmlNode*				   m_pFirstChapterAtom;
+	wxXmlNode*				   m_pPrevChapterAtom;
+	wxXmlNode*				   m_pEditionEntry;
 
-	wxXmlDocument* m_pXmlTags;
-	wxXmlNode* m_pTags;
+	wxScopedPtr<wxXmlDocument> m_pXmlTags;
+	wxXmlNode*				   m_pTags;
 
 	const wxConfiguration* m_pCfg;
-	wxInputFile m_inputFile;
-	wxString m_sOutputFile;
-	wxString m_sTagsFile;
+	wxInputFile			   m_inputFile;
+	wxString			   m_sOutputFile;
+	wxString			   m_sTagsFile;
 
 	wxSamplingInfo m_si;
 
@@ -68,20 +68,16 @@ public:
 
 	static wxXmlCueSheetRenderer* const Null;
 
-	static class Tag
+	static struct Tag
 	{
-public:
-
 		static const wxChar* const ORIGINAL_MEDIA_TYPE;
 		static const wxChar* const CATALOG_NUMBER;
 		static const wxChar* const TOTAL_PARTS;
 		static const wxChar* const PART_NUMBER;
 	};
 
-	static class Xml
+	static struct Xml
 	{
-public:
-
 		static const wxChar* const CHAPTER_UID;
 		static const wxChar* const EDITION_ENTRY;
 		static const wxChar* const EDITION_UID;
@@ -104,10 +100,8 @@ public:
 		static const wxChar* const SIMPLE;
 	};
 
-	static class XmlValue
+	static struct XmlValue
 	{
-public:
-
 		static const wxChar* const ALBUM;
 		static const wxChar* const TRACK;
 	};
@@ -191,12 +185,13 @@ public:
 
 	static wxXmlCueSheetRenderer* CreateObject( const wxConfiguration&, const wxInputFile& );
 
-	~wxXmlCueSheetRenderer( void );
-
 	void SetInputFile( const wxInputFile& );
 
-	wxXmlDocument* GetXmlDoc() const;
-	wxXmlDocument* GetXmlTags() const;
+	bool HasXmlDoc() const;
+	bool HasXmlTags() const;
+
+	wxXmlDocument& GetXmlDoc() const;
+	wxXmlDocument& GetXmlTags() const;
 
 	const wxString& GetOutputFile() const;
 	const wxString& GetTagsFile() const;
@@ -205,3 +200,4 @@ public:
 };
 
 #endif
+

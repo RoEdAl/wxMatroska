@@ -108,3 +108,4 @@ void wxDurationHolder::ClearDuration()
 {
 	m_pDuration.reset();
 }
+

@@ -61,11 +61,11 @@ wxString wxFlacMetaDataReader::GetCueSheetFromVorbisComment() const
 {
 	wxASSERT( HasVorbisComment() );
 	const FLAC::Metadata::VorbisComment& vorbisComment = GetVorbisComment();
-	unsigned int numComments						   = vorbisComment.get_num_comments();
-	for ( unsigned int i = 0 ; i < numComments ; i++ )
+	unsigned int						 numComments   = vorbisComment.get_num_comments();
+	for ( unsigned int i = 0; i < numComments; i++ )
 	{
 		FLAC::Metadata::VorbisComment::Entry entry = vorbisComment.get_comment( i );
-		wxString sEntryName( wxString::FromUTF8( entry.get_field_name(), entry.get_field_name_length() ) );
+		wxString							 sEntryName( wxString::FromUTF8( entry.get_field_name(), entry.get_field_name_length() ) );
 		if ( sEntryName.CmpNoCase( wxT( "CUESHEET" ) ) == 0 )
 		{
 			return wxString::FromUTF8( entry.get_field_value(), entry.get_field_value_length() );
@@ -80,13 +80,13 @@ void wxFlacMetaDataReader::ReadVorbisComments( wxArrayCueTag& comments ) const
 	wxASSERT( HasVorbisComment() );
 	comments.Empty();
 	const FLAC::Metadata::VorbisComment& vorbisComment = GetVorbisComment();
-	unsigned int numComments						   = vorbisComment.get_num_comments();
-	for ( unsigned int i = 0 ; i < numComments ; i++ )
+	unsigned int						 numComments   = vorbisComment.get_num_comments();
+	for ( unsigned int i = 0; i < numComments; i++ )
 	{
 		FLAC::Metadata::VorbisComment::Entry entry = vorbisComment.get_comment( i );
-		wxString sEntryName( wxString::FromUTF8( entry.get_field_name(), entry.get_field_name_length() ) );
-		wxString sEntryValue( wxString::FromUTF8( entry.get_field_value(), entry.get_field_value_length() ) );
-		wxCueTag comment( wxCueTag::TAG_MEDIA_METADATA, sEntryName, sEntryValue );
+		wxString							 sEntryName( wxString::FromUTF8( entry.get_field_name(), entry.get_field_name_length() ) );
+		wxString							 sEntryValue( wxString::FromUTF8( entry.get_field_value(), entry.get_field_value_length() ) );
+		wxCueTag							 comment( wxCueTag::TAG_MEDIA_METADATA, sEntryName, sEntryValue );
 		comments.Add( comment );
 	}
 }
@@ -162,3 +162,4 @@ const wxString& wxFlacMetaDataReader::GetFlacFile() const
 {
 	return m_sFlacFile;
 }
+

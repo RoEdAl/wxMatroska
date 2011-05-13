@@ -59,8 +59,8 @@ HRESULT wxMultiLanguage::DetectInputCodepage(
 {
 	wxASSERT( IsValid() );
 
-	INT nSize	 = (INT)srcStr.length();
-	HRESULT hRes = m_pMLang->DetectInputCodepage(
+	INT		nSize = (INT)srcStr.length();
+	HRESULT hRes  = m_pMLang->DetectInputCodepage(
 		dwFlag,
 		dwPrefWinCodePage,
 		const_cast<CHAR*> ( srcStr.data() ), &nSize,
@@ -78,7 +78,7 @@ HRESULT wxMultiLanguage::DetectCodepageInStream(
 	wxASSERT( IsValid() );
 
 	IStream* pStream;
-	HRESULT hRes = SHCreateStreamOnFile( fn.GetFullPath(), STGM_READ, &pStream );
+	HRESULT	 hRes = SHCreateStreamOnFile( fn.GetFullPath(), STGM_READ, &pStream );
 	if ( hRes != S_OK )
 	{
 		return hRes;
@@ -99,8 +99,8 @@ HRESULT wxMultiLanguage::GetCodePageDescription( UINT nCodePage, wxString& sDesc
 	wxASSERT( IsValid() );
 
 	MIMECPINFO cpinfo;
-	LANGID langid = LANG_USER_DEFAULT;
-	HRESULT hRes  = m_pMLang->GetCodePageInfo( nCodePage, langid, &cpinfo );
+	LANGID	   langid = LANG_USER_DEFAULT;
+	HRESULT	   hRes	  = m_pMLang->GetCodePageInfo( nCodePage, langid, &cpinfo );
 	if ( hRes == S_OK )
 	{
 		sDescription = cpinfo.wszDescription;
@@ -122,3 +122,4 @@ bool wxMultiLanguage::GetDefaultCodePage( wxUint32& nCodePage )
 		return false;
 	}
 }
+

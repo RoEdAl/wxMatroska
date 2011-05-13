@@ -165,9 +165,9 @@ public:
 
 		if ( m_minMBCharWidth == 0 )
 		{
-			DWORD dwMode  = 0;
-			UINT nSrcSize = 1;
-			UINT nDstSize = 0;
+			DWORD dwMode   = 0;
+			UINT  nSrcSize = 1;
+			UINT  nDstSize = 0;
 
 			HRESULT hRes = m_mlang->ConvertStringFromUnicodeEx(
 				&dwMode,
@@ -216,7 +216,7 @@ public:
 	{
 		wxString sDescription;
 		wxString sCPDescription;
-		HRESULT hRes = m_mlang.GetCodePageDescription( m_nCodePage, sCPDescription );
+		HRESULT	 hRes = m_mlang.GetCodePageDescription( m_nCodePage, sCPDescription );
 		if ( hRes == S_OK )
 		{
 			sDescription.Printf( wxT( "%s [CP:%d]" ), sCPDescription, m_nCodePage );
@@ -239,7 +239,7 @@ protected:
 	// cached result of GetMBNulLen(), set to 0 initially meaning
 	// "unknown"
 	size_t m_minMBCharWidth;
-	DWORD m_dwMode;
+	DWORD  m_dwMode;
 };
 
 class wxMBConv_BOM: public wxMBConv
@@ -346,7 +346,7 @@ protected:
 	bool check_bom( const char* src ) const
 	{
 		bool bRes = true;
-		for ( size_t i = 0 ; bRes && ( i < m_bom.length() ) ; i++ )
+		for ( size_t i = 0; bRes && ( i < m_bom.length() ); i++ )
 		{
 			if ( m_bom[ i ] != (wxByte)( src[ i ] ) )
 			{
@@ -360,8 +360,8 @@ protected:
 protected:
 
 	wxMBConvSharedPtr m_pConv;
-	wxByteBuffer m_bom;
-	bool m_bBOMConsumed;
+	wxByteBuffer	  m_bom;
+	bool			  m_bBOMConsumed;
 };
 
 wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetDefaultEncoding( bool bUseMLang, wxString& sDescription )
@@ -429,7 +429,7 @@ bool wxEncodingDetection::test_bom( const wxByteBuffer& buffer, const wxByte* bo
 {
 	wxASSERT( nLen >= 2 );
 	bool bRes = true;
-	for ( size_t i = 0 ; bRes && ( i < nLen ) ; i++ )
+	for ( size_t i = 0; bRes && ( i < nLen ); i++ )
 	{
 		if ( buffer[ i ] != bom[ i ] )
 		{
@@ -442,8 +442,8 @@ bool wxEncodingDetection::test_bom( const wxByteBuffer& buffer, const wxByte* bo
 
 wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncodingFromBOM( const wxFileName& fn, bool bUseMLang, wxString& sDescription )
 {
-	wxByteBuffer buffer( 4 );
-	size_t nLastRead = 0;
+	wxByteBuffer	  buffer( 4 );
+	size_t			  nLastRead = 0;
 	wxMBConvSharedPtr pRes;
 
 	{
@@ -502,7 +502,7 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncodingFromB
 wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( const wxFileName& fn, bool bUseMLang, wxString& sDescription )
 {
 	wxMBConvSharedPtr pRes;
-	wxULongLong nFileSize = fn.GetSize();
+	wxULongLong		  nFileSize = fn.GetSize();
 	if ( nFileSize == wxInvalidSize )
 	{
 		wxLogError( _( "Cannot determine size of file \u201C%s\u201D" ), fn.GetName() );
@@ -524,7 +524,7 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 	if ( bUseMLang )
 	{
 		wxMultiLanguage multiLanguage;
-		wxUint32 nDefCodePage = 0;
+		wxUint32		nDefCodePage = 0;
 		wxMultiLanguage::GetDefaultCodePage( nDefCodePage );
 
 		if ( !multiLanguage.IsValid() )
@@ -535,13 +535,13 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 		}
 
 		DetectEncodingInfo dei[ 10 ];
-		INT nSize = 10;
+		INT				   nSize = 10;
 
 		if ( nFileSize < wxULL( 256 ) )
 		{
 			wxCharBuffer buffer( nFileSize.GetLo() );
 			wxCharBuffer newBuffer( 256 );
-			size_t nLastRead;
+			size_t		 nLastRead;
 
 			{
 				wxFileInputStream fis( fn.GetFullPath() );
@@ -557,7 +557,7 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 			}
 
 			int steps = 256 / nLastRead;
-			for ( int i = 0 ; i < steps ; i++ )
+			for ( int i = 0; i < steps; i++ )
 			{
 				wxTmemcpy( newBuffer.data() + ( nLastRead * i ), buffer.data(), nLastRead );
 			}
@@ -577,7 +577,7 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 		{ // read only first 4k
 			wxLogWarning( _( "File \u201C%s\u201D is really big - trying first 4kb only" ), fn.GetName() );
 			wxCharBuffer buffer( 4 * 1024 );
-			size_t nLastRead;
+			size_t		 nLastRead;
 
 			{
 				wxFileInputStream fis( fn.GetFullPath() );
@@ -615,7 +615,7 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 
 		if ( nSize > 0 )
 		{
-			for ( INT i = 0 ; i < nSize ; i++ )
+			for ( INT i = 0; i < nSize; i++ )
 			{
 				wxLogDebug( _( "Detected encoding of file \u201C%s\u201D is %d (%d%%)" ), fn.GetName(), dei[ i ].nCodePage, dei[ i ].nDocPercent );
 			}
@@ -668,3 +668,4 @@ bool wxEncodingDetection::GetBOM( wxUint32 nCodePage, wxByteBuffer& bom )
 
 	return bRet;
 }
+

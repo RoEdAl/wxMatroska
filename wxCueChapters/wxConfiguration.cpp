@@ -117,7 +117,7 @@ bool wxConfiguration::GetFileEncodingFromStr( const wxString& sFileEncoding, wxC
 bool wxConfiguration::ReadLanguagesStrings( wxSortedArrayString& as )
 {
 	const wxStandardPaths& paths = wxStandardPaths::Get();
-	wxFileName fn( paths.GetExecutablePath() );
+	wxFileName			   fn( paths.GetExecutablePath() );
 	fn.SetFullName( LANG_FILE_NAME );
 	if ( !fn.FileExists() )
 	{
@@ -135,7 +135,7 @@ bool wxConfiguration::ReadLanguagesStrings( wxSortedArrayString& as )
 
 	as.Clear();
 	wxTextInputStream tis( fis );
-	size_t n = 0;
+	size_t			  n = 0;
 	while ( !fis.Eof() )
 	{
 		wxString sLine( tis.ReadLine() );
@@ -333,7 +333,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	}
 
 	wxString s;
-	long v;
+	long	 v;
 	if ( cmdLine.Found( wxT( "fo" ), &v ) )
 	{
 		if ( ( v < 0 ) || ( v > 10000 ) )
@@ -585,7 +585,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	if ( cmdLine.GetParamCount() > 0 )
 	{
-		for ( size_t i = 0 ; i < cmdLine.GetParamCount() ; i++ )
+		for ( size_t i = 0; i < cmdLine.GetParamCount(); i++ )
 		{
 			wxInputFile inputFile( cmdLine.GetParam( i ) );
 			if ( inputFile.IsOk() )
@@ -800,7 +800,7 @@ wxString wxConfiguration::GetEmbeddedModeFlagsDesc( unsigned int flags )
 
 	s.Empty();
 	size_t nItems = as.GetCount();
-	for ( size_t i = 0 ; i < nItems ; i++ )
+	for ( size_t i = 0; i < nItems; i++ )
 	{
 		s += as[ i ];
 		s += wxT( ',' );
@@ -812,9 +812,9 @@ wxString wxConfiguration::GetEmbeddedModeFlagsDesc( unsigned int flags )
 wxString wxConfiguration::GetTagSourcesNames( const wxArrayTagSource& sources )
 {
 	wxString s;
-	size_t nSources = sources.GetCount();
+	size_t	 nSources = sources.GetCount();
 	wxASSERT( nSources > 0 );
-	for ( size_t i = 0 ; i < nSources ; i++ )
+	for ( size_t i = 0; i < nSources; i++ )
 	{
 		s += wxCueTag::SourceToString( sources[ i ] );
 		s += wxT( ',' );
@@ -880,17 +880,17 @@ void wxConfiguration::Dump() const
 {
 	if ( wxLog::IsLevelEnabled( wxLOG_Info, wxLOG_COMPONENT ) && wxLog::GetVerbose() )
 	{
-		wxString sSeparator( wxT( '=' ), 65 );
+		wxString	  sSeparator( wxT( '=' ), 65 );
 		wxArrayString as;
 		as.Add( sSeparator );
 		as.Add( _( "Configuration:" ) );
 		FillArray( as );
 		as.Add( wxString::Format( _( "Output path: \u201C%s\u201D" ), m_outputFile.GetFullPath() ) );
 		as.Add( sSeparator );
-		size_t strings = as.GetCount();
+		size_t	   strings = as.GetCount();
 		wxDateTime dt( wxDateTime::Now() );
-		wxLog* pLog = wxLog::GetActiveTarget();
-		for ( size_t i = 0 ; i < strings ; i++ )
+		wxLog*	   pLog = wxLog::GetActiveTarget();
+		for ( size_t i = 0; i < strings; i++ )
 		{
 			pLog->OnLog( wxLOG_Info, as[ i ], dt.GetTicks() );
 		}
@@ -905,7 +905,7 @@ void wxConfiguration::BuildXmlComments( const wxString& sOutputFile, wxXmlNode* 
 	pNode->AddChild( pComment );
 
 	wxArrayString as;
-	wxDateTime dtNow( wxDateTime::Now() );
+	wxDateTime	  dtNow( wxDateTime::Now() );
 
 	as.Add( wxString::Format( wxT( "Application version: %s" ), wxGetApp().APP_VERSION ) );
 	as.Add( wxString::Format( wxT( "Application vendor: %s" ), wxGetApp().GetVendorDisplayName() ) );
@@ -915,7 +915,7 @@ void wxConfiguration::BuildXmlComments( const wxString& sOutputFile, wxXmlNode* 
 	FillArray( as );
 
 	size_t strings = as.GetCount();
-	for ( size_t i = 0 ; i < strings ; i++ )
+	for ( size_t i = 0; i < strings; i++ )
 	{
 		wxXmlNode* pComment = new wxXmlNode( wxNullXmlNode, wxXML_COMMENT_NODE, wxEmptyString, as[ i ] );
 		pNode->AddChild( pComment );
@@ -1265,3 +1265,4 @@ bool wxConfiguration::AttachEacLog() const
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
 WX_DEFINE_OBJARRAY( wxArrayInputFile );
+

@@ -11,14 +11,15 @@ public:
 
 	wxTextInputStreamOnString( const wxString& );
 	const wxStringInputStream& GetStringStream() const;
-	wxTextInputStream& GetStream();
-	wxTextInputStream& operator *();
+	wxTextInputStream&		   GetStream();
+	wxTextInputStream&		   operator *();
 	bool Eof() const;
 
 protected:
 
 	wxStringInputStream m_inputStream;
-	wxTextInputStream m_textInputStream;
+	wxTextInputStream	m_textInputStream;
 };
 
 #endif
+

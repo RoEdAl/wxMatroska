@@ -36,7 +36,7 @@ public:
 	virtual ~wxInputFile( void );
 
 	bool IsOk() const;
-	const wxFileName& GetInputFile() const;
+	const wxFileName&	   GetInputFile() const;
 	const wxArrayFileName& GetDataFiles() const;
 	void GetDataFiles( wxArrayDataFile&, wxDataFile::FileType = wxDataFile::WAVE ) const;
 	bool HasDataFiles() const;
@@ -48,3 +48,4 @@ public:
 };
 
 #endif
+

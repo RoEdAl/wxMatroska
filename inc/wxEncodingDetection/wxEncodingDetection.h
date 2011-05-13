@@ -14,10 +14,8 @@ public:
 
 	static wxMBConv* const wxNullMBConv;
 
-	static class BOM
+	static struct BOM
 	{
-public:
-
 		static const wxByte UTF32_BE[ 4 ];
 		static const wxByte UTF32_LE[ 4 ];
 		static const wxByte UTF16_BE[ 2 ];
@@ -25,10 +23,8 @@ public:
 		static const wxByte UTF8[ 3 ];
 	};
 
-	static class CP
+	static struct CP
 	{
-public:
-
 		static const wxUint32 UTF32_BE;
 		static const wxUint32 UTF32_LE;
 		static const wxUint32 UTF16_BE;
@@ -49,3 +45,4 @@ protected:
 };
 
 #endif
+

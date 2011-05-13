@@ -46,9 +46,9 @@ protected:
 	void metadata_callback( const::FLAC__StreamMetadata* );
 
 	FLAC::Metadata::VorbisComment* m_pVorbisComment;
-	FLAC::Metadata::CueSheet* m_pCueSheet;
-	FLAC::Metadata::StreamInfo* m_pStreamInfo;
-	wxString m_sFlacFile;
+	FLAC::Metadata::CueSheet*	   m_pCueSheet;
+	FLAC::Metadata::StreamInfo*	   m_pStreamInfo;
+	wxString					   m_sFlacFile;
 
 public:
 
@@ -72,3 +72,4 @@ public:
 };
 
 #endif
+

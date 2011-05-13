@@ -33,10 +33,10 @@ class wxMyApp: public wxAppConsole
 {
 protected:
 
-	wxConfiguration m_cfg;
-	wxString m_sSeparator;
+	wxConfiguration						m_cfg;
+	wxString							m_sSeparator;
 	wxScopedPtr<wxMkvmergeOptsRenderer> m_pMkvmergeOptsRenderer;
-	wxScopedPtr<wxCueSheet> m_pMergedCueSheet;
+	wxScopedPtr<wxCueSheet>				m_pMergedCueSheet;
 
 protected:
 
@@ -54,7 +54,7 @@ protected:
 
 	wxSharedPtr<wxXmlCueSheetRenderer> GetXmlRenderer( const wxInputFile& );
 	wxMkvmergeOptsRenderer& GetMkvmergeOptsRenderer( bool = true );
-	wxCueSheet& GetMergedCueSheet();
+	wxCueSheet&				GetMergedCueSheet();
 
 	bool HasMkvmergeOptsRenderer() const;
 	bool HasMergedCueSheet() const;
@@ -64,7 +64,7 @@ protected:
 protected:
 
 	virtual bool OnInit();
-	virtual void OnInitCmdLine(     wxCmdLineParser& );
+	virtual void OnInitCmdLine( wxCmdLineParser& );
 	virtual bool OnCmdLineParsed( wxCmdLineParser& );
 	virtual int OnRun();
 	virtual int OnExit();
@@ -87,3 +87,4 @@ public:
 wxDECLARE_APP( wxMyApp );
 
 #endif
+

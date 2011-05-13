@@ -93,7 +93,7 @@ wxWavpackTagReader::wxWavpackTagReader( void )
 bool wxWavpackTagReader::ReadCueSheetTag( const wxString& sWavpackFile, wxString& sCueSheet )
 {
 	wxWritableCharBuffer valueBuffer;
-	size_t nSize = 0;
+	size_t				 nSize = 0;
 
 	{
 		wxFileInputStream is( sWavpackFile );
@@ -105,7 +105,7 @@ bool wxWavpackTagReader::ReadCueSheetTag( const wxString& sWavpackFile, wxString
 
 		wxNullOutputStream os;
 
-		wxWavpackStream wavpackStream( is, os );
+		wxWavpackStream		 wavpackStream( is, os );
 		wxWritableCharBuffer errBuffer;
 		errBuffer.extend( 80 );
 		wxWavpackContext ctx(
@@ -163,7 +163,7 @@ bool wxWavpackTagReader::ReadTags( const wxString& sWavpackFile, wxArrayCueTag& 
 
 	wxNullOutputStream os;
 
-	wxWavpackStream wavpackStream( is, os );
+	wxWavpackStream		 wavpackStream( is, os );
 	wxWritableCharBuffer errBuffer;
 	errBuffer.extend( 80 );
 	wxWavpackContext ctx( WavpackOpenFileInputEx(
@@ -186,10 +186,10 @@ bool wxWavpackTagReader::ReadTags( const wxString& sWavpackFile, wxArrayCueTag& 
 
 	wxWritableCharBuffer itemBuffer;
 	wxWritableCharBuffer valueBuffer;
-	wxString sItem;
-	wxString sValue;
+	wxString			 sItem;
+	wxString			 sValue;
 
-	for ( int i = 0 ; i < nItems ; i++ )
+	for ( int i = 0; i < nItems; i++ )
 	{
 		size_t nSize = ctx.GetTagItemIndexed( i, itemBuffer, valueBuffer, sItem, sValue );
 		wxASSERT( nSize > 0 );
@@ -208,3 +208,4 @@ bool wxWavpackTagReader::ReadTags( const wxString& sWavpackFile, wxArrayCueTag& 
 
 	return true;
 }
+

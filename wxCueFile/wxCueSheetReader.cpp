@@ -159,8 +159,9 @@ wxCueSheetReader& wxCueSheetReader::CorrectQuotationMarks( bool bCorrectQuotatio
 
 bool wxCueSheetReader::ReadCueSheet( const wxString& sCueFile, bool bUseMLang )
 {
-	wxString sCPDescription;
+	wxString							   sCPDescription;
 	wxEncodingDetection::wxMBConvSharedPtr pConv( wxEncodingDetection::GetFileEncoding( sCueFile, bUseMLang, sCPDescription ) );
+
 	if ( pConv )
 	{
 		wxLogInfo( _( "Detected encoding of file \u201C%s\u201D file is \u201C%s\u201D" ), sCueFile, sCPDescription );
@@ -255,7 +256,7 @@ bool wxCueSheetReader::ReadCueSheetFromVorbisComment( const wxFlacMetaDataReader
 	}
 
 	wxStringInputStream is( sCueSheet );
-	bool res = ReadCueSheet( is, wxConvUTF8 );
+	bool				res = ReadCueSheet( is, wxConvUTF8 );
 	if ( res )
 	{
 		m_cueSheet.SetSingleDataFile( flacReader.GetFlacFile() );
@@ -286,11 +287,12 @@ bool wxCueSheetReader::ReadCueSheetFromCueSheetTag( const wxFlacMetaDataReader& 
 		m_cueSheet.AddCatalog( sCatalog );
 	}
 
-	for ( unsigned int i = 0 ; i < cueSheet.get_num_tracks() ; i++ )
+	for ( unsigned int i = 0; i < cueSheet.get_num_tracks(); i++ )
 	{
 		const FLAC::Metadata::CueSheet::Track flacTrack = cueSheet.get_track( i );
-		wxTrack track( flacTrack.get_number() );
-		wxString sIsrc( flacTrack.get_isrc() );
+		wxTrack								  track( flacTrack.get_number() );
+		wxString							  sIsrc( flacTrack.get_isrc() );
+
 		if ( !sIsrc.IsEmpty() )
 		{
 			track.AddCdTextInfo( wxCueTag::Name::ISRC, sIsrc );
@@ -302,10 +304,9 @@ bool wxCueSheetReader::ReadCueSheetFromCueSheetTag( const wxFlacMetaDataReader& 
 		}
 
 		unsigned int numIndicies = flacTrack.get_num_indices();
-		for ( unsigned int j = 0 ; j < numIndicies ; j++ )
+		for ( unsigned int j = 0; j < numIndicies; j++ )
 		{
 			::FLAC__StreamMetadata_CueSheet_Index flacIdx = flacTrack.get_index( j );
-
 			wxIndex idx( flacIdx.number, flacTrack.get_offset() + flacIdx.offset );
 			track.AddIndex( idx );
 		}
@@ -361,7 +362,7 @@ void wxCueSheetReader::AppendComments( wxArrayCueTag& comments, bool singleMedia
 {
 	size_t nComments = comments.GetCount();
 
-	for ( size_t i = 0 ; i < nComments ; i++ )
+	for ( size_t i = 0; i < nComments; i++ )
 	{
 		wxCueTag& comment = comments[ i ];
 
@@ -391,9 +392,10 @@ void wxCueSheetReader::AppendComments( wxArrayCueTag& comments, bool singleMedia
 
 			if ( m_reTrackComment.Matches( comment.GetName() ) )
 			{
-				wxString sTagNumber( m_reTrackComment.GetMatch( comment.GetName(), 1 ) );
-				wxString sTagName( m_reTrackComment.GetMatch( comment.GetName(), 2 ) );
+				wxString	  sTagNumber( m_reTrackComment.GetMatch( comment.GetName(), 1 ) );
+				wxString	  sTagName( m_reTrackComment.GetMatch( comment.GetName(), 2 ) );
 				unsigned long trackNumber;
+
 				if ( sTagNumber.ToULong( &trackNumber ) )
 				{
 					if ( m_cueSheet.HasTrack( trackNumber ) )
@@ -451,7 +453,8 @@ bool wxCueSheetReader::ReadEmbeddedInWavpackCueSheet( const wxString& sMediaFile
 	}
 
 	wxStringInputStream is( sCueSheet );
-	bool res = ReadCueSheet( is, wxConvUTF8 );
+	bool				res = ReadCueSheet( is, wxConvUTF8 );
+
 	if ( res )
 	{
 		m_cueSheet.SetSingleDataFile( sMediaFile );
@@ -482,8 +485,9 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMo
 	wxArrayString as1;
 	wxArrayString as2;
 
-	void* handle = dll.MediaInfoNew();
-	size_t res	 = dll.MediaInfoOpen( handle, sMediaFile );
+	void*  handle = dll.MediaInfoNew();
+	size_t res	  = dll.MediaInfoOpen( handle, sMediaFile );
+
 	if ( res == 0 )
 	{
 		wxLogError( _( "MediaInfo - fail to open file \u201C%s\u201D" ), sMediaFile );
@@ -492,7 +496,7 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMo
 		return false;
 	}
 
-	for ( size_t i = 0 ; i < INFOS_SIZE ; i++ )
+	for ( size_t i = 0; i < INFOS_SIZE; i++ )
 	{
 		wxString s1(
 			dll.MediaInfoGet(
@@ -517,7 +521,7 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMo
 		as2.Add( s2 );
 	}
 
-	for ( size_t i = 0 ; i < AUDIO_INFOS_SIZE ; i++ )
+	for ( size_t i = 0; i < AUDIO_INFOS_SIZE; i++ )
 	{
 		wxString s1(
 			dll.MediaInfoGet(
@@ -546,14 +550,14 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMo
 	dll.MediaInfoDelete( handle );
 	dll.Unload();
 
-	bool check			  = true;
-	bool singleMediaFile  = ( ( nMode & EC_SINGLE_MEDIA_FILE ) != 0 );
-	MEDIA_TYPE eMediaType = MEDIA_TYPE_UNKNOWN;
+	bool		  check			  = true;
+	bool		  singleMediaFile = ( ( nMode & EC_SINGLE_MEDIA_FILE ) != 0 );
+	MEDIA_TYPE	  eMediaType	  = MEDIA_TYPE_UNKNOWN;
 	unsigned long u;
-	wxString sCueSheet;
-	bool bCueSheet = false;
+	wxString	  sCueSheet;
+	bool		  bCueSheet = false;
 
-	for ( size_t i = 0 ; i < ( INFOS_SIZE + AUDIO_INFOS_SIZE ) ; i++ )
+	for ( size_t i = 0; i < ( INFOS_SIZE + AUDIO_INFOS_SIZE ); i++ )
 	{
 		switch ( i )
 		{
@@ -729,7 +733,7 @@ void wxCueSheetReader::DumpErrors( size_t nLine ) const
 {
 	if ( m_errors.Count() > 0 )
 	{
-		for ( wxArrayString::const_iterator i = m_errors.begin() ; i != m_errors.end() ; i++ )
+		for ( wxArrayString::const_iterator i = m_errors.begin(); i != m_errors.end(); i++ )
 		{
 			if ( m_bErrorsAsWarnings )
 			{
@@ -762,7 +766,7 @@ wxString wxCueSheetReader::Unquote( const wxString& qs )
 
 void wxCueSheetReader::ParseLine( size_t WXUNUSED( nLine ), const wxString& sToken, const wxString& sRest )
 {
-	for ( size_t i = 0 ; i < parseArraySize ; i++ )
+	for ( size_t i = 0; i < parseArraySize; i++ )
 	{
 		if ( sToken.CmpNoCase( parseArray[ i ].token ) == 0 )
 		{
@@ -848,9 +852,9 @@ bool wxCueSheetReader::ParseCue()
 {
 	m_dataFile.Clear();
 
-	bool res	 = true;
+	bool   res	 = true;
 	size_t nLine = 1;
-	for ( wxArrayString::const_iterator i = m_cueLines.begin() ; i != m_cueLines.end() ; i++, nLine++ )
+	for ( wxArrayString::const_iterator i = m_cueLines.begin(); i != m_cueLines.end(); i++, nLine++ )
 	{
 		if ( m_reEmpty.Matches( *i ) )
 		{
@@ -918,7 +922,7 @@ bool wxCueSheetReader::AddCdTextInfo( const wxString& sToken, const wxString& sB
 
 bool wxCueSheetReader::ParseMsf( const wxString& sBody, wxIndex& idx, bool bPrePost )
 {
-	bool res = true;
+	bool		  res = true;
 	unsigned long min, sec, frames;
 
 	if ( m_reMsf.Matches( sBody ) )
@@ -989,7 +993,7 @@ void wxCueSheetReader::ParseIndex( const wxString& WXUNUSED( sToken ), const wxS
 		else
 		{
 			wxString sMsf = m_reIndex.GetMatch( sBody, 2 );
-			wxIndex idx;
+			wxIndex	 idx;
 			if ( ParseMsf( sMsf, idx ) )
 			{
 				idx.SetNumber( number );
@@ -1064,7 +1068,7 @@ void wxCueSheetReader::ParseTrack( const wxString& sToken, const wxString& sBody
 		else
 		{
 			wxString sMode( m_reDataMode.GetMatch( sBody, 2 ) );
-			wxTrack newTrack( trackNo );
+			wxTrack	 newTrack( trackNo );
 			if ( newTrack.IsValid() && newTrack.SetMode( sMode ) )
 			{
 				if ( !m_dataFile.IsEmpty() )
@@ -1103,3 +1107,4 @@ void wxCueSheetReader::ParseCdTextFile( const wxString& WXUNUSED( sToken ), cons
 {
 	m_cueSheet.AddCdTextFile( Unquote( sBody ) );
 }
+

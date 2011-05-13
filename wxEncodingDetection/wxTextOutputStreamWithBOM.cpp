@@ -35,10 +35,10 @@ public:
 wxTextOutputStreamWithBOMFactory::wxTextOutputStreamSharedPtr wxTextOutputStreamWithBOMFactory::Create( wxOutputStream& s, wxEOL mode, bool bWriteBOM, wxUint32 nCodePage, bool bUseMLang )
 {
 	wxTextOutputStreamSharedPtr pRes;
-	wxByteBuffer bom;
+	wxByteBuffer				bom;
 	if ( wxEncodingDetection::GetBOM( nCodePage, bom ) )
 	{
-		wxString sDescription;
+		wxString			  sDescription;
 		wxSharedPtr<wxMBConv> pConv( wxEncodingDetection::GetStandardMBConv( nCodePage, bUseMLang, sDescription ) );
 		pRes = new wxTextOutputStreamWithBOM( s, mode, bWriteBOM, *pConv, bom );
 	}
@@ -58,6 +58,6 @@ wxTextOutputStreamWithBOMFactory::wxTextOutputStreamSharedPtr wxTextOutputStream
 
 #else
 	return Create( s, mode, bWriteBOM, wxEncodingDetection::CP::UTF16_LE, bUseMLang );
-
 #endif
 }
+

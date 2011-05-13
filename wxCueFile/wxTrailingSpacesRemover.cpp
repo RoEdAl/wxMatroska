@@ -39,3 +39,4 @@ wxString wxTrailingSpacesRemover::Remove( const wxString& s ) const
 	RemoveEx( s, sOut );
 	return sOut;
 }
+

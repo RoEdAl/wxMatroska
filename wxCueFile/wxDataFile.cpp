@@ -77,7 +77,7 @@ size_t wxDataFile::FileTypeStringSize = WXSIZEOF( wxDataFile::FileTypeString );
 wxString wxDataFile::GetFileTypeRegExp()
 {
 	wxString s;
-	for ( size_t i = 0 ; i < FileTypeStringSize ; i++ )
+	for ( size_t i = 0; i < FileTypeStringSize; i++ )
 	{
 		s += FileTypeString[ i ].szName;
 		s += wxT( '|' );
@@ -93,7 +93,7 @@ wxString wxDataFile::GetFileTypeRegExp()
 wxString wxDataFile::FileTypeToString( wxDataFile::FileType ftype )
 {
 	wxString s;
-	for ( size_t i = 0 ; i < FileTypeStringSize ; i++ )
+	for ( size_t i = 0; i < FileTypeStringSize; i++ )
 	{
 		if ( FileTypeString[ i ].ftype == ftype )
 		{
@@ -107,7 +107,7 @@ wxString wxDataFile::FileTypeToString( wxDataFile::FileType ftype )
 
 bool wxDataFile::StringToFileType( const wxString& s, wxDataFile::FileType& ftype )
 {
-	for ( size_t i = 0 ; i < FileTypeStringSize ; i++ )
+	for ( size_t i = 0; i < FileTypeStringSize; i++ )
 	{
 		if ( s.CmpNoCase( FileTypeString[ i ].szName ) == 0 )
 		{
@@ -182,7 +182,7 @@ bool wxDataFile::FindFile( wxFileName& fn, const wxString& sAlternateExt ) const
 		sTokens = wxT( "mp3" );
 	}
 
-	wxFileName fnTry( m_fileName );
+	wxFileName		  fnTry( m_fileName );
 	wxStringTokenizer tokenizer( sTokens, wxT( "," ) );
 	while ( tokenizer.HasMoreTokens() )
 	{
@@ -232,8 +232,8 @@ bool wxDataFile::GetFromMediaInfo( const wxFileName& fileName, wxULongLong& fram
 	wxArrayString as1;
 	wxArrayString as2;
 
-	void* handle = dll.MediaInfoNew();
-	size_t res	 = dll.MediaInfoOpen( handle, fileName.GetFullPath() );
+	void*  handle = dll.MediaInfoNew();
+	size_t res	  = dll.MediaInfoOpen( handle, fileName.GetFullPath() );
 	if ( res == 0 )
 	{
 		wxLogError( _( "MediaInfo - fail to open file" ) );
@@ -242,7 +242,7 @@ bool wxDataFile::GetFromMediaInfo( const wxFileName& fileName, wxULongLong& fram
 		return false;
 	}
 
-	for ( size_t i = 0 ; i < INFOS_SIZE ; i++ )
+	for ( size_t i = 0; i < INFOS_SIZE; i++ )
 	{
 		wxString s1(
 			dll.MediaInfoGet(
@@ -270,10 +270,10 @@ bool wxDataFile::GetFromMediaInfo( const wxFileName& fileName, wxULongLong& fram
 	dll.MediaInfoClose( handle );
 	dll.MediaInfoDelete( handle );
 
-	bool check = true;
+	bool		  check = true;
 	unsigned long u;
 
-	for ( size_t i = 0 ; i < INFOS_SIZE ; i++ )
+	for ( size_t i = 0; i < INFOS_SIZE; i++ )
 	{
 		switch ( i )
 		{
@@ -386,7 +386,7 @@ bool wxDataFile::GetInfo( wxSamplingInfo& si, wxULongLong& frames, const wxStrin
 bool wxDataFile::GetInfo( wxDuration& duration, const wxString& sAlternateExt ) const
 {
 	wxSamplingInfo si;
-	wxULongLong numberOfSamples;
+	wxULongLong	   numberOfSamples;
 
 	if ( GetInfo( si, numberOfSamples, sAlternateExt ) )
 	{
@@ -412,3 +412,4 @@ const wxAbstractDurationHolder& wxDataFile::CalculateDuration( const wxString& s
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
 WX_DEFINE_OBJARRAY( wxArrayDataFile );
+

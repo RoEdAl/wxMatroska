@@ -101,9 +101,9 @@ void wxIndex::FixDecimalPoint( wxString& s )
 	wxString sep = wxLocale::GetInfo( wxLOCALE_DECIMAL_POINT,
 		wxLOCALE_CAT_NUMBER );
 #else // !wxUSE_INTL
-	  // As above, this is the most common alternative value. Notice that here it
-	  // doesn't matter if we guess wrongly and the current separator is already
-	  // ".": we'll just waste a call to Replace() in this case.
+	// As above, this is the most common alternative value. Notice that here it
+	// doesn't matter if we guess wrongly and the current separator is already
+	// ".": we'll just waste a call to Replace() in this case.
 	wxString sep( "," );
 #endif // wxUSE_INTL/!wxUSE_INTL
 
@@ -142,3 +142,4 @@ int wxIndex::CompareFn( wxIndex** i1, wxIndex** i2 )
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
 WX_DEFINE_OBJARRAY( wxArrayIndex );
+
