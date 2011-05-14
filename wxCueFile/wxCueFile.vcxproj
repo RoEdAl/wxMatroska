@@ -89,7 +89,9 @@
     <ClCompile Include="wxCueSheet.cpp" />
     <ClCompile Include="wxCueSheetReader.cpp" />
     <ClCompile Include="wxCueSheetRenderer.cpp" />
+    <ClCompile Include="wxCueTag.cpp" />
     <ClCompile Include="wxDataFile.cpp" />
+    <ClCompile Include="wxDuration.cpp" />
     <ClCompile Include="wxEllipsizer.cpp" />
     <ClCompile Include="wxFlacDecoder.cpp" />
     <ClCompile Include="wxFlacMetaDataReader.cpp" />
@@ -107,6 +109,8 @@
     <ClCompile Include="wxWavpackTagReader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\inc\wxCueFile\wxCueTag.h" />
+    <ClInclude Include="..\inc\wxCueFile\wxDuration.h" />
     <ClInclude Include="..\inc\wxCueFile\wxEllipsizer.h" />
     <ClInclude Include="..\inc\wxCueFile\wxTextOutputStreamOnString.h" />
     <ClInclude Include="..\inc\wxCueFile\wxTrailingSpacesRemover.h" />
