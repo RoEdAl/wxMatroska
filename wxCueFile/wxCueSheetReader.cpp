@@ -193,7 +193,7 @@ bool wxCueSheetReader::ReadCueSheet( const wxString& sCueFile, wxMBConv& conv )
 		return false;
 	}
 
-	return ParseCue( wxCueSheetContent( internalReadCueSheet( fis, conv ), m_cueFileName ) );
+	return ParseCue( wxCueSheetContent( internalReadCueSheet( fis, conv ), m_cueFileName, false ) );
 }
 
 bool wxCueSheetReader::ReadCueSheet( wxInputStream& stream )
@@ -257,7 +257,7 @@ bool wxCueSheetReader::ReadCueSheetFromVorbisComment( const wxFlacMetaDataReader
 		return false;
 	}
 
-	bool res = ParseCue( wxCueSheetContent( sCueSheet, flacReader.GetFlacFile() ) );
+	bool res = ParseCue( wxCueSheetContent( sCueSheet, flacReader.GetFlacFile(), true ) );
 	if ( res )
 	{
 		m_cueSheet.SetSingleDataFile( flacReader.GetFlacFile() );
@@ -457,7 +457,7 @@ bool wxCueSheetReader::ReadEmbeddedInWavpackCueSheet( const wxString& sMediaFile
 		return false;
 	}
 
-	bool res = ParseCue( wxCueSheetContent( sCueSheet, sMediaFile ) );
+	bool res = ParseCue( wxCueSheetContent( sCueSheet, sMediaFile, true ) );
 
 	if ( res )
 	{
@@ -670,7 +670,7 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMo
 			return ReadEmbeddedInWavpackCueSheet( sMediaFile, nMode );
 
 			default:
-			return ParseCue( wxCueSheetContent( sCueSheet, sMediaFile ) );
+			return ParseCue( wxCueSheetContent( sCueSheet, sMediaFile, true ) );
 		}
 	}
 }
