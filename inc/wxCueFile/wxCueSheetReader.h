@@ -5,7 +5,9 @@
 #ifndef _WX_CUE_SHEET_READER_H_
 #define _WX_CUE_SHEET_READER_H_
 
+#ifndef _WX_CUE_SHEET_H_
 #include "wxCueSheet.h"
+#endif
 
 #ifndef _WX_INDEX_H_
 class wxIndex;
@@ -29,6 +31,10 @@ class wxFlacMetaDataReader;
 
 #ifndef _WX_ELLIPSIZER_H_
 #include "wxEllipsizer.h"
+#endif
+
+#ifndef _WX_CUE_SHEET_CONTENT_H_
+class wxCueSheetContent;
 #endif
 
 class wxCueSheetReader:
@@ -79,14 +85,13 @@ protected:
 	wxTrailingSpacesRemover m_spacesRemover;
 	wxEllipsizer			m_ellipsizer;
 
-	wxDataFile	  m_dataFile;
-	wxArrayString m_cueLines;
-	wxCueSheet	  m_cueSheet;
-	bool		  m_bErrorsAsWarnings;
-	bool		  m_bParseComments;
-	bool		  m_bEllipsizeTags;
-	wxString	  m_sLang;
-	wxFileName	  m_cueFileName;
+	wxDataFile m_dataFile;
+	wxCueSheet m_cueSheet;
+	bool	   m_bErrorsAsWarnings;
+	bool	   m_bParseComments;
+	bool	   m_bEllipsizeTags;
+	wxString   m_sLang;
+	wxFileName m_cueFileName;
 
 protected:
 
@@ -104,8 +109,10 @@ protected:
 
 protected:
 
-	bool internalReadCueSheet( wxInputStream& stream, wxMBConv& conv );
-	bool ParseCue( void );
+	wxString internalReadCueSheet( wxInputStream& stream, wxMBConv& conv );
+	bool ParseCue( const wxCueSheetContent& );
+
+	bool ParseCueLine( const wxString &, size_t );
 	void ProcessMediaInfoCueSheet( wxString& );
 
 	typedef void ( wxCueSheetReader::* PARSE_METHOD )( const wxString&, const wxString& );
@@ -170,8 +177,7 @@ public:
 	wxCueSheetReader& SetEllipsizeTags( bool = true );
 	wxCueSheetReader& CorrectQuotationMarks( bool, const wxString& );
 
-	const wxArrayString& GetCueLines() const;
-	const wxCueSheet&	 GetCueSheet() const;
+	const wxCueSheet& GetCueSheet() const;
 };
 
 #endif

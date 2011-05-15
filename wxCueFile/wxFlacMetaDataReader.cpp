@@ -57,7 +57,7 @@ const FLAC::Metadata::StreamInfo& wxFlacMetaDataReader::GetStreamInfo() const
 	return *m_pStreamInfo;
 }
 
-wxString wxFlacMetaDataReader::GetCueSheetFromVorbisComment() const
+bool wxFlacMetaDataReader::GetCueSheetFromVorbisComment( wxString& sCueSheet ) const
 {
 	wxASSERT( HasVorbisComment() );
 	const FLAC::Metadata::VorbisComment& vorbisComment = GetVorbisComment();
@@ -68,11 +68,12 @@ wxString wxFlacMetaDataReader::GetCueSheetFromVorbisComment() const
 		wxString							 sEntryName( wxString::FromUTF8( entry.get_field_name(), entry.get_field_name_length() ) );
 		if ( sEntryName.CmpNoCase( wxT( "CUESHEET" ) ) == 0 )
 		{
-			return wxString::FromUTF8( entry.get_field_value(), entry.get_field_value_length() );
+			sCueSheet = wxString::FromUTF8( entry.get_field_value(), entry.get_field_value_length() );
+			return true;
 		}
 	}
 
-	return wxEmptyString;
+	return false;
 }
 
 void wxFlacMetaDataReader::ReadVorbisComments( wxArrayCueTag& comments ) const

@@ -3,14 +3,17 @@
  */
 
 #include "StdWx.h"
+#include <wxCueFile/wxTextOutputStreamOnString.h>
 #include <wxCueFile/wxSamplingInfo.h>
 #include <wxCueFile/wxIndex.h>
 #include <wxCueFile/wxTrack.h>
+#include <wxCueFile/wxCueSheetContent.h>
 #include <wxCueFile/wxCueSheetReader.h>
 #include <wxCueFile/wxMediaInfo.h>
 #include "wxFlacMetaDataReader.h"
 #include "wxWavpackTagReader.h"
 #include <wxEncodingDetection/wxEncodingDetection.h>
+#include "wxTextInputStreamOnString.h"
 
 wxIMPLEMENT_DYNAMIC_CLASS( wxCueSheetReader, wxObject )
 
@@ -117,11 +120,6 @@ const wxCueSheet& wxCueSheetReader::GetCueSheet() const
 	return m_cueSheet;
 }
 
-const wxArrayString& wxCueSheetReader::GetCueLines() const
-{
-	return m_cueLines;
-}
-
 bool wxCueSheetReader::ErrorsAsWarnings() const
 {
 	return m_bErrorsAsWarnings;
@@ -195,18 +193,18 @@ bool wxCueSheetReader::ReadCueSheet( const wxString& sCueFile, wxMBConv& conv )
 		return false;
 	}
 
-	return internalReadCueSheet( fis, conv ) && ParseCue();
+	return ParseCue( wxCueSheetContent( internalReadCueSheet( fis, conv ), m_cueFileName ) );
 }
 
 bool wxCueSheetReader::ReadCueSheet( wxInputStream& stream )
 {
-	m_cueFileName.Clear();
 	return ReadCueSheet( stream, wxConvLocal );
 }
 
 bool wxCueSheetReader::ReadCueSheet( wxInputStream& stream, wxMBConv& conv )
 {
-	return internalReadCueSheet( stream, conv ) && ParseCue();
+	m_cueFileName.Clear();
+	return ParseCue( wxCueSheetContent( internalReadCueSheet( stream, conv ) ) );
 }
 
 void wxCueSheetReader::ProcessMediaInfoCueSheet( wxString& sCueSheet )
@@ -252,15 +250,14 @@ bool wxCueSheetReader::ReadCueSheetFromVorbisComment( const wxFlacMetaDataReader
 		return false;
 	}
 
-	wxString sCueSheet( flacReader.GetCueSheetFromVorbisComment() );
-	if ( sCueSheet.IsEmpty() )
+	wxString sCueSheet;
+	if ( !flacReader.GetCueSheetFromVorbisComment( sCueSheet ) )
 	{
 		wxLogWarning( _( "Cannot find CUESHEET comment" ) );
 		return false;
 	}
 
-	wxStringInputStream is( sCueSheet );
-	bool				res = ReadCueSheet( is, wxConvUTF8 );
+	bool res = ParseCue( wxCueSheetContent( sCueSheet, flacReader.GetFlacFile() ) );
 	if ( res )
 	{
 		m_cueSheet.SetSingleDataFile( flacReader.GetFlacFile() );
@@ -460,8 +457,7 @@ bool wxCueSheetReader::ReadEmbeddedInWavpackCueSheet( const wxString& sMediaFile
 		return false;
 	}
 
-	wxStringInputStream is( sCueSheet );
-	bool				res = ReadCueSheet( is, wxConvUTF8 );
+	bool res = ParseCue( wxCueSheetContent( sCueSheet, sMediaFile ) );
 
 	if ( res )
 	{
@@ -674,10 +670,7 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMo
 			return ReadEmbeddedInWavpackCueSheet( sMediaFile, nMode );
 
 			default:
-			{
-				wxStringInputStream is( sCueSheet );
-				return ReadCueSheet( is, wxConvUTF8 );
-			}
+			return ParseCue( wxCueSheetContent( sCueSheet, sMediaFile ) );
 		}
 	}
 }
@@ -692,19 +685,19 @@ void wxCueSheetReader::BuildFromSingleMediaFile( const wxString& sMediaFile ) //
 	m_cueSheet.SetSingleDataFile( sMediaFile );
 }
 
-bool wxCueSheetReader::internalReadCueSheet( wxInputStream& stream, wxMBConv& conv )
+wxString wxCueSheetReader::internalReadCueSheet( wxInputStream& stream, wxMBConv& conv )
 {
-	wxTextInputStream tis( stream, wxT( " \t" ), conv );
+	wxTextInputStream		   tis( stream, wxT( " \t" ), conv );
+	wxTextOutputStreamOnString tos;
 
 	m_cueSheet.Clear();
-	m_cueLines.Clear();
+
 	while ( !stream.Eof() )
 	{
-		wxString sLine( tis.ReadLine() );
-		m_cueLines.Add( sLine );
+		*tos << tis.ReadLine() << endl;
 	}
 
-	return true;
+	return tos.GetString();
 }
 
 bool wxCueSheetReader::IsTrack() const
@@ -860,57 +853,75 @@ void wxCueSheetReader::ParseComment( const wxString& WXUNUSED( sToken ), const w
 	}
 }
 
-bool wxCueSheetReader::ParseCue()
+bool wxCueSheetReader::ParseCue( const wxCueSheetContent& content )
 {
 	m_dataFile.Clear();
 
-	bool   res	 = true;
-	size_t nLine = 1;
-	for ( wxArrayString::const_iterator i = m_cueLines.begin(); i != m_cueLines.end(); i++, nLine++ )
+	size_t	 nLine = 1;
+	wxString sLine;
+
+	wxTextInputStreamOnString tis( content.GetValue() );
+	while ( !tis.Eof() )
 	{
-		if ( m_reEmpty.Matches( *i ) )
+		sLine = ( *tis ).ReadLine();
+		if ( m_reEmpty.Matches( sLine ) )
 		{
 			wxLogDebug( wxT( "Skipping empty line %d" ), nLine );
 			continue;
 		}
 
-		if ( m_reKeywords.Matches( *i ) )
+		if ( !ParseCueLine( sLine, nLine ) )
 		{
-			wxASSERT( m_reKeywords.GetMatchCount() == 3 );
-			wxString sToken = m_reKeywords.GetMatch( *i, 1 );
-			wxString sRest	= m_reKeywords.GetMatch( *i, 2 );
-			m_errors.Clear();
-			ParseLine( nLine, sToken, sRest );
-			if ( m_errors.Count() > 0 )
-			{
-				DumpErrors( nLine );
-				ParseGarbage( *i );
-				res = false;
-			}
+			return false;
 		}
-		else if ( m_reCdTextInfo.Matches( *i ) )
-		{
-			wxASSERT( m_reCdTextInfo.GetMatchCount() == 3 );
-			wxString sToken = m_reCdTextInfo.GetMatch( *i, 1 );
-			wxString sRest	= m_reCdTextInfo.GetMatch( *i, 2 );
-			m_errors.Clear();
-			ParseCdTextInfo( nLine, sToken, sRest );
-			if ( m_errors.Count() > 0 )
-			{
-				DumpErrors( nLine );
-				ParseGarbage( *i );
-				res = false;
-			}
-		}
-		else
-		{
-			wxLogWarning( _( "Incorrect line %d: %s" ), nLine, i->GetData() );
-			ParseGarbage( *i );
-			res = false;
-		}
+
+		nLine += 1;
 	}
 
 	m_cueSheet.SortTracks();
+	m_cueSheet.AddContent( content );
+	return true;
+}
+
+bool wxCueSheetReader::ParseCueLine( const wxString& sLine, size_t nLine )
+{
+	bool res = true;
+
+	if ( m_reKeywords.Matches( sLine ) )
+	{
+		wxASSERT( m_reKeywords.GetMatchCount() == 3 );
+		wxString sToken = m_reKeywords.GetMatch( sLine, 1 );
+		wxString sRest	= m_reKeywords.GetMatch( sLine, 2 );
+		m_errors.Clear();
+		ParseLine( nLine, sToken, sRest );
+		if ( m_errors.Count() > 0 )
+		{
+			DumpErrors( nLine );
+			ParseGarbage( sLine );
+			res = false;
+		}
+	}
+	else if ( m_reCdTextInfo.Matches( sLine ) )
+	{
+		wxASSERT( m_reCdTextInfo.GetMatchCount() == 3 );
+		wxString sToken = m_reCdTextInfo.GetMatch( sLine, 1 );
+		wxString sRest	= m_reCdTextInfo.GetMatch( sLine, 2 );
+		m_errors.Clear();
+		ParseCdTextInfo( nLine, sToken, sRest );
+		if ( m_errors.Count() > 0 )
+		{
+			DumpErrors( nLine );
+			ParseGarbage( sLine );
+			res = false;
+		}
+	}
+	else
+	{
+		wxLogWarning( _( "Incorrect line %d: %s" ), nLine, sLine );
+		ParseGarbage( sLine );
+		res = false;
+	}
+
 	return res;
 }
 

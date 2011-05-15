@@ -214,9 +214,7 @@ const wxArrayCueTag& wxCueComponent::GetTags() const
 
 static bool find_tag( const wxArrayCueTag& tags, const wxCueTag& cueTag )
 {
-	size_t numTags = tags.Count();
-
-	for ( size_t i = 0; i < numTags; i++ )
+	for ( size_t numTags = tags.Count(), i = 0; i < numTags; i++ )
 	{
 		if (
 			( cueTag.GetName().CmpNoCase( tags[ i ].GetName() ) == 0 ) &&
@@ -240,7 +238,7 @@ static void add_tag( wxArrayCueTag& tags, const wxCueTag& cueTag )
 
 static void add_tags( wxArrayCueTag& tags, const wxArrayCueTag& newTags )
 {
-	for ( size_t i = 0; i < newTags.Count(); i++ )
+	for ( size_t newTagsCount = newTags.Count(), i = 0; i < newTagsCount; i++ )
 	{
 		add_tag( tags, newTags[ i ] );
 	}
@@ -259,8 +257,7 @@ void wxCueComponent::GetTags(
 	wxHashCueTag restHash;
 
 	wxCueTag cueTag;
-	size_t	 nTags = m_cdTextTags.Count();
-	for ( size_t i = 0; i < nTags; i++ )
+	for ( size_t nTags = m_cdTextTags.Count(), i = 0; i < nTags; i++ )
 	{
 		if ( cdTagsSynonims.GetName( m_cdTextTags[ i ], cueTag ) )
 		{
@@ -272,8 +269,7 @@ void wxCueComponent::GetTags(
 		}
 	}
 
-	nTags = m_tags.GetCount();
-	for ( size_t i = 0; i < nTags; i++ )
+	for ( size_t nTags = m_tags.GetCount(), i = 0; i < nTags; i++ )
 	{
 		if ( tagsSynonims.GetName( m_tags[ i ], cueTag ) )
 		{
@@ -312,7 +308,7 @@ void wxCueComponent::remove_duplicates( const wxRegEx& reEmptyValue, wxCueCompon
 
 void wxCueComponent::remove_duplicates( const wxRegEx& reEmptyValue, wxArrayCueTag& tags )
 {
-	for ( size_t i = 0; i < tags.Count(); i += 1 )
+	for ( size_t nTags = tags.Count(), i = 0; i < nTags; i += 1 )
 	{
 		wxString sValue( tags[ i ].GetValue() );
 		bool	 bRemove = false;
@@ -402,9 +398,7 @@ wxString wxCueComponent::FormatCdTextData( const wxString& sKeyword, const wxStr
 
 static size_t find_keyword( const wxArrayCueTag& tags, const wxString& sKeyword )
 {
-	size_t numTags = tags.Count();
-
-	for ( size_t i = 0; i < numTags; i++ )
+	for ( size_t numTags = tags.Count(), i = 0; i < numTags; i++ )
 	{
 		if ( sKeyword.CmpNoCase( tags[ i ].GetName() ) == 0 )
 		{

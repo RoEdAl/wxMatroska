@@ -66,7 +66,7 @@ public:
 	bool HasStreamInfo() const;
 
 	const FLAC::Metadata::VorbisComment& GetVorbisComment() const;
-	wxString GetCueSheetFromVorbisComment() const;
+	bool GetCueSheetFromVorbisComment( wxString& ) const;
 	void ReadVorbisComments( wxArrayCueTag& ) const;
 
 	const FLAC::Metadata::CueSheet& GetCueSheet() const;

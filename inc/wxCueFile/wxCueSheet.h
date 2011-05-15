@@ -17,12 +17,18 @@
 #include "wxCueComponent.h"
 #endif
 
+#ifndef _WX_CUE_SHEET_CONTENT_H_
+#include "wxCueSheetContent.h"
+#endif
+
 class wxCueSheet:
 	public wxCueComponent, public wxAbstractDurationHolder
 {
 	wxDECLARE_DYNAMIC_CLASS( wxCueSheet );
 
 protected:
+
+	wxArrayCueSheetContent m_content;
 
 	wxArrayCueTag m_catalog;
 	wxArrayCueTag m_cdtextfile;
@@ -44,17 +50,20 @@ public:
 
 	bool HasSingleDataFile() const;
 	bool HasSingleDataFile( wxDataFile& ) const;
-
 	wxCueSheet& SetSingleDataFile( const wxDataFile& );
 	wxCueSheet& SetDataFiles( const wxArrayDataFile& );
 
 	bool IsLastTrackForDataFile( size_t, wxDataFile & ) const;
 
-public:
+	const wxArrayCueSheetContent& GetContent() const;
+	const wxArrayCueTag&		  GetCatalog() const;
+	const wxArrayCueTag&		  GetCdTextFile() const;
+	const wxArrayTrack&			  GetTracks() const;
 
-	const wxArrayCueTag& GetCatalog() const;
-	const wxArrayCueTag& GetCdTextFile() const;
-	const wxArrayTrack&	 GetTracks() const;
+	wxCueSheet& AddCatalog( const wxString& );
+	wxCueSheet& AddCdTextFile( const wxString& );
+	wxCueSheet& AddContent( const wxCueSheetContent& );
+	wxCueSheet& AddContent( const wxString& );
 
 	virtual bool HasDuration() const;
 	virtual wxDuration GetDuration() const;
@@ -69,9 +78,6 @@ public:
 	const wxTrack& GetLastTrack() const;
 	wxCueSheet&	   AddTrack( const wxTrack& );
 	wxArrayTrack&  SortTracks();
-
-	wxCueSheet& AddCatalog( const wxString& );
-	wxCueSheet& AddCdTextFile( const wxString& );
 
 	void Clear( void );
 

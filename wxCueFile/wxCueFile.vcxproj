@@ -85,6 +85,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="wxCueSheetContent.cpp" />
     <ClCompile Include="wxCueComponent.cpp" />
     <ClCompile Include="wxCueSheet.cpp" />
     <ClCompile Include="wxCueSheetReader.cpp" />
@@ -109,6 +110,7 @@
     <ClCompile Include="wxWavpackTagReader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\inc\wxCueFile\wxCueSheetContent.h" />
     <ClInclude Include="..\inc\wxCueFile\wxCueTag.h" />
     <ClInclude Include="..\inc\wxCueFile\wxDuration.h" />
     <ClInclude Include="..\inc\wxCueFile\wxEllipsizer.h" />
