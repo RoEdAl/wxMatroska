@@ -5,9 +5,13 @@
 #include "StdWx.h"
 #include "wxInputFile.h"
 
+// ===============================================================================
+
 const wxChar wxInputFile::SEPARATOR = wxT( ';' );
 
 wxIMPLEMENT_DYNAMIC_CLASS( wxInputFile, wxObject )
+
+// ===============================================================================
 
 void wxInputFile::copy( const wxInputFile& inputFile )
 {
@@ -116,6 +120,3 @@ wxString wxInputFile::ToString( bool bLongPath ) const
 
 	return s;
 }
-
-#include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
-WX_DEFINE_OBJARRAY( wxArrayFileName );

@@ -9,13 +9,13 @@ wxIMPLEMENT_DYNAMIC_CLASS( wxCueSheetContent, wxObject ) wxCueSheetContent::wxCu
 {}
 
 wxCueSheetContent::wxCueSheetContent( const wxString& sValue ):
-	m_sValue( sValue ),m_bEmbedded(false)
+	m_sValue( sValue ), m_bEmbedded( false )
 {
 	wxASSERT( !sValue.IsEmpty() );
 }
 
 wxCueSheetContent::wxCueSheetContent( const wxString& sValue, const wxFileName& source, bool bEmbedded )
-	: m_sValue( sValue ), m_source( source ), m_bEmbedded(bEmbedded)
+	: m_sValue( sValue ), m_source( source ), m_bEmbedded( bEmbedded )
 {
 	wxASSERT( !sValue.IsEmpty() );
 	wxASSERT( source.IsOk() && !source.IsDir() );
@@ -34,9 +34,9 @@ wxCueSheetContent& wxCueSheetContent::operator =( const wxCueSheetContent& csCon
 
 void wxCueSheetContent::copy( const wxCueSheetContent& csContent )
 {
-	m_source = csContent.m_source;
+	m_source	= csContent.m_source;
 	m_bEmbedded = csContent.m_bEmbedded;
-	m_sValue = csContent.m_sValue;
+	m_sValue	= csContent.m_sValue;
 }
 
 bool wxCueSheetContent::HasSource() const

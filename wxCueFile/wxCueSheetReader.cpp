@@ -13,9 +13,15 @@
 #include "wxFlacMetaDataReader.h"
 #include "wxWavpackTagReader.h"
 #include <wxEncodingDetection/wxEncodingDetection.h>
-#include "wxTextInputStreamOnString.h"
+#include <wxCueFile/wxTextInputStreamOnString.h>
+
+// ===============================================================================
 
 wxIMPLEMENT_DYNAMIC_CLASS( wxCueSheetReader, wxObject )
+
+// ===============================================================================
+
+const wxChar wxCueSheetReader::LOG_EXT[] = wxT( "log" );
 
 wxCueSheetReader::PARSE_STRUCT wxCueSheetReader::parseArray[] =
 {
@@ -80,6 +86,15 @@ wxString wxCueSheetReader::GetDataFileRegExp()
 
 	s.Printf( wxT( "\\A((?:\\\".*\\\")|(?:\\'.*\\'))(?:\\s+%s){0,1}\\Z" ), sRegExp );
 	return s;
+}
+
+bool wxCueSheetReader::GetLogFile( const wxFileName& inputFile, wxFileName& logFile )
+{
+	wxASSERT( inputFile.IsOk() );
+	logFile = inputFile;
+	logFile.SetExt( LOG_EXT );
+	wxASSERT( logFile.IsOk() );
+	return logFile.FileExists();
 }
 
 wxCueSheetReader::wxCueSheetReader( void ):
@@ -880,6 +895,16 @@ bool wxCueSheetReader::ParseCue( const wxCueSheetContent& content )
 
 	m_cueSheet.SortTracks();
 	m_cueSheet.AddContent( content );
+
+	if ( content.HasSource() )
+	{
+		wxFileName logFile;
+		if ( GetLogFile( content.GetSource(), logFile ) )
+		{
+			m_cueSheet.AddLog( logFile );
+		}
+	}
+
 	return true;
 }
 

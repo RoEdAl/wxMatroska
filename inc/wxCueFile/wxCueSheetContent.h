@@ -28,7 +28,7 @@ public:
 	bool HasSource() const;
 	const wxFileName& GetSource() const;
 	bool IsEmbedded() const;
-	const wxString&	  GetValue() const;
+	const wxString& GetValue() const;
 
 protected:
 

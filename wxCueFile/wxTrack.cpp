@@ -9,7 +9,11 @@
 #include <wxCueFile/wxSamplingInfo.h>
 #include <wxCueFile/wxDuration.h>
 
+// ===============================================================================
+
 wxIMPLEMENT_DYNAMIC_CLASS( wxTrack, wxCueComponent )
+
+// ===============================================================================
 
 wxTrack::FLAG_STR wxTrack::FlagString[] =
 {
@@ -36,6 +40,8 @@ wxTrack::DATA_MODE_STR wxTrack::DataModeString[] =
 };
 
 size_t wxTrack::DataModeStringSize = WXSIZEOF( wxTrack::DataModeString );
+
+// ===============================================================================
 
 wxTrack::wxTrack( void ):
 	wxCueComponent( true ), m_number( 0 )

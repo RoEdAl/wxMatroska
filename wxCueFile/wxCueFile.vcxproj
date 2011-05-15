@@ -114,12 +114,12 @@
     <ClInclude Include="..\inc\wxCueFile\wxCueTag.h" />
     <ClInclude Include="..\inc\wxCueFile\wxDuration.h" />
     <ClInclude Include="..\inc\wxCueFile\wxEllipsizer.h" />
+    <ClInclude Include="..\inc\wxCueFile\wxTextInputStreamOnString.h" />
     <ClInclude Include="..\inc\wxCueFile\wxTextOutputStreamOnString.h" />
     <ClInclude Include="..\inc\wxCueFile\wxTrailingSpacesRemover.h" />
     <ClInclude Include="StdWx.h" />
     <ClInclude Include="wxAbstractMetaDataReader.h" />
     <ClInclude Include="wxFlacMetaDataReader.h" />
-    <ClInclude Include="wxTextInputStreamOnString.h" />
     <ClInclude Include="wxWavpackStream.h" />
     <ClInclude Include="wxWavpackTagReader.h" />
     <ClInclude Include="..\inc\wxCueFile\wxCueComponent.h" />

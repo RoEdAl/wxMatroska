@@ -9,6 +9,10 @@
 #include "wxDuration.h"
 #endif
 
+#ifndef _WX_DATA_FILE_H_
+#include "wxDataFile.h"
+#endif
+
 #ifndef _WX_TRACK_H_
 #include "wxTrack.h"
 #endif
@@ -29,6 +33,7 @@ class wxCueSheet:
 protected:
 
 	wxArrayCueSheetContent m_content;
+	wxArrayFileName m_log;
 
 	wxArrayCueTag m_catalog;
 	wxArrayCueTag m_cdtextfile;
@@ -56,6 +61,7 @@ public:
 	bool IsLastTrackForDataFile( size_t, wxDataFile & ) const;
 
 	const wxArrayCueSheetContent& GetContent() const;
+	const wxArrayFileName&		  GetLog() const;
 	const wxArrayCueTag&		  GetCatalog() const;
 	const wxArrayCueTag&		  GetCdTextFile() const;
 	const wxArrayTrack&			  GetTracks() const;
@@ -64,6 +70,7 @@ public:
 	wxCueSheet& AddCdTextFile( const wxString& );
 	wxCueSheet& AddContent( const wxCueSheetContent& );
 	wxCueSheet& AddContent( const wxString& );
+	wxCueSheet& AddLog( const wxFileName& );
 
 	virtual bool HasDuration() const;
 	virtual wxDuration GetDuration() const;

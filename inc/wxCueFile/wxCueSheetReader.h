@@ -44,6 +44,8 @@ class wxCueSheetReader:
 
 public:
 
+	static const wxChar LOG_EXT[];
+
 	enum
 	{
 		EC_FLAC_READ_NONE					= 0,
@@ -99,6 +101,7 @@ protected:
 	static wxString GetKeywordsRegExp();
 	static wxString GetCdTextInfoRegExp();
 	static wxString GetDataFileRegExp();
+	static bool GetLogFile( const wxFileName&, wxFileName& );
 
 	void AddError0( const wxString& );
 	void AddError( const wxChar* pszFormat, ... );

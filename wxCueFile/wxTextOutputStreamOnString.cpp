@@ -5,7 +5,9 @@
 #include "StdWx.h"
 #include <wxCueFile/wxTextOutputStreamOnString.h>
 #include <wxEncodingDetection/wxTextOutputStreamWithBOM.h>
-#include "wxTextInputStreamOnString.h"
+#include <wxCueFile/wxTextInputStreamOnString.h>
+
+// ===============================================================================
 
 wxTextOutputStreamOnString::wxTextOutputStreamOnString():
 	m_outputStream( ( wxString* )NULL, m_conv ),

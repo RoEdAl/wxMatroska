@@ -9,7 +9,11 @@
 #include <wxCueFile/wxDataFile.h>
 #include <wxCueFile/wxMediaInfo.h>
 
+// ===============================================================================
+
 wxIMPLEMENT_DYNAMIC_CLASS( wxDataFile, wxObject )
+
+// ===============================================================================
 
 static const wxChar * INFOS[] =
 {
@@ -23,6 +27,8 @@ static const wxChar * INFOS[] =
 };
 
 static const size_t INFOS_SIZE = WXSIZEOF( INFOS );
+
+// ===============================================================================
 
 wxDataFile::wxDataFile( void ):
 	m_ftype( BINARY )
@@ -418,3 +424,4 @@ const wxAbstractDurationHolder& wxDataFile::CalculateDuration( const wxString& s
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
 WX_DEFINE_OBJARRAY( wxArrayDataFile );
+WX_DEFINE_OBJARRAY( wxArrayFileName );

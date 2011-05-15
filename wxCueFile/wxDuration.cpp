@@ -7,7 +7,12 @@
 #include <wxCueFile/wxIndex.h>
 #include <wxCueFile/wxDuration.h>
 
-wxIMPLEMENT_ABSTRACT_CLASS( wxDuration, wxObject ) wxDuration::wxDuration( void )
+// ===============================================================================
+
+wxIMPLEMENT_ABSTRACT_CLASS( wxDuration, wxObject )
+// ===============================================================================
+
+wxDuration::wxDuration( void )
 {}
 
 wxDuration::wxDuration( const wxDuration& duration )

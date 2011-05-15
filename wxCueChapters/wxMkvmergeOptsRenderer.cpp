@@ -3,19 +3,16 @@
  */
 
 #include "StdWx.h"
+#include <wxCueFile/wxDataFile.h>
 #include <wxCueFile/wxCueComponent.h>
 #include <wxCueFile/wxCueSheet.h>
 #include <wxEncodingDetection/wxTextOutputStreamWithBOM.h>
+#include <wxCueFile/wxTextInputStreamOnString.h>
+#include <wxCueFile/wxTextOutputStreamOnString.h>
 #include "wxConfiguration.h"
 #include "wxInputFile.h"
 #include "wxMkvmergeOptsRenderer.h"
 #include "wxApp.h"
-
-// ===============================================================================
-
-wxMkvmergeOptsRenderer* const wxMkvmergeOptsRenderer::Null = (wxMkvmergeOptsRenderer* const)NULL;
-
-const wxChar wxMkvmergeOptsRenderer::LOG_EXT[] = wxT( "log" );
 
 // ===============================================================================
 
@@ -40,26 +37,9 @@ wxString wxMkvmergeOptsRenderer::mkvmerge_escape( const wxString& s )
 	return sRes;
 }
 
-void wxMkvmergeOptsRenderer::write_as( wxTextOutputStream& stream, const wxArrayString& as )
+void wxMkvmergeOptsRenderer::write_attachments( const wxArrayFileName& logFiles )
 {
-	for ( wxArrayString::const_iterator i = as.begin(); i != as.end(); i++ )
-	{
-		stream << *i << endl;
-	}
-}
-
-bool wxMkvmergeOptsRenderer::GetLogFile( const wxFileName& inputFile, wxFileName& logFile )
-{
-	wxASSERT( inputFile.IsOk() );
-	logFile = inputFile;
-	logFile.SetExt( LOG_EXT );
-	wxASSERT( logFile.IsOk() );
-	return logFile.FileExists();
-}
-
-void wxMkvmergeOptsRenderer::write_attachments( wxTextOutputStream& stream )
-{
-	size_t nAttachments = m_logFiles.GetCount();
+	size_t nAttachments = logFiles.GetCount();
 
 	switch ( nAttachments )
 	{
@@ -67,14 +47,14 @@ void wxMkvmergeOptsRenderer::write_attachments( wxTextOutputStream& stream )
 		return;
 
 		case 1:
-		stream <<
+		*m_os <<
 		wxT( "# EAC log)" ) << endl <<
 		wxT( "--attachment-name" ) << endl <<
 		wxT( "eac.log" ) << endl <<
 		wxT( "--attachment-description" ) << endl <<
-		m_logFiles[ 0 ].GetFullName() << endl <<
+		logFiles[ 0 ].GetFullName() << endl <<
 		wxT( "--attach-file" ) << endl <<
-		mkvmerge_escape( m_logFiles[ 0 ].GetFullPath() ) << endl;
+		mkvmerge_escape( logFiles[ 0 ].GetFullPath() ) << endl;
 		break;
 
 		case 2:
@@ -85,31 +65,31 @@ void wxMkvmergeOptsRenderer::write_attachments( wxTextOutputStream& stream )
 		case 7:
 		case 8:
 		case 9:
-		stream << wxT( "# EAC logs" ) << endl;
+		*m_os << wxT( "# EAC logs" ) << endl;
 		for ( size_t i = 0; i < nAttachments; i++ )
 		{
-			stream <<
+			*m_os <<
 			wxT( "--attachment-name" ) << endl <<
 			wxString::Format( wxT( "eac%d.log" ), i + 1 ) << endl <<
 			wxT( "--attachment-description" ) << endl <<
-			m_logFiles[ i ].GetFullName() << endl <<
+			logFiles[ i ].GetFullName() << endl <<
 			wxT( "--attach-file" ) << endl <<
-			mkvmerge_escape( m_logFiles[ i ].GetFullPath() ) << endl;
+			mkvmerge_escape( logFiles[ i ].GetFullPath() ) << endl;
 		}
 
 		break;
 
 		default:
-		stream << wxT( "# EAC logs" ) << endl;
+		*m_os << wxT( "# EAC logs" ) << endl;
 		for ( size_t i = 0; i < nAttachments; i++ )
 		{
-			stream <<
+			*m_os <<
 			wxT( "--attachment-name" ) << endl <<
 			wxString::Format( wxT( "eac%02d.log" ), i + 1 ) << endl <<
 			wxT( "--attachment-description" ) << endl <<
-			m_logFiles[ i ].GetFullName() << endl <<
+			logFiles[ i ].GetFullName() << endl <<
 			wxT( "--attach-file" ) << endl <<
-			mkvmerge_escape( m_logFiles[ i ].GetFullPath() ) << endl;
+			mkvmerge_escape( logFiles[ i ].GetFullPath() ) << endl;
 		}
 
 		break;
@@ -126,55 +106,53 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile, const wxC
 	// pre
 	wxDateTime dtNow( wxDateTime::Now() );
 
-	m_asMmcPre.Empty();
-	m_asMmcPre.Add( wxString::Format( wxT( "# This file was created by %s tool" ), wxGetApp().GetAppDisplayName() ) );
-	m_asMmcPre.Add( wxString::Format( wxT( "# Application version: %s" ), wxGetApp().APP_VERSION ) );
-	m_asMmcPre.Add( wxString::Format( wxT( "# Application vendor: %s" ), wxGetApp().GetVendorDisplayName() ) );
-	m_asMmcPre.Add( wxString::Format( wxT( "# Creation time: %s %s" ), dtNow.FormatISODate(), dtNow.FormatISOTime() ) );
-	m_asMmcPre.Add( wxT( "# Output file" ) );
-	m_asMmcPre.Add( wxT( "-o" ) );
+	*m_os << wxT( "# This file was created by " ) << wxGetApp().GetAppDisplayName() << wxT( " tool" ) << endl <<
+	wxT( "# Application version: " ) << wxGetApp().APP_VERSION << endl <<
+	wxT( "# Application vendor: " ) << wxGetApp().GetVendorDisplayName() << endl <<
+	wxT( "# Creation time: " ) << dtNow.FormatISODate() << wxT( ' ' ) << dtNow.FormatISOTime() << endl <<
+	wxT( "# Output file" ) << endl <<
+	wxT( "-o" ) << endl;
+
 	if ( m_cfg.UseFullPaths() )
 	{
-		m_asMmcPre.Add( mkvmerge_escape( sMatroskaFile ) );
+		*m_os << mkvmerge_escape( sMatroskaFile ) << endl;
 	}
 	else
 	{
-		m_asMmcPre.Add( mkvmerge_escape( wxMyApp::GetFileName( sMatroskaFile ) ) );
+		*m_os << mkvmerge_escape( wxMyApp::GetFileName( sMatroskaFile ) ) << endl;
 	}
 
-	m_asMmcPre.Add( wxT( "--language" ) );
-	m_asMmcPre.Add( wxString::Format( wxT( "0:%s" ), m_cfg.GetLang() ) );
-	m_asMmcPre.Add( wxT( "--default-track" ) );
-	m_asMmcPre.Add( wxT( "0:yes" ) );
-	m_asMmcPre.Add( wxT( "--track-name" ) );
-	m_asMmcPre.Add( wxString::Format( wxT( "0:%s" ), cueSheet.Format( m_cfg.GetMatroskaNameFormat() ) ) );
-	m_asMmcPre.Add( wxT( "# Input file(s)" ) );
+	*m_os << wxT( "--language" ) << endl <<
+	wxT( "0:" ) << m_cfg.GetLang() << endl <<
+	wxT( "--default-track" ) << endl <<
+	wxT( "0:yes" ) << endl <<
+	wxT( "--track-name" ) << endl <<
+	wxT( "0:" ) << cueSheet.Format( m_cfg.GetMatroskaNameFormat() ) << endl <<
+	wxT( "# Input file(s)" ) << endl;
 
 	// tracks
-	const wxArrayTrack& tracks	= cueSheet.GetTracks();
-	size_t				nTracks = tracks.Count();
-	for ( size_t i = 0; i < nTracks; i++ )
+	const wxArrayTrack& tracks = cueSheet.GetTracks();
+	bool				bFirst = true;
+	for ( size_t nTracks = tracks.Count(), i = 0; i < nTracks; i++ )
 	{
 		if ( tracks[ i ].HasDataFile() )
 		{
-			bool bNext = !m_asMmcInputFiles.IsEmpty();
+			*m_os << wxT( "-a" ) << endl <<
+			wxT( "0" ) << endl <<
+			wxT( "-D" ) << endl <<
+			wxT( "-S" ) << endl <<
+			wxT( "-T" ) << endl <<
+			wxT( "--no-global-tags" ) << endl <<
+			wxT( "--no-chapters" );
 
-			m_asMmcInputFiles.Add( wxT( "-a" ) );
-			m_asMmcInputFiles.Add( wxT( "0" ) );
-			m_asMmcInputFiles.Add( wxT( "-D" ) );
-			m_asMmcInputFiles.Add( wxT( "-S" ) );
-			m_asMmcInputFiles.Add( wxT( "-T" ) );
-			m_asMmcInputFiles.Add( wxT( "--no-global-tags" ) );
-			m_asMmcInputFiles.Add( wxT( "--no-chapters" ) );
-			if ( bNext )
+			if ( !bFirst )
 			{
-				wxString sLine( tracks[ i ].GetDataFile().GetFullPath() );
-				sLine.Prepend( wxT( '+' ) );
-				m_asMmcInputFiles.Add( mkvmerge_escape( sLine ) );
+				*m_os << wxT( '+' ) << mkvmerge_escape( tracks[ i ].GetDataFile().GetFullPath() ) << endl;
 			}
 			else
 			{
-				m_asMmcInputFiles.Add( mkvmerge_escape( tracks[ i ].GetDataFile().GetFullPath() ) );
+				*m_os << mkvmerge_escape( tracks[ i ].GetDataFile().GetFullPath() ) << endl;
+				bFirst = false;
 			}
 		}
 	}
@@ -182,41 +160,36 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile, const wxC
 	// log
 	if ( m_cfg.AttachEacLog() )
 	{
-		wxFileName logFile;
-		if ( GetLogFile( inputFile.GetInputFile(), logFile ) )
-		{
-			wxLogInfo( _T( "Found EAC log file \u201C%s\u201D" ), logFile.GetFullPath() );
-			m_logFiles.Add( logFile );
-		}
+		write_attachments( cueSheet.GetLog() );
 	}
 
 	// poost
-	m_asMmcPost.Empty();
-	m_asMmcPost.Add( wxT( "# General options" ) );
-	m_asMmcPost.Add( wxT( "--default-language" ) );
-	m_asMmcPost.Add( m_cfg.GetLang() );
-	m_asMmcPost.Add( wxT( "--title" ) );
-	m_asMmcPost.Add( cueSheet.Format( m_cfg.GetMatroskaNameFormat() ) );
-	m_asMmcPost.Add( wxT( "--chapters" ) );
+	*m_os << wxT( "# General options" ) << endl <<
+	wxT( "--default-language" ) << endl <<
+	m_cfg.GetLang() << endl <<
+	wxT( "--title" ) << endl <<
+	cueSheet.Format( m_cfg.GetMatroskaNameFormat() ) << endl <<
+	wxT( "--chapters" ) << endl;
+
 	if ( m_cfg.UseFullPaths() )
 	{
-		m_asMmcPost.Add( mkvmerge_escape( sOutputFile ) );
+		*m_os << mkvmerge_escape( sOutputFile ) << endl;
 	}
 	else
 	{
-		m_asMmcPost.Add( mkvmerge_escape( wxMyApp::GetFileName( sOutputFile ) ) );
+		*m_os << mkvmerge_escape( wxMyApp::GetFileName( sOutputFile ) ) << endl;
 	}
 
 	if ( m_cfg.GenerateTags() )
 	{
-		m_asMmcPost.Add( wxT( "--global-tags" ) );
+		*m_os << wxT( "--global-tags" ) << endl;
 		if ( m_cfg.UseFullPaths() )
 		{
-			m_asMmcPost.Add( mkvmerge_escape( sTagsFile ) );
+			*m_os << mkvmerge_escape( sTagsFile ) << endl;
 		}
 		else
 		{
-			m_asMmcPost.Add( mkvmerge_escape( wxMyApp::GetFileName( sTagsFile ) ) );
+			*m_os << mkvmerge_escape( wxMyApp::GetFileName( sTagsFile ) ) << endl;
 		}
 	}
 }
@@ -229,10 +202,12 @@ bool wxMkvmergeOptsRenderer::Save()
 	{
 		wxLogInfo( _T( "Creating mkvmerge options file \u201C%s\u201D" ), wxMyApp::GetFileName( m_sMatroskaOptsFile ) );
 		wxSharedPtr<wxTextOutputStream> pStream( wxTextOutputStreamWithBOMFactory::CreateUTF8( os, wxEOL_NATIVE, true, m_cfg.UseMLang() ) );
-		write_as( *pStream, m_asMmcPre );
-		write_as( *pStream, m_asMmcInputFiles );
-		write_attachments( *pStream );
-		write_as( *pStream, m_asMmcPost );
+		wxTextInputStreamOnString		tis( m_os.GetString() );
+		while ( !tis.Eof() )
+		{
+			*pStream << ( *tis ).ReadLine() << endl;
+		}
+
 		pStream->Flush();
 		return true;
 	}

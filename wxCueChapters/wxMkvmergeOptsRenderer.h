@@ -17,33 +17,29 @@ class wxCueSheet;
 class wxInputFile;
 #endif
 
+#ifndef _WX_DATA_FILE_H_
+class wxArrayFileName;
+#endif
+
+#ifndef _WX_TEXT_OUTPUT_STREAM_ON_STRING_H_
+#include <wxCueFile/wxTextOutputStreamOnString.h>
+#endif
+
 class wxMkvmergeOptsRenderer:
 	public wxObject
 {
 protected:
 
-	const wxConfiguration& m_cfg;
-
-	wxArrayString	m_asMmcPre;
-	wxArrayString	m_asMmcPost;
-	wxArrayString	m_asMmcInputFiles;
-	wxArrayFileName m_logFiles;
-
-	wxString m_sMatroskaOptsFile;
+	const wxConfiguration&	   m_cfg;
+	wxTextOutputStreamOnString m_os;
+	wxString				   m_sMatroskaOptsFile;
 
 protected:
 
 	static wxString mkvmerge_escape( const wxString& );
-	static void write_as( wxTextOutputStream&, const wxArrayString& );
-
-	static bool GetLogFile( const wxFileName&, wxFileName& );
-
-	void write_attachments( wxTextOutputStream& );
+	void write_attachments( const wxArrayFileName& );
 
 public:
-
-	static wxMkvmergeOptsRenderer* const Null;
-	static const wxChar					 LOG_EXT[];
 
 	wxMkvmergeOptsRenderer( const wxConfiguration& );
 

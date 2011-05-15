@@ -9,6 +9,8 @@
 #include "wxDuration.h"
 #endif
 
+WX_DECLARE_OBJARRAY( wxFileName, wxArrayFileName );
+
 class wxDataFile:
 	public wxObject, public wxDurationHolder
 {

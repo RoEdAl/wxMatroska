@@ -5,11 +5,17 @@
 #include "StdWx.h"
 #include <wxCueFile/wxSamplingInfo.h>
 #include <wxCueFile/wxDuration.h>
+#include <wxCueFile/wxDataFile.h>
 #include <wxCueFile/wxTrack.h>
 #include <wxCueFile/wxCueSheetContent.h>
 #include <wxCueFile/wxCueSheet.h>
 
-wxIMPLEMENT_DYNAMIC_CLASS( wxCueSheet, wxCueComponent ) wxCueSheet::wxCueSheet( void )
+// ===============================================================================
+
+wxIMPLEMENT_DYNAMIC_CLASS( wxCueSheet, wxCueComponent )
+// ===============================================================================
+
+wxCueSheet::wxCueSheet( void )
 {}
 
 wxCueSheet::wxCueSheet( const wxCueSheet& cs )
@@ -59,6 +65,17 @@ wxCueSheet& wxCueSheet::AddContent( const wxCueSheetContent& content )
 wxCueSheet& wxCueSheet::AddContent( const wxString& sContent )
 {
 	m_content.Add( wxCueSheetContent( sContent ) );
+	return *this;
+}
+
+const wxArrayFileName& wxCueSheet::GetLog() const
+{
+	return m_log;
+}
+
+wxCueSheet& wxCueSheet::AddLog( const wxFileName& logFile )
+{
+	m_log.Add( logFile );
 	return *this;
 }
 
@@ -143,6 +160,7 @@ bool wxCueSheet::HasGarbage() const
 void wxCueSheet::Clear( void )
 {
 	m_content.Clear();
+	m_log.Clear();
 	wxCueComponent::Clear();
 	m_catalog.Clear();
 	m_cdtextfile.Clear();
@@ -153,6 +171,7 @@ void wxCueSheet::copy( const wxCueSheet& cs )
 {
 	wxCueComponent::copy( cs );
 	m_content	 = cs.m_content;
+	m_log		 = cs.m_log;
 	m_catalog	 = cs.m_catalog;
 	m_cdtextfile = cs.m_cdtextfile;
 	m_tracks	 = cs.m_tracks;
@@ -163,6 +182,7 @@ wxCueSheet& wxCueSheet::Append( const wxCueSheet& cs, const wxDuration& offset )
 	wxCueComponent::Append( cs );
 
 	WX_APPEND_ARRAY( m_content, cs.m_content );
+	WX_APPEND_ARRAY( m_log, cs.m_log );
 	WX_APPEND_ARRAY( m_catalog, cs.m_catalog );
 	WX_APPEND_ARRAY( m_cdtextfile, cs.m_cdtextfile );
 

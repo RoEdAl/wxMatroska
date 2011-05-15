@@ -6,7 +6,9 @@
 #include <wxCueFile/wxTrailingSpacesRemover.h>
 #include <wxCueFile/wxEllipsizer.h>
 #include <wxCueFile/wxTextOutputStreamOnString.h>
-#include "wxTextInputStreamOnString.h"
+#include <wxCueFile/wxTextInputStreamOnString.h>
+
+// ===============================================================================
 
 const wxChar* const wxCueTag::Name::CUESHEET	 = wxT( "CUESHEET" );
 const wxChar* const wxCueTag::Name::TOTALTRACKS	 = wxT( "TOTALTRACKS" );
@@ -21,7 +23,12 @@ const wxChar* const wxCueTag::Name::ALBUM_ARTIST = wxT( "ALBUM ARTIST" );
 const wxChar* const wxCueTag::Name::CATALOG		 = wxT( "CATALOG" );
 const wxChar* const wxCueTag::Name::CDTEXTFILE	 = wxT( "CDTEXTFILE" );
 
-wxIMPLEMENT_DYNAMIC_CLASS( wxCueTag, wxObject ) wxCueTag::wxCueTag():
+// ===============================================================================
+
+wxIMPLEMENT_DYNAMIC_CLASS( wxCueTag, wxObject )
+// ===============================================================================
+
+wxCueTag::wxCueTag():
 	m_eSource( TAG_UNKNOWN )
 {}
 

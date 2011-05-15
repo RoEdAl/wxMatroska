@@ -9,8 +9,6 @@
 #include <wxCueFile/wxDataFile.h>
 #endif
 
-WX_DECLARE_OBJARRAY( wxFileName, wxArrayFileName );
-
 class wxInputFile:
 	public wxObject
 {

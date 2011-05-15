@@ -3,7 +3,9 @@
  */
 
 #include "StdWx.h"
-#include "wxTextInputStreamOnString.h"
+#include <wxCueFile/wxTextInputStreamOnString.h>
+
+// ===============================================================================
 
 wxTextInputStreamOnString::wxTextInputStreamOnString( const wxString& s ):
 	m_inputStream( s ),

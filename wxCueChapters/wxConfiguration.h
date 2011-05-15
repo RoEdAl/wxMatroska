@@ -35,32 +35,44 @@ public:
 	static wxString GetFileEncodingStr( FILE_ENCODING );
 	static bool GetFileEncodingFromStr( const wxString&, FILE_ENCODING& );
 
+	typedef enum
+	{
+		CUESHEET_ATTACH_NONE,
+		CUESHEET_ATTACH_SOURCE,
+		CUESHEET_ATTACH_DECODED,
+		CUESHEET_ATTACH_RENDERED
+	} CUESHEET_ATTACH_MODE;
+
+	static wxString GetCueSheetAttachModeStr( CUESHEET_ATTACH_MODE );
+	static bool GetCueSheetAttachModeFromStr( const wxString&, CUESHEET_ATTACH_MODE& );
+
 protected:
 
-	bool			 m_bChapterTimeEnd; // default=true
-	bool			 m_bUnknownChapterTimeEndToNextChapter; // default=false
-	unsigned long	 m_nChapterOffset; // in frames
-	bool			 m_bUseDataFiles; // default=true
-	bool			 m_bEmbedded;
-	bool			 m_bCorrectQuotationMarks;
-	bool			 m_bSaveCueSheet;
-	bool			 m_bGenerateTags;
-	bool			 m_bGenerateMkvmergeOpts;
-	bool			 m_bRunMkvmerge;
-	bool			 m_bGenerateEditionUID;
-	bool			 m_bGenerateTagsFromComments;
-	FILE_ENCODING	 m_eCueSheetFileEncoding;
-	bool			 m_bTrackOneIndexOne; // or zero
-	bool			 m_bAbortOnError;
-	bool			 m_bRoundDownToFullFrames;
-	bool			 m_bHiddenIndexes;
-	bool			 m_bMerge;
-	unsigned int	 m_nEmbeddedModeFlags;
-	wxArrayTagSource m_aeIgnoredSources;
-	bool			 m_bUseMLang;
-	bool			 m_bFullPaths;
-	bool			 m_bEllipsizeTags;
-	bool			 m_bAttachEacLog;
+	bool				 m_bChapterTimeEnd; // default=true
+	bool				 m_bUnknownChapterTimeEndToNextChapter; // default=false
+	unsigned long		 m_nChapterOffset; // in frames
+	bool				 m_bUseDataFiles; // default=true
+	bool				 m_bEmbedded;
+	bool				 m_bCorrectQuotationMarks;
+	bool				 m_bSaveCueSheet;
+	bool				 m_bGenerateTags;
+	bool				 m_bGenerateMkvmergeOpts;
+	bool				 m_bRunMkvmerge;
+	bool				 m_bGenerateEditionUID;
+	bool				 m_bGenerateTagsFromComments;
+	FILE_ENCODING		 m_eCueSheetFileEncoding;
+	bool				 m_bTrackOneIndexOne; // or zero
+	bool				 m_bAbortOnError;
+	bool				 m_bRoundDownToFullFrames;
+	bool				 m_bHiddenIndexes;
+	bool				 m_bMerge;
+	unsigned int		 m_nEmbeddedModeFlags;
+	wxArrayTagSource	 m_aeIgnoredSources;
+	bool				 m_bUseMLang;
+	bool				 m_bFullPaths;
+	bool				 m_bEllipsizeTags;
+	bool				 m_bAttachEacLog;
+	CUESHEET_ATTACH_MODE m_eCsAttachMode;
 
 	wxString m_sAlternateExtensions;
 	wxString m_sLang;
@@ -131,6 +143,7 @@ public:
 	bool UseFullPaths() const;
 	bool EllipsizeTags() const;
 	bool AttachEacLog() const;
+	CUESHEET_ATTACH_MODE GetCueSheetAttachMode() const;
 
 	wxString GetOutputFile( const wxInputFile& ) const;
 	void GetOutputFile( const wxInputFile&, wxString&, wxString& ) const;
