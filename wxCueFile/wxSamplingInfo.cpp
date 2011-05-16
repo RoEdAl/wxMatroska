@@ -106,7 +106,7 @@ bool wxSamplingInfo::IsOK( bool bIgnoreBitsPerSample ) const
 	return
 		( m_nSamplingRate > 0 ) &&
 		( m_nNumChannels > 0 ) &&
-		( bIgnoreBitsPerSample?true : ( m_nBitsPerSample > 0 ) ) &&
+		( bIgnoreBitsPerSample ? true : ( m_nBitsPerSample > 0 ) ) &&
 		( ( m_nBitsPerSample % 8 ) == 0 );
 }
 
@@ -121,7 +121,7 @@ bool wxSamplingInfo::Equals( const wxSamplingInfo& si, bool bIgnoreBitsPerSample
 		return
 			( m_nSamplingRate == si.m_nSamplingRate ) &&
 			( m_nNumChannels == si.m_nNumChannels ) &&
-			( bIgnoreBitsPerSample?true : ( m_nBitsPerSample == si.m_nBitsPerSample ) );
+			( bIgnoreBitsPerSample ? true : ( m_nBitsPerSample == si.m_nBitsPerSample ) );
 	}
 	else
 	{

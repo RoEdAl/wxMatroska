@@ -271,7 +271,7 @@ wxXmlNode* wxXmlCueSheetRenderer::add_hidden_flag( wxXmlNode* pChapterAtom, bool
 {
 	wxXmlNode* pChapterHidden	  = new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, Xml::CHAPTER_FLAG_HIDDEN );
 	wxXmlNode* pChapterHiddenText = new wxXmlNode( pChapterHidden, wxXML_TEXT_NODE, wxEmptyString,
-		bHiddenFlag?wxT( "1" ) : wxT( "0" ) );
+		bHiddenFlag ? wxT( "1" ) : wxT( "0" ) );
 
 	pChapterAtom->AddChild( pChapterHidden );
 	return pChapterHidden;
@@ -486,7 +486,7 @@ wxXmlNode* wxXmlCueSheetRenderer::create_simple_tag( const wxCueTag& tag, const 
 
 	wxXmlNode* pValue	  = new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, Xml::STRING );
 	wxXmlNode* pValueText = new wxXmlNode( pValue,
-		tag.IsMultiline()?wxXML_CDATA_SECTION_NODE : wxXML_TEXT_NODE,
+		tag.IsMultiline() ? wxXML_CDATA_SECTION_NODE : wxXML_TEXT_NODE,
 		wxEmptyString, tag.GetValue() );
 
 	pSimple->AddChild( pValue );

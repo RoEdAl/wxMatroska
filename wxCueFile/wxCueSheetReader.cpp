@@ -170,7 +170,7 @@ wxCueSheetReader& wxCueSheetReader::SetEllipsizeTags( bool bEllipsizeTags )
 
 wxCueSheetReader& wxCueSheetReader::CorrectQuotationMarks( bool bCorrectQuotationMarks, const wxString& sLang )
 {
-	m_unquoter.SetLang( bCorrectQuotationMarks?sLang : wxEmptyString );
+	m_unquoter.SetLang( bCorrectQuotationMarks ? sLang : wxEmptyString );
 	return *this;
 }
 

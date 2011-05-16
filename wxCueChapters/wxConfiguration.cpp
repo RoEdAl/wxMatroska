@@ -828,7 +828,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		{
 			if ( bDefault )
 			{
-				m_eCsAttachMode = m_bEmbedded?CUESHEET_ATTACH_DECODED : CUESHEET_ATTACH_SOURCE;
+				m_eCsAttachMode = m_bEmbedded ? CUESHEET_ATTACH_DECODED : CUESHEET_ATTACH_SOURCE;
 			}
 		}
 		else
@@ -843,19 +843,19 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 wxString wxConfiguration::BoolToStr( bool b )
 {
-	return b?wxT( "yes" ) : wxT( "no" );
+	return b ? wxT( "yes" ) : wxT( "no" );
 }
 
 wxString wxConfiguration::BoolToIdx( bool b )
 {
-	return b?wxT( "01" ) : wxT( "00" );
+	return b ? wxT( "01" ) : wxT( "00" );
 }
 
 wxString wxConfiguration::GetEmbeddedModeFlagsDesc( unsigned int flags )
 {
 	wxArrayString as;
 
-	as.Add( ( ( flags & wxCueSheetReader::EC_SINGLE_MEDIA_FILE ) != 0 )?wxT( "single-media-file" ) : wxT( "media-file-with-embedded-cuesheet" ) );
+	as.Add( ( ( flags & wxCueSheetReader::EC_SINGLE_MEDIA_FILE ) != 0 ) ? wxT( "single-media-file" ) : wxT( "media-file-with-embedded-cuesheet" ) );
 
 	wxString s;
 	switch ( flags & wxCueSheetReader::EC_FLAC_READ_MASK )
@@ -887,7 +887,7 @@ wxString wxConfiguration::GetEmbeddedModeFlagsDesc( unsigned int flags )
 
 	as.Add( s );
 
-	as.Add( ( ( flags & wxCueSheetReader::EC_MEDIA_READ_TAGS ) != 0 )?wxT( "read-media-tags" ) : wxT( "dont-read-media-tags" ) );
+	as.Add( ( ( flags & wxCueSheetReader::EC_MEDIA_READ_TAGS ) != 0 ) ? wxT( "read-media-tags" ) : wxT( "dont-read-media-tags" ) );
 
 	s.Empty();
 	size_t nItems = as.GetCount();
@@ -1077,14 +1077,14 @@ wxString wxConfiguration::GetOutputFile( const wxInputFile& _inputFile ) const
 
 	if ( !m_outputFile.IsOk() )
 	{
-		inputFile.SetExt( m_bSaveCueSheet?m_sCueSheetExt : m_sMatroskaChaptersXmlExt );
+		inputFile.SetExt( m_bSaveCueSheet ? m_sCueSheetExt : m_sMatroskaChaptersXmlExt );
 	}
 	else
 	{
 		if ( m_outputFile.IsDir() )
 		{
 			inputFile.SetPath( m_outputFile.GetPath() );
-			inputFile.SetExt( m_bSaveCueSheet?m_sCueSheetExt : m_sMatroskaChaptersXmlExt );
+			inputFile.SetExt( m_bSaveCueSheet ? m_sCueSheetExt : m_sMatroskaChaptersXmlExt );
 		}
 		else
 		{
@@ -1111,7 +1111,7 @@ void wxConfiguration::GetOutputFile(
 
 	if ( !m_outputFile.IsOk() )
 	{
-		inputFile.SetExt( m_bSaveCueSheet?m_sCueSheetExt : m_sMatroskaChaptersXmlExt );
+		inputFile.SetExt( m_bSaveCueSheet ? m_sCueSheetExt : m_sMatroskaChaptersXmlExt );
 		sOutputFile = inputFile.GetFullPath();
 
 		if ( !m_bSaveCueSheet && m_bGenerateTags )
@@ -1125,7 +1125,7 @@ void wxConfiguration::GetOutputFile(
 		if ( m_outputFile.IsDir() )
 		{
 			inputFile.SetPath( m_outputFile.GetPath() );
-			inputFile.SetExt( m_bSaveCueSheet?m_sCueSheetExt : m_sMatroskaChaptersXmlExt );
+			inputFile.SetExt( m_bSaveCueSheet ? m_sCueSheetExt : m_sMatroskaChaptersXmlExt );
 		}
 		else
 		{

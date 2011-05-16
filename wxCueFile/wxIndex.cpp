@@ -49,7 +49,7 @@ const wxULongLong& wxIndex::GetOffset() const
 bool wxIndex::IsValid( bool bPrePost ) const
 {
 	return
-		( bPrePost?( m_number == 0u ) : true ) &&
+		( bPrePost ? ( m_number == 0u ) : true ) &&
 		( m_number < 100u );
 }
 
@@ -100,9 +100,9 @@ void wxIndex::FixDecimalPoint( wxString& s )
 	wxString sep = wxLocale::GetInfo( wxLOCALE_DECIMAL_POINT,
 		wxLOCALE_CAT_NUMBER );
 #else // !wxUSE_INTL
-	// As above, this is the most common alternative value. Notice that here it
-	// doesn't matter if we guess wrongly and the current separator is already
-	// ".": we'll just waste a call to Replace() in this case.
+	  // As above, this is the most common alternative value. Notice that here it
+	  // doesn't matter if we guess wrongly and the current separator is already
+	  // ".": we'll just waste a call to Replace() in this case.
 	wxString sep( "," );
 #endif // wxUSE_INTL/!wxUSE_INTL
 

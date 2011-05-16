@@ -460,7 +460,7 @@ int wxMyApp::OnRun()
 		res = ConvertCueSheet( firstInputFile, GetMergedCueSheet() );
 	}
 
-	return ( m_cfg.AbortOnError() || m_cfg.GetMerge() )?res : 0;
+	return ( m_cfg.AbortOnError() || m_cfg.GetMerge() ) ? res : 0;
 }
 
 int wxMyApp::OnExit()

@@ -69,7 +69,7 @@ int wxWavpackStream::set_pos_abs( uint32_t pos )
 	wxASSERT( m_inputStream.IsSeekable() );
 
 	wxFileOffset offset = m_inputStream.SeekI( pos );
-	return ( offset == wxInvalidOffset )?1 : 0;
+	return ( offset == wxInvalidOffset ) ? 1 : 0;
 }
 
 int wxWavpackStream::set_pos_rel( void* id, int32_t delta, int mode )
@@ -101,7 +101,7 @@ int wxWavpackStream::set_pos_rel( int32_t delta, int mode )
 	}
 
 	wxFileOffset offset = m_inputStream.SeekI( delta, seekMode );
-	return ( offset == wxInvalidOffset )?1 : 0;
+	return ( offset == wxInvalidOffset ) ? 1 : 0;
 }
 
 int wxWavpackStream::push_back_byte( void* id, int c )
@@ -113,7 +113,7 @@ int wxWavpackStream::push_back_byte( void* id, int c )
 
 int wxWavpackStream::push_back_byte( int c )
 {
-	return m_inputStream.Ungetch( c )?c : EOF;
+	return m_inputStream.Ungetch( c ) ? c : EOF;
 }
 
 uint32_t wxWavpackStream::get_length( void* id )
@@ -137,7 +137,7 @@ int wxWavpackStream::can_seek( void* id )
 
 int wxWavpackStream::can_seek() const
 {
-	return m_inputStream.IsSeekable()?1 : 0;
+	return m_inputStream.IsSeekable() ? 1 : 0;
 }
 
 int32_t wxWavpackStream::write_bytes( void* id, void* data, int32_t bcount )

@@ -103,13 +103,13 @@ wxString wxInputFile::ToString( bool bLongPath ) const
 
 	if ( m_inputFile.IsOk() )
 	{
-		s.Append( bLongPath?m_inputFile.GetFullPath() : m_inputFile.GetFullName() );
+		s.Append( bLongPath ? m_inputFile.GetFullPath() : m_inputFile.GetFullName() );
 		s.Append( SEPARATOR );
 	}
 
 	for ( size_t i = 0; i < m_dataFile.Count(); i++ )
 	{
-		s.Append( bLongPath?m_dataFile[ i ].GetFullPath() : m_dataFile[ i ].GetFullName() );
+		s.Append( bLongPath ? m_dataFile[ i ].GetFullPath() : m_dataFile[ i ].GetFullName() );
 		s.Append( SEPARATOR );
 	}
 

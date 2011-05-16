@@ -329,7 +329,7 @@ protected:
 
 	bool SkipBOM( const char*& src, size_t& len ) const
 	{
-		size_t realLen = ( len != (size_t)-1 )?len : wxStrnlen( src, 16 );
+		size_t realLen = ( len != (size_t)-1 ) ? len : wxStrnlen( src, 16 );
 
 		if ( realLen < m_bom.length() ) // still waiting
 		{

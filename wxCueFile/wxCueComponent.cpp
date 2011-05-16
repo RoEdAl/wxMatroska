@@ -342,7 +342,7 @@ void wxCueComponent::remove_duplicates( const wxRegEx& reEmptyValue, wxArrayCueT
 
 bool wxCueComponent::CheckEntryType( wxCueComponent::ENTRY_TYPE ctype ) const
 {
-	return ( ctype == ANY ) || ( m_bTrack?( ctype == TRACK ) : ( ctype == DISC ) );
+	return ( ctype == ANY ) || ( m_bTrack ? ( ctype == TRACK ) : ( ctype == DISC ) );
 }
 
 bool wxCueComponent::AddCdTextInfo( const wxString& sKeyword, const wxString& sBody )
@@ -427,7 +427,7 @@ void wxCueComponent::GetReplacements( wxCueComponent::wxHashString& replacements
 		}
 
 		wxString s( CdTextFields[ i ].replacement );
-		s.Prepend( m_bTrack?wxT( "t" ) : wxT( "d" ) );
+		s.Prepend( m_bTrack ? wxT( "t" ) : wxT( "d" ) );
 
 		bool bAdd = false;
 		switch ( CdTextFields[ i ].type )
