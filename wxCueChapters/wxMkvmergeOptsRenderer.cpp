@@ -286,7 +286,7 @@ void wxMkvmergeOptsRenderer::write_decoded_eac_attachments( const wxInputFile& i
 			{
 				*m_os <<
 				wxT( "--attachment-name" ) << endl <<
-				wxString::Format( wxT( "cuesheet%d.log" ), i + 1 ) << endl <<
+				wxString::Format( wxT( "cuesheet%d.cue" ), i + 1 ) << endl <<
 				wxT( "--attach-file" ) << endl <<
 				mkvmerge_escape( cueSheetPath.GetFullPath() ) << endl;
 			}
@@ -302,7 +302,7 @@ void wxMkvmergeOptsRenderer::write_decoded_eac_attachments( const wxInputFile& i
 			{
 				*m_os <<
 				wxT( "--attachment-name" ) << endl <<
-				wxString::Format( wxT( "cuesheet%d.log" ), i + 1 ) << endl <<
+				wxString::Format( wxT( "cuesheet%d.cue" ), i + 1 ) << endl <<
 				wxT( "--attach-file" ) << endl <<
 				mkvmerge_escape( cueSheetPath.GetFullPath() ) << endl;
 			}

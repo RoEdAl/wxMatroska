@@ -4,7 +4,7 @@
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.57
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.58
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -580,12 +580,15 @@ Func get_attach_mode_str($nSel)
 			$sRet = "default"
 
 		Case 1
-			$sRet = "source"
+			$sRet = "none"
 
 		Case 2
-			$sRet = "decoded"
+			$sRet = "source"
 
 		Case 3
+			$sRet = "decoded"
+
+		Case 4
 			$sRet = "rendered"
 
 	EndSwitch
