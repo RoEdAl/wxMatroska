@@ -376,7 +376,7 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile, const wxC
 			wxT( "-S" ) << endl <<
 			wxT( "-T" ) << endl <<
 			wxT( "--no-global-tags" ) << endl <<
-			wxT( "--no-chapters" );
+			wxT( "--no-chapters" ) << endl;
 
 			if ( !bFirst )
 			{
