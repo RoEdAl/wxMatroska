@@ -37,7 +37,14 @@ protected:
 protected:
 
 	static wxString mkvmerge_escape( const wxString& );
-	void write_attachments( const wxArrayFileName& );
+	void write_log_attachments( const wxArrayFileName& );
+	void write_eac_attachments( const wxInputFile&, const wxCueSheet& );
+	void write_source_eac_attachments( const wxInputFile&, const wxArrayCueSheetContent& );
+	void write_decoded_eac_attachments( const wxInputFile&, const wxArrayCueSheetContent& );
+	void write_rendered_eac_attachments( const wxInputFile&, const wxCueSheet& );
+	bool save_cuesheet( const wxInputFile&, const wxString&, const wxString&, wxFileName& );
+	bool render_cuesheet( const wxInputFile&, const wxString&, const wxCueSheet&, wxFileName& );
+	static void save_string_to_stream( wxTextOutputStream&, const wxString& );
 
 public:
 

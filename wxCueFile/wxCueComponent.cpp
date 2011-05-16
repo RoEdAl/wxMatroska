@@ -269,7 +269,7 @@ void wxCueComponent::GetTags(
 		}
 	}
 
-	for ( size_t nTags = m_tags.GetCount(), i = 0; i < nTags; i++ )
+	for ( size_t nTags = m_tags.Count(), i = 0; i < nTags; i++ )
 	{
 		if ( tagsSynonims.GetName( m_tags[ i ], cueTag ) )
 		{
@@ -312,7 +312,7 @@ void wxCueComponent::remove_duplicates( const wxRegEx& reEmptyValue, wxArrayCueT
 	{
 		wxString sValue( tags[ i ].GetValue() );
 		bool	 bRemove = false;
-		for ( size_t j = 0; j < tags.Count(); j++ )
+		for ( size_t j = 0; j < nTags; j++ )
 		{
 			if ( i == j )
 			{
@@ -334,7 +334,8 @@ void wxCueComponent::remove_duplicates( const wxRegEx& reEmptyValue, wxArrayCueT
 		{
 			wxLogInfo( _( "Removing tag \u201C%s\u201D - duplicated value \u201C%s\u201D" ), tags[ i ].GetName(), tags[ i ].GetValue() );
 			tags.RemoveAt( i );
-			i -= 1;
+			i	  -= 1;
+			nTags -= 1;
 		}
 	}
 }

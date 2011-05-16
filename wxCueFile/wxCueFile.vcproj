@@ -185,6 +185,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\wxCueSheetContent.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\wxCueSheetReader.cpp"
 				>
 			</File>
@@ -287,10 +291,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\wxTextInputStreamOnString.h"
-				>
-			</File>
-			<File
 				RelativePath=".\wxWavpackStream.h"
 				>
 			</File>
@@ -308,6 +308,10 @@
 			</File>
 			<File
 				RelativePath="..\inc\wxCueFile\wxCueSheet.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inc\wxCueFile\wxCueSheetContent.h"
 				>
 			</File>
 			<File
@@ -352,6 +356,10 @@
 			</File>
 			<File
 				RelativePath="..\inc\wxCueFile\wxTextCueSheetRenderer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inc\wxCueFile\wxTextInputStreamOnString.h"
 				>
 			</File>
 			<File

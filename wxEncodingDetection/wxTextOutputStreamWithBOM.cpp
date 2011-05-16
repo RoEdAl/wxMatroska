@@ -6,7 +6,7 @@
 #include <wxEncodingDetection/wxEncodingDetection.h>
 #include <wxEncodingDetection/wxTextOutputStreamWithBOM.h>
 
-wxTextOutputStream* const wxTextOutputStreamWithBOMFactory::wxNullTextOutputStream = (wxTextOutputStream* const)NULL;
+// ===============================================================================
 
 void wxTextOutputStreamWithBOMFactory::WriteBOM( wxOutputStream& s, const wxEncodingDetection::wxByteBuffer& bom )
 {

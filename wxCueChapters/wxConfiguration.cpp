@@ -17,6 +17,7 @@ const wxChar wxConfiguration::MATROSKA_CHAPTERS_EXT[] = wxT( "mkc.xml" );
 const wxChar wxConfiguration::MATROSKA_TAGS_EXT[]	  = wxT( "mkt.xml" );
 const wxChar wxConfiguration::MATROSKA_OPTS_EXT[]	  = wxT( "opt.txt" );
 const wxChar wxConfiguration::MATROSKA_AUDIO_EXT[]	  = wxT( "mka" );
+const wxChar wxConfiguration::CUESHEET_EXT[]		  = wxT( "cue" );
 
 const wxChar wxConfiguration::TRACK_NAME_FORMAT[]	 = wxT( "%dp% - %dt% - %tt%" );
 const wxChar wxConfiguration::MATROSKA_NAME_FORMAT[] = wxT( "%dp% - %dt%" );
@@ -145,31 +146,40 @@ wxString wxConfiguration::GetCueSheetAttachModeStr( wxConfiguration::CUESHEET_AT
 	return s;
 }
 
-bool wxConfiguration::GetCueSheetAttachModeFromStr( const wxString& sCsAttachMode, wxConfiguration::CUESHEET_ATTACH_MODE& eCsAttachMode )
+bool wxConfiguration::GetCueSheetAttachModeFromStr( const wxString& sCsAttachMode, wxConfiguration::CUESHEET_ATTACH_MODE& eCsAttachMode, bool& bDefault )
 {
-	if ( sCsAttachMode.CmpNoCase( wxT( "none" ) ) == 0 )
+	if ( sCsAttachMode.CmpNoCase( wxT( "default" ) ) == 0 )
 	{
-		eCsAttachMode = CUESHEET_ATTACH_NONE;
-		return true;
-	}
-	else if ( sCsAttachMode.CmpNoCase( wxT( "source" ) ) == 0 )
-	{
-		eCsAttachMode = CUESHEET_ATTACH_SOURCE;
-		return true;
-	}
-	else if ( sCsAttachMode.CmpNoCase( wxT( "decoded" ) ) == 0 )
-	{
-		eCsAttachMode = CUESHEET_ATTACH_DECODED;
-		return true;
-	}
-	else if ( sCsAttachMode.CmpNoCase( wxT( "rendered" ) ) == 0 )
-	{
-		eCsAttachMode = CUESHEET_ATTACH_RENDERED;
+		bDefault = true;
 		return true;
 	}
 	else
 	{
-		return false;
+		bDefault = false;
+		if ( sCsAttachMode.CmpNoCase( wxT( "none" ) ) == 0 )
+		{
+			eCsAttachMode = CUESHEET_ATTACH_NONE;
+			return true;
+		}
+		else if ( sCsAttachMode.CmpNoCase( wxT( "source" ) ) == 0 )
+		{
+			eCsAttachMode = CUESHEET_ATTACH_SOURCE;
+			return true;
+		}
+		else if ( sCsAttachMode.CmpNoCase( wxT( "decoded" ) ) == 0 )
+		{
+			eCsAttachMode = CUESHEET_ATTACH_DECODED;
+			return true;
+		}
+		else if ( sCsAttachMode.CmpNoCase( wxT( "rendered" ) ) == 0 )
+		{
+			eCsAttachMode = CUESHEET_ATTACH_RENDERED;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 }
 
@@ -348,7 +358,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddSwitch( wxEmptyString, wxT( "attach-eac-log" ), _( "Attach EAC log file to mkvmerge options file (default: yes)" ), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxEmptyString, wxT( "dont-attach-eac-log" ), _( "Don't attach EAC log file to mkvmerge options file" ), wxCMD_LINE_PARAM_OPTIONAL );
 
-	cmdLine.AddOption( wxEmptyString, wxT( "cue-sheet-attach-mode" ), _( "Mode of attaching cue sheet to mkvmerge options file - possible values are none (default), source, decoded, rendered" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( wxEmptyString, wxT( "cue-sheet-attach-mode" ), _( "Mode of attaching cue sheet to mkvmerge options file - possible values are none (default), source, decoded, rendered and default" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 
 	cmdLine.AddParam( _( "<cue sheet>" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE | wxCMD_LINE_PARAM_OPTIONAL );
 }
@@ -813,7 +823,15 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	if ( cmdLine.Found( wxT( "cue-sheet-attach-mode" ), &s ) )
 	{
-		if ( !GetCueSheetAttachModeFromStr( s, m_eCsAttachMode ) )
+		bool bDefault;
+		if ( GetCueSheetAttachModeFromStr( s, m_eCsAttachMode, bDefault ) )
+		{
+			if ( bDefault )
+			{
+				m_eCsAttachMode = m_bEmbedded?CUESHEET_ATTACH_DECODED : CUESHEET_ATTACH_SOURCE;
+			}
+		}
+		else
 		{
 			wxLogWarning( _( "Wrong cue sheet attaching mode %s" ), s );
 			bRes = false;
@@ -1169,6 +1187,50 @@ void wxConfiguration::GetOutputMatroskaFile(
 	}
 }
 
+bool wxConfiguration::GetOutputCueSheetFile(
+	const wxInputFile& _inputFile,
+	const wxString& sPostFix, wxFileName& cueFile
+	) const
+{
+	wxFileName inputFile( _inputFile.GetInputFile() );
+
+	if ( !inputFile.IsOk() )
+	{
+		return false;
+	}
+
+	if ( !( !m_bSaveCueSheet && m_bGenerateMkvmergeOpts ) )
+	{
+		return false;
+	}
+
+	if ( !m_outputFile.IsOk() )
+	{
+		inputFile.SetName( wxString::Format( wxT( "%s.%s" ), inputFile.GetName(), sPostFix ) );
+		inputFile.SetExt( CUESHEET_EXT );
+		inputFile.Normalize();
+		cueFile = inputFile;
+		return true;
+	}
+	else
+	{
+		if ( m_outputFile.IsDir() )
+		{
+			inputFile.SetPath( m_outputFile.GetPath() );
+		}
+		else
+		{
+			inputFile = m_outputFile;
+		}
+
+		inputFile.SetName( wxString::Format( wxT( "%s.%s" ), inputFile.GetName(), sPostFix ) );
+		inputFile.SetExt( CUESHEET_EXT );
+		inputFile.Normalize();
+		cueFile = inputFile;
+		return true;
+	}
+}
+
 bool wxConfiguration::IsEmbedded() const
 {
 	return m_bEmbedded;
@@ -1239,7 +1301,7 @@ wxConfiguration::FILE_ENCODING wxConfiguration::GetCueSheetFileEncoding() const
 	return m_eCueSheetFileEncoding;
 }
 
-wxSharedPtr<wxTextOutputStream> wxConfiguration::GetOutputTextStream( wxOutputStream& os )
+wxSharedPtr<wxTextOutputStream> wxConfiguration::GetOutputTextStream( wxOutputStream& os ) const
 {
 	wxSharedPtr<wxTextOutputStream> pRes;
 	switch ( m_eCueSheetFileEncoding )

@@ -4,7 +4,7 @@
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.56
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.57
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -334,7 +334,7 @@ GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCK
 $CheckBoxMLang = GUICtrlCreateCheckbox("Use MLang library", 8, 219, 117, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-$GroupMkvmerge = GUICtrlCreateGroup("mkvmerge", 236, 26, 277, 93)
+$GroupMkvmerge = GUICtrlCreateGroup("mkvmerge", 236, 26, 277, 117)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKHEIGHT)
 $LabelMkvmergeDir = GUICtrlCreateLabel("Location:", 242, 42, 51, 21, $SS_CENTERIMAGE)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
@@ -354,6 +354,11 @@ GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCK
 $CheckBoxEacLog = GUICtrlCreateCheckbox("Attach EAC log(s)", 240, 95, 113, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Attach EAC log file(s) to generated MKA file")
+$LabelCueSheetAttachMode = GUICtrlCreateLabel("Cue sheet attach mode", 240, 113, 115, 21, $SS_CENTERIMAGE)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+$ComboCueSheetAttachMode = GUICtrlCreateCombo("", 362, 113, 141, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL), $WS_EX_CLIENTEDGE)
+GUICtrlSetData(-1, "default|none|source|decoded|rendered")
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
 $CheckBoxVerbose = GUICtrlCreateCheckbox("&Verbose mode", 2, 372, 89, 17)
@@ -411,15 +416,11 @@ Func generate_tags_enable($nMode)
 			GUICtrlSetState($CheckBoxOf, $GUI_DISABLE)
 			GUICtrlSetState($LabelLang, $GUI_DISABLE)
 			GUICtrlSetState($InputLang, $GUI_DISABLE)
-			GUICtrlSetState($LabelCueSheetEncoding, $GUI_ENABLE)
-			GUICtrlSetState($ComboCueSheetEncoding, $GUI_ENABLE)
 		Case 1
 			GUICtrlSetState($CheckBoxT, $GUI_ENABLE)
 			GUICtrlSetState($CheckBoxOf, $GUI_ENABLE)
 			GUICtrlSetState($LabelLang, $GUI_ENABLE)
 			GUICtrlSetState($InputLang, $GUI_ENABLE)
-			GUICtrlSetState($LabelCueSheetEncoding, $GUI_DISABLE)
-			GUICtrlSetState($ComboCueSheetEncoding, $GUI_DISABLE)
 	EndSwitch
 EndFunc   ;==>generate_tags_enable
 
@@ -548,6 +549,7 @@ Func set_default_options()
 	GUICtrlSetState($CheckBoxFullPaths, $GUI_CHECKED)
 	GUICtrlSetState($CheckBoxEt, $GUI_CHECKED)
 	GUICtrlSetState($CheckBoxEacLog, $GUI_CHECKED)
+	_GUICtrlComboBox_SetCurSel($ComboCueSheetAttachMode, 0)
 EndFunc   ;==>set_default_options
 
 Func get_encoding_str($nSel)
@@ -570,6 +572,25 @@ Func get_encoding_str($nSel)
 	EndSwitch
 	Return SetError(0, 0, $sRet)
 EndFunc   ;==>get_encoding_str
+
+Func get_attach_mode_str($nSel)
+	Local $sRet
+	Switch $nSel
+		Case 0
+			$sRet = "default"
+
+		Case 1
+			$sRet = "source"
+
+		Case 2
+			$sRet = "decoded"
+
+		Case 3
+			$sRet = "rendered"
+
+	EndSwitch
+	Return SetError(0, 0, $sRet)
+EndFunc   ;==>get_attach_mode_str
 
 Func read_options()
 	Local $s = "", $w
@@ -659,13 +680,12 @@ Func read_options()
 		$s &= " "
 	EndIf
 
+	$s &= " -c -oce "
+	$s &= get_encoding_str(_GUICtrlComboBox_GetCurSel($ComboCueSheetEncoding))
+	$s &= " "
+
 	$w = _GUICtrlComboBox_GetCurSel($ComboOutputFormat)
 	Switch $w
-		Case 0
-			$s &= " -c -oce "
-			$s &= get_encoding_str(_GUICtrlComboBox_GetCurSel($ComboCueSheetEncoding))
-			$s &= " "
-
 		Case 1
 			$s &= " -m "
 			$s &= _Iif(GUICtrlRead($CheckBoxT) = $GUI_CHECKED, "-t", "-nt")
@@ -740,6 +760,10 @@ Func read_options()
 	$s &= " "
 
 	$s &= _Iif(GUICtrlRead($CheckBoxEacLog) = $GUI_CHECKED, "--attach-eac-log", "--dont-attach-eac-log")
+	$s &= " "
+
+	$s &= " --cue-sheet-attach-mode "
+	$s &= get_attach_mode_str(_GUICtrlComboBox_GetCurSel($ComboCueSheetAttachMode))
 	$s &= " "
 
 	$s &= _Iif(GUICtrlRead($CheckBoxRunMkvmerge) = $GUI_CHECKED, "--run-mkvmerge", "--dont-run-mkvmerge")

@@ -44,7 +44,7 @@ public:
 	} CUESHEET_ATTACH_MODE;
 
 	static wxString GetCueSheetAttachModeStr( CUESHEET_ATTACH_MODE );
-	static bool GetCueSheetAttachModeFromStr( const wxString&, CUESHEET_ATTACH_MODE& );
+	static bool GetCueSheetAttachModeFromStr( const wxString&, CUESHEET_ATTACH_MODE&, bool& );
 
 protected:
 
@@ -135,7 +135,7 @@ public:
 	bool GenerateTagsFromComments() const;
 	FILE_ENCODING GetCueSheetFileEncoding() const;
 
-	wxSharedPtr<wxTextOutputStream> GetOutputTextStream( wxOutputStream& );
+	wxSharedPtr<wxTextOutputStream> GetOutputTextStream( wxOutputStream& ) const;
 	bool GetMerge() const;
 	unsigned int GetEmbeddedModeFlags() const;
 	bool ShouldIgnoreTag( const wxCueTag& ) const;
@@ -148,14 +148,16 @@ public:
 	wxString GetOutputFile( const wxInputFile& ) const;
 	void GetOutputFile( const wxInputFile&, wxString&, wxString& ) const;
 	void GetOutputMatroskaFile( const wxInputFile&, wxString&, wxString& ) const;
+	bool GetOutputCueSheetFile( const wxInputFile&, const wxString&, wxFileName& ) const;
 
-protected:
+public:
 
 	static const wxChar CUE_SHEET_EXT[];
 	static const wxChar MATROSKA_CHAPTERS_EXT[];
 	static const wxChar MATROSKA_TAGS_EXT[];
 	static const wxChar MATROSKA_OPTS_EXT[];
 	static const wxChar MATROSKA_AUDIO_EXT[];
+	static const wxChar CUESHEET_EXT[];
 
 	static const wxChar MATROSKA_NAME_FORMAT[];
 	static const wxChar TRACK_NAME_FORMAT[];

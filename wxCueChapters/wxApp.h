@@ -17,10 +17,6 @@ class wxInputFile;
 #include <wxCueFile/wxCueSheet.h>
 #endif
 
-#ifndef _WX_CUE_SHEET_READER_H_
-class wxCueSheetReader;
-#endif
-
 #ifndef _WX_XML_CUE_SHEET_RENDERER_H_
 class wxXmlCueSheetRenderer;
 #endif;
@@ -41,7 +37,7 @@ protected:
 
 protected:
 
-	int ProcessCueFile( wxCueSheetReader&, const wxInputFile& );
+	int ProcessCueFile( const wxInputFile& );
 	int ConvertCueSheet( const wxInputFile&, const wxCueSheet& );
 	int AppendCueSheet( wxCueSheet& );
 

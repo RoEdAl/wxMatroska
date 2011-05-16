@@ -315,8 +315,15 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, const wxCueSheet& cu
 	return 0;
 }
 
-int wxMyApp::ProcessCueFile( wxCueSheetReader& reader, const wxInputFile& inputFile )
+int wxMyApp::ProcessCueFile( const wxInputFile& inputFile )
 {
+	wxCueSheetReader reader;
+
+	reader
+	.CorrectQuotationMarks( m_cfg.CorrectQuotationMarks(), m_cfg.GetLang() )
+	.SetParseComments( m_cfg.GenerateTagsFromComments() )
+	.SetEllipsizeTags( m_cfg.EllipsizeTags() );
+
 	wxString sInputFile( inputFile.GetInputFile().GetFullPath() );
 
 	wxLogMessage( _( "Processing \u201C%s\u201D" ), sInputFile );
@@ -377,18 +384,12 @@ int wxMyApp::ProcessCueFile( wxCueSheetReader& reader, const wxInputFile& inputF
 
 int wxMyApp::OnRun()
 {
-	wxCueSheetReader reader;
-
-	reader
-	.CorrectQuotationMarks( m_cfg.CorrectQuotationMarks(), m_cfg.GetLang() )
-	.SetParseComments( m_cfg.GenerateTagsFromComments() )
-	.SetEllipsizeTags( m_cfg.EllipsizeTags() );
-
 	wxInputFile firstInputFile;
 	bool		bFirst = true;
 
 	int						res		  = 0;
 	const wxArrayInputFile& inputFile = m_cfg.GetInputFiles();
+
 	for ( size_t i = 0; i < inputFile.Count(); i++ )
 	{
 		wxFileName fn( inputFile[ i ].GetInputFile() );
@@ -439,7 +440,7 @@ int wxMyApp::OnRun()
 					bFirst		   = false;
 				}
 
-				res = ProcessCueFile( reader, singleFile );
+				res = ProcessCueFile( singleFile );
 				if ( ( res != 0 ) && ( m_cfg.AbortOnError() || m_cfg.GetMerge() ) )
 				{
 					break;
