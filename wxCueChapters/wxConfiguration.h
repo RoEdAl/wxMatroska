@@ -165,7 +165,6 @@ public:
 public:
 
 	wxConfiguration( void );
-	~wxConfiguration( void );
 
 	static void AddCmdLineParams( wxCmdLineParser& );
 	bool Read( const wxCmdLineParser& );

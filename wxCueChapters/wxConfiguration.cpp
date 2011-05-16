@@ -275,9 +275,6 @@ wxConfiguration::wxConfiguration( void ):
 	ReadLanguagesStrings( m_asLang );
 }
 
-wxConfiguration::~wxConfiguration( void )
-{}
-
 void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 {
 	cmdLine.AddOption( wxT( "o" ), wxT( "output" ), _( "Output Matroska chapter file or cue sheet file (see -c option)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
