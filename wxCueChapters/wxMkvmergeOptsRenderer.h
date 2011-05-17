@@ -32,11 +32,15 @@ protected:
 
 	const wxConfiguration&	   m_cfg;
 	wxTextOutputStreamOnString m_os;
-	wxString				   m_sMatroskaOptsFile;
+	wxFileName				   m_matroskaOptsFile;
 
 protected:
 
 	static wxString mkvmerge_escape( const wxString& );
+	static wxString mkvmerge_escape( const wxFileName& );
+	static wxString mkvmerge_escape( const wxDataFile& );
+	wxString GetEscapedFile( const wxFileName& );
+
 	void write_log_attachments( const wxArrayFileName& );
 	void write_eac_attachments( const wxInputFile&, const wxCueSheet& );
 	void write_source_eac_attachments( const wxInputFile&, const wxArrayCueSheetContent& );
@@ -52,7 +56,8 @@ public:
 
 	void RenderDisc( const wxInputFile&, const wxCueSheet& );
 	bool Save();
-	const wxString& GetMkvmergeOptsFile() const;
+	const wxFileName& GetMkvmergeOptsFile() const;
 };
 
 #endif
+

@@ -29,7 +29,9 @@ class wxMBConv_MLang:
 {
 public:
 
-	static wxMBConv_MLang* Create( const wxMultiLanguage& ml, wxUint32 nCodePage, wxString& sDescription )
+	static wxMBConv_MLang* Create( const wxMultiLanguage& ml,
+		wxUint32 nCodePage,
+		wxString& sDescription )
 	{
 		wxMBConv_MLang* pConvMLang = new wxMBConv_MLang( ml, nCodePage );
 
@@ -69,7 +71,8 @@ protected:
 	}
 
 	wxMBConv_MLang( const wxMultiLanguage& ml, wxUint32 nCodePage = CP_ACP ):
-		m_mlang( ml ), m_nCodePage( nCodePage ), m_minMBCharWidth( 0 ), m_dwMode( 0 )
+		m_mlang( ml ), m_nCodePage( nCodePage ), m_minMBCharWidth( 0 ),
+		m_dwMode( 0 )
 	{
 		if ( nCodePage == CP_ACP )
 		{
@@ -85,7 +88,8 @@ protected:
 
 public:
 
-	virtual size_t ToWChar( wchar_t* dst, size_t dstLen, const char* src, size_t srcLen = wxNO_LEN ) const
+	virtual size_t ToWChar( wchar_t* dst, size_t dstLen, const char* src,
+		size_t srcLen = wxNO_LEN ) const
 	{
 		wxASSERT( m_mlang.IsValid() );
 
@@ -126,7 +130,8 @@ public:
 		}
 	}
 
-	virtual size_t FromWChar( char* dst, size_t dstLen, const wchar_t* src, size_t srcLen = wxNO_LEN ) const
+	virtual size_t FromWChar( char* dst, size_t dstLen, const wchar_t* src,
+		size_t srcLen = wxNO_LEN ) const
 	{
 		wxASSERT( m_mlang.IsValid() );
 
@@ -219,7 +224,8 @@ public:
 	{
 		wxString sDescription;
 		wxString sCPDescription;
-		HRESULT	 hRes = m_mlang.GetCodePageDescription( m_nCodePage, sCPDescription );
+		HRESULT	 hRes = m_mlang.GetCodePageDescription( m_nCodePage,
+			sCPDescription );
 
 		if ( hRes == S_OK )
 		{
@@ -257,7 +263,8 @@ public:
 
 	static wxMBConv_BOM* Create( const wxByte* bom, size_t nLen, wxUint32 nCodePage, bool bUseMLang, wxString& sDescription )
 	{
-		wxMBConvSharedPtr pConvStd( wxEncodingDetection::GetStandardMBConv( nCodePage, bUseMLang, sDescription ) );
+		wxMBConvSharedPtr pConvStd( wxEncodingDetection::GetStandardMBConv(
+										nCodePage, bUseMLang, sDescription ) );
 
 		return new wxMBConv_BOM( bom, nLen, pConvStd );
 	}
@@ -522,7 +529,8 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 
 	if ( nFileSize == wxULL( 0 ) )
 	{
-		wxLogError( _( "Cannot determine encoding of empty file \u201C%s\u201D" ), fn.GetName() );
+		wxLogError( _( "Cannot determine encoding of empty file \u201C%s\u201D" ),
+			fn.GetName() );
 		return pRes;
 	}
 
@@ -576,7 +584,11 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 			int rest = 256 % nLastRead;
 			wxTmemcpy( newBuffer.data() + ( nLastRead * steps ), buffer.data(), rest );
 
-			HRESULT hRes = multiLanguage.DetectInputCodepage( MLDETECTCP_NONE, nDefCodePage, newBuffer, dei, &nSize );
+			HRESULT hRes =
+				multiLanguage.DetectInputCodepage( MLDETECTCP_NONE,
+					nDefCodePage,
+					newBuffer, dei,
+					&nSize );
 			if ( hRes != S_OK )
 			{
 				wxLogError( _( "Cannot determine encoding of file \u201C%s\u201D" ), fn.GetName() );
@@ -605,7 +617,11 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 				buffer.extend( nLastRead );
 			}
 
-			HRESULT hRes = multiLanguage.DetectInputCodepage( MLDETECTCP_NONE, nDefCodePage, buffer, dei, &nSize );
+			HRESULT hRes =
+				multiLanguage.DetectInputCodepage( MLDETECTCP_NONE,
+					nDefCodePage,
+					buffer, dei,
+					&nSize );
 			if ( hRes != S_OK )
 			{
 				wxLogError( _( "Cannot determine encoding of file \u201C%s\u201D" ), fn.GetName() );
@@ -615,7 +631,8 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 		}
 		else
 		{
-			HRESULT hRes = multiLanguage.DetectCodepageInStream( MLDETECTCP_NONE, nDefCodePage, fn, dei, &nSize );
+			HRESULT hRes = multiLanguage.DetectCodepageInStream(
+				MLDETECTCP_NONE, nDefCodePage, fn, dei, &nSize );
 			if ( hRes != S_OK )
 			{
 				wxLogError( _( "Cannot determine encoding of file \u201C%s\u201D" ), fn.GetName() );
@@ -628,7 +645,7 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 		{
 			for ( INT i = 0; i < nSize; i++ )
 			{
-				wxLogDebug( _( "Detected encoding of file \u201C%s\u201D is %d (%d%%)" ), fn.GetName(), dei[ i ].nCodePage, dei[ i ].nDocPercent );
+				wxLogDebug( wxT( "Detected encoding of file \u201C%s\u201D is %d (%d%%)" ), fn.GetName(), dei[ i ].nCodePage, dei[ i ].nDocPercent );
 			}
 
 			pRes = wxMBConv_MLang::Create( multiLanguage, dei[ 0 ].nCodePage, sDescription );
@@ -680,3 +697,4 @@ bool wxEncodingDetection::GetBOM( wxUint32 nCodePage, wxByteBuffer& bom )
 
 	return bRet;
 }
+

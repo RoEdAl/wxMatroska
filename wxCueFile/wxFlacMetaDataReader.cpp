@@ -6,6 +6,8 @@
 #include <wxCueFile/wxCueComponent.h>
 #include "wxFlacMetaDataReader.h"
 
+// ===============================================================================
+
 wxFlacMetaDataReader::wxFlacMetaDataReader( void ):
 	m_pVorbisComment( ( FLAC::Metadata::VorbisComment* )NULL ),
 	m_pCueSheet( ( FLAC::Metadata::CueSheet* )NULL ),
@@ -164,3 +166,4 @@ const wxString& wxFlacMetaDataReader::GetFlacFile() const
 {
 	return m_sFlacFile;
 }
+

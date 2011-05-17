@@ -127,14 +127,9 @@ bool wxDataFile::StringToFileType( const wxString& s, wxDataFile::FileType& ftyp
 	return false;
 }
 
-wxString wxDataFile::GetFullPath() const
+const wxFileName& wxDataFile::GetFileName() const
 {
-	return m_fileName.GetFullPath();
-}
-
-wxString wxDataFile::GetFileName() const
-{
-	return m_fileName.GetFullName();
+	return m_fileName;
 }
 
 wxDataFile::FileType wxDataFile::GetFileType() const
@@ -191,7 +186,7 @@ bool wxDataFile::FindFile( wxFileName& fn, const wxString& sAlternateExt ) const
 	}
 
 	wxFileName		  fnTry( m_fileName );
-	wxStringTokenizer tokenizer( sTokens, wxT( "," ) );
+	wxStringTokenizer tokenizer( sTokens, wxT( ',' ) );
 	while ( tokenizer.HasMoreTokens() )
 	{
 		fnTry.SetExt( tokenizer.GetNextToken() );
@@ -352,8 +347,8 @@ bool wxDataFile::GetFromMediaInfo( const wxFileName& fileName, wxULongLong& fram
 			if ( !as1[ i ].IsEmpty() )
 			{
 				wxUint64 ul;
-				if ( as1[ i ].ToULongLong( &ul ) ) // calculate duration according to duration
-				{
+				if ( as1[ i ].ToULongLong( &ul ) ) // calculate duration
+				{ // according to duration
 					frames = ul;
 				}
 				else
@@ -425,3 +420,4 @@ const wxAbstractDurationHolder& wxDataFile::CalculateDuration( const wxString& s
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
 WX_DEFINE_OBJARRAY( wxArrayDataFile );
 WX_DEFINE_OBJARRAY( wxArrayFileName );
+

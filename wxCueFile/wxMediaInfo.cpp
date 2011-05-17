@@ -5,7 +5,11 @@
 #include "StdWx.h"
 #include <wxCueFile/wxMediaInfo.h>
 
+// ===============================================================================
+
 wxIMPLEMENT_ABSTRACT_CLASS( wxMediaInfo, wxObject )
+
+// ===============================================================================
 
 const wxChar wxMediaInfo::MEDIA_INFO_LIBRARY[] = wxT( "MediaInfo.dll" );
 
@@ -19,6 +23,8 @@ const wxChar* wxMediaInfo::SYMBOL_NAMES[] =
 };
 
 const size_t wxMediaInfo::SYMBOL_NAMES_SIZE = WXSIZEOF( wxMediaInfo::SYMBOL_NAMES );
+
+// ===============================================================================
 
 bool wxMediaInfo::load_symbols( const wxDynamicLibrary& dll, wxArrayPtrVoid& pointers )
 {
@@ -101,8 +107,16 @@ void wxMediaInfo::MediaInfoClose( void* handle )
 	m_fnClose( handle );
 }
 
-const wxChar* wxMediaInfo::MediaInfoGet( void* handle, MediaInfo_stream_C StreamKind, size_t StreamNumber, const wxChar* Parameter, MediaInfo_info_C KindOfInfo, MediaInfo_info_C KindOfSearch )
+const wxChar* wxMediaInfo::MediaInfoGet(
+	void* handle,
+	MediaInfo_stream_C StreamKind,
+	size_t StreamNumber,
+	const wxChar* Parameter,
+	MediaInfo_info_C KindOfInfo,
+	MediaInfo_info_C KindOfSearch )
 {
 	wxASSERT( IsLoaded() );
-	return m_fnGet( handle, StreamKind, StreamNumber, Parameter, KindOfInfo, KindOfSearch );
+	return m_fnGet( handle, StreamKind, StreamNumber, Parameter, KindOfInfo,
+		KindOfSearch );
 }
+

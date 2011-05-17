@@ -5,7 +5,12 @@
 #include "StdWx.h"
 #include <wxCueFile/wxCueSheetContent.h>
 
-wxIMPLEMENT_DYNAMIC_CLASS( wxCueSheetContent, wxObject ) wxCueSheetContent::wxCueSheetContent( void )
+// ===============================================================================
+
+wxIMPLEMENT_DYNAMIC_CLASS( wxCueSheetContent, wxObject )
+// ===============================================================================
+
+wxCueSheetContent::wxCueSheetContent( void )
 {}
 
 wxCueSheetContent::wxCueSheetContent( const wxString& sValue ):
@@ -14,8 +19,8 @@ wxCueSheetContent::wxCueSheetContent( const wxString& sValue ):
 	wxASSERT( !sValue.IsEmpty() );
 }
 
-wxCueSheetContent::wxCueSheetContent( const wxString& sValue, const wxFileName& source, bool bEmbedded )
-	: m_sValue( sValue ), m_source( source ), m_bEmbedded( bEmbedded )
+wxCueSheetContent::wxCueSheetContent( const wxString& sValue, const wxFileName& source, bool bEmbedded ):
+	m_sValue( sValue ), m_source( source ), m_bEmbedded( bEmbedded )
 {
 	wxASSERT( !sValue.IsEmpty() );
 	wxASSERT( source.IsOk() && !source.IsDir() );
@@ -62,3 +67,4 @@ const wxString& wxCueSheetContent::GetValue() const
 
 #include <wx/arrimpl.cpp>
 WX_DEFINE_OBJARRAY( wxArrayCueSheetContent );
+

@@ -690,8 +690,8 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMo
 	}
 }
 
-void wxCueSheetReader::BuildFromSingleMediaFile( const wxString& sMediaFile ) // one track, one index
-{
+void wxCueSheetReader::BuildFromSingleMediaFile( const wxString& sMediaFile )
+{ // one track one index
 	m_cueSheet.Clear();
 	wxTrack singleTrack( 1 );
 	wxIndex singleIdx( 1, wxULL( 0 ) );
@@ -752,7 +752,8 @@ void wxCueSheetReader::DumpErrors( size_t nLine ) const
 {
 	if ( m_errors.Count() > 0 )
 	{
-		for ( wxArrayString::const_iterator i = m_errors.begin(); i != m_errors.end(); i++ )
+		for ( wxArrayString::const_iterator i = m_errors.begin();
+			  i != m_errors.end(); i++ )
 		{
 			if ( m_bErrorsAsWarnings )
 			{
@@ -1115,7 +1116,8 @@ void wxCueSheetReader::ParseTrack( const wxString& sToken, const wxString& sBody
 		unsigned long trackNo;
 		if ( !m_reDataMode.GetMatch( sBody, 1 ).ToULong( &trackNo ) )
 		{
-			AddError( _( "Invalid track number %s" ), m_reDataMode.GetMatch( sBody, 1 ) );
+			AddError( _( "Invalid track number %s" ),
+				m_reDataMode.GetMatch( sBody, 1 ) );
 		}
 		else
 		{
@@ -1159,3 +1161,4 @@ void wxCueSheetReader::ParseCdTextFile( const wxString& WXUNUSED( sToken ), cons
 {
 	m_cueSheet.AddCdTextFile( Unquote( sBody ) );
 }
+

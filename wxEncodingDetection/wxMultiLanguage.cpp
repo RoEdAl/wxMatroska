@@ -5,6 +5,8 @@
 #include "StdWx.h"
 #include "wxMultiLanguage.h"
 
+// ===============================================================================
+
 wxMultiLanguage::wxMultiLanguage( void )
 {
 	m_pMLang = (IMultiLanguage2*)NULL;
@@ -123,3 +125,4 @@ bool wxMultiLanguage::GetDefaultCodePage( wxUint32& nCodePage )
 		return false;
 	}
 }
+

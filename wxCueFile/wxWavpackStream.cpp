@@ -6,6 +6,8 @@
 #include <wavpack.h>
 #include "wxWavpackStream.h"
 
+// ===============================================================================
+
 wxWavpackStream::wxWavpackStream( wxInputStream& inputStream, wxOutputStream& outputStream ):
 	m_inputStream( inputStream ), m_outputStream( outputStream )
 {}
@@ -152,3 +154,4 @@ int32_t wxWavpackStream::write_bytes( void* data, int32_t bcount )
 	m_outputStream.Write( data, bcount );
 	return (int32_t)m_outputStream.LastWrite();
 }
+

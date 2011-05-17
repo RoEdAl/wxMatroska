@@ -6,10 +6,16 @@
 #include <wxCueFile/wxSamplingInfo.h>
 #include <wxCueFile/wxIndex.h>
 
+// ===============================================================================
+
 wxIMPLEMENT_DYNAMIC_CLASS( wxSamplingInfo, wxObject )
+
+// ===============================================================================
 
 const wxTimeSpan wxSamplingInfo::wxInvalidDuration = wxTimeSpan::Hours( -1 );
 const wxUint64 wxSamplingInfo::wxInvalidNumberOfFrames = wxULL( 0xFFFFFFFFFFFFFFFF );
+
+// ===============================================================================
 
 wxSamplingInfo::wxSamplingInfo( void ):
 	m_nSamplingRate( 44100 ), m_nNumChannels( 2 ), m_nBitsPerSample( 16 )
@@ -21,7 +27,8 @@ wxSamplingInfo::wxSamplingInfo( const wxSamplingInfo& si )
 }
 
 wxSamplingInfo::wxSamplingInfo( unsigned long nSamplingRate, unsigned short nNumChannels, unsigned short nBitsPerSample ):
-	m_nSamplingRate( nSamplingRate ), m_nNumChannels( nNumChannels ), m_nBitsPerSample( nBitsPerSample )
+	m_nSamplingRate( nSamplingRate ), m_nNumChannels( nNumChannels ),
+	m_nBitsPerSample( nBitsPerSample )
 {}
 
 wxSamplingInfo::wxSamplingInfo( const FLAC::Metadata::StreamInfo& si )
@@ -157,9 +164,7 @@ wxTimeSpan wxSamplingInfo::GetDuration( wxULongLong frames )
 	return wxTimeSpan::Milliseconds( duration.GetValue() );
 }
 
-void wxSamplingInfo::GetNumberOfCdFrames(
-	wxULongLong frames,
-	wxULongLong& cdFrames, wxUint32& rest ) const
+void wxSamplingInfo::GetNumberOfCdFrames( wxULongLong frames, wxULongLong& cdFrames, wxUint32& rest ) const
 {
 	cdFrames  = frames;
 	cdFrames *= wxULL( 75 );
@@ -296,3 +301,4 @@ wxString wxSamplingInfo::GetIndexOffsetFramesStr( const wxIndex& idx ) const
 {
 	return GetCdFramesStr( GetIndexOffset( idx ) );
 }
+

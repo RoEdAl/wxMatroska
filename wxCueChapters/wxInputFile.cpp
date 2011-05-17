@@ -16,8 +16,7 @@ wxIMPLEMENT_DYNAMIC_CLASS( wxInputFile, wxObject )
 void wxInputFile::copy( const wxInputFile& inputFile )
 {
 	m_inputFile = inputFile.m_inputFile;
-	m_dataFile.Clear();
-	WX_APPEND_ARRAY( m_dataFile, inputFile.m_dataFile );
+	m_dataFile	= inputFile.m_dataFile;
 }
 
 wxInputFile::wxInputFile( const wxInputFile& inputFile )
@@ -50,9 +49,6 @@ wxInputFile::wxInputFile( const wxString& sInputFile )
 wxInputFile::wxInputFile( void )
 {}
 
-wxInputFile::~wxInputFile( void )
-{}
-
 bool wxInputFile::IsOk() const
 {
 	return m_inputFile.IsOk();
@@ -76,8 +72,7 @@ const wxArrayFileName& wxInputFile::GetDataFiles() const
 void wxInputFile::GetDataFiles( wxArrayDataFile& dataFile, wxDataFile::FileType fileType ) const
 {
 	dataFile.Clear();
-	size_t count = m_dataFile.Count();
-	for ( size_t i = 0; i < count; i++ )
+	for ( size_t i = 0, count = m_dataFile.Count(); i < count; i++ )
 	{
 		wxDataFile df( m_dataFile[ i ].GetFullPath(), fileType );
 		dataFile.Add( df );
@@ -120,3 +115,4 @@ wxString wxInputFile::ToString( bool bLongPath ) const
 
 	return s;
 }
+

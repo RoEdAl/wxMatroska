@@ -377,12 +377,9 @@ bool wxTrack::SetMode( const wxString& sMode )
 	{
 		mode = AUDIO;
 	}
-	else
+	else if ( !StringToDataMode( sMode, mode ) )
 	{
-		if ( !StringToDataMode( sMode, mode ) )
-		{
-			return false;
-		}
+		return false;
 	}
 
 	m_dataMode = mode;
@@ -472,3 +469,4 @@ wxTrack& wxTrack::Shift( const wxDuration& duration )
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
 WX_DEFINE_OBJARRAY( wxArrayTrack );
+

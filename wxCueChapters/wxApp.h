@@ -84,3 +84,4 @@ public:
 wxDECLARE_APP( wxMyApp );
 
 #endif
+

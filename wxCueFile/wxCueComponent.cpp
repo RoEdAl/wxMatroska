@@ -9,7 +9,11 @@
 #include <wxCueFile/wxUnquoter.h>
 #include <wxCueFile/wxTextOutputStreamOnString.h>
 
+// ===============================================================================
+
 wxIMPLEMENT_ABSTRACT_CLASS( wxCueComponent, wxObject )
+
+// ===============================================================================
 
 wxCueComponent::CDTEXT_ENTRY wxCueComponent::CdTextFields[] =
 {
@@ -44,6 +48,8 @@ wxCueComponent::KEYWORD_ENTRY wxCueComponent::Keywords[] =
 };
 
 size_t wxCueComponent::KeywordsSize = WXSIZEOF( wxCueComponent::Keywords );
+
+// ===============================================================================
 
 wxString wxCueComponent::GetCdTextInfoRegExp()
 {
@@ -186,10 +192,7 @@ void wxCueComponent::ParseComment( const wxString& sComment, bool bParse )
 
 	if ( reCommentMeta.Matches( sComment ) )
 	{
-		AddTag(
-			wxCueTag::TAG_CUE_COMMENT,
-			reCommentMeta.GetMatch( sComment, 2 ),
-			unquoter.Unquote( reCommentMeta.GetMatch( sComment, 3 ) ) );
+		AddTag( wxCueTag::TAG_CUE_COMMENT, reCommentMeta.GetMatch( sComment, 2 ), unquoter.Unquote( reCommentMeta.GetMatch( sComment, 3 ) ) );
 	}
 	else
 	{
@@ -342,7 +345,8 @@ void wxCueComponent::remove_duplicates( const wxRegEx& reEmptyValue, wxArrayCueT
 
 bool wxCueComponent::CheckEntryType( wxCueComponent::ENTRY_TYPE ctype ) const
 {
-	return ( ctype == ANY ) || ( m_bTrack ? ( ctype == TRACK ) : ( ctype == DISC ) );
+	return ( ctype == ANY ) ||
+		   ( m_bTrack ? ( ctype == TRACK ) : ( ctype == DISC ) );
 }
 
 bool wxCueComponent::AddCdTextInfo( const wxString& sKeyword, const wxString& sBody )
@@ -466,3 +470,4 @@ bool wxCueComponent::IsTrack() const
 {
 	return m_bTrack;
 }
+

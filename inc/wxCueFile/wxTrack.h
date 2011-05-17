@@ -45,7 +45,8 @@ public:
 
 	typedef enum _DataMode
 	{
-		AUDIO, CDG, MODE1_2048, MODE1_2352, MODE2_2336, MODE2_2352, CDI_2336, CDI_2352
+		AUDIO, CDG, MODE1_2048, MODE1_2352, MODE2_2336, MODE2_2352, CDI_2336,
+		CDI_2352
 	} DataMode;
 
 protected:
@@ -154,3 +155,4 @@ public:
 WX_DECLARE_OBJARRAY( wxTrack, wxArrayTrack );
 
 #endif
+

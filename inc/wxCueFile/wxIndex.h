@@ -54,3 +54,4 @@ public:
 WX_DECLARE_OBJARRAY( wxIndex, wxArrayIndex );
 
 #endif // _WX_INDEX_H_
+

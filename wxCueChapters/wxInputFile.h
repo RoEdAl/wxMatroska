@@ -32,8 +32,6 @@ public:
 	wxInputFile( const wxString& );
 	wxInputFile& operator =( const wxInputFile& );
 
-	virtual ~wxInputFile( void );
-
 	bool IsOk() const;
 	const wxFileName&	   GetInputFile() const;
 	const wxArrayFileName& GetDataFiles() const;
@@ -47,3 +45,4 @@ public:
 };
 
 #endif
+

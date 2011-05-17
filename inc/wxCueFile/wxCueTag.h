@@ -106,3 +106,4 @@ protected:
 WX_DECLARE_OBJARRAY( wxCueTag, wxArrayCueTag );
 
 #endif
+

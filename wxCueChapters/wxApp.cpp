@@ -124,14 +124,14 @@ bool wxMyApp::CheckLicense()
 	wxULongLong fs( fn.GetSize() );
 	if ( fs == wxInvalidSize )
 	{
-		wxLogInfo( wxT( "Unable to read license \u201C%s\u201D" ), fn.GetFullPath() );
+		wxLogInfo( _( "Unable to read license \u201C%s\u201D" ), fn.GetFullPath() );
 		return false;
 	}
 
 	wxULongLong maxSize( 0, MAX_LICENSE_FILE_SIZE );
 	if ( fs > maxSize )
 	{
-		wxLogInfo( wxT( "License file \u201C%s\u201D is too big" ), fn.GetFullPath() );
+		wxLogInfo( _( "License file \u201C%s\u201D is too big" ), fn.GetFullPath() );
 		return false;
 	}
 	return true;
@@ -251,7 +251,8 @@ int wxMyApp::AppendCueSheet( wxCueSheet& cueSheet )
 	}
 }
 
-int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, const wxCueSheet& cueSheet )
+int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile,
+	const wxCueSheet& cueSheet )
 {
 	if ( m_cfg.SaveCueSheet() )
 	{
@@ -274,7 +275,8 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, const wxCueSheet& cu
 	else
 	{
 		wxLogInfo( _( "Converting cue scheet to XML format" ) );
-		wxSharedPtr<wxXmlCueSheetRenderer> pXmlRenderer = GetXmlRenderer( inputFile );
+		wxSharedPtr<wxXmlCueSheetRenderer> pXmlRenderer = GetXmlRenderer(
+			inputFile );
 		if ( pXmlRenderer->Render( cueSheet ) )
 		{
 			if ( m_cfg.GenerateMkvmergeOpts() )
@@ -298,7 +300,7 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, const wxCueSheet& cu
 
 				if ( m_cfg.RunMkvmerge() )
 				{
-					if ( !RunMkvmerge( optsRenderer.GetMkvmergeOptsFile() ) )
+					if ( !RunMkvmerge( optsRenderer.GetMkvmergeOptsFile().GetFullPath() ) )
 					{
 						return 1;
 					}
@@ -588,3 +590,4 @@ wxString wxMyApp::GetFileName( const wxString& sFileName )
 
 	return fn.GetFullName();
 }
+

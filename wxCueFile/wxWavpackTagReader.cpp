@@ -58,9 +58,7 @@ size_t wxWavpackTagReader::wxWavpackContext::GetTagItemIndexed(
 	return nSize2;
 }
 
-size_t wxWavpackTagReader::wxWavpackContext::GetTagItem(
-	const wxString& sItem,
-	wxWritableCharBuffer& valueBuffer )
+size_t wxWavpackTagReader::wxWavpackContext::GetTagItem( const wxString& sItem, wxWritableCharBuffer& valueBuffer )
 {
 	wxASSERT( this->operator bool() );
 
@@ -179,7 +177,8 @@ bool wxWavpackTagReader::ReadTags( const wxString& sWavpackFile, wxArrayCueTag& 
 	if ( !ctx )
 	{
 		wxString sErr( wxString::FromUTF8( errBuffer ) );
-		wxLogError( _( "Fail to open (using WavpackOpenFileInputEx) Wavpack file %s. Error message: %s" ), sWavpackFile, sErr );
+		wxLogError( _( "Fail to open (using WavpackOpenFileInputEx) Wavpack file %s. Error message: %s" ),
+			sWavpackFile, sErr );
 		return false;
 	}
 
@@ -209,3 +208,4 @@ bool wxWavpackTagReader::ReadTags( const wxString& sWavpackFile, wxArrayCueTag& 
 
 	return true;
 }
+

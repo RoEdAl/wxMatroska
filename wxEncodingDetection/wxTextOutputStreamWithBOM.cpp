@@ -22,7 +22,8 @@ public:
 							   wxEOL mode,
 							   bool bWriteBOM,
 							   const wxMBConv& conv,
-							   const wxTextOutputStreamWithBOMFactory::wxByteBuffer& bom ):
+							   const wxTextOutputStreamWithBOMFactory::
+							   wxByteBuffer& bom ):
 		wxTextOutputStream( s, mode, conv )
 	{
 		if ( bWriteBOM )
@@ -32,7 +33,12 @@ public:
 	}
 };
 
-wxTextOutputStreamWithBOMFactory::wxTextOutputStreamSharedPtr wxTextOutputStreamWithBOMFactory::Create( wxOutputStream& s, wxEOL mode, bool bWriteBOM, wxUint32 nCodePage, bool bUseMLang )
+wxTextOutputStreamWithBOMFactory::wxTextOutputStreamSharedPtr wxTextOutputStreamWithBOMFactory::Create(
+	wxOutputStream& s,
+	wxEOL mode,
+	bool bWriteBOM,
+	wxUint32 nCodePage,
+	bool bUseMLang )
 {
 	wxTextOutputStreamSharedPtr pRes;
 	wxByteBuffer				bom;
@@ -47,7 +53,11 @@ wxTextOutputStreamWithBOMFactory::wxTextOutputStreamSharedPtr wxTextOutputStream
 	return pRes;
 }
 
-wxTextOutputStreamWithBOMFactory::wxTextOutputStreamSharedPtr wxTextOutputStreamWithBOMFactory::CreateUTF8( wxOutputStream& s, wxEOL mode, bool bWriteBOM, bool bUseMLang )
+wxTextOutputStreamWithBOMFactory::wxTextOutputStreamSharedPtr wxTextOutputStreamWithBOMFactory::CreateUTF8(
+	wxOutputStream& s,
+	wxEOL mode,
+	bool bWriteBOM,
+	bool bUseMLang )
 {
 	return Create( s, mode, bWriteBOM, wxEncodingDetection::CP::UTF8, bUseMLang );
 }
@@ -61,3 +71,4 @@ wxTextOutputStreamWithBOMFactory::wxTextOutputStreamSharedPtr wxTextOutputStream
 	return Create( s, mode, bWriteBOM, wxEncodingDetection::CP::UTF16_LE, bUseMLang );
 #endif
 }
+

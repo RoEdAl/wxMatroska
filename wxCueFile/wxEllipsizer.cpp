@@ -38,3 +38,4 @@ wxString wxEllipsizer::Ellipsize( const wxString& sIn ) const
 		return sIn;
 	}
 }
+

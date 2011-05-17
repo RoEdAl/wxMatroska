@@ -5,6 +5,8 @@
 #include "StdWx.h"
 #include "wxFlacDecoder.h"
 
+// ===============================================================================
+
 wxFlacDecoder::wxFlacDecoder( wxInputStream& inputStream, wxOutputStream& outputStream ):
 	m_inputStream( inputStream ), m_outputStream( outputStream )
 {}
@@ -114,3 +116,4 @@ void wxFlacDecoder::error_callback( ::FLAC__StreamDecoderErrorStatus status )
 
 	wxLogError( _( "FLAC error %d: %s" ), status, sFlacStatus );
 }
+

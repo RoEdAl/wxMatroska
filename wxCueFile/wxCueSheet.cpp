@@ -415,12 +415,9 @@ wxDuration wxCueSheet::GetDuration() const
 				duration = trackDuration;
 				bFirst	 = false;
 			}
-			else
+			else if ( !duration.Add( trackDuration ) )
 			{
-				if ( !duration.Add( trackDuration ) )
-				{
-					bStop = true;
-				}
+				bStop = true;
 			}
 		}
 	}
@@ -452,3 +449,4 @@ bool wxCueSheet::CalculateDuration( const wxString& sAlternateExt )
 
 	return bRes;
 }
+

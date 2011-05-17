@@ -38,8 +38,10 @@ public:
 
 		wxWavpackContext():
 			m_pContext( Null ){}
+
 		wxWavpackContext( WavpackContext* pContext ):
 			m_pContext( pContext ){}
+
 		~wxWavpackContext()
 		{
 			if ( this->operator bool() )
@@ -79,3 +81,4 @@ public:
 };
 
 #endif
+

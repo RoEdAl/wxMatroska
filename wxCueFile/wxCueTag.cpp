@@ -101,8 +101,7 @@ wxString wxCueTag::GetFlattenValue() const
 {
 	wxASSERT( IsMultiline() );
 
-	wxTextInputStreamOnString tis( m_sValue );
-
+	wxTextInputStreamOnString  tis( m_sValue );
 	wxTextOutputStreamOnString tos;
 
 	while ( !tis.Eof() )
@@ -198,3 +197,4 @@ wxString wxCueTag::Quote( const wxString& sValue )
 
 #include <wx/arrimpl.cpp>
 WX_DEFINE_OBJARRAY( wxArrayCueTag );
+

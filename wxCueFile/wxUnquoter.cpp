@@ -5,7 +5,11 @@
 #include "StdWx.h"
 #include <wxCueFile/wxUnquoter.h>
 
+// ===============================================================================
+
 wxIMPLEMENT_DYNAMIC_CLASS( wxUnquoter, wxObject )
+
+// ===============================================================================
 
 const wxChar wxUnquoter::SINGLE_QUOTES[] = wxT( "\\'(([^\\']|\\\')*)\\'(?![[:alnum:]])" );
 const wxChar wxUnquoter::DOUBLE_QUOTES[] = wxT( "\\\"(([^\\\"]|\\\\\")*)\\\"" );
@@ -24,6 +28,8 @@ const wxChar wxUnquoter::GERMAN_SINGLE_QUOTES[] = wxT( "\u201A\\1\u2018" );
 
 const wxChar wxUnquoter::FRENCH_DOUBLE_QUOTES[] = wxT( "\u00AB\u2005\\1\u2005\u00BB" );
 const wxChar wxUnquoter::FRENCH_SINGLE_QUOTES[] = wxT( "\u2039\u2005\\1\u2005\u203A" );
+
+// ===============================================================================
 
 wxUnquoter::wxUnquoter( void ):
 	m_reQuotes( SINGLE_QUOTES, wxRE_ADVANCED ),
@@ -161,3 +167,4 @@ bool wxUnquoter::IsQuoted( const wxString& s ) const
 {
 	return m_reQuotes.Matches( s ) || m_reDoubleQuotes.Matches( s );
 }
+

@@ -55,8 +55,8 @@ protected:
 
 	const wxConfiguration* m_pCfg;
 	wxInputFile			   m_inputFile;
-	wxString			   m_sOutputFile;
-	wxString			   m_sTagsFile;
+	wxFileName			   m_outputFile;
+	wxFileName			   m_tagsFile;
 
 	wxSamplingInfo m_si;
 
@@ -114,22 +114,11 @@ protected:
 				  const wxTagSynonimsCollection&,
 				  wxXmlNode* );
 	void AddCdTextInfo( const wxCueComponent&, wxXmlNode* );
-	wxXmlNode* AddDiscTags( const wxCueSheet&,
-							wxXmlNode*,
-							const wxULongLong&,
-							int = 50 );
-	wxXmlNode* AppendDiscTags( const wxCueSheet&,
-							   wxXmlNode*,
-							   long = 50 );
+	wxXmlNode* AddDiscTags( const wxCueSheet&, wxXmlNode*, const wxULongLong&, int = 50 );
+	wxXmlNode* AppendDiscTags( const wxCueSheet&, wxXmlNode*, long = 50 );
 
-	wxXmlNode* SetTotalParts(
-		size_t,
-		wxXmlNode *,
-		long = 50 );
-	wxXmlNode* AddTrackTags( const wxTrack&,
-							 const wxULongLong&,
-							 wxXmlNode*,
-							 int = 30 );
+	wxXmlNode* SetTotalParts( size_t, wxXmlNode *, long = 50 );
+	wxXmlNode* AddTrackTags( const wxTrack&, const wxULongLong&, wxXmlNode*, int = 30 );
 
 	wxXmlNode* AddChapterTimeStart( wxXmlNode*, const wxIndex& ) const;
 
@@ -163,7 +152,10 @@ protected:
 	static bool has_chapter_time_end( wxXmlNode* );
 	static wxXmlNode* add_chapter_display( wxXmlNode*, const wxString&, const wxString& );
 	static wxXmlNode* add_hidden_flag( wxXmlNode*, bool );
-	static wxXmlNode* add_idx_chapter_atom( wxXmlNode*, const wxSamplingInfo&, const wxULongLong&, unsigned int, const wxString&, bool );
+	static wxXmlNode* add_idx_chapter_atom( wxXmlNode*, const wxSamplingInfo&,
+											const wxULongLong&, unsigned int,
+											const wxString&,
+											bool );
 	static wxXmlNode* create_simple_tag( const wxCueTag&, const wxString& );
 	static wxXmlDocument* create_xml_document( const wxString& );
 	static bool is_simple( wxXmlNode*, const wxCueTag& );
@@ -190,10 +182,11 @@ public:
 	wxXmlDocument& GetXmlDoc() const;
 	wxXmlDocument& GetXmlTags() const;
 
-	const wxString& GetOutputFile() const;
-	const wxString& GetTagsFile() const;
+	const wxFileName& GetOutputFile() const;
+	const wxFileName& GetTagsFile() const;
 
 	bool SaveXmlDoc();
 };
 
 #endif
+

@@ -38,3 +38,4 @@ protected:
 WX_DECLARE_OBJARRAY( wxCueSheetContent, wxArrayCueSheetContent );
 
 #endif // _WX_CUE_SHEET_CONTENT_H_
+

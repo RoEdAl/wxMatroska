@@ -315,3 +315,4 @@ bool wxCueSheetRenderer::OnPostRenderPostGap( const wxCueSheet& WXUNUSED( cueShe
 {
 	return true;
 }
+

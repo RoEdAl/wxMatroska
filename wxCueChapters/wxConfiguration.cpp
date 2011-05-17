@@ -265,7 +265,8 @@ wxConfiguration::wxConfiguration( void ):
 	m_sMatroskaTagsXmlExt( MATROSKA_TAGS_EXT ),
 	m_sMatroskaOptsExt( MATROSKA_OPTS_EXT ),
 	m_bMerge( false ),
-	m_nEmbeddedModeFlags( wxCueSheetReader::EC_MEDIA_READ_TAGS | wxCueSheetReader::EC_FLAC_READ_TAG_FIRST_THEN_COMMENT ),
+	m_nEmbeddedModeFlags( wxCueSheetReader::EC_MEDIA_READ_TAGS |
+						  wxCueSheetReader::EC_FLAC_READ_TAG_FIRST_THEN_COMMENT ),
 	m_bUseMLang( true ),
 	m_bFullPaths( false ),
 	m_bEllipsizeTags( true ),
@@ -987,7 +988,7 @@ void wxConfiguration::Dump() const
 	}
 }
 
-void wxConfiguration::BuildXmlComments( const wxString& sOutputFile, wxXmlNode* pNode ) const
+void wxConfiguration::BuildXmlComments( const wxFileName& outputFile, wxXmlNode* pNode ) const
 {
 	wxString sInit;
 
@@ -1001,7 +1002,7 @@ void wxConfiguration::BuildXmlComments( const wxString& sOutputFile, wxXmlNode* 
 	as.Add( wxString::Format( wxT( "Application version: %s" ), wxGetApp().APP_VERSION ) );
 	as.Add( wxString::Format( wxT( "Application vendor: %s" ), wxGetApp().GetVendorDisplayName() ) );
 	as.Add( wxString::Format( wxT( "Creation time: %s %s" ), dtNow.FormatISODate(), dtNow.FormatISOTime() ) );
-	as.Add( wxString::Format( wxT( "Output file: \u201C%s\u201D" ), wxMyApp::GetFileName( sOutputFile ) ) );
+	as.Add( wxString::Format( wxT( "Output file: \u201C%s\u201D" ), outputFile.GetFullName() ) );
 
 	FillArray( as );
 
@@ -1092,13 +1093,10 @@ wxString wxConfiguration::GetOutputFile( const wxInputFile& _inputFile ) const
 	return inputFile.GetFullPath();
 }
 
-void wxConfiguration::GetOutputFile(
-	const wxInputFile& _inputFile,
-	wxString& sOutputFile, wxString& sTagsFile
-	) const
+void wxConfiguration::GetOutputFile( const wxInputFile& _inputFile, wxFileName& outputFile, wxFileName& tagsFile ) const
 {
-	sOutputFile.Empty();
-	sTagsFile.Empty();
+	outputFile.Clear();
+	tagsFile.Clear();
 
 	wxFileName inputFile( _inputFile.GetInputFile() );
 	if ( !inputFile.IsOk() )
@@ -1109,12 +1107,12 @@ void wxConfiguration::GetOutputFile(
 	if ( !m_outputFile.IsOk() )
 	{
 		inputFile.SetExt( m_bSaveCueSheet ? m_sCueSheetExt : m_sMatroskaChaptersXmlExt );
-		sOutputFile = inputFile.GetFullPath();
+		outputFile = inputFile;
 
 		if ( !m_bSaveCueSheet && m_bGenerateTags )
 		{
 			inputFile.SetExt( m_sMatroskaTagsXmlExt );
-			sTagsFile = inputFile.GetFullPath();
+			tagsFile = inputFile;
 		}
 	}
 	else
@@ -1129,22 +1127,19 @@ void wxConfiguration::GetOutputFile(
 			inputFile = m_outputFile;
 		}
 
-		sOutputFile = inputFile.GetFullPath();
+		outputFile = inputFile;
 		if ( !m_bSaveCueSheet && m_bGenerateTags )
 		{
 			inputFile.SetExt( m_sMatroskaTagsXmlExt );
-			sTagsFile = inputFile.GetFullPath();
+			tagsFile = inputFile;
 		}
 	}
 }
 
-void wxConfiguration::GetOutputMatroskaFile(
-	const wxInputFile& _inputFile,
-	wxString& sMatroskaFile, wxString& sOptionsFile
-	) const
+void wxConfiguration::GetOutputMatroskaFile( const wxInputFile& _inputFile, wxFileName& matroskaFile, wxFileName& optionsFile ) const
 {
-	sMatroskaFile.Empty();
-	sOptionsFile.Empty();
+	matroskaFile.Clear();
+	optionsFile.Clear();
 
 	wxFileName inputFile( _inputFile.GetInputFile() );
 	if ( !inputFile.IsOk() )
@@ -1160,10 +1155,10 @@ void wxConfiguration::GetOutputMatroskaFile(
 	if ( !m_outputFile.IsOk() )
 	{
 		inputFile.SetExt( MATROSKA_AUDIO_EXT );
-		sMatroskaFile = inputFile.GetFullPath();
+		matroskaFile = inputFile;
 
 		inputFile.SetExt( m_sMatroskaOptsExt );
-		sOptionsFile = inputFile.GetFullPath();
+		optionsFile = inputFile;
 	}
 	else
 	{
@@ -1177,17 +1172,14 @@ void wxConfiguration::GetOutputMatroskaFile(
 		}
 
 		inputFile.SetExt( MATROSKA_AUDIO_EXT );
-		sMatroskaFile = inputFile.GetFullPath();
+		matroskaFile = inputFile;
 
 		inputFile.SetExt( m_sMatroskaOptsExt );
-		sOptionsFile = inputFile.GetFullPath();
+		optionsFile = inputFile;
 	}
 }
 
-bool wxConfiguration::GetOutputCueSheetFile(
-	const wxInputFile& _inputFile,
-	const wxString& sPostFix, wxFileName& cueFile
-	) const
+bool wxConfiguration::GetOutputCueSheetFile( const wxInputFile& _inputFile, const wxString& sPostFix, wxFileName& cueFile ) const
 {
 	wxFileName inputFile( _inputFile.GetInputFile() );
 
@@ -1407,3 +1399,4 @@ wxConfiguration::CUESHEET_ATTACH_MODE wxConfiguration::GetCueSheetAttachMode() c
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
 WX_DEFINE_OBJARRAY( wxArrayInputFile );
+

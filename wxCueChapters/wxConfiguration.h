@@ -135,7 +135,8 @@ public:
 	bool GenerateTagsFromComments() const;
 	FILE_ENCODING GetCueSheetFileEncoding() const;
 
-	wxSharedPtr<wxTextOutputStream> GetOutputTextStream( wxOutputStream& ) const;
+	wxSharedPtr<wxTextOutputStream> GetOutputTextStream( wxOutputStream& )
+	const;
 	bool GetMerge() const;
 	unsigned int GetEmbeddedModeFlags() const;
 	bool ShouldIgnoreTag( const wxCueTag& ) const;
@@ -146,8 +147,8 @@ public:
 	CUESHEET_ATTACH_MODE GetCueSheetAttachMode() const;
 
 	wxString GetOutputFile( const wxInputFile& ) const;
-	void GetOutputFile( const wxInputFile&, wxString&, wxString& ) const;
-	void GetOutputMatroskaFile( const wxInputFile&, wxString&, wxString& ) const;
+	void GetOutputFile( const wxInputFile&, wxFileName&, wxFileName& ) const;
+	void GetOutputMatroskaFile( const wxInputFile&, wxFileName&, wxFileName& ) const;
 	bool GetOutputCueSheetFile( const wxInputFile&, const wxString&, wxFileName& ) const;
 
 public:
@@ -170,7 +171,8 @@ public:
 	bool Read( const wxCmdLineParser& );
 
 	void Dump() const;
-	void BuildXmlComments( const wxString&, wxXmlNode* ) const;
+	void BuildXmlComments( const wxFileName&, wxXmlNode* ) const;
 };
 
 #endif // _WX_CONFIGURATION_H
+

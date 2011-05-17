@@ -7,7 +7,8 @@
 
 #ifdef WIN32
 #include <targetver.h>
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from
+// Windows headers
 #endif
 
 #include <wx/wx.h>
@@ -30,3 +31,4 @@
 #include <wavpack.h>
 
 #endif // _STD_WX_H
+

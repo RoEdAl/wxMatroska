@@ -43,14 +43,14 @@ protected:
 
 	void copy( const wxDataFile& );
 
-	static wxULongLong GetNumberOfFramesFromBinary( const wxFileName&, const wxSamplingInfo& si );
-	static bool GetFromMediaInfo( const wxFileName&, wxULongLong&, wxSamplingInfo& );
+	static wxULongLong GetNumberOfFramesFromBinary( const wxFileName&,
+													const wxSamplingInfo& si );
+	static bool GetFromMediaInfo( const wxFileName&, wxULongLong&,
+								  wxSamplingInfo& );
 
 public:
 
-	wxString GetFileName() const;
-	wxString GetFullPath() const;
-
+	const wxFileName& GetFileName() const;
 	FileType GetFileType() const;
 	wxString GetFileTypeAsString() const;
 
@@ -84,3 +84,4 @@ public:
 WX_DECLARE_OBJARRAY( wxDataFile, wxArrayDataFile );
 
 #endif // _WX_DATA_FILE_H_
+

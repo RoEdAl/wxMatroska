@@ -6,7 +6,12 @@
 #include <wxCueFile/wxTagSynonims.h>
 #include <wxCueFile/wxCueComponent.h>
 
-IMPLEMENT_DYNAMIC_CLASS( wxTagSynonims, wxObject ) wxTagSynonims::wxTagSynonims( void )
+// ===============================================================================
+
+IMPLEMENT_DYNAMIC_CLASS( wxTagSynonims, wxObject )
+// ===============================================================================
+
+wxTagSynonims::wxTagSynonims( void )
 {}
 
 wxTagSynonims::wxTagSynonims( const wxString& sName, const wxArrayString& asSynonims ):
@@ -152,3 +157,4 @@ bool wxTagSynonimsCollection::GetName( const wxCueTag& synonim, wxCueTag& cueTag
 
 #include <wx/arrimpl.cpp>
 WX_DEFINE_OBJARRAY( _wxArrayTagSynonims );
+
