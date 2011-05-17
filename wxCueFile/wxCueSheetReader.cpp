@@ -690,8 +690,9 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMo
 	}
 }
 
+/* onet track, one index*/
 void wxCueSheetReader::BuildFromSingleMediaFile( const wxString& sMediaFile )
-{ // one track one index
+{
 	m_cueSheet.Clear();
 	wxTrack singleTrack( 1 );
 	wxIndex singleIdx( 1, wxULL( 0 ) );

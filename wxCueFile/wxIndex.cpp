@@ -105,17 +105,17 @@ wxString wxIndex::GetTimeStr( unsigned int hours, unsigned int minutes, double s
 void wxIndex::FixDecimalPoint( wxString& s )
 {
 #if wxUSE_INTL
-	wxString sep = wxLocale::GetInfo( wxLOCALE_DECIMAL_POINT,
-		wxLOCALE_CAT_NUMBER );
+	wxString sep = wxLocale::GetInfo( wxLOCALE_DECIMAL_POINT, wxLOCALE_CAT_NUMBER );
 #else // !wxUSE_INTL
-	  // As above, this is the most common alternative value. Notice that here
-	  // it
-	  // doesn't matter if we guess wrongly and the current separator is already
-	  // ".": we'll just waste a call to Replace() in this case.
+/*
+   As above, this is the most common alternative value. Notice that here it
+   doesn't matter if we guess wrongly and the current separator is already
+   ".": we'll just waste a call to Replace() in this case.
+ */
 	wxString sep( "," );
 #endif // wxUSE_INTL/!wxUSE_INTL
 
-	s.Replace( sep, "." );
+	s.Replace( sep, wxT( '.' ) );
 }
 
 wxIndex& wxIndex::operator -=( wxULongLong frames )
