@@ -45,6 +45,9 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cue2mkc</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cue2mkc</TargetName>
+    <CustomBuildAfterTargets Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    </CustomBuildBeforeTargets>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -101,11 +104,28 @@
       <SetChecksum>true</SetChecksum>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Message>
+      </Message>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Outputs>
+      </Outputs>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="license.txt" />
     <None Include="..\gui\icons\cd_mka.ico" />
-    <None Include="..\gui\cue2mkcgui.au3" />
+    <None Include="..\gui\cue2mkcgui.au3">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(ProgramFiles)\AutoIt3\aut2exe\aut2exe.exe"  /in "%(FullPath)" /out "%(RootDir)%(Directory)cue2mkcgui.exe" /icon "%(RootDir)%(Directory)icons\cd_mka.ico" /comp 4</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling AU3 script</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Directory)cue2mkcgui.exe</Outputs>
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StdWx.cpp">
