@@ -1,7 +1,25 @@
-#include "app_version.iss"
+#include "ISPPBuiltins.iss"
+
+#define Cue2MkcExe SourcePath + "/../bin/Release/cue2mkc.exe"
+#define Cue2MkcFileVersion GetFileVersion(Cue2MkcExe)
+#define Cue2MkcFileCompany GetFileCompany(Cue2MkcExe)
+#define Cue2MkcFileCopyright GetFileCopyright(Cue2MkcExe)
+#define Cue2MkcFileDescription GetFileDescription(Cue2MkcExe)
+#define Cue2MkcProductVersion GetFileProductVersion(Cue2MkcExe)
+#define Cue2MkcFileVersionString GetFileVersionString(Cue2MkcExe)
 
 [Setup]
 AppID=cue2mkc
+AppName={cm:cue2mkc}
+AppVerName={cm:cue2mkc} {#Cue2MkcFileVersion}
+AppVersion={#Cue2MkcFileVersion}
+AppCopyright={#Cue2MkcFileCopyright}
+AppPublisher={#Cue2MkcFileCompany}
+VersionInfoProductName=cue2mkc
+VersionInfoDescription={#Cue2MkcFileDescription} {#Cue2MkcFileVersion}
+VersionInfoVersion={#Cue2MkcFileVersion}
+VersionInfoCompany={#Cue2MkcFileCompany}
+VersionInfoCopyright={#Cue2MkcFileCopyright}
 DefaultDirName={pf}\cue2mkc
 SetupIconFile=..\gui\icons\cd_mka.ico
 OutputDir=..\bin\setup

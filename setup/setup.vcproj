@@ -34,7 +34,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Creating setup..."
-				CommandLine="&quot;$(ProjectDir)app_version.exe&quot;&#x0D;&#x0A;&quot;$(INNO_SETUP_DIR)\iscc&quot; /O$(OutDir) &quot;$(ProjectDir)setup.iss&quot;"
+				CommandLine="&quot;$(INNO_SETUP_DIR)\iscc&quot; /O$(OutDir) &quot;$(ProjectDir)setup.iss&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -48,14 +48,6 @@
 			>
 			<File
 				RelativePath=".\setup.iss"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Template Files"
-			>
-			<File
-				RelativePath=".\app_version.tmpl"
 				>
 			</File>
 		</Filter>
