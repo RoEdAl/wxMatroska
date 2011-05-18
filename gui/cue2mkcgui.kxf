@@ -1406,7 +1406,7 @@
 										<property name="Color" vt="Ident">clBtnFace</property>
 										<property name="CtrlStyle" vt="Int32">1342259200</property>
 										<property name="CtrlExStyle" vt="Int8">0</property>
-										<property name="Resizing" vt="Set">DockRight, DockBottom, DockWidth, DockHeight</property>
+										<property name="Resizing" vt="Set">DockRight, DockTop, DockWidth, DockHeight</property>
 									</properties>
 									<components/>
 								</object>
