@@ -1,11 +1,11 @@
 #NoTrayIcon
-#Region ;**** Directives created by AutoIt3Wrapper_GUI ****
-#AutoIt3Wrapper_Icon=icons/cd_mka.ico
+#region ;**** Directives created by AutoIt3Wrapper_GUI ****
+#AutoIt3Wrapper_icon=icons/cd_mka.ico
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.60
-#AutoIt3Wrapper_Res_FileVersion_AutoIncrement=y
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.61
+#AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html
 #AutoIt3Wrapper_Res_SaveSource=y
 #AutoIt3Wrapper_Res_Field=Company|Edmunt Pienkowsky - roed@onet.eu
@@ -16,7 +16,7 @@
 #AutoIt3Wrapper_Res_Icon_Add=icons/media_file_add.ico
 #AutoIt3Wrapper_Res_Icon_Add=icons/file_mask.ico
 #AutoIt3Wrapper_Run_Tidy=y
-#EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
+#endregion ;**** Directives created by AutoIt3Wrapper_GUI ****
 ;
 ; cue2mkcgui - simple frontend cue2mkc utility.
 ;
@@ -102,7 +102,7 @@ Func get_mkvmerge_dir()
 	EndIf
 EndFunc   ;==>get_mkvmerge_dir
 
-#Region ### START Koda GUI section ### Form=D:\Temp\wxMatroska.bitbucket\gui\cue2mkcgui.kxf
+#region ### START Koda GUI section ### Form=D:\Temp\wxMatroska.bitbucket\gui\cue2mkcgui.kxf
 $FormMain = GUICreate("cue2mkc GUI", 540, 408, -1, -1, BitOR($WS_MAXIMIZEBOX, $WS_MINIMIZEBOX, $WS_SIZEBOX, $WS_THICKFRAME, $WS_SYSMENU, $WS_CAPTION, $WS_OVERLAPPEDWINDOW, $WS_TILEDWINDOW, $WS_POPUP, $WS_POPUPWINDOW, $WS_GROUP, $WS_TABSTOP, $WS_BORDER, $WS_CLIPSIBLINGS), BitOR($WS_EX_ACCEPTFILES, $WS_EX_WINDOWEDGE))
 GUISetFont(8, 400, 0, "Microsoft Sans Serif")
 $DummyOutput = GUICtrlCreateDummy()
@@ -381,7 +381,7 @@ $ButtonGo = GUICtrlCreateButton("&Run", 452, 376, 85, 29, 0)
 GUICtrlSetFont(-1, 8, 800, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Run cue2mkc tool")
-#EndRegion ### END Koda GUI section ###
+#endregion ### END Koda GUI section ###
 
 Func set_output_mode($nMode)
 	Switch $nMode
