@@ -23,7 +23,8 @@ vcproj\..+\.user$
 ^gui/.*\.exe$
 ^gui/.*\.dll$
 ^gui/BackUp/
+^setup/BackUp/
 .+/build
 .+/dist
 nbproject/private
-
+setup/app_version.iss$
