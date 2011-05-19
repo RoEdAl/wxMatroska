@@ -85,9 +85,18 @@ public:
 	bool AddCdTextInfoTag( const wxCueTag& );
 	void AddCdTextInfoTags( const wxArrayCueTag& );
 
+	void RemoveCdTextInfoTag( const wxCueTag& );
+	void RemoveCdTextInfoTags( const wxArrayCueTag& );
+
 	void AddTag( wxCueTag::TAG_SOURCE, const wxString&, const wxString& );
 	void AddTag( const wxCueTag& );
 	void AddTags( const wxArrayCueTag& );
+
+	void RemoveTag( const wxCueTag& );
+	void RemoveTag( const wxString& );
+	void RemoveTags( const wxArrayCueTag& );
+
+	bool FindCommonPart( const wxString&, wxCueTag& ) const;
 
 	bool CheckEntryType( ENTRY_TYPE ) const;
 

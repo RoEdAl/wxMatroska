@@ -106,7 +106,12 @@ public:
 
 	static bool FindTag( const wxArrayCueTag&, const wxCueTag& );
 	static bool AddTag( wxArrayCueTag&, const wxCueTag& );
+	static void RemoveTag( wxArrayCueTag&, const wxCueTag& );
+	static void RemoveTag( wxArrayCueTag&, const wxString& );
 	static void AddTags( wxArrayCueTag&, const wxArrayCueTag& );
+	static void RemoveTags( wxArrayCueTag&, const wxArrayCueTag& );
+	static void CommonTags( wxArrayCueTag&, const wxArrayCueTag&, const wxArrayCueTag& );
+	static bool FindCommonPart( wxCueTag&, const wxCueTag&, const wxCueTag& );
 	static wxString Quote( const wxString& );
 	static wxString Escape( const wxString& );
 	static wxString UnEscape( const wxString& );

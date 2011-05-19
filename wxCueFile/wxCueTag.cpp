@@ -273,12 +273,105 @@ bool wxCueTag::AddTag( wxArrayCueTag& tags, const wxCueTag& cueTag )
 	return false;
 }
 
+void wxCueTag::RemoveTag( wxArrayCueTag& tags, const wxCueTag& cueTag )
+{
+	wxArrayCueTag newTags;
+
+	for ( size_t i = 0, nCount = tags.Count(); i < nCount; i++ )
+	{
+		if ( cueTag.GetName().CmpNoCase( tags[ i ].GetName() ) == 0 &&
+			 cueTag.GetValue().Cmp( tags[ i ].GetValue() ) == 0 )
+		{
+			continue;
+		}
+
+		newTags.Add( tags[ i ] );
+	}
+
+	tags = newTags;
+}
+
+void wxCueTag::RemoveTag( wxArrayCueTag& tags, const wxString& sTagName )
+{
+	wxArrayCueTag newTags;
+
+	for ( size_t i = 0, nCount = tags.Count(); i < nCount; i++ )
+	{
+		if ( sTagName.CmpNoCase( tags[ i ].GetName() ) == 0  )
+		{
+			continue;
+		}
+
+		newTags.Add( tags[ i ] );
+	}
+
+	tags = newTags;
+}
+
 void wxCueTag::AddTags( wxArrayCueTag& tags, const wxArrayCueTag& newTags )
 {
-	for ( size_t newTagsCount = newTags.Count(), i = 0; i < newTagsCount; i++ )
+	for ( size_t nCount = newTags.Count(), i = 0; i < nCount; i++ )
 	{
 		AddTag( tags, newTags[ i ] );
 	}
+}
+
+void wxCueTag::RemoveTags( wxArrayCueTag& tags, const wxArrayCueTag& tagsToDelete )
+{
+	for ( size_t nCount = tagsToDelete.Count(), i = 0; i < nCount; i++ )
+	{
+		RemoveTag( tags, tagsToDelete[ i ] );
+	}
+}
+
+void wxCueTag::CommonTags( wxArrayCueTag& commonTags, const wxArrayCueTag& group1, const wxArrayCueTag& group2 )
+{
+	commonTags.Clear();
+	for ( size_t i = 0, nCount = group1.Count(); i < nCount; i++ )
+	{
+		if ( FindTag( group2, group1[ i ] ) )
+		{
+			commonTags.Add( group1[ i ] );
+		}
+	}
+}
+
+bool wxCueTag::FindCommonPart( wxCueTag& commonTag, const wxCueTag& tag1, const wxCueTag& tag2 )
+{
+	wxASSERT( tag1.GetName().CmpNoCase( tag2.GetName() ) == 0 );
+
+	wxString sValue1, sValue2;
+	bool	 bMultiline1, bMultiline2;
+
+	tag1.GetValueEx( false, sValue1, bMultiline1 );
+	tag2.GetValueEx( false, sValue2, bMultiline2 );
+
+	size_t nLen = sValue1.Length();
+	if ( sValue2.Length() < nLen )
+	{
+		nLen = sValue2.Length();
+	}
+
+	if ( nLen == 0u )
+	{
+		return false;
+	}
+
+	sValue1.Truncate( nLen );
+	sValue2.Truncate( nLen );
+	for ( size_t i = nLen; i > 0; i--, sValue1.RemoveLast(), sValue2.RemoveLast() )
+	{
+		if ( sValue1.CmpNoCase( sValue2 ) == 0 )
+		{
+			commonTag.SetSource( wxCueTag::TAG_AUTO_GENERATED )
+			.SetName( tag1.GetName() )
+			.SetValue( sValue1 );
+
+			return true;
+		}
+	}
+
+	return false;
 }
 
 #include <wx/arrimpl.cpp>

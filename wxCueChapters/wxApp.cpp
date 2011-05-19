@@ -380,6 +380,7 @@ int wxMyApp::ProcessCueFile( const wxInputFile& inputFile )
 	}
 	else
 	{
+		cueSheet.FindCommonTags( false );
 		return ConvertCueSheet( inputFile, cueSheet );
 	}
 }
@@ -459,6 +460,7 @@ int wxMyApp::OnRun()
 	if ( m_cfg.GetMerge() && ( res == 0 ) )
 	{
 		wxASSERT( !bFirst );
+		GetMergedCueSheet().FindCommonTags( true );
 		res = ConvertCueSheet( firstInputFile, GetMergedCueSheet() );
 	}
 

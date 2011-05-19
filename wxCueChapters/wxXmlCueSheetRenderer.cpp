@@ -337,6 +337,7 @@ void wxXmlCueSheetRenderer::init_synonims()
 	as.Add( wxCueTag::Name::ALBUM_ARTIST );
 	wxTagSynonims discSynonim3( wxCueTag::Name::ARTIST, as );
 	m_discSynonims.Add( discSynonim3 );
+	m_trackCdTextSynonims.Add( discSynonim3 );
 }
 
 void wxXmlCueSheetRenderer::SetConfiguration( const wxConfiguration& cfg )
@@ -473,10 +474,7 @@ wxXmlNode* wxXmlCueSheetRenderer::create_simple_tag( const wxCueTag& tag, const 
 	wxXmlNode* pName	 = new wxXmlNode( pSimple, wxXML_ELEMENT_NODE, Xml::NAME );
 	wxXmlNode* pNameText = new wxXmlNode( pName, wxXML_TEXT_NODE, wxEmptyString, tag.GetName() );
 
-	if ( tag.GetSource() != wxCueTag::TAG_AUTO_GENERATED )
-	{
-		add_comment_node( pSimple, wxString::Format( wxT( "Source: %s" ), tag.GetSourceAsString() ) );
-	}
+	add_comment_node( pSimple, wxString::Format( wxT( "Source: %s" ), tag.GetSourceAsString() ) );
 
 	wxString sValue;
 	bool bMultiline;

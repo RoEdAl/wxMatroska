@@ -220,6 +220,11 @@ void wxCueComponent::AddTags( const wxArrayCueTag& newTags )
 	wxCueTag::AddTags( m_tags, newTags );
 }
 
+void wxCueComponent::RemoveTags( const wxArrayCueTag& newTags )
+{
+	wxCueTag::RemoveTags( m_tags, newTags );
+}
+
 void wxCueComponent::GetTags(
 	const wxTagSynonimsCollection& cdTagsSynonims,
 	const wxTagSynonimsCollection& tagsSynonims,
@@ -340,12 +345,22 @@ bool wxCueComponent::AddCdTextInfoTag( const wxCueTag& tag )
 	return AddCdTextInfoTag( tag.GetName(), tag.GetValue() );
 }
 
+void wxCueComponent::RemoveCdTextInfoTag( const wxCueTag& tag )
+{
+	wxCueTag::RemoveTag( m_cdTextTags, tag );
+}
+
 void wxCueComponent::AddCdTextInfoTags( const wxArrayCueTag& cueTags )
 {
-	for ( size_t i = 0, nCount = cueTags.Count(); i < nCount; i++ )
+	for( size_t i=0, nCount = cueTags.Count(); i<nCount; i++ )
 	{
-		AddCdTextInfoTag( cueTags[ i ] );
+		AddCdTextInfoTag( cueTags[i] );
 	}
+}
+
+void wxCueComponent::RemoveCdTextInfoTags( const wxArrayCueTag& cueTags )
+{
+	wxCueTag::RemoveTags( m_cdTextTags, cueTags );
 }
 
 void wxCueComponent::AddTag( wxCueTag::TAG_SOURCE eSource, const wxString& sKeyword, const wxString& sBody )
@@ -358,6 +373,45 @@ void wxCueComponent::AddTag( wxCueTag::TAG_SOURCE eSource, const wxString& sKeyw
 void wxCueComponent::AddTag( const wxCueTag& tag )
 {
 	wxCueTag::AddTag( m_tags, tag );
+}
+
+void wxCueComponent::RemoveTag( const wxCueTag& tag )
+{
+	wxCueTag::RemoveTag( m_tags, tag );
+}
+
+void wxCueComponent::RemoveTag( const wxString& sTagName )
+{
+	wxCueTag::RemoveTag( m_tags, sTagName );
+}
+
+bool wxCueComponent::FindCommonPart( const wxString& sTagName, wxCueTag& commonTag ) const
+{
+	bool bFirst = true;
+	for( size_t i=0, nCount = m_tags.Count(); i<nCount; i++ )
+	{
+		if ( m_tags[i].GetName().CmpNoCase( sTagName ) == 0 )
+		{
+			if ( bFirst )
+			{
+				commonTag = m_tags[i];
+				bFirst = false;
+			}
+			else
+			{
+				wxCueTag cmnTag;
+				if ( wxCueTag::FindCommonPart( cmnTag, commonTag, m_tags[i] ) )
+				{
+					commonTag = cmnTag;
+				}
+				else
+				{
+					return false;
+				}
+			}
+		}
+	}
+	return !bFirst;
 }
 
 void wxCueComponent::Clear()
