@@ -30,6 +30,7 @@ const wxChar* const wxCueTag::Name::UPC_EAN		 = wxT( "UPC_EAN" );
 const wxChar* const wxCueTag::Name::SIZE_INFO	 = wxT( "SIZE_INFO" );
 const wxChar* const wxCueTag::Name::TOC_INFO	 = wxT( "TOC_INFO" );
 const wxChar* const wxCueTag::Name::TOC_INFO2	 = wxT( "TOC_INFO2" );
+const wxChar* const wxCueTag::Name::DISCNUMBER	 = wxT( "DISCNUMBER" );
 
 // ===============================================================================
 
@@ -268,7 +269,7 @@ size_t wxCueTag::GetTags( const wxArrayCueTag& sourceTags, const wxString& sTagN
 	{
 		if ( sourceTags[ i ] == sTagName )
 		{
-			tags.Add( sourceTags[ i ] );
+			AddTag( tags, sourceTags[ i ] );
 			nCounter += 1;
 		}
 	}
@@ -298,6 +299,24 @@ bool wxCueTag::AddTag( wxArrayCueTag& tags, const wxCueTag& cueTag )
 	}
 
 	return false;
+}
+
+bool wxCueTag::AddTagIf( wxArrayCueTag& tags, const wxCueTag& tagToAdd, const wxCueTag& tagToCheck )
+{
+	if ( FindTag( tags, tagToCheck ) )
+	{
+		if ( !FindTag( tags, tagToAdd ) )
+		{
+			tags.Add( tagToAdd );
+			return true;
+		}
+
+		return false;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 void wxCueTag::RemoveTag( wxArrayCueTag& tags, const wxCueTag& cueTag )

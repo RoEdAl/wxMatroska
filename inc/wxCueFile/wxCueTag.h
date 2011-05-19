@@ -54,6 +54,7 @@ public:
 		static const wxChar* const SIZE_INFO;
 		static const wxChar* const TOC_INFO;
 		static const wxChar* const TOC_INFO2;
+		static const wxChar* const DISCNUMBER;
 	};
 
 public:
@@ -108,6 +109,7 @@ public:
 	static size_t GetTags( const wxArrayCueTag&, const wxString&, wxArrayCueTag& );
 	static bool FindTag( const wxArrayCueTag&, const wxCueTag& );
 	static bool AddTag( wxArrayCueTag&, const wxCueTag& );
+	static bool AddTagIf( wxArrayCueTag&, const wxCueTag&, const wxCueTag& );
 	static void RemoveTag( wxArrayCueTag&, const wxCueTag& );
 	static void RemoveTag( wxArrayCueTag&, const wxString& );
 	static void AddTags( wxArrayCueTag&, const wxArrayCueTag& );

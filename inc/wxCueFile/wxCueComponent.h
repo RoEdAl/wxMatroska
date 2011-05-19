@@ -90,7 +90,8 @@ public:
 	void RemoveCdTextInfoTags( const wxArrayCueTag& );
 
 	void AddTag( wxCueTag::TAG_SOURCE, const wxString&, const wxString& );
-	void AddTag( const wxCueTag& );
+	bool AddTag( const wxCueTag& );
+	bool AddTagIf( const wxCueTag&, const wxCueTag& );
 	void AddTags( const wxArrayCueTag& );
 
 	void RemoveTag( const wxCueTag& );

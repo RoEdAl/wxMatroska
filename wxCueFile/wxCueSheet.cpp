@@ -24,7 +24,7 @@ const wxChar* const wxCueSheet::CD_ALIASES[] =
 const size_t wxCueSheet::CD_ALIASES_SIZE = WXSIZEOF( wxCueSheet::CD_ALIASES );
 
 const wxChar wxCueSheet::ALBUM_REG_EX[] =
-	wxT( "\\A(.+[^[:space:][:punct:]\\(\\[])[[:space:][:punct:]]*[\\(\\[]{0,1}[[:space:]]*%s[[:space:][:punct:]]*\\Z" );
+	wxT( "\\A(.+[^[:space:][:punct:]\\(\\[])[[:space:][:punct:]]*[\\(\\[]{0,1}[[:space:][:punct:]]*%s[[:space:][:punct:]]*([[:digit:]]{1,2})[[:space:]]*[\\)\\]]{0,1}[[:space:]]*\\Z" );
 
 wxString wxCueSheet::GetCdAliasesRegExp()
 {
@@ -600,11 +600,24 @@ void wxCueSheet::FindCommonTags( bool bMerge )
 		m_tracks[ i ].RemoveTags( commonTags );
 	}
 
+	// ALBUM -> TITLE
+	{
+		wxArrayCueTag albumTags;
+		GetTags( wxCueTag::Name::ALBUM, albumTags );
+		for( size_t i=0, nCount = albumTags.Count(); i<nCount; i++ )
+		{
+			wxCueTag titleTag( albumTags[i].GetSource(), wxCueTag::Name::TITLE, albumTags[i].GetValue() );
+			AddCdTextInfoTag( titleTag );
+		}
+		RemoveTag( wxCueTag::Name::ALBUM );
+	}
+
 	// Trying to find common part of album tag
 	if ( bMerge )
 	{
 		wxArrayCueTag albumTags;
-		size_t		  nElements = 1;
+		size_t nElements = 1;
+
 		for ( size_t i = 0; i < nTracks && nElements > 0; i++ )
 		{
 			nElements = m_tracks[ i ].GetTags( wxCueTag::Name::ALBUM, albumTags );
@@ -613,6 +626,8 @@ void wxCueSheet::FindCommonTags( bool bMerge )
 		if ( nElements > 0 )
 		{
 			wxASSERT( albumTags.Count() >= 1 );
+			WX_DECLARE_STRING_HASH_MAP( unsigned long, wxHashMapStringToULong );
+			wxHashMapStringToULong albumNumbers;
 
 			bool	 bFirst	   = true;
 			bool	 bIsCommon = true;
@@ -624,8 +639,17 @@ void wxCueSheet::FindCommonTags( bool bMerge )
 				wxString sAlbum( albumTags[ j ].GetValue() );
 				if ( reDisc.Matches( sAlbum ) )
 				{
-					wxASSERT( reDisc.GetMatchCount() > 0 );
-					sAlbum = reDisc.GetMatch( sAlbum, 1 );
+					wxASSERT( reDisc.GetMatchCount() > 2 );
+					wxString sLocalAlbum( reDisc.GetMatch( sAlbum, 1 ) );
+					wxString sDiscNumber( reDisc.GetMatch( sAlbum, 3 ) );
+
+					unsigned long u;
+					if ( sDiscNumber.ToULong( &u ) )
+					{
+						albumNumbers[ albumTags[ j ].GetValue() ] = u;
+					}
+
+					sAlbum = sLocalAlbum;
 				}
 
 				if ( bFirst )
@@ -644,6 +668,18 @@ void wxCueSheet::FindCommonTags( bool bMerge )
 				wxLogInfo( wxT( "Album name: \u201C%s\u201D" ), sCommonAlbum );
 				wxCueTag commonAlbumTag( wxCueTag::TAG_AUTO_GENERATED, wxCueTag::Name::TITLE, sCommonAlbum );
 				AddCdTextInfoTag( commonAlbumTag );
+
+				for( wxHashMapStringToULong::const_iterator i = albumNumbers.begin(), iend = albumNumbers.end(); i != iend; i++ )
+				{
+					wxCueTag discNumberTag( wxCueTag::TAG_AUTO_GENERATED, wxCueTag::Name::DISCNUMBER, wxString::Format( wxT("%u"), i->second ) );
+					wxCueTag albumTag( wxCueTag::TAG_AUTO_GENERATED, wxCueTag::Name::ALBUM, i->first );
+
+					for ( size_t j = 0; j < nTracks; j++ )
+					{
+						m_tracks[j].AddTagIf( discNumberTag, albumTag );
+					}
+				}
+
 				for ( size_t i = 0; i < nTracks; i++ )
 				{
 					m_tracks[ i ].RemoveTag( wxCueTag::Name::ALBUM );

@@ -371,13 +371,17 @@ void wxCueComponent::RemoveCdTextInfoTags( const wxArrayCueTag& cueTags )
 void wxCueComponent::AddTag( wxCueTag::TAG_SOURCE eSource, const wxString& sKeyword, const wxString& sBody )
 {
 	wxCueTag newTag( eSource, sKeyword, sBody );
-
 	wxCueTag::AddTag( m_tags, newTag );
 }
 
-void wxCueComponent::AddTag( const wxCueTag& tag )
+bool wxCueComponent::AddTag( const wxCueTag& tag )
 {
-	wxCueTag::AddTag( m_tags, tag );
+	return wxCueTag::AddTag( m_tags, tag );
+}
+
+bool wxCueComponent::AddTagIf( const wxCueTag& tagToAdd, const wxCueTag& tagToCheck )
+{
+	return wxCueTag::AddTagIf( m_tags, tagToAdd, tagToCheck );
 }
 
 void wxCueComponent::RemoveTag( const wxCueTag& tag )
