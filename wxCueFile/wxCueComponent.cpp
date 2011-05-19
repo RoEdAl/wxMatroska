@@ -225,6 +225,11 @@ void wxCueComponent::RemoveTags( const wxArrayCueTag& newTags )
 	wxCueTag::RemoveTags( m_tags, newTags );
 }
 
+size_t wxCueComponent::GetTags( const wxString& sTagName, wxArrayCueTag& tags ) const
+{
+	return wxCueTag::GetTags( m_tags, sTagName, tags );
+}
+
 void wxCueComponent::GetTags(
 	const wxTagSynonimsCollection& cdTagsSynonims,
 	const wxTagSynonimsCollection& tagsSynonims,
@@ -352,9 +357,9 @@ void wxCueComponent::RemoveCdTextInfoTag( const wxCueTag& tag )
 
 void wxCueComponent::AddCdTextInfoTags( const wxArrayCueTag& cueTags )
 {
-	for( size_t i=0, nCount = cueTags.Count(); i<nCount; i++ )
+	for ( size_t i = 0, nCount = cueTags.Count(); i < nCount; i++ )
 	{
-		AddCdTextInfoTag( cueTags[i] );
+		AddCdTextInfoTag( cueTags[ i ] );
 	}
 }
 
@@ -385,35 +390,6 @@ void wxCueComponent::RemoveTag( const wxString& sTagName )
 	wxCueTag::RemoveTag( m_tags, sTagName );
 }
 
-bool wxCueComponent::FindCommonPart( const wxString& sTagName, wxCueTag& commonTag ) const
-{
-	bool bFirst = true;
-	for( size_t i=0, nCount = m_tags.Count(); i<nCount; i++ )
-	{
-		if ( m_tags[i].GetName().CmpNoCase( sTagName ) == 0 )
-		{
-			if ( bFirst )
-			{
-				commonTag = m_tags[i];
-				bFirst = false;
-			}
-			else
-			{
-				wxCueTag cmnTag;
-				if ( wxCueTag::FindCommonPart( cmnTag, commonTag, m_tags[i] ) )
-				{
-					commonTag = cmnTag;
-				}
-				else
-				{
-					return false;
-				}
-			}
-		}
-	}
-	return !bFirst;
-}
-
 void wxCueComponent::Clear()
 {
 	m_comments.Clear();
@@ -441,7 +417,7 @@ static size_t find_keyword( const wxArrayCueTag& tags, const wxString& sKeyword 
 {
 	for ( size_t numTags = tags.Count(), i = 0; i < numTags; i++ )
 	{
-		if ( sKeyword.CmpNoCase( tags[ i ].GetName() ) == 0 )
+		if ( tags[ i ] == sKeyword )
 		{
 			return i;
 		}

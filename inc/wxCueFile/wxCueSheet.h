@@ -30,6 +30,15 @@ class wxCueSheet:
 {
 	wxDECLARE_DYNAMIC_CLASS( wxCueSheet );
 
+public:
+
+	static const wxChar* const CD_ALIASES[];
+	static const size_t CD_ALIASES_SIZE;
+
+	static wxString GetCdAliasesRegExp();
+
+	static const wxChar ALBUM_REG_EX[];
+
 protected:
 
 	wxArrayCueSheetContent m_content;

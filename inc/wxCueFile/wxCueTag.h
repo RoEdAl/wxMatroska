@@ -77,7 +77,8 @@ public:
 	wxCueTag& SetName( const wxString& );
 	wxCueTag& SetValue( const wxString& );
 
-	bool operator ==( const wxCueTag& );
+	bool operator ==( const wxString& ) const;
+	bool operator ==( const wxCueTag& ) const;
 	wxCueTag& operator =( const wxCueTag& );
 
 	void RemoveTrailingSpaces( const wxTrailingSpacesRemover& );
@@ -104,6 +105,7 @@ public:
 
 	static wxString SourceToString( TAG_SOURCE );
 
+	static size_t GetTags( const wxArrayCueTag&, const wxString&, wxArrayCueTag& );
 	static bool FindTag( const wxArrayCueTag&, const wxCueTag& );
 	static bool AddTag( wxArrayCueTag&, const wxCueTag& );
 	static void RemoveTag( wxArrayCueTag&, const wxCueTag& );

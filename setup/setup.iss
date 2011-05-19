@@ -51,7 +51,7 @@ Source: ..\bin\Release\cue2mkc.exe; DestDir: {app}; Flags: comparetimestamp; Com
 Source: ..\bin\Release\cue2mkcgui.exe; DestDir: {app}; Flags: comparetimestamp; Components: gui; 
 Source: ..\bin\MediaInfo\MediaInfo.dll; DestDir: {app}; Flags: comparetimestamp; Components: cli; 
 Source: ..\wxCueChapters\license.txt; DestDir: {app}; Flags: comparetimestamp; 
-Source: ..\gui\ISO-639-2_utf-8.txt; DestDir: {app}; Flags: comparetimestamp; 
+Source: ..\cue\ISO-639-2_utf-8.txt; DestDir: {app}; Flags: comparetimestamp; 
 
 [Icons]
 Name: {group}\{cm:cue2mkc} {cm:gui}; Filename: {app}\cue2mkcgui.exe; WorkingDir: {userdocs}; IconFilename: {app}\cue2mkcgui.exe; Comment: {cm:gui_comment}; Components: gui; 

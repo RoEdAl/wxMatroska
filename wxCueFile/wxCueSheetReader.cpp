@@ -383,7 +383,7 @@ void wxCueSheetReader::AppendComments( wxArrayCueTag& comments, bool singleMedia
 	{
 		wxCueTag& comment = comments[ i ];
 
-		if ( comment.GetName().CmpNoCase( wxCueTag::Name::CUESHEET ) == 0 )
+		if ( comment == wxCueTag::Name::CUESHEET )
 		{
 			continue;
 		}
@@ -402,7 +402,7 @@ void wxCueSheetReader::AppendComments( wxArrayCueTag& comments, bool singleMedia
 		}
 		else
 		{
-			if ( comment.GetName().CmpNoCase( wxCueTag::Name::TOTALTRACKS ) == 0 )
+			if ( comment == wxCueTag::Name::TOTALTRACKS )
 			{
 				continue;
 			}

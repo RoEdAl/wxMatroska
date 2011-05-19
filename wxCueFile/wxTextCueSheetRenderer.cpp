@@ -86,7 +86,7 @@ void wxTextCueSheetRenderer::DumpComponentTag( const wxCueComponent& component, 
 	}
 
 	wxString sValue;
-	bool bMultiline;
+	bool	 bMultiline;
 	tag.GetValueEx( true, sValue, bMultiline );
 	DumpComponentString( component, wxT( "REM" ), wxString::Format( wxT( "%s %s" ), sName, sValue ) );
 }

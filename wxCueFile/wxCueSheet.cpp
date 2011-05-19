@@ -12,6 +12,36 @@
 
 // ===============================================================================
 
+const wxChar* const wxCueSheet::CD_ALIASES[] =
+{
+	wxT( "cd" ),
+	wxT( "disc" ),
+	wxT( "disk" ),
+	wxT( "dysk" ),
+	wxT( "disque" )
+};
+
+const size_t wxCueSheet::CD_ALIASES_SIZE = WXSIZEOF( wxCueSheet::CD_ALIASES );
+
+const wxChar wxCueSheet::ALBUM_REG_EX[] =
+	wxT( "\\A(.+[^[:space:][:punct:]\\(\\[])[[:space:][:punct:]]*[\\(\\[]{0,1}[[:space:]]*%s[[:space:][:punct:]]*\\Z" );
+
+wxString wxCueSheet::GetCdAliasesRegExp()
+{
+	wxString s;
+
+	for ( size_t i = 0; i < CD_ALIASES_SIZE; i++ )
+	{
+		s += CD_ALIASES[ i ];
+		s += wxT( '|' );
+	}
+
+	s = s.RemoveLast();
+	return wxString::Format( wxT( "(%s)" ), s );
+}
+
+// ===============================================================================
+
 wxIMPLEMENT_DYNAMIC_CLASS( wxCueSheet, wxCueComponent )
 // ===============================================================================
 
@@ -197,7 +227,7 @@ void wxCueSheet::PrepareToAppend()
 {
 	for ( size_t i = 0, nCount = m_cdTextTags.Count(); i < nCount; i++ )
 	{
-		if ( m_cdTextTags[ i ].GetName().CmpNoCase( wxCueTag::Name::TITLE ) == 0 )
+		if ( m_cdTextTags[ i ] == wxCueTag::Name::TITLE )
 		{
 			wxCueTag albumTag( m_cdTextTags[ i ].GetSource(), wxCueTag::Name::ALBUM, m_cdTextTags[ i ].GetValue() );
 			AddTagToAllTracks( albumTag );
@@ -210,7 +240,7 @@ void wxCueSheet::PrepareToAppend()
 
 	for ( size_t i = 0, nCount = m_tags.Count(); i < nCount; i++ )
 	{
-		if ( m_tags[ i ].GetName().CmpNoCase( wxCueTag::Name::ARTIST ) == 0 )
+		if ( m_tags[ i ] == wxCueTag::Name::ARTIST )
 		{
 			wxCueTag albumArtistTag( m_tags[ i ].GetSource(), wxCueTag::Name::ALBUM_ARTIST, m_tags[ i ].GetValue() );
 			AddTagToAllTracks( albumArtistTag );
@@ -510,42 +540,28 @@ bool wxCueSheet::CalculateDuration( const wxString& sAlternateExt )
 
 static void only_suitable_tags( wxArrayCueTag& tags )
 {
-	wxArrayCueTag newTags;
+	wxArrayCueTag			   newTags;
 	wxCueComponent::ENTRY_TYPE eEntryType;
 
-	for( size_t i=0, nCount = tags.Count(); i<nCount; i++ )
+	for ( size_t i = 0, nCount = tags.Count(); i < nCount; i++ )
 	{
-		if ( wxCueComponent::GetCdTextInfoType( tags[i].GetName(), eEntryType ) &&
-			eEntryType != wxCueComponent::TRACK )
+		if ( wxCueComponent::GetCdTextInfoType( tags[ i ].GetName(), eEntryType ) &&
+			 eEntryType != wxCueComponent::TRACK )
 		{
-			newTags.Add( tags[i] );
+			newTags.Add( tags[ i ] );
 		}
 	}
-	tags = newTags;
-}
 
-static bool normalize_album( wxString& sAlbum, const wxString& sRegEx )
-{
-	wxRegEx regEx( sRegEx, wxRE_ADVANCED|wxRE_ICASE );
-	wxASSERT( regEx.IsValid() );
-	if ( regEx.Matches( sAlbum ) )
-	{
-		wxASSERT( regEx.GetMatchCount() > 0 );
-		sAlbum = regEx.GetMatch( sAlbum, 1 );
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	tags = newTags;
 }
 
 void wxCueSheet::FindCommonTags( bool bMerge )
 {
 	size_t nTracks = m_tracks.Count();
+
 	if ( nTracks <= 1 )
 	{
-		wxLogDebug( wxT("wxCueSheet::FindCommonTags - too few tracks") );
+		wxLogDebug( wxT( "wxCueSheet::FindCommonTags - too few tracks" ) );
 		return;
 	}
 
@@ -553,85 +569,87 @@ void wxCueSheet::FindCommonTags( bool bMerge )
 	wxArrayCueTag group;
 
 	// CD-TEXT
-	group = m_tracks[0].GetCdTextTags();
-	for( size_t i=1; i<nTracks; i++ )
+	group = m_tracks[ 0 ].GetCdTextTags();
+	for ( size_t i = 1; i < nTracks; i++ )
 	{
-		wxCueTag::CommonTags( commonTags, group, m_tracks[i].GetCdTextTags() );
+		wxCueTag::CommonTags( commonTags, group, m_tracks[ i ].GetCdTextTags() );
 		group = commonTags;
 	}
+
 	only_suitable_tags( commonTags );
 
 	AddCdTextInfoTags( commonTags );
-	for( size_t i=0; i<nTracks; i++ )
+	for ( size_t i = 0; i < nTracks; i++ )
 	{
-		m_tracks[i].RemoveCdTextInfoTags( commonTags );
+		m_tracks[ i ].RemoveCdTextInfoTags( commonTags );
 	}
 
 	// TAGS
 	commonTags.Clear();
-	group = m_tracks[0].GetTags();
+	group = m_tracks[ 0 ].GetTags();
 
-	for( size_t i=1; i<nTracks; i++ )
+	for ( size_t i = 1; i < nTracks; i++ )
 	{
-		wxCueTag::CommonTags( commonTags, group, m_tracks[i].GetTags() );
+		wxCueTag::CommonTags( commonTags, group, m_tracks[ i ].GetTags() );
 		group = commonTags;
 	}
 
 	AddTags( commonTags );
-	for( size_t i=0; i<nTracks; i++ )
+	for ( size_t i = 0; i < nTracks; i++ )
 	{
-		m_tracks[i].RemoveTags( commonTags );
+		m_tracks[ i ].RemoveTags( commonTags );
 	}
 
 	// Trying to find common part of album tag
 	if ( bMerge )
 	{
-		wxCueTag albumTag;
-		wxCueTag commonAlbumTag;
-		wxCueTag cmnAlbumTag;
-		bool bFirst = true;
-		bool bCommon = true;
-		for( size_t i=0; i<nTracks && bCommon; i++ )
+		wxArrayCueTag albumTags;
+		size_t		  nElements = 1;
+		for ( size_t i = 0; i < nTracks && nElements > 0; i++ )
 		{
-			if ( m_tracks[i].FindCommonPart( wxCueTag::Name::ALBUM, albumTag ) )
-			{
-				if ( bFirst )
-				{
-					commonAlbumTag = albumTag;
-					bFirst = false;
-				}
-				else
-				{
-					if ( wxCueTag::FindCommonPart( cmnAlbumTag, albumTag, commonAlbumTag ) )
-					{
-						commonAlbumTag = cmnAlbumTag;
-					}
-					else
-					{
-						bCommon = false;
-					}
-				}
-			}
-			else
-			{
-				bCommon = false;
-			}
+			nElements = m_tracks[ i ].GetTags( wxCueTag::Name::ALBUM, albumTags );
 		}
 
-		if ( bCommon )
+		if ( nElements > 0 )
 		{
-			wxString sAlbum = commonAlbumTag.GetValue();
-			if ( normalize_album( sAlbum, wxT("\\A(.+[^[:space:][:punct:]\\(\\[])[[:space:][:punct:]]*[\\(\\[]{0,1}[[:space:]]*disc[[:space:][:punct:]]*\\Z") ) ||
-				 normalize_album( sAlbum, wxT("\\A(.+[^[:space:][:punct:]\\(\\[])[[:space:][:punct:]]*[\\(\\[]{0,1}[[:space:]]*CD[[:space:][:punct:]]*\\Z") ) )
+			wxASSERT( albumTags.Count() >= 1 );
+
+			bool	 bFirst	   = true;
+			bool	 bIsCommon = true;
+			wxString sCommonAlbum;
+			wxRegEx	 reDisc( wxString::Format( ALBUM_REG_EX, GetCdAliasesRegExp() ), wxRE_ADVANCED | wxRE_ICASE );
+			wxASSERT( reDisc.IsValid() );
+			for ( size_t j = 0, nCount = albumTags.Count(); j < nCount && bIsCommon; j++ )
 			{
-				commonAlbumTag.SetValue( sAlbum );
+				wxString sAlbum( albumTags[ j ].GetValue() );
+				if ( reDisc.Matches( sAlbum ) )
+				{
+					wxASSERT( reDisc.GetMatchCount() > 0 );
+					sAlbum = reDisc.GetMatch( sAlbum, 1 );
+				}
+
+				if ( bFirst )
+				{
+					sCommonAlbum = sAlbum;
+					bFirst		 = false;
+				}
+				else    if ( sCommonAlbum.Cmp( sAlbum ) != 0 )
+				{
+					bIsCommon = false;
+				}
 			}
 
-			AddTag( commonAlbumTag );
-			for( size_t i=0; i<nTracks; i++ )
+			if ( bIsCommon )
 			{
-				m_tracks[i].RemoveTag( wxCueTag::Name::ALBUM );
+				wxLogInfo( wxT( "Album name: \u201C%s\u201D" ), sCommonAlbum );
+				wxCueTag commonAlbumTag( wxCueTag::TAG_AUTO_GENERATED, wxCueTag::Name::TITLE, sCommonAlbum );
+				AddCdTextInfoTag( commonAlbumTag );
+				for ( size_t i = 0; i < nTracks; i++ )
+				{
+					m_tracks[ i ].RemoveTag( wxCueTag::Name::ALBUM );
+				}
 			}
 		}
 	}
 }
+

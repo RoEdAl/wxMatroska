@@ -477,7 +477,7 @@ wxXmlNode* wxXmlCueSheetRenderer::create_simple_tag( const wxCueTag& tag, const 
 	add_comment_node( pSimple, wxString::Format( wxT( "Source: %s" ), tag.GetSourceAsString() ) );
 
 	wxString sValue;
-	bool bMultiline;
+	bool	 bMultiline;
 	tag.GetValueEx( false, sValue, bMultiline );
 
 	wxXmlNode* pValue	  = new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, Xml::STRING );

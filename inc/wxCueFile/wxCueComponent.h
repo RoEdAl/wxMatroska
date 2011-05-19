@@ -76,6 +76,7 @@ public:
 	virtual bool HasGarbage() const;
 	const wxArrayCueTag& GetCdTextTags() const;
 	const wxArrayCueTag& GetTags() const;
+	size_t GetTags( const wxString&, wxArrayCueTag& ) const;
 	void GetTags( const wxTagSynonimsCollection&,
 				  const wxTagSynonimsCollection&,
 				  wxArrayCueTag&,
@@ -95,8 +96,6 @@ public:
 	void RemoveTag( const wxCueTag& );
 	void RemoveTag( const wxString& );
 	void RemoveTags( const wxArrayCueTag& );
-
-	bool FindCommonPart( const wxString&, wxCueTag& ) const;
 
 	bool CheckEntryType( ENTRY_TYPE ) const;
 

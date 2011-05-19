@@ -199,6 +199,18 @@ wxCueTag& wxCueTag::operator =( const wxCueTag& cueTag )
 	return *this;
 }
 
+bool wxCueTag::operator ==( const wxCueTag& tag ) const
+{
+	return
+		m_sName.CmpNoCase( tag.m_sName ) == 0 &&
+		m_sValue.Cmp( tag.m_sValue ) == 0;
+}
+
+bool wxCueTag::operator ==( const wxString& sTagName ) const
+{
+	return m_sName.CmpNoCase( sTagName ) == 0;
+}
+
 bool wxCueTag::IsMultiline() const
 {
 	wxTextInputStreamOnString tis( m_sValue );
@@ -248,12 +260,27 @@ wxString wxCueTag::Quote( const wxString& sValue )
 	return wxString::Format( wxT( "\"%s\"" ), sValue );
 }
 
+size_t wxCueTag::GetTags( const wxArrayCueTag& sourceTags, const wxString& sTagName, wxArrayCueTag& tags )
+{
+	size_t nCounter = 0;
+
+	for ( size_t i = 0, nCount = sourceTags.Count(); i < nCount; i++ )
+	{
+		if ( sourceTags[ i ] == sTagName )
+		{
+			tags.Add( sourceTags[ i ] );
+			nCounter += 1;
+		}
+	}
+
+	return nCounter;
+}
+
 bool wxCueTag::FindTag( const wxArrayCueTag& tags, const wxCueTag& cueTag )
 {
 	for ( size_t numTags = tags.Count(), i = 0; i < numTags; i++ )
 	{
-		if ( cueTag.GetName().CmpNoCase( tags[ i ].GetName() ) == 0 &&
-			 cueTag.GetValue().Cmp( tags[ i ].GetValue() ) == 0 )
+		if ( tags[ i ] == cueTag )
 		{
 			return true;
 		}
@@ -279,8 +306,7 @@ void wxCueTag::RemoveTag( wxArrayCueTag& tags, const wxCueTag& cueTag )
 
 	for ( size_t i = 0, nCount = tags.Count(); i < nCount; i++ )
 	{
-		if ( cueTag.GetName().CmpNoCase( tags[ i ].GetName() ) == 0 &&
-			 cueTag.GetValue().Cmp( tags[ i ].GetValue() ) == 0 )
+		if ( tags[ i ] == cueTag )
 		{
 			continue;
 		}
@@ -297,7 +323,7 @@ void wxCueTag::RemoveTag( wxArrayCueTag& tags, const wxString& sTagName )
 
 	for ( size_t i = 0, nCount = tags.Count(); i < nCount; i++ )
 	{
-		if ( sTagName.CmpNoCase( tags[ i ].GetName() ) == 0  )
+		if ( tags[ i ] == sTagName )
 		{
 			continue;
 		}
@@ -338,7 +364,7 @@ void wxCueTag::CommonTags( wxArrayCueTag& commonTags, const wxArrayCueTag& group
 
 bool wxCueTag::FindCommonPart( wxCueTag& commonTag, const wxCueTag& tag1, const wxCueTag& tag2 )
 {
-	wxASSERT( tag1.GetName().CmpNoCase( tag2.GetName() ) == 0 );
+	wxASSERT( tag1 == tag2.GetName() );
 
 	wxString sValue1, sValue2;
 	bool	 bMultiline1, bMultiline2;
