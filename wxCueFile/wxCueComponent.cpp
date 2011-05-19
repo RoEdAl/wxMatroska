@@ -17,19 +17,19 @@ wxIMPLEMENT_ABSTRACT_CLASS( wxCueComponent, wxObject )
 
 wxCueComponent::CDTEXT_ENTRY wxCueComponent::CdTextFields[] =
 {
-	{ wxT( "ARRANGER" ), wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( 'a' ) },
-	{ wxT( "COMPOSER" ), wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( 'c' ) },
-	{ wxT( "DISC_ID" ), wxCueComponent::ANY, wxCueComponent::BINARY, wxT( '\000' ) },
-	{ wxT( "GENRE" ), wxCueComponent::ANY, wxCueComponent::BINARY, wxT( '\000' ) },
-	{ wxT( "ISRC" ), wxCueComponent::TRACK, wxCueComponent::BINARY, wxT( '\000' ) },
-	{ wxT( "MESSAGE" ), wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( '\000' ) },
-	{ wxT( "PERFORMER" ), wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( 'p' ) },
-	{ wxT( "SONGWRITER" ), wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( 's' ) },
-	{ wxT( "TITLE" ), wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( 't' ) },
-	{ wxT( "UPC_EAN" ), wxCueComponent::DISC, wxCueComponent::CHARACTER, wxT( '\000' ) },
-	{ wxT( "SIZE_INFO" ), wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( '\000' ) },
-	{ wxT( "TOC_INFO" ), wxCueComponent::ANY, wxCueComponent::BINARY, wxT( '\000' ) },
-	{ wxT( "TOC_INFO2" ), wxCueComponent::ANY, wxCueComponent::BINARY, wxT( '\000' ) }
+	{ wxCueTag::Name::ARRANGER, wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( 'a' ) },
+	{ wxCueTag::Name::COMPOSER, wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( 'c' ) },
+	{ wxCueTag::Name::DISC_ID, wxCueComponent::ANY, wxCueComponent::BINARY, wxT( '\000' ) },
+	{ wxCueTag::Name::GENRE, wxCueComponent::ANY, wxCueComponent::BINARY, wxT( '\000' ) },
+	{ wxCueTag::Name::ISRC, wxCueComponent::TRACK, wxCueComponent::BINARY, wxT( '\000' ) },
+	{ wxCueTag::Name::MESSAGE, wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( '\000' ) },
+	{ wxCueTag::Name::PERFORMER, wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( 'p' ) },
+	{ wxCueTag::Name::SONGWRITER, wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( 's' ) },
+	{ wxCueTag::Name::TITLE, wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( 't' ) },
+	{ wxCueTag::Name::UPC_EAN, wxCueComponent::DISC, wxCueComponent::CHARACTER, wxT( '\000' ) },
+	{ wxCueTag::Name::SIZE_INFO, wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( '\000' ) },
+	{ wxCueTag::Name::TOC_INFO, wxCueComponent::ANY, wxCueComponent::BINARY, wxT( '\000' ) },
+	{ wxCueTag::Name::TOC_INFO2, wxCueComponent::ANY, wxCueComponent::BINARY, wxT( '\000' ) }
 };
 
 size_t wxCueComponent::CdTextFieldsSize = WXSIZEOF( wxCueComponent::CdTextFields );
@@ -153,8 +153,8 @@ wxCueComponent& wxCueComponent::Append( const wxCueComponent& component )
 
 	WX_APPEND_ARRAY( m_comments, component.m_comments );
 	WX_APPEND_ARRAY( m_garbage, component.m_garbage );
-	WX_APPEND_ARRAY( m_cdTextTags, component.m_cdTextTags );
-	WX_APPEND_ARRAY( m_tags, component.m_tags );
+	AddCdTextInfoTags( component.m_cdTextTags );
+	AddTags( component.m_tags );
 	return *this;
 }
 
@@ -215,36 +215,9 @@ const wxArrayCueTag& wxCueComponent::GetTags() const
 	return m_tags;
 }
 
-static bool find_tag( const wxArrayCueTag& tags, const wxCueTag& cueTag )
+void wxCueComponent::AddTags( const wxArrayCueTag& newTags )
 {
-	for ( size_t numTags = tags.Count(), i = 0; i < numTags; i++ )
-	{
-		if (
-			( cueTag.GetName().CmpNoCase( tags[ i ].GetName() ) == 0 ) &&
-			( cueTag.GetValue().Cmp( tags[ i ].GetValue() ) == 0 )
-			)
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-static void add_tag( wxArrayCueTag& tags, const wxCueTag& cueTag )
-{
-	if ( !find_tag( tags, cueTag ) )
-	{
-		tags.Add( cueTag );
-	}
-}
-
-static void add_tags( wxArrayCueTag& tags, const wxArrayCueTag& newTags )
-{
-	for ( size_t newTagsCount = newTags.Count(), i = 0; i < newTagsCount; i++ )
-	{
-		add_tag( tags, newTags[ i ] );
-	}
+	wxCueTag::AddTags( m_tags, newTags );
 }
 
 void wxCueComponent::GetTags(
@@ -292,12 +265,12 @@ void wxCueComponent::GetTags(
 
 	for ( wxHashCueTag::const_iterator i = tagsHash.begin(); i != tagsHash.end(); i++ )
 	{
-		add_tags( tags, i->second );
+		wxCueTag::AddTags( tags, i->second );
 	}
 
 	for ( wxHashCueTag::const_iterator i = restHash.begin(); i != restHash.end(); i++ )
 	{
-		add_tags( rest, i->second );
+		wxCueTag::AddTags( rest, i->second );
 	}
 }
 
@@ -345,37 +318,46 @@ void wxCueComponent::remove_duplicates( const wxRegEx& reEmptyValue, wxArrayCueT
 
 bool wxCueComponent::CheckEntryType( wxCueComponent::ENTRY_TYPE ctype ) const
 {
-	return ( ctype == ANY ) ||
-		   ( m_bTrack ? ( ctype == TRACK ) : ( ctype == DISC ) );
+	return ( ctype == ANY ) || ( m_bTrack ? ( ctype == TRACK ) : ( ctype == DISC ) );
 }
 
-bool wxCueComponent::AddCdTextInfo( const wxString& sKeyword, const wxString& sBody )
+bool wxCueComponent::AddCdTextInfoTag( const wxString& sKeyword, const wxString& sBody )
 {
 	for ( size_t i = 0; i < CdTextFieldsSize; i++ )
 	{
-		if ( ( sKeyword.CmpNoCase( CdTextFields[ i ].keyword ) == 0 ) &&
-			 CheckEntryType( CdTextFields[ i ].type )
-			  )
+		if ( ( sKeyword.CmpNoCase( CdTextFields[ i ].keyword ) == 0 ) && CheckEntryType( CdTextFields[ i ].type ) )
 		{
 			wxCueTag newTag( wxCueTag::TAG_CD_TEXT, sKeyword, sBody );
-			add_tag( m_cdTextTags, newTag );
-			return true;
+			return wxCueTag::AddTag( m_cdTextTags, newTag );
 		}
 	}
 
 	return false;
 }
 
+bool wxCueComponent::AddCdTextInfoTag( const wxCueTag& tag )
+{
+	return AddCdTextInfoTag( tag.GetName(), tag.GetValue() );
+}
+
+void wxCueComponent::AddCdTextInfoTags( const wxArrayCueTag& cueTags )
+{
+	for ( size_t i = 0, nCount = cueTags.Count(); i < nCount; i++ )
+	{
+		AddCdTextInfoTag( cueTags[ i ] );
+	}
+}
+
 void wxCueComponent::AddTag( wxCueTag::TAG_SOURCE eSource, const wxString& sKeyword, const wxString& sBody )
 {
 	wxCueTag newTag( eSource, sKeyword, sBody );
 
-	add_tag( m_tags, newTag );
+	wxCueTag::AddTag( m_tags, newTag );
 }
 
 void wxCueComponent::AddTag( const wxCueTag& tag )
 {
-	add_tag( m_tags, tag );
+	wxCueTag::AddTag( m_tags, tag );
 }
 
 void wxCueComponent::Clear()

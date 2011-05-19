@@ -13,8 +13,6 @@ public:
 	typedef wxCharTypeBuffer<wxByte> wxByteBuffer;
 	typedef wxSharedPtr<wxMBConv> wxMBConvSharedPtr;
 
-	static wxMBConv* const wxNullMBConv;
-
 	static struct BOM
 	{
 		static const wxByte UTF32_BE[ 4 ];

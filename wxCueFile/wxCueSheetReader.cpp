@@ -311,7 +311,7 @@ bool wxCueSheetReader::ReadCueSheetFromCueSheetTag( const wxFlacMetaDataReader& 
 
 		if ( !sIsrc.IsEmpty() )
 		{
-			track.AddCdTextInfo( wxCueTag::Name::ISRC, sIsrc );
+			track.AddCdTextInfoTag( wxCueTag::Name::ISRC, sIsrc );
 		}
 
 		if ( flacTrack.get_pre_emphasis() )
@@ -597,7 +597,6 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMo
 				{
 					sCueSheet = as1[ i ];
 					bCueSheet = true;
-					ProcessMediaInfoCueSheet( sCueSheet );
 				}
 			}
 
@@ -610,7 +609,6 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMo
 				{
 					sCueSheet = as1[ i ];
 					bCueSheet = true;
-					ProcessMediaInfoCueSheet( sCueSheet );
 				}
 			}
 
@@ -685,6 +683,7 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMo
 			return ReadEmbeddedInWavpackCueSheet( sMediaFile, nMode );
 
 			default:
+			ProcessMediaInfoCueSheet( sCueSheet );
 			return ParseCue( wxCueSheetContent( sCueSheet, sMediaFile, true ) );
 		}
 	}
@@ -963,11 +962,11 @@ bool wxCueSheetReader::AddCdTextInfo( const wxString& sToken, const wxString& sB
 
 	if ( IsTrack() )
 	{
-		return GetLastTrack().AddCdTextInfo( sToken, sModifiedBody );
+		return GetLastTrack().AddCdTextInfoTag( sToken, sModifiedBody );
 	}
 	else
 	{
-		return m_cueSheet.AddCdTextInfo( sToken, sModifiedBody );
+		return m_cueSheet.AddCdTextInfoTag( sToken, sModifiedBody );
 	}
 }
 

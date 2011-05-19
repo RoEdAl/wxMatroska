@@ -42,6 +42,9 @@ protected:
 protected:
 
 	void copy( const wxCueSheet& );
+	void AddCdTextInfoTagToAllTracks( const wxCueTag& );
+	void AddTagToAllTracks( const wxCueTag& );
+	void PrepareToAppend();
 	wxCueSheet& Append( const wxCueSheet&, const wxDuration& );
 
 public:

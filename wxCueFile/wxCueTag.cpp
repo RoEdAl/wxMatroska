@@ -22,11 +22,46 @@ const wxChar* const wxCueTag::Name::ARTIST		 = wxT( "ARTIST" );
 const wxChar* const wxCueTag::Name::ALBUM_ARTIST = wxT( "ALBUM ARTIST" );
 const wxChar* const wxCueTag::Name::CATALOG		 = wxT( "CATALOG" );
 const wxChar* const wxCueTag::Name::CDTEXTFILE	 = wxT( "CDTEXTFILE" );
+const wxChar* const wxCueTag::Name::DISC_ID		 = wxT( "DISC_ID" );
+const wxChar* const wxCueTag::Name::GENRE		 = wxT( "GENRE" );
+const wxChar* const wxCueTag::Name::MESSAGE		 = wxT( "MESSAGE" );
+const wxChar* const wxCueTag::Name::SONGWRITER	 = wxT( "SONGWRITER" );
+const wxChar* const wxCueTag::Name::UPC_EAN		 = wxT( "UPC_EAN" );
+const wxChar* const wxCueTag::Name::SIZE_INFO	 = wxT( "SIZE_INFO" );
+const wxChar* const wxCueTag::Name::TOC_INFO	 = wxT( "TOC_INFO" );
+const wxChar* const wxCueTag::Name::TOC_INFO2	 = wxT( "TOC_INFO2" );
+
+// ===============================================================================
+
+wxCueTag::SOURCE2TEXT wxCueTag::SOURCE2TEXT_MAPPING[] =
+{
+	{ TAG_UNKNOWN, _( "Unknown" ) },
+	{ TAG_CD_TEXT, _( "CD-TEXT" ) },
+	{ TAG_CUE_COMMENT, _( "CUE Comment" ) },
+	{ TAG_MEDIA_METADATA, _( "Media metadata" ) },
+	{ TAG_AUTO_GENERATED, _( "Automatically generated" ) }
+};
+
+size_t wxCueTag::SOURCE2TEXT_MAPPING_SIZE = WXSIZEOF( wxCueTag::SOURCE2TEXT_MAPPING );
 
 // ===============================================================================
 
 wxIMPLEMENT_DYNAMIC_CLASS( wxCueTag, wxObject )
+
 // ===============================================================================
+
+wxString wxCueTag::SourceToString( wxCueTag::TAG_SOURCE eSource )
+{
+	for ( size_t i = 0; i < SOURCE2TEXT_MAPPING_SIZE; i++ )
+	{
+		if ( eSource == SOURCE2TEXT_MAPPING[ i ].eSource )
+		{
+			return SOURCE2TEXT_MAPPING[ i ].pText;
+		}
+	}
+
+	return wxString::Format( wxT( "TAG_SOURCE <%d>" ), eSource );
+}
 
 wxCueTag::wxCueTag():
 	m_eSource( TAG_UNKNOWN )
@@ -44,30 +79,6 @@ wxCueTag::wxCueTag( const wxCueTag& cueTag )
 wxCueTag::TAG_SOURCE wxCueTag::GetSource() const
 {
 	return m_eSource;
-}
-
-wxCueTag::SOURCE2TEXT wxCueTag::SOURCE2TEXT_MAPPING[] =
-{
-	{ TAG_UNKNOWN, _( "Unknown" ) },
-	{ TAG_CD_TEXT, _( "CD-TEXT" ) },
-	{ TAG_CUE_COMMENT, _( "CUE Comment" ) },
-	{ TAG_MEDIA_METADATA, _( "Media metadata" ) },
-	{ TAG_AUTO_GENERATED, _( "Automatically generated" ) }
-};
-
-size_t wxCueTag::SOURCE2TEXT_MAPPING_SIZE = WXSIZEOF( wxCueTag::SOURCE2TEXT_MAPPING );
-
-wxString wxCueTag::SourceToString( wxCueTag::TAG_SOURCE eSource )
-{
-	for ( size_t i = 0; i < SOURCE2TEXT_MAPPING_SIZE; i++ )
-	{
-		if ( eSource == SOURCE2TEXT_MAPPING[ i ].eSource )
-		{
-			return SOURCE2TEXT_MAPPING[ i ].pText;
-		}
-	}
-
-	return wxEmptyString;
 }
 
 wxString wxCueTag::GetSourceAsString() const
@@ -94,6 +105,48 @@ wxString wxCueTag::GetQuotedValue( bool bEscape ) const
 	else
 	{
 		return Quote( m_sValue );
+	}
+}
+
+void wxCueTag::GetValueEx( bool bFlatten, wxString& sValue, bool& bMultiline ) const
+{
+	size_t					   nLines = 0;
+	wxTextInputStreamOnString  tis( m_sValue );
+	wxTextOutputStreamOnString tos;
+
+	while ( !tis.Eof() )
+	{
+		if ( bFlatten )
+		{
+			*tos << ( *tis ).ReadLine() << wxT( '/' );
+		}
+		else
+		{
+			*tos << ( *tis ).ReadLine() << endl;
+		}
+
+		nLines += 1;
+	}
+
+	if ( nLines <= 1 )
+	{
+		sValue	   = m_sValue;
+		bMultiline = false;
+	}
+	else
+	{
+		( *tos ).Flush();
+		const wxString& sOut = tos.GetString();
+		if ( bFlatten )
+		{
+			sValue = wxString( sOut, sOut.Length() - 1 );
+		}
+		else
+		{
+			sValue = sOut;
+		}
+
+		bMultiline = true;
 	}
 }
 
@@ -193,6 +246,39 @@ wxString wxCueTag::UnEscape( const wxString& sValue )
 wxString wxCueTag::Quote( const wxString& sValue )
 {
 	return wxString::Format( wxT( "\"%s\"" ), sValue );
+}
+
+bool wxCueTag::FindTag( const wxArrayCueTag& tags, const wxCueTag& cueTag )
+{
+	for ( size_t numTags = tags.Count(), i = 0; i < numTags; i++ )
+	{
+		if ( cueTag.GetName().CmpNoCase( tags[ i ].GetName() ) == 0 &&
+			 cueTag.GetValue().Cmp( tags[ i ].GetValue() ) == 0 )
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool wxCueTag::AddTag( wxArrayCueTag& tags, const wxCueTag& cueTag )
+{
+	if ( !FindTag( tags, cueTag ) )
+	{
+		tags.Add( cueTag );
+		return true;
+	}
+
+	return false;
+}
+
+void wxCueTag::AddTags( wxArrayCueTag& tags, const wxArrayCueTag& newTags )
+{
+	for ( size_t newTagsCount = newTags.Count(), i = 0; i < newTagsCount; i++ )
+	{
+		AddTag( tags, newTags[ i ] );
+	}
 }
 
 #include <wx/arrimpl.cpp>

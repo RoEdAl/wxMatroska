@@ -60,7 +60,6 @@ protected:
 	bool m_bTrack;
 	wxArrayString m_comments;
 	wxArrayString m_garbage;
-
 	wxArrayCueTag m_cdTextTags;
 	wxArrayCueTag m_tags;
 
@@ -82,16 +81,21 @@ public:
 				  wxArrayCueTag&,
 				  wxArrayCueTag& ) const;
 
-	void ParseComment( const wxString&, bool = true );
-	void ParseGarbage( const wxString& );
-	bool AddCdTextInfo( const wxString&, const wxString& );
+	bool AddCdTextInfoTag( const wxString&, const wxString& );
+	bool AddCdTextInfoTag( const wxCueTag& );
+	void AddCdTextInfoTags( const wxArrayCueTag& );
+
 	void AddTag( wxCueTag::TAG_SOURCE, const wxString&, const wxString& );
 	void AddTag( const wxCueTag& );
+	void AddTags( const wxArrayCueTag& );
 
 	bool CheckEntryType( ENTRY_TYPE ) const;
 
 	void Clear( void );
 	bool IsTrack() const;
+
+	void ParseComment( const wxString&, bool = true );
+	void ParseGarbage( const wxString& );
 
 	virtual void GetReplacements( wxHashString& ) const;
 

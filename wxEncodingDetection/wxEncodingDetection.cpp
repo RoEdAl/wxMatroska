@@ -8,8 +8,6 @@
 
 // ===========================================================
 
-wxMBConv* const wxEncodingDetection::wxNullMBConv = (wxMBConv* const)NULL;
-
 const wxByte wxEncodingDetection::BOM::UTF32_BE[ 4 ] = { 0x00, 0x00, 0xFE, 0xEF };
 const wxByte wxEncodingDetection::BOM::UTF32_LE[ 4 ] = { 0xFF, 0xFE, 0x00, 0x00 };
 const wxByte wxEncodingDetection::BOM::UTF16_BE[ 2 ] = { 0xFE, 0xFF };
@@ -281,7 +279,7 @@ protected:
 		m_pConv( pConv ),
 		m_bBOMConsumed( false )
 	{
-		wxASSERT( pConv.get() != wxEncodingDetection::wxNullMBConv );
+		wxASSERT( pConv );
 		wxASSERT( nLen >= 2 );
 	}
 
@@ -535,7 +533,7 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 	}
 
 	pRes = GetFileEncodingFromBOM( fn, bUseMLang, sDescription );
-	if ( pRes.get() != wxNullMBConv )
+	if ( pRes )
 	{
 		return pRes;
 	}

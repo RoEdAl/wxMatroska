@@ -177,8 +177,66 @@ void wxCueSheet::copy( const wxCueSheet& cs )
 	m_tracks	 = cs.m_tracks;
 }
 
-wxCueSheet& wxCueSheet::Append( const wxCueSheet& cs, const wxDuration& offset )
+void wxCueSheet::AddCdTextInfoTagToAllTracks( const wxCueTag& tag )
 {
+	for ( size_t i = 0, nCount = m_tracks.Count(); i < nCount; i++ )
+	{
+		m_tracks[ i ].AddCdTextInfoTag( tag );
+	}
+}
+
+void wxCueSheet::AddTagToAllTracks( const wxCueTag& tag )
+{
+	for ( size_t i = 0, nCount = m_tracks.Count(); i < nCount; i++ )
+	{
+		m_tracks[ i ].AddTag( tag );
+	}
+}
+
+void wxCueSheet::PrepareToAppend()
+{
+	for ( size_t i = 0, nCount = m_cdTextTags.Count(); i < nCount; i++ )
+	{
+		if ( m_cdTextTags[ i ].GetName().CmpNoCase( wxCueTag::Name::TITLE ) == 0 )
+		{
+			wxCueTag albumTag( m_cdTextTags[ i ].GetSource(), wxCueTag::Name::ALBUM, m_cdTextTags[ i ].GetValue() );
+			AddTagToAllTracks( albumTag );
+		}
+		else
+		{
+			AddCdTextInfoTagToAllTracks( m_cdTextTags[ i ] );
+		}
+	}
+
+	for ( size_t i = 0, nCount = m_tags.Count(); i < nCount; i++ )
+	{
+		if ( m_tags[ i ].GetName().CmpNoCase( wxCueTag::Name::ARTIST ) == 0 )
+		{
+			wxCueTag albumArtistTag( m_tags[ i ].GetSource(), wxCueTag::Name::ALBUM_ARTIST, m_tags[ i ].GetValue() );
+			AddTagToAllTracks( albumArtistTag );
+		}
+		else
+		{
+			AddTagToAllTracks( m_tags[ i ] );
+		}
+	}
+
+	for ( size_t i = 0, nCount = m_catalog.Count(); i < nCount; i++ )
+	{
+		AddTagToAllTracks( m_catalog[ i ] );
+	}
+
+	m_catalog.Clear();
+	m_cdTextTags.Clear();
+	m_tags.Clear();
+}
+
+wxCueSheet& wxCueSheet::Append( const wxCueSheet& _cs, const wxDuration& offset )
+{
+	wxCueSheet cs( _cs );
+
+	cs.PrepareToAppend();
+
 	wxCueComponent::Append( cs );
 
 	WX_APPEND_ARRAY( m_content, cs.m_content );

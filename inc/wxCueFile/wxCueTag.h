@@ -13,6 +13,9 @@ class wxTrailingSpacesRemover;
 class wxEllipsizer;
 #endif
 
+class wxCueTag;
+WX_DECLARE_OBJARRAY( wxCueTag, wxArrayCueTag );
+
 class wxCueTag:
 	public wxObject
 {
@@ -29,10 +32,8 @@ public:
 		TAG_AUTO_GENERATED
 	} TAG_SOURCE;
 
-	static class Name
+	static struct Name
 	{
-public:
-
 		static const wxChar* const CUESHEET;
 		static const wxChar* const TOTALTRACKS;
 		static const wxChar* const ARRANGER;
@@ -45,6 +46,14 @@ public:
 		static const wxChar* const ALBUM_ARTIST;
 		static const wxChar* const CATALOG;
 		static const wxChar* const CDTEXTFILE;
+		static const wxChar* const DISC_ID;
+		static const wxChar* const GENRE;
+		static const wxChar* const MESSAGE;
+		static const wxChar* const SONGWRITER;
+		static const wxChar* const UPC_EAN;
+		static const wxChar* const SIZE_INFO;
+		static const wxChar* const TOC_INFO;
+		static const wxChar* const TOC_INFO2;
 	};
 
 public:
@@ -55,17 +64,14 @@ public:
 
 	TAG_SOURCE GetSource() const;
 	wxString GetSourceAsString() const;
+
 	const wxString& GetName() const;
+
 	const wxString& GetValue() const;
-
-	static wxString Quote( const wxString& );
-	static wxString Escape( const wxString& );
-	static wxString UnEscape( const wxString& );
-
 	wxString GetQuotedValue( bool = true ) const;
-
 	bool IsMultiline() const;
 	wxString GetFlattenValue() const;
+	void GetValueEx( bool, wxString&, bool& ) const;
 
 	wxCueTag& SetSource( TAG_SOURCE );
 	wxCueTag& SetName( const wxString& );
@@ -98,12 +104,17 @@ public:
 
 	static wxString SourceToString( TAG_SOURCE );
 
+	static bool FindTag( const wxArrayCueTag&, const wxCueTag& );
+	static bool AddTag( wxArrayCueTag&, const wxCueTag& );
+	static void AddTags( wxArrayCueTag&, const wxArrayCueTag& );
+	static wxString Quote( const wxString& );
+	static wxString Escape( const wxString& );
+	static wxString UnEscape( const wxString& );
+
 protected:
 
 	void copy( const wxCueTag& );
 };
-
-WX_DECLARE_OBJARRAY( wxCueTag, wxArrayCueTag );
 
 #endif
 
