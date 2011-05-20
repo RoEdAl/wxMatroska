@@ -300,7 +300,7 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile,
 
 				if ( m_cfg.RunMkvmerge() )
 				{
-					if ( !RunMkvmerge( optsRenderer.GetMkvmergeOptsFile().GetFullPath() ) )
+					if ( !RunMkvmerge( optsRenderer.GetMkvmergeOptsFile() ) )
 					{
 						return 1;
 					}
@@ -532,7 +532,7 @@ wxCueSheet& wxMyApp::GetMergedCueSheet()
 	return *m_pMergedCueSheet;
 }
 
-bool wxMyApp::RunMkvmerge( const wxString& sOptionsFile )
+bool wxMyApp::RunMkvmerge( const wxFileName& optionsFile )
 {
 	wxASSERT( m_cfg.GenerateMkvmergeOpts() );
 	wxASSERT( m_cfg.RunMkvmerge() );
@@ -543,53 +543,46 @@ bool wxMyApp::RunMkvmerge( const wxString& sOptionsFile )
 		wxFileName mkvmerge( m_cfg.GetMkvmergeDir().GetFullPath(), wxT( "mkvmerge" ) );
 		if ( wxLog::GetVerbose() )
 		{
-			sCmdLine.Printf( wxT( "\"%s\" \"@%s\"" ), mkvmerge.GetFullPath(), sOptionsFile );
+			sCmdLine.Printf( wxT( "\"%s\" \"@%s\"" ), mkvmerge.GetFullPath(), optionsFile.GetFullPath() );
 		}
 		else
 		{
-			sCmdLine.Printf( wxT( "\"%s\" --quiet \"@%s\"" ), mkvmerge.GetFullPath(), sOptionsFile );
+			sCmdLine.Printf( wxT( "\"%s\" --quiet \"@%s\"" ), mkvmerge.GetFullPath(), optionsFile.GetFullPath() );
 		}
 	}
 	else
 	{
 		if ( wxLog::GetVerbose() )
 		{
-			sCmdLine.Printf( wxT( "mkvmerge \"@%s\"" ), sOptionsFile );
+			sCmdLine.Printf( wxT( "mkvmerge \"@%s\"" ), optionsFile.GetFullPath() );
 		}
 		else
 		{
-			sCmdLine.Printf( wxT( "mkvmerge --quiet \"@%s\"" ), sOptionsFile );
+			sCmdLine.Printf( wxT( "mkvmerge --quiet \"@%s\"" ), optionsFile.GetFullPath() );
 		}
 	}
 
-	wxLogMessage( _( "Running mkvmerge with options file \u201C%s\u201D" ), GetFileName( sOptionsFile ) );
+	wxLogMessage( _( "Running mkvmerge with options file \u201C%s\u201D" ), optionsFile.GetFullName() );
 	wxLogDebug( wxT( "Running commad: %s" ), sCmdLine );
 
 	long nRes = wxExecute( sCmdLine, wxEXEC_SYNC | wxEXEC_NOEVENTS );
 	if ( nRes == -1 )
 	{
-		wxLogError( _T( "Fail to execute mkvmerge tool" ) );
+		wxLogError( _( "Fail to execute mkvmerge tool" ) );
 		return false;
 	}
 	else
 	{
 		if ( nRes <= 1 )
 		{
-			wxLogInfo( _T( "mkvmerge exit code: %d" ), nRes );
+			wxLogInfo( _( "mkvmerge exit code: %d" ), nRes );
 			return true;
 		}
 		else
 		{
-			wxLogError( _T( "mkvmerge exit code: %d" ), nRes );
+			wxLogError( _( "mkvmerge exit code: %d" ), nRes );
 			return false;
 		}
 	}
-}
-
-wxString wxMyApp::GetFileName( const wxString& sFileName )
-{
-	wxFileName fn( sFileName );
-
-	return fn.GetFullName();
 }
 

@@ -56,7 +56,7 @@ protected:
 	bool HasMkvmergeOptsRenderer() const;
 	bool HasMergedCueSheet() const;
 
-	bool RunMkvmerge( const wxString& );
+	bool RunMkvmerge( const wxFileName& );
 
 protected:
 
@@ -73,8 +73,6 @@ public:
 	static const wxChar APP_VERSION[];
 	static const wxChar APP_AUTHOR[];
 	static const wxChar LICENSE_FILE_NAME[];
-
-	static wxString GetFileName( const wxString& );
 
 public:
 
