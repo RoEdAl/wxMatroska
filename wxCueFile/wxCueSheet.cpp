@@ -4,6 +4,7 @@
 
 #include "StdWx.h"
 #include <wxCueFile/wxSamplingInfo.h>
+#include <wxCueFile/wxTextOutputStreamOnString.h>
 #include <wxCueFile/wxDuration.h>
 #include <wxCueFile/wxDataFile.h>
 #include <wxCueFile/wxTrack.h>
@@ -26,25 +27,26 @@ const wxChar* const wxCueSheet::CD_ALIASES[] =
 const size_t wxCueSheet::CD_ALIASES_SIZE = WXSIZEOF( wxCueSheet::CD_ALIASES );
 
 const wxChar wxCueSheet::ALBUM_REG_EX[] =
-	wxT( "\\A(.+[^[:space:][:punct:]\\(\\[])[[:space:][:punct:]]*[\\(\\[]{0,1}[[:space:][:punct:]]*%s[[:space:][:punct:]]*([[:digit:]]{1,2})[[:space:]]*[\\)\\]]{0,1}[[:space:]]*\\Z" );
+	wxT( "\\A(.*[^[:space:]]){0,1}?[[:space:]]*[[:punct:]]{0,1}[[:space:]]*%s[[:space:]]*[[:punct:]]{0,1}[[:space:]]*([[:digit:]]{1,2})[[:space:]]*[[:punct:]]{0,1}[[:space:]]*([^[:space:]].*){0,1}\\Z" );
 
 wxString wxCueSheet::GetCdAliasesRegExp()
 {
-	wxString s;
+	wxTextOutputStreamOnString tos;
 
 	for ( size_t i = 0; i < CD_ALIASES_SIZE; i++ )
 	{
-		s += CD_ALIASES[ i ];
-		s += wxT( '|' );
+		*tos << CD_ALIASES[ i ] << wxT( '|' );
 	}
 
-	s = s.RemoveLast();
-	return wxString::Format( wxT( "(%s)" ), s );
+	const wxString& s = tos.GetString();
+	wxASSERT( !s.IsEmpty() );
+	return wxString::Format( wxT( "(%s)" ), s.Left( s.Length() - 1 ) );
 }
 
 // ===============================================================================
 
-wxIMPLEMENT_DYNAMIC_CLASS( wxCueSheet, wxCueComponent )
+wxIMPLEMENT_DYNAMIC_CLASS( wxCueSheet, wxCueComponent );
+
 // ===============================================================================
 
 wxCueSheet::wxCueSheet( void )
@@ -540,21 +542,44 @@ bool wxCueSheet::CalculateDuration( const wxString& sAlternateExt )
 	return bRes;
 }
 
-static void only_suitable_tags( wxArrayCueTag& tags )
+static size_t only_suitable_tags( wxArrayCueTag& tags )
 {
-	wxArrayCueTag			   newTags;
 	wxCueComponent::ENTRY_TYPE eEntryType;
+	size_t					   nCounter = 0;
 
 	for ( size_t i = 0, nCount = tags.Count(); i < nCount; i++ )
 	{
 		if ( wxCueComponent::GetCdTextInfoType( tags[ i ].GetName(), eEntryType ) &&
-			 eEntryType != wxCueComponent::TRACK )
+			 eEntryType == wxCueComponent::TRACK )
 		{
-			newTags.Add( tags[ i ] );
+			tags.RemoveAt( i );
+			nCounter += 1;
+			nCount	 -= 1;
+			i		 -= 1;
 		}
 	}
 
-	tags = newTags;
+	return nCounter;
+}
+
+static wxString concatenate( const wxString& s1, const wxString& s2 )
+{
+	if ( s1.IsEmpty() && s2.IsEmpty() )
+	{
+		return wxEmptyString;
+	}
+	else if ( s1.IsEmpty() && !s2.IsEmpty() )
+	{
+		return s2;
+	}
+	else if ( !s1.IsEmpty() && s2.IsEmpty() )
+	{
+		return s1;
+	}
+	else
+	{
+		return s1 + wxT( ' ' ) + s2;
+	}
 }
 
 void wxCueSheet::FindCommonTags( bool bMerge )
@@ -644,8 +669,9 @@ void wxCueSheet::FindCommonTags( bool bMerge )
 				if ( reDisc.Matches( sAlbum ) )
 				{
 					wxASSERT( reDisc.GetMatchCount() > 2 );
-					wxString sLocalAlbum( reDisc.GetMatch( sAlbum, 1 ) );
+					wxString sLocalAlbum1( reDisc.GetMatch( sAlbum, 1 ) );
 					wxString sDiscNumber( reDisc.GetMatch( sAlbum, 3 ) );
+					wxString sLocalAlbum2( reDisc.GetMatch( sAlbum, 4 ) );
 
 					unsigned long u;
 					if ( sDiscNumber.ToULong( &u ) )
@@ -653,7 +679,7 @@ void wxCueSheet::FindCommonTags( bool bMerge )
 						albumNumbers[ albumTags[ j ].GetValue() ] = u;
 					}
 
-					sAlbum = sLocalAlbum;
+					sAlbum = concatenate( sLocalAlbum1, sLocalAlbum2 );
 				}
 
 				if ( bFirst )

@@ -299,6 +299,8 @@ void wxCueComponent::remove_duplicates( const wxRegEx& reEmptyValue, wxCueCompon
 
 void wxCueComponent::remove_duplicates( const wxRegEx& reEmptyValue, wxArrayCueTag& tags )
 {
+	wxArrayString asLines;
+
 	for ( size_t nTags = tags.Count(), i = 0; i < nTags; i += 1 )
 	{
 		wxString sValue( tags[ i ].GetValue() );
@@ -310,8 +312,23 @@ void wxCueComponent::remove_duplicates( const wxRegEx& reEmptyValue, wxArrayCueT
 				continue;
 			}
 
-			size_t n = sValue.Replace( tags[ j ].GetValue(), wxEmptyString, false );
-			if ( n > 0 )
+			asLines.Clear();
+			size_t nReplCounter = 0;
+			tags[ j ].GetValue( asLines );
+
+			for ( size_t k = 0, nLines = asLines.Count(); k < nLines; k++ )
+			{
+				if ( sValue.Replace( asLines[ k ], wxEmptyString, false ) > 0 )
+				{
+					nReplCounter += 1;
+				}
+				else
+				{
+					break;
+				}
+			}
+
+			if ( nReplCounter == asLines.Count() )
 			{
 				if ( reEmptyValue.Matches( sValue ) )
 				{
@@ -342,8 +359,7 @@ bool wxCueComponent::AddCdTextInfoTag( const wxString& sKeyword, const wxString&
 	{
 		if ( ( sKeyword.CmpNoCase( CdTextFields[ i ].keyword ) == 0 ) && CheckEntryType( CdTextFields[ i ].type ) )
 		{
-			wxCueTag newTag( wxCueTag::TAG_CD_TEXT, sKeyword, sBody );
-			return wxCueTag::AddTag( m_cdTextTags, newTag );
+			return wxCueTag::AddTag( m_cdTextTags, wxCueTag( wxCueTag::TAG_CD_TEXT, sKeyword, sBody ) );
 		}
 	}
 

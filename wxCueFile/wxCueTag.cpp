@@ -66,12 +66,14 @@ wxString wxCueTag::SourceToString( wxCueTag::TAG_SOURCE eSource )
 }
 
 wxCueTag::wxCueTag():
-	m_eSource( TAG_UNKNOWN )
+	m_eSource( TAG_UNKNOWN ), m_bMultiline( false )
 {}
 
 wxCueTag::wxCueTag( wxCueTag::TAG_SOURCE eSource, const wxString& sName, const wxString& sValue ):
-	m_eSource( eSource ), m_sName( sName.Upper() ), m_sValue( sValue )
-{}
+	m_eSource( eSource ), m_sName( sName.Upper() )
+{
+	SetValue( sValue );
+}
 
 wxCueTag::wxCueTag( const wxCueTag& cueTag )
 {
@@ -98,6 +100,24 @@ const wxString& wxCueTag::GetValue() const
 	return m_sValue;
 }
 
+const wxCueTag& wxCueTag::GetValue(wxArrayString& asLines) const
+{
+	if ( m_bMultiline )
+	{
+		wxTextInputStreamOnString  tis( m_sValue );
+		while ( !tis.Eof() )
+		{
+			asLines.Add( ( *tis ).ReadLine() );
+		}
+	}
+	else
+	{
+		asLines.Add( m_sValue );
+	}
+
+	return *this;
+}
+
 wxString wxCueTag::GetQuotedValue( bool bEscape ) const
 {
 	if ( bEscape )
@@ -110,64 +130,27 @@ wxString wxCueTag::GetQuotedValue( bool bEscape ) const
 	}
 }
 
-void wxCueTag::GetValueEx( bool bFlatten, wxString& sValue, bool& bMultiline ) const
+wxString wxCueTag::GetFlattenValue() const
 {
-	size_t					   nLines = 0;
-	wxTextInputStreamOnString  tis( m_sValue );
-	wxTextOutputStreamOnString tos;
-
-	while ( !tis.Eof() )
+	if ( m_bMultiline )
 	{
-		if ( bFlatten )
+		wxTextInputStreamOnString  tis( m_sValue );
+		wxTextOutputStreamOnString tos;
+
+		while ( !tis.Eof() )
 		{
 			*tos << ( *tis ).ReadLine() << wxT( '/' );
 		}
-		else
-		{
-			*tos << ( *tis ).ReadLine() << endl;
-		}
 
-		nLines += 1;
-	}
+		( *tos ).Flush();
 
-	if ( nLines <= 1 )
-	{
-		sValue	   = m_sValue;
-		bMultiline = false;
+		const wxString& sOut = tos.GetString();
+		return wxString( sOut, sOut.Length() - 1 );
 	}
 	else
 	{
-		( *tos ).Flush();
-		const wxString& sOut = tos.GetString();
-		if ( bFlatten )
-		{
-			sValue = wxString( sOut, sOut.Length() - 1 );
-		}
-		else
-		{
-			sValue = sOut;
-		}
-
-		bMultiline = true;
+		return m_sValue;
 	}
-}
-
-wxString wxCueTag::GetFlattenValue() const
-{
-	wxASSERT( IsMultiline() );
-
-	wxTextInputStreamOnString  tis( m_sValue );
-	wxTextOutputStreamOnString tos;
-
-	while ( !tis.Eof() )
-	{
-		*tos << ( *tis ).ReadLine() << wxT( '/' );
-	}
-
-	( *tos ).Flush();
-
-	const wxString& sOut = tos.GetString();
-	return wxString( sOut, sOut.Length() - 1 );
 }
 
 wxCueTag& wxCueTag::SetSource( wxCueTag::TAG_SOURCE eSource )
@@ -184,15 +167,36 @@ wxCueTag& wxCueTag::SetName( const wxString& sName )
 
 wxCueTag& wxCueTag::SetValue( const wxString& sValue )
 {
-	m_sValue = sValue;
+	size_t					   nLines = 0;
+	wxTextInputStreamOnString  tis( sValue );
+	wxTextOutputStreamOnString tos;
+
+	while ( !tis.Eof() )
+	{
+		*tos << ( *tis ).ReadLine() << endl;
+		nLines += 1;
+	}
+
+	if ( nLines > 1 )
+	{
+		m_sValue	 = tos.GetString();
+		m_bMultiline = true;
+	}
+	else
+	{
+		m_sValue	 = sValue;
+		m_bMultiline = false;
+	}
+
 	return *this;
 }
 
 void wxCueTag::copy( const wxCueTag& cueTag )
 {
-	m_eSource = cueTag.m_eSource;
-	m_sName	  = cueTag.m_sName.Upper();
-	m_sValue  = cueTag.m_sValue;
+	m_eSource	 = cueTag.m_eSource;
+	m_sName		 = cueTag.m_sName.Upper();
+	m_sValue	 = cueTag.m_sValue;
+	m_bMultiline = cueTag.m_bMultiline;
 }
 
 wxCueTag& wxCueTag::operator =( const wxCueTag& cueTag )
@@ -215,16 +219,7 @@ bool wxCueTag::operator ==( const wxString& sTagName ) const
 
 bool wxCueTag::IsMultiline() const
 {
-	wxTextInputStreamOnString tis( m_sValue );
-	int						  nLines = 0;
-
-	while ( !( tis.Eof() || ( nLines > 1 ) ) )
-	{
-		tis.GetStream().ReadLine();
-		nLines += 1;
-	}
-
-	return ( nLines > 1 );
+	return m_bMultiline;
 }
 
 void wxCueTag::RemoveTrailingSpaces( const wxTrailingSpacesRemover& spacesRemover )
@@ -421,11 +416,7 @@ bool wxCueTag::FindCommonPart( wxCueTag& commonTag, const wxCueTag& tag1, const 
 {
 	wxASSERT( tag1 == tag2.GetName() );
 
-	wxString sValue1, sValue2;
-	bool	 bMultiline1, bMultiline2;
-
-	tag1.GetValueEx( false, sValue1, bMultiline1 );
-	tag2.GetValueEx( false, sValue2, bMultiline2 );
+	wxString sValue1( tag1.GetValue() ), sValue2( tag2.GetValue() );
 
 	size_t nLen = sValue1.Length();
 	if ( sValue2.Length() < nLen )

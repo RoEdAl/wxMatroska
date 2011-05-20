@@ -70,10 +70,10 @@ public:
 	const wxString& GetName() const;
 
 	const wxString& GetValue() const;
+	const wxCueTag& GetValue( wxArrayString& ) const;
 	wxString GetQuotedValue( bool = true ) const;
 	bool IsMultiline() const;
 	wxString GetFlattenValue() const;
-	void GetValueEx( bool, wxString&, bool& ) const;
 
 	wxCueTag& SetSource( TAG_SOURCE );
 	wxCueTag& SetName( const wxString& );
@@ -91,6 +91,7 @@ protected:
 	TAG_SOURCE m_eSource;
 	wxString   m_sName;
 	wxString   m_sValue;
+	bool m_bMultiline;
 
 protected:
 
