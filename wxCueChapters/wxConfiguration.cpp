@@ -28,7 +28,7 @@ static const wxChar LANG_FILE_NAME[] = wxT( "ISO-639-2_utf-8.txt" );
 
 // ===============================================================================
 
-wxIMPLEMENT_DYNAMIC_CLASS( wxConfiguration, wxObject )
+wxIMPLEMENT_DYNAMIC_CLASS( wxConfiguration, wxObject );
 
 // ===============================================================================
 

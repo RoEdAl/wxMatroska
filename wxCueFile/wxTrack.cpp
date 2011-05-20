@@ -11,7 +11,7 @@
 
 // ===============================================================================
 
-wxIMPLEMENT_DYNAMIC_CLASS( wxTrack, wxCueComponent )
+wxIMPLEMENT_DYNAMIC_CLASS( wxTrack, wxCueComponent );
 
 // ===============================================================================
 

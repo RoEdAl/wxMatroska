@@ -7,7 +7,8 @@
 
 // ===============================================================================
 
-wxIMPLEMENT_DYNAMIC_CLASS( wxCueSheetContent, wxObject )
+wxIMPLEMENT_DYNAMIC_CLASS( wxCueSheetContent, wxObject );
+
 // ===============================================================================
 
 wxCueSheetContent::wxCueSheetContent( void )

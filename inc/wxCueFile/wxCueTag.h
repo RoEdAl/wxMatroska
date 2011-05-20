@@ -91,7 +91,7 @@ protected:
 	TAG_SOURCE m_eSource;
 	wxString   m_sName;
 	wxString   m_sValue;
-	bool m_bMultiline;
+	bool	   m_bMultiline;
 
 protected:
 

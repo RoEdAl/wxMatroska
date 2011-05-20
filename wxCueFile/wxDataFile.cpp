@@ -11,11 +11,11 @@
 
 // ===============================================================================
 
-wxIMPLEMENT_DYNAMIC_CLASS( wxDataFile, wxObject )
+wxIMPLEMENT_DYNAMIC_CLASS( wxDataFile, wxObject );
 
 // ===============================================================================
 
-static const wxChar * INFOS[] =
+static const wxChar* INFOS[] =
 {
 	wxT( "StreamSize" ),
 	wxT( "Duration" ),

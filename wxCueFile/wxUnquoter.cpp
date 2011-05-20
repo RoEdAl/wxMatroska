@@ -7,7 +7,7 @@
 
 // ===============================================================================
 
-wxIMPLEMENT_DYNAMIC_CLASS( wxUnquoter, wxObject )
+wxIMPLEMENT_DYNAMIC_CLASS( wxUnquoter, wxObject );
 
 // ===============================================================================
 

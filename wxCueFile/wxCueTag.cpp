@@ -48,7 +48,7 @@ size_t wxCueTag::SOURCE2TEXT_MAPPING_SIZE = WXSIZEOF( wxCueTag::SOURCE2TEXT_MAPP
 
 // ===============================================================================
 
-wxIMPLEMENT_DYNAMIC_CLASS( wxCueTag, wxObject )
+wxIMPLEMENT_DYNAMIC_CLASS( wxCueTag, wxObject );
 
 // ===============================================================================
 
@@ -100,11 +100,11 @@ const wxString& wxCueTag::GetValue() const
 	return m_sValue;
 }
 
-const wxCueTag& wxCueTag::GetValue(wxArrayString& asLines) const
+const wxCueTag& wxCueTag::GetValue( wxArrayString& asLines ) const
 {
 	if ( m_bMultiline )
 	{
-		wxTextInputStreamOnString  tis( m_sValue );
+		wxTextInputStreamOnString tis( m_sValue );
 		while ( !tis.Eof() )
 		{
 			asLines.Add( ( *tis ).ReadLine() );

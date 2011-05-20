@@ -7,7 +7,8 @@
 
 // ===============================================================================
 
-wxIMPLEMENT_DYNAMIC_CLASS( wxIndex, wxObject )
+wxIMPLEMENT_DYNAMIC_CLASS( wxIndex, wxObject );
+
 // ===============================================================================
 
 wxIndex::wxIndex( void ):

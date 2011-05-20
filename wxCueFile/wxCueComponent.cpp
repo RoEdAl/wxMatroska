@@ -11,7 +11,7 @@
 
 // ===============================================================================
 
-wxIMPLEMENT_ABSTRACT_CLASS( wxCueComponent, wxObject )
+wxIMPLEMENT_ABSTRACT_CLASS( wxCueComponent, wxObject );
 
 // ===============================================================================
 
