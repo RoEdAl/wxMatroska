@@ -220,14 +220,19 @@ void wxCueComponent::AddTags( const wxArrayCueTag& newTags )
 	wxCueTag::AddTags( m_tags, newTags );
 }
 
-void wxCueComponent::RemoveTags( const wxArrayCueTag& newTags )
+size_t wxCueComponent::RemoveTags( const wxArrayCueTag& newTags )
 {
-	wxCueTag::RemoveTags( m_tags, newTags );
+	return wxCueTag::RemoveTags( m_tags, newTags );
 }
 
 size_t wxCueComponent::GetTags( const wxString& sTagName, wxArrayCueTag& tags ) const
 {
 	return wxCueTag::GetTags( m_tags, sTagName, tags );
+}
+
+size_t wxCueComponent::MoveTags( const wxString& sTagName, wxArrayCueTag& tags )
+{
+	return wxCueTag::MoveTags( m_tags, sTagName, tags );
 }
 
 void wxCueComponent::GetTags(
@@ -347,7 +352,15 @@ bool wxCueComponent::AddCdTextInfoTag( const wxString& sKeyword, const wxString&
 
 bool wxCueComponent::AddCdTextInfoTag( const wxCueTag& tag )
 {
-	return AddCdTextInfoTag( tag.GetName(), tag.GetValue() );
+	for ( size_t i = 0; i < CdTextFieldsSize; i++ )
+	{
+		if ( tag == CdTextFields[ i ].keyword && CheckEntryType( CdTextFields[ i ].type ) )
+		{
+			return wxCueTag::AddTag( m_cdTextTags, tag );
+		}
+	}
+
+	return false;
 }
 
 void wxCueComponent::RemoveCdTextInfoTag( const wxCueTag& tag )
@@ -371,6 +384,7 @@ void wxCueComponent::RemoveCdTextInfoTags( const wxArrayCueTag& cueTags )
 void wxCueComponent::AddTag( wxCueTag::TAG_SOURCE eSource, const wxString& sKeyword, const wxString& sBody )
 {
 	wxCueTag newTag( eSource, sKeyword, sBody );
+
 	wxCueTag::AddTag( m_tags, newTag );
 }
 
@@ -384,14 +398,19 @@ bool wxCueComponent::AddTagIf( const wxCueTag& tagToAdd, const wxCueTag& tagToCh
 	return wxCueTag::AddTagIf( m_tags, tagToAdd, tagToCheck );
 }
 
-void wxCueComponent::RemoveTag( const wxCueTag& tag )
+bool wxCueComponent::AddTagIfAndRemove( const wxCueTag& tagToAdd, const wxCueTag& tagToCheck )
 {
-	wxCueTag::RemoveTag( m_tags, tag );
+	return wxCueTag::AddTagIfAndRemove( m_tags, tagToAdd, tagToCheck );
 }
 
-void wxCueComponent::RemoveTag( const wxString& sTagName )
+size_t wxCueComponent::RemoveTag( const wxCueTag& tag )
 {
-	wxCueTag::RemoveTag( m_tags, sTagName );
+	return wxCueTag::RemoveTag( m_tags, tag );
+}
+
+size_t wxCueComponent::RemoveTag( const wxString& sTagName )
+{
+	return wxCueTag::RemoveTag( m_tags, sTagName );
 }
 
 void wxCueComponent::Clear()

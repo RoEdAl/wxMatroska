@@ -31,6 +31,7 @@ const wxChar* const wxCueTag::Name::SIZE_INFO	 = wxT( "SIZE_INFO" );
 const wxChar* const wxCueTag::Name::TOC_INFO	 = wxT( "TOC_INFO" );
 const wxChar* const wxCueTag::Name::TOC_INFO2	 = wxT( "TOC_INFO2" );
 const wxChar* const wxCueTag::Name::DISCNUMBER	 = wxT( "DISCNUMBER" );
+const wxChar* const wxCueTag::Name::TOTALDISCS	 = wxT( "TOTALDISCS" );
 
 // ===============================================================================
 
@@ -277,6 +278,26 @@ size_t wxCueTag::GetTags( const wxArrayCueTag& sourceTags, const wxString& sTagN
 	return nCounter;
 }
 
+size_t wxCueTag::MoveTags( wxArrayCueTag& sourceTags, const wxString& sTagName, wxArrayCueTag& tags )
+{
+	size_t nCounter = 0;
+
+	for ( size_t i = 0, nCount = sourceTags.Count(); i < nCount; i++ )
+	{
+		if ( sourceTags[ i ] == sTagName )
+		{
+			AddTag( tags, sourceTags[ i ] );
+			sourceTags.RemoveAt( i );
+
+			nCounter += 1;
+			nCount	 -= 1;
+			i		 -= 1;
+		}
+	}
+
+	return nCounter;
+}
+
 bool wxCueTag::FindTag( const wxArrayCueTag& tags, const wxCueTag& cueTag )
 {
 	for ( size_t numTags = tags.Count(), i = 0; i < numTags; i++ )
@@ -305,13 +326,7 @@ bool wxCueTag::AddTagIf( wxArrayCueTag& tags, const wxCueTag& tagToAdd, const wx
 {
 	if ( FindTag( tags, tagToCheck ) )
 	{
-		if ( !FindTag( tags, tagToAdd ) )
-		{
-			tags.Add( tagToAdd );
-			return true;
-		}
-
-		return false;
+		return AddTag( tags, tagToAdd );
 	}
 	else
 	{
@@ -319,38 +334,55 @@ bool wxCueTag::AddTagIf( wxArrayCueTag& tags, const wxCueTag& tagToAdd, const wx
 	}
 }
 
-void wxCueTag::RemoveTag( wxArrayCueTag& tags, const wxCueTag& cueTag )
+bool wxCueTag::AddTagIfAndRemove( wxArrayCueTag& tags, const wxCueTag& tagToAdd, const wxCueTag& tagToCheck )
 {
-	wxArrayCueTag newTags;
+	if ( FindTag( tags, tagToCheck ) )
+	{
+		RemoveTag( tags, tagToCheck );
+		return AddTag( tags, tagToAdd );
+	}
+	else
+	{
+		return false;
+	}
+}
+
+size_t wxCueTag::RemoveTag( wxArrayCueTag& tags, const wxCueTag& cueTag )
+{
+	size_t nCounter = 0;
 
 	for ( size_t i = 0, nCount = tags.Count(); i < nCount; i++ )
 	{
 		if ( tags[ i ] == cueTag )
 		{
-			continue;
-		}
+			tags.RemoveAt( i );
 
-		newTags.Add( tags[ i ] );
+			nCounter += 1;
+			nCount	 -= 1;
+			i		 -= 1;
+		}
 	}
 
-	tags = newTags;
+	return nCounter;
 }
 
-void wxCueTag::RemoveTag( wxArrayCueTag& tags, const wxString& sTagName )
+size_t wxCueTag::RemoveTag( wxArrayCueTag& tags, const wxString& sTagName )
 {
-	wxArrayCueTag newTags;
+	size_t nCounter = 0;
 
 	for ( size_t i = 0, nCount = tags.Count(); i < nCount; i++ )
 	{
 		if ( tags[ i ] == sTagName )
 		{
-			continue;
-		}
+			tags.RemoveAt( i );
 
-		newTags.Add( tags[ i ] );
+			nCounter += 1;
+			nCount	 -= 1;
+			i		 -= 1;
+		}
 	}
 
-	tags = newTags;
+	return nCounter;
 }
 
 void wxCueTag::AddTags( wxArrayCueTag& tags, const wxArrayCueTag& newTags )
@@ -361,12 +393,16 @@ void wxCueTag::AddTags( wxArrayCueTag& tags, const wxArrayCueTag& newTags )
 	}
 }
 
-void wxCueTag::RemoveTags( wxArrayCueTag& tags, const wxArrayCueTag& tagsToDelete )
+size_t wxCueTag::RemoveTags( wxArrayCueTag& tags, const wxArrayCueTag& tagsToDelete )
 {
+	size_t nCounter = 0;
+
 	for ( size_t nCount = tagsToDelete.Count(), i = 0; i < nCount; i++ )
 	{
-		RemoveTag( tags, tagsToDelete[ i ] );
+		nCounter += RemoveTag( tags, tagsToDelete[ i ] );
 	}
+
+	return nCounter;
 }
 
 void wxCueTag::CommonTags( wxArrayCueTag& commonTags, const wxArrayCueTag& group1, const wxArrayCueTag& group2 )

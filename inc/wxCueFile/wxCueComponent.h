@@ -77,6 +77,7 @@ public:
 	const wxArrayCueTag& GetCdTextTags() const;
 	const wxArrayCueTag& GetTags() const;
 	size_t GetTags( const wxString&, wxArrayCueTag& ) const;
+	size_t MoveTags( const wxString&, wxArrayCueTag& );
 	void GetTags( const wxTagSynonimsCollection&,
 				  const wxTagSynonimsCollection&,
 				  wxArrayCueTag&,
@@ -92,11 +93,12 @@ public:
 	void AddTag( wxCueTag::TAG_SOURCE, const wxString&, const wxString& );
 	bool AddTag( const wxCueTag& );
 	bool AddTagIf( const wxCueTag&, const wxCueTag& );
+	bool AddTagIfAndRemove( const wxCueTag&, const wxCueTag& );
 	void AddTags( const wxArrayCueTag& );
 
-	void RemoveTag( const wxCueTag& );
-	void RemoveTag( const wxString& );
-	void RemoveTags( const wxArrayCueTag& );
+	size_t RemoveTag( const wxCueTag& );
+	size_t RemoveTag( const wxString& );
+	size_t RemoveTags( const wxArrayCueTag& );
 
 	bool CheckEntryType( ENTRY_TYPE ) const;
 

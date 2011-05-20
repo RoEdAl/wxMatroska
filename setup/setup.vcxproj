@@ -26,11 +26,13 @@
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)obj\$(ProjectName)\$(Configuration)\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cue2mkc_setup</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.exe</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <PostBuildEvent>
       <Message>Creating setup...</Message>
-      <Command>"$(INNO_SETUP_DIR)\iscc.exe" "/O$(OutDir)" "$(ProjectDir)setup.iss"
+      <Command>"$(INNO_SETUP_DIR)\iscc.exe" "/O$(TargetDir)" "$(ProjectDir)setup.iss"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

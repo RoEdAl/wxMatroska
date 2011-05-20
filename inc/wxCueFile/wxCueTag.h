@@ -55,6 +55,7 @@ public:
 		static const wxChar* const TOC_INFO;
 		static const wxChar* const TOC_INFO2;
 		static const wxChar* const DISCNUMBER;
+		static const wxChar* const TOTALDISCS;
 	};
 
 public:
@@ -107,13 +108,15 @@ public:
 	static wxString SourceToString( TAG_SOURCE );
 
 	static size_t GetTags( const wxArrayCueTag&, const wxString&, wxArrayCueTag& );
+	static size_t MoveTags( wxArrayCueTag&, const wxString&, wxArrayCueTag& );
 	static bool FindTag( const wxArrayCueTag&, const wxCueTag& );
 	static bool AddTag( wxArrayCueTag&, const wxCueTag& );
 	static bool AddTagIf( wxArrayCueTag&, const wxCueTag&, const wxCueTag& );
-	static void RemoveTag( wxArrayCueTag&, const wxCueTag& );
-	static void RemoveTag( wxArrayCueTag&, const wxString& );
+	static bool AddTagIfAndRemove( wxArrayCueTag&, const wxCueTag&, const wxCueTag& );
+	static size_t RemoveTag( wxArrayCueTag&, const wxCueTag& );
+	static size_t RemoveTag( wxArrayCueTag&, const wxString& );
 	static void AddTags( wxArrayCueTag&, const wxArrayCueTag& );
-	static void RemoveTags( wxArrayCueTag&, const wxArrayCueTag& );
+	static size_t RemoveTags( wxArrayCueTag&, const wxArrayCueTag& );
 	static void CommonTags( wxArrayCueTag&, const wxArrayCueTag&, const wxArrayCueTag& );
 	static bool FindCommonPart( wxCueTag&, const wxCueTag&, const wxCueTag& );
 	static wxString Quote( const wxString& );
