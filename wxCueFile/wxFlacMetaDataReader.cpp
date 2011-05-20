@@ -68,7 +68,7 @@ bool wxFlacMetaDataReader::GetCueSheetFromVorbisComment( wxString& sCueSheet ) c
 	{
 		FLAC::Metadata::VorbisComment::Entry entry = vorbisComment.get_comment( i );
 		wxString							 sEntryName( wxString::FromUTF8( entry.get_field_name(), entry.get_field_name_length() ) );
-		if ( sEntryName.CmpNoCase( wxT( "CUESHEET" ) ) == 0 )
+		if ( sEntryName.CmpNoCase( wxCueTag::Name::CUESHEET ) == 0 )
 		{
 			sCueSheet = wxString::FromUTF8( entry.get_field_value(), entry.get_field_value_length() );
 			return true;

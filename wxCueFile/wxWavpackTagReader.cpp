@@ -97,7 +97,7 @@ bool wxWavpackTagReader::ReadCueSheetTag( const wxString& sWavpackFile, wxString
 		wxFileInputStream is( sWavpackFile );
 		if ( !is.IsOk() )
 		{
-			wxLogError( _( "Fail to open Wavpack file %s." ), sWavpackFile );
+			wxLogError( _( "Fail to open Wavpack file \u201C%s\u201D." ), sWavpackFile );
 			return false;
 		}
 
@@ -119,11 +119,11 @@ bool wxWavpackTagReader::ReadCueSheetTag( const wxString& sWavpackFile, wxString
 		if ( !ctx )
 		{
 			wxString sErr( wxString::FromUTF8( errBuffer ) );
-			wxLogError( _( "Fail to open (using WavpackOpenFileInputEx) Wavpack file %s. Error message: %s" ), sWavpackFile, sErr );
+			wxLogError( _( "Fail to open (using WavpackOpenFileInputEx) Wavpack file \u201C%s\u201D. Error message: %s" ), sWavpackFile, sErr );
 			return false;
 		}
 
-		nSize = ctx.GetTagItem( wxT( "CUESHEET" ), valueBuffer );
+		nSize = ctx.GetTagItem( wxCueTag::Name::CUESHEET, valueBuffer );
 	} // Wavpack file closed here
 
 	if ( nSize > 0 )
@@ -139,13 +139,13 @@ bool wxWavpackTagReader::ReadCueSheetTag( const wxString& sWavpackFile, wxString
 		}
 		else
 		{
-			wxLogWarning( _( "Invalid CUESHEET tag in Wavpack file %s" ), sWavpackFile );
+			wxLogWarning( _( "Invalid CUESHEET tag in Wavpack file \u201C%s\u201D" ), sWavpackFile );
 			return false;
 		}
 	}
 	else
 	{
-		wxLogWarning( _( "There's no CUESHEET tag in Wavpack file %s" ), sWavpackFile );
+		wxLogWarning( _( "There's no CUESHEET tag in Wavpack file \u201C%s\u201D" ), sWavpackFile );
 		return false;
 	}
 }
@@ -156,7 +156,7 @@ bool wxWavpackTagReader::ReadTags( const wxString& sWavpackFile, wxArrayCueTag& 
 
 	if ( !is.IsOk() )
 	{
-		wxLogError( _( "Fail to open Wavpack file %s." ), sWavpackFile );
+		wxLogError( _( "Fail to open Wavpack file \u201C%s\u201D." ), sWavpackFile );
 		return false;
 	}
 
@@ -177,7 +177,7 @@ bool wxWavpackTagReader::ReadTags( const wxString& sWavpackFile, wxArrayCueTag& 
 	if ( !ctx )
 	{
 		wxString sErr( wxString::FromUTF8( errBuffer ) );
-		wxLogError( _( "Fail to open (using WavpackOpenFileInputEx) Wavpack file %s. Error message: %s" ),
+		wxLogError( _( "Fail to open (using WavpackOpenFileInputEx) Wavpack file \u201C%s\u201D. Error message: \u201C%s\u201D" ),
 			sWavpackFile, sErr );
 		return false;
 	}
@@ -194,10 +194,7 @@ bool wxWavpackTagReader::ReadTags( const wxString& sWavpackFile, wxArrayCueTag& 
 		size_t nSize = ctx.GetTagItemIndexed( i, itemBuffer, valueBuffer, sItem, sValue );
 		wxASSERT( nSize > 0 );
 
-		wxStringTokenizer valueTokenizer(
-			sValue,
-			wxT( '\0' ),
-			wxTOKEN_DEFAULT );
+		wxStringTokenizer valueTokenizer( sValue, wxT( '\0' ), wxTOKEN_DEFAULT );
 
 		while ( valueTokenizer.HasMoreTokens() )
 		{
