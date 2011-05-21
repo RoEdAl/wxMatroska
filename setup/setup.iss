@@ -62,7 +62,7 @@ Name: {commondesktop}\{cm:cue2mkc} {cm:gui}; Filename: {app}\cue2mkcgui.exe; Wor
 Name: {commondesktop}\{cm:cue2mkc} {cm:console}; Filename: {cmd}; Parameters: "/T:3F /F:ON /V:ON /K SET PATH={app};!PATH!"; WorkingDir: {userdocs}; Components: cli;
 
 [Run]
-Components: gui; Filename: {app}\cue2mkcgui.exe; WorkingDir: {userappdata}; Flags: PostInstall RunAsOriginalUser; Description: {cm:gui_run}; 
+Components: gui; Filename: {app}\cue2mkcgui.exe; WorkingDir: {userappdata}; Flags: PostInstall RunAsOriginalUser NoWait; Description: {cm:gui_run}; 
 
 [CustomMessages]
 cue2mkc=cue2mkc

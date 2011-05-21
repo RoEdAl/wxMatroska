@@ -195,7 +195,7 @@ void wxMkvmergeOptsRenderer::write_source_eac_attachments(
 
 			*m_os <<
 			wxT( "--attachment-name" ) << endl <<
-			wxString::Format( wxT( "cuesheet%d.log" ), nCounter ) << endl <<
+			wxString::Format( wxT( "cuesheet%d.cue" ), nCounter ) << endl <<
 			wxT( "--attachment-description" ) << endl <<
 			contents[ i ].GetSource().GetFullName() << endl <<
 			wxT( "--attach-file" ) << endl <<
@@ -217,7 +217,7 @@ void wxMkvmergeOptsRenderer::write_source_eac_attachments(
 
 			*m_os <<
 			wxT( "--attachment-name" ) << endl <<
-			wxString::Format( wxT( "cuesheet%02d.log" ), nCounter ) << endl <<
+			wxString::Format( wxT( "cuesheet%02d.cue" ), nCounter ) << endl <<
 			wxT( "--attachment-description" ) << endl <<
 			contents[ i ].GetSource().GetFullName() << endl <<
 			wxT( "--attach-file" ) << endl <<
@@ -258,7 +258,7 @@ bool wxMkvmergeOptsRenderer::render_cuesheet( const wxInputFile& inputFile,
 	const wxString& sPostfix, const wxCueSheet& cueSheet,
 	wxFileName& fn )
 {
-	wxString sValue = wxTextCueSheetRenderer::ToString( cueSheet );
+	wxString sValue( wxTextCueSheetRenderer::ToString( cueSheet ) );
 
 	if ( !sValue.IsEmpty() )
 	{
