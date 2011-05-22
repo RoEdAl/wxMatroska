@@ -37,7 +37,8 @@ public:
 
 	static wxString GetCdAliasesRegExp();
 
-	static const wxChar ALBUM_REG_EX[];
+	static const wxChar ALBUM_REG_EX1[];
+	static const wxChar ALBUM_REG_EX2[];
 
 protected:
 

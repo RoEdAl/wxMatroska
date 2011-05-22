@@ -26,8 +26,11 @@ const wxChar* const wxCueSheet::CD_ALIASES[] =
 
 const size_t wxCueSheet::CD_ALIASES_SIZE = WXSIZEOF( wxCueSheet::CD_ALIASES );
 
-const wxChar wxCueSheet::ALBUM_REG_EX[] =
-	wxT( "\\A(.*[^[:space:]]){0,1}?[[:space:]]*[[:punct:]]{0,1}[[:space:]]*%s[[:space:]]*[[:punct:]]{0,1}[[:space:]]*([[:digit:]]{1,2})[[:space:]]*[[:punct:]]{0,1}[[:space:]]*([^[:space:]].*){0,1}\\Z" );
+const wxChar wxCueSheet::ALBUM_REG_EX1[] =
+	wxT( "\\A(.*[^[:space:]])[[:space:]]*([[:punct:]][[:space:]]*%s[[:space:][:punct:]]*([[:digit:]]{1,2})[[:space:]]*[[:punct:]])[[:space:]]*([^[:space:]].*){0,1}\\Z" );
+
+const wxChar wxCueSheet::ALBUM_REG_EX2[] =
+	wxT( "\\A(.*[^[:space:]])[[:space:]]*(%s[[:space:][:punct:]]*([[:digit:]]{1,2}))[[:space:]]*([^[:space:]].*){0,1}\\Z" );
 
 wxString wxCueSheet::GetCdAliasesRegExp()
 {
@@ -661,17 +664,35 @@ void wxCueSheet::FindCommonTags( bool bMerge )
 			bool	 bFirst	   = true;
 			bool	 bIsCommon = true;
 			wxString sCommonAlbum;
-			wxRegEx	 reDisc( wxString::Format( ALBUM_REG_EX, GetCdAliasesRegExp() ), wxRE_ADVANCED | wxRE_ICASE );
-			wxASSERT( reDisc.IsValid() );
+			wxRegEx	 reDisc1( wxString::Format( ALBUM_REG_EX1, GetCdAliasesRegExp() ), wxRE_ADVANCED | wxRE_ICASE );
+			wxASSERT( reDisc1.IsValid() );
+			wxRegEx reDisc2( wxString::Format( ALBUM_REG_EX2, GetCdAliasesRegExp() ), wxRE_ADVANCED | wxRE_ICASE );
+			wxASSERT( reDisc2.IsValid() );
 			for ( size_t j = 0, nCount = albumTags.Count(); j < nCount && bIsCommon; j++ )
 			{
-				wxString sAlbum( albumTags[ j ].GetValue() );
-				if ( reDisc.Matches( sAlbum ) )
+				wxString sAlbum( wxT( "Ala ma kota Vol1. CD4 kiszka" ) );
+				// wxString sAlbum( albumTags[ j ].GetValue() );
+				if ( reDisc1.Matches( sAlbum ) )
 				{
-					wxASSERT( reDisc.GetMatchCount() > 2 );
-					wxString sLocalAlbum1( reDisc.GetMatch( sAlbum, 1 ) );
-					wxString sDiscNumber( reDisc.GetMatch( sAlbum, 3 ) );
-					wxString sLocalAlbum2( reDisc.GetMatch( sAlbum, 4 ) );
+					wxASSERT( reDisc1.GetMatchCount() > 5 );
+					wxString sLocalAlbum1( reDisc1.GetMatch( sAlbum, 1 ) );
+					wxString sDiscNumber( reDisc1.GetMatch( sAlbum, 4 ) );
+					wxString sLocalAlbum2( reDisc1.GetMatch( sAlbum, 5 ) );
+
+					unsigned long u;
+					if ( sDiscNumber.ToULong( &u ) )
+					{
+						albumNumbers[ albumTags[ j ].GetValue() ] = u;
+					}
+
+					sAlbum = concatenate( sLocalAlbum1, sLocalAlbum2 );
+				}
+				else if ( reDisc2.Matches( sAlbum ) )
+				{
+					wxASSERT( reDisc1.GetMatchCount() > 5 );
+					wxString sLocalAlbum1( reDisc2.GetMatch( sAlbum, 1 ) );
+					wxString sDiscNumber( reDisc2.GetMatch( sAlbum, 4 ) );
+					wxString sLocalAlbum2( reDisc2.GetMatch( sAlbum, 5 ) );
 
 					unsigned long u;
 					if ( sDiscNumber.ToULong( &u ) )
