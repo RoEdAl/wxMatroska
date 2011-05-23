@@ -595,38 +595,40 @@ void wxCueSheet::FindCommonTags( bool bMerge )
 		return;
 	}
 
-	wxArrayCueTag commonTags;
-	wxArrayCueTag group;
-
-	// CD-TEXT
-	group = m_tracks[ 0 ].GetCdTextTags();
-	for ( size_t i = 1; i < nTracks; i++ )
 	{
-		wxCueTag::CommonTags( commonTags, group, m_tracks[ i ].GetCdTextTags() );
-		group = commonTags;
-	}
+		wxArrayCueTag commonTags;
+		wxArrayCueTag group;
 
-	only_suitable_tags( commonTags );
+		// CD-TEXT
+		group = m_tracks[ 0 ].GetCdTextTags();
+		for ( size_t i = 1; i < nTracks; i++ )
+		{
+			wxCueTag::CommonTags( commonTags, group, m_tracks[ i ].GetCdTextTags() );
+			group = commonTags;
+		}
 
-	AddCdTextInfoTags( commonTags );
-	for ( size_t i = 0; i < nTracks; i++ )
-	{
-		m_tracks[ i ].RemoveCdTextInfoTags( commonTags );
-	}
+		only_suitable_tags( commonTags );
 
-	// TAGS
-	commonTags.Clear();
-	group = m_tracks[ 0 ].GetTags();
-	for ( size_t i = 1; i < nTracks; i++ )
-	{
-		wxCueTag::CommonTags( commonTags, group, m_tracks[ i ].GetTags() );
-		group = commonTags;
-	}
+		AddCdTextInfoTags( commonTags );
+		for ( size_t i = 0; i < nTracks; i++ )
+		{
+			m_tracks[ i ].RemoveCdTextInfoTags( commonTags );
+		}
 
-	AddTags( commonTags );
-	for ( size_t i = 0; i < nTracks; i++ )
-	{
-		m_tracks[ i ].RemoveTags( commonTags );
+		// TAGS
+		commonTags.Clear();
+		group = m_tracks[ 0 ].GetTags();
+		for ( size_t i = 1; i < nTracks; i++ )
+		{
+			wxCueTag::CommonTags( commonTags, group, m_tracks[ i ].GetTags() );
+			group = commonTags;
+		}
+
+		AddTags( commonTags );
+		for ( size_t i = 0; i < nTracks; i++ )
+		{
+			m_tracks[ i ].RemoveTags( commonTags );
+		}
 	}
 
 	// ALBUM -> TITLE
@@ -670,8 +672,7 @@ void wxCueSheet::FindCommonTags( bool bMerge )
 			wxASSERT( reDisc2.IsValid() );
 			for ( size_t j = 0, nCount = albumTags.Count(); j < nCount && bIsCommon; j++ )
 			{
-				wxString sAlbum( wxT( "Ala ma kota Vol1. CD4 kiszka" ) );
-				// wxString sAlbum( albumTags[ j ].GetValue() );
+				wxString sAlbum( albumTags[ j ].GetValue() );
 				if ( reDisc1.Matches( sAlbum ) )
 				{
 					wxASSERT( reDisc1.GetMatchCount() > 5 );

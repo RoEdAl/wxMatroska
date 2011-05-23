@@ -5,7 +5,7 @@
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.63
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.64
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -44,13 +44,13 @@ AutoItSetOption("GUICloseOnESC", 0)
 #include <File.au3>
 #include <GuiTreeView.au3>
 
-Func get_tool_full_path($sExeName)
-	Local $sExe = $sExeName & ".exe"
-	Local $sPath = @ScriptDir & "\" & $sExe
+Func get_tool_full_path($sExeName, $sExt = "exe")
+	Local $sBin = $sExeName & "." & $sExt
+	Local $sPath = @ScriptDir & "\" & $sBin
 	If FileExists($sPath) Then
 		Return SetError(0, 1, $sPath)
 	Else
-		Return SetError(0, 0, $sExe)
+		Return SetError(0, 0, $sBin)
 	EndIf
 EndFunc   ;==>get_tool_full_path
 
@@ -76,6 +76,7 @@ Dim Const $XML_FILTER = "XML files (*.xml)|Matroska chapters XML files (*.mkc.xm
 Dim Const $MEDIA_FILTER = "Audio files (*.flac;*.ape;*.wv;*.wav;*.aiff;*.tta)|All files (*)"
 Dim Const $STILL_ACTIVE = 259
 Dim Const $APP_EXIT_CODE = "Exit code: %d."
+Dim Const $MEDIA_INFO = "MediaInfo"
 
 Func is_directory($s)
 	If Not FileExists($s) Then
@@ -916,9 +917,14 @@ Func get_full_file_select($s)
 	Return SetError(0, 0, $ar)
 EndFunc   ;==>get_full_file_select
 
-log_msg("This is simple frontend to cue2mkc utility.")
-log_msg("Use this application convert cue sheet files to Matroska chapters files.")
-log_msg("AutoIt version: " & @AutoItVersion & ".")
+log_msg("Simple frontend to cue2mkc utility.")
+log_msg("cue2mkc version: " & FileGetVersion($CUE2MKC_EXE) & ".")
+log_msg("MediaInfo version: " & FileGetVersion(get_tool_full_path($MEDIA_INFO, "dll")) & ".")
+If @Compiled Then
+	log_msg("Script version: " & FileGetVersion(@AutoItExe, "CompiledScript") & ".")
+Else
+	log_msg("AutoIt version: " & @AutoItVersion & ".")
+EndIf
 log_msg("Author: roed@onet.eu.")
 log_msg("Icons taken from Primo Icons Set - http://www.webdesignerdepot.com/2009/07/200-free-exclusive-vector-icons-primo/");
 log_msg("")
