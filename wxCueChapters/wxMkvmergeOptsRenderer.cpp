@@ -353,6 +353,28 @@ void wxMkvmergeOptsRenderer::write_rendered_eac_attachments( const wxInputFile& 
 	}
 }
 
+wxString wxMkvmergeOptsRenderer::get_mapping_str( const wxArrayTrack& tracks )
+{
+	wxString sRes;
+
+	size_t nDataFiles = 0;
+	for ( size_t i = 0, nCount = tracks.Count(); i < nCount; i++ )
+	{
+		if ( tracks[ i ].HasDataFile() )
+		{
+			if ( nDataFiles > 0 )
+			{
+				sRes += wxString::Format( wxT( "%d:0:0:0," ), nDataFiles );
+			}
+
+			nDataFiles += 1;			
+		}
+	}
+
+	wxASSERT( nDataFiles > 1 );
+	return sRes.RemoveLast();
+}
+
 void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile,
 	const wxCueSheet& cueSheet )
 {
@@ -365,34 +387,28 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile,
 	wxDateTime dtNow( wxDateTime::Now() );
 
 	*m_os <<
-	wxT( "# This file was created by " ) <<
-	wxGetApp().GetAppDisplayName() << wxT( " tool" ) << endl <<
+	wxT( "# This file was created by " ) << wxGetApp().GetAppDisplayName() << wxT( " tool" ) << endl <<
 	wxT( "# Application version: " ) << wxGetApp().APP_VERSION << endl <<
 	wxT( "# Application vendor: " ) << wxGetApp().GetVendorDisplayName() << endl <<
 	wxT( "# Creation time: " ) << dtNow.FormatISODate() << wxT( ' ' ) << dtNow.FormatISOTime() << endl <<
 	wxT( "# Output file" ) << endl <<
-	wxT( "-o" ) << endl <<
-	GetEscapedFile( matroskaFile ) << endl <<
-
-	wxT( "--language" ) << endl <<
-	wxT( "0:" ) << m_cfg.GetLang() << endl <<
-	wxT( "--default-track" ) << endl <<
-	wxT( "0:yes" ) << endl <<
-	wxT( "--track-name" ) << endl <<
-	wxT( "0:" ) << cueSheet.Format( m_cfg.GetMatroskaNameFormat() ) << endl <<
+	wxT( "-o" ) << endl << GetEscapedFile( matroskaFile ) << endl <<
+	wxT( "--language" ) << endl << wxT( "0:" ) << m_cfg.GetLang() << endl <<
+	wxT( "--default-track" ) << endl << wxT( "0:yes" ) << endl <<
+	wxT( "--track-name" ) << endl << wxT( "0:" ) << cueSheet.Format( m_cfg.GetMatroskaNameFormat() ) << endl <<
 	wxT( "# Input file(s)" ) << endl;
 
 	// tracks
 	const wxArrayTrack& tracks = cueSheet.GetTracks();
 	bool				bFirst = true;
+	size_t nDataFiles = 0;
 
 	for ( size_t nTracks = tracks.Count(), i = 0; i < nTracks; i++ )
 	{
 		if ( tracks[ i ].HasDataFile() )
 		{
 			*m_os <<
-			wxT( "-a" ) << endl <<
-			wxT( "0" ) << endl <<
+			wxT( "-a" ) << endl << wxT( "0" ) << endl <<
 			wxT( "-D" ) << endl <<
 			wxT( "-S" ) << endl <<
 			wxT( "-T" ) << endl <<
@@ -401,14 +417,20 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile,
 
 			if ( !bFirst )
 			{
-				*m_os << wxT( '+' ) << mkvmerge_escape( tracks[ i ].GetDataFile() ) << endl;
+				*m_os <<
+				wxT( '+' ) << endl <<
+				mkvmerge_escape( tracks[ i ].GetDataFile() ) << endl;
 			}
 			else
 			{
 				*m_os <<
+				wxT( '=' ) << endl <<
 				mkvmerge_escape( tracks[ i ].GetDataFile() ) << endl;
+
 				bFirst = false;
 			}
+
+			nDataFiles += 1;
 		}
 	}
 
@@ -420,21 +442,21 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile,
 
 	write_eac_attachments( inputFile, cueSheet );
 
-	// poost
+	// post
 	*m_os <<
 	wxT( "# General options" ) << endl <<
-	wxT( "--default-language" ) << endl <<
-	m_cfg.GetLang() << endl <<
-	wxT( "--title" ) << endl <<
-	cueSheet.Format( m_cfg.GetMatroskaNameFormat() ) << endl <<
-	wxT( "--chapters" ) << endl <<
-	GetEscapedFile( outputFile ) << endl;
+	wxT( "--default-language" ) << endl << m_cfg.GetLang() << endl <<
+	wxT( "--title" ) << endl << cueSheet.Format( m_cfg.GetMatroskaNameFormat() ) << endl <<
+	wxT( "--chapters" ) << endl << GetEscapedFile( outputFile ) << endl;
 
 	if ( m_cfg.GenerateTags() )
 	{
-		*m_os <<
-		wxT( "--global-tags" ) << endl <<
-		GetEscapedFile( tagsFile ) << endl;
+		*m_os << wxT( "--global-tags" ) << endl << GetEscapedFile( tagsFile ) << endl;
+	}
+
+	if ( m_cfg.GetMerge() && ( nDataFiles > 1 ) )
+	{
+		*m_os << wxT( "--append-to" ) << endl << get_mapping_str( tracks ) << endl;
 	}
 }
 

@@ -39,6 +39,7 @@ protected:
 	static wxString mkvmerge_escape( const wxString& );
 	static wxString mkvmerge_escape( const wxFileName& );
 	static wxString mkvmerge_escape( const wxDataFile& );
+
 	wxString GetEscapedFile( const wxFileName& );
 
 	void write_log_attachments( const wxArrayFileName& );
@@ -49,6 +50,8 @@ protected:
 	bool save_cuesheet( const wxInputFile&, const wxString&, const wxString&, wxFileName& );
 	bool render_cuesheet( const wxInputFile&, const wxString&, const wxCueSheet&, wxFileName& );
 	static void save_string_to_stream( wxTextOutputStream&, const wxString& );
+
+	static wxString get_mapping_str( const wxArrayTrack& );
 
 public:
 
