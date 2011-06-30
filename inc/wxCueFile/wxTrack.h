@@ -67,8 +67,8 @@ protected:
 		const wxChar* szName;
 	} FLAG_STR;
 
-	static FLAG_STR FlagString[];
-	static size_t	FlagStringSize;
+	static const FLAG_STR FlagString[];
+	static const size_t	  FlagStringSize;
 
 	typedef struct _DATA_MODE_STR
 	{
@@ -76,8 +76,8 @@ protected:
 		const wxChar* szName;
 	} DATA_MODE_STR;
 
-	static DATA_MODE_STR DataModeString[];
-	static size_t DataModeStringSize;
+	static const DATA_MODE_STR DataModeString[];
+	static const size_t DataModeStringSize;
 
 protected:
 

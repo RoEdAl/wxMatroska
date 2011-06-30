@@ -510,7 +510,6 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncodingFromB
 		wxLogError( _( "Cannot read BOM - file \u201C%s\u201D is too small" ), fn.GetName() );
 		break;
 	}
-
 	return pRes;
 }
 
@@ -692,7 +691,6 @@ bool wxEncodingDetection::GetBOM( wxUint32 nCodePage, wxByteBuffer& bom )
 		bRet = false;
 		break;
 	}
-
 	return bRet;
 }
 

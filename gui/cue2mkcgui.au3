@@ -5,7 +5,7 @@
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.65
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.66
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -68,7 +68,6 @@ EndIf
 
 If StringLen($sErr) > 0 Then
 	MsgBox(0x10, $APP_NAME, "The following utilities are missing:" & @CRLF & $sErr)
-	Exit 1
 EndIf
 
 Dim Const $CUE_FILTER = "CUE files (*.cue)|Text files (*.txt)|Audio files (*.flac;*.ape;*.wv;*.wav;*.aiff;*.tta)|All files (*)"
@@ -336,30 +335,32 @@ GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCK
 $CheckBoxMLang = GUICtrlCreateCheckbox("Use MLang library", 8, 219, 117, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-$GroupMkvmerge = GUICtrlCreateGroup("mkvmerge", 236, 26, 277, 117)
+$GroupMkvmerge = GUICtrlCreateGroup("mkvmerge", 236, 26, 277, 141)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKHEIGHT)
-$LabelMkvmergeDir = GUICtrlCreateLabel("Location:", 242, 42, 51, 21, $SS_CENTERIMAGE)
+$CheckBoxEacLog = GUICtrlCreateCheckbox("Attach EAC log(s)", 240, 43, 113, 17)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+GUICtrlSetTip(-1, "Attach EAC log file(s) to generated MKA file")
+$CheckBoxCover = GUICtrlCreateCheckbox("Attach &cover image", 240, 58, 121, 17)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+GUICtrlSetTip(-1, "Attach cover image (cover|front|picture.jpg|png)")
+$LabelCueSheetAttachMode = GUICtrlCreateLabel("Cue sheet attach mode", 240, 77, 115, 21, $SS_CENTERIMAGE)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+$ComboCueSheetAttachMode = GUICtrlCreateCombo("", 362, 77, 141, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL), $WS_EX_CLIENTEDGE)
+GUICtrlSetData(-1, "default|none|source|decoded|rendered")
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+$LabelMkvmergeDir = GUICtrlCreateLabel("Location:", 242, 106, 51, 21, $SS_CENTERIMAGE)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Directory where mkvmerge tool resides")
-$InputMkvmergeDir = GUICtrlCreateInput("", 293, 42, 181, 21)
+$InputMkvmergeDir = GUICtrlCreateInput("", 293, 106, 181, 21)
 GUICtrlSetLimit(-1, 50)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKHEIGHT)
-$ButtonMkvmergeDir = GUICtrlCreateButton("1", 476, 42, 29, 21, 0)
+$ButtonMkvmergeDir = GUICtrlCreateButton("1", 476, 106, 29, 21, 0)
 GUICtrlSetFont(-1, 10, 400, 0, "Wingdings")
 GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Specify output directory or file")
-$CheckBoxFullPaths = GUICtrlCreateCheckbox("Generate full paths in options file", 240, 65, 181, 17)
+$CheckBoxRunMkvmerge = GUICtrlCreateCheckbox("Run mkvmerge after options file generation", 240, 128, 229, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-GUICtrlSetTip(-1, "Read metadata from media file")
-$CheckBoxRunMkvmerge = GUICtrlCreateCheckbox("Run mkvmerge after options file generation", 240, 80, 229, 17)
-GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$CheckBoxEacLog = GUICtrlCreateCheckbox("Attach EAC log(s)", 240, 95, 113, 17)
-GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-GUICtrlSetTip(-1, "Attach EAC log file(s) to generated MKA file")
-$LabelCueSheetAttachMode = GUICtrlCreateLabel("Cue sheet attach mode", 240, 113, 115, 21, $SS_CENTERIMAGE)
-GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$ComboCueSheetAttachMode = GUICtrlCreateCombo("", 362, 113, 141, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL), $WS_EX_CLIENTEDGE)
-GUICtrlSetData(-1, "default|none|source|decoded|rendered")
+$CheckBoxFullPaths = GUICtrlCreateCheckbox("Generate full paths in options file", 240, 144, 181, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
@@ -551,6 +552,7 @@ Func set_default_options()
 	GUICtrlSetState($CheckBoxFullPaths, $GUI_CHECKED)
 	GUICtrlSetState($CheckBoxEt, $GUI_CHECKED)
 	GUICtrlSetState($CheckBoxEacLog, $GUI_CHECKED)
+	GUICtrlSetState($CheckBoxCover, $GUI_CHECKED)
 	_GUICtrlComboBox_SetCurSel($ComboCueSheetAttachMode, 0)
 EndFunc   ;==>set_default_options
 
@@ -767,6 +769,9 @@ Func read_options()
 	$s &= _Iif(GUICtrlRead($CheckBoxEacLog) = $GUI_CHECKED, "--attach-eac-log", "--dont-attach-eac-log")
 	$s &= " "
 
+	$s &= _Iif(GUICtrlRead($CheckBoxEacLog) = $GUI_CHECKED, "--attach-cover", "--dont-attach-cover")
+	$s &= " "
+
 	$s &= " --cue-sheet-attach-mode "
 	$s &= get_attach_mode_str(_GUICtrlComboBox_GetCurSel($ComboCueSheetAttachMode))
 	$s &= " "
@@ -934,13 +939,30 @@ If Not $CUE2MKC_EXE_EXISTS Then
 	log_msg("Warning: cue2mkc tool not found.")
 EndIf
 
-$cq = "Try to correct ""simple 'quotation' marks"" inside strings." & @CRLF & _
+$tip = "Try to correct ""simple 'quotation' marks"" inside strings." & @CRLF & _
 		"Examples:" & @CRLF & _
 		@TAB & "„polish ‚quotation’ marks”" & @CRLF & _
 		@TAB & "“english (U.S.) ‘quotation’ marks”" & @CRLF & _
 		@TAB & "« french ‹ angle › marks »" & @CRLF & _
 		@TAB & "„german ‚quotation‘ marks“"
-GUICtrlSetTip($CheckBoxCq, $cq, "Correct ""simple 'quotation' marks""", 1)
+GUICtrlSetTip($CheckBoxCq, $tip, "Correct ""simple 'quotation' marks""", 1)
+
+$tip = "CUE2MKC simply assumes that EAC log file is a file" & @CRLF & _
+		"with the same name that cuesheet but with “log” extension" & @CRLF & _
+		@CRLF & _
+		"For example EAC log file for file “c:\xxx\yyy.cue” is “c:\xxx\yyy.log”"
+GUICtrlSetTip($CheckBoxEacLog, $tip, "Attach EAC log(s)", 1)
+
+$tip = "Following files are searching in the same directory where cuesheet resides:" & @CRLF & _
+		@TAB & "cover.*" & @CRLF & _
+		@TAB & "front.*" & @CRLF & _
+		@TAB & "picture.*" & @CRLF & _
+		@CRLF & _
+		"Possible file extensions (case insensitive):" & @CRLF & _
+		@TAB & "jpg" & @CRLF & _
+		@TAB & "jpeg" & @CRLF & _
+		@TAB & "png";
+GUICtrlSetTip($CheckBoxCover, $tip, "Attach cover image", 1)
 
 If @Compiled Then
 	GUISetIcon(@ScriptFullPath, -1, $FormMain)

@@ -26,11 +26,15 @@ const wxChar* const wxCueSheet::CD_ALIASES[] =
 
 const size_t wxCueSheet::CD_ALIASES_SIZE = WXSIZEOF( wxCueSheet::CD_ALIASES );
 
+// ===============================================================================
+
 const wxChar wxCueSheet::ALBUM_REG_EX1[] =
 	wxT( "\\A(.*[^[:space:]])[[:space:]]*([[:punct:]][[:space:]]*%s[[:space:][:punct:]]*([[:digit:]]{1,2})[[:space:]]*[[:punct:]])[[:space:]]*([^[:space:]].*){0,1}\\Z" );
 
 const wxChar wxCueSheet::ALBUM_REG_EX2[] =
 	wxT( "\\A(.*[^[:space:]])[[:space:]]*(%s[[:space:][:punct:]]*([[:digit:]]{1,2}))[[:space:]]*([^[:space:]].*){0,1}\\Z" );
+
+// ===============================================================================
 
 wxString wxCueSheet::GetCdAliasesRegExp()
 {
@@ -110,10 +114,37 @@ const wxArrayFileName& wxCueSheet::GetLog() const
 	return m_log;
 }
 
+const wxArrayFileName& wxCueSheet::GetCover() const
+{
+	return m_cover;
+}
+
 wxCueSheet& wxCueSheet::AddLog( const wxFileName& logFile )
 {
 	m_log.Add( logFile );
 	return *this;
+}
+
+bool wxCueSheet::AddCover( const wxFileName& cover )
+{
+	bool bAdd = true;
+
+	for ( size_t i = 0, nCount = m_cover.Count(); i < nCount; i++ )
+	{
+		if ( m_cover[ i ] == cover )
+		{
+			wxLogDebug( wxT( "Adding cover %s second time." ), cover.GetFullName() );
+			bAdd = false;
+			break;
+		}
+	}
+
+	if ( bAdd )
+	{
+		m_cover.Add( cover );
+	}
+
+	return bAdd;
 }
 
 const wxArrayTrack& wxCueSheet::GetTracks() const
@@ -198,6 +229,7 @@ void wxCueSheet::Clear( void )
 {
 	m_content.Clear();
 	m_log.Clear();
+	m_cover.Clear();
 	wxCueComponent::Clear();
 	m_catalog.Clear();
 	m_cdtextfile.Clear();
@@ -209,6 +241,7 @@ void wxCueSheet::copy( const wxCueSheet& cs )
 	wxCueComponent::copy( cs );
 	m_content	 = cs.m_content;
 	m_log		 = cs.m_log;
+	m_cover		 = cs.m_cover;
 	m_catalog	 = cs.m_catalog;
 	m_cdtextfile = cs.m_cdtextfile;
 	m_tracks	 = cs.m_tracks;
@@ -268,6 +301,29 @@ void wxCueSheet::PrepareToAppend()
 	m_tags.Clear();
 }
 
+void wxCueSheet::AppendFileNames( wxArrayFileName& dest, const wxArrayFileName& source )
+{
+	bool bAdd;
+
+	for ( size_t i = 0, nSourceCount = source.Count(); i < nSourceCount; i++ )
+	{
+		bAdd = true;
+		for ( size_t j = 0, nDestCount = dest.Count(); j < nDestCount; j++ )
+		{
+			if ( dest[ j ] == source[ i ] )
+			{
+				bAdd = false;
+				break;
+			}
+		}
+
+		if ( bAdd )
+		{
+			dest.Add( source[ i ] );
+		}
+	}
+}
+
 wxCueSheet& wxCueSheet::Append( const wxCueSheet& _cs, const wxDuration& offset )
 {
 	wxCueSheet cs( _cs );
@@ -277,7 +333,8 @@ wxCueSheet& wxCueSheet::Append( const wxCueSheet& _cs, const wxDuration& offset 
 	wxCueComponent::Append( cs );
 
 	WX_APPEND_ARRAY( m_content, cs.m_content );
-	WX_APPEND_ARRAY( m_log, cs.m_log );
+	AppendFileNames( m_log, cs.m_log );
+	AppendFileNames( m_cover, cs.m_cover );
 	WX_APPEND_ARRAY( m_catalog, cs.m_catalog );
 	WX_APPEND_ARRAY( m_cdtextfile, cs.m_cdtextfile );
 

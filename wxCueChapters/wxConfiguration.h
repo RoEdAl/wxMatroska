@@ -73,6 +73,7 @@ protected:
 	bool				 m_bEllipsizeTags;
 	bool				 m_bAttachEacLog;
 	CUESHEET_ATTACH_MODE m_eCsAttachMode;
+	bool				 m_bAttachCover;
 
 	wxString m_sAlternateExtensions;
 	wxString m_sLang;
@@ -145,6 +146,7 @@ public:
 	bool EllipsizeTags() const;
 	bool AttachEacLog() const;
 	CUESHEET_ATTACH_MODE GetCueSheetAttachMode() const;
+	bool AttachCover() const;
 
 	wxString GetOutputFile( const wxInputFile& ) const;
 	void GetOutputFile( const wxInputFile&, wxFileName&, wxFileName& ) const;

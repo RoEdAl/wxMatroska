@@ -907,7 +907,6 @@ bool wxXmlCueSheetRenderer::OnRenderIndex( const wxCueSheet& cueSheet, const wxT
 		AddIdxChapterAtom( m_pChapterAtom, idx );
 		break;
 	}
-
 	return wxCueSheetRenderer::OnRenderIndex( cueSheet, track, idx );
 }
 

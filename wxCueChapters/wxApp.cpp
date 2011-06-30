@@ -18,7 +18,7 @@
 // ===============================================================================
 
 const wxChar wxMyApp::APP_NAME[]		  = wxT( "cue2mkc" );
-const wxChar wxMyApp::APP_VERSION[]		  = wxT( "0.75" );
+const wxChar wxMyApp::APP_VERSION[]		  = wxT( "0.76" );
 const wxChar wxMyApp::APP_VENDOR_NAME[]	  = wxT( "Edmunt Pienkowsky" );
 const wxChar wxMyApp::APP_AUTHOR[]		  = wxT( "Edmunt Pienkowsky - roed@onet.eu" );
 const wxChar wxMyApp::LICENSE_FILE_NAME[] = wxT( "license.txt" );

@@ -15,7 +15,7 @@ wxIMPLEMENT_DYNAMIC_CLASS( wxTrack, wxCueComponent );
 
 // ===============================================================================
 
-wxTrack::FLAG_STR wxTrack::FlagString[] =
+const wxTrack::FLAG_STR wxTrack::FlagString[] =
 {
 	{ DCP, wxT( "DCP" ) },
 	{ CH4, wxT( "CH4" ) },
@@ -25,9 +25,11 @@ wxTrack::FLAG_STR wxTrack::FlagString[] =
 	{ NONE, wxT( "NONE" ) }
 };
 
-size_t wxTrack::FlagStringSize = WXSIZEOF( wxTrack::FlagString );
+const size_t wxTrack::FlagStringSize = WXSIZEOF( wxTrack::FlagString );
 
-wxTrack::DATA_MODE_STR wxTrack::DataModeString[] =
+// ===============================================================================
+
+const wxTrack::DATA_MODE_STR wxTrack::DataModeString[] =
 {
 	{ AUDIO, wxT( "AUDIO" ) },
 	{ CDG, wxT( "CDG" ) },
@@ -39,7 +41,7 @@ wxTrack::DATA_MODE_STR wxTrack::DataModeString[] =
 	{ CDI_2352, wxT( "CDI/2352" ) }
 };
 
-size_t wxTrack::DataModeStringSize = WXSIZEOF( wxTrack::DataModeString );
+const size_t wxTrack::DataModeStringSize = WXSIZEOF( wxTrack::DataModeString );
 
 // ===============================================================================
 

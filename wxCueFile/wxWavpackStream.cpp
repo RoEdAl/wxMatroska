@@ -101,7 +101,6 @@ int wxWavpackStream::set_pos_rel( int32_t delta, int mode )
 		seekMode = wxFromStart;
 		break;
 	}
-
 	wxFileOffset offset = m_inputStream.SeekI( delta, seekMode );
 	return ( offset == wxInvalidOffset ) ? 1 : 0;
 }

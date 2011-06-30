@@ -15,7 +15,7 @@ wxIMPLEMENT_DYNAMIC_CLASS( wxDataFile, wxObject );
 
 // ===============================================================================
 
-static const wxChar* INFOS[] =
+static const wxChar* const INFOS[] =
 {
 	wxT( "StreamSize" ),
 	wxT( "Duration" ),
@@ -69,7 +69,7 @@ void wxDataFile::copy( const wxDataFile& df )
 	}
 }
 
-wxDataFile::FILE_TYPE_STR wxDataFile::FileTypeString[] =
+const wxDataFile::FILE_TYPE_STR wxDataFile::FileTypeString[] =
 {
 	{ BINARY, wxT( "BINARY" ) },
 	{ MOTOROLA, wxT( "MOTOROLA" ) },
@@ -78,7 +78,7 @@ wxDataFile::FILE_TYPE_STR wxDataFile::FileTypeString[] =
 	{ MP3, wxT( "MP3" ) }
 };
 
-size_t wxDataFile::FileTypeStringSize = WXSIZEOF( wxDataFile::FileTypeString );
+const size_t wxDataFile::FileTypeStringSize = WXSIZEOF( wxDataFile::FileTypeString );
 
 wxString wxDataFile::GetFileTypeRegExp()
 {

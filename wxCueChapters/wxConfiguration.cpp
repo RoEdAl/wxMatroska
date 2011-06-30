@@ -62,7 +62,6 @@ wxString wxConfiguration::GetFileEncodingStr( wxConfiguration::FILE_ENCODING eFi
 		s.Printf( wxT( "UNKNOWN %d" ), eFileEncoding );
 		break;
 	}
-
 	return s;
 }
 
@@ -142,7 +141,6 @@ wxString wxConfiguration::GetCueSheetAttachModeStr( wxConfiguration::CUESHEET_AT
 		s.Printf( wxT( "UNKNOWN %d" ), eCsAttachMode );
 		break;
 	}
-
 	return s;
 }
 
@@ -271,7 +269,8 @@ wxConfiguration::wxConfiguration( void ):
 	m_bFullPaths( false ),
 	m_bEllipsizeTags( true ),
 	m_bAttachEacLog( true ),
-	m_eCsAttachMode( CUESHEET_ATTACH_NONE )
+	m_eCsAttachMode( CUESHEET_ATTACH_NONE ),
+	m_bAttachCover( true )
 {
 	ReadLanguagesStrings( m_asLang );
 }
@@ -355,6 +354,9 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 
 	cmdLine.AddSwitch( wxEmptyString, wxT( "attach-eac-log" ), _( "Attach EAC log file to mkvmerge options file (default: yes)" ), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxEmptyString, wxT( "dont-attach-eac-log" ), _( "Don't attach EAC log file to mkvmerge options file" ), wxCMD_LINE_PARAM_OPTIONAL );
+
+	cmdLine.AddSwitch( wxEmptyString, wxT( "attach-cover" ), _( "Attach cover image (cover.*;front.*;album.*) to mkvmerge options file (default: yes)" ), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, wxT( "dont-attach-cover" ), _( "Don't attach cover image to mkvmerge options file" ), wxCMD_LINE_PARAM_OPTIONAL );
 
 	cmdLine.AddOption( wxEmptyString, wxT( "cue-sheet-attach-mode" ), _( "Mode of attaching cue sheet to mkvmerge options file - possible values are none (default), source, decoded, rendered and default" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 
@@ -819,6 +821,16 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		m_bAttachEacLog = false;
 	}
 
+	if ( cmdLine.Found( wxT( "attach-cover" ) ) )
+	{
+		m_bAttachCover = true;
+	}
+
+	if ( cmdLine.Found( wxT( "dont-attach-cover" ) ) )
+	{
+		m_bAttachCover = false;
+	}
+
 	if ( cmdLine.Found( wxT( "cue-sheet-attach-mode" ), &s ) )
 	{
 		bool bDefault;
@@ -882,7 +894,6 @@ wxString wxConfiguration::GetEmbeddedModeFlagsDesc( unsigned int flags )
 		s.Printf( wxT( "flac-read-<%08x>" ), ( flags & wxCueSheetReader::EC_FLAC_READ_MASK ) );
 		break;
 	}
-
 	as.Add( s );
 
 	as.Add( ( ( flags & wxCueSheetReader::EC_MEDIA_READ_TAGS ) != 0 ) ? wxT( "read-media-tags" ) : wxT( "dont-read-media-tags" ) );
@@ -928,6 +939,7 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
 
 		as.Add( wxString::Format( wxT( "Generate full paths: %s" ), BoolToStr( m_bFullPaths ) ) );
 		as.Add( wxString::Format( wxT( "Attach EAC log: %s" ), BoolToStr( m_bAttachEacLog ) ) );
+		as.Add( wxString::Format( wxT( "Attach cover: %s" ), BoolToStr( m_bAttachCover ) ) );
 		as.Add( wxString::Format( wxT( "Cue sheet attach mode: %s" ), GetCueSheetAttachModeStr( m_eCsAttachMode ) ) );
 	}
 
@@ -1315,7 +1327,6 @@ wxSharedPtr<wxTextOutputStream> wxConfiguration::GetOutputTextStream( wxOutputSt
 		pRes = new wxTextOutputStream( os, wxEOL_NATIVE, wxConvLocal );
 		break;
 	}
-
 	return pRes;
 }
 
@@ -1390,6 +1401,11 @@ bool wxConfiguration::EllipsizeTags() const
 bool wxConfiguration::AttachEacLog() const
 {
 	return m_bAttachEacLog;
+}
+
+bool wxConfiguration::AttachCover() const
+{
+	return m_bAttachCover;
 }
 
 wxConfiguration::CUESHEET_ATTACH_MODE wxConfiguration::GetCueSheetAttachMode() const

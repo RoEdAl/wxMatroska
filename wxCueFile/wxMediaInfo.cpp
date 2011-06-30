@@ -13,7 +13,7 @@ wxIMPLEMENT_ABSTRACT_CLASS( wxMediaInfo, wxObject )
 
 const wxChar wxMediaInfo::MEDIA_INFO_LIBRARY[] = wxT( "MediaInfo.dll" );
 
-const wxChar* wxMediaInfo::SYMBOL_NAMES[] =
+const wxChar* const wxMediaInfo::SYMBOL_NAMES[] =
 {
 	wxT( "MediaInfo_New" ),
 	wxT( "MediaInfo_Delete" ),

@@ -18,8 +18,8 @@ public:
 
 	static const wxChar MEDIA_INFO_LIBRARY[];
 
-	static const wxChar* SYMBOL_NAMES[];
-	static const size_t	 SYMBOL_NAMES_SIZE;
+	static const wxChar* const SYMBOL_NAMES[];
+	static const size_t		   SYMBOL_NAMES_SIZE;
 
 	/** @brief Kinds of Stream */
 	typedef enum MediaInfo_stream_t

@@ -101,8 +101,8 @@ protected:
 		const wxChar* pText;
 	} SOURCE2TEXT;
 
-	static SOURCE2TEXT SOURCE2TEXT_MAPPING[];
-	static size_t	   SOURCE2TEXT_MAPPING_SIZE;
+	static const SOURCE2TEXT SOURCE2TEXT_MAPPING[];
+	static const size_t		 SOURCE2TEXT_MAPPING_SIZE;
 
 public:
 

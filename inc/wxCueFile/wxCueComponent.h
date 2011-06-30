@@ -43,8 +43,8 @@ protected:
 		wxChar replacement;
 	} CDTEXT_ENTRY;
 
-	static CDTEXT_ENTRY CdTextFields[];
-	static size_t		CdTextFieldsSize;
+	static const CDTEXT_ENTRY CdTextFields[];
+	static const size_t		  CdTextFieldsSize;
 
 	typedef struct _KEYWORD_ENTRY
 	{
@@ -52,8 +52,8 @@ protected:
 		ENTRY_TYPE type;
 	} KEYWORD_ENTRY;
 
-	static KEYWORD_ENTRY Keywords[];
-	static size_t KeywordsSize;
+	static const KEYWORD_ENTRY Keywords[];
+	static const size_t KeywordsSize;
 
 protected:
 

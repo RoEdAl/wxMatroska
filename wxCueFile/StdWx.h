@@ -26,6 +26,7 @@
 #include <wx/dynlib.h>
 #include <wx/filename.h>
 #include <wx/sharedptr.h>
+#include <wx/dir.h>
 
 #include <FLAC++/all.h>
 #include <wavpack.h>

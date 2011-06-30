@@ -46,6 +46,12 @@ public:
 
 	static const wxChar LOG_EXT[];
 
+	static const wxChar* const CoverNames[];
+	static const size_t		   CoverNamesSize;
+
+	static const wxChar* const CoverExts[];
+	static const size_t		   CoverExtsSize;
+
 	enum
 	{
 		EC_FLAC_READ_NONE					= 0,
@@ -103,6 +109,10 @@ protected:
 	static wxString GetDataFileRegExp();
 	static bool GetLogFile( const wxFileName&, wxFileName& );
 
+	static bool IsCoverFile( const wxFileName& );
+	static bool GetCoverFile( const wxDir&, const wxString&, wxFileName& );
+	static bool GetCoverFile( const wxFileName&, wxFileName& );
+
 	void AddError0( const wxString& );
 	void AddError( const wxChar* pszFormat, ... );
 
@@ -125,8 +135,8 @@ protected:
 		PARSE_METHOD method;
 	} PARSE_STRUCT;
 
-	static PARSE_STRUCT parseArray[];
-	static size_t		parseArraySize;
+	static const PARSE_STRUCT parseArray[];
+	static const size_t		  parseArraySize;
 
 	bool IsTrack() const;
 	wxTrack&	   GetLastTrack();

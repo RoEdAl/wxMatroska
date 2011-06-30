@@ -35,7 +35,7 @@ const wxChar* const wxCueTag::Name::TOTALDISCS	 = wxT( "TOTALDISCS" );
 
 // ===============================================================================
 
-wxCueTag::SOURCE2TEXT wxCueTag::SOURCE2TEXT_MAPPING[] =
+const wxCueTag::SOURCE2TEXT wxCueTag::SOURCE2TEXT_MAPPING[] =
 {
 	{ TAG_UNKNOWN, _( "Unknown" ) },
 	{ TAG_CD_TEXT, _( "CD-TEXT" ) },
@@ -44,7 +44,7 @@ wxCueTag::SOURCE2TEXT wxCueTag::SOURCE2TEXT_MAPPING[] =
 	{ TAG_AUTO_GENERATED, _( "Automatically generated" ) }
 };
 
-size_t wxCueTag::SOURCE2TEXT_MAPPING_SIZE = WXSIZEOF( wxCueTag::SOURCE2TEXT_MAPPING );
+const size_t wxCueTag::SOURCE2TEXT_MAPPING_SIZE = WXSIZEOF( wxCueTag::SOURCE2TEXT_MAPPING );
 
 // ===============================================================================
 

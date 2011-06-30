@@ -44,6 +44,7 @@ protected:
 
 	wxArrayCueSheetContent m_content;
 	wxArrayFileName m_log;
+	wxArrayFileName m_cover;
 
 	wxArrayCueTag m_catalog;
 	wxArrayCueTag m_cdtextfile;
@@ -56,6 +57,7 @@ protected:
 	void AddTagToAllTracks( const wxCueTag& );
 	void PrepareToAppend();
 	wxCueSheet& Append( const wxCueSheet&, const wxDuration& );
+	static void AppendFileNames( wxArrayFileName&, const wxArrayFileName& );
 
 public:
 
@@ -75,6 +77,7 @@ public:
 
 	const wxArrayCueSheetContent& GetContent() const;
 	const wxArrayFileName&		  GetLog() const;
+	const wxArrayFileName&		  GetCover() const;
 	const wxArrayCueTag&		  GetCatalog() const;
 	const wxArrayCueTag&		  GetCdTextFile() const;
 	const wxArrayTrack&			  GetTracks() const;
@@ -86,6 +89,7 @@ public:
 	wxCueSheet& AddContent( const wxCueSheetContent& );
 	wxCueSheet& AddContent( const wxString& );
 	wxCueSheet& AddLog( const wxFileName& );
+	bool AddCover( const wxFileName& );
 
 	virtual bool HasDuration() const;
 	virtual wxDuration GetDuration() const;

@@ -31,8 +31,8 @@ protected:
 		const wxChar* szName;
 	} FILE_TYPE_STR;
 
-	static FILE_TYPE_STR FileTypeString[];
-	static size_t FileTypeStringSize;
+	static const FILE_TYPE_STR FileTypeString[];
+	static const size_t FileTypeStringSize;
 
 protected:
 

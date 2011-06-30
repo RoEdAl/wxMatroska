@@ -15,7 +15,7 @@ wxIMPLEMENT_ABSTRACT_CLASS( wxCueComponent, wxObject );
 
 // ===============================================================================
 
-wxCueComponent::CDTEXT_ENTRY wxCueComponent::CdTextFields[] =
+const wxCueComponent::CDTEXT_ENTRY wxCueComponent::CdTextFields[] =
 {
 	{ wxCueTag::Name::ARRANGER, wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( 'a' ) },
 	{ wxCueTag::Name::COMPOSER, wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( 'c' ) },
@@ -32,9 +32,11 @@ wxCueComponent::CDTEXT_ENTRY wxCueComponent::CdTextFields[] =
 	{ wxCueTag::Name::TOC_INFO2, wxCueComponent::ANY, wxCueComponent::BINARY, wxT( '\000' ) }
 };
 
-size_t wxCueComponent::CdTextFieldsSize = WXSIZEOF( wxCueComponent::CdTextFields );
+const size_t wxCueComponent::CdTextFieldsSize = WXSIZEOF( wxCueComponent::CdTextFields );
 
-wxCueComponent::KEYWORD_ENTRY wxCueComponent::Keywords[] =
+// ===============================================================================
+
+const wxCueComponent::KEYWORD_ENTRY wxCueComponent::Keywords[] =
 {
 	{ wxT( "REM" ), wxCueComponent::ANY },
 	{ wxT( "INDEX" ), wxCueComponent::TRACK },
@@ -47,7 +49,7 @@ wxCueComponent::KEYWORD_ENTRY wxCueComponent::Keywords[] =
 	{ wxT( "CDTEXTFILE" ), wxCueComponent::DISC }
 };
 
-size_t wxCueComponent::KeywordsSize = WXSIZEOF( wxCueComponent::Keywords );
+const size_t wxCueComponent::KeywordsSize = WXSIZEOF( wxCueComponent::Keywords );
 
 // ===============================================================================
 
@@ -512,7 +514,6 @@ void wxCueComponent::GetReplacements( wxCueComponent::wxHashString& replacements
 
 			break;
 		}
-
 		replacements[ s ] = sValue;
 	}
 }
