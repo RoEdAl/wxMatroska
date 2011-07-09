@@ -74,6 +74,7 @@ protected:
 	bool				 m_bAttachEacLog;
 	CUESHEET_ATTACH_MODE m_eCsAttachMode;
 	bool				 m_bAttachCover;
+	bool				 m_bRemoveExtraSpaces;
 
 	wxString m_sAlternateExtensions;
 	wxString m_sLang;
@@ -147,6 +148,7 @@ public:
 	bool AttachEacLog() const;
 	CUESHEET_ATTACH_MODE GetCueSheetAttachMode() const;
 	bool AttachCover() const;
+	bool RemoveExtraSpaces() const;
 
 	wxString GetOutputFile( const wxInputFile& ) const;
 	void GetOutputFile( const wxInputFile&, wxFileName&, wxFileName& ) const;

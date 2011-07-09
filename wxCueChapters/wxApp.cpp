@@ -18,7 +18,7 @@
 // ===============================================================================
 
 const wxChar wxMyApp::APP_NAME[]		  = wxT( "cue2mkc" );
-const wxChar wxMyApp::APP_VERSION[]		  = wxT( "0.76" );
+const wxChar wxMyApp::APP_VERSION[]		  = wxT( "0.77" );
 const wxChar wxMyApp::APP_VENDOR_NAME[]	  = wxT( "Edmunt Pienkowsky" );
 const wxChar wxMyApp::APP_AUTHOR[]		  = wxT( "Edmunt Pienkowsky - roed@onet.eu" );
 const wxChar wxMyApp::LICENSE_FILE_NAME[] = wxT( "license.txt" );
@@ -324,7 +324,8 @@ int wxMyApp::ProcessCueFile( const wxInputFile& inputFile )
 	reader
 	.CorrectQuotationMarks( m_cfg.CorrectQuotationMarks(), m_cfg.GetLang() )
 	.SetParseComments( m_cfg.GenerateTagsFromComments() )
-	.SetEllipsizeTags( m_cfg.EllipsizeTags() );
+	.SetEllipsizeTags( m_cfg.EllipsizeTags() )
+	.SetRemoveExtraSpaces( m_cfg.RemoveExtraSpaces() );
 
 	wxString sInputFile( inputFile.GetInputFile().GetFullPath() );
 

@@ -66,6 +66,7 @@ const wxChar* const wxCueSheetReader::CoverNames[] =
 {
 	wxT( "cover" ),
 	wxT( "front" ),
+	wxT( "folder" ),
 	wxT( "picture" )
 };
 
@@ -212,7 +213,8 @@ wxCueSheetReader::wxCueSheetReader( void ):
 	m_reTrackComment( wxT( "cue[[.hyphen.][.underscore.][.low-line.]]track([[:digit:]]{1,2})[[.underscore.][.low-line.]]([[:alpha:][.hyphen.][.underscore.][.low-line.][.space.]]+)" ), wxRE_ADVANCED | wxRE_ICASE ),
 	m_bErrorsAsWarnings( true ),
 	m_bParseComments( true ),
-	m_bEllipsizeTags( true )
+	m_bEllipsizeTags( true ),
+	m_bRemoveExtraSpaces( false )
 {
 	wxASSERT( m_reKeywords.IsValid() );
 	wxASSERT( m_reCdTextInfo.IsValid() );
@@ -265,6 +267,17 @@ bool wxCueSheetReader::EllipsizeTags() const
 wxCueSheetReader& wxCueSheetReader::SetEllipsizeTags( bool bEllipsizeTags )
 {
 	m_bEllipsizeTags = bEllipsizeTags;
+	return *this;
+}
+
+bool wxCueSheetReader::RemoveExtraSpaces() const
+{
+	return m_bRemoveExtraSpaces;
+}
+
+wxCueSheetReader& wxCueSheetReader::SetRemoveExtraSpaces( bool bRemoveExtraSpaces )
+{
+	m_bRemoveExtraSpaces = bRemoveExtraSpaces;
 	return *this;
 }
 
@@ -487,7 +500,13 @@ void wxCueSheetReader::AppendComments( wxArrayCueTag& comments, bool singleMedia
 			continue;
 		}
 
-		comment.RemoveTrailingSpaces( m_spacesRemover );
+		comment.Unquote( m_unquoter );
+		comment.RemoveTrailingSpaces( m_trailingSpacesRemover );
+		if ( m_bRemoveExtraSpaces )
+		{
+			comment.RemoveExtraSpaces( m_reduntantSpacesRemover );
+		}
+
 		if ( m_bEllipsizeTags )
 		{
 			comment.Ellipsize( m_ellipsizer );
@@ -1058,11 +1077,16 @@ bool wxCueSheetReader::ParseCueLine( const wxString& sLine, size_t nLine )
 
 bool wxCueSheetReader::AddCdTextInfo( const wxString& sToken, const wxString& sBody )
 {
-	wxString sModifiedBody( m_spacesRemover.Remove( sBody ) );
+	wxString sModifiedBody( m_trailingSpacesRemover.Remove( sBody ) );
 
 	if ( m_bEllipsizeTags )
 	{
 		sModifiedBody = m_ellipsizer.Ellipsize( sModifiedBody );
+	}
+
+	if ( m_bRemoveExtraSpaces )
+	{
+		m_reduntantSpacesRemover.Remove( sModifiedBody );
 	}
 
 	if ( IsTrack() )

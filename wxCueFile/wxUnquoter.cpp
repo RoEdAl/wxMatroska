@@ -11,11 +11,12 @@ wxIMPLEMENT_DYNAMIC_CLASS( wxUnquoter, wxObject );
 
 // ===============================================================================
 
-const wxChar wxUnquoter::SINGLE_QUOTES[] = wxT( "\\'(([^\\']|\\\')*)\\'(?![[:alnum:]])" );
-const wxChar wxUnquoter::DOUBLE_QUOTES[] = wxT( "\\\"(([^\\\"]|\\\\\")*)\\\"" );
+const wxChar wxUnquoter::RE_SINGLE_QUOTES[] = wxT( "[[.apostrophe.]](([^[.apostrophe.]]|\\B[[.apostrophe.]])*)[[.apostrophe.]](?![[:alnum:]])" );
+const wxChar wxUnquoter::RE_DOUBLE_QUOTES[] = wxT( "[[.quotation-mark.]](([^[.quotation-mark.]]|\\B[[.quotation-mark.]])*)[[.quotation-mark.]]" );
+const wxChar wxUnquoter::RE_PSEUDO_DOUUBLE_QUOTES[] = wxT("\\'\\'(([^\\']|(\\\'){1})+)\\'\\'");
 
-const wxChar wxUnquoter::FULL_SINGLE_QUOTES[] = wxT( "\\A[[:space:]]*\\'(([^\\']|\\\')*)\\'[[:space:]]*\\Z" );
-const wxChar wxUnquoter::FULL_DOUBLE_QUOTES[] = wxT( "\\A[[:space:]]*\\\"(([^\\\"]|\\\\\")*)\\\"[[:space:]]*\\Z" );
+const wxChar wxUnquoter::RE_FULL_SINGLE_QUOTES[] = wxT( "\\A[[:space:]]*\\'(([^\\']|\\\')*)\\'[[:space:]]*\\Z" );
+const wxChar wxUnquoter::RE_FULL_DOUBLE_QUOTES[] = wxT( "\\A[[:space:]]*\\\"(([^\\\"]|\\\\\")*)\\\"[[:space:]]*\\Z" );
 
 const wxChar wxUnquoter::ENGLISH_DOUBLE_QUOTES[] = wxT( "\u201C\\1\u201D" );
 const wxChar wxUnquoter::ENGLISH_SINGLE_QUOTES[] = wxT( "\u2018\\1\u2019" );
@@ -32,13 +33,15 @@ const wxChar wxUnquoter::FRENCH_SINGLE_QUOTES[] = wxT( "\u2039\u2005\\1\u2005\u2
 // ===============================================================================
 
 wxUnquoter::wxUnquoter( void ):
-	m_reQuotes( SINGLE_QUOTES, wxRE_ADVANCED ),
-	m_reDoubleQuotes( DOUBLE_QUOTES, wxRE_ADVANCED ),
-	m_reFullQuotes( FULL_SINGLE_QUOTES, wxRE_ADVANCED ),
-	m_reFullDoubleQuotes( FULL_DOUBLE_QUOTES, wxRE_ADVANCED )
+	m_reSingleQuotes( RE_SINGLE_QUOTES, wxRE_ADVANCED ),
+	m_reDoubleQuotes( RE_DOUBLE_QUOTES, wxRE_ADVANCED ),
+	m_rePseudoDoubleQuotes( RE_PSEUDO_DOUUBLE_QUOTES, wxRE_ADVANCED ),
+	m_reFullQuotes( RE_FULL_SINGLE_QUOTES, wxRE_ADVANCED ),
+	m_reFullDoubleQuotes( RE_FULL_DOUBLE_QUOTES, wxRE_ADVANCED )
 {
-	wxASSERT( m_reQuotes.IsValid() );
+	wxASSERT( m_reSingleQuotes.IsValid() );
 	wxASSERT( m_reDoubleQuotes.IsValid() );
+	wxASSERT( m_rePseudoDoubleQuotes.IsValid() );
 
 	wxASSERT( m_reFullQuotes.IsValid() );
 	wxASSERT( m_reFullDoubleQuotes.IsValid() );
@@ -130,12 +133,17 @@ wxString wxUnquoter::UnquoteAndCorrect( const wxString& qs ) const
 {
 	wxString s( Unquote( qs ) );
 
-	if ( !m_sSingleQuotes.IsEmpty() )
+	if ( !m_sDoubleQuotes.IsEmpty() )
 	{
-		m_reQuotes.ReplaceAll( &s, m_sSingleQuotes );
+		m_rePseudoDoubleQuotes.ReplaceAll( &s, m_sDoubleQuotes );
 	}
 
-	if ( m_sDoubleQuotes.IsEmpty() )
+	if ( !m_sSingleQuotes.IsEmpty() )
+	{
+		m_reSingleQuotes.ReplaceAll( &s, m_sSingleQuotes );
+	}
+
+	if ( !m_sDoubleQuotes.IsEmpty() )
 	{
 		m_reDoubleQuotes.ReplaceAll( &s, m_sDoubleQuotes );
 	}
@@ -145,7 +153,7 @@ wxString wxUnquoter::UnquoteAndCorrect( const wxString& qs ) const
 
 const wxRegEx& wxUnquoter::GetReSingleQuotes() const
 {
-	return m_reQuotes;
+	return m_reSingleQuotes;
 }
 
 const wxRegEx& wxUnquoter::GetReDoubleQuotes() const
@@ -165,6 +173,5 @@ const wxRegEx& wxUnquoter::GetReFullDoubleQuotes() const
 
 bool wxUnquoter::IsQuoted( const wxString& s ) const
 {
-	return m_reQuotes.Matches( s ) || m_reDoubleQuotes.Matches( s );
+	return m_reSingleQuotes.Matches( s ) || m_reDoubleQuotes.Matches( s );
 }
-

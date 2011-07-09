@@ -29,6 +29,10 @@ class wxFlacMetaDataReader;
 #include "wxTrailingSpacesRemover.h"
 #endif
 
+#ifndef _WX_REDUNTANT_SPACES_REMOVER_H_
+#include "wxReduntantSpacesRemover.h"
+#endif
+
 #ifndef _WX_ELLIPSIZER_H_
 #include "wxEllipsizer.h"
 #endif
@@ -90,7 +94,8 @@ protected:
 	wxRegEx					m_reCatalog;
 	wxRegEx					m_reIsrc;
 	wxRegEx					m_reTrackComment;
-	wxTrailingSpacesRemover m_spacesRemover;
+	wxTrailingSpacesRemover m_trailingSpacesRemover;
+	wxReduntantSpacesRemover m_reduntantSpacesRemover;
 	wxEllipsizer			m_ellipsizer;
 
 	wxDataFile m_dataFile;
@@ -98,6 +103,7 @@ protected:
 	bool	   m_bErrorsAsWarnings;
 	bool	   m_bParseComments;
 	bool	   m_bEllipsizeTags;
+	bool m_bRemoveExtraSpaces;
 	wxString   m_sLang;
 	wxFileName m_cueFileName;
 
@@ -188,6 +194,8 @@ public:
 	wxCueSheetReader& SetParseComments( bool = true );
 	bool EllipsizeTags() const;
 	wxCueSheetReader& SetEllipsizeTags( bool = true );
+	bool RemoveExtraSpaces() const;
+	wxCueSheetReader& SetRemoveExtraSpaces( bool = true );
 	wxCueSheetReader& CorrectQuotationMarks( bool, const wxString& );
 
 	const wxCueSheet& GetCueSheet() const;

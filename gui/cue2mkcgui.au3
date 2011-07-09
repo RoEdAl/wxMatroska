@@ -1,12 +1,12 @@
 #NoTrayIcon
-#region ;**** Directives created by AutoIt3Wrapper_GUI ****
-#AutoIt3Wrapper_icon=icons/cd_mka.ico
-#AutoIt3Wrapper_outfile=../bin/Release/cue2mkcgui.exe
+#Region ;**** Directives created by AutoIt3Wrapper_GUI ****
+#AutoIt3Wrapper_Icon=icons/cd_mka.ico
+#AutoIt3Wrapper_Outfile=../bin/Release/cue2mkcgui.exe
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.66
-#AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.68
+#AutoIt3Wrapper_Res_FileVersion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html
 #AutoIt3Wrapper_Res_SaveSource=y
 #AutoIt3Wrapper_Res_Field=Company|Edmunt Pienkowsky - roed@onet.eu
@@ -17,7 +17,7 @@
 #AutoIt3Wrapper_Res_Icon_Add=icons/media_file_add.ico
 #AutoIt3Wrapper_Res_Icon_Add=icons/file_mask.ico
 #AutoIt3Wrapper_Run_Tidy=y
-#endregion ;**** Directives created by AutoIt3Wrapper_GUI ****
+#EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 ;
 ; cue2mkcgui - simple frontend cue2mkc utility.
 ;
@@ -103,8 +103,8 @@ Func get_mkvmerge_dir()
 	EndIf
 EndFunc   ;==>get_mkvmerge_dir
 
-#region ### START Koda GUI section ### Form=D:\Temp\wxMatroska.bitbucket\gui\cue2mkcgui.kxf
-$FormMain = GUICreate("cue2mkc GUI", 540, 408, -1, -1, BitOR($WS_MAXIMIZEBOX, $WS_MINIMIZEBOX, $WS_SIZEBOX, $WS_THICKFRAME, $WS_SYSMENU, $WS_CAPTION, $WS_OVERLAPPEDWINDOW, $WS_TILEDWINDOW, $WS_POPUP, $WS_POPUPWINDOW, $WS_GROUP, $WS_TABSTOP, $WS_BORDER, $WS_CLIPSIBLINGS), BitOR($WS_EX_ACCEPTFILES, $WS_EX_WINDOWEDGE))
+#Region ### START Koda GUI section ### Form=c:\Documents and Settings\VBox\My Documents\Visual Studio 2010\Projects\wxMatroska\gui\cue2mkcgui.kxf
+$FormMain = GUICreate("cue2mkc GUI", 545, 409, -1, -1, BitOR($WS_MAXIMIZEBOX, $WS_MINIMIZEBOX, $WS_SIZEBOX, $WS_THICKFRAME, $WS_SYSMENU, $WS_CAPTION, $WS_OVERLAPPEDWINDOW, $WS_TILEDWINDOW, $WS_POPUP, $WS_POPUPWINDOW, $WS_GROUP, $WS_TABSTOP, $WS_BORDER, $WS_CLIPSIBLINGS), BitOR($WS_EX_ACCEPTFILES, $WS_EX_WINDOWEDGE))
 GUISetFont(8, 400, 0, "Microsoft Sans Serif")
 $DummyOutput = GUICtrlCreateDummy()
 $MainTab = GUICtrlCreateTab(0, 0, 541, 369, $TCS_MULTILINE)
@@ -154,7 +154,7 @@ GUICtrlSetFont(-1, 8, 800, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $ListLog = GUICtrlCreateList("", 4, 46, 529, 276, BitOR($LBS_USETABSTOPS, $LBS_NOINTEGRALHEIGHT, $LBS_NOSEL, $WS_HSCROLL, $WS_VSCROLL), $WS_EX_STATICEDGE)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
-GUICtrlSetBkColor(-1, 0xD4D0C8)
+GUICtrlSetBkColor(-1, 0xECE9D8)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKBOTTOM)
 GUICtrlSetTip(-1, "Application messages")
 $ButtonMsgCopy = GUICtrlCreateButton("&Copy", 4, 325, 61, 29, 0)
@@ -220,35 +220,39 @@ $ComboCueSheetEncoding = GUICtrlCreateCombo("", 113, 266, 141, 25, BitOR($CBS_DR
 GUICtrlSetData(-1, "default|UTF-8|UTF-8 with BOM|UTF-16|UTF-16 with BOM")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-$GroupTags = GUICtrlCreateGroup("&Tags parsing", 4, 291, 265, 69)
+$GroupTags = GUICtrlCreateGroup("&Tags parsing", 276, 27, 233, 85)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$CheckBoxCq = GUICtrlCreateCheckbox("Correct ""simple 'quotation' marks"" inside strings", 8, 307, 249, 17)
+$CheckBoxCq = GUICtrlCreateCheckbox("Correct ""simple 'quotation' marks""", 280, 43, 201, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$CheckBoxTc = GUICtrlCreateCheckbox("Parse tags from cue sheet comments", 8, 323, 197, 17)
+GUICtrlSetTip(-1, "Correct ""simple 'quotation' marks"" inside tags")
+$CheckBoxTc = GUICtrlCreateCheckbox("Parse tags from cue sheet comments", 280, 59, 197, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Try to parse tags from cue sheet comments")
-$CheckBoxEt = GUICtrlCreateCheckbox("Ellipsize tags", 8, 338, 97, 17)
+$CheckBoxEt = GUICtrlCreateCheckbox("Ellipsize tags", 280, 74, 97, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Replace last three dots [...] with ellipsis […] character")
+$CheckBoxRs = GUICtrlCreateCheckbox("Remove extra spaces", 280, 90, 161, 17)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+GUICtrlSetTip(-1, "Remove extra spaces (e.g. more than two) from tags")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-$GroupIgnoredTags = GUICtrlCreateGroup("&Ignored tags", 279, 27, 225, 77, -1, $WS_EX_TRANSPARENT)
+$GroupIgnoredTags = GUICtrlCreateGroup("&Ignored tags", 276, 115, 225, 77, -1, $WS_EX_TRANSPARENT)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$CheckBoxTagIgnoreCdText = GUICtrlCreateCheckbox("Ignore CD-TEXT tags", 283, 43, 125, 17)
+$CheckBoxTagIgnoreCdText = GUICtrlCreateCheckbox("Ignore CD-TEXT tags", 280, 131, 125, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Ignore all CD-TEXT tags")
-$CheckBoxTagIgnoreCueComments = GUICtrlCreateCheckbox("Ignore tags from cuesheet comments", 283, 61, 205, 17)
+$CheckBoxTagIgnoreCueComments = GUICtrlCreateCheckbox("Ignore tags from cuesheet comments", 280, 149, 205, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Ignore all tags taken from cuesheet comments")
-$CheckBoxTagIgnoreFromMedia = GUICtrlCreateCheckbox("Ignore tags from media file(s)", 283, 80, 161, 17)
+$CheckBoxTagIgnoreFromMedia = GUICtrlCreateCheckbox("Ignore tags from media file(s)", 280, 168, 161, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Ignore all tags taken from media's metadata")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-$GroupTagFile = GUICtrlCreateGroup("&Tags file", 279, 107, 225, 37, -1, $WS_EX_TRANSPARENT)
+$GroupTagFile = GUICtrlCreateGroup("&Tags file", 276, 195, 225, 37, -1, $WS_EX_TRANSPARENT)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$CheckBoxEu = GUICtrlCreateCheckbox("Generate edition UID", 283, 123, 129, 17)
+$CheckBoxEu = GUICtrlCreateCheckbox("Generate edition UID", 280, 211, 129, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 $ChapterOptionsPane = GUICtrlCreateTabItem("&Chapters file generation options")
@@ -384,7 +388,7 @@ $ButtonGo = GUICtrlCreateButton("&Run", 452, 376, 85, 29, 0)
 GUICtrlSetFont(-1, 8, 800, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Run cue2mkc tool")
-#endregion ### END Koda GUI section ###
+#EndRegion ### END Koda GUI section ###
 
 Func set_output_mode($nMode)
 	Switch $nMode
@@ -553,6 +557,7 @@ Func set_default_options()
 	GUICtrlSetState($CheckBoxEt, $GUI_CHECKED)
 	GUICtrlSetState($CheckBoxEacLog, $GUI_CHECKED)
 	GUICtrlSetState($CheckBoxCover, $GUI_CHECKED)
+	GUICtrlSetState($CheckBoxRs, $GUI_UNCHECKED)
 	_GUICtrlComboBox_SetCurSel($ComboCueSheetAttachMode, 0)
 EndFunc   ;==>set_default_options
 
@@ -772,6 +777,9 @@ Func read_options()
 	$s &= _Iif(GUICtrlRead($CheckBoxEacLog) = $GUI_CHECKED, "--attach-cover", "--dont-attach-cover")
 	$s &= " "
 
+	$s &= _Iif(GUICtrlRead($CheckBoxRs) = $GUI_CHECKED, "--remove-extra-spaces", "--dont-remove-extra-spaces")
+	$s &= " "
+
 	$s &= " --cue-sheet-attach-mode "
 	$s &= get_attach_mode_str(_GUICtrlComboBox_GetCurSel($ComboCueSheetAttachMode))
 	$s &= " "
@@ -956,6 +964,7 @@ GUICtrlSetTip($CheckBoxEacLog, $tip, "Attach EAC log(s)", 1)
 $tip = "Following files are searching in the same directory where cuesheet resides:" & @CRLF & _
 		@TAB & "cover.*" & @CRLF & _
 		@TAB & "front.*" & @CRLF & _
+		@TAB & "folder.*" & @CRLF & _
 		@TAB & "picture.*" & @CRLF & _
 		@CRLF & _
 		"Possible file extensions (case insensitive):" & @CRLF & _

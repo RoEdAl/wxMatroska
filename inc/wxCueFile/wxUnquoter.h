@@ -12,8 +12,9 @@ class wxUnquoter:
 
 protected:
 
-	wxRegEx m_reQuotes;
+	wxRegEx m_reSingleQuotes;
 	wxRegEx m_reDoubleQuotes;
+	wxRegEx m_rePseudoDoubleQuotes;
 
 	wxRegEx m_reFullQuotes;
 	wxRegEx m_reFullDoubleQuotes;
@@ -23,10 +24,11 @@ protected:
 
 public:
 
-	static const wxChar SINGLE_QUOTES[];
-	static const wxChar DOUBLE_QUOTES[];
-	static const wxChar FULL_SINGLE_QUOTES[];
-	static const wxChar FULL_DOUBLE_QUOTES[];
+	static const wxChar RE_SINGLE_QUOTES[];
+	static const wxChar RE_DOUBLE_QUOTES[];
+	static const wxChar RE_PSEUDO_DOUUBLE_QUOTES[];
+	static const wxChar RE_FULL_SINGLE_QUOTES[];
+	static const wxChar RE_FULL_DOUBLE_QUOTES[];
 
 	static bool correct_polish_qm( const wxString& );
 	static bool correct_english_qm( const wxString& );

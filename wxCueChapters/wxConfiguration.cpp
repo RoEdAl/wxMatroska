@@ -270,7 +270,8 @@ wxConfiguration::wxConfiguration( void ):
 	m_bEllipsizeTags( true ),
 	m_bAttachEacLog( true ),
 	m_eCsAttachMode( CUESHEET_ATTACH_NONE ),
-	m_bAttachCover( true )
+	m_bAttachCover( true ),
+	m_bRemoveExtraSpaces( false )
 {
 	ReadLanguagesStrings( m_asLang );
 }
@@ -331,9 +332,11 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddOption( wxEmptyString, wxT( "mkvmerge-options-file-extension" ), wxString::Format( _( "File extension of mkvmerge options file (default: %s)" ), MATROSKA_OPTS_EXT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxT( "mf" ), wxT( "matroska-title-format" ), wxString::Format( _( "Mtroska container's title format (default: %s)" ), MATROSKA_NAME_FORMAT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT( "cq" ), wxT( "correct-quotation-marks" ), _( "Correct \"simple 'quotation' marks\" to \u201Cenglish \u2018quotation\u2019 marks\u201D inside strings (default: on)" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT( "ncq" ), wxT( "dont-correct-quotation-marks" ), _( "Dont correct \"simple 'quotation' marks\" to \u201Cenglish \u2018quotation\u2019 marks\u201D inside strings" ), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT( "ncq" ), wxT( "dont-correct-quotation-marks" ), _( "Do not correct \"simple 'quotation' marks\" to \u201Cenglish \u2018quotation\u2019 marks\u201D inside strings" ), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT( "et" ), wxT( "ellipsize-tags" ), wxString::Format( _( "Ellipsize tags - convert last three dots to '%c' (default: on)" ), wxEllipsizer::ELLIPSIS ), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT( "net" ), wxT( "dont-ellipsize-tags" ), _( "Do not ellipsize tags" ), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT( "rs" ), wxT( "remove-extra-spaces" ), _( "Remove extra spaces from tags (default: no)" ), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT( "nrs" ), wxT( "dont-remove-extra-spaces" ), _( "Do not remove extra spaces from tags" ), wxCMD_LINE_PARAM_OPTIONAL );
 
 	// embedded mode flags
 	cmdLine.AddSwitch( wxEmptyString, wxT( "single-media-file" ), _( "Embedded mode flag. Assume input as single media file without cuesheet (default: no, opposite to media-file-with-embedded-cuesheet)" ), wxCMD_LINE_PARAM_OPTIONAL );
@@ -831,6 +834,16 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		m_bAttachCover = false;
 	}
 
+	if ( cmdLine.Found( wxT( "remove-extra-spaces" ) ) )
+	{
+		m_bRemoveExtraSpaces = true;
+	}
+
+	if ( cmdLine.Found( wxT( "dont-remove-extra-spaces" ) ) )
+	{
+		m_bRemoveExtraSpaces = false;
+	}
+
 	if ( cmdLine.Found( wxT( "cue-sheet-attach-mode" ), &s ) )
 	{
 		bool bDefault;
@@ -971,6 +984,7 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
 	as.Add( wxString::Format( wxT( "mkvmerge options file extension: %s" ), m_sMatroskaOptsExt ) );
 	as.Add( wxString::Format( wxT( "Correct \"simple 'quotation' marks\" inside strings: %s" ), BoolToStr( m_bCorrectQuotationMarks ) ) );
 	as.Add( wxString::Format( wxT( "Ellipsize tags: %s" ), BoolToStr( m_bEllipsizeTags ) ) );
+	as.Add( wxString::Format( wxT( "Remove extra spaces from tags: %s" ), BoolToStr( m_bRemoveExtraSpaces ) ) );
 	if ( m_bEmbedded )
 	{
 		as.Add( wxString::Format( wxT( "Embedded mode flags: %s" ), GetEmbeddedModeFlagsDesc( m_nEmbeddedModeFlags ) ) );
@@ -1406,6 +1420,11 @@ bool wxConfiguration::AttachEacLog() const
 bool wxConfiguration::AttachCover() const
 {
 	return m_bAttachCover;
+}
+
+bool wxConfiguration::RemoveExtraSpaces() const
+{
+	return m_bRemoveExtraSpaces;
 }
 
 wxConfiguration::CUESHEET_ATTACH_MODE wxConfiguration::GetCueSheetAttachMode() const

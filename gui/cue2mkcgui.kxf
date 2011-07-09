@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <object type="TAForm" name="FormMain">
 	<properties>
-		<property name="Left" vt="Int16">197</property>
-		<property name="Top" vt="Int8">102</property>
-		<property name="Width" vt="Int16">547</property>
-		<property name="Height" vt="Int16">450</property>
+		<property name="Left" vt="Int16">200</property>
+		<property name="Top" vt="Int16">131</property>
+		<property name="Width" vt="Int16">552</property>
+		<property name="Height" vt="Int16">442</property>
 		<property name="Caption" vt="String">cue2mkc GUI</property>
 		<property name="Color" vt="Ident">clBtnFace</property>
 		<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
@@ -228,7 +228,7 @@
 								<property name="Top" vt="Int16">307</property>
 								<property name="Width" vt="Int16">137</property>
 								<property name="Height" vt="Int8">25</property>
-								<property name="ItemHeight" vt="Int8">13</property>
+								<property name="ItemHeight" vt="Int8">0</property>
 								<property name="TabOrder" vt="Int8">7</property>
 								<property name="Items.Strings" vt="List">
 									<list>
@@ -446,7 +446,7 @@
 										<property name="Top" vt="Int8">15</property>
 										<property name="Width" vt="Int16">177</property>
 										<property name="Height" vt="Int8">25</property>
-										<property name="ItemHeight" vt="Int8">13</property>
+										<property name="ItemHeight" vt="Int8">0</property>
 										<property name="TabOrder" vt="Int8">1</property>
 										<property name="Items.Strings" vt="List">
 											<list>
@@ -511,7 +511,7 @@
 										<property name="Top" vt="Int8">93</property>
 										<property name="Width" vt="Int16">141</property>
 										<property name="Height" vt="Int8">25</property>
-										<property name="ItemHeight" vt="Int8">13</property>
+										<property name="ItemHeight" vt="Int8">0</property>
 										<property name="TabOrder" vt="Int8">7</property>
 										<property name="Items.Strings" vt="List">
 											<list>
@@ -656,10 +656,10 @@
 						</object>
 						<object type="TAGroup" name="GroupTags">
 							<properties>
-								<property name="Left" vt="Int8">0</property>
-								<property name="Top" vt="Int16">267</property>
-								<property name="Width" vt="Int16">265</property>
-								<property name="Height" vt="Int8">69</property>
+								<property name="Left" vt="Int16">272</property>
+								<property name="Top" vt="Int8">3</property>
+								<property name="Width" vt="Int16">233</property>
+								<property name="Height" vt="Int8">85</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
 								<property name="Caption" vt="String">&amp;Tags parsing</property>
@@ -671,9 +671,10 @@
 									<properties>
 										<property name="Left" vt="Int8">4</property>
 										<property name="Top" vt="Int8">16</property>
-										<property name="Width" vt="Int16">249</property>
+										<property name="Width" vt="Int16">201</property>
 										<property name="Height" vt="Int8">17</property>
-										<property name="Caption" vt="String">Correct &quot;&quot;simple 'quotation' marks&quot;&quot; inside strings</property>
+										<property name="Hint" vt="String">Correct &quot;&quot;simple 'quotation' marks&quot;&quot; inside tags</property>
+										<property name="Caption" vt="String">Correct &quot;&quot;simple 'quotation' marks&quot;&quot;</property>
 										<property name="TabOrder" vt="Int8">0</property>
 										<property name="CtrlStyle" vt="Int32">1342242819</property>
 										<property name="CtrlExStyle" vt="Int8">0</property>
@@ -711,12 +712,27 @@
 									</properties>
 									<components/>
 								</object>
+								<object type="TACheckbox" name="CheckBoxRs">
+									<properties>
+										<property name="Left" vt="Int8">4</property>
+										<property name="Top" vt="Int8">63</property>
+										<property name="Width" vt="Int16">161</property>
+										<property name="Height" vt="Int8">17</property>
+										<property name="Hint" vt="String">Remove extra spaces (e.g. more than two) from tags</property>
+										<property name="Caption" vt="String">Remove extra spaces</property>
+										<property name="TabOrder" vt="Int8">3</property>
+										<property name="CtrlStyle" vt="Int32">1342242819</property>
+										<property name="CtrlExStyle" vt="Int8">0</property>
+										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+									</properties>
+									<components/>
+								</object>
 							</components>
 						</object>
 						<object type="TAGroup" name="GroupTagFile">
 							<properties>
-								<property name="Left" vt="Int16">275</property>
-								<property name="Top" vt="Int8">83</property>
+								<property name="Left" vt="Int16">272</property>
+								<property name="Top" vt="Int16">171</property>
 								<property name="Width" vt="Int16">225</property>
 								<property name="Height" vt="Int8">37</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
@@ -744,8 +760,8 @@
 						</object>
 						<object type="TAGroup" name="GroupIgnoredTags">
 							<properties>
-								<property name="Left" vt="Int16">275</property>
-								<property name="Top" vt="Int8">3</property>
+								<property name="Left" vt="Int16">272</property>
+								<property name="Top" vt="Int8">91</property>
 								<property name="Width" vt="Int16">225</property>
 								<property name="Height" vt="Int8">77</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
@@ -916,7 +932,7 @@
 										<property name="Top" vt="Int8">74</property>
 										<property name="Width" vt="Int8">41</property>
 										<property name="Height" vt="Int8">25</property>
-										<property name="ItemHeight" vt="Int8">13</property>
+										<property name="ItemHeight" vt="Int8">0</property>
 										<property name="ItemIndex" vt="Int8">2</property>
 										<property name="TabOrder" vt="Int8">5</property>
 										<property name="Text" vt="String">01</property>

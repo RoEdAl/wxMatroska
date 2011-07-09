@@ -98,6 +98,7 @@
     <ClCompile Include="wxFlacMetaDataReader.cpp" />
     <ClCompile Include="wxIndex.cpp" />
     <ClCompile Include="wxMediaInfo.cpp" />
+    <ClCompile Include="wxReduntantSpacesRemover.cpp" />
     <ClCompile Include="wxSamplingInfo.cpp" />
     <ClCompile Include="wxTagSynonims.cpp" />
     <ClCompile Include="wxTextCueSheetRenderer.cpp" />
@@ -114,6 +115,7 @@
     <ClInclude Include="..\inc\wxCueFile\wxCueTag.h" />
     <ClInclude Include="..\inc\wxCueFile\wxDuration.h" />
     <ClInclude Include="..\inc\wxCueFile\wxEllipsizer.h" />
+    <ClInclude Include="..\inc\wxCueFile\wxReduntantSpacesRemover.h" />
     <ClInclude Include="..\inc\wxCueFile\wxTextInputStreamOnString.h" />
     <ClInclude Include="..\inc\wxCueFile\wxTextOutputStreamOnString.h" />
     <ClInclude Include="..\inc\wxCueFile\wxTrailingSpacesRemover.h" />

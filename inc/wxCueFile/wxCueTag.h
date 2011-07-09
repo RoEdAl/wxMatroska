@@ -5,8 +5,16 @@
 #ifndef _WX_CUE_TAG_H_
 #define _WX_CUE_TAG_H_
 
+#ifndef _WX_UNQUOTER_H_
+class wxUnquoter;
+#endif
+
 #ifndef _WX_TRAILING_SPACES_REMOVER_H_
 class wxTrailingSpacesRemover;
+#endif
+
+#ifndef _WX_REDUNTANT_SPACES_REMOVER_H_
+class wxReduntantSpacesRemover;
 #endif
 
 #ifndef _WX_ELLIPSIZER_H_
@@ -83,7 +91,9 @@ public:
 	bool operator ==( const wxCueTag& ) const;
 	wxCueTag& operator =( const wxCueTag& );
 
+	void Unquote( const wxUnquoter& );
 	void RemoveTrailingSpaces( const wxTrailingSpacesRemover& );
+	int RemoveExtraSpaces( const wxReduntantSpacesRemover& );
 	void Ellipsize( const wxEllipsizer& );
 
 protected:

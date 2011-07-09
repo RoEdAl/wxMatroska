@@ -3,7 +3,9 @@
  */
 #include "StdWx.h"
 #include <wxCueFile/wxCueTag.h>
+#include <wxCueFile/wxUnquoter.h>
 #include <wxCueFile/wxTrailingSpacesRemover.h>
+#include <wxCueFile/wxReduntantSpacesRemover.h>
 #include <wxCueFile/wxEllipsizer.h>
 #include <wxCueFile/wxTextOutputStreamOnString.h>
 #include <wxCueFile/wxTextInputStreamOnString.h>
@@ -222,9 +224,26 @@ bool wxCueTag::IsMultiline() const
 	return m_bMultiline;
 }
 
+void wxCueTag::Unquote( const wxUnquoter& unquoter )
+{
+	m_sValue = unquoter.UnquoteAndCorrect( m_sValue );
+}
+
 void wxCueTag::RemoveTrailingSpaces( const wxTrailingSpacesRemover& spacesRemover )
 {
 	m_sValue = spacesRemover.Remove( m_sValue );
+}
+
+int wxCueTag::RemoveExtraSpaces( const wxReduntantSpacesRemover& spacesRemover )
+{
+	if ( m_bMultiline )
+	{
+		return 0;
+	}
+	else
+	{
+		return spacesRemover.Remove( m_sValue );
+	}
 }
 
 void wxCueTag::Ellipsize( const wxEllipsizer& ellipsizer )

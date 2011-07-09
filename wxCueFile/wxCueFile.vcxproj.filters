@@ -86,6 +86,9 @@
     <ClCompile Include="wxCueSheetContent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="wxReduntantSpacesRemover.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdWx.h">
@@ -158,6 +161,9 @@
       <Filter>External Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\inc\wxCueFile\wxTextInputStreamOnString.h">
+      <Filter>External Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\wxCueFile\wxReduntantSpacesRemover.h">
       <Filter>External Header Files</Filter>
     </ClInclude>
   </ItemGroup>
