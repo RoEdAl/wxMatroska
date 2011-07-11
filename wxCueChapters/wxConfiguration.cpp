@@ -271,7 +271,7 @@ wxConfiguration::wxConfiguration( void ):
 	m_bAttachEacLog( true ),
 	m_eCsAttachMode( CUESHEET_ATTACH_NONE ),
 	m_bAttachCover( true ),
-	m_bRemoveExtraSpaces( false )
+	m_bRemoveExtraSpaces( true )
 {
 	ReadLanguagesStrings( m_asLang );
 }
@@ -335,7 +335,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddSwitch( wxT( "ncq" ), wxT( "dont-correct-quotation-marks" ), _( "Do not correct \"simple 'quotation' marks\" to \u201Cenglish \u2018quotation\u2019 marks\u201D inside strings" ), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT( "et" ), wxT( "ellipsize-tags" ), wxString::Format( _( "Ellipsize tags - convert last three dots to '%c' (default: on)" ), wxEllipsizer::ELLIPSIS ), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT( "net" ), wxT( "dont-ellipsize-tags" ), _( "Do not ellipsize tags" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT( "rs" ), wxT( "remove-extra-spaces" ), _( "Remove extra spaces from tags (default: no)" ), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT( "rs" ), wxT( "remove-extra-spaces" ), _( "Remove extra spaces from tags (default: yes)" ), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT( "nrs" ), wxT( "dont-remove-extra-spaces" ), _( "Do not remove extra spaces from tags" ), wxCMD_LINE_PARAM_OPTIONAL );
 
 	// embedded mode flags

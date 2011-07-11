@@ -5,7 +5,7 @@
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.68
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.70
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -557,7 +557,7 @@ Func set_default_options()
 	GUICtrlSetState($CheckBoxEt, $GUI_CHECKED)
 	GUICtrlSetState($CheckBoxEacLog, $GUI_CHECKED)
 	GUICtrlSetState($CheckBoxCover, $GUI_CHECKED)
-	GUICtrlSetState($CheckBoxRs, $GUI_UNCHECKED)
+	GUICtrlSetState($CheckBoxRs, $GUI_CHECKED)
 	_GUICtrlComboBox_SetCurSel($ComboCueSheetAttachMode, 0)
 EndFunc   ;==>set_default_options
 
@@ -774,7 +774,7 @@ Func read_options()
 	$s &= _Iif(GUICtrlRead($CheckBoxEacLog) = $GUI_CHECKED, "--attach-eac-log", "--dont-attach-eac-log")
 	$s &= " "
 
-	$s &= _Iif(GUICtrlRead($CheckBoxEacLog) = $GUI_CHECKED, "--attach-cover", "--dont-attach-cover")
+	$s &= _Iif(GUICtrlRead($CheckBoxCover) = $GUI_CHECKED, "--attach-cover", "--dont-attach-cover")
 	$s &= " "
 
 	$s &= _Iif(GUICtrlRead($CheckBoxRs) = $GUI_CHECKED, "--remove-extra-spaces", "--dont-remove-extra-spaces")

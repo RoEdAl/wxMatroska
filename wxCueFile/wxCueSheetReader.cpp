@@ -204,7 +204,7 @@ wxCueSheetReader::wxCueSheetReader( void ):
 	m_reEmpty( wxT( "\\A\\s*\\Z" ), wxRE_ADVANCED ),
 	m_reIndex( wxT( "\\A\\s*(\\d{1,2})\\s+(\\S.*\\S)\\Z" ), wxRE_ADVANCED ),
 	m_reMsf( wxT( "\\A(\\d{1,4}):(\\d{1,2}):(\\d{1,2})\\Z" ), wxRE_ADVANCED ),
-	m_reQuotesEx( wxT( "\\'(([^\\'\\u201E\\\u201D]|\\\')*)\\'(?![[:alnum:]])" ), wxRE_ADVANCED ),
+	m_reQuotesEx( wxUnquoter::RE_SINGLE_QUOTES_EX, wxRE_ADVANCED ),
 	m_reFlags( wxT( "\\s+" ), wxRE_ADVANCED ),
 	m_reDataMode( GetDataModeRegExp(), wxRE_ADVANCED ),
 	m_reDataFile( GetDataFileRegExp(), wxRE_ADVANCED ),

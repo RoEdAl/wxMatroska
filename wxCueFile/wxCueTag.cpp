@@ -226,7 +226,7 @@ bool wxCueTag::IsMultiline() const
 
 void wxCueTag::Unquote( const wxUnquoter& unquoter )
 {
-	m_sValue = unquoter.UnquoteAndCorrect( m_sValue );
+	unquoter.CorrectQuotes( m_sValue );
 }
 
 void wxCueTag::RemoveTrailingSpaces( const wxTrailingSpacesRemover& spacesRemover )
