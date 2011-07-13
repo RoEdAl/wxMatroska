@@ -5,7 +5,7 @@
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.70
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.72
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -604,18 +604,21 @@ Func get_attach_mode_str($nSel)
 	Return SetError(0, 0, $sRet)
 EndFunc   ;==>get_attach_mode_str
 
+
+
+Func negatable_switch(ByRef $cmdLine, $CheckBoxId, $cmdSwitch)
+	$cmdLine &= "-" & _Iif(GUICtrlRead($CheckBoxId) = $GUI_CHECKED, $cmdSwitch, $cmdSwitch & "-")
+	$cmdLine &= " "
+EndFunc   ;==>negatable_switch
+
 Func read_options()
 	Local $s = "", $w
-	$s &= _Iif(GUICtrlRead($CheckBoxCe) = $GUI_CHECKED, "-ce", "-nce")
-	$s &= " "
-	$s &= _Iif(GUICtrlRead($CheckBoxEc) = $GUI_CHECKED, "-ec", "-nec")
-	$s &= " "
-	$s &= _Iif(GUICtrlRead($CheckBoxDf) = $GUI_CHECKED, "-df", "-ndf")
-	$s &= " "
-	$s &= _Iif(GUICtrlRead($CheckBoxUc) = $GUI_CHECKED, "-uc", "-nuc")
-	$s &= " "
-	$s &= _Iif(GUICtrlRead($CheckBoxMerge) = $GUI_CHECKED, "--merge", "--dont-merge")
-	$s &= " "
+
+	negatable_switch($s, $CheckBoxCe, "ce")
+	negatable_switch($s, $CheckBoxEc, "ec")
+	negatable_switch($s, $CheckBoxDf, "df")
+	negatable_switch($s, $CheckBoxUc, "uc")
+	negatable_switch($s, $CheckBoxMerge, "merge")
 
 	If GUICtrlRead($CheckBoxUc) = $GUI_CHECKED Then
 		$s &= "-fo "
@@ -658,11 +661,8 @@ Func read_options()
 		$s &= """ "
 	EndIf
 
-	$s &= _Iif(GUICtrlRead($CheckBoxR) = $GUI_CHECKED, "-r", "-nr")
-	$s &= " "
-
-	$s &= _Iif(GUICtrlRead($CheckBoxHi) = $GUI_CHECKED, "-hi", "-nhi")
-	$s &= " "
+	negatable_switch($s, $CheckBoxR, "r")
+	negatable_switch($s, $CheckBoxHi, "hi")
 
 	$w = GUICtrlRead($InputDce)
 	If StringLen($w) > 0 Then
@@ -700,26 +700,14 @@ Func read_options()
 	Switch $w
 		Case 1
 			$s &= " -m "
-			$s &= _Iif(GUICtrlRead($CheckBoxT) = $GUI_CHECKED, "-t", "-nt")
-			$s &= " "
+			negatable_switch($s, $CheckBoxT, "t")
+			negatable_switch($s, $CheckBoxOf, "of")
+			negatable_switch($s, $CheckBoxEu, "eu")
+			negatable_switch($s, $CheckBoxTc, "tc")
+			negatable_switch($s, $CheckBoxTagIgnoreCdText, "use-cdtext-tags")
+			negatable_switch($s, $CheckBoxTagIgnoreCueComments, "use-cue-comments-tags")
+			negatable_switch($s, $CheckBoxTagIgnoreFromMedia, "use-media-tags")
 
-			$s &= _Iif(GUICtrlRead($CheckBoxOf) = $GUI_CHECKED, "-of", "-nof")
-			$s &= " "
-
-			$s &= _Iif(GUICtrlRead($CheckBoxEu) = $GUI_CHECKED, "-eu", "-neu")
-			$s &= " "
-
-			$s &= _Iif(GUICtrlRead($CheckBoxTc) = $GUI_CHECKED, "-tc", "-ntc")
-			$s &= " "
-
-			$s &= _Iif(GUICtrlRead($CheckBoxTagIgnoreCdText) = $GUI_CHECKED, "--ignore-cdtext-tags", "--use-cdtext-tags")
-			$s &= " "
-
-			$s &= _Iif(GUICtrlRead($CheckBoxTagIgnoreCueComments) = $GUI_CHECKED, "--ignore-cue-comments-tags", "--use-cue-comments-tags")
-			$s &= " "
-
-			$s &= _Iif(GUICtrlRead($CheckBoxTagIgnoreFromMedia) = $GUI_CHECKED, "--ignore-media-tags", "--use-media-tags")
-			$s &= " "
 	EndSwitch
 
 	$w = _GUICtrlComboBox_GetCurSel($ComboTrack01)
@@ -731,14 +719,9 @@ Func read_options()
 			$s &= " -t1i1 "
 	EndSwitch
 
-	$s &= _Iif(GUICtrlRead($CheckBoxCq) = $GUI_CHECKED, "-cq", "-ncq")
-	$s &= " "
-
-	$s &= _Iif(GUICtrlRead($CheckBoxEt) = $GUI_CHECKED, "-et", "-net")
-	$s &= " "
-
-	$s &= _Iif(GUICtrlRead($CheckBoxA) = $GUI_CHECKED, "-a", "-na")
-	$s &= " "
+	negatable_switch($s, $CheckBoxCq, "cq")
+	negatable_switch($s, $CheckBoxEt, "et")
+	negatable_switch($s, $CheckBoxA, "a")
 
 	$w = _GUICtrlComboBox_GetCurSel($ComboFlacMode)
 	Switch $w
@@ -759,32 +742,19 @@ Func read_options()
 			$s &= " "
 	EndSwitch
 
-	$s &= _Iif(GUICtrlRead($CheckBoxReadMetadata) = $GUI_CHECKED, "--read-media-tags", "--dont-read-media-tags")
-	$s &= " "
-
 	$s &= _Iif(GUICtrlRead($CheckBoxSingleMediaFile) = $GUI_CHECKED, "--single-media-file", "--media-file-with-embedded-cuesheet")
 	$s &= " "
 
-	$s &= _Iif(GUICtrlRead($CheckBoxMLang) = $GUI_CHECKED, "--use-mlang", "--dont-use-mlang")
-	$s &= " "
-
-	$s &= _Iif(GUICtrlRead($CheckBoxFullPaths) = $GUI_CHECKED, "--full-paths", "--no-full-paths")
-	$s &= " "
-
-	$s &= _Iif(GUICtrlRead($CheckBoxEacLog) = $GUI_CHECKED, "--attach-eac-log", "--dont-attach-eac-log")
-	$s &= " "
-
-	$s &= _Iif(GUICtrlRead($CheckBoxCover) = $GUI_CHECKED, "--attach-cover", "--dont-attach-cover")
-	$s &= " "
-
-	$s &= _Iif(GUICtrlRead($CheckBoxRs) = $GUI_CHECKED, "--remove-extra-spaces", "--dont-remove-extra-spaces")
-	$s &= " "
+	negatable_switch($s, $CheckBoxReadMetadata, "read-media-tags")
+	negatable_switch($s, $CheckBoxMLang, "use-mlang")
+	negatable_switch($s, $CheckBoxFullPaths, "use-full-paths")
+	negatable_switch($s, $CheckBoxEacLog, "attach-eac-log")
+	negatable_switch($s, $CheckBoxCover, "attach-cover")
+	negatable_switch($s, $CheckBoxRs, "rs")
+	negatable_switch($s, $CheckBoxRunMkvmerge, "run-mkvmerge")
 
 	$s &= " --cue-sheet-attach-mode "
 	$s &= get_attach_mode_str(_GUICtrlComboBox_GetCurSel($ComboCueSheetAttachMode))
-	$s &= " "
-
-	$s &= _Iif(GUICtrlRead($CheckBoxRunMkvmerge) = $GUI_CHECKED, "--run-mkvmerge", "--dont-run-mkvmerge")
 	$s &= " "
 
 	If GUICtrlRead($CheckBoxVerbose) = $GUI_CHECKED Then

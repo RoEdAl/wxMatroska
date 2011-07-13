@@ -266,7 +266,7 @@ wxConfiguration::wxConfiguration( void ):
 	m_nEmbeddedModeFlags( wxCueSheetReader::EC_MEDIA_READ_TAGS |
 						  wxCueSheetReader::EC_FLAC_READ_TAG_FIRST_THEN_COMMENT ),
 	m_bUseMLang( true ),
-	m_bFullPaths( false ),
+	m_bUseFullPaths( true ),
 	m_bEllipsizeTags( true ),
 	m_bAttachEacLog( true ),
 	m_eCsAttachMode( CUESHEET_ATTACH_NONE ),
@@ -280,63 +280,41 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 {
 	cmdLine.AddOption( wxT( "o" ), wxT( "output" ), _( "Output Matroska chapter file or cue sheet file (see -c option)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxT( "od" ), wxT( "output-directory" ), _( "Output directory (default: input directory)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT( "ce" ), wxT( "chapter-time-end" ), _( "Calculate end time of chapters if possible (default: on)" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT( "nce" ), wxT( "no-chapter-time-end" ), _( "Do not calculate end time of chapters" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT( "uc" ), wxT( "unknown-chapter-end-to-next-track" ), _( "If track's end time is unknown set it to next track position using frame offset (default: off)" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT( "nuc" ), wxT( "no-unknown-chapter-end-to-next-track" ), _( "Do not set end time of track if unknown" ), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT( "ce" ), wxT( "chapter-time-end" ), _( "Calculate end time of chapters if possible (default: on)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( wxT( "uc" ), wxT( "unknown-chapter-end-to-next-track" ), _( "If track's end time is unknown set it to next track position using frame offset (default: off)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddOption( wxT( "fo" ), wxT( "frame-offset" ), _( "Offset in frames to use with -uc option (default: 150)" ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT( "df" ), wxT( "use-data-files" ), _( "Use data file(s) to calculate end time of chapters (default: off)" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT( "ndf" ), wxT( "dont-use-data-files" ), _( "Don't use data file(s) to calculate end time of chapters (requires MediaInfo library)" ), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT( "df" ), wxT( "use-data-files" ), _( "Use data file(s) to calculate end time of chapters (default: off)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddOption( wxT( "e" ), wxT( "alternate-extensions" ), _( "Comma-separated list of alternate extensions of data files (default: none)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxT( "f" ), wxT( "single-data-file" ), _( "Sets single data file to cue sheet (default: none)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxT( "tf" ), wxT( "track-title-format" ), wxString::Format( _( "Track title format (default: %s)" ), TRACK_NAME_FORMAT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxT( "l" ), wxT( "language" ), _( "Set language of chapter's tilte (default: unk)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT( "ec" ), wxT( "embedded-cue" ), _( "Try to read embedded cue sheet (requires MediaInfo library)" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT( "nec" ), wxT( "no-embedded-cue" ), _( "Try to read embedded cue sheet" ), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT( "ec" ), wxT( "embedded-cue" ), _( "Try to read embedded cue sheet (requires MediaInfo library)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxT( "c" ), wxT( "save-cue-sheet" ), _( "Save cue sheet instead of Matroska chapter file. This switch allows to extract embedded cue sheet when used with ec option." ), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT( "m" ), wxT( "save-matroska-chapters" ), _( "Save Matroska chapter file (default)" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT( "t" ), wxT( "generate-tags" ), _( "Generate tags file (default: no)" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT( "nt" ), wxT( "dont-generate-tags" ), _( "Do not generate tags file" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT( "of" ), wxT( "generate-mkvmerge-options" ), _( "Generate file with mkvmerge options (default: no)" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxEmptyString, wxT( "run-mkvmerge" ), _( "Run mkvmerge tool after generation of options file (default: yes)" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxEmptyString, wxT( "dont-run-mkvmerge" ), _( "Run mkvmerge tool after generation of options file (default: no)" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddOption( wxEmptyString, wxT( "mkvmerge-directory" ), _( "Location of mkvmerge tool" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT( "nof" ), wxT( "dont-generate-mkvmerge-options" ), _( "Don't generate file with mkvmerge options" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT( "eu" ), wxT( "generate-edition-uid" ), _( "Generate edition UID (default: no)" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT( "neu" ), wxT( "dont-generate-edition-uid" ), _( "Do not generate edition UID" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT( "tc" ), wxT( "generate-tags-from-comments" ), _( "Try to parse tags from cue sheet comments (default: yes)" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT( "ntc" ), wxT( "dont-generate-tags-from-comments" ), _( "Do not try to parse tags from cue sheet comments" ), wxCMD_LINE_PARAM_OPTIONAL );
-
-	cmdLine.AddSwitch( wxEmptyString, wxT( "ignore-cdtext-tags" ), _( "Ignore all CD-TEXT tags" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxEmptyString, wxT( "use-cdtext-tags" ), _( "Use CD-TEXT tags (default)" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxEmptyString, wxT( "ignore-cue-comments-tags" ), _( "Ignore all tags from cuesheet comments" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxEmptyString, wxT( "use-cue-comments-tags" ), _( "Use tags from cuesheet comments (default)" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxEmptyString, wxT( "ignore-media-tags" ), _( "Ignore all tagsfrom media file" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxEmptyString, wxT( "use-media-tags" ), _( "Use tags from media file (default)" ), wxCMD_LINE_PARAM_OPTIONAL );
-
+	cmdLine.AddSwitch( wxT( "t" ), wxT( "generate-tags" ), _( "Generate tags file (default: no)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( wxT( "of" ), wxT( "generate-mkvmerge-options" ), _( "Generate file with mkvmerge options (default: no)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( wxEmptyString, wxT( "run-mkvmerge" ), _( "Run mkvmerge tool after generation of options file (default: yes)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddOption( wxEmptyString, wxT( "mkvmerge-directory" ), _( "Location of mkvmerge tool" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( wxT( "eu" ), wxT( "generate-edition-uid" ), _( "Generate edition UID (default: no)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( wxT( "tc" ), wxT( "generate-tags-from-comments" ), _( "Try to parse tags from cue sheet comments (default: yes)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( wxEmptyString, wxT( "use-cdtext-tags" ), _( "Use CD-TEXT tags (default)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( wxEmptyString, wxT( "use-cue-comments-tags" ), _( "Use tags from cuesheet comments (default)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( wxEmptyString, wxT( "use-media-tags" ), _( "Use tags from media file (default)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddOption( wxT( "oce" ), wxT( "cue-sheet-encoding" ), _( "Output cue sheet file encoding - possible values are local (default), utf8, utf8_bom, utf16, utf16_bom" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-
 	cmdLine.AddSwitch( wxT( "t1i1" ), wxT( "track-01-index-01" ), _( "For first track assume index 01 as beginning of track (default)" ), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT( "t1i0" ), wxT( "track-01-index-00" ), _( "For first track assume index 00 as beginning of track" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT( "a" ), wxT( "abort-on-error" ), _( "Abort when conversion errors occurs (default)" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT( "na" ), wxT( "dont-abort-on-error" ), _( "Do not abort when conversion errors occurs" ), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT( "a" ), wxT( "abort-on-error" ), _( "Abort when conversion errors occurs (default)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxT( "r" ), wxT( "round-down-to-full-frames" ), _( "Round down track end time to full frames (default: no)" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT( "nr" ), wxT( "dont-round-down-to-full-frames" ), _( "Do not round down track end time to full frames" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT( "hi" ), wxT( "hidden-indexes" ), _( "Convert indexes to hidden (sub)chapters" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxEmptyString, wxT( "merge" ), _( "Merge cue sheets (default: no)" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxEmptyString, wxT( "dont-merge" ), _( "Do not merge cue sheets" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT( "nhi" ), wxT( "no-hidden-indexes" ), _( "Convert indexes to normal (non-hidden) (sub)chapters (default)" ), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT( "hi" ), wxT( "hidden-indexes" ), _( "Convert indexes to hidden (sub)chapters" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( wxEmptyString, wxT( "merge" ), _( "Merge cue sheets (default: no)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddOption( wxEmptyString, wxT( "cue-sheet-file-extension" ), wxString::Format( _( "Cue sheet file extension (default: %s)" ), CUE_SHEET_EXT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxEmptyString, wxT( "matroska-chapters-file-extension" ), wxString::Format( _( "Matroska chapters XML file extension (default: %s)" ), MATROSKA_CHAPTERS_EXT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxEmptyString, wxT( "matroska-tags-file-extension" ), wxString::Format( _( "Matroska tags XML file extension (default: %s)" ), MATROSKA_TAGS_EXT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxEmptyString, wxT( "mkvmerge-options-file-extension" ), wxString::Format( _( "File extension of mkvmerge options file (default: %s)" ), MATROSKA_OPTS_EXT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxT( "mf" ), wxT( "matroska-title-format" ), wxString::Format( _( "Mtroska container's title format (default: %s)" ), MATROSKA_NAME_FORMAT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT( "cq" ), wxT( "correct-quotation-marks" ), _( "Correct \"simple 'quotation' marks\" to \u201Cenglish \u2018quotation\u2019 marks\u201D inside strings (default: on)" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT( "ncq" ), wxT( "dont-correct-quotation-marks" ), _( "Do not correct \"simple 'quotation' marks\" to \u201Cenglish \u2018quotation\u2019 marks\u201D inside strings" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT( "et" ), wxT( "ellipsize-tags" ), wxString::Format( _( "Ellipsize tags - convert last three dots to '%c' (default: on)" ), wxEllipsizer::ELLIPSIS ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT( "net" ), wxT( "dont-ellipsize-tags" ), _( "Do not ellipsize tags" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT( "rs" ), wxT( "remove-extra-spaces" ), _( "Remove extra spaces from tags (default: yes)" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxT( "nrs" ), wxT( "dont-remove-extra-spaces" ), _( "Do not remove extra spaces from tags" ), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT( "cq" ), wxT( "correct-quotation-marks" ), _( "Correct \"simple 'quotation' marks\" to \u201Cenglish \u2018quotation\u2019 marks\u201D inside strings (default: on)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( wxT( "et" ), wxT( "ellipsize-tags" ), wxString::Format( _( "Ellipsize tags - convert last three dots to '%c' (default: on)" ), wxEllipsizer::ELLIPSIS ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( wxT( "rs" ), wxT( "remove-extra-spaces" ), _( "Remove extra spaces from tags (default: yes)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 
 	// embedded mode flags
 	cmdLine.AddSwitch( wxEmptyString, wxT( "single-media-file" ), _( "Embedded mode flag. Assume input as single media file without cuesheet (default: no, opposite to media-file-with-embedded-cuesheet)" ), wxCMD_LINE_PARAM_OPTIONAL );
@@ -346,21 +324,12 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddSwitch( wxEmptyString, wxT( "flac-read-vorbis-comment-first" ), _( "Embedded mode flag - FLAC cuesheet read mode. Try to read embedded cuesheet from FLAC container - first try read CUESHEET comment then try CUESHEET tag" ), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxEmptyString, wxT( "flac-read-cuesheet-tag-only" ), _( "Embedded mode flag - FLAC cuesheet read mode. Try to read embedded cuesheet from FLAC container - try read CUESHEET tag only" ), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxEmptyString, wxT( "flac-read-vorbis-comment-only" ), _( "Embedded mode flag - FLAC cuesheet read mode. Try to read embedded cuesheet from FLAC container - try read CUESHEET comment only" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxEmptyString, wxT( "read-media-tags" ), _( "Embedded mode flag. Read tags from media file (default: yes)" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxEmptyString, wxT( "dont-read-media-tags" ), _( "Embedded mode flag. Don't read tags from media file" ), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, wxT( "read-media-tags" ), _( "Embedded mode flag. Read tags from media file (default: yes)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 
-	cmdLine.AddSwitch( wxEmptyString, wxT( "use-mlang" ), _( "Use MLang library (default)" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxEmptyString, wxT( "dont-use-mlang" ), _( "Don't use MLang library" ), wxCMD_LINE_PARAM_OPTIONAL );
-
-	cmdLine.AddSwitch( wxEmptyString, wxT( "full-paths" ), _( "Use full paths in mkvmerge options file (default: yes)" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxEmptyString, wxT( "no-full-paths" ), _( "Don't use full paths in mkvmerge options file" ), wxCMD_LINE_PARAM_OPTIONAL );
-
-	cmdLine.AddSwitch( wxEmptyString, wxT( "attach-eac-log" ), _( "Attach EAC log file to mkvmerge options file (default: yes)" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxEmptyString, wxT( "dont-attach-eac-log" ), _( "Don't attach EAC log file to mkvmerge options file" ), wxCMD_LINE_PARAM_OPTIONAL );
-
-	cmdLine.AddSwitch( wxEmptyString, wxT( "attach-cover" ), _( "Attach cover image (cover.*;front.*;album.*) to mkvmerge options file (default: yes)" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxEmptyString, wxT( "dont-attach-cover" ), _( "Don't attach cover image to mkvmerge options file" ), wxCMD_LINE_PARAM_OPTIONAL );
-
+	cmdLine.AddSwitch( wxEmptyString, wxT( "use-mlang" ), _( "Use MLang library (default)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( wxEmptyString, wxT( "use-full-paths" ), _( "Use full paths in mkvmerge options file (default: yes)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( wxEmptyString, wxT( "attach-eac-log" ), _( "Attach EAC log file to mkvmerge options file (default: yes)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( wxEmptyString, wxT( "attach-cover" ), _( "Attach cover image (cover.*;front.*;album.*) to mkvmerge options file (default: yes)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddOption( wxEmptyString, wxT( "cue-sheet-attach-mode" ), _( "Mode of attaching cue sheet to mkvmerge options file - possible values are none (default), source, decoded, rendered and default" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 
 	cmdLine.AddParam( _( "<cue sheet>" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE | wxCMD_LINE_PARAM_OPTIONAL );
@@ -384,32 +353,38 @@ bool wxConfiguration::CheckLang( const wxString& sLang ) const
 	}
 }
 
+bool wxConfiguration::ReadNegatableSwitchValue( const wxCmdLineParser& cmdLine, const wxString& name, bool& switchVal )
+{
+	wxCmdLineSwitchState state = cmdLine.FoundSwitch( name );
+	bool				 res   = true;
+
+	switch ( state )
+	{
+		case wxCMD_SWITCH_ON:
+		switchVal = true;
+		break;
+
+		case wxCMD_SWITCH_OFF:
+		switchVal = false;
+		break;
+
+		default:
+		res = false;
+		break;
+	}
+	return res;
+}
+
 bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 {
-	bool bRes = true;
-
-	if ( cmdLine.Found( wxT( "ce" ) ) )
-	{
-		m_bChapterTimeEnd = true;
-	}
-
-	if ( cmdLine.Found( wxT( "nce" ) ) )
-	{
-		m_bChapterTimeEnd = false;
-	}
-
-	if ( cmdLine.Found( wxT( "uc" ) ) )
-	{
-		m_bUnknownChapterTimeEndToNextChapter = true;
-	}
-
-	if ( cmdLine.Found( wxT( "nuc" ) ) )
-	{
-		m_bUnknownChapterTimeEndToNextChapter = false;
-	}
-
+	bool	 bRes = true;
 	wxString s;
 	long	 v;
+	bool	 switchVal;
+
+	ReadNegatableSwitchValue( cmdLine, wxT( "ce" ), m_bChapterTimeEnd );
+	ReadNegatableSwitchValue( cmdLine, wxT( "uc" ), m_bUnknownChapterTimeEndToNextChapter );
+
 	if ( cmdLine.Found( wxT( "fo" ), &v ) )
 	{
 		if ( ( v < 0 ) || ( v > 10000 ) )
@@ -423,45 +398,10 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		}
 	}
 
-	if ( cmdLine.Found( wxT( "df" ) ) )
-	{
-		m_bUseDataFiles = true;
-	}
-
-	if ( cmdLine.Found( wxT( "ndf" ) ) )
-	{
-		m_bUseDataFiles = false;
-	}
-
-	if ( cmdLine.Found( wxT( "ec" ) ) )
-	{
-		m_bEmbedded = true;
-	}
-
-	if ( cmdLine.Found( wxT( "nec" ) ) )
-	{
-		m_bEmbedded = false;
-	}
-
-	if ( cmdLine.Found( wxT( "cq" ) ) )
-	{
-		m_bCorrectQuotationMarks = true;
-	}
-
-	if ( cmdLine.Found( wxT( "ncq" ) ) )
-	{
-		m_bCorrectQuotationMarks = false;
-	}
-
-	if ( cmdLine.Found( wxT( "et" ) ) )
-	{
-		m_bEllipsizeTags = true;
-	}
-
-	if ( cmdLine.Found( wxT( "net" ) ) )
-	{
-		m_bEllipsizeTags = false;
-	}
+	ReadNegatableSwitchValue( cmdLine, wxT( "df" ), m_bUseDataFiles );
+	ReadNegatableSwitchValue( cmdLine, wxT( "ec" ), m_bEmbedded );
+	ReadNegatableSwitchValue( cmdLine, wxT( "cq" ), m_bCorrectQuotationMarks );
+	ReadNegatableSwitchValue( cmdLine, wxT( "et" ), m_bEllipsizeTags );
 
 	if ( cmdLine.Found( wxT( "c" ) ) )
 	{
@@ -483,75 +423,13 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		m_bTrackOneIndexOne = false;
 	}
 
-	if ( cmdLine.Found( wxT( "a" ) ) )
-	{
-		m_bAbortOnError = true;
-	}
-
-	if ( cmdLine.Found( wxT( "na" ) ) )
-	{
-		m_bAbortOnError = false;
-	}
-
-	if ( cmdLine.Found( wxT( "r" ) ) )
-	{
-		m_bRoundDownToFullFrames = true;
-	}
-
-	if ( cmdLine.Found( wxT( "nr" ) ) )
-	{
-		m_bRoundDownToFullFrames = false;
-	}
-
-	if ( cmdLine.Found( wxT( "hi" ) ) )
-	{
-		m_bHiddenIndexes = true;
-	}
-
-	if ( cmdLine.Found( wxT( "nhi" ) ) )
-	{
-		m_bHiddenIndexes = false;
-	}
-
-	if ( cmdLine.Found( wxT( "t" ) ) )
-	{
-		m_bGenerateTags = true;
-	}
-
-	if ( cmdLine.Found( wxT( "nt" ) ) )
-	{
-		m_bGenerateTags = false;
-	}
-
-	if ( cmdLine.Found( wxT( "of" ) ) )
-	{
-		m_bGenerateMkvmergeOpts = true;
-	}
-
-	if ( cmdLine.Found( wxT( "nof" ) ) )
-	{
-		m_bGenerateMkvmergeOpts = false;
-	}
-
-	if ( cmdLine.Found( wxT( "run-mkvmerge" ) ) )
-	{
-		m_bRunMkvmerge = true;
-	}
-
-	if ( cmdLine.Found( wxT( "dont-run-mkvmerge" ) ) )
-	{
-		m_bRunMkvmerge = false;
-	}
-
-	if ( cmdLine.Found( wxT( "full-paths" ) ) )
-	{
-		m_bFullPaths = true;
-	}
-
-	if ( cmdLine.Found( wxT( "no-full-paths" ) ) )
-	{
-		m_bFullPaths = false;
-	}
+	ReadNegatableSwitchValue( cmdLine, wxT( "a" ), m_bAbortOnError );
+	ReadNegatableSwitchValue( cmdLine, wxT( "r" ), m_bRoundDownToFullFrames );
+	ReadNegatableSwitchValue( cmdLine, wxT( "hi" ), m_bHiddenIndexes );
+	ReadNegatableSwitchValue( cmdLine, wxT( "t" ), m_bGenerateTags );
+	ReadNegatableSwitchValue( cmdLine, wxT( "of" ), m_bGenerateMkvmergeOpts );
+	ReadNegatableSwitchValue( cmdLine, wxT( "run-mkvmerge" ), m_bRunMkvmerge );
+	ReadNegatableSwitchValue( cmdLine, wxT( "use-full-paths" ), m_bUseFullPaths );
 
 	if ( cmdLine.Found( wxT( "oce" ), &s ) )
 	{
@@ -562,35 +440,9 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		}
 	}
 
-	if ( cmdLine.Found( wxT( "eu" ) ) )
-	{
-		m_bGenerateEditionUID = true;
-	}
-
-	if ( cmdLine.Found( wxT( "neu" ) ) )
-	{
-		m_bGenerateEditionUID = false;
-	}
-
-	if ( cmdLine.Found( wxT( "tc" ) ) )
-	{
-		m_bGenerateTagsFromComments = true;
-	}
-
-	if ( cmdLine.Found( wxT( "ntc" ) ) )
-	{
-		m_bGenerateTagsFromComments = false;
-	}
-
-	if ( cmdLine.Found( wxT( "merge" ) ) )
-	{
-		m_bMerge = true;
-	}
-
-	if ( cmdLine.Found( wxT( "dont-merge" ) ) )
-	{
-		m_bMerge = false;
-	}
+	ReadNegatableSwitchValue( cmdLine, wxT( "eu" ), m_bGenerateEditionUID );
+	ReadNegatableSwitchValue( cmdLine, wxT( "tc" ), m_bGenerateTagsFromComments );
+	ReadNegatableSwitchValue( cmdLine, wxT( "merge" ), m_bMerge );
 
 	if ( cmdLine.Found( wxT( "cue-sheet-file-extension" ), &s ) )
 	{
@@ -719,34 +571,40 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		}
 	}
 
-	if ( cmdLine.Found( wxT( "ignore-cdtext-tags" ) ) )
+	if ( ReadNegatableSwitchValue( cmdLine, wxT( "use-cdtext-tags" ), switchVal ) )
 	{
-		AddTagSourceToIgnore( wxCueTag::TAG_CD_TEXT );
+		if ( switchVal )
+		{
+			RemoveTagSourceToIgnore( wxCueTag::TAG_CD_TEXT );
+		}
+		else
+		{
+			AddTagSourceToIgnore( wxCueTag::TAG_CD_TEXT );
+		}
 	}
 
-	if ( cmdLine.Found( wxT( "use-cdtext-tags" ) ) )
+	if ( ReadNegatableSwitchValue( cmdLine, wxT( "use-cue-comments-tags" ), switchVal ) )
 	{
-		RemoveTagSourceToIgnore( wxCueTag::TAG_CD_TEXT );
+		if ( switchVal )
+		{
+			RemoveTagSourceToIgnore( wxCueTag::TAG_CUE_COMMENT );
+		}
+		else
+		{
+			AddTagSourceToIgnore( wxCueTag::TAG_CUE_COMMENT );
+		}
 	}
 
-	if ( cmdLine.Found( wxT( "ignore-cue-comments-tags" ) ) )
+	if ( ReadNegatableSwitchValue( cmdLine, wxT( "use-media-tags" ), switchVal ) )
 	{
-		AddTagSourceToIgnore( wxCueTag::TAG_CUE_COMMENT );
-	}
-
-	if ( cmdLine.Found( wxT( "use-cue-comments-tags" ) ) )
-	{
-		RemoveTagSourceToIgnore( wxCueTag::TAG_CUE_COMMENT );
-	}
-
-	if ( cmdLine.Found( wxT( "ignore-media-tags" ) ) )
-	{
-		AddTagSourceToIgnore( wxCueTag::TAG_MEDIA_METADATA );
-	}
-
-	if ( cmdLine.Found( wxT( "use-media-tags" ) ) )
-	{
-		RemoveTagSourceToIgnore( wxCueTag::TAG_MEDIA_METADATA );
+		if ( switchVal )
+		{
+			RemoveTagSourceToIgnore( wxCueTag::TAG_MEDIA_METADATA );
+		}
+		else
+		{
+			AddTagSourceToIgnore( wxCueTag::TAG_MEDIA_METADATA );
+		}
 	}
 
 	if ( cmdLine.Found( wxT( "single-media-file" ) ) )
@@ -791,58 +649,25 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		m_nEmbeddedModeFlags |= wxCueSheetReader::EC_FLAC_READ_COMMENT_ONLY;
 	}
 
-	if ( cmdLine.Found( wxT( "read-media-tags" ) ) )
+	if ( ReadNegatableSwitchValue( cmdLine, wxT( "read-media-tags" ), switchVal ) )
 	{
-		m_nEmbeddedModeFlags &= ~wxCueSheetReader::EC_MEDIA_READ_TAGS;
-		m_nEmbeddedModeFlags |= wxCueSheetReader::EC_MEDIA_READ_TAGS;
-	}
-
-	if ( cmdLine.Found( wxT( "dont-read-media-tags" ) ) )
-	{
-		m_nEmbeddedModeFlags &= ~wxCueSheetReader::EC_MEDIA_READ_TAGS;
-		m_nEmbeddedModeFlags |= 0;
+		if ( switchVal )
+		{
+			m_nEmbeddedModeFlags &= ~wxCueSheetReader::EC_MEDIA_READ_TAGS;
+			m_nEmbeddedModeFlags |= wxCueSheetReader::EC_MEDIA_READ_TAGS;
+		}
+		else
+		{
+			m_nEmbeddedModeFlags &= ~wxCueSheetReader::EC_MEDIA_READ_TAGS;
+			m_nEmbeddedModeFlags |= 0;
+		}
 	}
 
 	// MLang
-	if ( cmdLine.Found( wxT( "use-mlang" ) ) )
-	{
-		m_bUseMLang = true;
-	}
-
-	if ( cmdLine.Found( wxT( "dont-use-mlang" ) ) )
-	{
-		m_bUseMLang = false;
-	}
-
-	if ( cmdLine.Found( wxT( "attach-eac-log" ) ) )
-	{
-		m_bAttachEacLog = true;
-	}
-
-	if ( cmdLine.Found( wxT( "dont-attach-eac-log" ) ) )
-	{
-		m_bAttachEacLog = false;
-	}
-
-	if ( cmdLine.Found( wxT( "attach-cover" ) ) )
-	{
-		m_bAttachCover = true;
-	}
-
-	if ( cmdLine.Found( wxT( "dont-attach-cover" ) ) )
-	{
-		m_bAttachCover = false;
-	}
-
-	if ( cmdLine.Found( wxT( "remove-extra-spaces" ) ) )
-	{
-		m_bRemoveExtraSpaces = true;
-	}
-
-	if ( cmdLine.Found( wxT( "dont-remove-extra-spaces" ) ) )
-	{
-		m_bRemoveExtraSpaces = false;
-	}
+	ReadNegatableSwitchValue( cmdLine, wxT( "use-mlang" ), m_bUseMLang );
+	ReadNegatableSwitchValue( cmdLine, wxT( "attach-eac-log" ), m_bAttachEacLog );
+	ReadNegatableSwitchValue( cmdLine, wxT( "attach-cover" ), m_bAttachCover );
+	ReadNegatableSwitchValue( cmdLine, wxT( "rs" ), m_bRemoveExtraSpaces );
 
 	if ( cmdLine.Found( wxT( "cue-sheet-attach-mode" ), &s ) )
 	{
@@ -950,7 +775,7 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
 			as.Add( wxString::Format( wxT( "mkvmerge dir: %s" ), m_mkvmergeDir.GetFullPath() ) );
 		}
 
-		as.Add( wxString::Format( wxT( "Generate full paths: %s" ), BoolToStr( m_bFullPaths ) ) );
+		as.Add( wxString::Format( wxT( "Generate full paths: %s" ), BoolToStr( m_bUseFullPaths ) ) );
 		as.Add( wxString::Format( wxT( "Attach EAC log: %s" ), BoolToStr( m_bAttachEacLog ) ) );
 		as.Add( wxString::Format( wxT( "Attach cover: %s" ), BoolToStr( m_bAttachCover ) ) );
 		as.Add( wxString::Format( wxT( "Cue sheet attach mode: %s" ), GetCueSheetAttachModeStr( m_eCsAttachMode ) ) );
@@ -1404,7 +1229,7 @@ const wxFileName& wxConfiguration::GetMkvmergeDir() const
 
 bool wxConfiguration::UseFullPaths() const
 {
-	return m_bFullPaths;
+	return m_bUseFullPaths;
 }
 
 bool wxConfiguration::EllipsizeTags() const

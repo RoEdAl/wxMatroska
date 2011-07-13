@@ -18,7 +18,7 @@
 // ===============================================================================
 
 const wxChar wxMyApp::APP_NAME[]		  = wxT( "cue2mkc" );
-const wxChar wxMyApp::APP_VERSION[]		  = wxT( "0.77" );
+const wxChar wxMyApp::APP_VERSION[]		  = wxT( "0.80" );
 const wxChar wxMyApp::APP_VENDOR_NAME[]	  = wxT( "Edmunt Pienkowsky" );
 const wxChar wxMyApp::APP_AUTHOR[]		  = wxT( "Edmunt Pienkowsky - roed@onet.eu" );
 const wxChar wxMyApp::LICENSE_FILE_NAME[] = wxT( "license.txt" );
@@ -566,7 +566,19 @@ bool wxMyApp::RunMkvmerge( const wxFileName& optionsFile )
 	wxLogMessage( _( "Running mkvmerge with options file \u201C%s\u201D" ), optionsFile.GetFullName() );
 	wxLogDebug( wxT( "Running commad: %s" ), sCmdLine );
 
-	long nRes = wxExecute( sCmdLine, wxEXEC_SYNC | wxEXEC_NOEVENTS );
+	long nRes = 0;
+	if ( m_cfg.UseFullPaths() )
+	{
+		nRes = wxExecute( sCmdLine, wxEXEC_SYNC | wxEXEC_NOEVENTS );
+	}
+	else
+	{
+		wxExecuteEnv env;
+		env.cwd = optionsFile.GetPath();
+
+		nRes = wxExecute( sCmdLine, wxEXEC_SYNC | wxEXEC_NOEVENTS, (wxProcess*)NULL, &env );
+	}
+
 	if ( nRes == -1 )
 	{
 		wxLogError( _( "Fail to execute mkvmerge tool" ) );

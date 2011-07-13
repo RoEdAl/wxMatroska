@@ -69,7 +69,7 @@ protected:
 	unsigned int		 m_nEmbeddedModeFlags;
 	wxArrayTagSource	 m_aeIgnoredSources;
 	bool				 m_bUseMLang;
-	bool				 m_bFullPaths;
+	bool				 m_bUseFullPaths;
 	bool				 m_bEllipsizeTags;
 	bool				 m_bAttachEacLog;
 	CUESHEET_ATTACH_MODE m_eCsAttachMode;
@@ -105,6 +105,7 @@ protected:
 	void FillArray( wxArrayString& as ) const;
 	void AddTagSourceToIgnore( wxCueTag::TAG_SOURCE );
 	void RemoveTagSourceToIgnore( wxCueTag::TAG_SOURCE );
+	bool ReadNegatableSwitchValue( const wxCmdLineParser&, const wxString&, bool& );
 
 public:
 
