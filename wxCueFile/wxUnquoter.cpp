@@ -247,22 +247,21 @@ void wxUnquoter::InternalCorrectQuotes( wxString& s ) const
 	int		 nLevel = 0;
 	wxString res;
 
-	for ( size_t i = 0, nLen = s.Length(); i < nLen; i++ )
+	for ( wxString::const_iterator i = s.begin(); i != s.end(); i++ )
 	{
-		wxChar c = s[ i ];
-		if ( c == OPENING_QOUTATION_MARK_REPLACEMENT )
+		if ( *i == OPENING_QOUTATION_MARK_REPLACEMENT )
 		{
 			res << ( this->*m_replacement_method )( nLevel, true );
 			nLevel += 1;
 		}
-		else if ( c == CLOSING_QOUTATION_MARK_REPLACEMENT )
+		else if ( *i == CLOSING_QOUTATION_MARK_REPLACEMENT )
 		{
 			nLevel -= 1;
 			res << ( this->*m_replacement_method )( nLevel, false );
 		}
 		else
 		{
-			res << c;
+			res << *i;
 		}
 	}
 
