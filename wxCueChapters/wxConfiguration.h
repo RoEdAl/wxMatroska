@@ -103,8 +103,8 @@ protected:
 
 	bool CheckLang( const wxString& ) const;
 	void FillArray( wxArrayString& as ) const;
-	void AddTagSourceToIgnore( wxCueTag::TAG_SOURCE );
-	void RemoveTagSourceToIgnore( wxCueTag::TAG_SOURCE );
+	void AddIgnoredTagSource( wxCueTag::TAG_SOURCE );
+	void RemoveIgnoredTagSource( wxCueTag::TAG_SOURCE );
 	bool ReadNegatableSwitchValue( const wxCmdLineParser&, const wxString&, bool& );
 
 public:

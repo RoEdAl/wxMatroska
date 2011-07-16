@@ -5,7 +5,7 @@
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.72
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.74
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -166,6 +166,7 @@ GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Clear log")
 $OptionsPane = GUICtrlCreateTabItem("&General options")
+GUICtrlSetState(-1, $GUI_SHOW)
 $GroupGeneral = GUICtrlCreateGroup("&General", 4, 27, 265, 53, -1, $WS_EX_TRANSPARENT)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
@@ -236,18 +237,18 @@ $CheckBoxRs = GUICtrlCreateCheckbox("Remove extra spaces", 280, 90, 161, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Remove extra spaces (e.g. more than two) from tags")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-$GroupIgnoredTags = GUICtrlCreateGroup("&Ignored tags", 276, 115, 225, 77, -1, $WS_EX_TRANSPARENT)
+$GroupUsedTags = GUICtrlCreateGroup("&Used tags", 276, 115, 225, 77, -1, $WS_EX_TRANSPARENT)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$CheckBoxTagIgnoreCdText = GUICtrlCreateCheckbox("Ignore CD-TEXT tags", 280, 131, 125, 17)
+$CheckBoxTagUseCdText = GUICtrlCreateCheckbox("Use CD-TEXT tags", 280, 131, 125, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-GUICtrlSetTip(-1, "Ignore all CD-TEXT tags")
-$CheckBoxTagIgnoreCueComments = GUICtrlCreateCheckbox("Ignore tags from cuesheet comments", 280, 149, 205, 17)
+GUICtrlSetTip(-1, "Use CD-TEXT tags")
+$CheckBoxTagUseCueComments = GUICtrlCreateCheckbox("Use tags from cuesheet comments", 280, 149, 205, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-GUICtrlSetTip(-1, "Ignore all tags taken from cuesheet comments")
-$CheckBoxTagIgnoreFromMedia = GUICtrlCreateCheckbox("Ignore tags from media file(s)", 280, 168, 161, 17)
+GUICtrlSetTip(-1, "Use tags taken from cuesheet comments")
+$CheckBoxTagUseFromMedia = GUICtrlCreateCheckbox("Use tags from media file(s)", 280, 168, 161, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-GUICtrlSetTip(-1, "Ignore all tags taken from media's metadata")
+GUICtrlSetTip(-1, "Use tags taken from media's metadata")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 $GroupTagFile = GUICtrlCreateGroup("&Tags file", 276, 195, 225, 37, -1, $WS_EX_TRANSPARENT)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
@@ -295,7 +296,6 @@ GUICtrlSetLimit(-1, 150)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 $OtherOptionsPane = GUICtrlCreateTabItem("&Advanced options")
-GUICtrlSetState(-1, $GUI_SHOW)
 $GroupFileExtensions = GUICtrlCreateGroup("&File extensions", 4, 24, 225, 113, -1, $WS_EX_TRANSPARENT)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
@@ -543,9 +543,9 @@ Func set_default_options()
 	GUICtrlSetState($CheckBoxCq, $GUI_CHECKED)
 	GUICtrlSetState($CheckBoxEu, $GUI_UNCHECKED)
 	GUICtrlSetState($CheckBoxTc, $GUI_CHECKED)
-	GUICtrlSetState($CheckBoxTagIgnoreCdText, $GUI_UNCHECKED)
-	GUICtrlSetState($CheckBoxTagIgnoreCueComments, $GUI_UNCHECKED)
-	GUICtrlSetState($CheckBoxTagIgnoreFromMedia, $GUI_UNCHECKED)
+	GUICtrlSetState($CheckBoxTagUseCdText, $GUI_CHECKED)
+	GUICtrlSetState($CheckBoxTagUseCueComments, $GUI_CHECKED)
+	GUICtrlSetState($CheckBoxTagUseFromMedia, $GUI_CHECKED)
 	GUICtrlSetState($CheckBoxA, $GUI_CHECKED)
 	GUICtrlSetState($CheckBoxVerbose, $GUI_UNCHECKED)
 	GUICtrlSetState($CheckBoxMerge, $GUI_UNCHECKED)
@@ -611,6 +611,11 @@ Func negatable_switch(ByRef $cmdLine, $CheckBoxId, $cmdSwitch)
 	$cmdLine &= " "
 EndFunc   ;==>negatable_switch
 
+Func negatable_switch_long(ByRef $cmdLine, $CheckBoxId, $cmdSwitch)
+	$cmdLine &= "--" & _Iif(GUICtrlRead($CheckBoxId) = $GUI_CHECKED, $cmdSwitch, $cmdSwitch & "-")
+	$cmdLine &= " "
+EndFunc   ;==>negatable_switch_long
+
 Func read_options()
 	Local $s = "", $w
 
@@ -618,7 +623,7 @@ Func read_options()
 	negatable_switch($s, $CheckBoxEc, "ec")
 	negatable_switch($s, $CheckBoxDf, "df")
 	negatable_switch($s, $CheckBoxUc, "uc")
-	negatable_switch($s, $CheckBoxMerge, "merge")
+	negatable_switch($s, $CheckBoxMerge, "j")
 
 	If GUICtrlRead($CheckBoxUc) = $GUI_CHECKED Then
 		$s &= "-fo "
@@ -704,9 +709,9 @@ Func read_options()
 			negatable_switch($s, $CheckBoxOf, "of")
 			negatable_switch($s, $CheckBoxEu, "eu")
 			negatable_switch($s, $CheckBoxTc, "tc")
-			negatable_switch($s, $CheckBoxTagIgnoreCdText, "use-cdtext-tags")
-			negatable_switch($s, $CheckBoxTagIgnoreCueComments, "use-cue-comments-tags")
-			negatable_switch($s, $CheckBoxTagIgnoreFromMedia, "use-media-tags")
+			negatable_switch_long($s, $CheckBoxTagUseCdText, "use-cdtext-tags")
+			negatable_switch_long($s, $CheckBoxTagUseCueComments, "use-cue-comments-tags")
+			negatable_switch_long($s, $CheckBoxTagUseFromMedia, "use-media-tags")
 
 	EndSwitch
 
@@ -746,12 +751,12 @@ Func read_options()
 	$s &= " "
 
 	negatable_switch($s, $CheckBoxReadMetadata, "read-media-tags")
-	negatable_switch($s, $CheckBoxMLang, "use-mlang")
-	negatable_switch($s, $CheckBoxFullPaths, "use-full-paths")
-	negatable_switch($s, $CheckBoxEacLog, "attach-eac-log")
-	negatable_switch($s, $CheckBoxCover, "attach-cover")
+	negatable_switch_long($s, $CheckBoxMLang, "use-mlang")
+	negatable_switch_long($s, $CheckBoxFullPaths, "use-full-paths")
+	negatable_switch_long($s, $CheckBoxEacLog, "attach-eac-log")
+	negatable_switch_long($s, $CheckBoxCover, "attach-cover")
 	negatable_switch($s, $CheckBoxRs, "rs")
-	negatable_switch($s, $CheckBoxRunMkvmerge, "run-mkvmerge")
+	negatable_switch_long($s, $CheckBoxRunMkvmerge, "run-mkvmerge")
 
 	$s &= " --cue-sheet-attach-mode "
 	$s &= get_attach_mode_str(_GUICtrlComboBox_GetCurSel($ComboCueSheetAttachMode))

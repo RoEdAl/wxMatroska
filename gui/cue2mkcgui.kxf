@@ -38,7 +38,7 @@
 				<property name="Top" vt="Int8">0</property>
 				<property name="Width" vt="Int16">541</property>
 				<property name="Height" vt="Int16">369</property>
-				<property name="ActivePage" vt="Ident">OtherOptionsPane</property>
+				<property name="ActivePage" vt="Ident">OptionsPane</property>
 				<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
 				<property name="Font.Color" vt="Ident">clWindowText</property>
 				<property name="Font.Height" vt="Int8">-11</property>
@@ -228,7 +228,7 @@
 								<property name="Top" vt="Int16">307</property>
 								<property name="Width" vt="Int16">137</property>
 								<property name="Height" vt="Int8">25</property>
-								<property name="ItemHeight" vt="Int8">0</property>
+								<property name="ItemHeight" vt="Int8">13</property>
 								<property name="TabOrder" vt="Int8">7</property>
 								<property name="Items.Strings" vt="List">
 									<list>
@@ -446,7 +446,7 @@
 										<property name="Top" vt="Int8">15</property>
 										<property name="Width" vt="Int16">177</property>
 										<property name="Height" vt="Int8">25</property>
-										<property name="ItemHeight" vt="Int8">0</property>
+										<property name="ItemHeight" vt="Int8">13</property>
 										<property name="TabOrder" vt="Int8">1</property>
 										<property name="Items.Strings" vt="List">
 											<list>
@@ -511,7 +511,7 @@
 										<property name="Top" vt="Int8">93</property>
 										<property name="Width" vt="Int16">141</property>
 										<property name="Height" vt="Int8">25</property>
-										<property name="ItemHeight" vt="Int8">0</property>
+										<property name="ItemHeight" vt="Int8">13</property>
 										<property name="TabOrder" vt="Int8">7</property>
 										<property name="Items.Strings" vt="List">
 											<list>
@@ -758,7 +758,7 @@
 								</object>
 							</components>
 						</object>
-						<object type="TAGroup" name="GroupIgnoredTags">
+						<object type="TAGroup" name="GroupUsedTags">
 							<properties>
 								<property name="Left" vt="Int16">272</property>
 								<property name="Top" vt="Int8">91</property>
@@ -766,19 +766,19 @@
 								<property name="Height" vt="Int8">77</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">32</property>
-								<property name="Caption" vt="String">&amp;Ignored tags</property>
+								<property name="Caption" vt="String">&amp;Used tags</property>
 								<property name="TabOrder" vt="Int8">4</property>
 								<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
 							</properties>
 							<components>
-								<object type="TACheckbox" name="CheckBoxTagIgnoreCdText">
+								<object type="TACheckbox" name="CheckBoxTagUseCdText">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
 										<property name="Top" vt="Int8">16</property>
 										<property name="Width" vt="Int8">125</property>
 										<property name="Height" vt="Int8">17</property>
-										<property name="Hint" vt="String">Ignore all CD-TEXT tags</property>
-										<property name="Caption" vt="String">Ignore CD-TEXT tags</property>
+										<property name="Hint" vt="String">Use CD-TEXT tags</property>
+										<property name="Caption" vt="String">Use CD-TEXT tags</property>
 										<property name="TabOrder" vt="Int8">0</property>
 										<property name="CtrlStyle" vt="Int32">1342242819</property>
 										<property name="CtrlExStyle" vt="Int8">0</property>
@@ -786,14 +786,14 @@
 									</properties>
 									<components/>
 								</object>
-								<object type="TACheckbox" name="CheckBoxTagIgnoreCueComments">
+								<object type="TACheckbox" name="CheckBoxTagUseCueComments">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
 										<property name="Top" vt="Int8">34</property>
 										<property name="Width" vt="Int16">205</property>
 										<property name="Height" vt="Int8">17</property>
-										<property name="Hint" vt="String">Ignore all tags taken from cuesheet comments</property>
-										<property name="Caption" vt="String">Ignore tags from cuesheet comments</property>
+										<property name="Hint" vt="String">Use tags taken from cuesheet comments</property>
+										<property name="Caption" vt="String">Use tags from cuesheet comments</property>
 										<property name="TabOrder" vt="Int8">1</property>
 										<property name="CtrlStyle" vt="Int32">1342242819</property>
 										<property name="CtrlExStyle" vt="Int8">0</property>
@@ -801,14 +801,14 @@
 									</properties>
 									<components/>
 								</object>
-								<object type="TACheckbox" name="CheckBoxTagIgnoreFromMedia">
+								<object type="TACheckbox" name="CheckBoxTagUseFromMedia">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
 										<property name="Top" vt="Int8">53</property>
 										<property name="Width" vt="Int16">161</property>
 										<property name="Height" vt="Int8">17</property>
-										<property name="Hint" vt="String">Ignore all tags taken from media's metadata</property>
-										<property name="Caption" vt="String">Ignore tags from media file(s)</property>
+										<property name="Hint" vt="String">Use tags taken from media's metadata</property>
+										<property name="Caption" vt="String">Use tags from media file(s)</property>
 										<property name="TabOrder" vt="Int8">2</property>
 										<property name="CtrlStyle" vt="Int32">1342242819</property>
 										<property name="CtrlExStyle" vt="Int8">0</property>
@@ -932,7 +932,7 @@
 										<property name="Top" vt="Int8">74</property>
 										<property name="Width" vt="Int8">41</property>
 										<property name="Height" vt="Int8">25</property>
-										<property name="ItemHeight" vt="Int8">0</property>
+										<property name="ItemHeight" vt="Int8">13</property>
 										<property name="ItemIndex" vt="Int8">2</property>
 										<property name="TabOrder" vt="Int8">5</property>
 										<property name="Text" vt="String">01</property>

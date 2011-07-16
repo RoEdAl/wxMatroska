@@ -294,7 +294,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddSwitch( wxT( "t" ), wxT( "generate-tags" ), _( "Generate tags file (default: no)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxT( "of" ), wxT( "generate-mkvmerge-options" ), _( "Generate file with mkvmerge options (default: no)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxEmptyString, wxT( "run-mkvmerge" ), _( "Run mkvmerge tool after generation of options file (default: yes)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
-	cmdLine.AddOption( wxEmptyString, wxT( "mkvmerge-directory" ), _( "Location of mkvmerge tool" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddOption( wxEmptyString, wxT( "mkvmerge-directory" ), _( "Location of mkvmerge tool" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT( "eu" ), wxT( "generate-edition-uid" ), _( "Generate edition UID (default: no)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxT( "tc" ), wxT( "generate-tags-from-comments" ), _( "Try to parse tags from cue sheet comments (default: yes)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxEmptyString, wxT( "use-cdtext-tags" ), _( "Use CD-TEXT tags (default)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
@@ -304,9 +304,9 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddSwitch( wxT( "t1i1" ), wxT( "track-01-index-01" ), _( "For first track assume index 01 as beginning of track (default)" ), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT( "t1i0" ), wxT( "track-01-index-00" ), _( "For first track assume index 00 as beginning of track" ), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT( "a" ), wxT( "abort-on-error" ), _( "Abort when conversion errors occurs (default)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
-	cmdLine.AddSwitch( wxT( "r" ), wxT( "round-down-to-full-frames" ), _( "Round down track end time to full frames (default: no)" ), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxT( "r" ), wxT( "round-down-to-full-frames" ), _( "Round down track end time to full frames (default: no)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxT( "hi" ), wxT( "hidden-indexes" ), _( "Convert indexes to hidden (sub)chapters" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
-	cmdLine.AddSwitch( wxEmptyString, wxT( "merge" ), _( "Merge cue sheets (default: no)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( wxT("j"), wxT( "merge" ), _( "Merge cue sheets (default: no)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddOption( wxEmptyString, wxT( "cue-sheet-file-extension" ), wxString::Format( _( "Cue sheet file extension (default: %s)" ), CUE_SHEET_EXT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxEmptyString, wxT( "matroska-chapters-file-extension" ), wxString::Format( _( "Matroska chapters XML file extension (default: %s)" ), MATROSKA_CHAPTERS_EXT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxEmptyString, wxT( "matroska-tags-file-extension" ), wxString::Format( _( "Matroska tags XML file extension (default: %s)" ), MATROSKA_TAGS_EXT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
@@ -442,7 +442,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	ReadNegatableSwitchValue( cmdLine, wxT( "eu" ), m_bGenerateEditionUID );
 	ReadNegatableSwitchValue( cmdLine, wxT( "tc" ), m_bGenerateTagsFromComments );
-	ReadNegatableSwitchValue( cmdLine, wxT( "merge" ), m_bMerge );
+	ReadNegatableSwitchValue( cmdLine, wxT( "j" ), m_bMerge );
 
 	if ( cmdLine.Found( wxT( "cue-sheet-file-extension" ), &s ) )
 	{
@@ -575,11 +575,11 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		if ( switchVal )
 		{
-			RemoveTagSourceToIgnore( wxCueTag::TAG_CD_TEXT );
+			RemoveIgnoredTagSource( wxCueTag::TAG_CD_TEXT );
 		}
 		else
 		{
-			AddTagSourceToIgnore( wxCueTag::TAG_CD_TEXT );
+			AddIgnoredTagSource( wxCueTag::TAG_CD_TEXT );
 		}
 	}
 
@@ -587,11 +587,11 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		if ( switchVal )
 		{
-			RemoveTagSourceToIgnore( wxCueTag::TAG_CUE_COMMENT );
+			RemoveIgnoredTagSource( wxCueTag::TAG_CUE_COMMENT );
 		}
 		else
 		{
-			AddTagSourceToIgnore( wxCueTag::TAG_CUE_COMMENT );
+			AddIgnoredTagSource( wxCueTag::TAG_CUE_COMMENT );
 		}
 	}
 
@@ -599,11 +599,11 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		if ( switchVal )
 		{
-			RemoveTagSourceToIgnore( wxCueTag::TAG_MEDIA_METADATA );
+			RemoveIgnoredTagSource( wxCueTag::TAG_MEDIA_METADATA );
 		}
 		else
 		{
-			AddTagSourceToIgnore( wxCueTag::TAG_MEDIA_METADATA );
+			AddIgnoredTagSource( wxCueTag::TAG_MEDIA_METADATA );
 		}
 	}
 
@@ -1179,7 +1179,7 @@ unsigned int wxConfiguration::GetEmbeddedModeFlags() const
 	return m_nEmbeddedModeFlags;
 }
 
-void wxConfiguration::AddTagSourceToIgnore( wxCueTag::TAG_SOURCE eSource )
+void wxConfiguration::AddIgnoredTagSource( wxCueTag::TAG_SOURCE eSource )
 {
 	if ( m_aeIgnoredSources.Index( eSource ) == wxNOT_FOUND )
 	{
@@ -1187,7 +1187,7 @@ void wxConfiguration::AddTagSourceToIgnore( wxCueTag::TAG_SOURCE eSource )
 	}
 }
 
-void wxConfiguration::RemoveTagSourceToIgnore( wxCueTag::TAG_SOURCE eSource )
+void wxConfiguration::RemoveIgnoredTagSource( wxCueTag::TAG_SOURCE eSource )
 {
 	int nIdx = m_aeIgnoredSources.Index( eSource );
 
