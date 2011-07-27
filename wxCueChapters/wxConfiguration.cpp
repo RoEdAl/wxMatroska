@@ -266,7 +266,7 @@ wxConfiguration::wxConfiguration( void ):
 	m_nEmbeddedModeFlags( wxCueSheetReader::EC_MEDIA_READ_TAGS |
 						  wxCueSheetReader::EC_FLAC_READ_TAG_FIRST_THEN_COMMENT ),
 	m_bUseMLang( true ),
-	m_bUseFullPaths( true ),
+	m_bUseFullPaths( false ),
 	m_bEllipsizeTags( true ),
 	m_bAttachEacLog( true ),
 	m_eCsAttachMode( CUESHEET_ATTACH_NONE ),
@@ -327,7 +327,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddSwitch( wxEmptyString, wxT( "read-media-tags" ), _( "Embedded mode flag. Read tags from media file (default: yes)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 
 	cmdLine.AddSwitch( wxEmptyString, wxT( "use-mlang" ), _( "Use MLang library (default)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
-	cmdLine.AddSwitch( wxEmptyString, wxT( "use-full-paths" ), _( "Use full paths in mkvmerge options file (default: yes)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( wxEmptyString, wxT( "use-full-paths" ), _( "Use full paths in mkvmerge options file (default: no)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxEmptyString, wxT( "attach-eac-log" ), _( "Attach EAC log file to mkvmerge options file (default: yes)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxEmptyString, wxT( "attach-cover" ), _( "Attach cover image (cover.*;front.*;album.*) to mkvmerge options file (default: yes)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddOption( wxEmptyString, wxT( "cue-sheet-attach-mode" ), _( "Mode of attaching cue sheet to mkvmerge options file - possible values are none (default), source, decoded, rendered and default" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );

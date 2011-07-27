@@ -488,6 +488,8 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile,
 	const wxArrayTrack& tracks	   = cueSheet.GetTracks();
 	bool				bFirst	   = true;
 	size_t				nDataFiles = 0;
+	wxFileName dataFile;
+	bool bDataFile;
 
 	for ( size_t nTracks = tracks.Count(), i = 0; i < nTracks; i++ )
 	{
@@ -501,17 +503,23 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile,
 			wxT( "--no-global-tags" ) << endl <<
 			wxT( "--no-chapters" ) << endl;
 
+			bDataFile = tracks[ i ].GetDataFile().FindFile( dataFile, m_cfg.GetAlternateExtensions() );
+			if ( !bDataFile )
+			{
+				wxLogDebug( wxT("Fail to get data file for track %d. This is serious error!"), i );
+			}
+
 			if ( !bFirst )
 			{
 				*m_os <<
 				wxT( '+' ) << endl <<
-				mkvmerge_escape( tracks[ i ].GetDataFile() ) << endl;
+				mkvmerge_escape( dataFile ) << endl;
 			}
 			else
 			{
 				*m_os <<
 				wxT( '=' ) << endl <<
-				mkvmerge_escape( tracks[ i ].GetDataFile() ) << endl;
+				mkvmerge_escape( dataFile ) << endl;
 
 				bFirst = false;
 			}
