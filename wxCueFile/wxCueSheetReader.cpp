@@ -127,7 +127,7 @@ bool wxCueSheetReader::GetLogFile( const wxFileName& inputFile, wxFileName& logF
 	logFile = inputFile;
 	logFile.SetExt( LOG_EXT );
 	wxASSERT( logFile.IsOk() );
-	return logFile.FileExists();
+	return logFile.IsFileReadable();
 }
 
 bool wxCueSheetReader::IsCoverFile( const wxFileName& fileName )
@@ -178,7 +178,7 @@ bool wxCueSheetReader::GetCoverFile( const wxFileName& inputFile, wxFileName& co
 
 	sourceDirFn.SetName( wxEmptyString );
 	sourceDirFn.ClearExt();
-	wxASSERT( sourceDirFn.DirExists() );
+	wxASSERT( sourceDirFn.IsDirReadable() );
 
 	wxDir sourceDir( sourceDirFn.GetPath() );
 	if ( !sourceDir.IsOpened() )
@@ -308,7 +308,7 @@ bool wxCueSheetReader::ReadCueSheet( const wxString& sCueFile, wxMBConv& conv )
 	m_cueFileName.Assign( sCueFile );
 	m_cueFileName.MakeAbsolute();
 
-	if ( !m_cueFileName.FileExists() || m_cueFileName.IsDir() )
+	if ( !m_cueFileName.IsFileReadable() || m_cueFileName.IsDir() )
 	{
 		wxLogError( _( "Invalid path to CUE file \u201C%s\u201D" ), sCueFile );
 		return false;

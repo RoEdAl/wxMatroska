@@ -116,7 +116,7 @@ bool wxMyApp::CheckLicense()
 	const wxStandardPaths& paths = wxStandardPaths::Get();
 	wxFileName			   fn( paths.GetExecutablePath() );
 	fn.SetFullName( LICENSE_FILE_NAME );
-	if ( !fn.FileExists() )
+	if ( !fn.IsFileReadable() )
 	{
 		return false;
 	}
@@ -144,7 +144,7 @@ void wxMyApp::ShowLicense()
 	wxFileName			   fn( paths.GetExecutablePath() );
 
 	fn.SetFullName( LICENSE_FILE_NAME );
-	if ( !fn.FileExists() )
+	if ( !fn.IsFileReadable() )
 	{
 		wxLogError( _( "Cannot find license file \u201C%s\u201D" ), fn.GetFullPath() );
 		return;

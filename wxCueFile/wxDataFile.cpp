@@ -169,7 +169,7 @@ wxDataFile& wxDataFile::Assign( const wxFileName& fileName, wxDataFile::FileType
 
 bool wxDataFile::FindFile( wxFileName& fn, const wxString& sAlternateExt ) const
 {
-	if ( m_fileName.FileExists() ) // file just exists
+	if ( m_fileName.IsFileReadable() ) // file just exists
 	{
 		fn = m_fileName;
 		return true;
@@ -190,7 +190,7 @@ bool wxDataFile::FindFile( wxFileName& fn, const wxString& sAlternateExt ) const
 	while ( tokenizer.HasMoreTokens() )
 	{
 		fnTry.SetExt( tokenizer.GetNextToken() );
-		if ( fnTry.FileExists() )
+		if ( fnTry.IsFileReadable() )
 		{
 			fn = fnTry;
 			wxLogInfo( _( "%s -> %s" ), m_fileName.GetFullName(), fnTry.GetFullName() );
@@ -210,7 +210,7 @@ bool wxDataFile::FileExists( const wxString& sAlternateExt ) const
 
 wxULongLong wxDataFile::GetNumberOfFramesFromBinary( const wxFileName& fileName, const wxSamplingInfo& si )
 {
-	wxASSERT( fileName.FileExists() );
+	wxASSERT( fileName.IsFileReadable() );
 	wxASSERT( si.IsOK() );
 
 	wxULongLong size = fileName.GetSize();

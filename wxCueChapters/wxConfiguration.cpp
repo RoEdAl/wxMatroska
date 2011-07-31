@@ -187,7 +187,7 @@ bool wxConfiguration::ReadLanguagesStrings( wxSortedArrayString& as )
 	wxFileName			   fn( paths.GetExecutablePath() );
 
 	fn.SetFullName( LANG_FILE_NAME );
-	if ( !fn.FileExists() )
+	if ( !fn.IsFileReadable() )
 	{
 		wxLogInfo( _( "Cannot find language file \u201C%s\u201D" ), fn.GetFullPath() );
 		wxLogInfo( _( "You can find this file at \u201C%s\u201D" ), LANG_FILE_URL );
