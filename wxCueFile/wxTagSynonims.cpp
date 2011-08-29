@@ -14,6 +14,12 @@ IMPLEMENT_DYNAMIC_CLASS( wxTagSynonims, wxObject )
 wxTagSynonims::wxTagSynonims( void )
 {}
 
+wxTagSynonims::wxTagSynonims( const wxString& sName ):
+	m_sName( sName )
+{
+	wxASSERT( !sName.IsEmpty() );
+}
+
 wxTagSynonims::wxTagSynonims( const wxString& sName, const wxArrayString& asSynonims ):
 	m_sName( sName ), m_asSynonims( asSynonims )
 {
@@ -141,9 +147,7 @@ bool wxTagSynonimsCollection::GetName( const wxString& sSynonim, wxString& sName
 
 bool wxTagSynonimsCollection::GetName( const wxCueTag& synonim, wxCueTag& cueTag ) const
 {
-	size_t nSynonims = GetCount();
-
-	for ( size_t i = 0; i < nSynonims; i++ )
+	for ( size_t i = 0, nSynonims = GetCount(); i < nSynonims; i++ )
 	{
 		if ( Item( i ).GetName( synonim, cueTag ) )
 		{

@@ -26,6 +26,7 @@ protected:
 public:
 
 	wxTagSynonims( void );
+	wxTagSynonims( const wxString& );
 	wxTagSynonims( const wxString&, const wxArrayString& );
 	wxTagSynonims( const wxTagSynonims& );
 	wxTagSynonims& operator =( const wxTagSynonims& );

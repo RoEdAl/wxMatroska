@@ -337,7 +337,7 @@ void wxXmlCueSheetRenderer::init_synonims()
 	as.Add( wxCueTag::Name::ALBUM_ARTIST );
 	wxTagSynonims discSynonim3( wxCueTag::Name::ARTIST, as );
 	m_discSynonims.Add( discSynonim3 );
-	m_trackCdTextSynonims.Add( discSynonim3 );
+	m_trackSynonims.Add( discSynonim3 );
 }
 
 void wxXmlCueSheetRenderer::SetConfiguration( const wxConfiguration& cfg )
