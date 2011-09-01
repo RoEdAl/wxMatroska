@@ -198,6 +198,19 @@ bool wxCueSheetReader::GetCoverFile( const wxFileName& inputFile, wxFileName& co
 	return false;
 }
 
+wxString wxCueSheetReader::GetOneTrackCue()
+{
+	wxTextOutputStreamOnString tos;
+
+	( *tos ) <<
+	wxT( "REM one-track CUE sheet" ) << endl <<
+	wxT( "FILE \"track.wav\" WAVE" ) << endl <<
+	wxT( "\tTRACK 01 AUDIO" ) << endl <<
+	wxT( "\tINDEX 01 00:00:00" ) << endl;
+	( *tos ).Flush();
+	return tos.GetString();
+}
+
 wxCueSheetReader::wxCueSheetReader( void ):
 	m_reKeywords( GetKeywordsRegExp(), wxRE_ADVANCED ),
 	m_reCdTextInfo( GetCdTextInfoRegExp(), wxRE_ADVANCED ),
@@ -211,10 +224,12 @@ wxCueSheetReader::wxCueSheetReader( void ):
 	m_reCatalog( wxT( "\\d{13}" ), wxRE_ADVANCED | wxRE_NOSUB ),
 	m_reIsrc( wxT( "([[:upper:]]{2}|00)-{0,1}[[:upper:][:digit:]]{3}-{0,1}[[:digit:]]{5}" ), wxRE_ADVANCED | wxRE_NOSUB ),
 	m_reTrackComment( wxT( "cue[[.hyphen.][.underscore.][.low-line.]]track([[:digit:]]{1,2})[[.underscore.][.low-line.]]([[:alpha:][.hyphen.][.underscore.][.low-line.][.space.]]+)" ), wxRE_ADVANCED | wxRE_ICASE ),
+	m_reCommentMeta( wxT( "\\A([[.quotation-mark.]]{0,1})([[:upper:][.hyphen.][.underscore.][:space:][.low-line.]]+)\\1[[:space:]]+([^[:space:]].+)\\Z" ), wxRE_ADVANCED ),
 	m_bErrorsAsWarnings( true ),
 	m_bParseComments( true ),
 	m_bEllipsizeTags( true ),
-	m_bRemoveExtraSpaces( false )
+	m_bRemoveExtraSpaces( false ),
+	m_sOneTrackCue( GetOneTrackCue() )
 {
 	wxASSERT( m_reKeywords.IsValid() );
 	wxASSERT( m_reCdTextInfo.IsValid() );
@@ -228,8 +243,7 @@ wxCueSheetReader::wxCueSheetReader( void ):
 	wxASSERT( m_reCatalog.IsValid() );
 	wxASSERT( m_reIsrc.IsValid() );
 	wxASSERT( m_reTrackComment.IsValid() );
-
-	m_unquoter.SetLang( wxT( "unk" ) );
+	wxASSERT( m_reCommentMeta.IsValid() );
 }
 
 const wxCueSheet& wxCueSheetReader::GetCueSheet() const
@@ -762,28 +776,30 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMo
 
 	if ( singleMediaFile )
 	{
-		bool res = true;
-		BuildFromSingleMediaFile( sMediaFile );
-		bool bReadTags = ( ( nMode & EC_MEDIA_READ_TAGS ) != 0 );
-		if ( bReadTags )
+		bool res = BuildFromSingleMediaFile( sMediaFile );
+		if ( res )
 		{
-			switch ( eMediaType )
+			bool bReadTags = ( ( nMode & EC_MEDIA_READ_TAGS ) != 0 );
+			if ( bReadTags )
 			{
-				case MEDIA_TYPE_FLAC:
+				switch ( eMediaType )
 				{
-					wxFlacMetaDataReader flacReader;
-					if ( flacReader.ReadMetadata( sMediaFile ) && flacReader.HasVorbisComment() )
+					case MEDIA_TYPE_FLAC:
 					{
-						res = AppendFlacComments( flacReader, true );
+						wxFlacMetaDataReader flacReader;
+						if ( flacReader.ReadMetadata( sMediaFile ) && flacReader.HasVorbisComment() )
+						{
+							res = AppendFlacComments( flacReader, true );
+						}
+
+						break;
 					}
 
-					break;
-				}
-
-				case MEDIA_TYPE_WAVPACK:
-				{
-					res = ReadEmbeddedInWavpackTags( sMediaFile, true );
-					break;
+					case MEDIA_TYPE_WAVPACK:
+					{
+						res = ReadEmbeddedInWavpackTags( sMediaFile, true );
+						break;
+					}
 				}
 			}
 		}
@@ -807,15 +823,19 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, int nMo
 	}
 }
 
-/* onet track, one index*/
-void wxCueSheetReader::BuildFromSingleMediaFile( const wxString& sMediaFile )
+/* one track, one index*/
+bool wxCueSheetReader::BuildFromSingleMediaFile( const wxString& sMediaFile )
 {
 	m_cueSheet.Clear();
-	wxTrack singleTrack( 1 );
-	wxIndex singleIdx( 1, wxULL( 0 ) );
-	singleTrack.AddIndex( singleIdx );
-	m_cueSheet.AddTrack( singleTrack );
-	m_cueSheet.SetSingleDataFile( sMediaFile );
+	if ( ParseCue( wxCueSheetContent( m_sOneTrackCue, sMediaFile, true ) ) )
+	{
+		m_cueSheet.SetSingleDataFile( sMediaFile );
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 wxString wxCueSheetReader::internalReadCueSheet( wxInputStream& stream, wxMBConv& conv )
@@ -967,11 +987,29 @@ void wxCueSheetReader::ParseGarbage( const wxString& sLine )
 {
 	if ( IsTrack() )
 	{
-		GetLastTrack().ParseGarbage( sLine );
+		GetLastTrack().AddGarbage( sLine );
 	}
 	else
 	{
-		m_cueSheet.ParseGarbage( sLine );
+		m_cueSheet.AddGarbage( sLine );
+	}
+}
+
+void wxCueSheetReader::ParseComment( wxCueComponent& component, const wxString& sComment )
+{
+	if ( !m_bParseComments )
+	{
+		component.AddComment( sComment );
+		return;
+	}
+
+	if ( m_reCommentMeta.Matches( sComment ) )
+	{
+		component.AddTag( wxCueTag::TAG_CUE_COMMENT, m_reCommentMeta.GetMatch( sComment, 2 ), m_genericUnquoter.Unquote( m_reCommentMeta.GetMatch( sComment, 3 ) ) );
+	}
+	else
+	{
+		component.AddComment( sComment );
 	}
 }
 
@@ -979,11 +1017,11 @@ void wxCueSheetReader::ParseComment( const wxString& WXUNUSED( sToken ), const w
 {
 	if ( IsTrack() )
 	{
-		GetLastTrack().ParseComment( sComment, m_bParseComments );
+		ParseComment( GetLastTrack(), sComment );
 	}
 	else
 	{
-		m_cueSheet.ParseComment( sComment, m_bParseComments );
+		ParseComment( m_cueSheet, sComment );
 	}
 }
 

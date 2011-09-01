@@ -18,7 +18,7 @@
 // ===============================================================================
 
 const wxChar wxMyApp::APP_NAME[]		  = wxT( "cue2mkc" );
-const wxChar wxMyApp::APP_VERSION[]		  = wxT( "0.80" );
+const wxChar wxMyApp::APP_VERSION[]		  = wxT( "0.81" );
 const wxChar wxMyApp::APP_VENDOR_NAME[]	  = wxT( "Edmunt Pienkowsky" );
 const wxChar wxMyApp::APP_AUTHOR[]		  = wxT( "Edmunt Pienkowsky - roed@onet.eu" );
 const wxChar wxMyApp::LICENSE_FILE_NAME[] = wxT( "license.txt" );
@@ -317,7 +317,7 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile,
 	return 0;
 }
 
-int wxMyApp::ProcessCueFile( const wxInputFile& inputFile )
+int wxMyApp::ProcessCueFile( const wxInputFile& inputFile, const wxTagSynonimsCollection& discSynonims, const wxTagSynonimsCollection& trackSynonims )
 {
 	wxCueSheetReader reader;
 
@@ -381,7 +381,7 @@ int wxMyApp::ProcessCueFile( const wxInputFile& inputFile )
 	}
 	else
 	{
-		cueSheet.FindCommonTags( false );
+		cueSheet.FindCommonTags( discSynonims, trackSynonims, false );
 		return ConvertCueSheet( inputFile, cueSheet );
 	}
 }
@@ -390,6 +390,12 @@ int wxMyApp::OnRun()
 {
 	wxInputFile firstInputFile;
 	bool		bFirst = true;
+
+	wxTagSynonimsCollection discSynonims;
+	wxTagSynonimsCollection trackSynonims;
+
+	wxCueComponent::GetSynonims( discSynonims, false );
+	wxCueComponent::GetSynonims( trackSynonims, true );
 
 	int						res		  = 0;
 	const wxArrayInputFile& inputFile = m_cfg.GetInputFiles();
@@ -444,7 +450,7 @@ int wxMyApp::OnRun()
 					bFirst		   = false;
 				}
 
-				res = ProcessCueFile( singleFile );
+				res = ProcessCueFile( singleFile, discSynonims, trackSynonims );
 				if ( ( res != 0 ) && ( m_cfg.AbortOnError() || m_cfg.GetMerge() ) )
 				{
 					break;
@@ -461,7 +467,7 @@ int wxMyApp::OnRun()
 	if ( m_cfg.GetMerge() && ( res == 0 ) )
 	{
 		wxASSERT( !bFirst );
-		GetMergedCueSheet().FindCommonTags( true );
+		GetMergedCueSheet().FindCommonTags( discSynonims, trackSynonims, true );
 		res = ConvertCueSheet( firstInputFile, GetMergedCueSheet() );
 	}
 

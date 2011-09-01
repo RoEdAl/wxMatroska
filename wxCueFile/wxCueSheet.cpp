@@ -440,7 +440,7 @@ wxString wxCueSheet::FormatTrack( size_t trackNo, const wxString& sFmt ) const
 	for ( wxHashString::const_iterator i = replacements.begin(); i != replacements.end(); i++ )
 	{
 		wxString sFind( i->first );
-		sFind.Prepend( wxT( "%" ) ).Append( wxT( "%" ) );
+		sFind.Prepend( wxT( '%' ) ).Append( wxT( '%' ) );
 		s.Replace( sFind, i->second, true );
 	}
 
@@ -457,7 +457,7 @@ wxString wxCueSheet::Format( const wxString& sFmt ) const
 	for ( wxHashString::const_iterator i = replacements.begin(); i != replacements.end(); i++ )
 	{
 		wxString sFind( i->first );
-		sFind.Prepend( wxT( "%" ) ).Append( wxT( "%" ) );
+		sFind.Prepend( wxT( '%' ) ).Append( wxT( '%' ) );
 		s.Replace( sFind, i->second, true );
 	}
 
@@ -642,9 +642,15 @@ static wxString concatenate( const wxString& s1, const wxString& s2 )
 	}
 }
 
-void wxCueSheet::FindCommonTags( bool bMerge )
+void wxCueSheet::FindCommonTags( const wxTagSynonimsCollection& discSynonims, const wxTagSynonimsCollection& trackSynonims, bool bMerge )
 {
 	size_t nTracks = m_tracks.Count();
+
+	MoveCdTextInfoTags( discSynonims );
+	for ( size_t i = 0; i < nTracks; i++ )
+	{
+		m_tracks[ i ].MoveCdTextInfoTags( trackSynonims );
+	}
 
 	if ( nTracks <= 1 )
 	{
@@ -774,7 +780,7 @@ void wxCueSheet::FindCommonTags( bool bMerge )
 
 			if ( bIsCommon )
 			{
-				wxLogInfo( wxT( "Album name: \u201C%s\u201D" ), sCommonAlbum );
+				wxLogInfo( _( "Album name: \u201C%s\u201D" ), sCommonAlbum );
 				AddCdTextInfoTag( wxCueTag( wxCueTag::TAG_AUTO_GENERATED, wxCueTag::Name::TITLE, sCommonAlbum ) );
 
 				for ( wxHashMapStringToULong::const_iterator i = albumNumbers.begin(), iend = albumNumbers.end(); i != iend; i++ )

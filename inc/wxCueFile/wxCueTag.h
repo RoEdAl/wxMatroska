@@ -21,6 +21,10 @@ class wxReduntantSpacesRemover;
 class wxEllipsizer;
 #endif
 
+#ifndef _WX_TAG_SYNONIMS_H_
+class wxTagSynonimsCollection;
+#endif
+
 class wxCueTag;
 WX_DECLARE_OBJARRAY( wxCueTag, wxArrayCueTag );
 
@@ -82,6 +86,7 @@ public:
 	wxString GetQuotedValue( bool = true ) const;
 	bool IsMultiline() const;
 	wxString GetFlattenValue() const;
+	wxString GetFlattenValue( const wxString& ) const;
 
 	wxCueTag& SetSource( TAG_SOURCE );
 	wxCueTag& SetName( const wxString& );
@@ -120,6 +125,7 @@ public:
 
 	static size_t GetTags( const wxArrayCueTag&, const wxString&, wxArrayCueTag& );
 	static size_t MoveTags( wxArrayCueTag&, const wxString&, wxArrayCueTag& );
+	static size_t MoveTags( wxArrayCueTag&, const wxTagSynonimsCollection&, wxArrayCueTag& );
 	static bool FindTag( const wxArrayCueTag&, const wxCueTag& );
 	static bool AddTag( wxArrayCueTag&, const wxCueTag& );
 	static bool AddTagIf( wxArrayCueTag&, const wxCueTag&, const wxCueTag& );
@@ -130,6 +136,7 @@ public:
 	static size_t RemoveTags( wxArrayCueTag&, const wxArrayCueTag& );
 	static void CommonTags( wxArrayCueTag&, const wxArrayCueTag&, const wxArrayCueTag& );
 	static bool FindCommonPart( wxCueTag&, const wxCueTag&, const wxCueTag& );
+	static wxString GetFlattenValues( const wxArrayCueTag&, const wxString& );
 	static wxString Quote( const wxString& );
 	static wxString Escape( const wxString& );
 	static wxString UnEscape( const wxString& );

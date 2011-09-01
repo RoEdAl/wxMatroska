@@ -33,7 +33,7 @@ public:
 	WX_DECLARE_STRING_HASH_MAP( wxString, wxHashString );
 	WX_DECLARE_STRING_HASH_MAP( wxArrayCueTag, wxHashCueTag );
 
-protected:
+public:
 
 	typedef struct _CDTEXT_ENTRY
 	{
@@ -54,6 +54,8 @@ protected:
 
 	static const KEYWORD_ENTRY Keywords[];
 	static const size_t KeywordsSize;
+
+	static void GetSynonims( wxTagSynonimsCollection&, bool );
 
 protected:
 
@@ -96,6 +98,8 @@ public:
 	bool AddTagIfAndRemove( const wxCueTag&, const wxCueTag& );
 	void AddTags( const wxArrayCueTag& );
 
+	size_t MoveCdTextInfoTags( const wxTagSynonimsCollection& );
+
 	size_t RemoveTag( const wxCueTag& );
 	size_t RemoveTag( const wxString& );
 	size_t RemoveTags( const wxArrayCueTag& );
@@ -105,8 +109,8 @@ public:
 	void Clear( void );
 	bool IsTrack() const;
 
-	void ParseComment( const wxString&, bool = true );
-	void ParseGarbage( const wxString& );
+	void AddComment( const wxString& );
+	void AddGarbage( const wxString& );
 
 	virtual void GetReplacements( wxHashString& ) const;
 

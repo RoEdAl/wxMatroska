@@ -84,26 +84,29 @@ protected:
 	wxRegEx m_reCdTextInfo;
 	wxRegEx m_reEmpty;
 
-	wxRegEx					m_reIndex;
-	wxRegEx					m_reMsf;
-	wxUnquoter				m_unquoter;
-	wxRegEx					m_reQuotesEx;
-	wxRegEx					m_reFlags;
-	wxRegEx					m_reDataMode;
-	wxRegEx					m_reDataFile;
-	wxRegEx					m_reCatalog;
-	wxRegEx					m_reIsrc;
-	wxRegEx					m_reTrackComment;
-	wxTrailingSpacesRemover m_trailingSpacesRemover;
+	wxRegEx					 m_reIndex;
+	wxRegEx					 m_reMsf;
+	wxUnquoter				 m_unquoter;
+	wxUnquoter				 m_genericUnquoter;
+	wxRegEx					 m_reQuotesEx;
+	wxRegEx					 m_reFlags;
+	wxRegEx					 m_reDataMode;
+	wxRegEx					 m_reDataFile;
+	wxRegEx					 m_reCatalog;
+	wxRegEx					 m_reIsrc;
+	wxRegEx					 m_reTrackComment;
+	wxRegEx					 m_reCommentMeta;
+	wxTrailingSpacesRemover	 m_trailingSpacesRemover;
 	wxReduntantSpacesRemover m_reduntantSpacesRemover;
-	wxEllipsizer			m_ellipsizer;
+	wxEllipsizer			 m_ellipsizer;
+	wxString				 m_sOneTrackCue;
 
 	wxDataFile m_dataFile;
 	wxCueSheet m_cueSheet;
 	bool	   m_bErrorsAsWarnings;
 	bool	   m_bParseComments;
 	bool	   m_bEllipsizeTags;
-	bool m_bRemoveExtraSpaces;
+	bool	   m_bRemoveExtraSpaces;
 	wxString   m_sLang;
 	wxFileName m_cueFileName;
 
@@ -113,6 +116,7 @@ protected:
 	static wxString GetKeywordsRegExp();
 	static wxString GetCdTextInfoRegExp();
 	static wxString GetDataFileRegExp();
+	static wxString GetOneTrackCue();
 	static bool GetLogFile( const wxFileName&, wxFileName& );
 
 	static bool IsCoverFile( const wxFileName& );
@@ -153,6 +157,7 @@ protected:
 
 	void ParseGarbage( const wxString& );
 	void ParseComment( const wxString&, const wxString& );
+	void ParseComment( wxCueComponent&, const wxString& );
 	bool ParseMsf( const wxString&, wxIndex&, bool = false );
 	wxString Unquote( const wxString& );
 
@@ -176,7 +181,7 @@ protected:
 	bool ReadEmbeddedInWavpackCueSheet( const wxString&, int );
 	bool ReadEmbeddedInWavpackTags( const wxString&, bool );
 
-	void BuildFromSingleMediaFile( const wxString& );
+	bool BuildFromSingleMediaFile( const wxString& );
 
 public:
 

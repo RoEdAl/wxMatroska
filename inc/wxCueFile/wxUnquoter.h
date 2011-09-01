@@ -65,7 +65,7 @@ protected:
 	static const QUOTATION_MARKS FRENCH_QUOTES[];
 	static const size_t			 FRENCH_QUOTES_SIZE;
 
-	typedef wxScopedCharTypeBuffer< wxChar > wxScopedCharBuffer;
+	typedef wxScopedCharTypeBuffer<wxChar> wxScopedCharBuffer;
 	typedef wxScopedCharBuffer ( wxUnquoter::* GET_REPLACEMENT_METHOD )( int, bool ) const;
 
 	wxScopedCharBuffer get_standard_replacement( int, bool ) const;

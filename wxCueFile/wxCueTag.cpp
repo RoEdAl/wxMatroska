@@ -4,6 +4,7 @@
 #include "StdWx.h"
 #include <wxCueFile/wxCueTag.h>
 #include <wxCueFile/wxUnquoter.h>
+#include <wxCueFile/wxTagSynonims.h>
 #include <wxCueFile/wxTrailingSpacesRemover.h>
 #include <wxCueFile/wxReduntantSpacesRemover.h>
 #include <wxCueFile/wxEllipsizer.h>
@@ -134,6 +135,11 @@ wxString wxCueTag::GetQuotedValue( bool bEscape ) const
 
 wxString wxCueTag::GetFlattenValue() const
 {
+	return GetFlattenValue( wxT( '/' ) );
+}
+
+wxString wxCueTag::GetFlattenValue( const wxString& sSeparator ) const
+{
 	if ( m_bMultiline )
 	{
 		wxTextInputStreamOnString  tis( m_sValue );
@@ -141,13 +147,13 @@ wxString wxCueTag::GetFlattenValue() const
 
 		while ( !tis.Eof() )
 		{
-			*tos << ( *tis ).ReadLine() << wxT( '/' );
+			*tos << ( *tis ).ReadLine() << sSeparator;
 		}
 
 		( *tos ).Flush();
 
 		const wxString& sOut = tos.GetString();
-		return wxString( sOut, sOut.Length() - 1 );
+		return wxString( sOut, sOut.Length() - sSeparator.Length() );
 	}
 	else
 	{
@@ -312,6 +318,28 @@ size_t wxCueTag::MoveTags( wxArrayCueTag& sourceTags, const wxString& sTagName, 
 	return nCounter;
 }
 
+size_t wxCueTag::MoveTags( wxArrayCueTag& sourceTags, const wxTagSynonimsCollection& tagSynonims, wxArrayCueTag& tags )
+{
+	size_t nCounter = 0;
+
+	wxCueTag tag;
+
+	for ( size_t i = 0, nCount = sourceTags.Count(); i < nCount; i++ )
+	{
+		if ( tagSynonims.GetName( sourceTags[ i ], tag ) )
+		{
+			AddTag( tags, tag );
+			sourceTags.RemoveAt( i );
+
+			nCounter += 1;
+			nCount	 -= 1;
+			i		 -= 1;
+		}
+	}
+
+	return nCounter;
+}
+
 bool wxCueTag::FindTag( const wxArrayCueTag& tags, const wxCueTag& cueTag )
 {
 	for ( size_t numTags = tags.Count(), i = 0; i < numTags; i++ )
@@ -463,6 +491,26 @@ bool wxCueTag::FindCommonPart( wxCueTag& commonTag, const wxCueTag& tag1, const 
 	}
 
 	return false;
+}
+
+wxString wxCueTag::GetFlattenValues( const wxArrayCueTag& tags, const wxString& sSeparator )
+{
+	wxString sResult;
+
+	for ( size_t i = 0, nCount = tags.Count(); i < nCount; i++ )
+	{
+		sResult.Append( tags[ i ].GetFlattenValue( sSeparator ) );
+		sResult.Append( sSeparator );
+	}
+
+	if ( tags.IsEmpty() )
+	{
+		return sResult;
+	}
+	else
+	{
+		return sResult.Truncate( sResult.Length() - sSeparator.Length() );
+	}
 }
 
 #include <wx/arrimpl.cpp>

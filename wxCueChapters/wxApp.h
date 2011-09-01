@@ -37,7 +37,7 @@ protected:
 
 protected:
 
-	int ProcessCueFile( const wxInputFile& );
+	int ProcessCueFile( const wxInputFile&, const wxTagSynonimsCollection&, const wxTagSynonimsCollection& );
 	int ConvertCueSheet( const wxInputFile&, const wxCueSheet& );
 	int AppendCueSheet( wxCueSheet& );
 

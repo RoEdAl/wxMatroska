@@ -450,7 +450,7 @@ wxString wxMkvmergeOptsRenderer::get_mapping_str( const wxArrayTrack& tracks )
 		{
 			if ( nDataFiles > 0 )
 			{
-				sRes += wxString::Format( wxT( "%d:0:0:0," ), nDataFiles );
+				sRes += wxString::Format( wxT( "%d:0:%d:0," ), nDataFiles, nDataFiles - 1 );
 			}
 
 			nDataFiles += 1;
@@ -488,8 +488,8 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile,
 	const wxArrayTrack& tracks	   = cueSheet.GetTracks();
 	bool				bFirst	   = true;
 	size_t				nDataFiles = 0;
-	wxFileName dataFile;
-	bool bDataFile;
+	wxFileName			dataFile;
+	bool				bDataFile;
 
 	for ( size_t nTracks = tracks.Count(), i = 0; i < nTracks; i++ )
 	{
@@ -506,7 +506,7 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile,
 			bDataFile = tracks[ i ].GetDataFile().FindFile( dataFile, m_cfg.GetAlternateExtensions() );
 			if ( !bDataFile )
 			{
-				wxLogDebug( wxT("Fail to get data file for track %d. This is serious error!"), i );
+				wxLogDebug( wxT( "Fail to get data file for track %d. This is serious error!" ), i );
 			}
 
 			if ( !bFirst )

@@ -180,29 +180,12 @@ const wxArrayString& wxCueComponent::GetGarbage() const
 	return m_garbage;
 }
 
-void wxCueComponent::ParseComment( const wxString& sComment, bool bParse )
+void wxCueComponent::AddComment( const wxString& sComment )
 {
-	if ( !bParse )
-	{
-		m_comments.Add( sComment );
-		return;
-	}
-
-	wxUnquoter unquoter;
-	wxRegEx	   reCommentMeta( wxT( "\\A([[.quotation-mark.]]{0,1})([[:upper:][.hyphen.][.underscore.][:space:][.low-line.]]+)\\1[[:space:]]+([^[:space:]].+)\\Z" ), wxRE_ADVANCED );
-	wxASSERT( reCommentMeta.IsValid() );
-
-	if ( reCommentMeta.Matches( sComment ) )
-	{
-		AddTag( wxCueTag::TAG_CUE_COMMENT, reCommentMeta.GetMatch( sComment, 2 ), unquoter.Unquote( reCommentMeta.GetMatch( sComment, 3 ) ) );
-	}
-	else
-	{
-		m_comments.Add( sComment );
-	}
+	m_comments.Add( sComment );
 }
 
-void wxCueComponent::ParseGarbage( const wxString& sLine )
+void wxCueComponent::AddGarbage( const wxString& sLine )
 {
 	m_garbage.Add( sLine );
 }
@@ -431,6 +414,54 @@ size_t wxCueComponent::RemoveTag( const wxString& sTagName )
 	return wxCueTag::RemoveTag( m_tags, sTagName );
 }
 
+void wxCueComponent::GetSynonims( wxTagSynonimsCollection& synonimCollections, bool bTrack )
+{
+	synonimCollections.Clear();
+	wxArrayString synonims;
+	for ( size_t i = 0; i < CdTextFieldsSize; i++ )
+	{
+		if ( ( bTrack ? ( CdTextFields[ i ].type == wxCueComponent::TRACK ) : ( CdTextFields[ i ].type == wxCueComponent::DISC ) ) ||
+			 CdTextFields[ i ].type == wxCueComponent::ANY )
+		{
+			if ( wxStricmp( CdTextFields[ i ].keyword, wxCueTag::Name::TITLE ) == 0 && !bTrack )
+			{
+				// DISC: TITLE = ALBUM
+				synonims.Clear();
+				synonims.Add( wxCueTag::Name::ALBUM );
+				synonimCollections.Add( wxTagSynonims( CdTextFields[ i ].keyword, synonims ) );
+			}
+			else if ( wxStricmp( CdTextFields[ i ].keyword, wxCueTag::Name::PERFORMER ) == 0 && bTrack )
+			{
+				// PERFORMER = ARTIST
+				synonims.Clear();
+				synonims.Add( wxCueTag::Name::ARTIST );
+				synonimCollections.Add( wxTagSynonims( CdTextFields[ i ].keyword, synonims ) );
+			}
+			else if ( wxStricmp( CdTextFields[ i ].keyword, wxCueTag::Name::PERFORMER ) == 0 && !bTrack )
+			{
+				// PERFORMER = ARTIST, ALBUM_ARTIST
+				synonims.Clear();
+				synonims.Add( wxCueTag::Name::ARTIST );
+				synonims.Add( wxCueTag::Name::ALBUM_ARTIST );
+				synonimCollections.Add( wxTagSynonims( CdTextFields[ i ].keyword, synonims ) );
+			}
+			else
+			{
+				synonimCollections.Add( wxTagSynonims( CdTextFields[ i ].keyword ) );
+			}
+		}
+	}
+}
+
+size_t wxCueComponent::MoveCdTextInfoTags( const wxTagSynonimsCollection& synonimCollections )
+{
+	wxArrayCueTag cdTextTags;
+	size_t		  res = wxCueTag::MoveTags( m_tags, synonimCollections, cdTextTags );
+
+	wxCueTag::AddTags( m_cdTextTags, cdTextTags );
+	return res;
+}
+
 void wxCueComponent::Clear()
 {
 	m_comments.Clear();
@@ -476,15 +507,14 @@ void wxCueComponent::GetReplacements( wxCueComponent::wxHashString& replacements
 			continue;
 		}
 
-		wxString sValue;
-		size_t	 idx = find_keyword( m_cdTextTags, CdTextFields[ i ].keyword );
-		if ( idx != -1 )
-		{
-			sValue = m_cdTextTags[ idx ].GetValue();
-		}
+		wxString	  sValue;
+		wxArrayCueTag tags;
+
+		wxCueTag::GetTags( m_cdTextTags, CdTextFields[ i ].keyword, tags );
+		sValue = wxCueTag::GetFlattenValues( tags, wxT( ',' ) );
 
 		wxString s( CdTextFields[ i ].replacement );
-		s.Prepend( m_bTrack ? wxT( "t" ) : wxT( "d" ) );
+		s.Prepend( m_bTrack ? wxT( 't' ) : wxT( 'd' ) );
 
 		bool bAdd = false;
 		switch ( CdTextFields[ i ].type )
@@ -493,7 +523,7 @@ void wxCueComponent::GetReplacements( wxCueComponent::wxHashString& replacements
 			{
 				bAdd = true;
 				wxString s( CdTextFields[ i ].replacement );
-				s.Prepend( wxT( "a" ) );
+				s.Prepend( wxT( 'a' ) );
 				replacements[ s ] = sValue;
 				break;
 			}

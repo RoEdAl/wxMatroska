@@ -82,7 +82,7 @@ public:
 	const wxArrayCueTag&		  GetCdTextFile() const;
 	const wxArrayTrack&			  GetTracks() const;
 
-	void FindCommonTags( bool );
+	void FindCommonTags( const wxTagSynonimsCollection&, const wxTagSynonimsCollection&, bool );
 
 	wxCueSheet& AddCatalog( const wxString& );
 	wxCueSheet& AddCdTextFile( const wxString& );
