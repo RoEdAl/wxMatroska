@@ -931,43 +931,42 @@ bool wxXmlCueSheetRenderer::OnPostRenderDisc( const wxCueSheet& cueSheet )
 
 		if ( GetConfig().GetChapterTimeEnd() )
 		{
-			if ( !has_chapter_time_end( pChapterAtom ) )
+			if ( GetConfig().GetUseDataFiles() && bLastTrackForDataFile && dataFile.HasDuration() )
 			{
-				if ( GetConfig().GetUseDataFiles() && bLastTrackForDataFile && dataFile.HasDuration() )
+				wxLogInfo( _( "Calculating end time for track %d using media file \u201C%s\u201D" ),
+					tracks[ i ].GetNumber(), dataFile.GetFileName().GetFullName() );
+				bool bAdd = true;
+				if ( bFirst )
 				{
-					wxLogInfo( _( "Calculating end time for track %d using media file \u201C%s\u201D" ),
-						tracks[ i ].GetNumber(), dataFile.GetFileName().GetFullName() );
-					bool bAdd = true;
-					if ( bFirst )
-					{
-						offset = dataFile.GetDuration();
-						bFirst = false;
-					}
-					else if ( !offset.Add( dataFile.GetDuration() ) )
-					{
-						wxLogError( _( "Fail to calculate offset for track %d" ),
-							tracks[ i ].GetNumber() );
-						bAdd = false;
-					}
-
-					if ( bAdd )
-					{
-						wxLogDebug( wxT( "Offset: %s" ), offset.GetNumberOfSamples().ToString() );
-						AddChapterTimeEnd( pChapterAtom, offset );
-					}
+					offset = dataFile.GetDuration();
+					bFirst = false;
 				}
-				else if ( GetConfig().GetUnknownChapterTimeEndToNextChapter() && ( ( i + 1 ) < tracksCount ) )
+				else if ( !offset.Add( dataFile.GetDuration() ) )
 				{
-					wxLogInfo( _( "Calculating end time for track %d using offset (%d CD frames)" ), tracks[ i ].GetNumber(), GetConfig().GetChapterOffset() );
+					wxLogError( _( "Fail to calculate offset for track %d" ),
+						tracks[ i ].GetNumber() );
+					bAdd = false;
+				}
+
+				if ( !has_chapter_time_end( pChapterAtom ) && bAdd )
+				{
+					wxLogDebug( wxT( "Offset: %s" ), offset.GetNumberOfSamples().ToString() );
+					AddChapterTimeEnd( pChapterAtom, offset );
+				}
+			}
+			else if ( GetConfig().GetUnknownChapterTimeEndToNextChapter() && ( ( i + 1 ) < tracksCount ) )
+			{
+				wxLogInfo( _( "Calculating end time for track %d using offset (%d CD frames)" ), tracks[ i ].GetNumber(), GetConfig().GetChapterOffset() );
+
+				if ( !has_chapter_time_end( pChapterAtom ) )
+				{
 					const wxTrack& nextTrack = tracks[ i + 1 ];
 					AddChapterTimeEnd( pChapterAtom, nextTrack );
 				}
 			}
-
-			wxString s( cueSheet.FormatTrack( i, GetConfig().GetTrackNameFormat() ) );
-			add_chapter_display( pChapterAtom, s, GetConfig().GetLang() );
 		}
 
+		add_chapter_display( pChapterAtom, cueSheet.FormatTrack( i, GetConfig().GetTrackNameFormat() ), GetConfig().GetLang() );
 		pChapterAtom = pChapterAtom->GetNext();
 	}
 
