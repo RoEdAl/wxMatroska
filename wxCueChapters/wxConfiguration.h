@@ -13,6 +13,10 @@
 #include <wxCueComponent.h>
 #endif
 
+#ifndef _WX_CUE_SHEET_READER_H_
+#include <wxCueFile/wxCueSheetReader.h>
+#endif
+
 WX_DECLARE_OBJARRAY( wxInputFile, wxArrayInputFile );
 WX_DEFINE_ARRAY_INT( wxCueTag::TAG_SOURCE, wxArrayTagSource );
 

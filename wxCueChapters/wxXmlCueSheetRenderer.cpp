@@ -9,6 +9,7 @@
 #include <wxCueFile/wxIndex.h>
 #include <wxCueFile/wxTrack.h>
 #include <wxCueFile/wxCueSheet.h>
+#include <wxCueFile/wxCueSheetReader.h>
 #include <wxEncodingDetection/wxTextOutputStreamWithBOM.h>
 #include "wxConfiguration.h"
 #include "wxInputFile.h"

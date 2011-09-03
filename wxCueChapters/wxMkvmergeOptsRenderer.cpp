@@ -6,6 +6,7 @@
 #include <wxCueFile/wxDataFile.h>
 #include <wxCueFile/wxCueComponent.h>
 #include <wxCueFile/wxCueSheet.h>
+#include <wxCueFile/wxCueSheetReader.h>
 #include <wxEncodingDetection/wxTextOutputStreamWithBOM.h>
 #include <wxCueFile/wxTextOutputStreamOnString.h>
 #include <wxCueFile/wxTextInputStreamOnString.h>
