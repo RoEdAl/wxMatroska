@@ -245,9 +245,8 @@ void wxTrack::ClearFlags()
 wxString wxTrack::GetFlagsAsString() const
 {
 	wxString s;
-	size_t	 flags = m_flags.Count();
 
-	for ( size_t i = 0; i < flags; i++ )
+	for ( size_t i = 0, nCount = m_flags.GetCount(); i < nCount; i++ )
 	{
 		s += FlagToString( m_flags[ i ] );
 		s += wxT( ' ' );
@@ -259,14 +258,12 @@ wxString wxTrack::GetFlagsAsString() const
 
 bool wxTrack::HasFlags() const
 {
-	return ( m_flags.Count() > 0u );
+	return ( m_flags.GetCount() > 0u );
 }
 
 bool wxTrack::HasFlag( wxTrack::Flag f ) const
 {
-	size_t flags = m_flags.Count();
-
-	for ( size_t i = 0; i < flags; i++ )
+	for ( size_t i = 0, nCount = m_flags.GetCount(); i < nCount; i++ )
 	{
 		if ( m_flags[ i ] == f )
 		{
@@ -427,9 +424,7 @@ wxArrayIndex& wxTrack::SortIndicies()
 
 const wxIndex& wxTrack::GetFirstIndex() const
 {
-	size_t idxs = m_indexes.Count();
-
-	for ( size_t i = 0; i < idxs; i++ )
+	for ( size_t i = 0, nCount = m_indexes.GetCount(); i < nCount; i++ )
 	{
 		if ( m_indexes[ i ].GetNumber() == 1 )
 		{

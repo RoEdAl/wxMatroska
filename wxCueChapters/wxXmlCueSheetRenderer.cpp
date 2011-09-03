@@ -593,8 +593,7 @@ void wxXmlCueSheetRenderer::AddTags(
 
 	component.GetTags( cdTextSynonims, synonims, mappedTags, rest );
 
-	size_t numTags = mappedTags.Count();
-	for ( size_t i = 0; i < numTags; i++ )
+	for ( size_t i = 0, nTags = mappedTags.GetCount(); i < nTags; i++ )
 	{
 		if ( GetConfig().ShouldIgnoreTag( mappedTags[ i ] ) )
 		{
@@ -604,8 +603,7 @@ void wxXmlCueSheetRenderer::AddTags(
 		wxXmlNode* pSimple = add_simple_tag( pTag, mappedTags[ i ], GetConfig().GetLang() );
 	}
 
-	numTags = rest.Count();
-	for ( size_t i = 0; i < numTags; i++ )
+	for ( size_t i = 0, nTags = rest.GetCount(); i < nTags; i++ )
 	{
 		if ( GetConfig().ShouldIgnoreTag( rest[ i ] ) )
 		{
@@ -681,7 +679,7 @@ wxXmlNode* wxXmlCueSheetRenderer::AppendDiscTags(
 	AddCdTextInfo( cueSheet, pTag );
 
 	const wxArrayCueTag& catalogs = cueSheet.GetCatalogs();
-	for ( size_t nCount = catalogs.Count(), i = 0; i < nCount; i++ )
+	for ( size_t i = 0, nCount = catalogs.GetCount(); i < nCount; i++ )
 	{
 		wxXmlNode* pSimple = add_simple_tag(
 			pTag,
@@ -779,7 +777,7 @@ bool wxXmlCueSheetRenderer::OnPreRenderDisc( const wxCueSheet& cueSheet )
 	AddDiscTags( cueSheet, m_pTags, editionUID );
 
 	add_comment_node( m_pTags, wxString::Format( wxT( "CUE file: \u201C%s\u201D" ), m_inputFile.ToString( false ) ) );
-	add_comment_node( m_pTags, wxString::Format( wxT( "Number of tracks: %d" ), cueSheet.GetTracks().Count() ) );
+	add_comment_node( m_pTags, wxString::Format( wxT( "Number of tracks: %d" ), cueSheet.GetTracksCount() ) );
 
 	return wxCueSheetRenderer::OnPreRenderDisc( cueSheet );
 }
@@ -916,7 +914,7 @@ bool wxXmlCueSheetRenderer::OnPostRenderDisc( const wxCueSheet& cueSheet )
 	wxLogInfo( _( "Calculating chapter names and end time from data file(s)" ) );
 
 	const wxArrayTrack& tracks		= cueSheet.GetTracks();
-	size_t				tracksCount = tracks.Count();
+	size_t				tracksCount = tracks.GetCount();
 	SetTotalParts( tracksCount, m_pTags );
 
 	wxASSERT( m_pFirstChapterAtom != wxNullXmlNode );
@@ -935,7 +933,7 @@ bool wxXmlCueSheetRenderer::OnPostRenderDisc( const wxCueSheet& cueSheet )
 			if ( GetConfig().GetUseDataFiles() && bLastTrackForDataFile && dataFile.HasDuration() )
 			{
 				wxLogInfo( _( "Calculating end time for track %d using media file \u201C%s\u201D" ),
-					tracks[ i ].GetNumber(), dataFile.GetFileName().GetFullName() );
+					tracks[ i ].GetNumber(), dataFile.GetRealFileName().GetFullName() );
 				bool bAdd = true;
 				if ( bFirst )
 				{

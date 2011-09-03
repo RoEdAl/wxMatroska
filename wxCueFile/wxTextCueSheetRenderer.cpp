@@ -120,7 +120,7 @@ void wxTextCueSheetRenderer::InternalRenderComponent( const wxCueComponent& comp
 	if ( ( m_nDumpFlags & DUMP_TAGS ) != 0 )
 	{
 		const wxArrayCueTag& tags = component.GetTags();
-		for ( size_t numTags = tags.Count(), i = 0; i < numTags; i++ )
+		for ( size_t i = 0, nCount = tags.GetCount(); i < nCount; i++ )
 		{
 			DumpComponentTag( component, tags[ i ] );
 		}
@@ -128,7 +128,7 @@ void wxTextCueSheetRenderer::InternalRenderComponent( const wxCueComponent& comp
 
 	// dump CT-TEXT info
 	const wxArrayCueTag& tags = component.GetCdTextTags();
-	for ( size_t numTags = tags.Count(), i = 0; i < numTags; i++ )
+	for ( size_t i = 0, nCount = tags.GetCount(); i < nCount; i++ )
 	{
 		DumpComponentString( component,
 			tags[ i ].GetName(),
@@ -152,13 +152,13 @@ void wxTextCueSheetRenderer::InternalRenderCueSheet( const wxCueSheet& cueSheet 
 	InternalRenderComponent( cueSheet );
 
 	const wxArrayCueTag& catalogs = cueSheet.GetCatalogs();
-	for ( size_t nCount = catalogs.Count(), i = 0; i < nCount; i++ )
+	for ( size_t i = 0, nCount = catalogs.GetCount(); i < nCount; i++ )
 	{
 		DumpComponentString( cueSheet, catalogs[ i ].GetName(), catalogs[ i ].GetValue() );
 	}
 
 	const wxArrayCueTag& cdtextfiles = cueSheet.GetCdTextFiles();
-	for ( size_t nCount = cdtextfiles.Count(), i = 0; i < nCount; i++ )
+	for ( size_t i = 0, nCount = cdtextfiles.GetCount(); i < nCount; i++ )
 	{
 		DumpComponentString( cueSheet, cdtextfiles[ i ].GetName(), wxCueTag::Quote( cdtextfiles[ i ].GetValue() ) );
 	}

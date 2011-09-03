@@ -31,7 +31,6 @@ public:
 	} ENTRY_TYPE;
 
 	WX_DECLARE_STRING_HASH_MAP( wxString, wxHashString );
-	WX_DECLARE_STRING_HASH_MAP( wxArrayCueTag, wxHashCueTag );
 
 public:
 
@@ -68,7 +67,7 @@ protected:
 protected:
 
 	void copy( const wxCueComponent& );
-	static void remove_duplicates( const wxRegEx&, wxHashCueTag& );
+	static void remove_duplicates( const wxRegEx&, wxHashArrayCueTag& );
 	static void remove_duplicates( const wxRegEx&, wxArrayCueTag& );
 
 public:

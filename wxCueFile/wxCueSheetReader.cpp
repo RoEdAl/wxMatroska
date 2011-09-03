@@ -815,7 +815,7 @@ wxString wxCueSheetReader::internalReadCueSheet( wxInputStream& stream, wxMBConv
 
 bool wxCueSheetReader::IsTrack() const
 {
-	return ( m_cueSheet.GetTracks().Count() > 0 );
+	return !m_cueSheet.GetTracks().IsEmpty();
 }
 
 wxTrack& wxCueSheetReader::GetLastTrack()
@@ -848,7 +848,7 @@ void wxCueSheetReader::AddError( const wxChar* pszFormat, ... )
 
 void wxCueSheetReader::DumpErrors( size_t nLine ) const
 {
-	if ( m_errors.Count() > 0 )
+	if ( !m_errors.IsEmpty() )
 	{
 		for ( wxArrayString::const_iterator i = m_errors.begin();
 			  i != m_errors.end(); i++ )
@@ -1054,7 +1054,7 @@ bool wxCueSheetReader::ParseCueLine( const wxString& sLine, size_t nLine )
 		wxString sRest	= m_reKeywords.GetMatch( sLine, 2 );
 		m_errors.Clear();
 		ParseLine( nLine, sToken, sRest );
-		if ( m_errors.Count() > 0 )
+		if ( m_errors.GetCount() > 0 )
 		{
 			DumpErrors( nLine );
 			ParseGarbage( sLine );
@@ -1068,7 +1068,7 @@ bool wxCueSheetReader::ParseCueLine( const wxString& sLine, size_t nLine )
 		wxString sRest	= m_reCdTextInfo.GetMatch( sLine, 2 );
 		m_errors.Clear();
 		ParseCdTextInfo( nLine, sToken, sRest );
-		if ( m_errors.Count() > 0 )
+		if ( m_errors.GetCount() > 0 )
 		{
 			DumpErrors( nLine );
 			ParseGarbage( sLine );

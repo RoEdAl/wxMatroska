@@ -61,7 +61,7 @@ const wxFileName& wxInputFile::GetInputFile() const
 
 bool wxInputFile::HasDataFiles() const
 {
-	return ( m_dataFile.Count() > 0 );
+	return !m_dataFile.IsEmpty();
 }
 
 const wxArrayFileName& wxInputFile::GetDataFiles() const
@@ -72,7 +72,7 @@ const wxArrayFileName& wxInputFile::GetDataFiles() const
 void wxInputFile::GetDataFiles( wxArrayDataFile& dataFile, wxDataFile::FileType fileType ) const
 {
 	dataFile.Clear();
-	for ( size_t i = 0, count = m_dataFile.Count(); i < count; i++ )
+	for ( size_t i = 0, nCount = m_dataFile.GetCount(); i < nCount; i++ )
 	{
 		wxDataFile df( m_dataFile[ i ].GetFullPath(), fileType );
 		dataFile.Add( df );
@@ -102,7 +102,7 @@ wxString wxInputFile::ToString( bool bLongPath ) const
 		s.Append( SEPARATOR );
 	}
 
-	for ( size_t i = 0; i < m_dataFile.Count(); i++ )
+	for ( size_t i = 0, nCount = m_dataFile.GetCount(); i < nCount; i++ )
 	{
 		s.Append( bLongPath ? m_dataFile[ i ].GetFullPath() : m_dataFile[ i ].GetFullName() );
 		s.Append( SEPARATOR );

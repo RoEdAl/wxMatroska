@@ -27,6 +27,7 @@ class wxTagSynonimsCollection;
 
 class wxCueTag;
 WX_DECLARE_OBJARRAY( wxCueTag, wxArrayCueTag );
+WX_DECLARE_STRING_HASH_MAP( wxArrayCueTag, wxHashArrayCueTag );
 
 class wxCueTag:
 	public wxObject
@@ -133,6 +134,7 @@ public:
 	static size_t RemoveTag( wxArrayCueTag&, const wxCueTag& );
 	static size_t RemoveTag( wxArrayCueTag&, const wxString& );
 	static void AddTags( wxArrayCueTag&, const wxArrayCueTag& );
+	static void AddTags( wxArrayCueTag&, const wxHashArrayCueTag& );
 	static size_t RemoveTags( wxArrayCueTag&, const wxArrayCueTag& );
 	static void CommonTags( wxArrayCueTag&, const wxArrayCueTag&, const wxArrayCueTag& );
 	static bool FindCommonPart( wxCueTag&, const wxCueTag&, const wxCueTag& );

@@ -225,7 +225,7 @@ void wxMkvmergeOptsRenderer::write_eac_attachments(
 void wxMkvmergeOptsRenderer::write_source_eac_attachments(
 	const wxInputFile& WXUNUSED( inputFile ), const wxArrayCueSheetContent& contents )
 {
-	size_t nContents	   = contents.Count();
+	size_t nContents	   = contents.GetCount();
 	size_t nSourceContents = 0;
 
 	for ( size_t i = 0; i < nContents; i++ )
@@ -359,7 +359,7 @@ bool wxMkvmergeOptsRenderer::render_cuesheet( const wxInputFile& inputFile,
 void wxMkvmergeOptsRenderer::write_decoded_eac_attachments( const wxInputFile& inputFile,
 	const wxArrayCueSheetContent& contents )
 {
-	size_t	   nContents = contents.Count();
+	size_t	   nContents = contents.GetCount();
 	wxFileName cueSheetPath;
 
 	switch ( nContents )
@@ -445,7 +445,7 @@ wxString wxMkvmergeOptsRenderer::get_mapping_str( const wxArrayTrack& tracks )
 
 	size_t nDataFiles = 0;
 
-	for ( size_t i = 0, nCount = tracks.Count(); i < nCount; i++ )
+	for ( size_t i = 0, nCount = tracks.GetCount(); i < nCount; i++ )
 	{
 		if ( tracks[ i ].HasDataFile() )
 		{
@@ -492,7 +492,7 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile,
 	wxFileName			dataFile;
 	bool				bDataFile;
 
-	for ( size_t nTracks = tracks.Count(), i = 0; i < nTracks; i++ )
+	for ( size_t nTracks = tracks.GetCount(), i = 0; i < nTracks; i++ )
 	{
 		if ( tracks[ i ].HasDataFile() )
 		{
