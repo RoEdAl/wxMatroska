@@ -619,7 +619,7 @@ void wxCueSheetReader::AppendTags( const wxArrayCueTag& tags, size_t nTrackFrom,
 		{
 			for ( size_t j = nTrackFrom; j <= nTrackTo; j++ )
 			{
-				m_cueSheet.GetTrack( i ).AddTag( tag );
+				m_cueSheet.GetTrack( j ).AddTag( tag );
 			}
 		}
 	}
