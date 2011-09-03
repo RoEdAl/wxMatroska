@@ -48,33 +48,31 @@ public:
 
 protected:
 
-	bool				 m_bChapterTimeEnd; // default=true
-	bool				 m_bUnknownChapterTimeEndToNextChapter; // default=false
-	unsigned long		 m_nChapterOffset; // in frames
-	bool				 m_bUseDataFiles; // default=true
-	bool				 m_bEmbedded;
-	bool				 m_bCorrectQuotationMarks;
-	bool				 m_bSaveCueSheet;
-	bool				 m_bGenerateTags;
-	bool				 m_bGenerateMkvmergeOpts;
-	bool				 m_bRunMkvmerge;
-	bool				 m_bGenerateEditionUID;
-	bool				 m_bGenerateTagsFromComments;
-	FILE_ENCODING		 m_eCueSheetFileEncoding;
-	bool				 m_bTrackOneIndexOne; // or zero
-	bool				 m_bAbortOnError;
-	bool				 m_bRoundDownToFullFrames;
-	bool				 m_bHiddenIndexes;
-	bool				 m_bMerge;
-	unsigned int		 m_nEmbeddedModeFlags;
-	wxArrayTagSource	 m_aeIgnoredSources;
-	bool				 m_bUseMLang;
-	bool				 m_bUseFullPaths;
-	bool				 m_bEllipsizeTags;
-	bool				 m_bAttachEacLog;
-	CUESHEET_ATTACH_MODE m_eCsAttachMode;
-	bool				 m_bAttachCover;
-	bool				 m_bRemoveExtraSpaces;
+	bool						m_bChapterTimeEnd; // default=true
+	bool						m_bUnknownChapterTimeEndToNextChapter; // default=false
+	unsigned long				m_nChapterOffset; // in frames
+	bool						m_bUseDataFiles; // default=true
+	bool						m_bEmbedded;
+	bool						m_bCorrectQuotationMarks;
+	bool						m_bSaveCueSheet;
+	bool						m_bGenerateTags;
+	bool						m_bGenerateMkvmergeOpts;
+	bool						m_bRunMkvmerge;
+	bool						m_bGenerateEditionUID;
+	bool						m_bGenerateTagsFromComments;
+	FILE_ENCODING				m_eCueSheetFileEncoding;
+	bool						m_bTrackOneIndexOne; // or zero
+	bool						m_bAbortOnError;
+	bool						m_bRoundDownToFullFrames;
+	bool						m_bHiddenIndexes;
+	bool						m_bMerge;
+	wxCueSheetReader::ReadFlags m_nReadFlags;
+	wxArrayTagSource			m_aeIgnoredSources;
+	bool						m_bUseMLang;
+	bool						m_bUseFullPaths;
+	bool						m_bEllipsizeTags;
+	CUESHEET_ATTACH_MODE		m_eCsAttachMode;
+	bool						m_bRemoveExtraSpaces;
 
 	wxString m_sAlternateExtensions;
 	wxString m_sLang;
@@ -98,7 +96,7 @@ protected:
 	static bool check_ext( const wxString& );
 	static wxString BoolToStr( bool );
 	static wxString BoolToIdx( bool );
-	static wxString GetEmbeddedModeFlagsDesc( unsigned int );
+	static wxString GetReadFlagsDesc( wxCueSheetReader::ReadFlags );
 	static wxString GetTagSourcesNames( const wxArrayTagSource& );
 
 	bool CheckLang( const wxString& ) const;
@@ -141,7 +139,7 @@ public:
 	wxSharedPtr<wxTextOutputStream> GetOutputTextStream( wxOutputStream& )
 	const;
 	bool GetMerge() const;
-	unsigned int GetEmbeddedModeFlags() const;
+	wxCueSheetReader::ReadFlags GetReadFlags() const;
 	bool ShouldIgnoreTag( const wxCueTag& ) const;
 	bool UseMLang() const;
 	bool UseFullPaths() const;

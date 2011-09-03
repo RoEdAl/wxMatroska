@@ -151,13 +151,13 @@ void wxTextCueSheetRenderer::InternalRenderCueSheet( const wxCueSheet& cueSheet 
 {
 	InternalRenderComponent( cueSheet );
 
-	const wxArrayCueTag& catalogs = cueSheet.GetCatalog();
+	const wxArrayCueTag& catalogs = cueSheet.GetCatalogs();
 	for ( size_t nCount = catalogs.Count(), i = 0; i < nCount; i++ )
 	{
 		DumpComponentString( cueSheet, catalogs[ i ].GetName(), catalogs[ i ].GetValue() );
 	}
 
-	const wxArrayCueTag& cdtextfiles = cueSheet.GetCdTextFile();
+	const wxArrayCueTag& cdtextfiles = cueSheet.GetCdTextFiles();
 	for ( size_t nCount = cdtextfiles.Count(), i = 0; i < nCount; i++ )
 	{
 		DumpComponentString( cueSheet, cdtextfiles[ i ].GetName(), wxCueTag::Quote( cdtextfiles[ i ].GetValue() ) );

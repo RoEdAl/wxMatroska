@@ -263,14 +263,11 @@ wxConfiguration::wxConfiguration( void ):
 	m_sMatroskaTagsXmlExt( MATROSKA_TAGS_EXT ),
 	m_sMatroskaOptsExt( MATROSKA_OPTS_EXT ),
 	m_bMerge( false ),
-	m_nEmbeddedModeFlags( wxCueSheetReader::EC_MEDIA_READ_TAGS |
-						  wxCueSheetReader::EC_FLAC_READ_TAG_FIRST_THEN_COMMENT ),
+	m_nReadFlags( wxCueSheetReader::EC_MEDIA_READ_TAGS | wxCueSheetReader::EC_FLAC_READ_TAG_FIRST_THEN_COMMENT | wxCueSheetReader::EC_FIND_COVER | wxCueSheetReader::EC_FIND_LOG ),
 	m_bUseMLang( true ),
 	m_bUseFullPaths( false ),
 	m_bEllipsizeTags( true ),
-	m_bAttachEacLog( true ),
 	m_eCsAttachMode( CUESHEET_ATTACH_NONE ),
-	m_bAttachCover( true ),
 	m_bRemoveExtraSpaces( true )
 {
 	ReadLanguagesStrings( m_asLang );
@@ -609,64 +606,90 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	if ( cmdLine.Found( wxT( "single-media-file" ) ) )
 	{
-		m_nEmbeddedModeFlags &= ~wxCueSheetReader::EC_SINGLE_MEDIA_FILE;
-		m_nEmbeddedModeFlags |= wxCueSheetReader::EC_SINGLE_MEDIA_FILE;
+		m_nReadFlags &= ~wxCueSheetReader::EC_SINGLE_MEDIA_FILE;
+		m_nReadFlags |= wxCueSheetReader::EC_SINGLE_MEDIA_FILE;
 	}
 
 	if ( cmdLine.Found( wxT( "media-file-with-embedded-cuesheet" ) ) )
 	{
-		m_nEmbeddedModeFlags &= ~wxCueSheetReader::EC_SINGLE_MEDIA_FILE;
-		m_nEmbeddedModeFlags |= 0;
+		m_nReadFlags &= ~wxCueSheetReader::EC_SINGLE_MEDIA_FILE;
+		m_nReadFlags |= 0;
 	}
 
 	if ( cmdLine.Found( wxT( "flac-read-none" ) ) )
 	{
-		m_nEmbeddedModeFlags &= ~wxCueSheetReader::EC_FLAC_READ_MASK;
-		m_nEmbeddedModeFlags |= wxCueSheetReader::EC_FLAC_READ_NONE;
+		m_nReadFlags &= ~wxCueSheetReader::EC_FLAC_READ_MASK;
+		m_nReadFlags |= wxCueSheetReader::EC_FLAC_READ_NONE;
 	}
 
 	if ( cmdLine.Found( wxT( "flac-read-cuesheet-tag-first" ) ) )
 	{
-		m_nEmbeddedModeFlags &= ~wxCueSheetReader::EC_FLAC_READ_MASK;
-		m_nEmbeddedModeFlags |= wxCueSheetReader::EC_FLAC_READ_TAG_FIRST_THEN_COMMENT;
+		m_nReadFlags &= ~wxCueSheetReader::EC_FLAC_READ_MASK;
+		m_nReadFlags |= wxCueSheetReader::EC_FLAC_READ_TAG_FIRST_THEN_COMMENT;
 	}
 
 	if ( cmdLine.Found( wxT( "flac-read-vorbis-comment-first" ) ) )
 	{
-		m_nEmbeddedModeFlags &= ~wxCueSheetReader::EC_FLAC_READ_MASK;
-		m_nEmbeddedModeFlags |= wxCueSheetReader::EC_FLAC_READ_COMMENT_FIRST_THEN_TAG;
+		m_nReadFlags &= ~wxCueSheetReader::EC_FLAC_READ_MASK;
+		m_nReadFlags |= wxCueSheetReader::EC_FLAC_READ_COMMENT_FIRST_THEN_TAG;
 	}
 
 	if ( cmdLine.Found( wxT( "flac-read-cuesheet-tag-only" ) ) )
 	{
-		m_nEmbeddedModeFlags &= ~wxCueSheetReader::EC_FLAC_READ_MASK;
-		m_nEmbeddedModeFlags |= wxCueSheetReader::EC_FLAC_READ_TAG_ONLY;
+		m_nReadFlags &= ~wxCueSheetReader::EC_FLAC_READ_MASK;
+		m_nReadFlags |= wxCueSheetReader::EC_FLAC_READ_TAG_ONLY;
 	}
 
 	if ( cmdLine.Found( wxT( "flac-read-vorbis-comment-only" ) ) )
 	{
-		m_nEmbeddedModeFlags &= ~wxCueSheetReader::EC_FLAC_READ_MASK;
-		m_nEmbeddedModeFlags |= wxCueSheetReader::EC_FLAC_READ_COMMENT_ONLY;
+		m_nReadFlags &= ~wxCueSheetReader::EC_FLAC_READ_MASK;
+		m_nReadFlags |= wxCueSheetReader::EC_FLAC_READ_COMMENT_ONLY;
 	}
 
 	if ( ReadNegatableSwitchValue( cmdLine, wxT( "read-media-tags" ), switchVal ) )
 	{
 		if ( switchVal )
 		{
-			m_nEmbeddedModeFlags &= ~wxCueSheetReader::EC_MEDIA_READ_TAGS;
-			m_nEmbeddedModeFlags |= wxCueSheetReader::EC_MEDIA_READ_TAGS;
+			m_nReadFlags &= ~wxCueSheetReader::EC_MEDIA_READ_TAGS;
+			m_nReadFlags |= wxCueSheetReader::EC_MEDIA_READ_TAGS;
 		}
 		else
 		{
-			m_nEmbeddedModeFlags &= ~wxCueSheetReader::EC_MEDIA_READ_TAGS;
-			m_nEmbeddedModeFlags |= 0;
+			m_nReadFlags &= ~wxCueSheetReader::EC_MEDIA_READ_TAGS;
+			m_nReadFlags |= 0;
+		}
+	}
+
+	if ( ReadNegatableSwitchValue( cmdLine, wxT( "attach-eac-log" ), switchVal ) )
+	{
+		if ( switchVal )
+		{
+			m_nReadFlags &= ~wxCueSheetReader::EC_FIND_LOG;
+			m_nReadFlags |= wxCueSheetReader::EC_FIND_LOG;
+		}
+		else
+		{
+			m_nReadFlags &= ~wxCueSheetReader::EC_FIND_LOG;
+			m_nReadFlags |= 0;
+		}
+	}
+
+	if ( ReadNegatableSwitchValue( cmdLine, wxT( "attach-cover" ), switchVal ) )
+	{
+		if ( switchVal )
+		{
+			m_nReadFlags &= ~wxCueSheetReader::EC_FIND_COVER;
+			m_nReadFlags |= wxCueSheetReader::EC_FIND_COVER;
+		}
+		else
+		{
+			m_nReadFlags &= ~wxCueSheetReader::EC_FIND_COVER;
+			m_nReadFlags |= 0;
 		}
 	}
 
 	// MLang
 	ReadNegatableSwitchValue( cmdLine, wxT( "use-mlang" ), m_bUseMLang );
-	ReadNegatableSwitchValue( cmdLine, wxT( "attach-eac-log" ), m_bAttachEacLog );
-	ReadNegatableSwitchValue( cmdLine, wxT( "attach-cover" ), m_bAttachCover );
 	ReadNegatableSwitchValue( cmdLine, wxT( "rs" ), m_bRemoveExtraSpaces );
 
 	if ( cmdLine.Found( wxT( "cue-sheet-attach-mode" ), &s ) )
@@ -699,7 +722,7 @@ wxString wxConfiguration::BoolToIdx( bool b )
 	return b ? wxT( "01" ) : wxT( "00" );
 }
 
-wxString wxConfiguration::GetEmbeddedModeFlagsDesc( unsigned int flags )
+wxString wxConfiguration::GetReadFlagsDesc( wxCueSheetReader::ReadFlags flags )
 {
 	wxArrayString as;
 
@@ -734,7 +757,9 @@ wxString wxConfiguration::GetEmbeddedModeFlagsDesc( unsigned int flags )
 	}
 	as.Add( s );
 
-	as.Add( ( ( flags & wxCueSheetReader::EC_MEDIA_READ_TAGS ) != 0 ) ? wxT( "read-media-tags" ) : wxT( "dont-read-media-tags" ) );
+	as.Add( ( ( flags & wxCueSheetReader::EC_MEDIA_READ_TAGS ) != 0 ) ? wxT( "media-tags" ) : wxT( "no-media-tags" ) );
+	as.Add( ( ( flags & wxCueSheetReader::EC_FIND_COVER ) != 0 ) ? wxT( "find-cover" ) : wxT( "no-cover" ) );
+	as.Add( ( ( flags & wxCueSheetReader::EC_FIND_LOG ) != 0 ) ? wxT( "find-log" ) : wxT( "no-log" ) );
 
 	s.Empty();
 	size_t nItems = as.GetCount();
@@ -776,8 +801,6 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
 		}
 
 		as.Add( wxString::Format( wxT( "Generate full paths: %s" ), BoolToStr( m_bUseFullPaths ) ) );
-		as.Add( wxString::Format( wxT( "Attach EAC log: %s" ), BoolToStr( m_bAttachEacLog ) ) );
-		as.Add( wxString::Format( wxT( "Attach cover: %s" ), BoolToStr( m_bAttachCover ) ) );
 		as.Add( wxString::Format( wxT( "Cue sheet attach mode: %s" ), GetCueSheetAttachModeStr( m_eCsAttachMode ) ) );
 	}
 
@@ -810,11 +833,7 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
 	as.Add( wxString::Format( wxT( "Correct \"simple 'quotation' marks\" inside strings: %s" ), BoolToStr( m_bCorrectQuotationMarks ) ) );
 	as.Add( wxString::Format( wxT( "Ellipsize tags: %s" ), BoolToStr( m_bEllipsizeTags ) ) );
 	as.Add( wxString::Format( wxT( "Remove extra spaces from tags: %s" ), BoolToStr( m_bRemoveExtraSpaces ) ) );
-	if ( m_bEmbedded )
-	{
-		as.Add( wxString::Format( wxT( "Embedded mode flags: %s" ), GetEmbeddedModeFlagsDesc( m_nEmbeddedModeFlags ) ) );
-	}
-
+	as.Add( wxString::Format( wxT( "Read flags: %s" ), GetReadFlagsDesc( m_nReadFlags ) ) );
 	as.Add( wxString::Format( wxT( "Use MLang library: %s" ), BoolToStr( m_bUseMLang ) ) );
 }
 
@@ -1174,9 +1193,9 @@ bool wxConfiguration::GetMerge() const
 	return m_bMerge;
 }
 
-unsigned int wxConfiguration::GetEmbeddedModeFlags() const
+wxCueSheetReader::ReadFlags wxConfiguration::GetReadFlags() const
 {
-	return m_nEmbeddedModeFlags;
+	return m_nReadFlags;
 }
 
 void wxConfiguration::AddIgnoredTagSource( wxCueTag::TAG_SOURCE eSource )
@@ -1239,12 +1258,12 @@ bool wxConfiguration::EllipsizeTags() const
 
 bool wxConfiguration::AttachEacLog() const
 {
-	return m_bAttachEacLog;
+	return ( m_nReadFlags & wxCueSheetReader::EC_FIND_LOG ) != 0;
 }
 
 bool wxConfiguration::AttachCover() const
 {
-	return m_bAttachCover;
+	return ( m_nReadFlags & wxCueSheetReader::EC_FIND_COVER ) != 0;
 }
 
 bool wxConfiguration::RemoveExtraSpaces() const

@@ -75,12 +75,18 @@ public:
 
 	bool IsLastTrackForDataFile( size_t, wxDataFile & ) const;
 
-	const wxArrayCueSheetContent& GetContent() const;
-	const wxArrayFileName&		  GetLog() const;
-	const wxArrayFileName&		  GetCover() const;
-	const wxArrayCueTag&		  GetCatalog() const;
-	const wxArrayCueTag&		  GetCdTextFile() const;
-	const wxArrayTrack&			  GetTracks() const;
+	size_t GetContentsCount() const;
+	const wxArrayCueSheetContent& GetContents() const;
+	size_t GetLogsCount() const;
+	const wxArrayFileName& GetLogs() const;
+	size_t GetCoversCount() const;
+	const wxArrayFileName& GetCovers() const;
+	size_t GetCatalogsCount() const;
+	const wxArrayCueTag& GetCatalogs() const;
+	size_t GetCdTextFilesCount() const;
+	const wxArrayCueTag& GetCdTextFiles() const;
+	size_t GetTracksCount() const;
+	const wxArrayTrack& GetTracks() const;
 
 	void FindCommonTags( const wxTagSynonimsCollection&, const wxTagSynonimsCollection&, bool );
 

@@ -679,7 +679,7 @@ wxXmlNode* wxXmlCueSheetRenderer::AppendDiscTags(
 
 	AddCdTextInfo( cueSheet, pTag );
 
-	const wxArrayCueTag& catalogs = cueSheet.GetCatalog();
+	const wxArrayCueTag& catalogs = cueSheet.GetCatalogs();
 	for ( size_t nCount = catalogs.Count(), i = 0; i < nCount; i++ )
 	{
 		wxXmlNode* pSimple = add_simple_tag(

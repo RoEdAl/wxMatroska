@@ -23,6 +23,13 @@ public:
 		BINARY, MOTOROLA, AIFF, WAVE, MP3
 	} FileType;
 
+	typedef enum _MediaType
+	{
+		MEDIA_TYPE_UNKNOWN,
+		MEDIA_TYPE_FLAC,
+		MEDIA_TYPE_WAVPACK
+	} MediaType;
+
 protected:
 
 	typedef struct _FILE_TYPE_STR
@@ -36,8 +43,18 @@ protected:
 
 protected:
 
+	static const wxChar* const INFOS[];
+	static const size_t INFOS_SIZE;
+	static const wxChar* const AUDIO_INFOS[];
+	static const size_t AUDIO_INFOS_SIZE;
+
+protected:
+
 	wxFileName m_fileName;
+	wxFileName m_realFileName;
 	FileType m_ftype;
+	wxString m_sMIFormat;
+	wxString m_sCueSheet;
 
 protected:
 
@@ -46,13 +63,20 @@ protected:
 	static wxULongLong GetNumberOfFramesFromBinary( const wxFileName&,
 													const wxSamplingInfo& si );
 	static bool GetFromMediaInfo( const wxFileName&, wxULongLong&,
-								  wxSamplingInfo& );
+								  wxSamplingInfo&, wxString&, wxString& );
 
 public:
 
 	const wxFileName& GetFileName() const;
+	bool HasRealFileName() const;
+	const wxFileName& GetRealFileName() const;
 	FileType GetFileType() const;
 	wxString GetFileTypeAsString() const;
+	const wxString& GetMIFormat() const;
+	static MediaType GetMediaType( const wxString& );
+	MediaType GetMediaType() const;
+	bool HasCueSheet() const;
+	const wxString& GetCueSheet() const;
 
 	bool IsEmpty() const;
 
@@ -70,11 +94,9 @@ public:
 	void Clear();
 
 	bool FindFile( wxFileName&, const wxString& = wxEmptyString ) const;
-	bool FileExists( const wxString& = wxEmptyString ) const;
+	bool FindFile( const wxString& = wxEmptyString );
 
-	bool GetInfo( wxSamplingInfo&, wxULongLong&, const wxString& = wxEmptyString ) const;
-	bool GetInfo( wxDuration&, const wxString& = wxEmptyString ) const;
-	const wxAbstractDurationHolder& CalculateDuration( const wxString& = wxEmptyString );
+	bool GetInfo( const wxString& = wxEmptyString );
 
 	static wxString FileTypeToString( FileType );
 	static bool StringToFileType( const wxString&, FileType& );

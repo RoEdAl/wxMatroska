@@ -70,7 +70,12 @@ wxCueSheet& wxCueSheet::operator =( const wxCueSheet& cs )
 	return *this;
 }
 
-const wxArrayCueTag& wxCueSheet::GetCatalog() const
+size_t wxCueSheet::GetCatalogsCount() const
+{
+	return m_catalog.GetCount();
+}
+
+const wxArrayCueTag& wxCueSheet::GetCatalogs() const
 {
 	return m_catalog;
 }
@@ -81,7 +86,12 @@ wxCueSheet& wxCueSheet::AddCatalog( const wxString& sCatalog )
 	return *this;
 }
 
-const wxArrayCueTag& wxCueSheet::GetCdTextFile() const
+size_t wxCueSheet::GetCdTextFilesCount() const
+{
+	return m_cdtextfile.GetCount();
+}
+
+const wxArrayCueTag& wxCueSheet::GetCdTextFiles() const
 {
 	return m_cdtextfile;
 }
@@ -92,7 +102,12 @@ wxCueSheet& wxCueSheet::AddCdTextFile( const wxString& sCdTextFile )
 	return *this;
 }
 
-const wxArrayCueSheetContent& wxCueSheet::GetContent() const
+size_t wxCueSheet::GetContentsCount() const
+{
+	return m_content.GetCount();
+}
+
+const wxArrayCueSheetContent& wxCueSheet::GetContents() const
 {
 	return m_content;
 }
@@ -109,12 +124,22 @@ wxCueSheet& wxCueSheet::AddContent( const wxString& sContent )
 	return *this;
 }
 
-const wxArrayFileName& wxCueSheet::GetLog() const
+size_t wxCueSheet::GetLogsCount() const
+{
+	return m_log.GetCount();
+}
+
+const wxArrayFileName& wxCueSheet::GetLogs() const
 {
 	return m_log;
 }
 
-const wxArrayFileName& wxCueSheet::GetCover() const
+size_t wxCueSheet::GetCoversCount() const
+{
+	return m_cover.GetCount();
+}
+
+const wxArrayFileName& wxCueSheet::GetCovers() const
 {
 	return m_cover;
 }
@@ -145,6 +170,11 @@ bool wxCueSheet::AddCover( const wxFileName& cover )
 	}
 
 	return bAdd;
+}
+
+size_t wxCueSheet::GetTracksCount() const
+{
+	return m_tracks.GetCount();
 }
 
 const wxArrayTrack& wxCueSheet::GetTracks() const

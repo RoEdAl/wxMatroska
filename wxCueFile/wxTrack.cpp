@@ -202,7 +202,7 @@ bool wxTrack::CalculateDuration( const wxString& sAlternateExt )
 		}
 		else
 		{
-			return m_df.CalculateDuration( sAlternateExt ).HasDuration();
+			return m_df.GetInfo( sAlternateExt );
 		}
 	}
 	else

@@ -18,7 +18,7 @@
 // ===============================================================================
 
 const wxChar wxMyApp::APP_NAME[]		  = wxT( "cue2mkc" );
-const wxChar wxMyApp::APP_VERSION[]		  = wxT( "0.81" );
+const wxChar wxMyApp::APP_VERSION[]		  = wxT( "0.82" );
 const wxChar wxMyApp::APP_VENDOR_NAME[]	  = wxT( "Edmunt Pienkowsky" );
 const wxChar wxMyApp::APP_AUTHOR[]		  = wxT( "Edmunt Pienkowsky - roed@onet.eu" );
 const wxChar wxMyApp::LICENSE_FILE_NAME[] = wxT( "license.txt" );
@@ -325,7 +325,8 @@ int wxMyApp::ProcessCueFile( const wxInputFile& inputFile, const wxTagSynonimsCo
 	.CorrectQuotationMarks( m_cfg.CorrectQuotationMarks(), m_cfg.GetLang() )
 	.SetParseComments( m_cfg.GenerateTagsFromComments() )
 	.SetEllipsizeTags( m_cfg.EllipsizeTags() )
-	.SetRemoveExtraSpaces( m_cfg.RemoveExtraSpaces() );
+	.SetRemoveExtraSpaces( m_cfg.RemoveExtraSpaces() )
+	.SetAlternateExt( m_cfg.GetAlternateExtensions() );
 
 	wxString sInputFile( inputFile.GetInputFile().GetFullPath() );
 
@@ -334,7 +335,7 @@ int wxMyApp::ProcessCueFile( const wxInputFile& inputFile, const wxTagSynonimsCo
 	if ( m_cfg.IsEmbedded() )
 	{
 		wxLogInfo( _( "Reading cue sheet from media file" ) );
-		if ( !reader.ReadEmbeddedCueSheet( sInputFile, m_cfg.GetEmbeddedModeFlags() ) )
+		if ( !reader.ReadEmbeddedCueSheet( sInputFile, m_cfg.GetReadFlags() ) )
 		{
 			wxLogError( _( "Fail to read embedded sue sheet from \u201C%s\u201D or parse error" ), sInputFile );
 			return 1;
@@ -343,7 +344,7 @@ int wxMyApp::ProcessCueFile( const wxInputFile& inputFile, const wxTagSynonimsCo
 	else
 	{
 		wxLogInfo( _( "Reading cue sheet from text file" ) );
-		if ( !reader.ReadCueSheet( sInputFile, m_cfg.UseMLang() ) )
+		if ( !reader.ReadCueSheet( sInputFile, m_cfg.GetReadFlags(), m_cfg.UseMLang() ) )
 		{
 			wxLogError( _( "Fail to read or parse input cue file \u201C%s\u201D" ), sInputFile );
 			return 1;
