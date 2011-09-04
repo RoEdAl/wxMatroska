@@ -49,6 +49,7 @@ class wxCueSheetReader:
 public:
 
 	static const wxChar LOG_EXT[];
+	static const wxChar LOG_MASK[];
 
 	static const wxChar* const CoverNames[];
 	static const size_t		   CoverNamesSize;
@@ -120,7 +121,7 @@ protected:
 	static wxString GetDataFileRegExp();
 	static wxString GetOneTrackCue();
 
-	static bool GetLogFile( const wxFileName&, wxFileName& );
+	static bool GetLogFile( const wxFileName&, bool, wxFileName& );
 
 	static bool IsCoverFile( const wxFileName& );
 	static bool GetCoverFile( const wxDir&, const wxString&, wxFileName& );
@@ -183,8 +184,8 @@ protected:
 
 	// FLAC
 	bool ReadEmbeddedInFlacCueSheet( const wxString &, ReadFlags );
-	bool ReadCueSheetFromVorbisComment( const wxFlacMetaDataReader&, bool );
-	bool ReadCueSheetFromCueSheetTag( const wxFlacMetaDataReader&, bool );
+	bool ReadCueSheetFromVorbisComment( const wxFlacMetaDataReader &, ReadFlags );
+	bool ReadCueSheetFromCueSheetTag( const wxFlacMetaDataReader &, ReadFlags );
 	bool AppendFlacTags( const wxFlacMetaDataReader&, bool );
 
 	bool AppendFlacTags( const wxFlacMetaDataReader &, size_t, size_t );
@@ -195,10 +196,13 @@ protected:
 
 	bool ReadWavpackTags( const wxString &, size_t, size_t );
 
-	bool BuildFromSingleMediaFile( const wxString& );
+	bool BuildFromSingleMediaFile( const wxString &, ReadFlags = 0 );
 	void ReadTagsFromRelatedFiles();
 
 	bool ReadTagsFromMediaFile( const wxDataFile &, size_t, size_t );
+
+	bool FindLog( const wxCueSheetContent &, ReadFlags );
+	bool FindCover( const wxCueSheetContent &, ReadFlags );
 
 public:
 

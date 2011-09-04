@@ -354,26 +354,10 @@ int wxMyApp::ProcessCueFile( const wxInputFile& inputFile, const wxTagSynonimsCo
 	wxCueSheet cueSheet( reader.GetCueSheet() );
 	if ( inputFile.HasDataFiles() )
 	{
+		// obsolete code
 		wxArrayDataFile dataFiles;
 		inputFile.GetDataFiles( dataFiles, wxDataFile::WAVE );
 		cueSheet.SetDataFiles( dataFiles );
-	}
-	else if ( m_cfg.IsEmbedded() )
-	{
-		wxDataFile dataFile( sInputFile, wxDataFile::WAVE );
-		cueSheet.SetSingleDataFile( dataFile );
-	}
-
-	if ( m_cfg.GetUseDataFiles() )
-	{
-		if ( !cueSheet.CalculateDuration( m_cfg.GetAlternateExtensions() ) )
-		{
-			wxLogError( _( "Fail to calculate duration of cue sheet \u201C%s\u201D or parse error" ), sInputFile );
-			if ( m_cfg.AbortOnError() )
-			{
-				return 1;
-			}
-		}
 	}
 
 	if ( m_cfg.GetMerge() )
