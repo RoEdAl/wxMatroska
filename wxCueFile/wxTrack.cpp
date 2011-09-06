@@ -229,8 +229,13 @@ bool wxTrack::IsRelatedToDataFileIdx( size_t nDataFileIdx, bool bPrePost ) const
 	return false;
 }
 
-static void MaxDataFile( size_t& nDataFileIdx, const wxIndex& idx )
+static void MaxDataFile( size_t& nDataFileIdx, const wxIndex& idx, bool bPrePost )
 {
+	if ( !bPrePost && idx.GetNumber() == 0u )
+	{
+		return;
+	}
+
 	if ( idx.HasDataFileIdx() )
 	{
 		if ( nDataFileIdx == wxIndex::UnknownDataFileIdx )
@@ -252,25 +257,30 @@ size_t wxTrack::GetMaxDataFileIdx( bool bPrePost ) const
 	{
 		if ( HasPreGap() )
 		{
-			MaxDataFile( nDataFileIdx, *m_pPreGap );
+			MaxDataFile( nDataFileIdx, *m_pPreGap, true );
 		}
 
 		if ( HasPostGap() )
 		{
-			MaxDataFile( nDataFileIdx, *m_pPostGap );
+			MaxDataFile( nDataFileIdx, *m_pPostGap, true );
 		}
 	}
 
 	for ( size_t i = 0, nCount = m_indexes.GetCount(); i < nCount; i++ )
 	{
-		MaxDataFile( nDataFileIdx, m_indexes[ i ] );
+		MaxDataFile( nDataFileIdx, m_indexes[ i ], bPrePost );
 	}
 
 	return nDataFileIdx;
 }
 
-static void MinDataFile( size_t& nDataFileIdx, const wxIndex& idx )
+static void MinDataFile( size_t& nDataFileIdx, const wxIndex& idx, bool bPrePost )
 {
+	if ( !bPrePost && idx.GetNumber() == 0u )
+	{
+		return;
+	}
+
 	if ( idx.HasDataFileIdx() )
 	{
 		if ( nDataFileIdx == wxIndex::UnknownDataFileIdx )
@@ -292,18 +302,18 @@ size_t wxTrack::GetMinDataFileIdx( bool bPrePost ) const
 	{
 		if ( HasPreGap() )
 		{
-			MinDataFile( nDataFileIdx, *m_pPreGap );
+			MinDataFile( nDataFileIdx, *m_pPreGap, true );
 		}
 
 		if ( HasPostGap() )
 		{
-			MinDataFile( nDataFileIdx, *m_pPostGap );
+			MinDataFile( nDataFileIdx, *m_pPostGap, true );
 		}
 	}
 
 	for ( size_t i = 0, nCount = m_indexes.GetCount(); i < nCount; i++ )
 	{
-		MinDataFile( nDataFileIdx, m_indexes[ i ] );
+		MinDataFile( nDataFileIdx, m_indexes[ i ], bPrePost );
 	}
 
 	return nDataFileIdx;
