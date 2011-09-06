@@ -51,6 +51,11 @@ size_t wxIndex::GetNumber() const
 	return m_number;
 }
 
+bool wxIndex::IsZero() const
+{
+	return ( m_number == 0u );
+}
+
 bool wxIndex::HasCdFrames() const
 {
 	return m_bCdFrames;

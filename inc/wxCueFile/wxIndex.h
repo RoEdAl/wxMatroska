@@ -31,6 +31,7 @@ public:
 	static int CompareFn( wxIndex**, wxIndex** );
 
 	size_t GetNumber() const;
+	bool IsZero() const;
 	bool HasCdFrames() const;
 	bool HasDataFileIdx() const;
 	size_t GetDataFileIdx() const;

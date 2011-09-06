@@ -1369,55 +1369,6 @@ bool wxCueSheetReader::ReadTagsFromRelatedFiles()
 	return bRes;
 }
 
-/*
-   void wxCueSheetReader::ReadTagsFromRelatedFiles()
-   {
-        bool	   bFirst = true;
-        size_t	   nTrackFrom, nTrackTo;
-        wxDataFile dataFile;
-
-        size_t nTracks = m_cueSheet.GetTracksCount();
-
-        for ( size_t i = 0; i <= nTracks; i++ )
-        {
-                if ( i == nTracks )
-                {
-                        nTrackTo = i - 1;
-                        ReadTagsFromMediaFile( dataFile, nTrackFrom, nTrackTo );
-                }
-                else
-                {
-                        wxTrack& track = m_cueSheet.GetTrack( i );
-                        if ( track.HasDataFile() )
-                        {
-                                if ( !track.GetDataFile().HasRealFileName() )
-                                {
-                                        if ( !track.CalculateDuration( m_sAlternateExt ) )
-                                        {
-                                                // fail to get information from media file
-                                                return;
-                                        }
-                                }
-
-                                wxASSERT( track.GetDataFile().HasRealFileName() );
-                                if ( bFirst )
-                                {
-                                        dataFile   = track.GetDataFile();
-                                        nTrackFrom = i;
-                                        bFirst	   = false;
-                                }
-                                else
-                                {
-                                        nTrackTo = i - 1;
-                                        ReadTagsFromMediaFile( dataFile, nTrackFrom, nTrackTo );
-                                        nTrackFrom = i;
-                                        dataFile   = track.GetDataFile();
-                                }
-                        }
-                }
-        }
-   }
- */
 bool wxCueSheetReader::ReadTagsFromMediaFile( const wxDataFile& dataFile, size_t nTrackFrom, size_t nTrackTo )
 {
 	bool bRes = false;

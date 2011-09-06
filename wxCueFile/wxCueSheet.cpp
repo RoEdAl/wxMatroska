@@ -248,7 +248,6 @@ size_t wxCueSheet::GetTrackIdxFromNumber( size_t nTrackNo ) const
 	return wxIndex::UnknownDataFileIdx;
 }
 
-
 wxTrack& wxCueSheet::GetLastTrack()
 {
 	wxASSERT( !m_tracks.IsEmpty() );

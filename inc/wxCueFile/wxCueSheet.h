@@ -115,9 +115,10 @@ public:
 	wxTrack& GetTrack( size_t );
 	wxTrack& GetLastTrack();
 	wxTrack& GetBeforeLastTrack();
-	bool HasTrack( size_t ) const;
+
+	bool	 HasTrack( size_t ) const;
 	wxTrack& GetTrackByNumber( size_t );
-	size_t GetTrackIdxFromNumber( size_t ) const;
+	size_t	 GetTrackIdxFromNumber( size_t ) const;
 
 	const wxTrack& GetTrack( size_t ) const;
 	const wxTrack& GetLastTrack() const;

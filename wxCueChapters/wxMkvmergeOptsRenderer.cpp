@@ -46,7 +46,8 @@ wxString wxMkvmergeOptsRenderer::mkvmerge_escape( const wxFileName& fn )
 
 wxString wxMkvmergeOptsRenderer::mkvmerge_escape( const wxDataFile& df )
 {
-	return mkvmerge_escape( df.GetFileName() );
+	wxASSERT( df.HasRealFileName() );
+	return mkvmerge_escape( df.GetRealFileName() );
 }
 
 wxString wxMkvmergeOptsRenderer::GetEscapedFile( const wxFileName& fn )

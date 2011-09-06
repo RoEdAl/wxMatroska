@@ -220,6 +220,11 @@ bool wxTrack::IsRelatedToDataFileIdx( size_t nDataFileIdx, bool bPrePost ) const
 
 	for ( size_t i = 0, nCount = m_indexes.GetCount(); i < nCount; i++ )
 	{
+		if ( !bPrePost && m_indexes[ i ].IsZero() )
+		{
+			continue;
+		}
+
 		if ( m_indexes[ i ].HasDataFileIdx() && ( m_indexes[ i ].GetDataFileIdx() == nDataFileIdx ) )
 		{
 			return true;
@@ -231,7 +236,7 @@ bool wxTrack::IsRelatedToDataFileIdx( size_t nDataFileIdx, bool bPrePost ) const
 
 static void MaxDataFile( size_t& nDataFileIdx, const wxIndex& idx, bool bPrePost )
 {
-	if ( !bPrePost && idx.GetNumber() == 0u )
+	if ( !bPrePost && idx.IsZero() )
 	{
 		return;
 	}
@@ -276,7 +281,7 @@ size_t wxTrack::GetMaxDataFileIdx( bool bPrePost ) const
 
 static void MinDataFile( size_t& nDataFileIdx, const wxIndex& idx, bool bPrePost )
 {
-	if ( !bPrePost && idx.GetNumber() == 0u )
+	if ( !bPrePost && idx.IsZero() )
 	{
 		return;
 	}
