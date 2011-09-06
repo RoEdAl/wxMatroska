@@ -72,33 +72,33 @@ wxCueSheet& wxCueSheet::operator =( const wxCueSheet& cs )
 
 size_t wxCueSheet::GetCatalogsCount() const
 {
-	return m_catalog.GetCount();
+	return m_catalogs.GetCount();
 }
 
 const wxArrayCueTag& wxCueSheet::GetCatalogs() const
 {
-	return m_catalog;
+	return m_catalogs;
 }
 
 wxCueSheet& wxCueSheet::AddCatalog( const wxString& sCatalog )
 {
-	m_catalog.Add( wxCueTag( wxCueTag::TAG_UNKNOWN, wxCueTag::Name::CATALOG, sCatalog ) );
+	m_catalogs.Add( wxCueTag( wxCueTag::TAG_UNKNOWN, wxCueTag::Name::CATALOG, sCatalog ) );
 	return *this;
 }
 
 size_t wxCueSheet::GetCdTextFilesCount() const
 {
-	return m_cdtextfile.GetCount();
+	return m_cdtextfiles.GetCount();
 }
 
 const wxArrayCueTag& wxCueSheet::GetCdTextFiles() const
 {
-	return m_cdtextfile;
+	return m_cdtextfiles;
 }
 
 wxCueSheet& wxCueSheet::AddCdTextFile( const wxString& sCdTextFile )
 {
-	m_cdtextfile.Add( wxCueTag( wxCueTag::TAG_UNKNOWN, wxCueTag::Name::CDTEXTFILE, sCdTextFile ) );
+	m_cdtextfiles.Add( wxCueTag( wxCueTag::TAG_UNKNOWN, wxCueTag::Name::CDTEXTFILE, sCdTextFile ) );
 	return *this;
 }
 
@@ -126,27 +126,27 @@ wxCueSheet& wxCueSheet::AddContent( const wxString& sContent )
 
 size_t wxCueSheet::GetLogsCount() const
 {
-	return m_log.GetCount();
+	return m_logs.GetCount();
 }
 
 const wxArrayFileName& wxCueSheet::GetLogs() const
 {
-	return m_log;
+	return m_logs;
 }
 
 size_t wxCueSheet::GetCoversCount() const
 {
-	return m_cover.GetCount();
+	return m_covers.GetCount();
 }
 
 const wxArrayFileName& wxCueSheet::GetCovers() const
 {
-	return m_cover;
+	return m_covers;
 }
 
 wxCueSheet& wxCueSheet::AddLog( const wxFileName& logFile )
 {
-	m_log.Add( logFile );
+	m_logs.Add( logFile );
 	return *this;
 }
 
@@ -154,9 +154,9 @@ bool wxCueSheet::AddCover( const wxFileName& cover )
 {
 	bool bAdd = true;
 
-	for ( size_t i = 0, nCount = m_cover.GetCount(); i < nCount; i++ )
+	for ( size_t i = 0, nCount = m_covers.GetCount(); i < nCount; i++ )
 	{
-		if ( m_cover[ i ] == cover )
+		if ( m_covers[ i ] == cover )
 		{
 			wxLogDebug( wxT( "Adding cover %s second time." ), cover.GetFullName() );
 			bAdd = false;
@@ -166,10 +166,15 @@ bool wxCueSheet::AddCover( const wxFileName& cover )
 
 	if ( bAdd )
 	{
-		m_cover.Add( cover );
+		m_covers.Add( cover );
 	}
 
 	return bAdd;
+}
+
+bool wxCueSheet::HasTracks() const
+{
+	return !m_tracks.IsEmpty();
 }
 
 size_t wxCueSheet::GetTracksCount() const
@@ -182,10 +187,15 @@ const wxArrayTrack& wxCueSheet::GetTracks() const
 	return m_tracks;
 }
 
-wxCueSheet& wxCueSheet::AddTrack( const wxTrack& track )
+bool wxCueSheet::AddTrack( const wxTrack& track )
 {
+	if ( m_dataFiles.IsEmpty() && track.HasIndexes() )
+	{
+		return false;
+	}
+
 	m_tracks.Add( track );
-	return *this;
+	return true;
 }
 
 wxTrack& wxCueSheet::GetTrack( size_t idx )
@@ -193,11 +203,11 @@ wxTrack& wxCueSheet::GetTrack( size_t idx )
 	return m_tracks[ idx ];
 }
 
-bool wxCueSheet::HasTrack( unsigned long trackNo ) const
+bool wxCueSheet::HasTrack( size_t nTrackNo ) const
 {
 	for ( size_t i = 0, nCount = m_tracks.GetCount(); i < nCount; i++ )
 	{
-		if ( m_tracks[ i ].GetNumber() == trackNo )
+		if ( m_tracks[ i ].GetNumber() == nTrackNo )
 		{
 			return true;
 		}
@@ -206,13 +216,13 @@ bool wxCueSheet::HasTrack( unsigned long trackNo ) const
 	return false;
 }
 
-wxTrack& wxCueSheet::GetTrackByNumber( unsigned long trackNo )
+wxTrack& wxCueSheet::GetTrackByNumber( size_t nTrackNo )
 {
-	wxASSERT( HasTrack( trackNo ) );
+	wxASSERT( HasTrack( nTrackNo ) );
 
 	for ( size_t i = 0, nCount = m_tracks.GetCount(); i < nCount; i++ )
 	{
-		if ( m_tracks[ i ].GetNumber() == trackNo )
+		if ( m_tracks[ i ].GetNumber() == nTrackNo )
 		{
 			return m_tracks[ i ];
 		}
@@ -222,9 +232,35 @@ wxTrack& wxCueSheet::GetTrackByNumber( unsigned long trackNo )
 	return m_tracks[ 0 ];
 }
 
+size_t wxCueSheet::GetTrackIdxFromNumber( size_t nTrackNo ) const
+{
+	wxASSERT( HasTrack( nTrackNo ) );
+
+	for ( size_t i = 0, nCount = m_tracks.GetCount(); i < nCount; i++ )
+	{
+		if ( m_tracks[ i ].GetNumber() == nTrackNo )
+		{
+			return i;
+		}
+	}
+
+	wxASSERT( false );
+	return wxIndex::UnknownDataFileIdx;
+}
+
+
 wxTrack& wxCueSheet::GetLastTrack()
 {
+	wxASSERT( !m_tracks.IsEmpty() );
 	return m_tracks.Last();
+}
+
+wxTrack& wxCueSheet::GetBeforeLastTrack()
+{
+	size_t nCount = m_tracks.GetCount();
+
+	wxASSERT( nCount > 1u );
+	return m_tracks[ nCount - 2 ];
 }
 
 const wxTrack& wxCueSheet::GetTrack( size_t idx ) const
@@ -252,26 +288,93 @@ bool wxCueSheet::HasGarbage() const
 	return bRes;
 }
 
+bool wxCueSheet::HasDataFiles() const
+{
+	return !m_dataFiles.IsEmpty();
+}
+
+size_t wxCueSheet::GetDataFilesCount() const
+{
+	return m_dataFiles.GetCount();
+}
+
+size_t wxCueSheet::GetLastDataFileIdx() const
+{
+	if ( m_dataFiles.IsEmpty() )
+	{
+		return wxIndex::UnknownDataFileIdx;
+	}
+	else
+	{
+		return m_dataFiles.GetCount() - 1;
+	}
+}
+
+bool wxCueSheet::GetRelatedTracks( size_t nDataFileIdx, size_t& nTrackFrom, size_t& nTrackTo ) const
+{
+	wxASSERT( nDataFileIdx != wxIndex::UnknownDataFileIdx );
+	bool bTrackFrom = false, bTrackTo = false;
+	for ( size_t i = 0, nCount = m_tracks.GetCount(); ( i < nCount ) && !( bTrackFrom && bTrackTo ); i++ )
+	{
+		if ( m_tracks[ i ].IsRelatedToDataFileIdx( nDataFileIdx, false ) )
+		{
+			if ( !bTrackFrom )
+			{
+				nTrackFrom = i;
+				bTrackFrom = true;
+			}
+		}
+		else if ( bTrackFrom )
+		{
+			wxASSERT( i > 0u );
+			nTrackTo = i - 1;
+			bTrackTo = true;
+		}
+	}
+
+	if ( bTrackFrom && !bTrackTo )
+	{
+		wxASSERT( !m_tracks.IsEmpty() );
+		nTrackTo = m_tracks.GetCount() - 1;
+		bTrackTo = true;
+	}
+
+	return ( bTrackFrom && bTrackTo );
+}
+
+const wxArrayDataFile& wxCueSheet::GetDataFiles() const
+{
+	return m_dataFiles;
+}
+
+wxCueSheet& wxCueSheet::AddDataFile( const wxDataFile& dataFile )
+{
+	m_dataFiles.Add( dataFile );
+	return *this;
+}
+
 void wxCueSheet::Clear( void )
 {
 	m_content.Clear();
-	m_log.Clear();
-	m_cover.Clear();
+	m_logs.Clear();
+	m_covers.Clear();
 	wxCueComponent::Clear();
-	m_catalog.Clear();
-	m_cdtextfile.Clear();
+	m_catalogs.Clear();
+	m_cdtextfiles.Clear();
 	m_tracks.Clear();
+	m_dataFiles.Clear();
 }
 
 void wxCueSheet::copy( const wxCueSheet& cs )
 {
 	wxCueComponent::copy( cs );
-	m_content	 = cs.m_content;
-	m_log		 = cs.m_log;
-	m_cover		 = cs.m_cover;
-	m_catalog	 = cs.m_catalog;
-	m_cdtextfile = cs.m_cdtextfile;
-	m_tracks	 = cs.m_tracks;
+	m_content	  = cs.m_content;
+	m_logs		  = cs.m_logs;
+	m_covers	  = cs.m_covers;
+	m_catalogs	  = cs.m_catalogs;
+	m_cdtextfiles = cs.m_cdtextfiles;
+	m_tracks	  = cs.m_tracks;
+	m_dataFiles	  = cs.m_dataFiles;
 }
 
 void wxCueSheet::AddCdTextInfoTagToAllTracks( const wxCueTag& tag )
@@ -318,12 +421,12 @@ void wxCueSheet::PrepareToAppend()
 		}
 	}
 
-	for ( size_t i = 0, nCount = m_catalog.GetCount(); i < nCount; i++ )
+	for ( size_t i = 0, nCount = m_catalogs.GetCount(); i < nCount; i++ )
 	{
-		AddTagToAllTracks( m_catalog[ i ] );
+		AddTagToAllTracks( m_catalogs[ i ] );
 	}
 
-	m_catalog.Clear();
+	m_catalogs.Clear();
 	m_cdTextTags.Clear();
 	m_tags.Clear();
 }
@@ -351,7 +454,7 @@ void wxCueSheet::AppendFileNames( wxArrayFileName& dest, const wxArrayFileName& 
 	}
 }
 
-wxCueSheet& wxCueSheet::Append( const wxCueSheet& _cs, const wxDuration& offset )
+wxCueSheet& wxCueSheet::Append( const wxCueSheet& _cs )
 {
 	wxCueSheet cs( _cs );
 
@@ -360,10 +463,13 @@ wxCueSheet& wxCueSheet::Append( const wxCueSheet& _cs, const wxDuration& offset 
 	wxCueComponent::Append( cs );
 
 	WX_APPEND_ARRAY( m_content, cs.m_content );
-	AppendFileNames( m_log, cs.m_log );
-	AppendFileNames( m_cover, cs.m_cover );
-	WX_APPEND_ARRAY( m_catalog, cs.m_catalog );
-	WX_APPEND_ARRAY( m_cdtextfile, cs.m_cdtextfile );
+	AppendFileNames( m_logs, cs.m_logs );
+	AppendFileNames( m_covers, cs.m_covers );
+	WX_APPEND_ARRAY( m_catalogs, cs.m_catalogs );
+	WX_APPEND_ARRAY( m_cdtextfiles, cs.m_cdtextfiles );
+
+	size_t nDataFilesCount = m_dataFiles.GetCount();
+	WX_APPEND_ARRAY( m_dataFiles, cs.m_dataFiles );
 
 	size_t nNumberOffset = 0;
 	if ( !m_tracks.IsEmpty() )
@@ -376,22 +482,11 @@ wxCueSheet& wxCueSheet::Append( const wxCueSheet& _cs, const wxDuration& offset 
 	for ( size_t i = 0, nCount = tracks.GetCount(); i < nCount; i++ )
 	{
 		tracks[ i ].SetNumber( nNumberOffset + tracks[ i ].GetNumber() );
-		tracks[ i ].Shift( offset );
+		tracks[ i ].ShiftDataFileIdx( nDataFilesCount );
 	}
 
 	WX_APPEND_ARRAY( m_tracks, tracks );
 	return *this;
-}
-
-bool wxCueSheet::Append( const wxCueSheet& cs )
-{
-	if ( !HasDuration() )
-	{
-		return false;
-	}
-
-	Append( cs, GetDuration() );
-	return true;
 }
 
 wxArrayTrack& wxCueSheet::SortTracks()
@@ -405,54 +500,30 @@ wxArrayTrack& wxCueSheet::SortTracks()
 	return m_tracks;
 }
 
-bool wxCueSheet::IsLastTrackForDataFile( size_t trackNo, wxDataFile& dataFile ) const
+size_t wxCueSheet::GetDataFileIdxIfLastForTrack( size_t nTrackNo ) const
 {
-	bool   res	  = false;
-	size_t tracks = m_tracks.GetCount();
+	size_t nTracksCount = m_tracks.GetCount();
 
-	if ( ( trackNo + 1 ) < tracks )
+	wxASSERT( nTrackNo < nTracksCount );
+
+	if ( ( nTrackNo + 1u ) == nTracksCount )
 	{
-		if ( m_tracks[ trackNo + 1 ].HasDataFile() )
+		return GetTrack( nTrackNo ).GetMinDataFileIdx( false );
+	}
+	else
+	{
+		size_t nCurDataFileIdx	= GetTrack( nTrackNo ).GetMaxDataFileIdx( true );
+		size_t nNextDataFileIdx = GetTrack( nTrackNo + 1u ).GetMinDataFileIdx( false );
+
+		if ( nNextDataFileIdx > nCurDataFileIdx )
 		{
-			res = true;
+			return GetTrack( nTrackNo ).GetMinDataFileIdx( false );
+		}
+		else
+		{
+			return wxIndex::UnknownDataFileIdx;
 		}
 	}
-	else if ( ( trackNo + 1 ) == tracks )
-	{
-		res = true;
-	}
-
-	if ( res )
-	{
-		bool found = false;
-		while ( trackNo > 0 )
-		{
-			if ( m_tracks[ trackNo ].HasDataFile() )
-			{
-				dataFile = m_tracks[ trackNo ].GetDataFile();
-				found	 = true;
-				break;
-			}
-
-			trackNo--;
-		}
-
-		if ( !found ) // zero
-		{
-			if ( m_tracks[ 0 ].HasDataFile() )
-			{
-				dataFile = m_tracks[ 0 ].GetDataFile();
-				found	 = true;
-			}
-		}
-
-		if ( !found )
-		{
-			res = false;
-		}
-	}
-
-	return res;
 }
 
 wxString wxCueSheet::FormatTrack( size_t trackNo, const wxString& sFmt ) const
@@ -493,67 +564,63 @@ wxString wxCueSheet::Format( const wxString& sFmt ) const
 
 bool wxCueSheet::HasSingleDataFile( wxDataFile& dataFile ) const
 {
-	size_t tracks	= m_tracks.GetCount();
-	size_t nCounter = 0;
-	bool   bFirst	= false;
+	size_t nDataFiles = m_dataFiles.GetCount();
 
-	for ( size_t i = 0; ( i < tracks ) && ( nCounter < 2 ); i++ )
+	if ( nDataFiles == 1u )
 	{
-		if ( ( m_tracks[ i ].GetNumber() == 1 ) && m_tracks[ i ].HasDataFile() )
-		{
-			dataFile = m_tracks[ i ].GetDataFile();
-			bFirst	 = true;
-		}
-
-		if ( m_tracks[ i ].HasDataFile() )
-		{
-			nCounter += 1;
-		}
+		dataFile = m_dataFiles[ 0 ];
+		return true;
 	}
-
-	return bFirst && ( nCounter == 1 );
+	else
+	{
+		return false;
+	}
 }
 
 bool wxCueSheet::HasSingleDataFile() const
 {
-	wxDataFile dummy;
-
-	return HasSingleDataFile( dummy );
+	return ( m_dataFiles.GetCount() == 1u );
 }
 
 wxCueSheet& wxCueSheet::SetSingleDataFile( const wxDataFile& dataFile )
 {
+	m_dataFiles.Clear();
+	m_dataFiles.Add( dataFile );
 	for ( size_t i = 0, nCount = m_tracks.GetCount(); i < nCount; i++ )
 	{
-		if ( m_tracks[ i ].GetNumber() == 1 )
-		{
-			m_tracks[ i ].SetDataFile( dataFile );
-		}
-		else
-		{
-			m_tracks[ i ].ClearDataFile();
-		}
+		m_tracks[ i ].SetDataFileIdx( 0u );
 	}
 
 	return *this;
 }
 
-wxCueSheet& wxCueSheet::SetDataFiles( const wxArrayDataFile& dataFile )
+wxCueSheet& wxCueSheet::SetDataFiles( const wxArrayDataFile& dataFiles )
 {
-	size_t j = 0;
+	size_t nDataFilesCount	  = m_dataFiles.GetCount();
+	size_t nNewDataFilesCount = dataFiles.GetCount();
 
-	for ( size_t i = 0, nCount = m_tracks.GetCount(), nDataFileCount = dataFile.GetCount(); ( i < nCount ) && ( j < nDataFileCount ); i++ )
-	{
-		if ( m_tracks[ i ].HasDataFile() )
-		{
-			m_tracks[ i ].SetDataFile( dataFile[ j++ ] );
-		}
-	}
-
-	if ( j < dataFile.GetCount() )
+	if ( nDataFilesCount > nNewDataFilesCount )
 	{
 		wxLogWarning( _( "Not all data files in cue sheet are replaced" ) );
-		wxLogWarning( _( "%d data file(s) left" ), ( dataFile.GetCount() - j ) );
+		wxLogWarning( _( "%d data file(s) left" ), ( nDataFilesCount - nNewDataFilesCount ) );
+		for ( size_t i = 0; i < nNewDataFilesCount; i++ )
+		{
+			m_dataFiles[ i ] = dataFiles[ i ];
+		}
+	}
+	else if ( nDataFilesCount == nNewDataFilesCount )
+	{
+		m_dataFiles.Clear();
+		WX_APPEND_ARRAY( m_dataFiles, dataFiles );
+	}
+	else
+	{
+		wxLogWarning( _( "Too many data files" ) );
+		wxLogWarning( _( "%d data file(s) too much" ), ( nNewDataFilesCount - nDataFilesCount ) );
+		for ( size_t i = 0; i < nDataFilesCount; i++ )
+		{
+			m_dataFiles[ i ] = dataFiles[ i ];
+		}
 	}
 
 	return *this;
@@ -563,39 +630,47 @@ bool wxCueSheet::HasDuration() const
 {
 	bool bRes = true;
 
-	for ( size_t i = 0, nCount = m_tracks.GetCount(); ( i < nCount ) && bRes; i++ )
+	for ( size_t i = 0, nCount = m_dataFiles.GetCount(); ( i < nCount ) && bRes; i++ )
 	{
-		if ( m_tracks[ i ].HasDataFile() )
-		{
-			bRes = bRes && m_tracks[ i ].GetDataFile().HasDuration();
-		}
+		bRes = bRes && m_dataFiles[ i ].HasDuration();
 	}
 
 	return bRes;
 }
 
-wxDuration wxCueSheet::GetDuration() const
+wxDuration wxCueSheet::GetDuration( size_t nDataFileIdx ) const
 {
-	wxASSERT( HasDuration() );
-
 	wxDuration duration;
-	bool	   bFirst = true;
-	bool	   bStop  = false;
 
-	for ( size_t i = 0, nCount = m_tracks.GetCount(); i < nCount; i++ )
+	if ( nDataFileIdx == wxIndex::UnknownDataFileIdx || nDataFileIdx == 0u )
 	{
-		if ( m_tracks[ i ].HasDataFile() )
+		return duration;
+	}
+
+	wxASSERT( HasDuration() );
+	wxASSERT( nDataFileIdx <= m_dataFiles.GetCount() );
+
+	bool   bFirst = true;
+	bool   bStop  = false;
+	size_t nFirstTrack, nLastTrack;
+
+	for ( size_t i = 0; i < nDataFileIdx; i++ )
+	{
+		if ( !GetRelatedTracks( i, nFirstTrack, nLastTrack ) )
 		{
-			const wxDuration& trackDuration = m_tracks[ i ].GetDataFile().GetDuration();
-			if ( bFirst )
-			{
-				duration = trackDuration;
-				bFirst	 = false;
-			}
-			else if ( !duration.Add( trackDuration ) )
-			{
-				bStop = true;
-			}
+			wxLogDebug( wxT( "wxCueSheet::GetDuration - skipping unused data file %d" ), i );
+			continue;
+		}
+
+		const wxDuration& dfDuration = m_dataFiles[ i ].GetDuration();
+		if ( bFirst )
+		{
+			duration = dfDuration;
+			bFirst	 = false;
+		}
+		else if ( !duration.Add( dfDuration ) )
+		{
+			bStop = true;
 		}
 	}
 
@@ -608,15 +683,20 @@ wxDuration wxCueSheet::GetDuration() const
 	return duration;
 }
 
+wxDuration wxCueSheet::GetDuration() const
+{
+	return GetDuration( m_dataFiles.GetCount() );
+}
+
 bool wxCueSheet::CalculateDuration( const wxString& sAlternateExt )
 {
 	bool bRes = true;
 
-	for ( size_t i = 0, nCount = m_tracks.GetCount(); i < nCount; i++ )
+	for ( size_t i = 0, nCount = m_dataFiles.GetCount(); i < nCount; i++ )
 	{
-		if ( m_tracks[ i ].HasDataFile() )
+		if ( !m_dataFiles[ i ].HasDuration() )
 		{
-			if ( !m_tracks[ i ].CalculateDuration( sAlternateExt ) )
+			if ( !m_dataFiles[ i ].GetInfo( sAlternateExt ) )
 			{
 				wxLogDebug( wxT( "Fail to calculate duration for track %d" ), i );
 				bRes = false;

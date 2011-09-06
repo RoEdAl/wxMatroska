@@ -7,16 +7,24 @@
 
 // ===============================================================================
 
+const size_t wxIndex::UnknownDataFileIdx = (size_t)( -1 );
+
+// ===============================================================================
+
 wxIMPLEMENT_DYNAMIC_CLASS( wxIndex, wxObject );
 
 // ===============================================================================
 
 wxIndex::wxIndex( void ):
-	m_number( 0 ), m_offset( 0, 0 ), m_bCdFrames( false )
+	m_number( 0 ), m_offset( 0, 0 ), m_bCdFrames( false ), m_nDataFileIdx( UnknownDataFileIdx )
 {}
 
 wxIndex::wxIndex( unsigned int number, wxULongLong offset ):
-	m_number( number ), m_offset( offset ), m_bCdFrames( false )
+	m_number( number ), m_offset( offset ), m_bCdFrames( false ), m_nDataFileIdx( UnknownDataFileIdx )
+{}
+
+wxIndex::wxIndex( unsigned int number, wxULongLong offset, size_t nDataFileIdx ):
+	m_number( number ), m_offset( offset ), m_bCdFrames( false ), m_nDataFileIdx( nDataFileIdx )
 {}
 
 wxIndex::wxIndex( const wxIndex& idx )
@@ -32,9 +40,10 @@ wxIndex& wxIndex::operator =( const wxIndex& idx )
 
 void wxIndex::copy( const wxIndex& idx )
 {
-	m_number	= idx.m_number;
-	m_offset	= idx.m_offset;
-	m_bCdFrames = idx.m_bCdFrames;
+	m_number	   = idx.m_number;
+	m_offset	   = idx.m_offset;
+	m_bCdFrames	   = idx.m_bCdFrames;
+	m_nDataFileIdx = idx.m_nDataFileIdx;
 }
 
 size_t wxIndex::GetNumber() const
@@ -50,6 +59,16 @@ bool wxIndex::HasCdFrames() const
 const wxULongLong& wxIndex::GetOffset() const
 {
 	return m_offset;
+}
+
+bool wxIndex::HasDataFileIdx() const
+{
+	return ( m_nDataFileIdx != UnknownDataFileIdx );
+}
+
+size_t wxIndex::GetDataFileIdx() const
+{
+	return m_nDataFileIdx;
 }
 
 bool wxIndex::IsValid( bool bPrePost ) const
@@ -71,11 +90,36 @@ wxIndex& wxIndex::SetOffset( wxULongLong offset )
 	return *this;
 }
 
+wxIndex& wxIndex::SetDataFileIdx( size_t nDataFileIdx )
+{
+	m_nDataFileIdx = nDataFileIdx;
+	return *this;
+}
+
+bool wxIndex::ShiftDataFileIdx( size_t nOffset )
+{
+	if ( HasDataFileIdx() )
+	{
+		m_nDataFileIdx += nOffset;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 wxIndex& wxIndex::Assign( size_t number, wxULongLong offset )
 {
-	m_number	= number;
-	m_offset	= offset;
-	m_bCdFrames = false;
+	return Assign( number, offset, UnknownDataFileIdx );
+}
+
+wxIndex& wxIndex::Assign( size_t number, wxULongLong offset, size_t nDataFileIdx )
+{
+	m_number	   = number;
+	m_offset	   = offset;
+	m_bCdFrames	   = false;
+	m_nDataFileIdx = nDataFileIdx;
 	return *this;
 }
 
@@ -84,13 +128,23 @@ wxIndex& wxIndex::Assign( size_t number,
 	unsigned long seconds,
 	unsigned long frames )
 {
+	return Assign( number, minutes, seconds, frames, UnknownDataFileIdx );
+}
+
+wxIndex& wxIndex::Assign( size_t number,
+	unsigned long minutes,
+	unsigned long seconds,
+	unsigned long frames,
+	size_t nDataFileIdx )
+{
 	m_number = number;
 	wxULongLong cdFrames( 0, minutes );
-	cdFrames   *= wxULL( 4500 );
-	cdFrames   += wxULL( 75 ) * seconds;
-	cdFrames   += frames;
-	m_offset	= cdFrames;
-	m_bCdFrames = true;
+	cdFrames	  *= wxULL( 4500 );
+	cdFrames	  += wxULL( 75 ) * seconds;
+	cdFrames	  += frames;
+	m_offset	   = cdFrames;
+	m_bCdFrames	   = true;
+	m_nDataFileIdx = nDataFileIdx;
 	return *this;
 }
 

@@ -110,7 +110,6 @@ protected:
 	// work
 	wxCueSheetContent m_cueSheetContent;
 	wxArrayString	  m_errors;
-	wxDataFile		  m_dataFile;
 	wxCueSheet		  m_cueSheet;
 
 protected:
@@ -153,10 +152,6 @@ protected:
 	static const PARSE_STRUCT parseArray[];
 	static const size_t		  parseArraySize;
 
-	bool IsTrack() const;
-	wxTrack&	   GetLastTrack();
-	const wxTrack& GetLastTrack() const;
-
 	void ParseLine( size_t, const wxString &, const wxString & );
 	void ParseCdTextInfo( size_t, const wxString &, const wxString & );
 
@@ -197,7 +192,7 @@ protected:
 	bool ReadWavpackTags( const wxString &, size_t, size_t );
 
 	bool BuildFromSingleMediaFile( const wxString &, ReadFlags = 0 );
-	void ReadTagsFromRelatedFiles();
+	bool ReadTagsFromRelatedFiles();
 
 	bool ReadTagsFromMediaFile( const wxDataFile &, size_t, size_t );
 

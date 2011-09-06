@@ -9,7 +9,10 @@
 #include "wxDuration.h"
 #endif
 
+class wxDataFile;
+
 WX_DECLARE_OBJARRAY( wxFileName, wxArrayFileName );
+WX_DECLARE_OBJARRAY( wxDataFile, wxArrayDataFile );
 
 class wxDataFile:
 	public wxObject, public wxDurationHolder
@@ -102,8 +105,6 @@ public:
 	static bool StringToFileType( const wxString&, FileType& );
 	static wxString GetFileTypeRegExp();
 };
-
-WX_DECLARE_OBJARRAY( wxDataFile, wxArrayDataFile );
 
 #endif // _WX_DATA_FILE_H_
 

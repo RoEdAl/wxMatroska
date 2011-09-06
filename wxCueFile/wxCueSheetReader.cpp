@@ -21,7 +21,7 @@ wxIMPLEMENT_DYNAMIC_CLASS( wxCueSheetReader, wxObject );
 
 // ===============================================================================
 
-const wxChar wxCueSheetReader::LOG_EXT[] = wxT( "log" );
+const wxChar wxCueSheetReader::LOG_EXT[]  = wxT( "log" );
 const wxChar wxCueSheetReader::LOG_MASK[] = wxT( "*.log" );
 
 // ===============================================================================
@@ -859,23 +859,6 @@ wxString wxCueSheetReader::internalReadCueSheet( wxInputStream& stream, wxMBConv
 	return tos.GetString();
 }
 
-bool wxCueSheetReader::IsTrack() const
-{
-	return !m_cueSheet.GetTracks().IsEmpty();
-}
-
-wxTrack& wxCueSheetReader::GetLastTrack()
-{
-	wxASSERT( IsTrack() );
-	return m_cueSheet.GetLastTrack();
-}
-
-const wxTrack& wxCueSheetReader::GetLastTrack() const
-{
-	wxASSERT( IsTrack() );
-	return m_cueSheet.GetLastTrack();
-}
-
 void wxCueSheetReader::AddError0( const wxString& sMsg )
 {
 	m_errors.Add( sMsg );
@@ -913,9 +896,9 @@ void wxCueSheetReader::DumpErrors( size_t nLine ) const
 
 bool wxCueSheetReader::CheckEntryType( wxCueComponent::ENTRY_TYPE et ) const
 {
-	if ( IsTrack() )
+	if ( m_cueSheet.HasTracks() )
 	{
-		return GetLastTrack().CheckEntryType( et );
+		return m_cueSheet.GetLastTrack().CheckEntryType( et );
 	}
 	else
 	{
@@ -991,9 +974,9 @@ void wxCueSheetReader::ParseCdTextInfo( size_t WXUNUSED( nLine ), const wxString
 
 void wxCueSheetReader::ParseGarbage( const wxString& sLine )
 {
-	if ( IsTrack() )
+	if ( m_cueSheet.HasTracks() )
 	{
-		GetLastTrack().AddGarbage( sLine );
+		m_cueSheet.GetLastTrack().AddGarbage( sLine );
 	}
 	else
 	{
@@ -1021,9 +1004,9 @@ void wxCueSheetReader::ParseComment( wxCueComponent& component, const wxString& 
 
 void wxCueSheetReader::ParseComment( const wxString& WXUNUSED( sToken ), const wxString& sComment )
 {
-	if ( IsTrack() )
+	if ( m_cueSheet.HasTracks() )
 	{
-		ParseComment( GetLastTrack(), sComment );
+		ParseComment( m_cueSheet.GetLastTrack(), sComment );
 	}
 	else
 	{
@@ -1034,7 +1017,6 @@ void wxCueSheetReader::ParseComment( const wxString& WXUNUSED( sToken ), const w
 bool wxCueSheetReader::ParseCue( const wxCueSheetContent& content, ReadFlags nMode )
 {
 	m_cueSheetContent = content;
-	m_dataFile.Clear();
 
 	size_t	 nLine = 1;
 	wxString sLine;
@@ -1137,9 +1119,9 @@ bool wxCueSheetReader::AddCdTextInfo( const wxString& sToken, const wxString& sB
 		m_reduntantSpacesRemover.Remove( sModifiedBody );
 	}
 
-	if ( IsTrack() )
+	if ( m_cueSheet.HasTracks() )
 	{
-		return GetLastTrack().AddCdTextInfoTag( sToken, sModifiedBody );
+		return m_cueSheet.GetLastTrack().AddCdTextInfoTag( sToken, sModifiedBody );
 	}
 	else
 	{
@@ -1188,7 +1170,15 @@ void wxCueSheetReader::ParsePreGap( const wxString& WXUNUSED( sToken ), const wx
 
 	if ( ParseMsf( sBody, idx, true ) )
 	{
-		GetLastTrack().SetPreGap( idx );
+		if ( m_cueSheet.GetTracksCount() > 1u )
+		{
+			idx.SetDataFileIdx( m_cueSheet.GetBeforeLastTrack().GetMaxDataFileIdx( false ) );
+			m_cueSheet.GetLastTrack().SetPreGap( idx );
+		}
+		else
+		{
+			AddError0( _( "Fail to add pre-gap - no previous track" ) );
+		}
 	}
 	else
 	{
@@ -1202,7 +1192,15 @@ void wxCueSheetReader::ParsePostGap( const wxString& WXUNUSED( sToken ), const w
 
 	if ( ParseMsf( sBody, idx, true ) )
 	{
-		GetLastTrack().SetPostGap( idx );
+		if ( m_cueSheet.HasDataFiles() )
+		{
+			idx.SetDataFileIdx( m_cueSheet.GetLastDataFileIdx() );
+			m_cueSheet.GetLastTrack().SetPostGap( idx );
+		}
+		else
+		{
+			AddError0( _( "Cannot add post-gap - no data files" ) );
+		}
 	}
 	else
 	{
@@ -1228,7 +1226,15 @@ void wxCueSheetReader::ParseIndex( const wxString& WXUNUSED( sToken ), const wxS
 				idx.SetNumber( number );
 				if ( idx.IsValid() )
 				{
-					GetLastTrack().AddIndex( idx );
+					if ( m_cueSheet.HasDataFiles() )
+					{
+						idx.SetDataFileIdx( m_cueSheet.GetLastDataFileIdx() );
+						m_cueSheet.GetLastTrack().AddIndex( idx );
+					}
+					else
+					{
+						AddError0( _( "Fail to add index - no data file" ) );
+					}
 				}
 				else
 				{
@@ -1266,7 +1272,7 @@ void wxCueSheetReader::ParseFile( const wxString& WXUNUSED( sToken ), const wxSt
 			fn.SetPath( m_cueSheetContent.GetSource().GetPath() );
 		}
 
-		m_dataFile.Assign( fn, ftype );
+		m_cueSheet.AddDataFile( wxDataFile( fn, ftype ) );
 	}
 }
 
@@ -1279,7 +1285,7 @@ void wxCueSheetReader::ParseFlags( const wxString& WXUNUSED( sToken ), const wxS
 	while ( tokenizer.HasMoreTokens() )
 	{
 		wxString sFlag( tokenizer.GetNextToken() );
-		if ( !GetLastTrack().AddFlag( sFlag ) )
+		if ( !m_cueSheet.GetLastTrack().AddFlag( sFlag ) )
 		{
 			AddError( _( "Invalid flag %s" ), sFlag );
 		}
@@ -1302,12 +1308,6 @@ void wxCueSheetReader::ParseTrack( const wxString& sToken, const wxString& sBody
 			wxTrack	 newTrack( trackNo );
 			if ( newTrack.IsValid() && newTrack.SetMode( sMode ) )
 			{
-				if ( !m_dataFile.IsEmpty() )
-				{
-					newTrack.SetDataFile( m_dataFile );
-					m_dataFile.Clear();
-				}
-
 				m_cueSheet.AddTrack( newTrack );
 			}
 			else
@@ -1339,54 +1339,85 @@ void wxCueSheetReader::ParseCdTextFile( const wxString& WXUNUSED( sToken ), cons
 	m_cueSheet.AddCdTextFile( Unquote( sBody ) );
 }
 
-void wxCueSheetReader::ReadTagsFromRelatedFiles()
+bool wxCueSheetReader::ReadTagsFromRelatedFiles()
 {
-	bool	   bFirst = true;
-	size_t	   nTrackFrom, nTrackTo;
-	wxDataFile dataFile;
-
-	size_t nTracks = m_cueSheet.GetTracksCount();
-
-	for ( size_t i = 0; i <= nTracks; i++ )
+	if ( !m_cueSheet.CalculateDuration( m_sAlternateExt ) )
 	{
-		if ( i == nTracks )
+		return false;
+	}
+
+	const wxArrayDataFile& dataFiles = m_cueSheet.GetDataFiles();
+	size_t				   nTrackFrom, nTrackTo;
+	bool				   bRes = true;
+
+	for ( size_t i = 0, nCount = dataFiles.GetCount(); i < nCount; i++ )
+	{
+		wxASSERT( dataFiles[ i ].HasRealFileName() );
+		if ( m_cueSheet.GetRelatedTracks( i, nTrackFrom, nTrackTo ) )
 		{
-			nTrackTo = i - 1;
-			ReadTagsFromMediaFile( dataFile, nTrackFrom, nTrackTo );
+			if ( !ReadTagsFromMediaFile( dataFiles[ i ], nTrackFrom, nTrackTo ) )
+			{
+				bRes = false;
+			}
 		}
 		else
 		{
-			wxTrack& track = m_cueSheet.GetTrack( i );
-			if ( track.HasDataFile() )
-			{
-				if ( !track.GetDataFile().HasRealFileName() )
-				{
-					if ( !track.CalculateDuration( m_sAlternateExt ) )
-					{
-						// fail to get information from media file
-						return;
-					}
-				}
-
-				wxASSERT( track.GetDataFile().HasRealFileName() );
-				if ( bFirst )
-				{
-					dataFile   = track.GetDataFile();
-					nTrackFrom = i;
-					bFirst	   = false;
-				}
-				else
-				{
-					nTrackTo = i - 1;
-					ReadTagsFromMediaFile( dataFile, nTrackFrom, nTrackTo );
-					nTrackFrom = i;
-					dataFile   = track.GetDataFile();
-				}
-			}
+			wxLogWarning( _( "Data file %s is not related" ), dataFiles[ i ].GetRealFileName().GetName() );
 		}
 	}
+
+	return bRes;
 }
 
+/*
+   void wxCueSheetReader::ReadTagsFromRelatedFiles()
+   {
+        bool	   bFirst = true;
+        size_t	   nTrackFrom, nTrackTo;
+        wxDataFile dataFile;
+
+        size_t nTracks = m_cueSheet.GetTracksCount();
+
+        for ( size_t i = 0; i <= nTracks; i++ )
+        {
+                if ( i == nTracks )
+                {
+                        nTrackTo = i - 1;
+                        ReadTagsFromMediaFile( dataFile, nTrackFrom, nTrackTo );
+                }
+                else
+                {
+                        wxTrack& track = m_cueSheet.GetTrack( i );
+                        if ( track.HasDataFile() )
+                        {
+                                if ( !track.GetDataFile().HasRealFileName() )
+                                {
+                                        if ( !track.CalculateDuration( m_sAlternateExt ) )
+                                        {
+                                                // fail to get information from media file
+                                                return;
+                                        }
+                                }
+
+                                wxASSERT( track.GetDataFile().HasRealFileName() );
+                                if ( bFirst )
+                                {
+                                        dataFile   = track.GetDataFile();
+                                        nTrackFrom = i;
+                                        bFirst	   = false;
+                                }
+                                else
+                                {
+                                        nTrackTo = i - 1;
+                                        ReadTagsFromMediaFile( dataFile, nTrackFrom, nTrackTo );
+                                        nTrackFrom = i;
+                                        dataFile   = track.GetDataFile();
+                                }
+                        }
+                }
+        }
+   }
+ */
 bool wxCueSheetReader::ReadTagsFromMediaFile( const wxDataFile& dataFile, size_t nTrackFrom, size_t nTrackTo )
 {
 	bool bRes = false;

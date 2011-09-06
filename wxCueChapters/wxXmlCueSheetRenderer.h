@@ -58,7 +58,7 @@ protected:
 	wxFileName			   m_outputFile;
 	wxFileName			   m_tagsFile;
 
-	wxSamplingInfo m_si;
+// wxSamplingInfo m_si;
 
 	wxTagSynonimsCollection m_discCdTextSynonims;
 	wxTagSynonimsCollection m_discSynonims;
@@ -120,14 +120,13 @@ protected:
 	wxXmlNode* SetTotalParts( size_t, wxXmlNode *, long = 50 );
 	wxXmlNode* AddTrackTags( const wxTrack&, const wxULongLong&, wxXmlNode*, int = 30 );
 
-	wxXmlNode* AddChapterTimeStart( wxXmlNode*, const wxIndex& ) const;
+	wxXmlNode* AddChapterTimeStart( wxXmlNode*, const wxCueSheet&, const wxIndex& ) const;
 
-	wxXmlNode* AddChapterTimeEnd( wxXmlNode*, const wxTrack& ) const;
-	wxXmlNode* AddChapterTimeEnd( wxXmlNode*, const wxIndex& ) const;
-	wxXmlNode* AddChapterTimeEnd( wxXmlNode*, const wxULongLong& ) const;
+	wxXmlNode* AddChapterTimeEnd( wxXmlNode*, const wxCueSheet&, const wxTrack& ) const;
+	wxXmlNode* AddChapterTimeEnd( wxXmlNode*, const wxCueSheet&, const wxIndex& ) const;
 	wxXmlNode* AddChapterTimeEnd( wxXmlNode*, const wxDuration& ) const;
 
-	wxXmlNode* AddIdxChapterAtom( wxXmlNode*, const wxIndex& ) const;
+	wxXmlNode* AddIdxChapterAtom( wxXmlNode*, const wxCueSheet&, const wxIndex& ) const;
 
 	void init_synonims();
 
@@ -140,7 +139,7 @@ protected:
 	static wxXmlNode* add_chapter_uid( wxXmlNode*, const wxULongLong& uid );
 	static wxXmlNode* add_chapter_time_start( wxXmlNode*, const wxString& );
 
-	static wxXmlNode* add_chapter_time_start( wxXmlNode *, const wxSamplingInfo &, wxULongLong );
+	static wxXmlNode* add_chapter_time_start( wxXmlNode*, const wxDuration& );
 	static wxXmlNode* find_chapter_time_start( wxXmlNode* );
 	static bool is_album_tag( wxXmlNode*, long );
 	static wxXmlNode* find_disc_tag_node( wxXmlNode*, long );
@@ -148,12 +147,12 @@ protected:
 	static bool set_total_parts( wxXmlNode *, size_t );
 	static wxXmlNode* add_chapter_time_end( wxXmlNode*, const wxString& );
 
-	static wxXmlNode* add_chapter_time_end( wxXmlNode *, const wxSamplingInfo &, wxULongLong );
+	static wxXmlNode* add_chapter_time_end( wxXmlNode*, const wxDuration& );
 	static bool has_chapter_time_end( wxXmlNode* );
 	static wxXmlNode* add_chapter_display( wxXmlNode*, const wxString&, const wxString& );
 	static wxXmlNode* add_hidden_flag( wxXmlNode*, bool );
-	static wxXmlNode* add_idx_chapter_atom( wxXmlNode*, const wxSamplingInfo&,
-											const wxULongLong&, unsigned int,
+	static wxXmlNode* add_idx_chapter_atom( wxXmlNode*, const wxDuration&,
+											unsigned int,
 											const wxString&,
 											bool );
 	static wxXmlNode* create_simple_tag( const wxCueTag&, const wxString& );

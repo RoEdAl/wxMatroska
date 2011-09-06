@@ -56,7 +56,6 @@ protected:
 	wxArrayIndex		 m_indexes;
 	wxScopedPtr<wxIndex> m_pPreGap;
 	wxScopedPtr<wxIndex> m_pPostGap;
-	wxDataFile			 m_df;
 	wxArrayFlag			 m_flags;
 
 protected:
@@ -97,11 +96,14 @@ public:
 	wxTrack& SetMode( DataMode );
 	bool SetMode( const wxString& );
 
+	bool HasIndexes() const;
+	size_t GetIndexesCount() const;
 	const wxArrayIndex& GetIndexes() const;
 	const wxIndex&		GetFirstIndex() const;
 	void AddIndex( const wxIndex& );
 
 	bool HasPreGap() const;
+	bool HasZeroIndex() const;
 	bool HasPostGap() const;
 
 	const wxIndex& GetPreGap() const;
@@ -125,11 +127,12 @@ public:
 
 	bool HasFlag( Flag ) const;
 
-	const wxDataFile& GetDataFile() const;
-	bool HasDataFile() const;
-	void SetDataFile( const wxDataFile& );
-	void ClearDataFile();
-	bool CalculateDuration( const wxString& = wxEmptyString );
+	bool IsRelatedToDataFileIdx( size_t, bool = true ) const;
+	size_t GetMaxDataFileIdx( bool = true ) const;
+	size_t GetMinDataFileIdx( bool = true ) const;
+
+	void SetDataFileIdx( size_t );
+	void ShiftDataFileIdx( size_t );
 
 	virtual void GetReplacements( wxHashString& ) const;
 
@@ -139,7 +142,6 @@ public:
 	wxTrack( unsigned long );
 	wxTrack( const wxTrack& );
 	wxTrack& operator =( const wxTrack& );
-	wxTrack& Shift( const wxDuration& );
 
 	bool IsValid() const;
 

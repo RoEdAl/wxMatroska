@@ -25,6 +25,8 @@ protected:
 	wxSamplingInfo		m_si;
 	wxRegEx				m_reSpace;
 
+	size_t m_nDataFileIdx;
+
 protected:
 
 	virtual bool OnPreRenderDisc( const wxCueSheet& );
@@ -44,7 +46,8 @@ private:
 
 	void InternalRenderIndex( const wxCueSheet &, const wxTrack &, const wxIndex &, wxString );
 	void InternalRenderIndex( const wxCueSheet&, const wxTrack&, const wxIndex& );
-	void InternalRenderDataFile( const wxDataFile& );
+
+	void InternalRenderDataFile( const wxCueSheet &, size_t );
 
 public:
 

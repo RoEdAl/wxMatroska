@@ -67,7 +67,7 @@ void wxDuration::Invalidate()
 
 bool wxDuration::IsValid() const
 {
-	return m_si.IsOK() && ( m_numberOfSamples.GetValue() == wxSamplingInfo::wxInvalidNumberOfFrames );
+	return m_si.IsOK() && ( m_numberOfSamples.GetValue() != wxSamplingInfo::wxInvalidNumberOfFrames );
 }
 
 bool wxDuration::Add( const wxDuration& duration )
@@ -83,9 +83,25 @@ bool wxDuration::Add( const wxDuration& duration )
 	}
 }
 
+wxDuration& wxDuration::Add( wxULongLong numberOfSamples )
+{
+	m_numberOfSamples += numberOfSamples;
+	return *this;
+}
+
 wxIndex wxDuration::ConvertIndex( const wxIndex& idx, bool bAdd ) const
 {
 	return m_si.ConvertIndex( idx, m_numberOfSamples, bAdd );
+}
+
+wxString wxDuration::GetSamplesStr() const
+{
+	return m_si.GetSamplesStr( m_numberOfSamples );
+}
+
+wxString wxDuration::GetCdFramesStr( wxULongLong frames ) const
+{
+	return m_si.GetCdFramesStr( m_numberOfSamples );
 }
 
 wxDurationHolder::wxDurationHolder()

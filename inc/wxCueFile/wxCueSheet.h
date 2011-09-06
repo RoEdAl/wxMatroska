@@ -43,11 +43,11 @@ public:
 protected:
 
 	wxArrayCueSheetContent m_content;
-	wxArrayFileName m_log;
-	wxArrayFileName m_cover;
-
-	wxArrayCueTag m_catalog;
-	wxArrayCueTag m_cdtextfile;
+	wxArrayFileName m_logs;
+	wxArrayFileName m_covers;
+	wxArrayDataFile m_dataFiles;
+	wxArrayCueTag m_catalogs;
+	wxArrayCueTag m_cdtextfiles;
 	wxArrayTrack m_tracks;
 
 protected:
@@ -56,7 +56,6 @@ protected:
 	void AddCdTextInfoTagToAllTracks( const wxCueTag& );
 	void AddTagToAllTracks( const wxCueTag& );
 	void PrepareToAppend();
-	wxCueSheet& Append( const wxCueSheet&, const wxDuration& );
 	static void AppendFileNames( wxArrayFileName&, const wxArrayFileName& );
 
 public:
@@ -64,7 +63,7 @@ public:
 	wxCueSheet( void );
 	wxCueSheet( const wxCueSheet& );
 	wxCueSheet& operator =( const wxCueSheet& );
-	bool Append( const wxCueSheet& );
+	wxCueSheet& Append( const wxCueSheet& );
 
 	virtual bool HasGarbage() const;
 
@@ -73,7 +72,7 @@ public:
 	wxCueSheet& SetSingleDataFile( const wxDataFile& );
 	wxCueSheet& SetDataFiles( const wxArrayDataFile& );
 
-	bool IsLastTrackForDataFile( size_t, wxDataFile & ) const;
+	size_t GetDataFileIdxIfLastForTrack( size_t ) const;
 
 	size_t GetContentsCount() const;
 	const wxArrayCueSheetContent& GetContents() const;
@@ -85,8 +84,15 @@ public:
 	const wxArrayCueTag& GetCatalogs() const;
 	size_t GetCdTextFilesCount() const;
 	const wxArrayCueTag& GetCdTextFiles() const;
+	bool HasTracks() const;
 	size_t GetTracksCount() const;
 	const wxArrayTrack& GetTracks() const;
+	bool HasDataFiles() const;
+	size_t GetDataFilesCount() const;
+	const wxArrayDataFile& GetDataFiles() const;
+	size_t GetLastDataFileIdx() const;
+
+	bool GetRelatedTracks( size_t, size_t &, size_t & ) const;
 
 	void FindCommonTags( const wxTagSynonimsCollection&, const wxTagSynonimsCollection&, bool );
 
@@ -96,19 +102,25 @@ public:
 	wxCueSheet& AddContent( const wxString& );
 	wxCueSheet& AddLog( const wxFileName& );
 	bool AddCover( const wxFileName& );
+	wxCueSheet& AddDataFile( const wxDataFile& );
 
 	virtual bool HasDuration() const;
 	virtual wxDuration GetDuration() const;
+
+	wxDuration GetDuration( size_t ) const;
 	bool CalculateDuration( const wxString& = wxEmptyString );
+
+	bool AddTrack( const wxTrack& );
 
 	wxTrack& GetTrack( size_t );
 	wxTrack& GetLastTrack();
-	bool HasTrack( unsigned long ) const;
-	wxTrack& GetTrackByNumber( unsigned long );
+	wxTrack& GetBeforeLastTrack();
+	bool HasTrack( size_t ) const;
+	wxTrack& GetTrackByNumber( size_t );
+	size_t GetTrackIdxFromNumber( size_t ) const;
 
 	const wxTrack& GetTrack( size_t ) const;
 	const wxTrack& GetLastTrack() const;
-	wxCueSheet&	   AddTrack( const wxTrack& );
 	wxArrayTrack&  SortTracks();
 
 	void Clear( void );

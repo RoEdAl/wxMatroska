@@ -273,7 +273,7 @@ wxIndex wxSamplingInfo::ConvertIndex( const wxIndex& idx, wxULongLong offset, bo
 
 	if ( idx.HasCdFrames() )
 	{
-		res.SetNumber( idx.GetNumber() ).SetOffset( GetFramesFromCdFrames( idx.GetOffset() ) );
+		res.SetNumber( idx.GetNumber() ).SetOffset( GetFramesFromCdFrames( idx.GetOffset() ) ).SetDataFileIdx( idx.GetDataFileIdx() );
 	}
 	else
 	{

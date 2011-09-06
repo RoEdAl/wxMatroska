@@ -18,7 +18,7 @@
 // ===============================================================================
 
 const wxChar wxMyApp::APP_NAME[]		  = wxT( "cue2mkc" );
-const wxChar wxMyApp::APP_VERSION[]		  = wxT( "0.82" );
+const wxChar wxMyApp::APP_VERSION[]		  = wxT( "0.9" );
 const wxChar wxMyApp::APP_VENDOR_NAME[]	  = wxT( "Edmunt Pienkowsky" );
 const wxChar wxMyApp::APP_AUTHOR[]		  = wxT( "Edmunt Pienkowsky - roed@onet.eu" );
 const wxChar wxMyApp::LICENSE_FILE_NAME[] = wxT( "license.txt" );
@@ -230,30 +230,38 @@ int wxMyApp::AppendCueSheet( wxCueSheet& cueSheet )
 {
 	wxASSERT( m_cfg.GetMerge() );
 
-	if ( !cueSheet.HasDuration() )
+	if ( !( cueSheet.HasDuration() || cueSheet.CalculateDuration( m_cfg.GetAlternateExtensions() ) ) )
 	{
-		if ( !cueSheet.CalculateDuration( m_cfg.GetAlternateExtensions() ) )
+		wxLogError( _( "Fail to calculate duration of cue sheet" ) );
+		return 1;
+	}
+
+	wxCueSheet& mergedCueSheet = GetMergedCueSheet();
+	mergedCueSheet.Append( cueSheet );
+	return 0;
+}
+
+int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, wxCueSheet& cueSheet )
+{
+	if ( cueSheet.GetDataFilesCount() > 1u )
+	{
+		if ( !m_cfg.GetUseDataFiles() )
+		{
+			wxLogError( _( "Cue sheet has more than one data file." ) );
+			wxLogError( _( "Please use -df (or --use-data-files) option." ) );
+			return 1;
+		}
+	}
+
+	if ( m_cfg.GetUseDataFiles() )
+	{
+		if ( !( cueSheet.HasDuration() || cueSheet.CalculateDuration( m_cfg.GetAlternateExtensions() ) ) )
 		{
 			wxLogError( _( "Fail to calculate duration of cue sheet" ) );
 			return 1;
 		}
 	}
 
-	wxCueSheet& mergedCueSheet = GetMergedCueSheet();
-	if ( mergedCueSheet.Append( cueSheet ) )
-	{
-		return 0;
-	}
-	else
-	{
-		wxLogError( _( "Fail to merge cue sheet" ) );
-		return 1;
-	}
-}
-
-int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile,
-	const wxCueSheet& cueSheet )
-{
 	if ( m_cfg.SaveCueSheet() )
 	{
 		wxString sOutputFile( m_cfg.GetOutputFile( inputFile ) );

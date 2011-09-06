@@ -52,7 +52,7 @@ protected:
 	bool render_cuesheet( const wxInputFile&, const wxString&, const wxCueSheet&, wxFileName& );
 	static void save_string_to_stream( wxTextOutputStream&, const wxString& );
 
-	static wxString get_mapping_str( const wxArrayTrack& );
+	static wxString get_mapping_str( const wxCueSheet& );
 
 public:
 

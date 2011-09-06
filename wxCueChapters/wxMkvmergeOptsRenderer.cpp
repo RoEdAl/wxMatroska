@@ -439,23 +439,19 @@ void wxMkvmergeOptsRenderer::write_rendered_eac_attachments( const wxInputFile& 
 	}
 }
 
-wxString wxMkvmergeOptsRenderer::get_mapping_str( const wxArrayTrack& tracks )
+wxString wxMkvmergeOptsRenderer::get_mapping_str( const wxCueSheet& cueSheet )
 {
 	wxString sRes;
+	size_t	 nDataFiles = 0;
 
-	size_t nDataFiles = 0;
-
-	for ( size_t i = 0, nCount = tracks.GetCount(); i < nCount; i++ )
+	for ( size_t i = 0, nCount = cueSheet.GetDataFilesCount(); i < nCount; i++ )
 	{
-		if ( tracks[ i ].HasDataFile() )
+		if ( nDataFiles > 0 )
 		{
-			if ( nDataFiles > 0 )
-			{
-				sRes += wxString::Format( wxT( "%d:0:%d:0," ), nDataFiles, nDataFiles - 1 );
-			}
-
-			nDataFiles += 1;
+			sRes += wxString::Format( wxT( "%d:0:%d:0," ), nDataFiles, nDataFiles - 1 );
 		}
+
+		nDataFiles += 1;
 	}
 
 	wxASSERT( nDataFiles > 1 );
@@ -486,46 +482,35 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile,
 	wxT( "# Input file(s)" ) << endl;
 
 	// tracks
-	const wxArrayTrack& tracks	   = cueSheet.GetTracks();
-	bool				bFirst	   = true;
-	size_t				nDataFiles = 0;
-	wxFileName			dataFile;
-	bool				bDataFile;
+	const wxArrayDataFile& dataFiles = cueSheet.GetDataFiles();
+	bool				   bFirst	 = true;
 
-	for ( size_t nTracks = tracks.GetCount(), i = 0; i < nTracks; i++ )
+	for ( size_t nTracks = dataFiles.GetCount(), i = 0; i < nTracks; i++ )
 	{
-		if ( tracks[ i ].HasDataFile() )
+		*m_os <<
+		wxT( "-a" ) << endl << wxT( "0" ) << endl <<
+		wxT( "-D" ) << endl <<
+		wxT( "-S" ) << endl <<
+		wxT( "-T" ) << endl <<
+		wxT( "--no-global-tags" ) << endl <<
+		wxT( "--no-chapters" ) << endl;
+
+		const wxDataFile& dataFile = dataFiles[ i ];
+		wxASSERT( dataFile.HasRealFileName() );
+
+		if ( !bFirst )
 		{
 			*m_os <<
-			wxT( "-a" ) << endl << wxT( "0" ) << endl <<
-			wxT( "-D" ) << endl <<
-			wxT( "-S" ) << endl <<
-			wxT( "-T" ) << endl <<
-			wxT( "--no-global-tags" ) << endl <<
-			wxT( "--no-chapters" ) << endl;
+			wxT( '+' ) << endl <<
+			mkvmerge_escape( dataFile ) << endl;
+		}
+		else
+		{
+			*m_os <<
+			wxT( '=' ) << endl <<
+			mkvmerge_escape( dataFile ) << endl;
 
-			bDataFile = tracks[ i ].GetDataFile().FindFile( dataFile, m_cfg.GetAlternateExtensions() );
-			if ( !bDataFile )
-			{
-				wxLogDebug( wxT( "Fail to get data file for track %d. This is serious error!" ), i );
-			}
-
-			if ( !bFirst )
-			{
-				*m_os <<
-				wxT( '+' ) << endl <<
-				mkvmerge_escape( dataFile ) << endl;
-			}
-			else
-			{
-				*m_os <<
-				wxT( '=' ) << endl <<
-				mkvmerge_escape( dataFile ) << endl;
-
-				bFirst = false;
-			}
-
-			nDataFiles += 1;
+			bFirst = false;
 		}
 	}
 
@@ -555,9 +540,9 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile,
 		*m_os << wxT( "--global-tags" ) << endl << GetEscapedFile( tagsFile ) << endl;
 	}
 
-	if ( m_cfg.GetMerge() && ( nDataFiles > 1 ) )
+	if ( m_cfg.GetMerge() && ( dataFiles.GetCount() > 1u ) )
 	{
-		*m_os << wxT( "--append-to" ) << endl << get_mapping_str( tracks ) << endl;
+		*m_os << wxT( "--append-to" ) << endl << get_mapping_str( cueSheet ) << endl;
 	}
 }
 

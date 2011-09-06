@@ -16,6 +16,7 @@ protected:
 	size_t m_number;
 	wxULongLong m_offset;
 	bool m_bCdFrames;
+	size_t m_nDataFileIdx;
 
 protected:
 
@@ -26,16 +27,23 @@ protected:
 
 public:
 
+	static const size_t UnknownDataFileIdx;
 	static int CompareFn( wxIndex**, wxIndex** );
 
 	size_t GetNumber() const;
 	bool HasCdFrames() const;
+	bool HasDataFileIdx() const;
+	size_t GetDataFileIdx() const;
 
-	wxIndex& SetNumber( unsigned int );
-
+	wxIndex& SetNumber( size_t );
 	wxIndex& SetOffset( wxULongLong );
+	wxIndex& SetDataFileIdx( size_t );
+	bool	 ShiftDataFileIdx( size_t );
+
 	wxIndex& Assign( size_t, wxULongLong );
+	wxIndex& Assign( size_t, wxULongLong, size_t );
 	wxIndex& Assign( size_t, unsigned long, unsigned long, unsigned long );
+	wxIndex& Assign( size_t, unsigned long, unsigned long, unsigned long, size_t );
 
 	bool IsValid( bool = false ) const;
 	static void FixDecimalPoint( wxString& );
@@ -44,6 +52,7 @@ public:
 
 	wxIndex( void );
 	wxIndex( unsigned int, wxULongLong );
+	wxIndex( unsigned int, wxULongLong, size_t );
 	wxIndex( const wxIndex& );
 	wxIndex& operator =( const wxIndex& );
 

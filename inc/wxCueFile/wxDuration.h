@@ -35,11 +35,16 @@ public:
 
 	const wxSamplingInfo& GetSamplingInfo() const;
 	const wxULongLong&	  GetNumberOfSamples() const;
+	wxString GetSamplesStr() const;
+
+	wxString GetCdFramesStr( wxULongLong ) const;
 
 	bool IsValid() const;
 	void Clear();
 	void Invalidate();
 	bool Add( const wxDuration& );
+
+	wxDuration& Add( wxULongLong );
 
 	wxIndex ConvertIndex( const wxIndex&, bool = true ) const;
 
