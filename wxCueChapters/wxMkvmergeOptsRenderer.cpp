@@ -442,20 +442,14 @@ void wxMkvmergeOptsRenderer::write_rendered_eac_attachments( const wxInputFile& 
 
 wxString wxMkvmergeOptsRenderer::get_mapping_str( const wxCueSheet& cueSheet )
 {
+	wxASSERT( cueSheet.GetDataFilesCount() > 1u );
 	wxString sRes;
-	size_t	 nDataFiles = 0;
 
-	for ( size_t i = 0, nCount = cueSheet.GetDataFilesCount(); i < nCount; i++ )
+	for ( size_t i = 1u, nCount = cueSheet.GetDataFilesCount(); i < nCount; i++ )
 	{
-		if ( nDataFiles > 0 )
-		{
-			sRes += wxString::Format( wxT( "%d:0:%d:0," ), nDataFiles, nDataFiles - 1 );
-		}
-
-		nDataFiles += 1;
+		sRes += wxString::Format( wxT( "%d:0:%d:0," ), i, i - 1 );
 	}
 
-	wxASSERT( nDataFiles > 1 );
 	return sRes.RemoveLast();
 }
 
@@ -541,7 +535,7 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile,
 		*m_os << wxT( "--global-tags" ) << endl << GetEscapedFile( tagsFile ) << endl;
 	}
 
-	if ( m_cfg.GetMerge() && ( dataFiles.GetCount() > 1u ) )
+	if ( dataFiles.GetCount() > 1u )
 	{
 		*m_os << wxT( "--append-to" ) << endl << get_mapping_str( cueSheet ) << endl;
 	}
