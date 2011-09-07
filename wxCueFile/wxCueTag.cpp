@@ -13,28 +13,28 @@
 
 // ===============================================================================
 
-const wxChar* const wxCueTag::Name::CUESHEET	 = wxT( "CUESHEET" );
-const wxChar* const wxCueTag::Name::TOTALTRACKS	 = wxT( "TOTALTRACKS" );
-const wxChar* const wxCueTag::Name::ARRANGER	 = wxT( "ARRANGER" );
-const wxChar* const wxCueTag::Name::COMPOSER	 = wxT( "COMPOSER" );
-const wxChar* const wxCueTag::Name::ISRC		 = wxT( "ISRC" );
-const wxChar* const wxCueTag::Name::TITLE		 = wxT( "TITLE" );
-const wxChar* const wxCueTag::Name::ALBUM		 = wxT( "ALBUM" );
-const wxChar* const wxCueTag::Name::PERFORMER	 = wxT( "PERFORMER" );
-const wxChar* const wxCueTag::Name::ARTIST		 = wxT( "ARTIST" );
-const wxChar* const wxCueTag::Name::ALBUM_ARTIST = wxT( "ALBUM ARTIST" );
-const wxChar* const wxCueTag::Name::CATALOG		 = wxT( "CATALOG" );
-const wxChar* const wxCueTag::Name::CDTEXTFILE	 = wxT( "CDTEXTFILE" );
-const wxChar* const wxCueTag::Name::DISC_ID		 = wxT( "DISC_ID" );
-const wxChar* const wxCueTag::Name::GENRE		 = wxT( "GENRE" );
-const wxChar* const wxCueTag::Name::MESSAGE		 = wxT( "MESSAGE" );
-const wxChar* const wxCueTag::Name::SONGWRITER	 = wxT( "SONGWRITER" );
-const wxChar* const wxCueTag::Name::UPC_EAN		 = wxT( "UPC_EAN" );
-const wxChar* const wxCueTag::Name::SIZE_INFO	 = wxT( "SIZE_INFO" );
-const wxChar* const wxCueTag::Name::TOC_INFO	 = wxT( "TOC_INFO" );
-const wxChar* const wxCueTag::Name::TOC_INFO2	 = wxT( "TOC_INFO2" );
-const wxChar* const wxCueTag::Name::DISCNUMBER	 = wxT( "DISCNUMBER" );
-const wxChar* const wxCueTag::Name::TOTALDISCS	 = wxT( "TOTALDISCS" );
+const wxChar wxCueTag::Name::CUESHEET[]		= wxT( "CUESHEET" );
+const wxChar wxCueTag::Name::TOTALTRACKS[]	= wxT( "TOTALTRACKS" );
+const wxChar wxCueTag::Name::ARRANGER[]		= wxT( "ARRANGER" );
+const wxChar wxCueTag::Name::COMPOSER[]		= wxT( "COMPOSER" );
+const wxChar wxCueTag::Name::ISRC[]			= wxT( "ISRC" );
+const wxChar wxCueTag::Name::TITLE[]		= wxT( "TITLE" );
+const wxChar wxCueTag::Name::ALBUM[]		= wxT( "ALBUM" );
+const wxChar wxCueTag::Name::PERFORMER[]	= wxT( "PERFORMER" );
+const wxChar wxCueTag::Name::ARTIST[]		= wxT( "ARTIST" );
+const wxChar wxCueTag::Name::ALBUM_ARTIST[] = wxT( "ALBUM ARTIST" );
+const wxChar wxCueTag::Name::CATALOG[]		= wxT( "CATALOG" );
+const wxChar wxCueTag::Name::CDTEXTFILE[]	= wxT( "CDTEXTFILE" );
+const wxChar wxCueTag::Name::DISC_ID[]		= wxT( "DISC_ID" );
+const wxChar wxCueTag::Name::GENRE[]		= wxT( "GENRE" );
+const wxChar wxCueTag::Name::MESSAGE[]		= wxT( "MESSAGE" );
+const wxChar wxCueTag::Name::SONGWRITER[]	= wxT( "SONGWRITER" );
+const wxChar wxCueTag::Name::UPC_EAN[]		= wxT( "UPC_EAN" );
+const wxChar wxCueTag::Name::SIZE_INFO[]	= wxT( "SIZE_INFO" );
+const wxChar wxCueTag::Name::TOC_INFO[]		= wxT( "TOC_INFO" );
+const wxChar wxCueTag::Name::TOC_INFO2[]	= wxT( "TOC_INFO2" );
+const wxChar wxCueTag::Name::DISCNUMBER[]	= wxT( "DISCNUMBER" );
+const wxChar wxCueTag::Name::TOTALDISCS[]	= wxT( "TOTALDISCS" );
 
 // ===============================================================================
 
@@ -68,6 +68,31 @@ wxString wxCueTag::SourceToString( wxCueTag::TAG_SOURCE eSource )
 	return wxString::Format( wxT( "TAG_SOURCE <%d>" ), eSource );
 }
 
+wxString wxCueTag::SourcesToString( wxCueTag::TagSources nTagSources )
+{
+	wxString s;
+
+	for ( size_t i = 0; i < SOURCE2TEXT_MAPPING_SIZE; i++ )
+	{
+		if ( ( nTagSources & SOURCE2TEXT_MAPPING[ i ].eSource ) != 0u )
+		{
+			s << SOURCE2TEXT_MAPPING[ i ].pText << wxT( ',' );
+		}
+	}
+
+	if ( !s.IsEmpty() )
+	{
+		s.RemoveLast();
+	}
+
+	return s;
+}
+
+bool wxCueTag::TestTagSources( wxCueTag::TagSources sources, wxCueTag::TagSources mask )
+{
+	return ( sources & mask ) == mask;
+}
+
 wxCueTag::wxCueTag():
 	m_eSource( TAG_UNKNOWN ), m_bMultiline( false )
 {}
@@ -86,6 +111,11 @@ wxCueTag::wxCueTag( const wxCueTag& cueTag )
 wxCueTag::TAG_SOURCE wxCueTag::GetSource() const
 {
 	return m_eSource;
+}
+
+bool wxCueTag::TestSource( wxCueTag::TagSources nTagSources ) const
+{
+	return TestTagSources( nTagSources, m_eSource );
 }
 
 wxString wxCueTag::GetSourceAsString() const

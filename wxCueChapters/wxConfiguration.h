@@ -18,7 +18,6 @@
 #endif
 
 WX_DECLARE_OBJARRAY( wxInputFile, wxArrayInputFile );
-WX_DEFINE_ARRAY_INT( wxCueTag::TAG_SOURCE, wxArrayTagSource );
 
 class wxConfiguration:
 	public wxObject
@@ -81,7 +80,7 @@ protected:
 	bool						m_bHiddenIndexes;
 	bool						m_bMerge;
 	wxCueSheetReader::ReadFlags m_nReadFlags;
-	wxArrayTagSource			m_aeIgnoredSources;
+	wxCueTag::TagSources		m_nTagSources;
 	bool						m_bUseMLang;
 	bool						m_bUseFullPaths;
 	bool						m_bEllipsizeTags;
@@ -111,14 +110,14 @@ protected:
 	static wxString BoolToStr( bool );
 	static wxString BoolToIdx( bool );
 	static wxString GetReadFlagsDesc( wxCueSheetReader::ReadFlags );
-	static wxString GetTagSourcesNames( const wxArrayTagSource& );
 	static void AddFlag( wxArrayString&, wxCueSheetReader::ReadFlags, wxCueSheetReader::ReadFlags, const wxString& );
 
 	bool CheckLang( const wxString& ) const;
 	void FillArray( wxArrayString& as ) const;
-	void AddIgnoredTagSource( wxCueTag::TAG_SOURCE );
-	void RemoveIgnoredTagSource( wxCueTag::TAG_SOURCE );
-	bool ReadNegatableSwitchValue( const wxCmdLineParser&, const wxString&, bool& );
+	static bool ReadNegatableSwitchValue( const wxCmdLineParser&, const wxString&, bool& );
+	static bool ReadNegatableSwitchValueAndNegate( const wxCmdLineParser&, const wxString&, bool& );
+	bool ReadReadFlags( const wxCmdLineParser&, const wxString&, wxCueSheetReader::ReadFlags );
+	bool ReadTagSources( const wxCmdLineParser&, const wxString&, wxCueTag::TagSources );
 
 public:
 
@@ -154,6 +153,7 @@ public:
 	const;
 	bool GetMerge() const;
 	wxCueSheetReader::ReadFlags GetReadFlags() const;
+	wxCueTag::TagSources GetTagSources() const;
 	bool ShouldIgnoreTag( const wxCueTag& ) const;
 	bool UseMLang() const;
 	bool UseFullPaths() const;

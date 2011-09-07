@@ -26,38 +26,38 @@ wxXmlCueSheetRenderer* const wxXmlCueSheetRenderer::Null = (wxXmlCueSheetRendere
 
 // ===============================================================================
 
-const wxChar* const wxXmlCueSheetRenderer::Tag::ORIGINAL_MEDIA_TYPE = wxT( "ORIGINAL_MEDIA_TYPE" );
-const wxChar* const wxXmlCueSheetRenderer::Tag::CATALOG_NUMBER		= wxT( "CATALOG_NUMBER" );
-const wxChar* const wxXmlCueSheetRenderer::Tag::TOTAL_PARTS			= wxT( "TOTAL_PARTS" );
-const wxChar* const wxXmlCueSheetRenderer::Tag::PART_NUMBER			= wxT( "PART_NUMBER" );
+const wxChar wxXmlCueSheetRenderer::Tag::ORIGINAL_MEDIA_TYPE[] = wxT( "ORIGINAL_MEDIA_TYPE" );
+const wxChar wxXmlCueSheetRenderer::Tag::CATALOG_NUMBER[]	   = wxT( "CATALOG_NUMBER" );
+const wxChar wxXmlCueSheetRenderer::Tag::TOTAL_PARTS[]		   = wxT( "TOTAL_PARTS" );
+const wxChar wxXmlCueSheetRenderer::Tag::PART_NUMBER[]		   = wxT( "PART_NUMBER" );
 
 // ===============================================================================
 
-const wxChar* const wxXmlCueSheetRenderer::Xml::CHAPTER_UID			= wxT( "ChapterUID" );
-const wxChar* const wxXmlCueSheetRenderer::Xml::EDITION_ENTRY		= wxT( "EditionEntry" );
-const wxChar* const wxXmlCueSheetRenderer::Xml::EDITION_UID			= wxT( "EditionUID" );
-const wxChar* const wxXmlCueSheetRenderer::Xml::CHAPTER_TIME_START	= wxT( "ChapterTimeStart" );
-const wxChar* const wxXmlCueSheetRenderer::Xml::CHAPTER_TIME_END	= wxT( "ChapterTimeEnd" );
-const wxChar* const wxXmlCueSheetRenderer::Xml::CHAPTER_DISPLAY		= wxT( "ChapterDisplay" );
-const wxChar* const wxXmlCueSheetRenderer::Xml::CHAPTER_STRING		= wxT( "ChapterString" );
-const wxChar* const wxXmlCueSheetRenderer::Xml::CHAPTER_LANGUAGE	= wxT( "ChapterLanguage" );
-const wxChar* const wxXmlCueSheetRenderer::Xml::CHAPTER_FLAG_HIDDEN = wxT( "ChapterFlagHidden" );
-const wxChar* const wxXmlCueSheetRenderer::Xml::CHAPTER_ATOM		= wxT( "ChapterAtom" );
-const wxChar* const wxXmlCueSheetRenderer::Xml::CHAPTERS			= wxT( "Chapters" );
-const wxChar* const wxXmlCueSheetRenderer::Xml::TARGETS				= wxT( "Targets" );
-const wxChar* const wxXmlCueSheetRenderer::Xml::TAGS				= wxT( "Tags" );
-const wxChar* const wxXmlCueSheetRenderer::Xml::TARGET_TYPE_VALUE	= wxT( "TargetTypeValue" );
-const wxChar* const wxXmlCueSheetRenderer::Xml::TARGET_TYPE			= wxT( "TargetType" );
-const wxChar* const wxXmlCueSheetRenderer::Xml::TAG					= wxT( "Tag" );
-const wxChar* const wxXmlCueSheetRenderer::Xml::TAG_LANGUAGE		= wxT( "TagLanguage" );
-const wxChar* const wxXmlCueSheetRenderer::Xml::NAME				= wxT( "Name" );
-const wxChar* const wxXmlCueSheetRenderer::Xml::STRING				= wxT( "String" );
-const wxChar* const wxXmlCueSheetRenderer::Xml::SIMPLE				= wxT( "Simple" );
+const wxChar wxXmlCueSheetRenderer::Xml::CHAPTER_UID[]		   = wxT( "ChapterUID" );
+const wxChar wxXmlCueSheetRenderer::Xml::EDITION_ENTRY[]	   = wxT( "EditionEntry" );
+const wxChar wxXmlCueSheetRenderer::Xml::EDITION_UID[]		   = wxT( "EditionUID" );
+const wxChar wxXmlCueSheetRenderer::Xml::CHAPTER_TIME_START[]  = wxT( "ChapterTimeStart" );
+const wxChar wxXmlCueSheetRenderer::Xml::CHAPTER_TIME_END[]	   = wxT( "ChapterTimeEnd" );
+const wxChar wxXmlCueSheetRenderer::Xml::CHAPTER_DISPLAY[]	   = wxT( "ChapterDisplay" );
+const wxChar wxXmlCueSheetRenderer::Xml::CHAPTER_STRING[]	   = wxT( "ChapterString" );
+const wxChar wxXmlCueSheetRenderer::Xml::CHAPTER_LANGUAGE[]	   = wxT( "ChapterLanguage" );
+const wxChar wxXmlCueSheetRenderer::Xml::CHAPTER_FLAG_HIDDEN[] = wxT( "ChapterFlagHidden" );
+const wxChar wxXmlCueSheetRenderer::Xml::CHAPTER_ATOM[]		   = wxT( "ChapterAtom" );
+const wxChar wxXmlCueSheetRenderer::Xml::CHAPTERS[]			   = wxT( "Chapters" );
+const wxChar wxXmlCueSheetRenderer::Xml::TARGETS[]			   = wxT( "Targets" );
+const wxChar wxXmlCueSheetRenderer::Xml::TAGS[]				   = wxT( "Tags" );
+const wxChar wxXmlCueSheetRenderer::Xml::TARGET_TYPE_VALUE[]   = wxT( "TargetTypeValue" );
+const wxChar wxXmlCueSheetRenderer::Xml::TARGET_TYPE[]		   = wxT( "TargetType" );
+const wxChar wxXmlCueSheetRenderer::Xml::TAG[]				   = wxT( "Tag" );
+const wxChar wxXmlCueSheetRenderer::Xml::TAG_LANGUAGE[]		   = wxT( "TagLanguage" );
+const wxChar wxXmlCueSheetRenderer::Xml::NAME[]				   = wxT( "Name" );
+const wxChar wxXmlCueSheetRenderer::Xml::STRING[]			   = wxT( "String" );
+const wxChar wxXmlCueSheetRenderer::Xml::SIMPLE[]			   = wxT( "Simple" );
 
 // ===============================================================================
 
-const wxChar* const wxXmlCueSheetRenderer::XmlValue::ALBUM = wxT( "ALBUM" );
-const wxChar* const wxXmlCueSheetRenderer::XmlValue::TRACK = wxT( "TRACK" );
+const wxChar wxXmlCueSheetRenderer::XmlValue::ALBUM[] = wxT( "ALBUM" );
+const wxChar wxXmlCueSheetRenderer::XmlValue::TRACK[] = wxT( "TRACK" );
 
 // ===============================================================================
 

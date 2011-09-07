@@ -365,12 +365,58 @@ bool wxConfiguration::ReadNegatableSwitchValue( const wxCmdLineParser& cmdLine, 
 	return res;
 }
 
+bool wxConfiguration::ReadNegatableSwitchValueAndNegate( const wxCmdLineParser& cmdLine, const wxString& name, bool& switchVal )
+{
+	if ( ReadNegatableSwitchValue( cmdLine, name, switchVal ) )
+	{
+		switchVal = !switchVal;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool wxConfiguration::ReadReadFlags( const wxCmdLineParser& cmdLine, const wxString& name, wxCueSheetReader::ReadFlags nReadFlags )
+{
+	wxCmdLineSwitchState state = cmdLine.FoundSwitch( name );
+	bool				 bSwitchValue;
+
+	if ( ReadNegatableSwitchValue( cmdLine, name, bSwitchValue ) )
+	{
+		m_nReadFlags &= ~nReadFlags;
+		m_nReadFlags |= bSwitchValue ? nReadFlags : 0u;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool wxConfiguration::ReadTagSources( const wxCmdLineParser& cmdLine, const wxString& name, wxCueTag::TagSources nTagSources )
+{
+	wxCmdLineSwitchState state = cmdLine.FoundSwitch( name );
+	bool				 bSwitchValue;
+
+	if ( ReadNegatableSwitchValue( cmdLine, name, bSwitchValue ) )
+	{
+		m_nTagSources &= ~nTagSources;
+		m_nTagSources |= bSwitchValue ? nTagSources : 0u;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 {
 	bool	 bRes = true;
 	wxString s;
 	long	 v;
-	bool	 switchVal;
 
 	ReadNegatableSwitchValue( cmdLine, wxT( "ce" ), m_bChapterTimeEnd );
 	ReadNegatableSwitchValue( cmdLine, wxT( "cn" ), m_bUnknownChapterTimeEndToNextChapter );
@@ -392,13 +438,8 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	ReadNegatableSwitchValue( cmdLine, wxT( "ec" ), m_bEmbedded );
 	ReadNegatableSwitchValue( cmdLine, wxT( "cq" ), m_bCorrectQuotationMarks );
 	ReadNegatableSwitchValue( cmdLine, wxT( "et" ), m_bEllipsizeTags );
-	ReadNegatableSwitchValue( cmdLine, wxT( "m" ), m_bSaveCueSheet );
-
-	if ( ReadNegatableSwitchValue( cmdLine, wxT( "t1i0" ), m_bTrackOneIndexOne ) )
-	{
-		m_bTrackOneIndexOne = !m_bTrackOneIndexOne;
-	}
-
+	ReadNegatableSwitchValueAndNegate( cmdLine, wxT( "m" ), m_bSaveCueSheet );
+	ReadNegatableSwitchValueAndNegate( cmdLine, wxT( "t1i0" ), m_bTrackOneIndexOne );
 	ReadNegatableSwitchValue( cmdLine, wxT( "a" ), m_bAbortOnError );
 	ReadNegatableSwitchValue( cmdLine, wxT( "t" ), m_bGenerateTags );
 	ReadNegatableSwitchValue( cmdLine, wxT( "k" ), m_bGenerateMkvmergeOpts );
@@ -546,47 +587,9 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		}
 	}
 
-	if ( ReadNegatableSwitchValue( cmdLine, wxT( "use-cdtext-tags" ), switchVal ) )
-	{
-		if ( switchVal )
-		{
-			RemoveIgnoredTagSource( wxCueTag::TAG_CD_TEXT );
-		}
-		else
-		{
-			AddIgnoredTagSource( wxCueTag::TAG_CD_TEXT );
-		}
-	}
-
-	if ( ReadNegatableSwitchValue( cmdLine, wxT( "use-cue-comments-tags" ), switchVal ) )
-	{
-		if ( switchVal )
-		{
-			RemoveIgnoredTagSource( wxCueTag::TAG_CUE_COMMENT );
-		}
-		else
-		{
-			AddIgnoredTagSource( wxCueTag::TAG_CUE_COMMENT );
-		}
-	}
-
-	if ( ReadNegatableSwitchValue( cmdLine, wxT( "use-media-tags" ), switchVal ) )
-	{
-		if ( switchVal )
-		{
-			RemoveIgnoredTagSource( wxCueTag::TAG_MEDIA_METADATA );
-		}
-		else
-		{
-			AddIgnoredTagSource( wxCueTag::TAG_MEDIA_METADATA );
-		}
-	}
-
-	if ( ReadNegatableSwitchValue( cmdLine, wxT( "single-media-file" ), switchVal ) )
-	{
-		m_nReadFlags &= ~wxCueSheetReader::EC_SINGLE_MEDIA_FILE;
-		m_nReadFlags |= switchVal ? wxCueSheetReader::EC_SINGLE_MEDIA_FILE : 0u;
-	}
+	ReadTagSources( cmdLine, wxT( "use-cdtext-tags" ), wxCueTag::TAG_CD_TEXT );
+	ReadTagSources( cmdLine, wxT( "use-cue-comments-tags" ), wxCueTag::TAG_CUE_COMMENT );
+	ReadTagSources( cmdLine, wxT( "use-media-tags" ), wxCueTag::TAG_MEDIA_METADATA );
 
 	if ( cmdLine.Found( wxT( "flac-read-none" ) ) )
 	{
@@ -618,47 +621,10 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		m_nReadFlags |= wxCueSheetReader::EC_FLAC_READ_COMMENT_ONLY;
 	}
 
-	if ( ReadNegatableSwitchValue( cmdLine, wxT( "read-media-tags" ), switchVal ) )
-	{
-		if ( switchVal )
-		{
-			m_nReadFlags &= ~wxCueSheetReader::EC_MEDIA_READ_TAGS;
-			m_nReadFlags |= wxCueSheetReader::EC_MEDIA_READ_TAGS;
-		}
-		else
-		{
-			m_nReadFlags &= ~wxCueSheetReader::EC_MEDIA_READ_TAGS;
-			m_nReadFlags |= 0;
-		}
-	}
-
-	if ( ReadNegatableSwitchValue( cmdLine, wxT( "attach-eac-log" ), switchVal ) )
-	{
-		if ( switchVal )
-		{
-			m_nReadFlags &= ~wxCueSheetReader::EC_FIND_LOG;
-			m_nReadFlags |= wxCueSheetReader::EC_FIND_LOG;
-		}
-		else
-		{
-			m_nReadFlags &= ~wxCueSheetReader::EC_FIND_LOG;
-			m_nReadFlags |= 0;
-		}
-	}
-
-	if ( ReadNegatableSwitchValue( cmdLine, wxT( "attach-cover" ), switchVal ) )
-	{
-		if ( switchVal )
-		{
-			m_nReadFlags &= ~wxCueSheetReader::EC_FIND_COVER;
-			m_nReadFlags |= wxCueSheetReader::EC_FIND_COVER;
-		}
-		else
-		{
-			m_nReadFlags &= ~wxCueSheetReader::EC_FIND_COVER;
-			m_nReadFlags |= 0;
-		}
-	}
+	ReadReadFlags( cmdLine, wxT( "single-media-file" ), wxCueSheetReader::EC_SINGLE_MEDIA_FILE );
+	ReadReadFlags( cmdLine, wxT( "read-media-tags" ), wxCueSheetReader::EC_MEDIA_READ_TAGS );
+	ReadReadFlags( cmdLine, wxT( "attach-eac-log" ), wxCueSheetReader::EC_FIND_LOG );
+	ReadReadFlags( cmdLine, wxT( "attach-cover" ), wxCueSheetReader::EC_FIND_COVER );
 
 	// MLang
 	ReadNegatableSwitchValue( cmdLine, wxT( "use-mlang" ), m_bUseMLang );
@@ -752,21 +718,6 @@ wxString wxConfiguration::GetReadFlagsDesc( wxCueSheetReader::ReadFlags flags )
 	return s.RemoveLast();
 }
 
-wxString wxConfiguration::GetTagSourcesNames( const wxArrayTagSource& sources )
-{
-	wxString s;
-	size_t	 nSources = sources.GetCount();
-
-	wxASSERT( nSources > 0 );
-	for ( size_t i = 0; i < nSources; i++ )
-	{
-		s += wxCueTag::SourceToString( sources[ i ] );
-		s += wxT( ',' );
-	}
-
-	return s.RemoveLast();
-}
-
 void wxConfiguration::FillArray( wxArrayString& as ) const
 {
 	as.Add( wxString::Format( wxT( "Save cue sheet: %s" ), BoolToStr( m_bSaveCueSheet ) ) );
@@ -786,11 +737,7 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
 
 	as.Add( wxString::Format( wxT( "Generate edition UID: %s" ), BoolToStr( m_bGenerateEditionUID ) ) );
 	as.Add( wxString::Format( wxT( "Generate tags from comments: %s" ), BoolToStr( m_bGenerateTagsFromComments ) ) );
-	if ( !m_aeIgnoredSources.IsEmpty() )
-	{
-		as.Add( wxString::Format( wxT( "Ignored tag sources: %s" ), GetTagSourcesNames( m_aeIgnoredSources ) ) );
-	}
-
+	as.Add( wxString::Format( wxT( "Tag sources: %s" ), wxCueTag::SourcesToString( m_nTagSources ) ) );
 	as.Add( wxString::Format( wxT( "Output cue sheet file encoding: %s" ), GetFileEncodingStr( m_eCueSheetFileEncoding ) ) );
 	as.Add( wxString::Format( wxT( "Calculate end time of chapters: %s" ), BoolToStr( m_bChapterTimeEnd ) ) );
 	as.Add( wxString::Format( wxT( "Read embedded cue sheet: %s" ), BoolToStr( m_bEmbedded ) ) );
@@ -1172,27 +1119,14 @@ wxCueSheetReader::ReadFlags wxConfiguration::GetReadFlags() const
 	return m_nReadFlags;
 }
 
-void wxConfiguration::AddIgnoredTagSource( wxCueTag::TAG_SOURCE eSource )
+wxCueTag::TagSources wxConfiguration::GetTagSources() const
 {
-	if ( m_aeIgnoredSources.Index( eSource ) == wxNOT_FOUND )
-	{
-		m_aeIgnoredSources.Add( eSource );
-	}
-}
-
-void wxConfiguration::RemoveIgnoredTagSource( wxCueTag::TAG_SOURCE eSource )
-{
-	int nIdx = m_aeIgnoredSources.Index( eSource );
-
-	if ( nIdx != wxNOT_FOUND )
-	{
-		m_aeIgnoredSources.RemoveAt( nIdx );
-	}
+	return m_nTagSources;
 }
 
 bool wxConfiguration::ShouldIgnoreTag( const wxCueTag& tag ) const
 {
-	return ( m_aeIgnoredSources.Index( tag.GetSource() ) != wxNOT_FOUND );
+	return !tag.TestSource( m_nTagSources );
 }
 
 bool wxConfiguration::UseMLang() const

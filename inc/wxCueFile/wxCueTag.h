@@ -38,37 +38,39 @@ public:
 
 	typedef enum _TAG_SOURCE
 	{
-		TAG_UNKNOWN,
-		TAG_CD_TEXT,
-		TAG_CUE_COMMENT,
-		TAG_MEDIA_METADATA,
-		TAG_AUTO_GENERATED
+		TAG_UNKNOWN		   = 0,
+		TAG_CD_TEXT		   = 1,
+		TAG_CUE_COMMENT	   = 2,
+		TAG_MEDIA_METADATA = 4,
+		TAG_AUTO_GENERATED = 8
 	} TAG_SOURCE;
+
+	typedef wxUint32 TagSources;
 
 	static struct Name
 	{
-		static const wxChar* const CUESHEET;
-		static const wxChar* const TOTALTRACKS;
-		static const wxChar* const ARRANGER;
-		static const wxChar* const COMPOSER;
-		static const wxChar* const ISRC;
-		static const wxChar* const TITLE;
-		static const wxChar* const ALBUM;
-		static const wxChar* const PERFORMER;
-		static const wxChar* const ARTIST;
-		static const wxChar* const ALBUM_ARTIST;
-		static const wxChar* const CATALOG;
-		static const wxChar* const CDTEXTFILE;
-		static const wxChar* const DISC_ID;
-		static const wxChar* const GENRE;
-		static const wxChar* const MESSAGE;
-		static const wxChar* const SONGWRITER;
-		static const wxChar* const UPC_EAN;
-		static const wxChar* const SIZE_INFO;
-		static const wxChar* const TOC_INFO;
-		static const wxChar* const TOC_INFO2;
-		static const wxChar* const DISCNUMBER;
-		static const wxChar* const TOTALDISCS;
+		static const wxChar CUESHEET[];
+		static const wxChar TOTALTRACKS[];
+		static const wxChar ARRANGER[];
+		static const wxChar COMPOSER[];
+		static const wxChar ISRC[];
+		static const wxChar TITLE[];
+		static const wxChar ALBUM[];
+		static const wxChar PERFORMER[];
+		static const wxChar ARTIST[];
+		static const wxChar ALBUM_ARTIST[];
+		static const wxChar CATALOG[];
+		static const wxChar CDTEXTFILE[];
+		static const wxChar DISC_ID[];
+		static const wxChar GENRE[];
+		static const wxChar MESSAGE[];
+		static const wxChar SONGWRITER[];
+		static const wxChar UPC_EAN[];
+		static const wxChar SIZE_INFO[];
+		static const wxChar TOC_INFO[];
+		static const wxChar TOC_INFO2[];
+		static const wxChar DISCNUMBER[];
+		static const wxChar TOTALDISCS[];
 	};
 
 public:
@@ -78,6 +80,8 @@ public:
 	wxCueTag( TAG_SOURCE, const wxString&, const wxString& );
 
 	TAG_SOURCE GetSource() const;
+
+	bool TestSource( TagSources ) const;
 	wxString GetSourceAsString() const;
 
 	const wxString& GetName() const;
@@ -123,6 +127,8 @@ protected:
 public:
 
 	static wxString SourceToString( TAG_SOURCE );
+	static wxString SourcesToString( TagSources );
+	static bool		TestTagSources( TagSources, TagSources );
 
 	static size_t GetTags( const wxArrayCueTag&, const wxString&, wxArrayCueTag& );
 	static size_t MoveTags( wxArrayCueTag&, const wxString&, wxArrayCueTag& );

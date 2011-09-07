@@ -71,40 +71,40 @@ public:
 
 	static struct Tag
 	{
-		static const wxChar* const ORIGINAL_MEDIA_TYPE;
-		static const wxChar* const CATALOG_NUMBER;
-		static const wxChar* const TOTAL_PARTS;
-		static const wxChar* const PART_NUMBER;
+		static const wxChar ORIGINAL_MEDIA_TYPE[];
+		static const wxChar CATALOG_NUMBER[];
+		static const wxChar TOTAL_PARTS[];
+		static const wxChar PART_NUMBER[];
 	};
 
 	static struct Xml
 	{
-		static const wxChar* const CHAPTER_UID;
-		static const wxChar* const EDITION_ENTRY;
-		static const wxChar* const EDITION_UID;
-		static const wxChar* const CHAPTER_TIME_START;
-		static const wxChar* const CHAPTER_TIME_END;
-		static const wxChar* const CHAPTER_DISPLAY;
-		static const wxChar* const CHAPTER_STRING;
-		static const wxChar* const CHAPTER_LANGUAGE;
-		static const wxChar* const CHAPTER_FLAG_HIDDEN;
-		static const wxChar* const CHAPTER_ATOM;
-		static const wxChar* const CHAPTERS;
-		static const wxChar* const TARGETS;
-		static const wxChar* const TAGS;
-		static const wxChar* const TARGET_TYPE_VALUE;
-		static const wxChar* const TARGET_TYPE;
-		static const wxChar* const TAG;
-		static const wxChar* const TAG_LANGUAGE;
-		static const wxChar* const NAME;
-		static const wxChar* const STRING;
-		static const wxChar* const SIMPLE;
+		static const wxChar CHAPTER_UID[];
+		static const wxChar EDITION_ENTRY[];
+		static const wxChar EDITION_UID[];
+		static const wxChar CHAPTER_TIME_START[];
+		static const wxChar CHAPTER_TIME_END[];
+		static const wxChar CHAPTER_DISPLAY[];
+		static const wxChar CHAPTER_STRING[];
+		static const wxChar CHAPTER_LANGUAGE[];
+		static const wxChar CHAPTER_FLAG_HIDDEN[];
+		static const wxChar CHAPTER_ATOM[];
+		static const wxChar CHAPTERS[];
+		static const wxChar TARGETS[];
+		static const wxChar TAGS[];
+		static const wxChar TARGET_TYPE_VALUE[];
+		static const wxChar TARGET_TYPE[];
+		static const wxChar TAG[];
+		static const wxChar TAG_LANGUAGE[];
+		static const wxChar NAME[];
+		static const wxChar STRING[];
+		static const wxChar SIMPLE[];
 	};
 
 	static struct XmlValue
 	{
-		static const wxChar* const ALBUM;
-		static const wxChar* const TRACK;
+		static const wxChar ALBUM[];
+		static const wxChar TRACK[];
 	};
 
 protected:

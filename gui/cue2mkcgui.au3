@@ -5,7 +5,7 @@
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.78
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.79
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -696,6 +696,10 @@ Func read_options()
 
 	$w = _GUICtrlComboBox_GetCurSel($ComboOutputFormat)
 	Switch $w
+		Case 0
+			$s &= "-m- -oce "
+			$s &= get_encoding_str(_GUICtrlComboBox_GetCurSel($ComboCueSheetEncoding))
+
 		Case 1
 			$s &= "-m "
 			negatable_switch($s, $CheckBoxT, "t")
@@ -705,10 +709,6 @@ Func read_options()
 			negatable_switch_long($s, $CheckBoxTagUseCdText, "use-cdtext-tags")
 			negatable_switch_long($s, $CheckBoxTagUseCueComments, "use-cue-comments-tags")
 			negatable_switch_long($s, $CheckBoxTagUseFromMedia, "use-media-tags")
-
-		Case 2
-			$s &= "-m- -oce "
-			$s &= get_encoding_str(_GUICtrlComboBox_GetCurSel($ComboCueSheetEncoding))
 
 	EndSwitch
 
