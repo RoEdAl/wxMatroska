@@ -67,7 +67,6 @@ protected:
 	FILE_ENCODING				m_eCueSheetFileEncoding;
 	bool						m_bTrackOneIndexOne; // or zero
 	bool						m_bAbortOnError;
-	bool						m_bRoundDownToFullFrames;
 	bool						m_bHiddenIndexes;
 	bool						m_bMerge;
 	wxCueSheetReader::ReadFlags m_nReadFlags;
@@ -126,7 +125,6 @@ public:
 	bool SaveCueSheet() const;
 	bool TrackOneIndexOne() const;
 	bool AbortOnError() const;
-	bool RoundDownToFullFrames() const;
 	bool HiddenIndexes() const;
 	const wxString& CueSheetExt() const;
 	const wxString& MatroskaChaptersXmlExt() const;

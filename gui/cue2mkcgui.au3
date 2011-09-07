@@ -5,7 +5,7 @@
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.76
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.77
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -206,7 +206,7 @@ GUICtrlSetData(-1, "cue sheet|Matroska chapters XML file")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $CheckBoxT = GUICtrlCreateCheckbox("Generate tags XML file", 26, 211, 157, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$CheckBoxOf = GUICtrlCreateCheckbox("Generate options file for mkvmerge", 26, 227, 213, 17)
+$CheckBoxK = GUICtrlCreateCheckbox("Generate options file for mkvmerge", 26, 227, 213, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $LabelLang = GUICtrlCreateLabel("Language:", 26, 243, 53, 21, $SS_CENTERIMAGE)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
@@ -257,12 +257,12 @@ $CheckBoxEu = GUICtrlCreateCheckbox("Generate edition UID", 280, 211, 129, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 $ChapterOptionsPane = GUICtrlCreateTabItem("&Chapters file generation options")
-$GroupChapterOptions = GUICtrlCreateGroup("&Chapters file", 4, 24, 293, 133, -1, $WS_EX_TRANSPARENT)
+$GroupChapterOptions = GUICtrlCreateGroup("&Chapters file", 4, 24, 293, 117, -1, $WS_EX_TRANSPARENT)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $CheckBoxCe = GUICtrlCreateCheckbox("Calculate end time of chapters if possible", 8, 38, 217, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$CheckBoxUc = GUICtrlCreateCheckbox("Calculate chapter's end time from next chapter", 8, 54, 276, 17)
+$CheckBoxCn = GUICtrlCreateCheckbox("Calculate chapter's end time from next chapter", 8, 54, 276, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "If track's end time is unknown set it to next track position using frame offset")
 $LabelFo = GUICtrlCreateLabel("Offset:", 24, 75, 35, 21, $SS_CENTERIMAGE)
@@ -278,20 +278,19 @@ GUICtrlSetData(-1, "00|01", "01")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $LabelTrack01_2 = GUICtrlCreateLabel("as beginning of track", 185, 98, 103, 21, $SS_CENTERIMAGE)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$CheckBoxR = GUICtrlCreateCheckbox("Round down track end time to full frames", 8, 122, 217, 17)
+$CheckBoxHiddenIndexes = GUICtrlCreateCheckbox("Convert indexes to hidden chapters", 8, 121, 217, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$CheckBoxHi = GUICtrlCreateCheckbox("Convert indexes to hidden chapters", 8, 137, 217, 17)
-GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+GUICtrlSetTip(-1, "For indexes > 1")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-$GroupFormatting = GUICtrlCreateGroup("&Formatting", 4, 162, 289, 69)
-$LabelTf = GUICtrlCreateLabel("Track title format:", 8, 178, 86, 21, $SS_CENTERIMAGE)
+$GroupFormatting = GUICtrlCreateGroup("&Formatting", 4, 146, 289, 69)
+$LabelTf = GUICtrlCreateLabel("Track title format:", 8, 162, 86, 21, $SS_CENTERIMAGE)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$InputTf = GUICtrlCreateInput("%dp% - %dt% - %tt%", 104, 178, 181, 21)
+$InputTf = GUICtrlCreateInput("%dp% - %dt% - %tt%", 104, 162, 181, 21)
 GUICtrlSetLimit(-1, 150)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$LabelMf = GUICtrlCreateLabel("MKA tilte format:", 8, 202, 86, 21, $SS_CENTERIMAGE)
+$LabelMf = GUICtrlCreateLabel("MKA tilte format:", 8, 186, 86, 21, $SS_CENTERIMAGE)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-$InputMf = GUICtrlCreateInput("%dp% - %dt%", 104, 202, 181, 21)
+$InputMf = GUICtrlCreateInput("%dp% - %dt%", 104, 186, 181, 21)
 GUICtrlSetLimit(-1, 150)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
@@ -420,12 +419,12 @@ Func generate_tags_enable($nMode)
 	Switch $nMode
 		Case 0
 			GUICtrlSetState($CheckBoxT, $GUI_DISABLE)
-			GUICtrlSetState($CheckBoxOf, $GUI_DISABLE)
+			GUICtrlSetState($CheckBoxK, $GUI_DISABLE)
 			GUICtrlSetState($LabelLang, $GUI_DISABLE)
 			GUICtrlSetState($InputLang, $GUI_DISABLE)
 		Case 1
 			GUICtrlSetState($CheckBoxT, $GUI_ENABLE)
-			GUICtrlSetState($CheckBoxOf, $GUI_ENABLE)
+			GUICtrlSetState($CheckBoxK, $GUI_ENABLE)
 			GUICtrlSetState($LabelLang, $GUI_ENABLE)
 			GUICtrlSetState($InputLang, $GUI_ENABLE)
 	EndSwitch
@@ -520,22 +519,21 @@ Func set_default_options()
 	GUICtrlSetState($CheckBoxCe, $GUI_CHECKED)
 	GUICtrlSetState($CheckBoxEc, $GUI_UNCHECKED)
 	GUICtrlSetState($CheckBoxDf, $GUI_CHECKED)
-	GUICtrlSetState($CheckBoxUc, $GUI_UNCHECKED)
+	GUICtrlSetState($CheckBoxCn, $GUI_UNCHECKED)
 	GUICtrlSetData($InputFo, 150)
 	frame_offset_enable(False)
 	GUICtrlSetData($InputAlternateExt, "")
 	GUICtrlSetData($InputTf, "%dp% - %dt% - %tt%")
 	GUICtrlSetData($InputMf, "%dp% - %dt%")
 	GUICtrlSetData($InputLang, "eng")
-	GUICtrlSetState($CheckBoxR, $GUI_UNCHECKED)
-	GUICtrlSetState($CheckBoxHi, $GUI_CHECKED)
+	GUICtrlSetState($CheckBoxHiddenIndexes, $GUI_UNCHECKED)
 	GUICtrlSetData($InputDce, "cue")
 	GUICtrlSetData($InputDme, "mkc.xml")
 	GUICtrlSetData($InputDte, "mkt.xml")
 	GUICtrlSetData($InputDoe, "opt.txt")
 	_GUICtrlComboBox_SetCurSel($ComboOutputFormat, 1)
 	GUICtrlSetState($CheckBoxT, $GUI_UNCHECKED)
-	GUICtrlSetState($CheckBoxOf, $GUI_UNCHECKED)
+	GUICtrlSetState($CheckBoxK, $GUI_UNCHECKED)
 	GUICtrlSetState($CheckBoxRunMkvmerge, $GUI_CHECKED)
 	_GUICtrlComboBox_SetCurSel($ComboCueSheetEncoding, 0)
 	generate_tags_enable(1)
@@ -622,10 +620,10 @@ Func read_options()
 	negatable_switch($s, $CheckBoxCe, "ce")
 	negatable_switch($s, $CheckBoxEc, "ec")
 	negatable_switch($s, $CheckBoxDf, "df")
-	negatable_switch($s, $CheckBoxUc, "uc")
+	negatable_switch($s, $CheckBoxCn, "cn")
 	negatable_switch($s, $CheckBoxMerge, "j")
 
-	If GUICtrlRead($CheckBoxUc) = $GUI_CHECKED Then
+	If GUICtrlRead($CheckBoxCn) = $GUI_CHECKED Then
 		$s &= "-fo "
 		$s &= GUICtrlRead($InputFo)
 		$s &= " "
@@ -640,7 +638,7 @@ Func read_options()
 
 	$w = GUICtrlRead($InputTf)
 	If StringLen($w) > 0 Then
-		$s &= "-tf """
+		$s &= "-f """
 		$s &= $w
 		$s &= """ "
 	EndIf
@@ -666,8 +664,7 @@ Func read_options()
 		$s &= """ "
 	EndIf
 
-	negatable_switch($s, $CheckBoxR, "r")
-	negatable_switch($s, $CheckBoxHi, "hi")
+	negatable_switch_long($s, $CheckBoxHiddenIndexes, "hidden-indexes")
 
 	$w = GUICtrlRead($InputDce)
 	If StringLen($w) > 0 Then
@@ -697,31 +694,33 @@ Func read_options()
 		$s &= " "
 	EndIf
 
-	$s &= " -c -oce "
-	$s &= get_encoding_str(_GUICtrlComboBox_GetCurSel($ComboCueSheetEncoding))
-	$s &= " "
-
 	$w = _GUICtrlComboBox_GetCurSel($ComboOutputFormat)
 	Switch $w
 		Case 1
-			$s &= " -m "
+			$s &= "-m "
 			negatable_switch($s, $CheckBoxT, "t")
-			negatable_switch($s, $CheckBoxOf, "of")
+			negatable_switch($s, $CheckBoxK, "k")
 			negatable_switch($s, $CheckBoxEu, "eu")
 			negatable_switch($s, $CheckBoxTc, "tc")
 			negatable_switch_long($s, $CheckBoxTagUseCdText, "use-cdtext-tags")
 			negatable_switch_long($s, $CheckBoxTagUseCueComments, "use-cue-comments-tags")
 			negatable_switch_long($s, $CheckBoxTagUseFromMedia, "use-media-tags")
 
+		Case 2
+			$s &= "-m- -oce "
+			$s &= get_encoding_str(_GUICtrlComboBox_GetCurSel($ComboCueSheetEncoding))
+
 	EndSwitch
+
+	$s &= " "
 
 	$w = _GUICtrlComboBox_GetCurSel($ComboTrack01)
 	Switch $w
 		Case 0
-			$s &= " -t1i0 "
+			$s &= "-t1i0 "
 
 		Case 1
-			$s &= " -t1i1 "
+			$s &= "-t1i0- "
 	EndSwitch
 
 	negatable_switch($s, $CheckBoxCq, "cq")
@@ -731,20 +730,15 @@ Func read_options()
 	$w = _GUICtrlComboBox_GetCurSel($ComboFlacMode)
 	Switch $w
 		Case 0
-			$s &= "--flac-read-none"
-			$s &= " "
+			$s &= "--flac-read-none "
 		Case 1
-			$s &= "--flac-read-cuesheet-tag-first"
-			$s &= " "
+			$s &= "--flac-read-cuesheet-tag-first "
 		Case 2
-			$s &= "--flac-read-vorbis-comment-first"
-			$s &= " "
+			$s &= "--flac-read-vorbis-comment-first "
 		Case 3
-			$s &= "--flac-read-cuesheet-tag-only"
-			$s &= " "
+			$s &= "--flac-read-cuesheet-tag-only "
 		Case 4
-			$s &= "--flac-read-vorbis-comment-only"
-			$s &= " "
+			$s &= "--flac-read-vorbis-comment-only "
 	EndSwitch
 
 	$s &= _Iif(GUICtrlRead($CheckBoxSingleMediaFile) = $GUI_CHECKED, "--single-media-file", "--media-file-with-embedded-cuesheet")
@@ -1018,8 +1012,8 @@ While True
 		Case $ComboOutput
 			set_output_mode(_GUICtrlComboBox_GetCurSel($ComboOutput))
 
-		Case $CheckBoxUc
-			frame_offset_enable(_Iif(GUICtrlRead($CheckBoxUc) = $GUI_CHECKED, True, False))
+		Case $CheckBoxCn
+			frame_offset_enable(_Iif(GUICtrlRead($CheckBoxCn) = $GUI_CHECKED, True, False))
 
 		Case $ButtonGo
 			$s = get_cmd_line()

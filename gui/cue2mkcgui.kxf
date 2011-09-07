@@ -474,7 +474,7 @@
 									</properties>
 									<components/>
 								</object>
-								<object type="TACheckbox" name="CheckBoxOf">
+								<object type="TACheckbox" name="CheckBoxK">
 									<properties>
 										<property name="Left" vt="Int8">22</property>
 										<property name="Top" vt="Int8">54</property>
@@ -836,7 +836,7 @@
 								<property name="Left" vt="Int8">0</property>
 								<property name="Top" vt="Int8">0</property>
 								<property name="Width" vt="Int16">293</property>
-								<property name="Height" vt="Int16">133</property>
+								<property name="Height" vt="Int8">117</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">32</property>
 								<property name="Caption" vt="String">&amp;Chapters file</property>
@@ -863,7 +863,7 @@
 									</properties>
 									<components/>
 								</object>
-								<object type="TACheckbox" name="CheckBoxUc">
+								<object type="TACheckbox" name="CheckBoxCn">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
 										<property name="Top" vt="Int8">30</property>
@@ -964,28 +964,15 @@
 									</properties>
 									<components/>
 								</object>
-								<object type="TACheckbox" name="CheckBoxR">
+								<object type="TACheckbox" name="CheckBoxHiddenIndexes">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">98</property>
+										<property name="Top" vt="Int8">97</property>
 										<property name="Width" vt="Int16">217</property>
 										<property name="Height" vt="Int8">17</property>
-										<property name="Caption" vt="String">Round down track end time to full frames</property>
-										<property name="TabOrder" vt="Int8">7</property>
-										<property name="CtrlStyle" vt="Int32">1342242819</property>
-										<property name="CtrlExStyle" vt="Int8">0</property>
-										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
-									</properties>
-									<components/>
-								</object>
-								<object type="TACheckbox" name="CheckBoxHi">
-									<properties>
-										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">113</property>
-										<property name="Width" vt="Int16">217</property>
-										<property name="Height" vt="Int8">17</property>
+										<property name="Hint" vt="String">For indexes &gt; 1</property>
 										<property name="Caption" vt="String">Convert indexes to hidden chapters</property>
-										<property name="TabOrder" vt="Int8">8</property>
+										<property name="TabOrder" vt="Int8">7</property>
 										<property name="CtrlStyle" vt="Int32">1342242819</property>
 										<property name="CtrlExStyle" vt="Int8">0</property>
 										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
@@ -997,7 +984,7 @@
 						<object type="TAGroup" name="GroupFormatting">
 							<properties>
 								<property name="Left" vt="Int8">0</property>
-								<property name="Top" vt="Int16">138</property>
+								<property name="Top" vt="Int8">122</property>
 								<property name="Width" vt="Int16">289</property>
 								<property name="Height" vt="Int8">69</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
