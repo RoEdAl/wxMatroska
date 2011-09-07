@@ -226,6 +226,7 @@ size_t wxCueComponent::MoveTags( const wxString& sTagName, wxArrayCueTag& tags )
 }
 
 void wxCueComponent::GetTags(
+	wxCueTag::TagSources nTagSources,
 	const wxTagSynonimsCollection& cdTagsSynonims,
 	const wxTagSynonimsCollection& tagsSynonims,
 	wxArrayCueTag& tags,
@@ -240,6 +241,11 @@ void wxCueComponent::GetTags(
 	wxCueTag cueTag;
 	for ( size_t i = 0, nTags = m_cdTextTags.GetCount(); i < nTags; i++ )
 	{
+		if ( !m_cdTextTags[ i ].TestSource( nTagSources ) )
+		{
+			continue;
+		}
+
 		if ( cdTagsSynonims.GetName( m_cdTextTags[ i ], cueTag ) )
 		{
 			tagsHash[ cueTag.GetName() ].Add( cueTag );
@@ -252,6 +258,11 @@ void wxCueComponent::GetTags(
 
 	for ( size_t i = 0, nTags = m_tags.GetCount(); i < nTags; i++ )
 	{
+		if ( !m_tags[ i ].TestSource( nTagSources ) )
+		{
+			continue;
+		}
+
 		if ( tagsSynonims.GetName( m_tags[ i ], cueTag ) )
 		{
 			tagsHash[ cueTag.GetName() ].Add( cueTag );

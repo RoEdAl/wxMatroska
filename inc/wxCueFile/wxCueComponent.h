@@ -79,10 +79,7 @@ public:
 	const wxArrayCueTag& GetTags() const;
 	size_t GetTags( const wxString&, wxArrayCueTag& ) const;
 	size_t MoveTags( const wxString&, wxArrayCueTag& );
-	void GetTags( const wxTagSynonimsCollection&,
-				  const wxTagSynonimsCollection&,
-				  wxArrayCueTag&,
-				  wxArrayCueTag& ) const;
+	void GetTags( wxCueTag::TagSources, const wxTagSynonimsCollection&, const wxTagSynonimsCollection&, wxArrayCueTag&, wxArrayCueTag& ) const;
 
 	bool AddCdTextInfoTag( const wxString&, const wxString& );
 	bool AddCdTextInfoTag( const wxCueTag& );

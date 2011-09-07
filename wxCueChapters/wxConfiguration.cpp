@@ -1124,11 +1124,6 @@ wxCueTag::TagSources wxConfiguration::GetTagSources() const
 	return m_nTagSources;
 }
 
-bool wxConfiguration::ShouldIgnoreTag( const wxCueTag& tag ) const
-{
-	return !tag.TestSource( m_nTagSources );
-}
-
 bool wxConfiguration::UseMLang() const
 {
 	return m_bUseMLang;

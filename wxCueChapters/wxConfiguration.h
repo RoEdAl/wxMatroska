@@ -154,7 +154,6 @@ public:
 	bool GetMerge() const;
 	wxCueSheetReader::ReadFlags GetReadFlags() const;
 	wxCueTag::TagSources GetTagSources() const;
-	bool ShouldIgnoreTag( const wxCueTag& ) const;
 	bool UseMLang() const;
 	bool UseFullPaths() const;
 	bool EllipsizeTags() const;
@@ -162,7 +161,6 @@ public:
 	CUESHEET_ATTACH_MODE GetCueSheetAttachMode() const;
 	bool AttachCover() const;
 	bool RemoveExtraSpaces() const;
-
 	wxString GetOutputFile( const wxInputFile& ) const;
 	void GetOutputFile( const wxInputFile&, wxFileName&, wxFileName& ) const;
 	void GetOutputMatroskaFile( const wxInputFile&, wxFileName&, wxFileName& ) const;
