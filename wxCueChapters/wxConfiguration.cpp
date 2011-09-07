@@ -18,13 +18,23 @@ const wxChar wxConfiguration::MATROSKA_TAGS_EXT[]	  = wxT( "mkt.xml" );
 const wxChar wxConfiguration::MATROSKA_OPTS_EXT[]	  = wxT( "opt.txt" );
 const wxChar wxConfiguration::MATROSKA_AUDIO_EXT[]	  = wxT( "mka" );
 const wxChar wxConfiguration::CUESHEET_EXT[]		  = wxT( "cue" );
+const wxChar wxConfiguration::TRACK_NAME_FORMAT[]	  = wxT( "%dp% - %dt% - %tt%" );
+const wxChar wxConfiguration::MATROSKA_NAME_FORMAT[]  = wxT( "%dp% - %dt%" );
+const size_t wxConfiguration::MAX_EXT_LEN			  = 20;
+const wxChar wxConfiguration::LANG_FILE_URL[]		  = wxT( "http://www.loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt" );
+const wxChar wxConfiguration::LANG_FILE_NAME[]		  = wxT( "ISO-639-2_utf-8.txt" );
 
-const wxChar wxConfiguration::TRACK_NAME_FORMAT[]	 = wxT( "%dp% - %dt% - %tt%" );
-const wxChar wxConfiguration::MATROSKA_NAME_FORMAT[] = wxT( "%dp% - %dt%" );
+// ===============================================================================
 
-static const size_t MAX_EXT_LEN		 = 20;
-static const wxChar LANG_FILE_URL[]	 = wxT( "http://www.loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt" );
-static const wxChar LANG_FILE_NAME[] = wxT( "ISO-639-2_utf-8.txt" );
+const wxConfiguration::CuesheetAttachModeName wxConfiguration::AttachModeNames[] =
+{
+	{ CUESHEET_ATTACH_NONE, wxT( "none" ) },
+	{ CUESHEET_ATTACH_SOURCE, wxT( "source" ) },
+	{ CUESHEET_ATTACH_DECODED, wxT( "decoded" ) },
+	{ CUESHEET_ATTACH_RENDERED, wxT( "rendered" ) }
+};
+
+const size_t wxConfiguration::AttachModeNamesSize = WXSIZEOF( wxConfiguration::AttachModeNames );
 
 // ===============================================================================
 
@@ -120,29 +130,23 @@ bool wxConfiguration::GetFileEncodingFromStr( const wxString& sFileEncoding, wxC
 wxString wxConfiguration::GetCueSheetAttachModeStr( wxConfiguration::CUESHEET_ATTACH_MODE eCsAttachMode )
 {
 	wxString s;
+	bool	 bRes = false;
 
-	switch ( eCsAttachMode )
+	for ( size_t i = 0; i < AttachModeNamesSize && !bRes; i++ )
 	{
-		case CUESHEET_ATTACH_NONE:
-		s = wxT( "NONE" );
-		break;
-
-		case CUESHEET_ATTACH_SOURCE:
-		s = wxT( "SOURCE" );
-		break;
-
-		case CUESHEET_ATTACH_DECODED:
-		s = wxT( "DECODED" );
-		break;
-
-		case CUESHEET_ATTACH_RENDERED:
-		s = wxT( "RENDERED" );
-		break;
-
-		default:
-		s.Printf( wxT( "UNKNOWN %d" ), eCsAttachMode );
-		break;
+		if ( AttachModeNames[ i ].eMode == eCsAttachMode )
+		{
+			s = AttachModeNames[ i ].pszName;
+			s.UpperCase();
+			bRes = true;
+		}
 	}
+
+	if ( !bRes )
+	{
+		s.Printf( wxT( "UNKNOWN <%d>" ), eCsAttachMode );
+	}
+
 	return s;
 }
 
@@ -156,30 +160,16 @@ bool wxConfiguration::GetCueSheetAttachModeFromStr( const wxString& sCsAttachMod
 	else
 	{
 		bDefault = false;
-		if ( sCsAttachMode.CmpNoCase( wxT( "none" ) ) == 0 )
+		for ( size_t i = 0; i < AttachModeNamesSize; i++ )
 		{
-			eCsAttachMode = CUESHEET_ATTACH_NONE;
-			return true;
+			if ( sCsAttachMode.CmpNoCase( AttachModeNames[ i ].pszName ) )
+			{
+				eCsAttachMode = AttachModeNames[ i ].eMode;
+				return true;
+			}
 		}
-		else if ( sCsAttachMode.CmpNoCase( wxT( "source" ) ) == 0 )
-		{
-			eCsAttachMode = CUESHEET_ATTACH_SOURCE;
-			return true;
-		}
-		else if ( sCsAttachMode.CmpNoCase( wxT( "decoded" ) ) == 0 )
-		{
-			eCsAttachMode = CUESHEET_ATTACH_DECODED;
-			return true;
-		}
-		else if ( sCsAttachMode.CmpNoCase( wxT( "rendered" ) ) == 0 )
-		{
-			eCsAttachMode = CUESHEET_ATTACH_RENDERED;
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+
+		return false;
 	}
 }
 
@@ -259,7 +249,7 @@ wxConfiguration::wxConfiguration( void ):
 	m_bRunMkvmerge( true ),
 	m_bTrackOneIndexOne( true ),
 	m_bAbortOnError( true ),
-	m_bHiddenIndexes(false),
+	m_bHiddenIndexes( false ),
 	m_sCueSheetExt( CUE_SHEET_EXT ),
 	m_sMatroskaChaptersXmlExt( MATROSKA_CHAPTERS_EXT ),
 	m_sMatroskaTagsXmlExt( MATROSKA_TAGS_EXT ),
@@ -302,8 +292,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddSwitch( wxT( "rs" ), wxT( "remove-extra-spaces" ), _( "Remove extra spaces from tags (default: yes)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 
 	// embedded mode flags
-	cmdLine.AddSwitch( wxEmptyString, wxT( "single-media-file" ), _( "Embedded mode flag. Assume input as single media file without cuesheet (default: no, opposite to media-file-with-embedded-cuesheet)" ), wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxEmptyString, wxT( "media-file-with-embedded-cuesheet" ), _( "Embedded mode flag. Assume input file as media file with embedded cuesheet (default: yes, opposite to single-media-file)" ), wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, wxT( "single-media-file" ), _( "Embedded mode flag. Assume input as single media file without cuesheet (default: no)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxEmptyString, wxT( "flac-read-none" ), _( "Embedded mode flag - FLAC cuesheet read mode. Do not read cuesheet from FLAC container" ), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxEmptyString, wxT( "flac-read-cuesheet-tag-first" ), _( "Embedded mode flag - FLAC cuesheet read mode. Try to read embedded cuesheet from FLAC container - first try read CUESHEET tag then try CUESHEET comment (default)" ), wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxEmptyString, wxT( "flac-read-vorbis-comment-first" ), _( "Embedded mode flag - FLAC cuesheet read mode. Try to read embedded cuesheet from FLAC container - first try read CUESHEET comment then try CUESHEET tag" ), wxCMD_LINE_PARAM_OPTIONAL );
@@ -593,16 +582,10 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		}
 	}
 
-	if ( cmdLine.Found( wxT( "single-media-file" ) ) )
+	if ( ReadNegatableSwitchValue( cmdLine, wxT( "single-media-file" ), switchVal ) )
 	{
 		m_nReadFlags &= ~wxCueSheetReader::EC_SINGLE_MEDIA_FILE;
-		m_nReadFlags |= wxCueSheetReader::EC_SINGLE_MEDIA_FILE;
-	}
-
-	if ( cmdLine.Found( wxT( "media-file-with-embedded-cuesheet" ) ) )
-	{
-		m_nReadFlags &= ~wxCueSheetReader::EC_SINGLE_MEDIA_FILE;
-		m_nReadFlags |= 0;
+		m_nReadFlags |= switchVal ? wxCueSheetReader::EC_SINGLE_MEDIA_FILE : 0u;
 	}
 
 	if ( cmdLine.Found( wxT( "flac-read-none" ) ) )
@@ -711,13 +694,20 @@ wxString wxConfiguration::BoolToIdx( bool b )
 	return b ? wxT( "01" ) : wxT( "00" );
 }
 
+void wxConfiguration::AddFlag( wxArrayString& as, wxCueSheetReader::ReadFlags flags, wxCueSheetReader::ReadFlags mask, const wxString& sText )
+{
+	if ( wxCueSheetReader::TestReadFlags( flags, mask ) )
+	{
+		as.Add( sText );
+	}
+}
+
 wxString wxConfiguration::GetReadFlagsDesc( wxCueSheetReader::ReadFlags flags )
 {
 	wxArrayString as;
 
-	as.Add( ( ( flags & wxCueSheetReader::EC_SINGLE_MEDIA_FILE ) != 0 ) ? wxT( "single-media-file" ) : wxT( "media-file-with-embedded-cuesheet" ) );
-
 	wxString s;
+
 	switch ( flags & wxCueSheetReader::EC_FLAC_READ_MASK )
 	{
 		case wxCueSheetReader::EC_FLAC_READ_NONE:
@@ -746,9 +736,10 @@ wxString wxConfiguration::GetReadFlagsDesc( wxCueSheetReader::ReadFlags flags )
 	}
 	as.Add( s );
 
-	as.Add( ( ( flags & wxCueSheetReader::EC_MEDIA_READ_TAGS ) != 0 ) ? wxT( "media-tags" ) : wxT( "no-media-tags" ) );
-	as.Add( ( ( flags & wxCueSheetReader::EC_FIND_COVER ) != 0 ) ? wxT( "find-cover" ) : wxT( "no-cover" ) );
-	as.Add( ( ( flags & wxCueSheetReader::EC_FIND_LOG ) != 0 ) ? wxT( "find-log" ) : wxT( "no-log" ) );
+	AddFlag( as, flags, wxCueSheetReader::EC_SINGLE_MEDIA_FILE, wxT( "single-media-file" ) );
+	AddFlag( as, flags, wxCueSheetReader::EC_MEDIA_READ_TAGS, wxT( "media-tags" ) );
+	AddFlag( as, flags, wxCueSheetReader::EC_FIND_COVER, wxT( "find-cover" ) );
+	AddFlag( as, flags, wxCueSheetReader::EC_FIND_LOG, wxT( "find-log" ) );
 
 	s.Empty();
 	size_t nItems = as.GetCount();

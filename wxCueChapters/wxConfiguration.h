@@ -52,6 +52,17 @@ public:
 
 protected:
 
+	typedef struct _CuesheetAttachModeName
+	{
+		CUESHEET_ATTACH_MODE eMode;
+		const wxChar* pszName;
+	} CuesheetAttachModeName;
+
+	static const CuesheetAttachModeName AttachModeNames[];
+	static const size_t					AttachModeNamesSize;
+
+protected:
+
 	bool						m_bChapterTimeEnd; // default=true
 	bool						m_bUnknownChapterTimeEndToNextChapter; // default=false
 	unsigned long				m_nChapterOffset; // in frames
@@ -101,6 +112,7 @@ protected:
 	static wxString BoolToIdx( bool );
 	static wxString GetReadFlagsDesc( wxCueSheetReader::ReadFlags );
 	static wxString GetTagSourcesNames( const wxArrayTagSource& );
+	static void AddFlag( wxArrayString&, wxCueSheetReader::ReadFlags, wxCueSheetReader::ReadFlags, const wxString& );
 
 	bool CheckLang( const wxString& ) const;
 	void FillArray( wxArrayString& as ) const;
@@ -164,9 +176,11 @@ public:
 	static const wxChar MATROSKA_OPTS_EXT[];
 	static const wxChar MATROSKA_AUDIO_EXT[];
 	static const wxChar CUESHEET_EXT[];
-
 	static const wxChar MATROSKA_NAME_FORMAT[];
 	static const wxChar TRACK_NAME_FORMAT[];
+	static const size_t MAX_EXT_LEN;
+	static const wxChar LANG_FILE_URL[];
+	static const wxChar LANG_FILE_NAME[];
 
 public:
 

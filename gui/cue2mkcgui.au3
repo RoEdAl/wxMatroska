@@ -5,7 +5,7 @@
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.77
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.78
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -741,9 +741,7 @@ Func read_options()
 			$s &= "--flac-read-vorbis-comment-only "
 	EndSwitch
 
-	$s &= _Iif(GUICtrlRead($CheckBoxSingleMediaFile) = $GUI_CHECKED, "--single-media-file", "--media-file-with-embedded-cuesheet")
-	$s &= " "
-
+	negatable_switch_long($s, $CheckBoxSingleMediaFile, "single-media-file")
 	negatable_switch_long($s, $CheckBoxReadMetadata, "read-media-tags")
 	negatable_switch_long($s, $CheckBoxMLang, "use-mlang")
 	negatable_switch_long($s, $CheckBoxFullPaths, "use-full-paths")
