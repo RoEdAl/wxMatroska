@@ -442,7 +442,7 @@ void wxCueSheetReader::ProcessMediaInfoCueSheet( wxString& sCueSheet )
 	re.ReplaceAll( &sCueSheet, wxT( "'\\1'" ) );
 }
 
-bool wxCueSheetReader::ReadCueSheetFromVorbisComment( const wxFlacMetaDataReader& flacReader, ReadFlags nMode )
+bool wxCueSheetReader::ReadCueSheetFromVorbisComment( const wxDataFile& mediaFile, const wxFlacMetaDataReader& flacReader, ReadFlags nMode )
 {
 	if ( !flacReader.HasVorbisComment() )
 	{
@@ -457,10 +457,10 @@ bool wxCueSheetReader::ReadCueSheetFromVorbisComment( const wxFlacMetaDataReader
 		return false;
 	}
 
-	bool res = ParseCue( wxCueSheetContent( sCueSheet, flacReader.GetFlacFile(), true ), ( nMode & ~EC_MEDIA_READ_TAGS ) );
+	bool res = ParseCue( wxCueSheetContent( sCueSheet, mediaFile.GetRealFileName(), true ), ( nMode & ~EC_MEDIA_READ_TAGS ) );
 	if ( res )
 	{
-		m_cueSheet.SetSingleDataFile( flacReader.GetFlacFile() );
+		m_cueSheet.SetSingleDataFile( mediaFile );
 	}
 
 	if ( res && TestReadFlags( nMode, EC_MEDIA_READ_TAGS ) )
@@ -471,7 +471,7 @@ bool wxCueSheetReader::ReadCueSheetFromVorbisComment( const wxFlacMetaDataReader
 	return res;
 }
 
-bool wxCueSheetReader::ReadCueSheetFromCueSheetTag( const wxFlacMetaDataReader& flacReader, ReadFlags nMode )
+bool wxCueSheetReader::ReadCueSheetFromCueSheetTag( const wxDataFile& mediaFile, const wxFlacMetaDataReader& flacReader, ReadFlags nMode )
 {
 	if ( !flacReader.HasCueSheet() )
 	{
@@ -515,7 +515,7 @@ bool wxCueSheetReader::ReadCueSheetFromCueSheetTag( const wxFlacMetaDataReader& 
 		m_cueSheet.AddTrack( track );
 	}
 
-	m_cueSheet.SetSingleDataFile( flacReader.GetFlacFile() );
+	m_cueSheet.SetSingleDataFile( mediaFile );
 	wxCueSheetContent content( wxTextCueSheetRenderer::ToString( m_cueSheet ), flacReader.GetFlacFile(), true );
 	m_cueSheetContent = content;
 
@@ -540,9 +540,10 @@ bool wxCueSheetReader::ReadCueSheetFromCueSheetTag( const wxFlacMetaDataReader& 
 	return true;
 }
 
-bool wxCueSheetReader::ReadEmbeddedInFlacCueSheet( const wxString& sMediaFile, ReadFlags nMode )
+bool wxCueSheetReader::ReadEmbeddedInFlacCueSheet( const wxDataFile& mediaFile, ReadFlags nMode )
 {
 	wxFlacMetaDataReader flacReader;
+	wxString			 sMediaFile( mediaFile.GetRealFileName().GetFullPath() );
 
 	if ( !flacReader.ReadMetadata( sMediaFile ) )
 	{
@@ -552,16 +553,16 @@ bool wxCueSheetReader::ReadEmbeddedInFlacCueSheet( const wxString& sMediaFile, R
 	switch ( nMode & EC_FLAC_READ_MASK )
 	{
 		case EC_FLAC_READ_COMMENT_ONLY:
-		return ReadCueSheetFromVorbisComment( flacReader, nMode );
+		return ReadCueSheetFromVorbisComment( mediaFile, flacReader, nMode );
 
 		case EC_FLAC_READ_TAG_ONLY:
-		return ReadCueSheetFromCueSheetTag( flacReader, nMode );
+		return ReadCueSheetFromCueSheetTag( mediaFile, flacReader, nMode );
 
 		case EC_FLAC_READ_TAG_FIRST_THEN_COMMENT:
-		return ReadCueSheetFromCueSheetTag( flacReader, nMode ) || ReadCueSheetFromVorbisComment( flacReader, nMode );
+		return ReadCueSheetFromCueSheetTag( mediaFile, flacReader, nMode ) || ReadCueSheetFromVorbisComment( mediaFile, flacReader, nMode );
 
 		case EC_FLAC_READ_COMMENT_FIRST_THEN_TAG:
-		return ReadCueSheetFromVorbisComment( flacReader, nMode ) || ReadCueSheetFromCueSheetTag( flacReader, nMode );
+		return ReadCueSheetFromVorbisComment( mediaFile, flacReader, nMode ) || ReadCueSheetFromCueSheetTag( mediaFile, flacReader, nMode );
 
 		default:
 		return false;
@@ -746,9 +747,10 @@ bool wxCueSheetReader::ReadWavpackTags( const wxString& sMediaFile, size_t nTrac
 	}
 }
 
-bool wxCueSheetReader::ReadEmbeddedInWavpackCueSheet( const wxString& sMediaFile, ReadFlags nMode )
+bool wxCueSheetReader::ReadEmbeddedInWavpackCueSheet( const wxDataFile& mediaFile, ReadFlags nMode )
 {
 	wxString sCueSheet;
+	wxString sMediaFile( mediaFile.GetRealFileName().GetFullPath() );
 
 	if ( !wxWavpackTagReader::ReadCueSheetTag( sMediaFile, sCueSheet ) )
 	{
@@ -760,7 +762,7 @@ bool wxCueSheetReader::ReadEmbeddedInWavpackCueSheet( const wxString& sMediaFile
 	if ( res )
 	{
 		wxASSERT( m_cueSheet.HasSingleDataFile() );
-		m_cueSheet.SetSingleDataFile( sMediaFile );
+		m_cueSheet.SetSingleDataFile( mediaFile );
 	}
 
 	if ( res )
@@ -805,11 +807,11 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, ReadFla
 		switch ( dataFile.GetMediaType() )
 		{
 			case wxDataFile::MEDIA_TYPE_FLAC:
-			bRes = ReadEmbeddedInFlacCueSheet( sMediaFile, nMode );
+			bRes = ReadEmbeddedInFlacCueSheet( dataFile, nMode );
 			break;
 
 			case wxDataFile::MEDIA_TYPE_WAVPACK:
-			bRes = ReadEmbeddedInWavpackCueSheet( sMediaFile, nMode );
+			bRes = ReadEmbeddedInWavpackCueSheet( dataFile, nMode );
 			break;
 
 			default:

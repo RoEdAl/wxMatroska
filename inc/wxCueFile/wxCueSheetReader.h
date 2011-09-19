@@ -178,15 +178,15 @@ protected:
 protected:
 
 	// FLAC
-	bool ReadEmbeddedInFlacCueSheet( const wxString &, ReadFlags );
-	bool ReadCueSheetFromVorbisComment( const wxFlacMetaDataReader &, ReadFlags );
-	bool ReadCueSheetFromCueSheetTag( const wxFlacMetaDataReader &, ReadFlags );
+	bool ReadEmbeddedInFlacCueSheet( const wxDataFile &, ReadFlags );
+	bool ReadCueSheetFromVorbisComment( const wxDataFile &, const wxFlacMetaDataReader &, ReadFlags );
+	bool ReadCueSheetFromCueSheetTag( const wxDataFile &, const wxFlacMetaDataReader &, ReadFlags );
 	bool AppendFlacTags( const wxFlacMetaDataReader&, bool );
 
 	bool AppendFlacTags( const wxFlacMetaDataReader &, size_t, size_t );
 
 	// WavPack
-	bool ReadEmbeddedInWavpackCueSheet( const wxString &, ReadFlags );
+	bool ReadEmbeddedInWavpackCueSheet( const wxDataFile &, ReadFlags );
 	bool ReadWavpackTags( const wxString&, bool );
 
 	bool ReadWavpackTags( const wxString &, size_t, size_t );
