@@ -80,7 +80,7 @@ public:
 	MediaType GetMediaType() const;
 	bool HasCueSheet() const;
 	const wxString& GetCueSheet() const;
-
+	bool IsBinary() const;
 	bool IsEmpty() const;
 
 	wxDataFile& Assign( const wxString&, FileType = BINARY );

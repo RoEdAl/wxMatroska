@@ -189,7 +189,7 @@ wxDataFile::MediaType wxDataFile::GetMediaType() const
 
 bool wxDataFile::HasCueSheet() const
 {
-	return m_sCueSheet.IsEmpty();
+	return !m_sCueSheet.IsEmpty();
 }
 
 const wxString& wxDataFile::GetCueSheet() const
@@ -205,6 +205,11 @@ wxString wxDataFile::GetFileTypeAsString() const
 bool wxDataFile::IsEmpty() const
 {
 	return !m_fileName.IsOk();
+}
+
+bool wxDataFile::IsBinary() const
+{
+	return ( m_ftype == BINARY ) || ( m_ftype == MOTOROLA );
 }
 
 void wxDataFile::Clear()
@@ -247,7 +252,7 @@ bool wxDataFile::FindFile( wxFileName& fn, const wxString& sAlternateExt ) const
 	}
 
 	wxString sTokens( sAlternateExt );
-	if ( m_ftype == BINARY )
+	if ( IsBinary() )
 	{
 		return false;
 	}
@@ -513,7 +518,7 @@ bool wxDataFile::GetInfo( const wxString& sAlternateExt )
 	wxULongLong	   frames;
 	bool		   res;
 
-	if ( m_ftype == BINARY )
+	if ( IsBinary() )
 	{
 		si.SetDefault();
 		m_sMIFormat = _T( "BINARY" );
