@@ -1,0 +1,505 @@
+# Wstęp.
+
+W tym artykule chciałbym przedstawić mój program `cue2mkc`. Chciałbym zaprezentować jego podstawowe możliwości oraz genezę
+jego powstania. Zdaję sobie sprawę z wielu braków tego programu jednak uważam, że uzyskał już on minimalną
+funkcjonalność wartą zaprezentowania.
+
+# Geneza.
+
+W jednym z poprzednich artykułów opisywałem zalety kontenera Matrioszka jako kontenera audio i pokazałem "ręczny" sposób
+tworzenia takiego kontenera z pary plik audio + plik CUE. Program `cue2mkc` jest próbą zautomatyzowania tego procesu.
+Początkowo program `cue2mkc` miał być tylko programem odczytującym plik CUE i generującym na tej podstawie plik XML z
+opisem rozdziałów (ang. *chapters*). Standardowy program `mkvmerge` potrafi to zrobić jednak z sposób nie do końca
+zadowalający. Moje zastrzeżenia dotyczyły głównie obsługi indeksów utworu w pliku CUE (a w zasadzie na płycie CD) .
+Problemy z obsługą indeksów widoczne były już we wspomnianym artykule z opisem ręcznego tworzenia kontenerów Matrioszka.
+Program `mkvmerge` importował wszystkie indeksy mimo że często ich importowanie nie ma większego sensu. Indeks o numerze
+jeden to po prostu początek utworu i nie ma sensu jego jawne importowanie. Indeks o numerze zero (jeżeli jest) w
+zasadzie jest końcem poprzedniego utworu. Indeksy o numerze większym niż jeden są bardzo rzadko używane ale jeżeli już
+są w to są to jedyne indeksy które warto jawnie importować. Tak domyślnie działa program `cue2mkc`:
+
+-   indeks o numerze zero uznawany są za koniec poprzedniego utworu (w kontenerze Matrioszka rozdział obowiązkowo musi
+    mieć znacznik początku i opcjonalnie może posiadać znacznik końca)
+-   indeks o numerze jeden uznawany jest za znacznik początku utworu
+-   indeks o numerze wyższym niż jeden jest jawnie importowany jako podrozdział (pamiętajmy o hierarchicznej strukturze
+    rozdziałów w kontenerze Matrioszka) z opcjonalnym atrybutem "ukryty" (ang. *hidden*)
+
+Takie było początkowe założenie funkcjonalności programu `cue2mkc` (stąd nazwa programu) – nieco lepiej niż program
+`mkvmerge` wygenerować plik XML z opisem rozdziałów na podstawie pliku CUE. Gdy jednak napisałem już algorytm czytający
+plik CUE nie było już trudno zrobić jeszcze jedną rzecz – wygenerować plik XML z opisem metadanych w wziętych z pliku
+CUE (również z komentarzy zawartych w tym pliku). Następnym etapem było dodanie możliwości odczytania pliku CUE
+osadzonego w pliku multimedialnym za pomocą biblioteki `MediaInfo`. Za pomocą biblioteki `MediaInfo` chciałem też odczytać
+metadane również z kontenera audio jednak okazało się to mało wygodne. Zamiast tego użyłem “natywnych” bibliotek w celu
+odczytania metadanych z kontenerów FLAC oraz WavPack. Do tego momentu program `cue2mkc` generował z jednego pliku CUE dwa
+pliki XML – jeden z opisem rozdziałów i jeden z opisem metadanych (zarówno dla całego kontenera jak i poszczególnych
+rozdziałów) – i w zasadzie nie miał bezpośrednio nic wspólnego z programem `mkvmerge`. Wygenerowane pliki XML można było
+po prostu użyć jako pliki wejściowe do tego programu. Program `mkvmerge` należało jednak uruchomić z odpowiednimi
+parametrami oddzielnie. Pomyślałem więc, że dobrze by było by mój program potrafił wywołać program `mkvmerge` z
+odpowiednimi parametrami. W tym celu generowany jest najpierw plik tekstowy z parametrami dla programu `mkvmerge` a
+następnie (opcjonalnie) program `mkvmerge` jest uruchamiany z parametrami wziętymi z tego pliku. W efekcie program `cue2mkc`
+(oczywiście przy pomocy programu `mkvmerge`) potrafi wygenerować kontener Matrioszka z opisem rozdziałów oraz metadanymi.
+Na sam koniec dodałem możliwość osadzenia w generowanym kontenerze Matrioszka obrazka (np. z okładką płyty).
+
+# Funkcjonalność.
+
+Podsumujmy zatem. Program `cue2mkc` pozwala z pliku CUE oraz skojarzonymi z nimi plikami audio:
+
+-   Wygenerować plik XML z opisem rozdziałów.
+-   Wygenerować plik XML z opisem metadanych dla całego kontenera (albumu) oraz poszczególnych rozdziałów (utworów).
+-   Wygenerować plik tekstowy z parametrami dla programu `mkvmerge` pozwalającymi na wygenerowanie kontenera Matrioszka z
+    zadanym materiałem audio wraz z opisem rozdziałów i metadanymi. W wygenerowanym pliku znajdować mogą się również
+    opcje pozwalające osadzić w generowanym kontenerze jednego obrazka (np. z okładką płyty) oraz jednego pliku LOG (np.
+    raport wygenerowany przez program EAC).
+-   Uruchomić program `mkvmerge` z opcjami zawartymi w pliku tekstowym opisanym w poprzednim punkcie.
+
+Plik CUE może być osobnym plikiem albo być osadzonym w kontenerze audio. Dodatkowo dla plików FLAC oraz WavPack metadane
+odczytywane mogą być również z tych kontenerów nie tylko z pliku CUE. Ponadto program `cue2mkc` potrafi też pracować w
+trybie łączenia plików CUE – na podstawie kilku plików CUE generowany jest jeden plik XML z opisem rozdziałów. Pozwala
+to na wygenerowanie jednego kontenera Matrioszka np. dla wielopłytowych wydawnictw. Program potrafi również dokonywać
+drobnych korekcji w importowanych metadanych. Dostępne korekcje to:
+
+-   Obcinanie zbędnych spacji na początku i końcu tekstu.
+-   Korekcja cudzysłowów (np. "ala \`ma\` kota" jest zamieniane na „ala ,ma' kota”).
+-   Zamiana trzech kropek [...] na jeden znak wielokropka […].
+
+Program `cue2mkc` jest programem w pełni obsługującym Unicode więc nie ma problemów z oczytaniem różnych narodowych
+znaków. Wykorzystując bibliotekę MLang program `cue2mkc` próbuje też rozpoznać kodowanie wejściowego pliku CUE i przy
+imporcie danych dokonać odpowiedniego przekodowania. Rozpoznanie kodowania pliku CUE odbywa się również za pomocą tzw.
+znacznika BOM (ang. *Byte Order Mark*) znajdującego się na początku pliku jeżeli znacznik takowy na początku pliku się
+znajduje (rozpoznawane kodowania: UTF-8, UTF-16LE, UTF-16BE, UTF-32LE, UTF-32BE). Sam program `cue2mkc` jest programem
+uruchamianym z linii komend (ang. *console application*). Jednak stworzyłem też prosty program okienkowy `cue2mkcgui` gdzie
+zdecydowaną większość opcji dla programu można sobie "wyklikać". Program `cue2mkcgui` po prostu uruchamia program `cue2mkc`
+z “wyklikanymi” opcjami. W dalszej części artykułu nie będę opisywać szczegółowo parametrów programu `cue2mkc`. Zamiast
+tego używał będę programu `cue2mkcgui` i na kilku praktycznych przykładach jak za pomocą mojego programu tworzyć można
+kompletne kontenery Matrioszka z zawartością audio.
+
+# Instalacja i konfiguracja.
+
+Zanim przystąpię do prezentacji programu musimy musimy go oczywiście zainstalować. Dodatkowo musimy zainstalować i
+skonfigurować kilka innych programów i komponentów.
+
+## WavPack.
+
+Instalacja kodeków WavPack jest potrzebna tylko wtedy gdy instalujemy i konfigurujemy program EAC (patrz niżej). W
+zasadzie trudno tu mówić o instalacji – po prostu [pobieramy](http://www.wavpack.com/downloads.html) paczkę ZIP (Windows
+command-line programs and user documentation) i rozpakowujemy ją w dowolnie wybrane miejsce. W poniższych przykładach
+zamiast kodeka FLAC używam właśnie WavPack'a. Oczywiście program `cue2mkc` działa również dla plików FLAC jednak
+implementacja osadzania strumienia FLAC w kontenerze Matrioszka nie jest najlepsza. Było to widać już we wspomnianym
+wcześniejszym artykule gdzie musiałem z linii komend użyć programu metaflac. Implementacja osadzania strumienia WavPack
+w kontenerze Matrioszka wydaje się być lepiej dopracowana. Chciałbym aby to było jasne – kodek FLAC nie jest gorszy od
+WavPack'a tylko implementacja osadzania strumienia FLAC w kontenerze Matrioszka nie jest dopracowana i tylko z tego
+powodu wybieram w poniższych przykładach WavPack'a.
+
+Jeżeli ktoś nie lubi w ogóle kompresji audio – nawet bezstratnej – może osadzić w kontenerze Matrioszka nieskompresowany
+strumień audio. Program `cue2mkc` doskonale radzi sobie z parą WAV + CUE.
+
+## EAC – Exact Audio Copy.
+
+Program EAC to znany program do rippowania płyt CD. W poniższych przykładach chciałbym pokazać całą ścieżkę tworzenia
+kontenerów audio – od rippowania do utworzenia kontenera Matrioszka. Dlatego więc zalecam zainstalowanie i
+skonfigurowanie tego programu. Oczywiście nie jest to konieczne i punktem wyjścia może być po prostu para plik audio +
+plik CUE. Można też użyć dowolnego innego programu do rippowania płyt CD.
+
+Program EAC można pobrać ze strony
+[http://www.exactaudiocopy.de/en/index.php/resources/download](http://www.exactaudiocopy.de/en/index.php/resources/download).
+Instalacja programu jest prosta – w instalatorze nie trzeba wybierać specjalnych opcji. Gorzej jest z konfiguracją tego
+programu. Czytelnik pozwoli że nie będę się zagłębiał w całą konfigurację programu - w sieci znaleźć można opisów
+konfiguracji EAC'a dla różnych napędów. Tutaj skupię się tylko na opcjach ważnych z punktu widzenia programu `cue2mkc`.
+Zalecam zainstalowanie programu EAC w wersji **1.0 beta 2** lub wyższej.
+
+### Konfiguracja kodeka WavPack.
+
+1.  Z menu **EAC** wybieramy opcję **Compression options**.
+2.  W dialogu który się pojawi wybieramy zakładkę **External Compression**.
+    * Zaznaczmy opcję **Use external program for compression**.
+    * Opcję **Parameter passing scheme** ustawiamy na **User Defined Encoder**.
+    * W polu Use file extension wpisujemy **.wv**.
+    * W polu **Program, including path, used for compression** wpisujemy pełną ścieżkę do rozpakowanego wcześniej
+      kodeka wavpack.exe.
+    * W polu **Additional command-line options** wpisujemy następującą sekwencję:
+	
+			-q -h -x1 -t -w "ALBUM=%albumtitle%" -w "ALBUM ARTIST=%albumartist%" -w "COMPOSER=%albumcomposer%" -w "ALBUM
+			PERFORMER=%albuminterpret%" -w "COMMENT=%comment%" -w YEAR=%year% -w GENRE=%genre% -w
+			"DISC=%cdnumber%/%totalcds%" %source% %dest%
+
+	* Zaznaczmy opcję **Delete WAV after compression** (opcjonalnie).
+	* Zaznaczmy opcję **Check for external program return code** (opcjonalnie).
+
+	![EAC: Compression options - External Compression](eac/compression_external_compression.png)
+
+3.  Wybieramy zakładkę **Comment**.
+	*  Wybieramy opcję **Write the comment text of the CD into ID3 tag comment field**.
+
+	![EAC: Compression options - Comment](eac/compression_comment.png)
+
+4.  Klikamy na przycisk **OK**.
+5.  W dolnej części głownego okna programu klikamy na przycisk **New**. W dialogu który się pojawi: \
+	![EAC: Tworzenie nowego profilu kompresji](eac/new_compression_profile.png)
+	* Wpisujemy nazwę tworzonego profilu np. `WavPack – album`.
+	* Jako typ profilu wybieramy **Compression options**.
+
+	![EAC: Tworzenie profilu `WavPack - album`](eac/compression_profile_album.png)
+
+6.  Klikamy na przycisk **OK**.
+7.  Ponownie z menu EAC wybieramy opcję **Compression options** i wybieramy zakładkę **External Compression**.
+	* W polu **Additional command** line options wpisujemy:
+	
+			-q -h -x1 -t -w "TITLE=%title%" -w "ARTIST=%artist%" -w "TRACK=%tracknr%/%numtracks%" -w "ALBUM=%albumtitle%" -w
+			"ALBUM ARTIST=%albumartist%" -w "COMPOSER=%composer%" -w "ALBUM PERFORMER=%albuminterpret%" -w
+			"COMMENT=%comment%" -w YEAR=%year% -w GENRE=%genre% -w "DISC=%cdnumber%/%totalcds%" %source% %dest%
+
+8.  Ponownie wybieramy zakładkę **Comment**.
+	* Wybieramy opcję **Write CRC checksum into ID3 tag comment field**.
+
+	![EAC: Compression options - Comment - CRC checksum](eac/compression_comment_track.png)
+
+9.  Klikamy na przycisk **OK**.
+10. W dolnej części głównego programu EAC klikamy na przycisk **New**. W dialogu który się pojawi:
+	* Wpisujemy nazwę tworzonego profilu np. `WavPack – track`.
+	* Jako typ profilu wybieramy **Compression options**.
+11. Klikamy na przycisk **OK**.
+
+	![EAC: Tworzenie profilu `WavPack - track`](eac/compression_profile_track.png)
+
+W ten sposób stworzyliśmy dwa profile kodeka WavPack:
+
+* `WavPack - album` - dla kompresji obrazu płyty
+* `WavPack - track` - dla kompresji pojedyńczych utworów
+
+### Przydatne ustawienia ogólne programu EAC.
+
+1.  Z menu **EAC** wybieramy opcję **EAC Options**.
+2.  W dialogu który się pojawi wybieramy zakładkę **Tools**. Na wybranej zakładce zaznaczmy następujące opcje:
+	* **Retreive UPC/ISRC codes in CUE sheet generation**.
+	* **Use CD-Text information in CUE sheet generation**.
+	* **Automatically write status report after extraction**.
+	* **Append checksum to status report**.
+	* **On extraction start external compressiors queued in the background**.
+	* **Do not open external compressor window**.
+	
+	![EAC: Ogólne opcje programu](eac/options_tools.png)
+
+3.  Wybieramy zakładkę **Interface**.
+	* Jako **SCSI Interface** wybieramy **Native Win32 interface XP/Vista/Win 7**.
+	Ta opcja najprawdopodobniej jest już odpowiednio ustawiona jednak na moim komputerze z nieznanych mi powodów
+	opcja ta początkowo ustawiona była na **Installed external ASPI interface** co sprawiało mi nieco kłopotów.
+	
+	![EAC: Wybór interfejsu](eac/options_interface.png)
+
+4.  Klikamy na przycisk **OK**.
+
+## `cue2mkc`.
+
+Dla programu `cue2mkc` stworzyłem prosty instalator który pobrać można z adresu
+[http://bitbucket.org/roed/wxmatroska/downloads/cue2mkc_setup.exe](http://bitbucket.org/roed/wxmatroska/downloads/cue2mkc_setup.exe).
+Po pobraniu wystarczy go po prostu uruchomić i "popychać" gdyż nie ma on żadnych nadzwyczajnych opcji. Warto co najwyżej
+zwrócić uwagę na instalowane komponenty – wybieramy instalację pełną. Instalacja wymaga praw administratora.
+
+![`cue2mkc` - Instalacja](cue2mkc/setup.png)
+
+## `MKVToolnix` - Cross-platform tools for Matroska.
+
+Możliwe, że pakiet `MKVToolnix` mają już Państwo zainstalowany. Zawsze jednak warto sprawdzić, czy używamy najnowszej
+wersji tego pakietu. Można go pobrać z adresu
+[http://www.bunkus.org/videotools/mkvtoolnix/downloads.html\#windows](http://www.bunkus.org/videotools/mkvtoolnix/downloads.html#windows).
+Po pobraniu i zainstalowaniu proszę chociaż raz uruchomić program `mkvmerge` GUI – ta czynność jest potrzebna by program
+`cue2mkcgui` znalazł lokalizację programu `mkvmerge`.
+
+# Program `cue2mkc` w działaniu.
+
+Prześledźmy teraz kilka podstawowych scenariuszy użycia programu `cue2mkc`.
+
+## Jeden album, jeden plik.
+
+To najbardziej typowy scenariusz - tworzenie obrazu płyty CD. Punktem wyjścia jest jedna płyta CD i utworzyć chcemy
+jeden kontener MKA z całą zawartością płyty. Wybieram płytę *Katarzyny Nosowskiej* pod tytułem *UniSexBlues*.
+
+1.  Uruchamiamy program EAC i wkładmy do napędu płytę CD.
+
+	![EAC: Główne okno programu po włożeniu płyty CD do napędu](cue2mkc/02/eac_unisexblues.png)
+
+2.  Upewnijmy się, że załadowany jest profil **WavPack – album**. W tym celu w dolnym pasku statusu głównego okna
+    programu wybieramy konfigurację **WavPack - album** i klikamy na przycisk **Load** po prawej stronie.
+3.  Z menu **Action** wybieramy opcję **Test & Copy Image & Create CUE Sheet/Compressed…**.
+
+	![EAC: Wybór opcji testowania i rippowania płyty CD](cue2mkc/02/eac_action_test_and_copy_compressed_unisexblues.png)
+
+4.  Po zakończeniu *rippowania* czekamy na zakończenie procesu kompresji który odbywa się w tle. W dolnym pasku głównego
+    okna programu wyświetlana jest informacja czy w tle wykonywany jest jakiś proces pkompresji. \
+	![EAC: Fragment pask ststusu prezentującego liczbę zadań wykonywanych w tle](cue2mkc/01/background_compression.png) \
+	Po zakończeniu procesu
+    kompresji winniśmy otrzymać trzy pliki: plik WV, plik CUE oraz plik LOG. W przypadku płyty *UniSexBlues* są to
+    pliki:
+	
+		Katarzyna Nosowska - Unisexblues.wv
+		Katarzyna Nosowska - Unisexblues.cue
+		Katarzyna Nosowska - Unisexblues.log
+	
+5.  Uruchamiamy program `cue2mkcgui`.
+6.  Wybieramy zakładkę **Source & destination**.
+	* Za pomocą przycisku ![+](cue2mkc/cue2mkc_add.png) dodajmy plik CUE do listy źródeł (Sources list).
+	Możemy też plik CUE po prostu na tą listę przeciągnąć.
+7.  Wybieramy zakładkę **General options**. Na tej zakładce zaznaczmy następujące opcje:
+	* **Generate tags XML file**
+	* **Generate options for `mkvmerge`**
+
+	![cue2mkc GUI: Zakładka **General options**](cue2mkc/02/cue2mkc_general.png)
+
+8.  Klikamy na przycisk **Run** w prawym dolnym rogu okna. Przejdziemy w ten sposób do zakładki **Messages** gdzie
+    oglądać możemy (niezbyt imponujące) postępy pracy programu `cue2mkc`.
+	
+	![cue2mkc GUI: Zakładka **Messages**](cue2mkc/02/cue2mkc_messages.png)
+	
+	Po pomyślnym zakończeniu działania programu `cue2mkc`.
+	Powinien zostać utworzony plik:
+	
+		Katarzyna Nosowska - Unisexblues.mka
+    
+    Pozostaje też kilka plików roboczych z rozszeżeniami .mkc.xml, .mkt.xml oraz .opt.txt - te pliki po pomyślnym
+    zakończeniu pracy programu `cue2mkc` można bezpiecznie usunąć.
+9.  Otwórzmy powstały plik w programie Foobar 2000 by przekonać się, że z powstałego kontenera MKA da się posłuchać
+    muzyki.
+
+## Jeden album, wiele plików z poszczególnymi utworami.
+
+To scenariusz podobny do powyższego. Jednak tutaj *rippowane* są poszczególne utwory do osobnych plików. Na konec jednak
+i tak wszystkie *zrippowane* i skompresowane utwory wkładamy do jednego kontenera MKA. Czytelnik może się zatem spytać
+po co *rippować* poszczególne utwory skoro i tak potem wszystko łączymy i wkładamy do jednej paczki? Tak na prawdę to
+chciałem tu zaprezentować możliwość łączenia kilku plików audio - punktem wyjścia mogą być już pliki audio z
+poszczególnymi utworami. Tutaj zaprezentuję sposób ich łączenia. *Rippowanie* poszczególnych utworów to poprostu sposób
+zdobycia plików audio.
+
+1.  Uruchamiamy program EAC i wkładmy do napędu płytę CD.
+	
+	![EAC: Główne okno programu po włożeniu płyty CD do napędu](cue2mkc/02/eac_unisexblues.png)
+
+2.  Upewnijmy się, że załadowany jest profil **WavPack – track**. W tym celu w dolnym pasku statusu głównego okna
+    programu wybieramy konfigurację **WavPack - track** i klikamy na przycisk **Load**.
+	
+	![EAC: Ładowanie profilu kompresji](cue2mkc/03/eac_compression_profile.png)
+
+3.  Z menu **Action** wybieramy opcję **Test & Copy Selected Tracks/Compressed…**.
+	
+	![EAC: Wybór opcji testowania i *rippowania* poszczególnych utworów z płyty CD](cue2mkc/03/eac_test_and_copy_tracks.png)
+
+4.  Po zakończeniu *rippowania* czekamy na zakończenie procesu kodowania który odbywa się w tle. W dolnym pasku głównego
+    okna programu wyświetlana jest informacja czy w tle wykonywany jest jakiś proces przekodowywania. Po zakończeniu
+    procesu kompresji winniśmy otrzymać kilkanaście plików WV oraz plik LOG. W przypadku płyty *UniSexBlues* są to
+    pliki:
+	
+		01. Era Retuszera.wv
+		02. Grand Prix.wv
+		03. Makro.wv
+		04. Nerwy I Wiktorianscy Lekarze.wv
+		05. Kasitet Romans.wv
+		06. My Faith Is Stronger Than The Hills.wv
+		07. Unisexblues.wv
+		08. Metempsycho.wv
+		09. Sub Rosa.wv
+		10. Simple Present.wv
+		11. Poli D.N.O..wv
+		12. Odrobina Dyskomfortu.wv
+		13. Karatetyka.wv
+		14. Konsorcjum K.C.K..wv
+		Katarzyna Nosowska - Unisexblues.log
+	
+5.  Uruchamiamy program `cue2mkc` GUI.
+6.  Wybieramy zakładkę **Source & destination.**
+    * Za pomocą przycisku ![+](CUE2MKC/cue2mkc_add.png) dodajmy pierwszy
+	plik WV do listy źródeł (ang. *Sources list*). Możemy też plik ten po prostu na tą listę przeciągnąć.
+    * Klikamy na przycisk ![*](cue2mkc/03/cue2mkc_asterisk.png).
+
+	![cue2mkc GUI: Zakładka **Source & destination** - wiele plików `WV`](cue2mkc/03/cue2mkc_sources_asterisk.png)
+
+7.  Wybieramy zakładkę **General options**. Na tej zakładce zaznaczmy następujące opcje:
+	* **Merge mode**
+	* **Embedded cue sheet**
+	* **Media files without cuesheet**
+	* **Generate tags XML file**
+	* **Generate options for `mkvmerge`**
+
+8.  Wybieramy zakładkę **Advanced options**. Na tej zakładce ustawiamy następujące opcje:
+	* **Cue sheet attach mode** ustawiamy na **none**.
+
+	![cue2mkc GUI: Zakładka **Advanced options**](cue2mkc/03/cue2mkc_advanced.png)
+
+9.  Klikamy na przycisk **Run** w prawym dolnym rogu okna. Przejdziemy w ten sposób do zakładki **Messages** gdzie
+	oglądać możemy postępy pracy programu `cue2mkc`.
+
+	![cue2mkc GUI: Zakładka **Messages**](cue2mkc/03/cue2mkc_messages.png)
+
+10. Po pomyślnym zakończeniu działania programu `cue2mkc` (co może nieco potrwać) powinien zostać utworzony plik:
+
+		01. Era Retuszera.mka
+
+	W trybie łączenia (ang. *merge mode*) domyślnie nazwa pliku wyjściowego brana jest z pierwszego pliku wejściowego. To
+	zachowanie można zmienić podając w zakładce **Source & Destination** nazwę pliku wyjsciowego. Nazwę pliku MKA możemy
+	również dowolnie zmienić po zakończeniu pracy programu `cue2mkc`. Po zakończeniu pracy pozostaje też kilka plików
+	roboczych z rozszeżeniami .mkc.xml, .mkt.xml oraz .opt.txt - te pliki po pomyślnym zakończeniu pracy programu
+	`cue2mkc` można bezpiecznie usunąć.
+11. Otwórzmy powstały plik w programie Foobar 2000 by przekonać się, że z powstałego kontenera MKA da się posłuchać
+	muzyki.
+
+## Jeden album, wiele plików z poszczególnymi utworami plus plik CUE.
+
+Modyfikacja poprzedniego scenariusza. *Rippowanie* poszczególnych utworów do osobnych plików plus dodatkowo tworzenie
+pliku CUE. Program `cue2mkc` jako parametr wejściowy dostaje jeden plik CUE. Tworzony jest oczywiście jeden kontener MKA.
+Ta mtetoda ma drobną przewagę nad rippowaniem całego obrazu płyty CD - do kontenera MKA kopiowane są metadane z
+poszczególnych kontenerów audio. Pozwala to w prosty sposób zawrzeć w kontenerze MKA dodatkowe metadane (np.
+kompozytora) które w pliku CUE się nie znajdują.
+
+1.  Uruchamiamy program EAC i wkładmy do napędu płytę CD.
+
+	![EAC: Główne okno programu po włożeniu płyty CD do napędu](cue2mkc/02/eac_unisexblues.png)
+
+2.  Upewnijmy się, że załadowany jest profil **WavPack – track**. W tym celu w dolnym pasku statusu głównego okna
+    programu wybieramy konfigurację **WavPack - track** i klikamy na przycisk **Load**.
+
+	![EAC: Ładowanie profilu kompresji](cue2mkc/03/eac_compression_profile.png)
+
+3.  Z menu **Action** wybieramy opcję **Test & Copy Selected Tracks/Compressed…**.
+
+	![EAC: Wybór opcji testowania i *rippowania* poszczególnych utworów z płyty CD](cue2mkc/03/eac_test_and_copy_tracks.png)
+
+4.  Po zakończeniu *rippowania* z menu **Action** wybieramy opcję **Create CUE sheet/Current Gap Settings…**. Jako
+    lokalizację pliku CUE podajemy ten sam katalog do którego *rippowaliśmy* utwory z płyty.
+
+	![EAC: Zapis pliku `CUE`](cue2mkc/04/eac_cue.png)
+
+5.  Czekamy na zakończenie procesu kodowania który odbywa się w tle. W dolnym pasku głównego okna programu wyświetlana
+    jest informacja czy w tle wykonywany jest jakiś proces przekodowywania. Po zakończeniu procesu kompresji winniśmy
+    otrzymać kilkanaście plików WV oraz plik LOG. W przypadku płyty *UniSexBlues* są to pliki:
+	
+		01. Era Retuszera.wv
+		02. Grand Prix.wv
+		03. Makro.wv
+		04. Nerwy I Wiktorianscy Lekarze.wv
+		05. Kasitet Romans.wv
+		06. My Faith Is Stronger Than The Hills.wv
+		07. Unisexblues.wv
+		08. Metempsycho.wv
+		09. Sub Rosa.wv
+		10. Simple Present.wv
+		11. Poli D.N.O..wv
+		12. Odrobina Dyskomfortu.wv
+		13. Karatetyka.wv
+		14. Konsorcjum K.C.K..wv
+		Katarzyna Nosowska - Unisexblues.log
+		Katarzyna Nosowska - Unisexblues.cue
+	
+6.  Uruchamiamy program `cue2mkc` GUI.
+7.  Wybieramy zakładkę **Source & destination**.
+	* Za pomocą przycisku ![*](cue2mkc/cue2mkc_add.png) dodajmy plik CUE do
+	listy źródeł (ang: *Sources list*). Możemy też plik ten po prostu na tą listę przeciągnąć.
+
+	![cue2nkc GUI: Zakładka **Source & destination**](cue2mkc/04/cue2mkc_source.png)
+
+8.  Wybieramy zakładkę **General options**. Na tej zakładce ustawiamy następujące opcje:
+	* W polu **Alternate media files extensions** wpisujemy **wv**.
+	* Zaznaczmy opcję **Generate tags XML file**
+	* Zaznaczmy opcję **Generate options for `mkvmerge`**
+
+	![cue2mkc GUI: Zakładka **General options**](cue2mkc/04/cue2mkc_general.png)
+
+9.  Klikamy na przycisk **Run** w prawym dolnym rogu okna. Przejdziemy w ten sposób do zakładki **Messages** gdzie
+	oglądać możemy postępy pracy programu `cue2mkc`.
+
+	![cue2mkc GUI: Zakładka **Messages**](cue2mkc/04/cue2mkc_messages.png)
+
+10. Po pomyślnym zakończeniu działania programu `cue2mkc` (co może nieco potrwać) powinien zostać utworzony plik:
+
+		Katarzyna Nosowaska - Unisexblues.mka
+
+	Po zakończeniu pracy pozostaje też kilka plików roboczych z rozszeżeniami .mkc.xml, .mkt.xml oraz .opt.txt - te
+	pliki po pomyślnym zakończeniu pracy programu `cue2mkc` można bezpiecznie usunąć.
+11. Otwórzmy powstały plik w programie Foobar 2000 by przekonać się, że z powstałego kontenera MKA da się posłuchać
+	muzyki.
+
+## Kilka płyt z jednym utworem.
+
+Zobaczmy teraz jak program `cue2mkc` radzi sobie z łączeniem kilku plików CUE. Jako przykład wezmę *Samsona* Händla w
+wykonaniu *The Sixteen* oraz *The Symphony of Harmony & Invention* pod dyrekcją *Harry'ego Christophers'a*. To wydanie
+trzypłytowe. Tutaj spróbujemy te trzy płyty włożyć do jednego kontenera.
+
+1.	Uruchamiamy program EAC i do napędu wkładamy pierwszą płytę CD.
+2.	Upewnijmy się, że załadowany jest profil **WavPack – album**. W tym celu w dolnym pasku statusu głównego okna
+	programu wybieramy konfigurację **WavPack - album** i klikamy na przycisk **Load**.
+3.	Uzupełnijmy informację o płycie – w szczególności zwróćmy uwagę na pola **Number of CDs** oraz **CD Number**. Warto
+	też podać kompozytora – to bardzo proste gdyż program EAC po wpisaniu pierwszych literek podpowiada dalszą część.
+
+	![EAC: Główne okno programu po włożeniu płyty CD do napędu](cue2mkc/01/samson_cd1.png)
+
+4.	Z menu **Action** wybieramy opcję **Test & Copy Image & Create CUE Sheet/Compressed…**.
+5.	Czekamy na zrippowanie płyty. Po zakończeniu wkładamy drugą a następnie trzecią płytę postępując podobnie jak z
+	płytą pierwszą. Obrazy płyt zapisujemy do wspólnego katalogu. Pamiętajmy, że kompresja plików odbywa się w tle zatem
+	po zrippowaniu trzeciej płyty trzeba zapewne chwilę poczekać zanim obraz ostatniej płyty zostanie przekodowany do
+	WavPack'a. W dolnym pasku głównego okna programu wyświetlana jest informacja czy w tle wykonywany jest jakiś proces
+	przekodowywania. \
+	![EAC: Fragment paska statusu prezentującego liczbę zadań wykonywanych w tle](cue2mkc/01/background_compression.png) \
+	Po zrippowaniu wszystkich płyt w jednym katalogu winniśmy mieć dziewięć plików – dla każdej płyty CD
+	po trzy pliki – plik WV, plik CUE oraz plik LOG. Na przykład dla pierwszej płyty są to pliki:
+
+		Harry Christophers, The Sixteen + The Symphony of Harmony & Invention - Handel - Samson (CD1).cue
+		Harry Christophers, The Sixteen + The Symphony of Harmony & Invention - Handel - Samson (CD1).wv
+		Harry Christophers, The Sixteen + The Symphony of Harmony & Invention - Handel - Samson (CD1).log
+
+6.  Uruchamiamy program `cue2mkc` GUI. Wybieramy zakładkę **Source & destination**.
+	* Za pomocą przycisku ![+](cue2mkc/cue2mkc_add.png) dodajmy trzy pliki
+	CUE do listy źródeł (ang. *Sources list*). Możemy też pliki CUE po prostu na tą listę przeciągnąć. Niestety na chwilę
+	obecną można przeciągać tylko pojedyńcze pliki.
+
+7.  Wybieramy zakładkę **General options**. Na tej zakładce zaznaczmy następujące opcje:
+	* **Merge mode**
+	* **Generate tags XML file**
+	* **Generate options for `mkvmerge`**
+
+	![cue2mkc GUI: Zakładka **Source & destination**](cue2mkc/01/sources.png)
+
+8.  Wybieramy zakładkę **Advanced options**. Sprawdzamy następujące opcje w grupie `mkvmerge`:
+	* Opcja **Attach EAC log(s)** winna być zaznaczona
+	* Opcja **Attach cover image** może być odznaczona.
+	* Opcja **Run `mkvmerge` after options file generation** winna być zaznaczona.
+
+	![cue2mkc GUI: Zakładka **Advanced options**](cue2mkc/01/advanced.png)
+
+9.  Klikamy na przycisk **Run** w prawym dolnym rogu okna. Przejdziemy w ten sposób do zakładki **Messages** gdzie
+    oglądać możemy (niezbyt imponujące) postępy pracy programu `cue2mkc`. Łączenie plików może chwilę potrwać.
+
+	![cue2mkc GUI: Zakładka **Messages**](cue2mkc/01/messages.png)
+
+10. Po pomyślnym zakończeniu działania programu `cue2mkc`. Powinien zostać utworzony plik:
+
+		Harry Christophers, The Sixteen + The Symphony of Harmony & Invention - Handel - Samson (CD1).mka
+
+	W trybie łączenia (ang. *merge mode*) domyślną nazwą tworzonego pliku jest nazwa pierwszego pliku wejściowego ze
+	zmienionym rozszerzeniem na MKA. To zachowanie można zmienić podając w zakładce **Source & destination** nazwę pliku
+	wyjściowego. Nazwę pliku MKA możemy również dowolnie zmienić po zakończeniu pracy programu `cue2mkc`. Objętość pliku
+	MKA jest niewiele większa od objętości nieskompresowanego obrazu jednej płyty CD (ok. 812MB).
+11. Otwórzmy powstały plik w programie Foobar 2000. Widzimy, że powstała kompilacja liczy 81 utworów. Zajrzyjmy również
+	jak wyglądają metadane. Warto zauważyć, że nazwa albumu została uwspólniona. Dla poszczególnych plików nazwa albumu
+	miała postać *Handel: Samson (CDx). \
+	![Foobar 2000: Podgląd metadanych kontenera `MKA`](cue2mkc/01/foobar_properties.png) \
+	Program `cue2mkc` w trybie łączenia pozbył się końcówki *(CDx)*. Za pomocą
+	programu Media Player Classic możemy się przekonać, że w powstałym kontenerze zawarte są wszystkie pliki CUE oraz
+	LOG. \
+	![Media player Classic: zasoby kontenera MKA](cue2mkc/01/mpc_resources.png)
+
+# Informacje dla programistów.
+
+Program `cue2mkc` napisany jest w języku C++ w oparciu o bibliotekę [`wxWidgets`](http://wxwidgets.org/) w wersji 2.9.2 lub
+wyższej. Może to być nieco zaskakujące gdyż biblioteka ta kojarzy się głównie z tworzeniem aplikacji okienkowych na
+różne platformy. W moim przypadku jednak bibliotekę `wxWidgets` wykorzystuję głównie do:
+
+-   odczytu parametrów wejściowych
+-   obsługi Unicode (klasa `wxString` o sporych możliwościach)
+-   obsługi wyrażeń regularnych
+
+Program linkowany jest statycznie z biblioteką `wxWidgets` – stąd pokaźny rozmiar programu. Program `cue2mkcgui` to
+natomiast prosty skrypt napisany w języku `AutoIt`. Źródła programu dostępne są pod adresem
+[https://bitbucket.org/roed/wxmatroska](https://bitbucket.org/roed/wxmatroska). Program skompilowany został przy pomocy
+kompilatora `Microsoft Visual C++ 2010`. Program dystrybuowany jest na licencji BSD (*Simplified BSD License*).
+
+# Zakończenie.
+
+Mam nadzieję, że program `cue2mkc` spotka się z przychylną oceną użytkowników i chociaż w niewielkim stopniu spopularyzuje
+wciąż nie do końca doceniany sposób przechowywania materiału audio w kontenerach Matrioszka. Wszelkie uwagi dotyczące
+programu proszę kierować na adres [roed@onet.eu](roed@onet.eu).
