@@ -68,7 +68,7 @@ znacznika BOM (ang. *Byte Order Mark*) znajdującego się na początku pliku je�
 znajduje (rozpoznawane kodowania: UTF-8, UTF-16LE, UTF-16BE, UTF-32LE, UTF-32BE). Sam program `cue2mkc` jest programem
 uruchamianym z linii komend (ang. *console application*). Jednak stworzyłem też prosty program okienkowy `cue2mkcgui` gdzie
 zdecydowaną większość opcji dla programu można sobie "wyklikać". Program `cue2mkcgui` po prostu uruchamia program `cue2mkc`
-z “wyklikanymi” opcjami. W dalszej części artykułu nie będę opisywać szczegółowo parametrów programu `cue2mkc`. Zamiast
+z "wyklikanymi" opcjami. W dalszej części artykułu nie będę opisywać szczegółowo parametrów programu `cue2mkc`. Zamiast
 tego używał będę programu `cue2mkcgui` i na kilku praktycznych przykładach jak za pomocą mojego programu tworzyć można
 kompletne kontenery Matrioszka z zawartością audio.
 
@@ -84,7 +84,7 @@ zasadzie trudno tu mówić o instalacji – po prostu [pobieramy](http://www.wav
 command-line programs and user documentation) i rozpakowujemy ją w dowolnie wybrane miejsce. W poniższych przykładach
 zamiast kodeka FLAC używam właśnie WavPack'a. Oczywiście program `cue2mkc` działa również dla plików FLAC jednak
 implementacja osadzania strumienia FLAC w kontenerze Matrioszka nie jest najlepsza. Było to widać już we wspomnianym
-wcześniejszym artykule gdzie musiałem z linii komend użyć programu metaflac. Implementacja osadzania strumienia WavPack
+wcześniejszym artykule gdzie musiałem z linii komend użyć programu `metaflac`. Implementacja osadzania strumienia WavPack
 w kontenerze Matrioszka wydaje się być lepiej dopracowana. Chciałbym aby to było jasne – kodek FLAC nie jest gorszy od
 WavPack'a tylko implementacja osadzania strumienia FLAC w kontenerze Matrioszka nie jest dopracowana i tylko z tego
 powodu wybieram w poniższych przykładach WavPack'a.
@@ -254,9 +254,9 @@ jeden kontener MKA z całą zawartością płyty. Wybieram płytę *Katarzyny No
 	
 		Katarzyna Nosowska - Unisexblues.mka
     
-    Pozostaje też kilka plików roboczych z rozszeżeniami .mkc.xml, .mkt.xml oraz .opt.txt - te pliki po pomyślnym
+    Pozostaje też kilka plików roboczych z rozszeżeniami `.mkc.xml`, `.mkt.xml` oraz `.opt.txt` - te pliki po pomyślnym
     zakończeniu pracy programu `cue2mkc` można bezpiecznie usunąć.
-9.  Otwórzmy powstały plik w programie Foobar 2000 by przekonać się, że z powstałego kontenera MKA da się posłuchać
+9.  Otwórzmy powstały plik w programie *Foobar 2000* by przekonać się, że z powstałego kontenera MKA da się posłuchać
     muzyki.
 
 ## Jeden album, wiele plików z poszczególnymi utworami.
@@ -302,9 +302,9 @@ zdobycia plików audio.
 		14. Konsorcjum K.C.K..wv
 		Katarzyna Nosowska - Unisexblues.log
 	
-5.  Uruchamiamy program `cue2mkc` GUI.
+5.  Uruchamiamy program `cue2mkcgui`.
 6.  Wybieramy zakładkę **Source & destination.**
-    * Za pomocą przycisku ![+](CUE2MKC/cue2mkc_add.png) dodajmy pierwszy
+    * Za pomocą przycisku ![+](cue2mkc/cue2mkc_add.png) dodajmy pierwszy
 	plik WV do listy źródeł (ang. *Sources list*). Możemy też plik ten po prostu na tą listę przeciągnąć.
     * Klikamy na przycisk ![*](cue2mkc/03/cue2mkc_asterisk.png).
 
@@ -334,9 +334,9 @@ zdobycia plików audio.
 	W trybie łączenia (ang. *merge mode*) domyślnie nazwa pliku wyjściowego brana jest z pierwszego pliku wejściowego. To
 	zachowanie można zmienić podając w zakładce **Source & Destination** nazwę pliku wyjsciowego. Nazwę pliku MKA możemy
 	również dowolnie zmienić po zakończeniu pracy programu `cue2mkc`. Po zakończeniu pracy pozostaje też kilka plików
-	roboczych z rozszeżeniami .mkc.xml, .mkt.xml oraz .opt.txt - te pliki po pomyślnym zakończeniu pracy programu
+	roboczych z rozszeżeniami `.mkc.xml`, `.mkt.xml` oraz `.opt.txt` - te pliki po pomyślnym zakończeniu pracy programu
 	`cue2mkc` można bezpiecznie usunąć.
-11. Otwórzmy powstały plik w programie Foobar 2000 by przekonać się, że z powstałego kontenera MKA da się posłuchać
+11. Otwórzmy powstały plik w programie *Foobar 2000* by przekonać się, że z powstałego kontenera MKA da się posłuchać
 	muzyki.
 
 ## Jeden album, wiele plików z poszczególnymi utworami plus plik CUE.
@@ -386,7 +386,7 @@ kompozytora) które w pliku CUE się nie znajdują.
 		Katarzyna Nosowska - Unisexblues.log
 		Katarzyna Nosowska - Unisexblues.cue
 	
-6.  Uruchamiamy program `cue2mkc` GUI.
+6.  Uruchamiamy program `cue2mkcgui`.
 7.  Wybieramy zakładkę **Source & destination**.
 	* Za pomocą przycisku ![*](cue2mkc/cue2mkc_add.png) dodajmy plik CUE do
 	listy źródeł (ang: *Sources list*). Możemy też plik ten po prostu na tą listę przeciągnąć.
@@ -409,9 +409,9 @@ kompozytora) które w pliku CUE się nie znajdują.
 
 		Katarzyna Nosowaska - Unisexblues.mka
 
-	Po zakończeniu pracy pozostaje też kilka plików roboczych z rozszeżeniami .mkc.xml, .mkt.xml oraz .opt.txt - te
+	Po zakończeniu pracy pozostaje też kilka plików roboczych z rozszeżeniami `.mkc.xml`, `.mkt.xml` oraz `.opt.txt` - te
 	pliki po pomyślnym zakończeniu pracy programu `cue2mkc` można bezpiecznie usunąć.
-11. Otwórzmy powstały plik w programie Foobar 2000 by przekonać się, że z powstałego kontenera MKA da się posłuchać
+11. Otwórzmy powstały plik w programie *Foobar 2000* by przekonać się, że z powstałego kontenera MKA da się posłuchać
 	muzyki.
 
 ## Kilka płyt z jednym utworem.
@@ -442,7 +442,7 @@ trzypłytowe. Tutaj spróbujemy te trzy płyty włożyć do jednego kontenera.
 		Harry Christophers, The Sixteen + The Symphony of Harmony & Invention - Handel - Samson (CD1).wv
 		Harry Christophers, The Sixteen + The Symphony of Harmony & Invention - Handel - Samson (CD1).log
 
-6.  Uruchamiamy program `cue2mkc` GUI. Wybieramy zakładkę **Source & destination**.
+6.  Uruchamiamy program `cue2mkcgui`. Wybieramy zakładkę **Source & destination**.
 	* Za pomocą przycisku ![+](cue2mkc/cue2mkc_add.png) dodajmy trzy pliki
 	CUE do listy źródeł (ang. *Sources list*). Możemy też pliki CUE po prostu na tą listę przeciągnąć. Niestety na chwilę
 	obecną można przeciągać tylko pojedyńcze pliki.
@@ -474,23 +474,23 @@ trzypłytowe. Tutaj spróbujemy te trzy płyty włożyć do jednego kontenera.
 	zmienionym rozszerzeniem na MKA. To zachowanie można zmienić podając w zakładce **Source & destination** nazwę pliku
 	wyjściowego. Nazwę pliku MKA możemy również dowolnie zmienić po zakończeniu pracy programu `cue2mkc`. Objętość pliku
 	MKA jest niewiele większa od objętości nieskompresowanego obrazu jednej płyty CD (ok. 812MB).
-11. Otwórzmy powstały plik w programie Foobar 2000. Widzimy, że powstała kompilacja liczy 81 utworów. Zajrzyjmy również
+11. Otwórzmy powstały plik w programie *Foobar 2000*. Widzimy, że powstała kompilacja liczy 81 utworów. Zajrzyjmy również
 	jak wyglądają metadane. Warto zauważyć, że nazwa albumu została uwspólniona. Dla poszczególnych plików nazwa albumu
-	miała postać *Handel: Samson (CDx). \
+	miała postać *Handel: Samson (CDx)*. \
 	![Foobar 2000: Podgląd metadanych kontenera `MKA`](cue2mkc/01/foobar_properties.png) \
 	Program `cue2mkc` w trybie łączenia pozbył się końcówki *(CDx)*. Za pomocą
-	programu Media Player Classic możemy się przekonać, że w powstałym kontenerze zawarte są wszystkie pliki CUE oraz
+	programu *Media Player Classic* możemy się przekonać, że w powstałym kontenerze zawarte są wszystkie pliki CUE oraz
 	LOG. \
 	![Media player Classic: zasoby kontenera MKA](cue2mkc/01/mpc_resources.png)
 
 # Informacje dla programistów.
 
-Program `cue2mkc` napisany jest w języku C++ w oparciu o bibliotekę [`wxWidgets`](http://wxwidgets.org/) w wersji 2.9.2 lub
-wyższej. Może to być nieco zaskakujące gdyż biblioteka ta kojarzy się głównie z tworzeniem aplikacji okienkowych na
+Program `cue2mkc` napisany jest w języku C++ w oparciu o bibliotekę [`wxWidgets`](http://wxwidgets.org/) (w wersji 2.9.2 lub
+wyższej). Może to być nieco zaskakujące gdyż biblioteka ta kojarzy się głównie z tworzeniem aplikacji okienkowych na
 różne platformy. W moim przypadku jednak bibliotekę `wxWidgets` wykorzystuję głównie do:
 
 -   odczytu parametrów wejściowych
--   obsługi Unicode (klasa `wxString` o sporych możliwościach)
+-   obsługi Unicode
 -   obsługi wyrażeń regularnych
 
 Program linkowany jest statycznie z biblioteką `wxWidgets` – stąd pokaźny rozmiar programu. Program `cue2mkcgui` to
@@ -501,5 +501,5 @@ kompilatora `Microsoft Visual C++ 2010`. Program dystrybuowany jest na licencji 
 # Zakończenie.
 
 Mam nadzieję, że program `cue2mkc` spotka się z przychylną oceną użytkowników i chociaż w niewielkim stopniu spopularyzuje
-wciąż nie do końca doceniany sposób przechowywania materiału audio w kontenerach Matrioszka. Wszelkie uwagi dotyczące
-programu proszę kierować na adres [roed@onet.eu](roed@onet.eu).
+wciąż nie do końca doceniany sposób przechowywania materiału audio w kontenerach Matrioszka. \
+Wszelkie uwagi dotyczące programu proszę kierować na adres [roed@onet.eu](mailto:roed@onet.eu).

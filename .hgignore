@@ -28,3 +28,7 @@ vcproj\..+\.user$
 .+/dist
 nbproject/private
 setup/app_version.iss$
+^doc/.*\.htm.{0,1}
+^doc/.*\.rtf
+
+
