@@ -1,0 +1,116 @@
+header {
+	display: none
+}
+
+#TOC A {
+	transition: font-size,color 350ms ease;
+	-moz-transition: font-size,color 350ms ease; /* Firefox 4 */
+	-webkit-transition: font-size,color 350ms ease; /* Safari and Chrome */
+	-o-transition: font-size,color 350ms ease; /* Opera */ 
+}
+
+A:link {text-decoration: none; color: black}
+A:visited {text-decoration: none; color: black}
+A:active {text-decoration: none; color black}
+A:hover {text-decoration: none; color: MidnightBlue }
+#TOC A:hover {font-size: 105%; color: black; background-color: #F0F0F0}
+
+#TOC A:link {text-decoration: none; color: black}
+#TOC A:visited {text-decoration: none; color: black}
+#TOC A:active {text-decoration: none; color: black}
+#TOC A:hover {text-decoration: none; color: black}
+
+A .header-section-number {font-size: 105%}
+A:hover .header-section-number {color: black}
+A .toc-section-number {font-weight: bold}
+A:hover .toc-section-number {color: black}
+
+#TOC {
+	border-top-width: 1px;
+	border-bottom-width: 1px;
+	border-top-style: solid;
+	border-bottom-style: solid;
+	border-top-color: #E1A60A;
+	border-bottom-color: #E1A60A;
+	padding: 0px;
+}
+
+#TOC > ul {
+	padding-left: 0px
+}
+
+#TOC > ul  ul {
+	list-style: none
+}
+
+p:first-letter { 
+	font-size: 108%
+}
+
+figure img{
+	border-top-width: 1px;
+	border-bottom-width: 1px;
+	border-top-style: solid;
+	border-bottom-style: solid;
+	border-top-color: #E1A60A;
+	border-bottom-color: #E1A60A;
+	padding: 0.2em 0px
+}
+
+figcaption {
+	font-family: arial;
+	font-size: 70%;
+	margin-top: 0.2em
+}
+
+table {
+	border-width: thin;
+	border-spacing: 10px;
+	border-style: inset;
+	border-color: #E1A60A;
+	border-collapse: collapse;
+	margin: 0.2em 0px
+}
+
+table > caption {
+	font-family: arial;
+	font-size: 70%;
+	caption-side:bottom
+}
+
+table th {
+	border-width: thin;
+	padding: 5px;
+	border-style: inset;
+	border-color: #E1A60A
+}
+table td {
+	border-width: thin;
+	padding: 5px;
+	border-style: inset;
+	border-color: #E1A60A
+}
+
+p > img {
+	vertical-align:middle;
+}
+
+li > img {
+	vertical-align:middle;
+}
+
+.footnotes {
+	font-size: 75%;
+}
+
+pre > code {
+	background-color: #F0F0F0;
+	display: inline-block;
+	border-top-width: 1px;
+	border-bottom-width: 1px;
+	border-top-style: solid;
+	border-bottom-style: solid;
+	border-top-color: #E1A60A;
+	border-bottom-color: #E1A60A;
+	padding: 0.2em 0em
+}
