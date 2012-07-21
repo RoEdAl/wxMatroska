@@ -6,6 +6,7 @@
 \usepackage[titles]{tocloft}
 \usepackage{setspace}
 \ifxetex
+  \newcommand{\euro}{€}
   \usepackage{fontspec,xltxtra,xunicode}
   \setmonofont[Scale=0.85]{Courier New}    
   \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase,Fractions=On}  
@@ -15,9 +16,11 @@
   \ifluatex
     \usepackage{fontspec}
     \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+	\newcommand{\euro}{€}
   \else
     \usepackage[utf8]{inputenc}
 	\usepackage[T1]{fontenc}
+	\usepackage{eurosym}
   \fi
 \fi
 $if(natbib)$
@@ -73,7 +76,7 @@ $if(graphics)$
 $endif$
 \ifxetex
 	\usepackage{polyglossia}
-	\setdefaultlanguage{$lang$}
+	\setmainlanguage{$mainlang$}
 	\PassOptionsToPackage{hyphens}{url}\usepackage[
 		setpagesize=false, % page size defined by xetex
 		unicode=false, % unicode breaks when used with xetex
@@ -116,6 +119,7 @@ $endif$
 $if(verbatim-in-note)$
 \VerbatimFootnotes % allows verbatim text in footnotes
 $endif$
+
 $if(lang)$
 \usepackage{csquotes}
 \DeclareQuoteStyle{polish}

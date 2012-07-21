@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{DBA9C4B3-E02E-4394-88EC-6D9614B4AF32}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>wxWaw2Img</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Configuration)\</IntDir>
+    <TargetName>wav2img</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Configuration)\</IntDir>
+    <TargetName>wav2img</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;wxUSE_GUI=0;__WXDEBUG__;WXDEBUG=1;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>StdWx.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>..\inc;..\..\include;$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswud;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)\lib;$(WXWIN)\lib\vc_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>shlwapi.lib;Comctl32.lib;Rpcrt4.lib;wxbase29ud.lib;wxbase29ud_net.lib;wxbase29ud_xml.lib;wxmsw29ud_core.lib;wxexpatd.lib;wxregexud.lib;wxzlibd.lib;wxpngd.lib;wxjpegd.lib;wxtiffd.lib;libsndfile-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;wxUSE_GUI=0;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>StdWx.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>..\inc;..\..\include;$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswud;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(SolutionDir)\lib;$(WXWIN)\lib\vc_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>shlwapi.lib;Comctl32.lib;Rpcrt4.lib;wxbase29u.lib;wxmsw29u_core.lib;wxzlib.lib;wxpng.lib;wxjpeg.lib;wxtiff.lib;libsndfile-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="ArrayWaveDrawer.h" />
+    <ClInclude Include="AudioRenderer.h" />
+    <ClInclude Include="ChannelMixer.h" />
+    <ClInclude Include="FloatArray.h" />
+    <ClInclude Include="MCChainWaveDrawer.h" />
+    <ClInclude Include="MCGraphicsContextWaveDrawer.h" />
+    <ClInclude Include="MultiChannelWaveDrawer.h" />
+    <ClInclude Include="SampleChunker.h" />
+    <ClInclude Include="SampleProcessor.h" />
+    <ClInclude Include="SoundFile.h" />
+    <ClInclude Include="StdWx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="WaveDrawer.h" />
+    <ClInclude Include="WaveDrawerGraphicsContext.h" />
+    <ClInclude Include="WaveDrawerPoly.h" />
+    <ClInclude Include="WaveDrawerRaster.h" />
+    <ClInclude Include="WaveDrawerRaster1.h" />
+    <ClInclude Include="WaveDrawerRaster2.h" />
+    <ClInclude Include="WaveDrawerSimple.h" />
+    <ClInclude Include="wxApp.h" />
+    <ClInclude Include="wxConfiguration.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ArrayWaveDrawer.cpp" />
+    <ClCompile Include="AudioRenderer.cpp" />
+    <ClCompile Include="ChannelMixer.cpp" />
+    <ClCompile Include="FloatArray.cpp" />
+    <ClCompile Include="MCChainWaveDrawer.cpp" />
+    <ClCompile Include="MCGraphicsContextWaveDrawer.cpp" />
+    <ClCompile Include="MultiChannelWaveDrawer.cpp" />
+    <ClCompile Include="SampleChunker.cpp" />
+    <ClCompile Include="SampleProcessor.cpp" />
+    <ClCompile Include="SoundFile.cpp" />
+    <ClCompile Include="StdWx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="WaveDrawer.cpp" />
+    <ClCompile Include="WaveDrawerGraphicsContext.cpp" />
+    <ClCompile Include="WaveDrawerPoly.cpp" />
+    <ClCompile Include="WaveDrawerRaster.cpp" />
+    <ClCompile Include="WaveDrawerRaster1.cpp" />
+    <ClCompile Include="WaveDrawerRaster2.cpp" />
+    <ClCompile Include="WaveDrawerSimple.cpp" />
+    <ClCompile Include="wxApp.cpp" />
+    <ClCompile Include="wxConfiguration.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
