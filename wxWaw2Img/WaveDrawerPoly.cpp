@@ -14,8 +14,7 @@ PolyWaveDrawer::PolyWaveDrawer(
 	wxGraphicsContext* gc,
 	bool bLogarithmicScale, bool bLogarithmicColorGradient, wxFloat32 fLogBase,
 	wxRect2DInt rc, const wxColour& clrFrom, const wxColour& clrTo )
-	:RasterWaveDrawer( nNumberOfSamples, gc, bLogarithmicScale, fLogBase, rc, clrFrom, clrTo ),
-	m_bLogarithmicScale(bLogarithmicScale), m_bLogarithmicColorGradient(bLogarithmicColorGradient)
+	:RasterWaveDrawer( nNumberOfSamples, gc, bLogarithmicScale, bLogarithmicColorGradient, fLogBase, rc, clrFrom, clrTo )
 {}
 
 void PolyWaveDrawer::ProcessInitializer()
@@ -80,27 +79,4 @@ void PolyWaveDrawer::ProcessFinalizer()
 	m_gc->SetBrush( wxNullBrush );
 
 	__super::ProcessFinalizer();
-}
-
-void PolyWaveDrawer::create_log_stops( wxGraphicsGradientStops& stops, const wxColour& clrFrom, const wxColour& clrTo, wxUint32 nHeight, wxFloat32 fLogBase )
-{
-	wxASSERT( nHeight > 0 );
-
-	wxFloat32 fLogLogBase = log( fLogBase );
-
-	for( wxUint32 i=nHeight; i > 0; i-- )
-	{
-		wxFloat32 p = 1.0f * i / nHeight;
-		wxFloat32 pl = log( p * (fLogBase - 1.0f) + 1.0f ) / fLogLogBase;
-
-		stops.Add( linear_interpolation( clrFrom, clrTo, pl ), (1.0f - p) / 2.0f );
-	}
-
-	for( wxUint32 i=0; i < nHeight; i++ )
-	{
-		wxFloat32 p = 1.0f * i / nHeight;
-		wxFloat32 pl = log( p * (fLogBase - 1.0f) + 1.0f ) / fLogLogBase;
-
-		stops.Add( linear_interpolation( clrFrom, clrTo, pl ), 0.5f + (p / 2.0f) );
-	}
 }

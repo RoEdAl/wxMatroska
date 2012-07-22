@@ -11,7 +11,7 @@ class Raster1WaveDrawer :public RasterWaveDrawer
 	Raster1WaveDrawer(	
 		wxUint64,
 		wxGraphicsContext*,
-		bool, wxFloat32,
+		bool, bool, wxFloat32,
 		wxRect2DInt, const wxColour&, const wxColour& );
 
 	protected:
@@ -22,10 +22,6 @@ class Raster1WaveDrawer :public RasterWaveDrawer
 	protected:
 
 	wxGraphicsBitmap m_bm;
-
-	protected:
-
-	bool m_bLogarithmicScale;
 };
 
 #endif

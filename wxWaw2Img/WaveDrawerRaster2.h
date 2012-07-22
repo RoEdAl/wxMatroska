@@ -23,11 +23,6 @@ class Raster2WaveDrawer :public RasterWaveDrawer
 	protected:
 
 	wxScopedPtr<wxMemoryDC> m_mdc;
-
-	protected:
-
-	bool m_bLogarithmicScale;
-	bool m_bLogarithmicColorGradient;
 };
 
 #endif

@@ -25,13 +25,6 @@ class PolyWaveDrawer :public RasterWaveDrawer
 	protected:
 
 	Point2DDoubleArray m_points;
-
-	static void create_log_stops( wxGraphicsGradientStops&, const wxColour&, const wxColour&, wxUint32, wxFloat32 );
-
-	protected:
-
-	bool m_bLogarithmicScale;
-	bool m_bLogarithmicColorGradient;
 };
 
 #endif

@@ -25,7 +25,7 @@ wxConfiguration::wxConfiguration( void ):
 	m_nImageQuality(75),
 	m_nImageColorDepth( wxBITMAP_SCREEN_DEPTH ),
 	m_bLogarithmicScale( false ),
-	m_bLogarithmicColorGradient( true ),
+	m_bLogarithmicColorGradient( false ),
 	m_fLogBase( 100 ),
 	m_bPowerMix( true ),
 	m_nFrequency(50)
@@ -56,10 +56,10 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddOption( wxEmptyString, "resolution-units", _( "Image resolution units [inches|cm] (default: inches)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 
 	cmdLine.AddOption( "q", "image-quality", _( "Image quality [0-100] (default: 75)" ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddOption( "d", "color-depth", _( "Image color depth [8,16,24,32] (default: screen color depth)" ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( "d", "color-depth", _( "Image color depth [8,16,24,32] (default: display color depth)" ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 
 	cmdLine.AddSwitch( "l", "logaritmic-scale", _( "Draw using logarithmic scale (default: off)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
-	cmdLine.AddSwitch( "lc", "logarithmic-color-gradient", _( "Use logarithmic color gradient (default: on)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( "lc", "logarithmic-color-gradient", _( "Use logarithmic color gradient (default: off)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddOption( "lb", "logarithm-base", _( "Logarithm base used in logarithmic scale (default: 100)" ), wxCMD_LINE_VAL_DOUBLE, wxCMD_LINE_PARAM_OPTIONAL );
 
 	cmdLine.AddSwitch( "mp", "power-mix", _( "Power mixing of multichannel audio source (default: on)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );

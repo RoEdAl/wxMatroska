@@ -12,18 +12,25 @@
 Raster1WaveDrawer::Raster1WaveDrawer(
 	wxUint64 nNumberOfSamples,
 	wxGraphicsContext* gc,
-	bool bLogarithmicScale, wxFloat32 fLogBase,
+	bool bLogarithmicScale, bool bLogarithmicColorGradient, wxFloat32 fLogBase,
 	wxRect2DInt rc, const wxColour& clrFrom, const wxColour& clrTo )
-	:RasterWaveDrawer( nNumberOfSamples, gc, bLogarithmicScale, fLogBase, rc, clrFrom, clrTo ),
-	m_bLogarithmicScale(bLogarithmicScale)
-{
-}
+	:RasterWaveDrawer( nNumberOfSamples, gc, bLogarithmicScale, bLogarithmicColorGradient, fLogBase, rc, clrFrom, clrTo )
+{}
 
 void Raster1WaveDrawer::ProcessInitializer()
 {
 	__super::ProcessInitializer();
 
-	wxImage img( create_gradient_bitmap( m_clrFrom, m_clrTo, m_nImgHeight ) );
+	wxImage img;
+	if ( m_bLogarithmicColorGradient )
+	{
+		img = create_log_gradient_bitmap( m_clrFrom, m_clrTo, m_nImgHeight, m_fLogBase );
+	}
+	else
+	{
+		img = create_gradient_bitmap( m_clrFrom, m_clrTo, m_nImgHeight );
+	}
+
 	wxASSERT( (2 * m_nImgHeight) == img.GetHeight() );
 
 	m_bm = m_gc->CreateBitmap( img );
