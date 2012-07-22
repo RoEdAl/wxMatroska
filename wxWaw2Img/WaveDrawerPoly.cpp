@@ -2,6 +2,7 @@
 	WaveDrawerRaster1.cpp
 */
 #include "StdWx.h"
+#include "LogarithmicScale.h"
 #include "SampleProcessor.h"
 #include "WaveDrawer.h"
 #include "SampleChunker.h"
@@ -65,7 +66,7 @@ void PolyWaveDrawer::ProcessFinalizer()
 	wxGraphicsGradientStops stops( m_clrTo, m_clrTo );
 	if ( m_bLogarithmicColorGradient )
 	{
-		create_log_stops( stops, m_clrFrom, m_clrTo, m_nImgHeight, m_fLogBase );
+		create_log_stops( stops, m_clrFrom, m_clrTo, m_nImgHeight, GetLogarithmicScale() );
 	}
 	else
 	{

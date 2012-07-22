@@ -4,6 +4,7 @@
 #include "StdWx.h"
 #include <sndfile.h>
 #include "FloatArray.h"
+#include "LogarithmicScale.h"
 #include "wxConfiguration.h"
 #include "wxApp.h"
 
@@ -167,7 +168,7 @@ static WaveDrawer* create_wave_drawer( DRAWING_MODE eMode, const wxConfiguration
 		return new SimpleWaveDrawer( nNumberOfSamples, gc, cfg.UseLogarithmicScale(), cfg.GetLogarithmBase(), rc, cfg.GetColourFrom() );
 
 		case DRAWING_MODE_RASTER1:
-			return new Raster1WaveDrawer( nNumberOfSamples, gc, cfg.UseLogarithmicScale(), cfg.UseLogarithmicColorPalette(), cfg.GetLogarithmBase(), rc, cfg.GetColourFrom(), cfg.GetColourTo() );
+		return new Raster1WaveDrawer( nNumberOfSamples, gc, cfg.UseLogarithmicScale(), cfg.UseLogarithmicColorPalette(), cfg.GetLogarithmBase(), rc, cfg.GetColourFrom(), cfg.GetColourTo() );
 
 		case DRAWING_MODE_RASTER2:
 		return new Raster2WaveDrawer( nNumberOfSamples, gc, cfg.UseLogarithmicScale(), cfg.UseLogarithmicColorPalette(), cfg.GetLogarithmBase(), rc, cfg.GetColourFrom(), cfg.GetColourTo() );

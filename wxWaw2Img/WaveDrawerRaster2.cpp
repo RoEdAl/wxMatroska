@@ -2,6 +2,7 @@
 	WaveDrawerRaster2.cpp
 */
 #include "StdWx.h"
+#include "LogarithmicScale.h"
 #include "SampleProcessor.h"
 #include "WaveDrawer.h"
 #include "SampleChunker.h"
@@ -14,7 +15,7 @@ Raster2WaveDrawer::Raster2WaveDrawer(
 	bool bLogarithmicScale, bool bLogarithmicColorGradient, wxFloat32 fLogBase,
 	wxRect2DInt rc,
 	const wxColour& clrFrom, const wxColour& clrTo )
-	:RasterWaveDrawer(  nNumberOfSamples, gc, bLogarithmicColorGradient, bLogarithmicScale, fLogBase, rc, clrFrom, clrTo )
+	:RasterWaveDrawer(  nNumberOfSamples, gc, bLogarithmicScale, bLogarithmicColorGradient, fLogBase, rc, clrFrom, clrTo )
 {}
 
 void Raster2WaveDrawer::ProcessInitializer()
@@ -30,21 +31,21 @@ void Raster2WaveDrawer::NextColumn( wxFloat32 fValue, wxFloat32 fLogValue )
 	wxColour clrFrom = linear_interpolation( m_clrTo, m_clrFrom, abs(fValue) );
 	wxColour clrTo = m_clrTo;
 
-	wxGraphicsBitmap bmp;
+	wxImage img;
 	
 	if ( m_bLogarithmicColorGradient )
 	{
-		bmp = m_gc->CreateBitmap( create_log_gradient_bitmap( *m_mdc, clrFrom, clrTo, m_nImgHeight, m_fLogBase ) );
+		wxASSERT( UseLogarithmicScale() );
+		img = create_log_gradient_bitmap( *m_mdc, clrFrom, clrTo, m_nImgHeight, GetLogarithmicScale() );
 	}
 	else
 	{
-		bmp = m_gc->CreateBitmap( create_gradient_bitmap( *m_mdc, clrFrom, clrTo, m_nImgHeight ) );
+		img = create_gradient_bitmap( *m_mdc, clrFrom, clrTo, m_nImgHeight );
 	}
-	
 
 	wxPoint2DDouble point_central( m_nCurrentColumn + m_rc.m_x, m_yoffset );
 	wxRect2DDouble rc( 0 ,0, 1, abs( (m_bLogarithmicScale? fLogValue : fValue) * m_nImgHeight ) );
-	m_gc->DrawBitmap( bmp, point_central.m_x, point_central.m_y - rc.m_height, rc.m_width, 2 * rc.m_height );
+	m_gc->DrawBitmap( m_gc->CreateBitmapFromImage(img), point_central.m_x, point_central.m_y - rc.m_height, rc.m_width, 2 * rc.m_height );
 }
 
 void Raster2WaveDrawer::ProcessFinalizer()

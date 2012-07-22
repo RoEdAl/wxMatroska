@@ -17,6 +17,9 @@ class SampleChunker :public WaveDrawer
 	virtual void ProcessSample( wxFloat32 fSample );
 	virtual void NextColumn( wxFloat32 fValue, wxFloat32 fLogSample ) = 0;
 
+	bool UseLogarithmicScale() const;
+	const LogarithmicScale& GetLogarithmicScale() const;
+
 	protected:
 	
 	wxUint64 m_nNumberOfSamples;
@@ -25,16 +28,13 @@ class SampleChunker :public WaveDrawer
 	
 	wxUint32 m_nWidth;
 	wxUint32 m_nCurrentColumn;
-
-	wxFloat32 m_fLogBase;
 	
 	private:
 	
 	wxUint64 m_nLimit;	
 	wxFloat32 m_fMaxSample;
 	wxFloat32 m_fAbsMaxSample;
-	bool m_bCalcLogarithmic;
-	wxFloat32 m_fLogLogBase;
+	wxScopedPtr<LogarithmicScale> m_pLogarithmicScale;
 	
 	private:
 	

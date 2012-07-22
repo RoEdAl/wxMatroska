@@ -1,12 +1,14 @@
 /*
-	WaveDrawerRaster1.cpp
+	WaveDrawerRaster.cpp
 */
 #include "StdWx.h"
+#include "LogarithmicScale.h"
 #include "SampleProcessor.h"
 #include "WaveDrawer.h"
 #include "SampleChunker.h"
 #include "WaveDrawerGraphicsContext.h"
 #include "WaveDrawerRaster.h"
+
 
 RasterWaveDrawer::RasterWaveDrawer(
 	wxUint64 nNumberOfSamples,
@@ -48,16 +50,14 @@ wxColour RasterWaveDrawer::linear_interpolation( const wxColour& c1, const wxCol
 	return wxColour( r, g, b ,a );
 }
 
-void RasterWaveDrawer::create_log_stops( wxGraphicsGradientStops& stops, const wxColour& clrFrom, const wxColour& clrTo, wxUint32 nHeight, wxFloat32 fLogBase )
+void RasterWaveDrawer::create_log_stops( wxGraphicsGradientStops& stops, const wxColour& clrFrom, const wxColour& clrTo, wxUint32 nHeight, const LogarithmicScale& logarithmicScale )
 {
 	wxASSERT( nHeight > 0 );
-
-	wxFloat32 fLogLogBase = log( fLogBase );
 
 	for( wxUint32 i=nHeight; i > 0; i-- )
 	{
 		wxFloat32 p = 1.0f * i / nHeight;
-		wxFloat32 pl = log( p * (fLogBase - 1.0f) + 1.0f ) / fLogLogBase;
+		wxFloat32 pl = logarithmicScale( p );
 
 		stops.Add( linear_interpolation( clrFrom, clrTo, pl ), (1.0f - p) / 2.0f );
 	}
@@ -65,7 +65,7 @@ void RasterWaveDrawer::create_log_stops( wxGraphicsGradientStops& stops, const w
 	for( wxUint32 i=0; i < nHeight; i++ )
 	{
 		wxFloat32 p = 1.0f * i / nHeight;
-		wxFloat32 pl = log( p * (fLogBase - 1.0f) + 1.0f ) / fLogLogBase;
+		wxFloat32 pl = logarithmicScale( p );
 
 		stops.Add( linear_interpolation( clrFrom, clrTo, pl ), 0.5f + (p / 2.0f) );
 	}
@@ -108,7 +108,7 @@ wxImage RasterWaveDrawer::create_gradient_bitmap( const wxColour& clrFrom, const
 	return draw_gradient_bitmap( mdc, clrFrom, clrTo, nHeight );
 }
 
-wxImage RasterWaveDrawer::draw_log_gradient_bitmap( wxMemoryDC& mdc, const wxColour& clrFrom, const wxColour& clrTo, wxUint32 nHeight, wxFloat32 fLogBase )
+wxImage RasterWaveDrawer::draw_log_gradient_bitmap( wxMemoryDC& mdc, const wxColour& clrFrom, const wxColour& clrTo, wxUint32 nHeight, const LogarithmicScale& logarithmicScale )
 {
 	wxASSERT( nHeight > 0 );
 	wxBitmap bmp( 1, 2 * nHeight, ( has_alpha(clrFrom) || has_alpha(clrTo) ) ? 32 : 24 );
@@ -119,7 +119,7 @@ wxImage RasterWaveDrawer::draw_log_gradient_bitmap( wxMemoryDC& mdc, const wxCol
 		wxScopedPtr<wxGraphicsContext> gc( wxGraphicsContext::Create( mdc ) );
 
 		wxGraphicsGradientStops gstops( clrTo, clrTo );
-		create_log_stops( gstops, clrFrom, clrTo, nHeight, fLogBase );
+		create_log_stops( gstops, clrFrom, clrTo, nHeight, logarithmicScale );
 		
 		wxGraphicsBrush brush = gc->CreateLinearGradientBrush( 0,0, 0,2*nHeight-1, gstops );
 
@@ -134,13 +134,13 @@ wxImage RasterWaveDrawer::draw_log_gradient_bitmap( wxMemoryDC& mdc, const wxCol
 	return bmp.ConvertToImage();
 }
 
-wxImage RasterWaveDrawer::create_log_gradient_bitmap( wxMemoryDC& mdc, const wxColour& clrFrom, const wxColour& clrTo, wxUint32 nHeight, wxFloat32 fLogBase )
+wxImage RasterWaveDrawer::create_log_gradient_bitmap( wxMemoryDC& mdc, const wxColour& clrFrom, const wxColour& clrTo, wxUint32 nHeight, const LogarithmicScale& logarithmicScale )
 {
-	return draw_log_gradient_bitmap( mdc, clrFrom, clrTo, nHeight, fLogBase );
+	return draw_log_gradient_bitmap( mdc, clrFrom, clrTo, nHeight, logarithmicScale );
 }
 
-wxImage RasterWaveDrawer::create_log_gradient_bitmap( const wxColour& clrFrom, const wxColour& clrTo, wxUint32 nHeight, wxFloat32 fLogBase )
+wxImage RasterWaveDrawer::create_log_gradient_bitmap( const wxColour& clrFrom, const wxColour& clrTo, wxUint32 nHeight, const LogarithmicScale& logarithmicScale )
 {
 	wxMemoryDC mdc;
-	return draw_log_gradient_bitmap( mdc, clrFrom, clrTo, nHeight, fLogBase );
+	return draw_log_gradient_bitmap( mdc, clrFrom, clrTo, nHeight, logarithmicScale );
 }

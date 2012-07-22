@@ -78,6 +78,9 @@
     <ClInclude Include="WaveDrawerPoly.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LogarithmicScale.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StdWx.cpp">
