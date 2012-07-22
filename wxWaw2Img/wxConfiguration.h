@@ -53,8 +53,20 @@ protected:
 	bool ReadNegatableSwitchValue( const wxCmdLineParser& cmdLine, const wxString& name, bool& switchVal );
 	bool ReadNegatableSwitchValueAndNegate( const wxCmdLineParser& cmdLine, const wxString& name, bool& switchVal );
 	bool ParseColourString( const wxString&, wxColour& );
-	bool GetDefaultsFromDisplay();
+	void GetDefaultsFromDisplay();
 	static bool ConvertStringToDrawingMode( const wxString&, DRAWING_MODE& );
+	static wxString GetDrawingModeAsText( DRAWING_MODE );
+	static wxString GetDrawingModeTexts();
+	static wxString GetSwitchAsText( bool );
+
+	struct DRAWING_MODE_DESC
+	{
+		DRAWING_MODE drawingMode;
+		const wxChar* description;
+	};
+
+	static const DRAWING_MODE_DESC DrawingModeDesc[];
+	static const size_t DrawingModeDescSize;
 
 public:
 
@@ -89,7 +101,7 @@ public:
 
 	wxConfiguration( void );
 
-	static void AddCmdLineParams( wxCmdLineParser& );
+	void AddCmdLineParams( wxCmdLineParser& );
 	bool Read( const wxCmdLineParser& );
 };
 

@@ -23,6 +23,7 @@ protected:
 	void AddSeparator( wxCmdLineParser& );
 	static void AddVersionInfos( wxCmdLineParser& );
 	static void AddColourFormatDescription( wxCmdLineParser& );
+	static void AddDisplayDescription( wxCmdLineParser& );
 	static void InitImageHandlers();
 
 protected:

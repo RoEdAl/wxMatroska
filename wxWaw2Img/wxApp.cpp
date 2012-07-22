@@ -49,10 +49,14 @@ void wxMyApp::AddSeparator( wxCmdLineParser& cmdline )
 
 static wxString get_libsndfile_version()
 {
-	char ver[128];
-	int nRes = sf_command (NULL, SFC_GET_LIB_VERSION, ver, sizeof (ver));
+	wxString v;
 
-	wxString v( ver, nRes );
+	{
+		wxStringTypeBufferLength<char> vl( v, 128 );
+		int nRes = sf_command (NULL, SFC_GET_LIB_VERSION, vl, 128 );
+		vl.SetLength( nRes );
+	}
+
 	return v;
 }
 
@@ -68,19 +72,34 @@ void wxMyApp::AddVersionInfos( wxCmdLineParser& cmdline )
 void wxMyApp::AddColourFormatDescription( wxCmdLineParser& cmdline )
 {
 	cmdline.AddUsageText( _( "Color format specification:" ) );
-	cmdline.AddUsageText( _("\t- RGB(r,g,b) e.g RGB(176,45,235)" ) );
-	cmdline.AddUsageText( _("\t- RGBA(r,g,b,a) e.g RGBA(176,45,235,0.7)" ) );
-	cmdline.AddUsageText( _("\t- #RRGGBB (HTML format) e.g #AABBFF" ) );
-	cmdline.AddUsageText( _("\t- colour_name e.g yellow" ) );
+	cmdline.AddUsageText( _("\tCSS sytntax: RGB(176,45,235)" ) );
+	cmdline.AddUsageText( _("\tCSS syntax with alpha: RGBA(176,45,235,0.7)" ) );
+	cmdline.AddUsageText( _("\tHTML syntax (no alpha): #AABBFF" ) );
+	cmdline.AddUsageText( _("\tcolor name: yellow )" ) );
+}
+
+void wxMyApp::AddDisplayDescription( wxCmdLineParser& cmdline )
+{
+	wxRect dplRect = wxGetClientDisplayRect();
+	int nDepth = wxDisplayDepth();
+	wxSize res = wxGetDisplayPPI();
+
+	cmdline.AddUsageText( wxString::Format( _("Display position (pixels): %dx%d"), dplRect.x, dplRect.y ) );
+	cmdline.AddUsageText( wxString::Format( _("Display size: %dx%d"), dplRect.width, dplRect.height ) );
+	cmdline.AddUsageText( wxString::Format( _("Display color depth: %d bits"), nDepth ) );
+	cmdline.AddUsageText( wxString::Format( _("Display resolution (pixels per inch): %dx%d"), res.x, res.y ) );
+	cmdline.AddUsageText( wxString::Format( _("Window color: %s"), wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW  ).GetAsString() ) );
 }
 
 void wxMyApp::OnInitCmdLine( wxCmdLineParser& cmdline )
 {
 	wxAppConsole::OnInitCmdLine( cmdline );
 	cmdline.SetLogo( _( "This application draws a wave file." ) );
-	wxConfiguration::AddCmdLineParams( cmdline );
+	m_cfg.AddCmdLineParams( cmdline );
 	AddSeparator( cmdline );
 	AddColourFormatDescription( cmdline );
+	AddSeparator( cmdline );
+	AddDisplayDescription( cmdline );
 	AddSeparator( cmdline );
 	AddVersionInfos( cmdline );
 	AddSeparator( cmdline );

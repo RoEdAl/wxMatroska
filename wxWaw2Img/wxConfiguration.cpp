@@ -12,6 +12,18 @@ wxIMPLEMENT_DYNAMIC_CLASS( wxConfiguration, wxObject );
 
 // ===============================================================================
 
+const wxConfiguration::DRAWING_MODE_DESC wxConfiguration::DrawingModeDesc[] = {
+	{ DRAWING_MODE_SIMPLE, wxT("simple") },
+	{ DRAWING_MODE_RASTER1, wxT("raster1") },
+	{ DRAWING_MODE_RASTER2, wxT("raster2") },
+	{ DRAWING_MODE_POLY, wxT("poly") },
+	{ DRAWING_MODE_AUDIO, wxT("audio") },
+};
+
+const size_t wxConfiguration::DrawingModeDescSize = sizeof(wxConfiguration::DrawingModeDesc)/sizeof(wxConfiguration::DRAWING_MODE_DESC);
+
+// ===============================================================================
+
 wxConfiguration::wxConfiguration( void ):
 	m_eDrawingMode( DRAWING_MODE_RASTER1 ),
 	m_nWidth(800),
@@ -32,38 +44,45 @@ wxConfiguration::wxConfiguration( void ):
 {
 }
 
+wxString wxConfiguration::GetSwitchAsText( bool b )
+{
+	return b? _("on") : _("off");
+}
+
 void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 {
 	cmdLine.AddParam( _("Input file"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "o", "output", _( "Output file" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddOption( "m", "drawing-mode", _( "Drawing mode. [simple|raster1|raster2|poly|audio] (default: raster1)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( "m", "drawing-mode", wxString::Format( _( "Drawing mode. [%s] (default: %s)" ), GetDrawingModeTexts(), GetDrawingModeAsText( m_eDrawingMode ) ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 
 	cmdLine.AddSwitch( "s", "take-display-properties", _( "Get image size and color depth from display properties (default: on)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 
-	cmdLine.AddOption( "w", "width", _( "Image width in pixels (800 by default)" ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddOption( "y", "height", _( "Image height in pixels (600 by default)" ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( "w", "width", wxString::Format( _( "Image width in pixels (default: %u)" ), m_nWidth ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( "y", "height", wxString::Format( _( "Image height in pixels (default: %u)" ), m_nHeight ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 
-	cmdLine.AddSwitch( "g", "gradient", _( "Draw gradient (default: on)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
-	cmdLine.AddOption( "c", "colour", _( "Colour to draw (default: black[transparent])" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddOption( "c2", "second-colour", _( "Second colour to draw if drawing gradient (default: black[opaque])" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( "g", "gradient", wxString::Format( _( "Draw gradient (default: %s)" ), GetSwitchAsText(m_bDrawWithGradient) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+
+	cmdLine.AddOption( "c", "colour", wxString::Format( _( "Colour to draw (default: %s)"), m_clrFrom.GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( "c2", "second-colour", wxString::Format( _( "Second colour to draw if drawing gradient (default: %s)" ), m_clrTo.GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 
 	cmdLine.AddOption( "b", "background", _( "Background color (default: transparent or white)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( "bs", "background-from-system", _( "Take background color from system settings (default: off)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 
-	cmdLine.AddOption( "r", "resolution", _( "Image horizontal and vertical resolution (default: 75)" ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddOption( "rx", "x-resolution", _( "Image horizontal resolution (default: 75)" ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddOption( "ry", "y-resolution", _( "Image vertical resolution (default: 75)" ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( "r", "resolution", wxString::Format( _( "Image horizontal and vertical resolution (default: %d)" ), m_imageResolution.x ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( "rx", "x-resolution", wxString::Format( _( "Image horizontal resolution (default: %d)" ), m_imageResolution.x ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( "ry", "y-resolution", wxString::Format( _( "Image vertical resolution (default: %d)" ), m_imageResolution.y ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 
 	cmdLine.AddOption( wxEmptyString, "resolution-units", _( "Image resolution units [inches|cm] (default: inches)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 
-	cmdLine.AddOption( "q", "image-quality", _( "Image quality [0-100] (default: 75)" ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( "q", "image-quality", wxString::Format( _( "Image quality [0-100] (default: %d)" ), m_nImageQuality ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "d", "color-depth", _( "Image color depth [8,16,24,32] (default: display color depth)" ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 
-	cmdLine.AddSwitch( "l", "logaritmic-scale", _( "Draw using logarithmic scale (default: off)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
-	cmdLine.AddSwitch( "lc", "logarithmic-color-gradient", _( "Use logarithmic color gradient (default: off)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( "l", "logaritmic-scale", wxString::Format( _( "Draw using logarithmic scale (default: %s)" ), GetSwitchAsText(m_bLogarithmicScale) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( "lc", "logarithmic-color-gradient", wxString::Format( _( "Use logarithmic color gradient (default: %s)" ), GetSwitchAsText(m_bLogarithmicColorGradient) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddOption( "lb", "logarithm-base", _( "Logarithm base used in logarithmic scale (default: 100)" ), wxCMD_LINE_VAL_DOUBLE, wxCMD_LINE_PARAM_OPTIONAL );
 
-	cmdLine.AddSwitch( "mp", "power-mix", _( "Power mixing of multichannel audio source (default: on)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
-	cmdLine.AddOption( "f", "frequency", _( "Frequency (in Hz) of rendered audio file (default 50)" ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( "mp", "power-mix", wxString::Format( _( "Power mixing of multichannel audio source (default: %s)" ), GetSwitchAsText(m_bPowerMix) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddOption( "f", "frequency", wxString::Format( _( "Frequency (in Hz) of rendered audio file (default %u)" ), m_nFrequency ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 }
 
 bool wxConfiguration::ReadNegatableSwitchValue( const wxCmdLineParser& cmdLine, const wxString& name, bool& switchVal )
@@ -101,18 +120,20 @@ bool wxConfiguration::ReadNegatableSwitchValueAndNegate( const wxCmdLineParser& 
 	}
 }
 
-bool wxConfiguration::GetDefaultsFromDisplay()
+void wxConfiguration::GetDefaultsFromDisplay()
 {
-	wxSize dplSize = wxGetDisplaySize();
+	wxRect dplRect = wxGetClientDisplayRect();
 	int nDepth = wxDisplayDepth();
 	wxSize res = wxGetDisplayPPI();
 
-	m_nWidth = dplSize.GetWidth();
-	m_nHeight = dplSize.GetHeight();
+	wxLogInfo( _("Display size in pixels: %dx%d"), dplRect.GetWidth(), dplRect.GetHeight() );
+	wxLogInfo( _("Display color depth: %d bits"), nDepth );
+	wxLogInfo( _("Display resolution in pixels per inch: %dx%d"), res.x, res.y );
+
+	m_nWidth = dplRect.GetWidth();
+	m_nHeight = dplRect.GetHeight();
 	m_nImageColorDepth = nDepth;
 	m_imageResolution = res;
-
-	return false;
 }
 
 static wxColour get_default_bg_color( int nDepth )
@@ -135,33 +156,40 @@ static wxColour get_default_bg_color( int nDepth )
 
 bool wxConfiguration::ConvertStringToDrawingMode( const wxString& s, DRAWING_MODE& e )
 {
-	if ( s.CmpNoCase( "simple" ) == 0 )
+	for( size_t i=0; i < DrawingModeDescSize; i++ )
 	{
-		e = DRAWING_MODE_SIMPLE;
-		return true;
-	}
-	else if ( s.CmpNoCase( "raster1" ) == 0 )
-	{
-		e = DRAWING_MODE_RASTER1;
-		return true;
-	}
-	else if ( s.CmpNoCase( "raster2" ) == 0 )
-	{
-		e = DRAWING_MODE_RASTER2;
-		return true;
-	}
-	else if ( s.CmpNoCase( "poly" ) == 0 )
-	{
-		e = DRAWING_MODE_POLY;
-		return true;
-	}
-	else if ( s.CmpNoCase( "audio" ) == 0 )
-	{
-		e = DRAWING_MODE_AUDIO;
-		return true;
+		if ( s.CmpNoCase( DrawingModeDesc[i].description ) == 0 )
+		{
+			e = DrawingModeDesc[i].drawingMode;
+			return true;
+		}
 	}
 
 	return false;
+}
+
+wxString wxConfiguration::GetDrawingModeAsText( DRAWING_MODE e )
+{
+	for( size_t i=0; i < DrawingModeDescSize; i++ )
+	{
+		if ( DrawingModeDesc[i].drawingMode == e )
+		{
+			return DrawingModeDesc[i].description;
+		}
+	}
+
+	return wxString::Format( "<%d>", static_cast<int>(e) );
+}
+
+wxString wxConfiguration::GetDrawingModeTexts()
+{
+	wxString s;
+	for( size_t i=0; i < DrawingModeDescSize; i++ )
+	{
+		s << DrawingModeDesc[i].description << "|";
+	}
+
+	return s.RemoveLast();
 }
 
 bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
@@ -264,7 +292,12 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		m_clrBackground = get_default_bg_color( m_nImageColorDepth );
 	}
 
-	if ( cmdLine.Found( "b", &s ) )
+	if ( ReadNegatableSwitchValue( cmdLine, "bs", bRes ) && bRes )
+	{
+		m_clrBackground = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW  );
+		wxLogInfo( _("Background color: %s"), m_clrBackground.GetAsString() );
+	}
+	else if ( cmdLine.Found( "b", &s ) )
 	{
 		if ( !ParseColourString( s, m_clrBackground ) )
 		{
