@@ -1,6 +1,6 @@
 /*
-	MCGrpahicsContextWaveDrawer.cpp
-*/
+        MCGrpahicsContextWaveDrawer.cpp
+ */
 
 #include "StdWx.h"
 #include "SampleProcessor.h"
@@ -9,10 +9,9 @@
 #include "ArrayWaveDrawer.h"
 #include "MCGraphicsContextWaveDrawer.h"
 
-McGraphicalContextWaveDrawer::McGraphicalContextWaveDrawer(wxUint16 nChannels )
-	:ArrayWaveDrawer( nChannels )
-{
-}
+McGraphicalContextWaveDrawer::McGraphicalContextWaveDrawer( wxUint16 nChannels ):
+	ArrayWaveDrawer( nChannels )
+{}
 
 wxImage McGraphicalContextWaveDrawer::GetBitmap() const
 {
@@ -22,24 +21,24 @@ wxImage McGraphicalContextWaveDrawer::GetBitmap() const
 
 wxGraphicsContext* McGraphicalContextWaveDrawer::Initialize( wxUint32 nWidth, wxUint32 nHeight, int nImageColourDepth, const wxColour& clrBg )
 {
-	wxLogInfo( _("Creating bitmap") );
+	wxLogInfo( _( "Creating bitmap" ) );
 	m_bmp.reset( new wxBitmap( nWidth, nHeight, nImageColourDepth ) );
 
-	wxLogInfo( _("Creating memory context") );
+	wxLogInfo( _( "Creating memory context" ) );
 	m_mc.reset( new wxMemoryDC() );
 
 	m_mc->SelectObject( *m_bmp );
 	if ( !m_mc->IsOk() )
 	{
 		m_mc.release();
-		wxLogError( _("Fail to set bitmap into memory context") );
+		wxLogError( _( "Fail to set bitmap into memory context" ) );
 		return NULL;
 	}
 
-	wxLogInfo( _("Creating graphics context") );
+	wxLogInfo( _( "Creating graphics context" ) );
 	m_gc.reset( wxGraphicsContext::Create( *m_mc ) );
 
-	wxLogInfo( _("Initializing graphics context") );
+	wxLogInfo( _( "Initializing graphics context" ) );
 	m_gc->SetAntialiasMode( wxANTIALIAS_DEFAULT );
 	m_gc->SetInterpolationQuality( wxINTERPOLATION_BEST );
 	m_gc->SetPen( wxNullPen );
@@ -58,3 +57,4 @@ void McGraphicalContextWaveDrawer::ProcessFinalizer()
 	m_mc->SelectObject( wxNullBitmap );
 	m_mc.reset();
 }
+

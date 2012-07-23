@@ -1,16 +1,14 @@
 /*
-	SoundFileReader.cpp
-*/
+        SoundFileReader.cpp
+ */
 #include "StdWx.h"
 #include "WaveDrawer.h"
 #include "MultiChannelWaveDrawer.h"
 #include "SoundFile.h"
 #include "SoundFileReader.h"
 
-//wxDECLARE_SCOPED_ARRAY(float, wxFloatArray)
-wxDEFINE_SCOPED_ARRAY(float, wxFloatArray)
-
-SoundFileReader::SoundFileReader()
+// wxDECLARE_SCOPED_ARRAY(float, wxFloatArray)
+wxDEFINE_SCOPED_ARRAY( float, wxFloatArray ) SoundFileReader::SoundFileReader()
 {}
 
 SoundFileReader::~SoundFileReader()
@@ -43,35 +41,38 @@ void SoundFileReader::ReadSamples( MultiChannelWaveDrawer& waveDrawer )
 	SNDFILE* sndfile = m_soundFile.GetHandle();
 
 	/*
-	double d;
+	   double d;
 
-	if ( !sf_command( m_soundFile.GetHandle(), SFC_CALC_NORM_SIGNAL_MAX, &d, sizeof(d) ) )
-	{
-		wxLogMessage( _("Normalized value: %f"), d );
-	}
-	else
-	{
-		d = 1;
-	}
-	*/
+	   if ( !sf_command( m_soundFile.GetHandle(), SFC_CALC_NORM_SIGNAL_MAX, &d, sizeof(d) ) )
+	   {
+	        wxLogMessage( _("Normalized value: %f"), d );
+	   }
+	   else
+	   {
+	        d = 1;
+	   }
+	 */
 
-	int nChannels = m_soundFile.GetInfo().channels;
-	int nSamplerate = m_soundFile.GetInfo().samplerate;
-	sf_count_t nBlock = nChannels * nSamplerate;
+	int		   nChannels   = m_soundFile.GetInfo().channels;
+	int		   nSamplerate = m_soundFile.GetInfo().samplerate;
+	sf_count_t nBlock	   = nChannels * nSamplerate;
 
 	wxFloatArray block( new float[ nBlock ] );
 
 	sf_count_t nCount = sf_readf_float( sndfile, block.get(), nSamplerate );
-	while( nCount > 0 )
+
+	while ( nCount > 0 )
 	{
 		float* p = block.get();
-		for( sf_count_t i=0; i < nCount; i++ )
+		for ( sf_count_t i = 0; i < nCount; i++ )
 		{
 			waveDrawer.NextSample( p );
 			p += nChannels;
 		}
+
 		nCount = sf_readf_float( sndfile, block.get(), nSamplerate );
 	}
 
 	m_soundFile.Close();
 }
+

@@ -1,11 +1,12 @@
 /*
-	ChannelMixer.h
-*/
+        ChannelMixer.h
+ */
 
 #ifndef _CHANNEL_MIXER_H_
 #define _CHANNEL_MIXER_H_
 
-class ChannelMixer :public McChainWaveDrawer
+class ChannelMixer:
+	public McChainWaveDrawer
 {
 public:
 
@@ -14,8 +15,9 @@ public:
 	virtual void ProcessFrame( const wxFloat32* );
 
 protected:
-	
+
 	wxFloat32 m_fFactor;
 };
 
 #endif
+

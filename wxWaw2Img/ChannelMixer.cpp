@@ -1,6 +1,6 @@
 /*
-	ChannelMixer.cpp
-*/
+        ChannelMixer.cpp
+ */
 #include "StdWx.h"
 #include "SampleProcessor.h"
 #include "WaveDrawer.h"
@@ -8,8 +8,8 @@
 #include "MCChainWaveDrawer.h"
 #include "ChannelMixer.h"
 
-ChannelMixer::ChannelMixer(wxUint16 nChannels, MultiChannelWaveDrawer* pMcWaveDrawer, bool bPowerMix)
-	:McChainWaveDrawer( nChannels, pMcWaveDrawer )
+ChannelMixer::ChannelMixer( wxUint16 nChannels, MultiChannelWaveDrawer* pMcWaveDrawer, bool bPowerMix ):
+	McChainWaveDrawer( nChannels, pMcWaveDrawer )
 {
 	wxASSERT( pMcWaveDrawer->GetNumberOfChannels() == 1 );
 
@@ -26,9 +26,10 @@ ChannelMixer::ChannelMixer(wxUint16 nChannels, MultiChannelWaveDrawer* pMcWaveDr
 void ChannelMixer::ProcessFrame( const wxFloat32* frame )
 {
 	wxFloat32 fMix = 0.0;
-	for( wxUint16 i=0; i < m_nChannels; i++ )
+
+	for ( wxUint16 i = 0; i < m_nChannels; i++ )
 	{
-		fMix += frame[i] * m_fFactor;
+		fMix += frame[ i ] * m_fFactor;
 	}
 
 	if ( fMix <= -1.0f )
@@ -42,5 +43,4 @@ void ChannelMixer::ProcessFrame( const wxFloat32* frame )
 
 	m_pMcWaveDrawer->ProcessFrame( &fMix ); // one channel
 }
-
 

@@ -29,10 +29,10 @@
 
 // ===============================================================================
 
-const wxChar wxMyApp::APP_NAME[]		  = wxT( "wav2img" );
-const wxChar wxMyApp::APP_VERSION[]		  = wxT( "1.0" );
-const wxChar wxMyApp::APP_VENDOR_NAME[]	  = wxT( "Edmunt Pienkowsky" );
-const wxChar wxMyApp::APP_AUTHOR[]		  = wxT( "Edmunt Pienkowsky - roed@onet.eu" );
+const wxChar wxMyApp::APP_NAME[]		= wxT( "wav2img" );
+const wxChar wxMyApp::APP_VERSION[]		= wxT( "1.0" );
+const wxChar wxMyApp::APP_VENDOR_NAME[] = wxT( "Edmunt Pienkowsky" );
+const wxChar wxMyApp::APP_AUTHOR[]		= wxT( "Edmunt Pienkowsky - roed@onet.eu" );
 
 // ===============================================================================
 
@@ -53,7 +53,7 @@ static wxString get_libsndfile_version()
 
 	{
 		wxStringTypeBufferLength<char> vl( v, 128 );
-		int nRes = sf_command (NULL, SFC_GET_LIB_VERSION, vl, 128 );
+		int							   nRes = sf_command ( NULL, SFC_GET_LIB_VERSION, vl, 128 );
 		vl.SetLength( nRes );
 	}
 
@@ -65,30 +65,30 @@ void wxMyApp::AddVersionInfos( wxCmdLineParser& cmdline )
 	cmdline.AddUsageText( wxString::Format( _( "Application version: %s" ), APP_VERSION ) );
 	cmdline.AddUsageText( wxString::Format( _( "Author: %s" ), APP_AUTHOR ) );
 	cmdline.AddUsageText( _( "License: Simplified BSD License - http://www.opensource.org/licenses/bsd-license.php" ) );
-	cmdline.AddUsageText( wxString::Format( _("libsndfile version: %s"), get_libsndfile_version() ) );
+	cmdline.AddUsageText( wxString::Format( _( "libsndfile version: %s" ), get_libsndfile_version() ) );
 	cmdline.AddUsageText( wxString::Format( _( "Operating system: %s" ), wxPlatformInfo::Get().GetOperatingSystemDescription() ) );
 }
 
 void wxMyApp::AddColourFormatDescription( wxCmdLineParser& cmdline )
 {
 	cmdline.AddUsageText( _( "Color format specification:" ) );
-	cmdline.AddUsageText( _("\tCSS sytntax: RGB(176,45,235)" ) );
-	cmdline.AddUsageText( _("\tCSS syntax with alpha: RGBA(176,45,235,0.7)" ) );
-	cmdline.AddUsageText( _("\tHTML syntax (no alpha): #AABBFF" ) );
-	cmdline.AddUsageText( _("\tcolor name: yellow )" ) );
+	cmdline.AddUsageText( _( "\tCSS sytntax: RGB(176,45,235)" ) );
+	cmdline.AddUsageText( _( "\tCSS syntax with alpha: RGBA(176,45,235,0.7)" ) );
+	cmdline.AddUsageText( _( "\tHTML syntax (no alpha): #AABBFF" ) );
+	cmdline.AddUsageText( _( "\tcolor name: yellow" ) );
 }
 
 void wxMyApp::AddDisplayDescription( wxCmdLineParser& cmdline )
 {
 	wxRect dplRect = wxGetClientDisplayRect();
-	int nDepth = wxDisplayDepth();
-	wxSize res = wxGetDisplayPPI();
+	int	   nDepth  = wxDisplayDepth();
+	wxSize res	   = wxGetDisplayPPI();
 
-	cmdline.AddUsageText( wxString::Format( _("Display position (pixels): %dx%d"), dplRect.x, dplRect.y ) );
-	cmdline.AddUsageText( wxString::Format( _("Display size: %dx%d"), dplRect.width, dplRect.height ) );
-	cmdline.AddUsageText( wxString::Format( _("Display color depth: %d bits"), nDepth ) );
-	cmdline.AddUsageText( wxString::Format( _("Display resolution (pixels per inch): %dx%d"), res.x, res.y ) );
-	cmdline.AddUsageText( wxString::Format( _("Window color: %s"), wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW  ).GetAsString() ) );
+	cmdline.AddUsageText( wxString::Format( _( "Display position (pixels): %dx%d" ), dplRect.x, dplRect.y ) );
+	cmdline.AddUsageText( wxString::Format( _( "Display size: %dx%d" ), dplRect.width, dplRect.height ) );
+	cmdline.AddUsageText( wxString::Format( _( "Display color depth: %d bits" ), nDepth ) );
+	cmdline.AddUsageText( wxString::Format( _( "Display resolution (pixels per inch): %dx%d" ), res.x, res.y ) );
+	cmdline.AddUsageText( wxString::Format( _( "Window color: %s" ), wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW ).GetAsString() ) );
 }
 
 void wxMyApp::OnInitCmdLine( wxCmdLineParser& cmdline )
@@ -151,26 +151,27 @@ static void read_audio_samples( SoundFile& soundFile, MultiChannelWaveDrawer& wa
 	SNDFILE* sndfile = soundFile.GetHandle();
 
 	/*
-	double d;
+	   double d;
 
-	if ( !sf_command( m_soundFile.GetHandle(), SFC_CALC_NORM_SIGNAL_MAX, &d, sizeof(d) ) )
-	{
-		wxLogMessage( _("Normalized value: %f"), d );
-	}
-	else
-	{
-		d = 1;
-	}
-	*/
+	   if ( !sf_command( m_soundFile.GetHandle(), SFC_CALC_NORM_SIGNAL_MAX, &d, sizeof(d) ) )
+	   {
+	        wxLogMessage( _("Normalized value: %f"), d );
+	   }
+	   else
+	   {
+	        d = 1;
+	   }
+	 */
 
-	int nChannels = soundFile.GetInfo().channels;
-	int nSamplerate = soundFile.GetInfo().samplerate;
-	sf_count_t nBlock = nChannels * nSamplerate;
+	int		   nChannels   = soundFile.GetInfo().channels;
+	int		   nSamplerate = soundFile.GetInfo().samplerate;
+	sf_count_t nBlock	   = nChannels * nSamplerate;
 
 	wxFloatArray block( new float[ nBlock ] );
 
 	sf_count_t nCount = sf_readf_float( sndfile, block.get(), nSamplerate );
-	while( nCount > 0 )
+
+	while ( nCount > 0 )
 	{
 		waveDrawer.ProcessFames( block.get(), nCount );
 		nCount = sf_readf_float( sndfile, block.get(), nSamplerate );
@@ -181,7 +182,7 @@ static void read_audio_samples( SoundFile& soundFile, MultiChannelWaveDrawer& wa
 
 static WaveDrawer* create_wave_drawer( DRAWING_MODE eMode, const wxConfiguration& cfg, wxUint64 nNumberOfSamples, wxGraphicsContext* gc, const wxRect2DInt& rc )
 {
-	switch( eMode )
+	switch ( eMode )
 	{
 		case DRAWING_MODE_SIMPLE:
 		return new SimpleWaveDrawer( nNumberOfSamples, gc, cfg.UseLogarithmicScale(), cfg.GetLogarithmBase(), rc, cfg.GetColourFrom() );
@@ -195,20 +196,20 @@ static WaveDrawer* create_wave_drawer( DRAWING_MODE eMode, const wxConfiguration
 		case DRAWING_MODE_POLY:
 		return new PolyWaveDrawer( nNumberOfSamples, gc, cfg.UseLogarithmicScale(), cfg.UseLogarithmicColorPalette(), cfg.GetLogarithmBase(), rc, cfg.GetColourFrom(), cfg.GetColourTo() );
 	}
-
 	wxASSERT( false );
 	return NULL;
 }
+
 static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const SF_INFO& sfInfo )
 {
 	if ( sfInfo.frames <= 0 )
 	{
-		wxLogInfo( _("Unknown length of audio source") );
+		wxLogInfo( _( "Unknown length of audio source" ) );
 		return NULL;
 	}
 
-	wxUint64 nSamples = sfInfo.frames;
-	wxUint16 nChannels = sfInfo.channels;
+	wxUint64 nSamples	 = sfInfo.frames;
+	wxUint16 nChannels	 = sfInfo.channels;
 	wxUint32 nSamplerate = sfInfo.samplerate;
 
 	MultiChannelWaveDrawer* pMcwd = NULL;
@@ -220,13 +221,14 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 			ArrayWaveDrawer* pAwd = new ArrayWaveDrawer( 1 );
 			pAwd->AddDrawer( new AudioRenderer( nSamples, cfg.GetWidth(), cfg.UseLogarithmicScale(), cfg.GetLogarithmBase(), nSamplerate ) );
 			pMcwd = pAwd;
+			break;
 		}
-		break;
 
 		case DRAWING_MODE_SIMPLE:
 		case DRAWING_MODE_RASTER1:
 		case DRAWING_MODE_RASTER2:
 		case DRAWING_MODE_POLY:
+		if ( cfg.MultiChannel() )
 		{
 			McGraphicalContextWaveDrawer* pGc = new McGraphicalContextWaveDrawer( 1 );
 
@@ -236,30 +238,58 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 				delete pGc;
 				return NULL;
 			}
-			pGc->AddDrawer( create_wave_drawer( cfg.GetDrawingMode(), cfg, nSamples, gc, wxRect2DInt( 0,0,cfg.GetWidth(), cfg.GetHeight() ) ) );
+
+			for ( wxUint16 nChannel = 0; nChannel < nChannels; nChannel++ )
+			{
+				pGc->AddDrawer( create_wave_drawer( cfg.GetDrawingMode(), cfg, nSamples, gc, cfg.GetDrawerRect( nChannel, nChannels ) ) );
+			}
+
 			pMcwd = pGc;
 		}
+		else
+		{
+			McGraphicalContextWaveDrawer* pGc = new McGraphicalContextWaveDrawer( 1 );
+
+			wxGraphicsContext* gc = pGc->Initialize( cfg.GetWidth(), cfg.GetHeight(), cfg.GetImageColorDepth(), cfg.GetBackgroundColor() );
+			if ( gc == NULL )
+			{
+				delete pGc;
+				return NULL;
+			}
+
+			pGc->AddDrawer( create_wave_drawer( cfg.GetDrawingMode(), cfg, nSamples, gc, cfg.GetDrawerRect() ) );
+			pMcwd = pGc;
+		}
+
 		break;
 	}
-
-	ChannelMixer* pMixer = new ChannelMixer( nChannels, pMcwd, cfg.PowerMix() );
-	return pMixer;
+	if ( cfg.MultiChannel() )
+	{
+		McChainWaveDrawer* pDrawer = new McChainWaveDrawer( nChannels, pMcwd );
+		return pDrawer;
+	}
+	else
+	{
+		ChannelMixer* pMixer = new ChannelMixer( nChannels, pMcwd, cfg.PowerMix() );
+		return pMixer;
+	}
 }
 
 static bool save_rendered_wave( McChainWaveDrawer* pWaveDrawer, const wxConfiguration& cfg )
 {
 	wxFileName fn( cfg.GetOutputFile() );
+
 	if ( !fn.IsOk() )
 	{
 		return false;
 	}
 
-	switch( cfg.GetDrawingMode() )
+	switch ( cfg.GetDrawingMode() )
 	{
 		case DRAWING_MODE_AUDIO:
 		{
-			ArrayWaveDrawer* pAwd = static_cast<ArrayWaveDrawer*>(pWaveDrawer->GetWaveDrawer());
-			AudioRenderer* pAudioRenderer = static_cast<AudioRenderer*>(pAwd->GetDrawer(0));
+			ArrayWaveDrawer* pAwd			= static_cast<ArrayWaveDrawer*>( pWaveDrawer->GetWaveDrawer() );
+			AudioRenderer*	 pAudioRenderer = static_cast<AudioRenderer*>( pAwd->GetDrawer( 0 ) );
 			return pAudioRenderer->GenerateAudio( fn.GetFullPath(), cfg.GetFrequency() );
 		}
 
@@ -268,8 +298,8 @@ static bool save_rendered_wave( McChainWaveDrawer* pWaveDrawer, const wxConfigur
 		case DRAWING_MODE_RASTER2:
 		case DRAWING_MODE_POLY:
 		{
-			McGraphicalContextWaveDrawer* pGc = static_cast<McGraphicalContextWaveDrawer*>(pWaveDrawer->GetWaveDrawer());
-			wxImage img( pGc->GetBitmap() );
+			McGraphicalContextWaveDrawer* pGc = static_cast<McGraphicalContextWaveDrawer*>( pWaveDrawer->GetWaveDrawer() );
+			wxImage						  img( pGc->GetBitmap() );
 
 			img.SetOption( wxIMAGE_OPTION_RESOLUTIONX, cfg.GetImageResolution().GetWidth() );
 			img.SetOption( wxIMAGE_OPTION_RESOLUTIONY, cfg.GetImageResolution().GetHeight() );
@@ -277,21 +307,20 @@ static bool save_rendered_wave( McChainWaveDrawer* pWaveDrawer, const wxConfigur
 			img.SetOption( wxIMAGE_OPTION_QUALITY, cfg.GetImageQuality() );
 			img.SetOption( wxIMAGE_OPTION_FILENAME, fn.GetName() );
 
-			wxLogInfo( _("Saving image to file %s"), fn.GetFullPath() );
+			wxLogInfo( _( "Saving image to file %s" ), fn.GetFullPath() );
 			bool res = img.SaveFile( fn.GetFullPath() );
 			if ( res )
 			{
-				wxLogInfo( _("Image sucessfully saved to file %s"), fn.GetFullPath() );
+				wxLogInfo( _( "Image sucessfully saved to file %s" ), fn.GetFullPath() );
 				return true;
 			}
 			else
 			{
-				wxLogError( _("Fail to save image to file %s"), fn.GetFullPath() );
+				wxLogError( _( "Fail to save image to file %s" ), fn.GetFullPath() );
 				return false;
 			}
 		}
 	}
-
 	return true;
 }
 
@@ -304,15 +333,15 @@ int wxMyApp::OnRun()
 		return 100;
 	}
 
-	wxLogInfo( _("Opening audio file") );
+	wxLogInfo( _( "Opening audio file" ) );
 	SoundFile sfReader;
 	if ( !sfReader.Open( inputFile.GetFullPath() ) )
 	{
-		wxLogError( _("Cannot open sound file %s"), inputFile.GetFullName() );
+		wxLogError( _( "Cannot open sound file %s" ), inputFile.GetFullName() );
 		return false;
 	}
 
-	wxLogInfo( _("Creating wave drawer") );
+	wxLogInfo( _( "Creating wave drawer" ) );
 	wxScopedPtr<McChainWaveDrawer> pWaveDrawer( create_wave_drawer( m_cfg, sfReader.GetInfo() ) );
 
 	if ( !pWaveDrawer )
@@ -322,18 +351,20 @@ int wxMyApp::OnRun()
 
 	{
 		ProcessorHolder holder( *pWaveDrawer );
-		wxLogInfo( _("Drawing wave") );
+		wxLogInfo( _( "Drawing wave" ) );
 		read_audio_samples( sfReader, *pWaveDrawer );
 	}
 
-	wxLogInfo( _("Wave drawed") );
+	wxLogInfo( _( "Wave drawed" ) );
 
-	return save_rendered_wave( pWaveDrawer.get(), m_cfg )? 0 : 1;
+	return save_rendered_wave( pWaveDrawer.get(), m_cfg ) ? 0 : 1;
 }
 
 int wxMyApp::OnExit()
 {
 	int res = wxAppConsole::OnExit();
+
 	wxLogMessage( _( "Done" ) );
 	return res;
 }
+

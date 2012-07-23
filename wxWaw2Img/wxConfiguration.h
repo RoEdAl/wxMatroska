@@ -31,21 +31,26 @@ protected:
 
 	wxColour m_clrFrom;
 	wxColour m_clrTo;
-	bool m_bDrawWithGradient;
+	bool	 m_bDrawWithGradient;
 
 	wxColour m_clrBackground;
 
 	wxImageResolution m_imageResolutionUnits;
-	wxSize m_imageResolution;
-	wxUint16 m_nImageQuality;
+	wxSize			  m_imageResolution;
+	wxUint16		  m_nImageQuality;
 
 	int m_nImageColorDepth;
 
-	bool m_bLogarithmicScale;
-	bool m_bLogarithmicColorGradient;
+	bool	  m_bLogarithmicScale;
+	bool	  m_bLogarithmicColorGradient;
 	wxFloat32 m_fLogBase;
 
+	bool	 m_bMultiChannel;
+	wxUint16 m_nColumnNumber;
+	wxSize	 m_margins;
+
 	bool m_bPowerMix;
+
 	wxUint16 m_nFrequency;
 
 protected:
@@ -55,6 +60,7 @@ protected:
 	bool ParseColourString( const wxString&, wxColour& );
 	void GetDefaultsFromDisplay();
 	static bool ConvertStringToDrawingMode( const wxString&, DRAWING_MODE& );
+
 	static wxString GetDrawingModeAsText( DRAWING_MODE );
 	static wxString GetDrawingModeTexts();
 	static wxString GetSwitchAsText( bool );
@@ -66,7 +72,11 @@ protected:
 	};
 
 	static const DRAWING_MODE_DESC DrawingModeDesc[];
-	static const size_t DrawingModeDescSize;
+	static const size_t			   DrawingModeDescSize;
+
+private:
+
+	void add_margin( wxRect2DInt& ) const;
 
 public:
 
@@ -91,6 +101,14 @@ public:
 	bool UseLogarithmicScale() const;
 	bool UseLogarithmicColorPalette() const;
 	wxFloat32 GetLogarithmBase() const;
+
+	bool MultiChannel() const;
+	wxUint16 GetNumberOfColumns() const;
+	wxSize GetMargins() const;
+
+	wxRect2DInt GetDrawerRect() const;
+
+	wxRect2DInt GetDrawerRect( wxUint16, wxUint16 ) const;
 
 	bool PowerMix() const;
 

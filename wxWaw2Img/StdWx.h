@@ -24,9 +24,9 @@
  */
 #define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers
 #define NOUSER
-//#define NOGDI
-//#define NOMB
-//#define NOCOMM
+// #define NOGDI
+// #define NOMB
+// #define NOCOMM
 
 /*
    Dummy definition of MSG (LPMSG) to make
@@ -59,12 +59,12 @@ typedef struct tagMSG
 #include <wx/sstream.h>
 #include <wx/dir.h>
 #include <wx/stdpaths.h>
-#include <wx/scopedptr.h> 
+#include <wx/scopedptr.h>
 #include <wx/scopedarray.h>
 #include <wx/gdicmn.h>
 #include <wx/bitmap.h>
-#include <wx/image.h> 
-#include <wx/dcmemory.h> 
+#include <wx/image.h>
+#include <wx/dcmemory.h>
 #include <wx/geometry.h>
 #include <wx/graphics.h>
 #include <wx/display.h>

@@ -1,32 +1,33 @@
 /*
-	WaveDrawerGraphicsContext.h
-*/
+        WaveDrawerGraphicsContext.h
+ */
 
 #ifndef _WAVE_DRIVER_GRAPHICS_CONTEXT_H_
 #define _WAVE_DRIVER_GRAPHICS_CONTEXT_H_
 
-class GraphicsContextWaveDrawer : public SampleChunker
+class GraphicsContextWaveDrawer:
+	public SampleChunker
 {
-	public:
+public:
 
-	GraphicsContextWaveDrawer( 
-		wxUint64,
-		wxGraphicsContext* gc,
-		bool, wxFloat32,
-		wxRect2DInt );
+	GraphicsContextWaveDrawer( wxUint64,
+							   wxGraphicsContext* gc,
+							   bool, wxFloat32,
+							   wxRect2DInt );
 
-	protected:
+protected:
 
 	virtual void ProcessInitializer();
 	virtual void ProcessFinalizer();
 
-	protected:
+protected:
 
 	wxGraphicsContext* m_gc;
-	wxRect2DInt m_rc;
-	wxFloat32 m_height2;
-	wxFloat32 m_yoffset;
-	wxInt32 m_nImgHeight;
+	wxRect2DInt		   m_rc;
+	wxFloat32		   m_height2;
+	wxFloat32		   m_yoffset;
+	wxInt32			   m_nImgHeight;
 };
 
 #endif
+

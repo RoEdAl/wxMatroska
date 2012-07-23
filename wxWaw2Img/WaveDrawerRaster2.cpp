@@ -1,6 +1,6 @@
 /*
-	WaveDrawerRaster2.cpp
-*/
+        WaveDrawerRaster2.cpp
+ */
 #include "StdWx.h"
 #include "LogarithmicScale.h"
 #include "SampleProcessor.h"
@@ -10,12 +10,11 @@
 #include "WaveDrawerRaster.h"
 #include "WaveDrawerRaster2.h"
 
-Raster2WaveDrawer::Raster2WaveDrawer(
-	wxUint64 nNumberOfSamples, wxGraphicsContext* gc,
-	bool bLogarithmicScale, bool bLogarithmicColorGradient, wxFloat32 fLogBase,
-	wxRect2DInt rc,
-	const wxColour& clrFrom, const wxColour& clrTo )
-	:RasterWaveDrawer(  nNumberOfSamples, gc, bLogarithmicScale, bLogarithmicColorGradient, fLogBase, rc, clrFrom, clrTo )
+Raster2WaveDrawer::Raster2WaveDrawer( wxUint64 nNumberOfSamples, wxGraphicsContext* gc,
+									  bool bLogarithmicScale, bool bLogarithmicColorGradient, wxFloat32 fLogBase,
+									  wxRect2DInt rc,
+									  const wxColour& clrFrom, const wxColour& clrTo ):
+	RasterWaveDrawer( nNumberOfSamples, gc, bLogarithmicScale, bLogarithmicColorGradient, fLogBase, rc, clrFrom, clrTo )
 {}
 
 void Raster2WaveDrawer::ProcessInitializer()
@@ -27,12 +26,12 @@ void Raster2WaveDrawer::ProcessInitializer()
 
 void Raster2WaveDrawer::NextColumn( wxFloat32 fValue, wxFloat32 fLogValue )
 {
-	//wxColour clrFrom = linear_interpolation( m_clrTo, m_clrFrom, abs( m_bLogarithmicColorGradient? fLogValue : fValue ) );
-	wxColour clrFrom = linear_interpolation( m_clrTo, m_clrFrom, abs(fValue) );
-	wxColour clrTo = m_clrTo;
+	// wxColour clrFrom = linear_interpolation( m_clrTo, m_clrFrom, abs( m_bLogarithmicColorGradient? fLogValue : fValue ) );
+	wxColour clrFrom = linear_interpolation( m_clrTo, m_clrFrom, abs( fValue ) );
+	wxColour clrTo	 = m_clrTo;
 
 	wxImage img;
-	
+
 	if ( m_bLogarithmicColorGradient )
 	{
 		wxASSERT( UseLogarithmicScale() );
@@ -44,8 +43,8 @@ void Raster2WaveDrawer::NextColumn( wxFloat32 fValue, wxFloat32 fLogValue )
 	}
 
 	wxPoint2DDouble point_central( m_nCurrentColumn + m_rc.m_x, m_yoffset );
-	wxRect2DDouble rc( 0 ,0, 1, abs( (m_bLogarithmicScale? fLogValue : fValue) * m_nImgHeight ) );
-	m_gc->DrawBitmap( m_gc->CreateBitmapFromImage(img), point_central.m_x, point_central.m_y - rc.m_height, rc.m_width, 2 * rc.m_height );
+	wxRect2DDouble	rc( 0, 0, 1, abs( ( m_bLogarithmicScale ? fLogValue : fValue ) * m_nImgHeight ) );
+	m_gc->DrawBitmap( m_gc->CreateBitmapFromImage( img ), point_central.m_x, point_central.m_y - rc.m_height, rc.m_width, 2 * rc.m_height );
 }
 
 void Raster2WaveDrawer::ProcessFinalizer()

@@ -1,6 +1,6 @@
 /*
-	WaveDrawerRaster1.cpp
-*/
+        WaveDrawerRaster1.cpp
+ */
 #include "StdWx.h"
 #include "LogarithmicScale.h"
 #include "SampleProcessor.h"
@@ -10,12 +10,11 @@
 #include "WaveDrawerRaster.h"
 #include "WaveDrawerPoly.h"
 
-PolyWaveDrawer::PolyWaveDrawer(
-	wxUint64 nNumberOfSamples,
-	wxGraphicsContext* gc,
-	bool bLogarithmicScale, bool bLogarithmicColorGradient, wxFloat32 fLogBase,
-	wxRect2DInt rc, const wxColour& clrFrom, const wxColour& clrTo )
-	:RasterWaveDrawer( nNumberOfSamples, gc, bLogarithmicScale, bLogarithmicColorGradient, fLogBase, rc, clrFrom, clrTo )
+PolyWaveDrawer::PolyWaveDrawer( wxUint64 nNumberOfSamples,
+								wxGraphicsContext* gc,
+								bool bLogarithmicScale, bool bLogarithmicColorGradient, wxFloat32 fLogBase,
+								wxRect2DInt rc, const wxColour& clrFrom, const wxColour& clrTo ):
+	RasterWaveDrawer( nNumberOfSamples, gc, bLogarithmicScale, bLogarithmicColorGradient, fLogBase, rc, clrFrom, clrTo )
 {}
 
 void PolyWaveDrawer::ProcessInitializer()
@@ -26,19 +25,20 @@ void PolyWaveDrawer::ProcessInitializer()
 
 void PolyWaveDrawer::NextColumn( wxFloat32 fValue, wxFloat32 fLogValue )
 {
-	m_points.Add( wxPoint2DDouble( m_nCurrentColumn, m_bLogarithmicScale? fLogValue : fValue ) );
+	m_points.Add( wxPoint2DDouble( m_nCurrentColumn, m_bLogarithmicScale ? fLogValue : fValue ) );
 }
 
 void PolyWaveDrawer::ProcessFinalizer()
 {
 	wxPoint2DDouble first_point;
-	wxGraphicsPath path = m_gc->CreatePath();
-	for( size_t i=0, nCount = m_points.GetCount(); i < nCount; i++ )
+	wxGraphicsPath	path = m_gc->CreatePath();
+
+	for ( size_t i = 0, nCount = m_points.GetCount(); i < nCount; i++ )
 	{
-		wxPoint2DDouble pt( m_points[i] );
+		wxPoint2DDouble pt( m_points[ i ] );
 
 		pt.m_x += m_rc.m_x;
-		pt.m_y = m_yoffset + ( abs( pt.m_y ) * m_nImgHeight );
+		pt.m_y	= m_yoffset + ( abs( pt.m_y ) * m_nImgHeight );
 
 		if ( i == 0 )
 		{
@@ -51,12 +51,12 @@ void PolyWaveDrawer::ProcessFinalizer()
 		}
 	}
 
-	for( size_t i = m_points.GetCount(); i > 0; i-- )
+	for ( size_t i = m_points.GetCount(); i > 0; i-- )
 	{
-		wxPoint2DDouble pt( m_points[i-1] );
+		wxPoint2DDouble pt( m_points[ i - 1 ] );
 
 		pt.m_x += m_rc.m_x;
-		pt.m_y = m_yoffset - ( abs( pt.m_y ) * m_nImgHeight );
+		pt.m_y	= m_yoffset - ( abs( pt.m_y ) * m_nImgHeight );
 
 		path.AddLineToPoint( pt );
 	}
@@ -73,7 +73,7 @@ void PolyWaveDrawer::ProcessFinalizer()
 		stops.Add( m_clrFrom, 0.5f );
 	}
 
-	wxGraphicsBrush brush = m_gc->CreateLinearGradientBrush( 0,0, 0,2*m_nImgHeight, stops );
+	wxGraphicsBrush brush = m_gc->CreateLinearGradientBrush( 0, 0, 0, 2 * m_nImgHeight, stops );
 
 	m_gc->SetBrush( brush );
 	m_gc->FillPath( path );
@@ -81,3 +81,4 @@ void PolyWaveDrawer::ProcessFinalizer()
 
 	__super::ProcessFinalizer();
 }
+

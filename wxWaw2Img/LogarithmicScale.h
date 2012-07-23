@@ -1,34 +1,34 @@
 /*
-	LogarithmicScale.h
-*/
+        LogarithmicScale.h
+ */
 
 #ifndef _LOGARITTHMIC_SCALE_H_
 #define _LOGARITTHMIC_SCALE_H_
 
 class LogarithmicScale
 {
-	public:
+public:
 
-	LogarithmicScale()
-		:m_fLogBase(10)
+	LogarithmicScale():
+		m_fLogBase( 10 )
 	{
 		init();
 	}
 
-	LogarithmicScale( wxFloat32 fLogBase )
-		:m_fLogBase(fLogBase)
+	LogarithmicScale( wxFloat32 fLogBase ):
+		m_fLogBase( fLogBase )
 	{
 		wxASSERT( fLogBase > 1.0f );
 		init();
 	}
 
-	LogarithmicScale( const LogarithmicScale& ls )
-		:m_fLogBase(ls.m_fLogBase),m_fLogLogBase(ls.m_fLogLogBase)
+	LogarithmicScale( const LogarithmicScale& ls ):
+		m_fLogBase( ls.m_fLogBase ), m_fLogLogBase( ls.m_fLogLogBase )
 	{}
 
-	LogarithmicScale& operator=(const LogarithmicScale& ls )
+	LogarithmicScale& operator =( const LogarithmicScale& ls )
 	{
-		m_fLogBase = ls.m_fLogBase;
+		m_fLogBase	  = ls.m_fLogBase;
 		m_fLogLogBase = ls.m_fLogLogBase;
 		return *this;
 	}
@@ -38,22 +38,23 @@ class LogarithmicScale
 		return m_fLogBase;
 	}
 
-	wxFloat32 operator()( wxFloat32 fValue ) const
+	wxFloat32 operator ()( wxFloat32 fValue ) const
 	{
-		return log( fValue * (m_fLogBase - 1.0f) + 1.0f ) / m_fLogLogBase;
+		return log( fValue * ( m_fLogBase - 1.0f ) + 1.0f ) / m_fLogLogBase;
 	}
 
-	protected:
+protected:
 
 	wxFloat32 m_fLogBase;
 	wxFloat32 m_fLogLogBase;
 
-	private:
+private:
 
 	void init()
 	{
-		m_fLogLogBase = log(m_fLogBase);
+		m_fLogLogBase = log( m_fLogBase );
 	}
 };
 
 #endif
+

@@ -12,57 +12,59 @@ wxIMPLEMENT_DYNAMIC_CLASS( wxConfiguration, wxObject );
 
 // ===============================================================================
 
-const wxConfiguration::DRAWING_MODE_DESC wxConfiguration::DrawingModeDesc[] = {
-	{ DRAWING_MODE_SIMPLE, wxT("simple") },
-	{ DRAWING_MODE_RASTER1, wxT("raster1") },
-	{ DRAWING_MODE_RASTER2, wxT("raster2") },
-	{ DRAWING_MODE_POLY, wxT("poly") },
-	{ DRAWING_MODE_AUDIO, wxT("audio") },
+const wxConfiguration::DRAWING_MODE_DESC wxConfiguration::DrawingModeDesc[] =
+{
+	{ DRAWING_MODE_SIMPLE, wxT( "simple" ) },
+	{ DRAWING_MODE_RASTER1, wxT( "raster1" ) },
+	{ DRAWING_MODE_RASTER2, wxT( "raster2" ) },
+	{ DRAWING_MODE_POLY, wxT( "poly" ) },
+	{ DRAWING_MODE_AUDIO, wxT( "audio" ) },
 };
 
-const size_t wxConfiguration::DrawingModeDescSize = sizeof(wxConfiguration::DrawingModeDesc)/sizeof(wxConfiguration::DRAWING_MODE_DESC);
+const size_t wxConfiguration::DrawingModeDescSize = sizeof ( wxConfiguration::DrawingModeDesc ) / sizeof ( wxConfiguration::DRAWING_MODE_DESC );
 
 // ===============================================================================
 
 wxConfiguration::wxConfiguration( void ):
 	m_eDrawingMode( DRAWING_MODE_RASTER1 ),
-	m_nWidth(800),
-	m_nHeight(300),
-	m_clrFrom( 0,0,0,wxALPHA_OPAQUE  ),
-	m_clrTo( 0,0,0, wxALPHA_TRANSPARENT ),
+	m_nWidth( 800 ),
+	m_nHeight( 300 ),
+	m_clrFrom( 0, 0, 0, wxALPHA_OPAQUE ),
+	m_clrTo( 0, 0, 0, wxALPHA_TRANSPARENT ),
 	m_bDrawWithGradient( true ),
 	m_clrBackground( wxTransparentColour ),
 	m_imageResolutionUnits( wxIMAGE_RESOLUTION_INCHES ),
 	m_imageResolution( 150, 150 ),
-	m_nImageQuality(75),
+	m_nImageQuality( 75 ),
 	m_nImageColorDepth( wxBITMAP_SCREEN_DEPTH ),
 	m_bLogarithmicScale( false ),
 	m_bLogarithmicColorGradient( false ),
-	m_fLogBase( 100 ),
+	m_bMultiChannel( false ),
+	m_nColumnNumber( 1 ),
+	m_margins( 4, 4 ),
+	m_fLogBase( 10 ),
 	m_bPowerMix( true ),
-	m_nFrequency(50)
-{
-}
+	m_nFrequency( 50 )
+{}
 
 wxString wxConfiguration::GetSwitchAsText( bool b )
 {
-	return b? _("on") : _("off");
+	return b ? _( "on" ) : _( "off" );
 }
 
 void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 {
-	cmdLine.AddParam( _("Input file"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddParam( _( "Input file" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "o", "output", _( "Output file" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "m", "drawing-mode", wxString::Format( _( "Drawing mode. [%s] (default: %s)" ), GetDrawingModeTexts(), GetDrawingModeAsText( m_eDrawingMode ) ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 
 	cmdLine.AddSwitch( "s", "take-display-properties", _( "Get image size and color depth from display properties (default: on)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
-
 	cmdLine.AddOption( "w", "width", wxString::Format( _( "Image width in pixels (default: %u)" ), m_nWidth ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "y", "height", wxString::Format( _( "Image height in pixels (default: %u)" ), m_nHeight ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 
-	cmdLine.AddSwitch( "g", "gradient", wxString::Format( _( "Draw gradient (default: %s)" ), GetSwitchAsText(m_bDrawWithGradient) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( "g", "gradient", wxString::Format( _( "Draw gradient (default: %s)" ), GetSwitchAsText( m_bDrawWithGradient ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 
-	cmdLine.AddOption( "c", "colour", wxString::Format( _( "Colour to draw (default: %s)"), m_clrFrom.GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( "c", "colour", wxString::Format( _( "Colour to draw (default: %s)" ), m_clrFrom.GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "c2", "second-colour", wxString::Format( _( "Second colour to draw if drawing gradient (default: %s)" ), m_clrTo.GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 
 	cmdLine.AddOption( "b", "background", _( "Background color (default: transparent or white)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
@@ -77,11 +79,18 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddOption( "q", "image-quality", wxString::Format( _( "Image quality [0-100] (default: %d)" ), m_nImageQuality ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "d", "color-depth", _( "Image color depth [8,16,24,32] (default: display color depth)" ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 
-	cmdLine.AddSwitch( "l", "logaritmic-scale", wxString::Format( _( "Draw using logarithmic scale (default: %s)" ), GetSwitchAsText(m_bLogarithmicScale) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
-	cmdLine.AddSwitch( "lc", "logarithmic-color-gradient", wxString::Format( _( "Use logarithmic color gradient (default: %s)" ), GetSwitchAsText(m_bLogarithmicColorGradient) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
-	cmdLine.AddOption( "lb", "logarithm-base", _( "Logarithm base used in logarithmic scale (default: 100)" ), wxCMD_LINE_VAL_DOUBLE, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( "l", "logaritmic-scale", wxString::Format( _( "Draw using logarithmic scale (default: %s)" ), GetSwitchAsText( m_bLogarithmicScale ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( "lc", "logarithmic-color-gradient", wxString::Format( _( "Use logarithmic color gradient (default: %s)" ), GetSwitchAsText( m_bLogarithmicColorGradient ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddOption( "lb", "logarithm-base", _( "Logarithm base used in logarithmic scale (default: 10)" ), wxCMD_LINE_VAL_DOUBLE, wxCMD_LINE_PARAM_OPTIONAL );
 
-	cmdLine.AddSwitch( "mp", "power-mix", wxString::Format( _( "Power mixing of multichannel audio source (default: %s)" ), GetSwitchAsText(m_bPowerMix) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( "mc", "multi-channel", wxString::Format( _( "Multi channel mode (default: %s)" ), GetSwitchAsText( m_bMultiChannel ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddOption( "cn", "number-of-columns", wxString::Format( _( "Number of columns in nultichannel mode (default %u)" ), m_nColumnNumber ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( "mp", "power-mix", wxString::Format( _( "Power mixing of multichannel audio source (default: %s)" ), GetSwitchAsText( m_bPowerMix ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+
+	cmdLine.AddOption( "ma", "margin", wxString::Format( _( "Margin (horizontal and vertical) (default %u)" ), m_margins.x ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( "mx", "margin-x", wxString::Format( _( "Horizontal margin (default %u)" ), m_margins.x ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( "my", "margin-y", wxString::Format( _( "Vertical margin (default %u)" ), m_margins.y ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
+
 	cmdLine.AddOption( "f", "frequency", wxString::Format( _( "Frequency (in Hz) of rendered audio file (default %u)" ), m_nFrequency ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 }
 
@@ -123,22 +132,22 @@ bool wxConfiguration::ReadNegatableSwitchValueAndNegate( const wxCmdLineParser& 
 void wxConfiguration::GetDefaultsFromDisplay()
 {
 	wxRect dplRect = wxGetClientDisplayRect();
-	int nDepth = wxDisplayDepth();
-	wxSize res = wxGetDisplayPPI();
+	int	   nDepth  = wxDisplayDepth();
+	wxSize res	   = wxGetDisplayPPI();
 
-	wxLogInfo( _("Display size in pixels: %dx%d"), dplRect.GetWidth(), dplRect.GetHeight() );
-	wxLogInfo( _("Display color depth: %d bits"), nDepth );
-	wxLogInfo( _("Display resolution in pixels per inch: %dx%d"), res.x, res.y );
+	wxLogInfo( _( "Display size in pixels: %dx%d" ), dplRect.GetWidth(), dplRect.GetHeight() );
+	wxLogInfo( _( "Display color depth: %d bits" ), nDepth );
+	wxLogInfo( _( "Display resolution in pixels per inch: %dx%d" ), res.x, res.y );
 
-	m_nWidth = dplRect.GetWidth();
-	m_nHeight = dplRect.GetHeight();
+	m_nWidth		   = dplRect.GetWidth();
+	m_nHeight		   = dplRect.GetHeight();
 	m_nImageColorDepth = nDepth;
-	m_imageResolution = res;
+	m_imageResolution  = res;
 }
 
 static wxColour get_default_bg_color( int nDepth )
 {
-	switch( nDepth )
+	switch ( nDepth )
 	{
 		case 8:
 		case 16:
@@ -156,11 +165,11 @@ static wxColour get_default_bg_color( int nDepth )
 
 bool wxConfiguration::ConvertStringToDrawingMode( const wxString& s, DRAWING_MODE& e )
 {
-	for( size_t i=0; i < DrawingModeDescSize; i++ )
+	for ( size_t i = 0; i < DrawingModeDescSize; i++ )
 	{
-		if ( s.CmpNoCase( DrawingModeDesc[i].description ) == 0 )
+		if ( s.CmpNoCase( DrawingModeDesc[ i ].description ) == 0 )
 		{
-			e = DrawingModeDesc[i].drawingMode;
+			e = DrawingModeDesc[ i ].drawingMode;
 			return true;
 		}
 	}
@@ -170,23 +179,24 @@ bool wxConfiguration::ConvertStringToDrawingMode( const wxString& s, DRAWING_MOD
 
 wxString wxConfiguration::GetDrawingModeAsText( DRAWING_MODE e )
 {
-	for( size_t i=0; i < DrawingModeDescSize; i++ )
+	for ( size_t i = 0; i < DrawingModeDescSize; i++ )
 	{
-		if ( DrawingModeDesc[i].drawingMode == e )
+		if ( DrawingModeDesc[ i ].drawingMode == e )
 		{
-			return DrawingModeDesc[i].description;
+			return DrawingModeDesc[ i ].description;
 		}
 	}
 
-	return wxString::Format( "<%d>", static_cast<int>(e) );
+	return wxString::Format( "<%d>", static_cast<int>( e ) );
 }
 
 wxString wxConfiguration::GetDrawingModeTexts()
 {
 	wxString s;
-	for( size_t i=0; i < DrawingModeDescSize; i++ )
+
+	for ( size_t i = 0; i < DrawingModeDescSize; i++ )
 	{
-		s << DrawingModeDesc[i].description << "|";
+		s << DrawingModeDesc[ i ].description << "|";
 	}
 
 	return s.RemoveLast();
@@ -198,7 +208,6 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	wxString s;
 	long	 v;
 	wxDouble vd;
-
 
 	if ( ReadNegatableSwitchValue( cmdLine, "s", bRes ) && bRes )
 	{
@@ -231,6 +240,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 			wxLogWarning( _( "Wrong width - %d" ), v );
 			return false;
 		}
+
 		m_nWidth = v;
 	}
 
@@ -261,6 +271,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 			wxLogWarning( _( "Invalid second color - %s" ), s );
 			return false;
 		}
+
 		m_bDrawWithGradient = true;
 	}
 
@@ -268,7 +279,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	if ( cmdLine.Found( "d", &v ) )
 	{
-		switch( v )
+		switch ( v )
 		{
 			case 8:
 			case 16:
@@ -294,8 +305,8 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	if ( ReadNegatableSwitchValue( cmdLine, "bs", bRes ) && bRes )
 	{
-		m_clrBackground = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW  );
-		wxLogInfo( _("Background color: %s"), m_clrBackground.GetAsString() );
+		m_clrBackground = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW );
+		wxLogInfo( _( "Background color: %s" ), m_clrBackground.GetAsString() );
 	}
 	else if ( cmdLine.Found( "b", &s ) )
 	{
@@ -314,7 +325,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 			return false;
 		}
 
-		m_imageResolution = wxSize(v,v);
+		m_imageResolution = wxSize( v, v );
 	}
 
 	if ( cmdLine.Found( "rx", &v ) )
@@ -381,6 +392,51 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	ReadNegatableSwitchValue( cmdLine, "l", m_bLogarithmicScale );
 	ReadNegatableSwitchValue( cmdLine, "lc", m_bLogarithmicColorGradient );
 
+	ReadNegatableSwitchValue( cmdLine, "mc", m_bMultiChannel );
+	if ( cmdLine.Found( "cn", &v ) )
+	{
+		if ( v < 1 || v > 10 )
+		{
+			wxLogWarning( _( "Invalid number of columns - %d" ), v );
+			return false;
+		}
+
+		m_nColumnNumber = v;
+	}
+
+	if ( cmdLine.Found( "ma", &v ) )
+	{
+		if ( v < 0 || v > 10000 )
+		{
+			wxLogWarning( _( "Invalid margin - %d" ), v );
+			return false;
+		}
+
+		m_margins.Set( v, v );
+	}
+
+	if ( cmdLine.Found( "mx", &v ) )
+	{
+		if ( v < 0 || v > 10000 )
+		{
+			wxLogWarning( _( "Invalid horizontal margin - %d" ), v );
+			return false;
+		}
+
+		m_margins.SetWidth( v );
+	}
+
+	if ( cmdLine.Found( "my", &v ) )
+	{
+		if ( v < 0 || v > 10000 )
+		{
+			wxLogWarning( _( "Invalid vertical margin - %d" ), v );
+			return false;
+		}
+
+		m_margins.SetHeight( v );
+	}
+
 	ReadNegatableSwitchValue( cmdLine, "mp", m_bPowerMix );
 
 	if ( cmdLine.Found( "f", &v ) )
@@ -413,7 +469,7 @@ wxFileName wxConfiguration::GetOutputFile() const
 		if ( m_inputFile.IsOk() )
 		{
 			wxFileName fn( m_inputFile );
-			switch( m_eDrawingMode )
+			switch ( m_eDrawingMode )
 			{
 				case DRAWING_MODE_AUDIO:
 				fn.SetExt( "wav" );
@@ -423,7 +479,6 @@ wxFileName wxConfiguration::GetOutputFile() const
 				fn.SetExt( "png" );
 				break;
 			}
-
 			return fn;
 		}
 		else
@@ -519,6 +574,66 @@ wxFloat32 wxConfiguration::GetLogarithmBase() const
 	return m_fLogBase;
 }
 
+bool wxConfiguration::MultiChannel() const
+{
+	return m_bMultiChannel;
+}
+
+wxUint16 wxConfiguration::GetNumberOfColumns() const
+{
+	return m_nColumnNumber;
+}
+
+void wxConfiguration::add_margin( wxRect2DInt& rc ) const
+{
+	if ( rc.m_width > ( 2 * m_margins.x ) )
+	{
+		rc.m_x	   += m_margins.x;
+		rc.m_width -= 2 * m_margins.x;
+	}
+	else
+	{
+		wxLogWarning( _( "Horizontal margin too big" ) );
+	}
+
+	if ( rc.m_height > ( 2 * m_margins.y ) )
+	{
+		rc.m_y		+= m_margins.y;
+		rc.m_height -= 2 * m_margins.y;
+	}
+	else
+	{
+		wxLogWarning( _( "Vertical margin too big" ) );
+	}
+}
+
+wxRect2DInt wxConfiguration::GetDrawerRect() const
+{
+	wxASSERT( !m_bMultiChannel );
+
+	wxRect2DInt rc( 0, 0, m_nWidth, m_nHeight );
+	add_margin( rc );
+	return rc;
+}
+
+wxRect2DInt wxConfiguration::GetDrawerRect( wxUint16 nChannel, wxUint16 nChannels ) const
+{
+	wxASSERT( m_bMultiChannel );
+
+	wxUint16 nRow	 = nChannel / m_nColumnNumber;
+	wxUint16 nColumn = nChannel % m_nColumnNumber;
+
+	wxUint16 nRowsNumber = nChannels / m_nColumnNumber;
+	nRowsNumber += ( ( nChannels % m_nColumnNumber ) == 0 ) ? 0 : 1;
+
+	wxUint32 nWidth	 = m_nWidth / m_nColumnNumber;
+	wxUint32 nHeight = m_nHeight / nRowsNumber;
+
+	wxRect2DInt rc( nColumn * m_nWidth / m_nColumnNumber, nRow * m_nHeight / nRowsNumber, nWidth, nHeight );
+	add_margin( rc );
+	return rc;
+}
+
 bool wxConfiguration::PowerMix() const
 {
 	return m_bPowerMix;
@@ -533,3 +648,4 @@ wxUint16 wxConfiguration::GetFrequency() const
 {
 	return m_nFrequency;
 }
+

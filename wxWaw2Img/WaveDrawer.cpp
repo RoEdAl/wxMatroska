@@ -1,6 +1,6 @@
 /*
-	WaveDrawer.cpp
-*/
+        WaveDrawer.cpp
+ */
 
 #include "StdWx.h"
 #include "SampleProcessor.h"
@@ -8,3 +8,4 @@
 
 WaveDrawer::WaveDrawer()
 {}
+
