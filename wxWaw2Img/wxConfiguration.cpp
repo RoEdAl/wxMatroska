@@ -3,6 +3,7 @@
  */
 
 #include "StdWx.h"
+#include "FloatArray.h"
 #include "wxConfiguration.h"
 #include "wxApp.h"
 
@@ -33,6 +34,7 @@ wxConfiguration::wxConfiguration( void ):
 	m_clrTo( 0, 0, 0, wxALPHA_TRANSPARENT ),
 	m_bDrawWithGradient( true ),
 	m_clrBackground( wxTransparentColour ),
+	m_clrBackground2( 0, 0, 0, 15 ),
 	m_imageResolutionUnits( wxIMAGE_RESOLUTION_INCHES ),
 	m_imageResolution( 150, 150 ),
 	m_nImageQuality( 75 ),
@@ -68,7 +70,8 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddOption( "c2", "second-colour", wxString::Format( _( "Second colour to draw if drawing gradient (default: %s)" ), m_clrTo.GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 
 	cmdLine.AddOption( "b", "background", _( "Background color (default: transparent or white)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( "bs", "background-from-system", _( "Take background color from system settings (default: off)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddOption( "b2", "secondary-background", wxString::Format( _( "Secondary background color (default: %s)" ), m_clrBackground2.GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( "bs", "background-from-system", _( "Take background colors from system settings (default: off)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 
 	cmdLine.AddOption( "r", "resolution", wxString::Format( _( "Image horizontal and vertical resolution (default: %d)" ), m_imageResolution.x ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "rx", "x-resolution", wxString::Format( _( "Image horizontal resolution (default: %d)" ), m_imageResolution.x ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
@@ -92,6 +95,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddOption( "my", "margin-y", wxString::Format( _( "Vertical margin (default %u)" ), m_margins.y ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 
 	cmdLine.AddOption( "f", "frequency", wxString::Format( _( "Frequency (in Hz) of rendered audio file (default %u)" ), m_nFrequency ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( "cp", "cue-point-file", _( "Cue point file" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 }
 
 bool wxConfiguration::ReadNegatableSwitchValue( const wxCmdLineParser& cmdLine, const wxString& name, bool& switchVal )
@@ -143,6 +147,186 @@ void wxConfiguration::GetDefaultsFromDisplay()
 	m_nHeight		   = dplRect.GetHeight();
 	m_nImageColorDepth = nDepth;
 	m_imageResolution  = res;
+}
+
+static int time_span_compare_fn( wxTimeSpan* ts1, wxTimeSpan* ts2 )
+{
+	if ( ts1->GetValue() < ts2->GetValue() )
+	{
+		return -1;
+	}
+	else if ( ts1->GetValue() > ts2->GetValue() )
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+static bool parse_msf( const wxRegEx& reMsf, const wxString& s, wxTimeSpan& ts )
+{
+	bool		  res = true;
+	unsigned long min, sec, frames;
+
+	if ( reMsf.Matches( s ) )
+	{
+		if ( !reMsf.GetMatch( s, 1 ).ToULong( &min ) )
+		{
+			res = false;
+		}
+
+		if ( !reMsf.GetMatch( s, 2 ).ToULong( &sec ) )
+		{
+			res = false;
+		}
+
+		if ( !reMsf.GetMatch( s, 3 ).ToULong( &frames ) )
+		{
+			res = false;
+		}
+
+		if ( frames >= 75 )
+		{
+			res = false;
+		}
+	}
+	else
+	{
+		res = false;
+	}
+
+	if ( res )
+	{
+		ts = wxTimeSpan( 0, min, sec, frames * 1000 / 75 );
+	}
+
+	return res;
+}
+
+static bool parse_msms( const wxRegEx& reMsms, const wxString& s, wxTimeSpan& ts )
+{
+	bool		  res = true;
+	unsigned long min, sec, msec;
+
+	if ( reMsms.Matches( s ) )
+	{
+		if ( !reMsms.GetMatch( s, 1 ).ToULong( &min ) )
+		{
+			res = false;
+		}
+
+		if ( !reMsms.GetMatch( s, 2 ).ToULong( &sec ) )
+		{
+			res = false;
+		}
+
+		if ( !reMsms.GetMatch( s, 3 ).ToULong( &msec ) )
+		{
+			res = false;
+		}
+	}
+	else
+	{
+		res = false;
+	}
+
+	if ( res )
+	{
+		ts = wxTimeSpan( 0, min, sec, msec );
+	}
+
+	return res;
+}
+
+bool wxConfiguration::ReadCuePoints( wxTimeSpanArray& cuePoints, const wxString& sFilePath )
+{
+	wxLogInfo( _( "Opening cuesheet file %s" ), sFilePath );
+	wxFileInputStream fis( sFilePath );
+	if ( !fis.IsOk() )
+	{
+		wxLogWarning( _( "Fail to open cuesheet file" ) );
+		return false;
+	}
+
+	// MM:SS:FF
+	wxRegEx reMsf( "\\A(\\d{1,4}):(\\d{1,2}):(\\d{2})\\Z", wxRE_ADVANCED );
+	wxASSERT( reMsf.IsValid() );
+
+	// MM:SS:XXX
+	wxRegEx reMsms( "\\A(\\d{1,4}):(\\d{1,2}).(\\d{3})\\Z", wxRE_ADVANCED );
+	wxASSERT( reMsms.IsValid() );
+
+	wxString		  s;
+	unsigned long	  sec;
+	double			  dsec;
+	wxTextInputStream tis( fis );
+	while ( !tis.GetInputStream().Eof() )
+	{
+		s = tis.ReadLine();
+		s.Trim( false );
+		s.Trim( true );
+		if ( s.IsEmpty() || s.StartsWith( "#" ) )
+		{
+			continue;
+		}
+
+		wxStringTokenizer tokenizer( s );
+		if ( !tokenizer.HasMoreTokens() )
+		{
+			continue;
+		}
+
+		// first only token
+		s = tokenizer.GetNextToken();
+
+		wxTimeSpan ts;
+		if ( parse_msf( reMsf, s, ts ) )
+		{
+			cuePoints.Add( ts );
+		}
+		else if ( parse_msms( reMsms, s, ts ) )
+		{
+			cuePoints.Add( ts );
+		}
+		else if ( s.ToCULong( &sec ) )
+		{
+			ts = wxTimeSpan::Seconds( sec );
+			cuePoints.Add( ts );
+		}
+		else if ( s.ToULong( &sec ) )
+		{
+			ts = wxTimeSpan::Seconds( sec );
+			cuePoints.Add( ts );
+		}
+		else if ( s.ToCDouble( &dsec ) && dsec > 0.0 )
+		{
+			ts = wxTimeSpan::Milliseconds( dsec * 1000 );
+			cuePoints.Add( ts );
+		}
+		else if ( s.ToDouble( &dsec ) && dsec > 0.0 )
+		{
+			ts = wxTimeSpan::Milliseconds( dsec * 1000 );
+			cuePoints.Add( ts );
+		}
+		else
+		{
+			wxLogWarning( _( "Unable to parse cue point: %s" ), s );
+			return false;
+		}
+
+		wxLogInfo( _( "Cue point: %s -> %s" ), s, ts.Format() );
+	}
+
+	wxLogInfo( _( "Closing cuesheet file" ) );
+	cuePoints.Sort( time_span_compare_fn );
+	return true;
+}
+
+bool wxConfiguration::ReadCuePoints( wxTimeSpanArray& cuePoints ) const
+{
+	return ReadCuePoints( cuePoints, m_cuePointsFile.GetFullPath() );
 }
 
 static wxColour get_default_bg_color( int nDepth )
@@ -305,15 +489,29 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	if ( ReadNegatableSwitchValue( cmdLine, "bs", bRes ) && bRes )
 	{
-		m_clrBackground = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW );
+		m_clrBackground	 = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW );
+		m_clrBackground2 = wxSystemSettings::GetColour( wxSYS_COLOUR_BACKGROUND );
 		wxLogInfo( _( "Background color: %s" ), m_clrBackground.GetAsString() );
+		wxLogInfo( _( "Secondary background color: %s" ), m_clrBackground2.GetAsString() );
 	}
-	else if ( cmdLine.Found( "b", &s ) )
+	else
 	{
-		if ( !ParseColourString( s, m_clrBackground ) )
+		if ( cmdLine.Found( "b", &s ) )
 		{
-			wxLogWarning( _( "Invalid background color - %s" ), s );
-			return false;
+			if ( !ParseColourString( s, m_clrBackground ) )
+			{
+				wxLogWarning( _( "Invalid background color - %s" ), s );
+				return false;
+			}
+		}
+
+		if ( cmdLine.Found( "b2", &s ) )
+		{
+			if ( !ParseColourString( s, m_clrBackground2 ) )
+			{
+				wxLogWarning( _( "Invalid second background color - %s" ), s );
+				return false;
+			}
 		}
 	}
 
@@ -450,12 +648,28 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		m_nFrequency = v;
 	}
 
+	if ( cmdLine.Found( "cp", &s ) )
+	{
+		m_cuePointsFile = s;
+	}
+
 	return true;
 }
 
 const wxFileName& wxConfiguration::GetInputFile() const
 {
 	return m_inputFile;
+}
+
+bool wxConfiguration::HasCuePointsFile() const
+{
+	return m_cuePointsFile.IsOk();
+}
+
+const wxFileName& wxConfiguration::GetCuePointsFile() const
+{
+	wxASSERT( HasCuePointsFile() );
+	return m_cuePointsFile;
 }
 
 wxFileName wxConfiguration::GetOutputFile() const
@@ -523,6 +737,11 @@ bool wxConfiguration::DrawWithGradient() const
 const wxColour& wxConfiguration::GetBackgroundColor() const
 {
 	return m_clrBackground;
+}
+
+const wxColour& wxConfiguration::GetSecondaryBackgroundColor() const
+{
+	return m_clrBackground2;
 }
 
 bool wxConfiguration::ParseColourString( const wxString& s, wxColour& clr )

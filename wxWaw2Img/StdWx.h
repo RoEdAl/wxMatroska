@@ -44,6 +44,7 @@ typedef struct tagMSG
 #include <wx/wx.h>
 #include <wx/defs.h>
 #include <wx/string.h>
+#include <wx/tokenzr.h>
 #include <wx/arrstr.h>
 #include <wx/file.h>
 #include <wx/app.h>

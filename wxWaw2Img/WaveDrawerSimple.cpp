@@ -2,6 +2,7 @@
         WaveDrawerSimple.cpp
  */
 #include "StdWx.h"
+#include "FloatArray.h"
 #include "LogarithmicScale.h"
 #include "SampleProcessor.h"
 #include "WaveDrawer.h"
@@ -12,8 +13,10 @@
 SimpleWaveDrawer::SimpleWaveDrawer( wxUint64 nNumberOfSamples,
 									wxGraphicsContext* gc,
 									bool bLogarithmicScale, wxFloat32 fLogBase,
-									wxRect2DInt rc, const wxColour& clr ):
-	GraphicsContextWaveDrawer( nNumberOfSamples, gc, bLogarithmicScale, fLogBase, rc ),
+									wxRect2DInt rc, const wxColour& clr,
+									bool bUseCuePoints, const wxTimeSpanArray& cuePoints,
+									const wxColour& clrBgSecond ):
+	GraphicsContextWaveDrawer( nNumberOfSamples, gc, bLogarithmicScale, fLogBase, rc, bUseCuePoints, cuePoints, clrBgSecond ),
 	m_clr( clr ), m_bLogarithmicScale( bLogarithmicScale )
 {}
 

@@ -14,7 +14,8 @@ public:
 	PolyWaveDrawer( wxUint64,
 					wxGraphicsContext*,
 					bool, bool, wxFloat32,
-					wxRect2DInt, const wxColour&, const wxColour& );
+					wxRect2DInt, const wxColour&, const wxColour&,
+					bool, const wxTimeSpanArray&, const wxColour& );
 
 protected:
 

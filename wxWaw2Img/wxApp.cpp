@@ -180,27 +180,27 @@ static void read_audio_samples( SoundFile& soundFile, MultiChannelWaveDrawer& wa
 	soundFile.Close();
 }
 
-static WaveDrawer* create_wave_drawer( DRAWING_MODE eMode, const wxConfiguration& cfg, wxUint64 nNumberOfSamples, wxGraphicsContext* gc, const wxRect2DInt& rc )
+static WaveDrawer* create_wave_drawer( DRAWING_MODE eMode, const wxConfiguration& cfg, wxUint64 nNumberOfSamples, wxGraphicsContext* gc, const wxRect2DInt& rc, bool bUseCuePoints, const wxTimeSpanArray& cuePoints )
 {
 	switch ( eMode )
 	{
 		case DRAWING_MODE_SIMPLE:
-		return new SimpleWaveDrawer( nNumberOfSamples, gc, cfg.UseLogarithmicScale(), cfg.GetLogarithmBase(), rc, cfg.GetColourFrom() );
+		return new SimpleWaveDrawer( nNumberOfSamples, gc, cfg.UseLogarithmicScale(), cfg.GetLogarithmBase(), rc, cfg.GetColourFrom(), bUseCuePoints, cuePoints, cfg.GetSecondaryBackgroundColor() );
 
 		case DRAWING_MODE_RASTER1:
-		return new Raster1WaveDrawer( nNumberOfSamples, gc, cfg.UseLogarithmicScale(), cfg.UseLogarithmicColorPalette(), cfg.GetLogarithmBase(), rc, cfg.GetColourFrom(), cfg.GetColourTo() );
+		return new Raster1WaveDrawer( nNumberOfSamples, gc, cfg.UseLogarithmicScale(), cfg.UseLogarithmicColorPalette(), cfg.GetLogarithmBase(), rc, cfg.GetColourFrom(), cfg.GetColourTo(), bUseCuePoints, cuePoints, cfg.GetSecondaryBackgroundColor() );
 
 		case DRAWING_MODE_RASTER2:
-		return new Raster2WaveDrawer( nNumberOfSamples, gc, cfg.UseLogarithmicScale(), cfg.UseLogarithmicColorPalette(), cfg.GetLogarithmBase(), rc, cfg.GetColourFrom(), cfg.GetColourTo() );
+		return new Raster2WaveDrawer( nNumberOfSamples, gc, cfg.UseLogarithmicScale(), cfg.UseLogarithmicColorPalette(), cfg.GetLogarithmBase(), rc, cfg.GetColourFrom(), cfg.GetColourTo(), bUseCuePoints, cuePoints, cfg.GetSecondaryBackgroundColor() );
 
 		case DRAWING_MODE_POLY:
-		return new PolyWaveDrawer( nNumberOfSamples, gc, cfg.UseLogarithmicScale(), cfg.UseLogarithmicColorPalette(), cfg.GetLogarithmBase(), rc, cfg.GetColourFrom(), cfg.GetColourTo() );
+		return new PolyWaveDrawer( nNumberOfSamples, gc, cfg.UseLogarithmicScale(), cfg.UseLogarithmicColorPalette(), cfg.GetLogarithmBase(), rc, cfg.GetColourFrom(), cfg.GetColourTo(), bUseCuePoints, cuePoints, cfg.GetSecondaryBackgroundColor() );
 	}
 	wxASSERT( false );
 	return NULL;
 }
 
-static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const SF_INFO& sfInfo )
+static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const SF_INFO& sfInfo, bool bUseCuePoints, const wxTimeSpanArray& cuePoints )
 {
 	if ( sfInfo.frames <= 0 )
 	{
@@ -241,7 +241,7 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 
 			for ( wxUint16 nChannel = 0; nChannel < nChannels; nChannel++ )
 			{
-				pGc->AddDrawer( create_wave_drawer( cfg.GetDrawingMode(), cfg, nSamples, gc, cfg.GetDrawerRect( nChannel, nChannels ) ) );
+				pGc->AddDrawer( create_wave_drawer( cfg.GetDrawingMode(), cfg, nSamples, gc, cfg.GetDrawerRect( nChannel, nChannels ), bUseCuePoints, cuePoints ) );
 			}
 
 			pMcwd = pGc;
@@ -257,7 +257,7 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 				return NULL;
 			}
 
-			pGc->AddDrawer( create_wave_drawer( cfg.GetDrawingMode(), cfg, nSamples, gc, cfg.GetDrawerRect() ) );
+			pGc->AddDrawer( create_wave_drawer( cfg.GetDrawingMode(), cfg, nSamples, gc, cfg.GetDrawerRect(), bUseCuePoints, cuePoints ) );
 			pMcwd = pGc;
 		}
 
@@ -326,6 +326,22 @@ static bool save_rendered_wave( McChainWaveDrawer* pWaveDrawer, const wxConfigur
 
 int wxMyApp::OnRun()
 {
+	wxTimeSpanArray cuePoints;
+
+	if ( m_cfg.HasCuePointsFile() )
+	{
+		if ( !m_cfg.ReadCuePoints( cuePoints ) )
+		{
+			return 1000;
+		}
+
+		if ( cuePoints.IsEmpty() )
+		{
+			wxLogWarning( _( "No cue points found" ) );
+			return 1001;
+		}
+	}
+
 	wxFileName inputFile( m_cfg.GetInputFile() );
 
 	if ( !inputFile.IsOk() )
@@ -341,8 +357,19 @@ int wxMyApp::OnRun()
 		return false;
 	}
 
+	if ( m_cfg.HasCuePointsFile() )
+	{
+		const SF_INFO& sfInfo	  = sfReader.GetInfo();
+		wxUint64	   frames	  = sfInfo.frames;
+		wxUint32	   samplerate = sfInfo.samplerate;
+
+		wxTimeSpan ts = wxTimeSpan::Milliseconds( frames * 1000 / samplerate );
+		cuePoints.Add( ts );
+		wxLogInfo( _( "Input file duration: %s" ), ts.Format() );
+	}
+
 	wxLogInfo( _( "Creating wave drawer" ) );
-	wxScopedPtr<McChainWaveDrawer> pWaveDrawer( create_wave_drawer( m_cfg, sfReader.GetInfo() ) );
+	wxScopedPtr<McChainWaveDrawer> pWaveDrawer( create_wave_drawer( m_cfg, sfReader.GetInfo(), m_cfg.HasCuePointsFile(), cuePoints ) );
 
 	if ( !pWaveDrawer )
 	{

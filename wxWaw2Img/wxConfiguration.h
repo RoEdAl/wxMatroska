@@ -34,6 +34,7 @@ protected:
 	bool	 m_bDrawWithGradient;
 
 	wxColour m_clrBackground;
+	wxColour m_clrBackground2;
 
 	wxImageResolution m_imageResolutionUnits;
 	wxSize			  m_imageResolution;
@@ -53,6 +54,8 @@ protected:
 
 	wxUint16 m_nFrequency;
 
+	wxFileName m_cuePointsFile;
+
 protected:
 
 	bool ReadNegatableSwitchValue( const wxCmdLineParser& cmdLine, const wxString& name, bool& switchVal );
@@ -60,6 +63,7 @@ protected:
 	bool ParseColourString( const wxString&, wxColour& );
 	void GetDefaultsFromDisplay();
 	static bool ConvertStringToDrawingMode( const wxString&, DRAWING_MODE& );
+	static bool ReadCuePoints( wxTimeSpanArray&, const wxString& );
 
 	static wxString GetDrawingModeAsText( DRAWING_MODE );
 	static wxString GetDrawingModeTexts();
@@ -91,6 +95,7 @@ public:
 	bool DrawWithGradient() const;
 
 	const wxColour& GetBackgroundColor() const;
+	const wxColour& GetSecondaryBackgroundColor() const;
 
 	wxImageResolution GetImageResolutionUnits() const;
 	const wxSize& GetImageResolution() const;
@@ -114,6 +119,10 @@ public:
 
 	DRAWING_MODE GetDrawingMode() const;
 	wxUint16 GetFrequency() const;
+
+	bool HasCuePointsFile() const;
+	const wxFileName& GetCuePointsFile() const;
+	bool ReadCuePoints( wxTimeSpanArray& ) const;
 
 public:
 

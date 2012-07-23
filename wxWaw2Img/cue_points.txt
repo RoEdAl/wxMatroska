@@ -1,0 +1,23 @@
+#
+# example file containing
+# cue points
+# in various formats
+#
+
+# minutes seconds frames
+0:01:57 first point
+
+# minutes seconds miliseconds
+2:56.003 second point
+
+# seconds
+240	third point
+
+# seconds (and miliseconds)
+250.67  fourth point
+
+# seconds (and miliseconds)
+570,67 fifth point
+
+# last point
+620.002

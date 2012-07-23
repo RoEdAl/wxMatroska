@@ -14,7 +14,8 @@ public:
 					  wxGraphicsContext* gc,
 					  bool, wxFloat32,
 					  wxRect2DInt,
-					  const wxColour& );
+					  const wxColour&,
+					  bool, const wxTimeSpanArray&, const wxColour& );
 
 protected:
 

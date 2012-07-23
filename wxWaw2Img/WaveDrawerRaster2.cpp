@@ -2,6 +2,7 @@
         WaveDrawerRaster2.cpp
  */
 #include "StdWx.h"
+#include "FloatArray.h"
 #include "LogarithmicScale.h"
 #include "SampleProcessor.h"
 #include "WaveDrawer.h"
@@ -13,8 +14,10 @@
 Raster2WaveDrawer::Raster2WaveDrawer( wxUint64 nNumberOfSamples, wxGraphicsContext* gc,
 									  bool bLogarithmicScale, bool bLogarithmicColorGradient, wxFloat32 fLogBase,
 									  wxRect2DInt rc,
-									  const wxColour& clrFrom, const wxColour& clrTo ):
-	RasterWaveDrawer( nNumberOfSamples, gc, bLogarithmicScale, bLogarithmicColorGradient, fLogBase, rc, clrFrom, clrTo )
+									  const wxColour& clrFrom, const wxColour& clrTo,
+									  bool bUseCuePoints, const wxTimeSpanArray& cuePoints,
+									  const wxColour& clrBgSecond ):
+	RasterWaveDrawer( nNumberOfSamples, gc, bLogarithmicScale, bLogarithmicColorGradient, fLogBase, rc, clrFrom, clrTo, bUseCuePoints, cuePoints, clrBgSecond )
 {}
 
 void Raster2WaveDrawer::ProcessInitializer()
