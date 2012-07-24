@@ -3,6 +3,7 @@
  */
 
 #include "StdWx.h"
+#include <wxEncodingDetection/wxEncodingDetection.h>
 #include "FloatArray.h"
 #include "wxConfiguration.h"
 #include "wxApp.h"
@@ -96,6 +97,8 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 
 	cmdLine.AddOption( "f", "frequency", wxString::Format( _( "Frequency (in Hz) of rendered audio file (default %u)" ), m_nFrequency ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "cp", "cue-point-file", _( "Cue point file" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( "cg", "generate-cue-points", _( "Multi channel mode (default: off)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddOption( "ci", "cue-points-interval", _( "Cue points interval" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 }
 
 bool wxConfiguration::ReadNegatableSwitchValue( const wxCmdLineParser& cmdLine, const wxString& name, bool& switchVal )
@@ -243,6 +246,20 @@ static bool parse_msms( const wxRegEx& reMsms, const wxString& s, wxTimeSpan& ts
 bool wxConfiguration::ReadCuePoints( wxTimeSpanArray& cuePoints, const wxString& sFilePath )
 {
 	wxLogInfo( _( "Opening cuesheet file %s" ), sFilePath );
+
+	wxString							   sCPDescription;
+	wxEncodingDetection::wxMBConvSharedPtr pConv( wxEncodingDetection::GetFileEncoding( sFilePath, true, sCPDescription ) );
+
+	if ( pConv )
+	{
+		wxLogInfo( _( "Detected encoding of file \u201C%s\u201D file is \u201C%s\u201D" ), sFilePath, sCPDescription );
+	}
+	else
+	{
+		pConv = wxEncodingDetection::GetDefaultEncoding( true, sCPDescription );
+		wxLogInfo( _( "Using default file encoding \u201C%s\u201D" ), sCPDescription );
+	}
+
 	wxFileInputStream fis( sFilePath );
 	if ( !fis.IsOk() )
 	{
@@ -261,7 +278,7 @@ bool wxConfiguration::ReadCuePoints( wxTimeSpanArray& cuePoints, const wxString&
 	wxString		  s;
 	unsigned long	  sec;
 	double			  dsec;
-	wxTextInputStream tis( fis );
+	wxTextInputStream tis( fis, wxT('\t'), *pConv );
 	while ( !tis.GetInputStream().Eof() )
 	{
 		s = tis.ReadLine();
@@ -653,6 +670,23 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		m_cuePointsFile = s;
 	}
 
+	if ( ReadNegatableSwitchValue( cmdLine, "cg", bRes ) && bRes )
+	{
+		if ( cmdLine.Found( "ci", &s ) )
+		{
+			if ( !Interval::Parse( s, m_interval ) )
+			{
+				wxLogWarning( _("Invalid interval - %s"), s );
+				return false;
+			}
+		}
+		else
+		{
+			wxLogWarning( _("Cue points interval must be specified") );
+			return false;
+		}
+	}
+
 	return true;
 }
 
@@ -670,6 +704,37 @@ const wxFileName& wxConfiguration::GetCuePointsFile() const
 {
 	wxASSERT( HasCuePointsFile() );
 	return m_cuePointsFile;
+}
+
+bool wxConfiguration::HasCuePointsInterval() const
+{
+	return m_interval;
+}
+
+bool wxConfiguration::GenerateCuePoints( const wxTimeSpan& duration, wxTimeSpanArray& cuePoints ) const
+{
+	wxASSERT( HasCuePointsInterval() );
+
+	wxTimeSpan step;
+	m_interval.Get( duration, step );
+	wxTimeSpan pos = step;
+	wxUint32 nCounter = 0;
+
+	while( pos < duration )
+	{
+		cuePoints.Add( pos );
+		pos += step;
+		nCounter += 1U;
+	}
+
+	if ( nCounter == 0 )
+	{
+		wxLogWarning( _("No cue points generated. Propably too big interval.") );
+	}
+
+	cuePoints.Sort( time_span_compare_fn );
+
+	return ( nCounter > 0 );
 }
 
 wxFileName wxConfiguration::GetOutputFile() const

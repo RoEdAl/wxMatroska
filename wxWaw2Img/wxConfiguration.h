@@ -14,6 +14,130 @@ enum DRAWING_MODE
 	DRAWING_MODE_AUDIO
 };
 
+enum INTERVAL_UNIT
+{
+	INTERVAL_UNIT_NONE,
+	INTERVAL_UNIT_SECOND,
+	INTERVAL_UNIT_MINUTE,
+	INTERVAL_UNIT_HOUR,
+	INTERVAL_UNIT_PERCENT
+};
+
+class Interval
+{
+	public:
+
+	INTERVAL_UNIT m_eUnit;
+	wxUint32 m_nValue;
+
+	public:
+
+	Interval()
+		:m_eUnit(INTERVAL_UNIT_NONE), m_nValue(0)
+	{}
+
+	Interval( INTERVAL_UNIT eUnit, wxUint32 nValue )
+		:m_eUnit(eUnit), m_nValue(nValue)
+	{}
+
+	Interval( const Interval& interval )
+		:m_eUnit(interval.m_eUnit),m_nValue(interval.m_nValue)
+	{}
+
+	Interval& operator=( const Interval& interval )
+	{
+		m_eUnit = interval.m_eUnit;
+		m_nValue = interval.m_nValue;
+		return *this;
+	}
+
+	operator bool() const
+	{
+		return m_eUnit != INTERVAL_UNIT_NONE;
+	}
+
+	bool Get( const wxTimeSpan& duration, wxTimeSpan& ts ) const
+	{
+		switch( m_eUnit )
+		{
+			case INTERVAL_UNIT_NONE:
+			default:
+			return false;
+
+			case INTERVAL_UNIT_SECOND:
+			ts = wxTimeSpan::Seconds( m_nValue );
+			return true;
+
+			case INTERVAL_UNIT_MINUTE:
+			ts = wxTimeSpan::Minutes( m_nValue );
+			return true;
+
+			case INTERVAL_UNIT_HOUR:
+			ts = wxTimeSpan::Hours( m_nValue );
+			return true;
+
+			case INTERVAL_UNIT_PERCENT:
+			ts = wxTimeSpan::Milliseconds( duration.GetMilliseconds().GetValue() * m_nValue / 100 );
+			return true;
+		}
+	}
+
+	static bool Parse( const wxString& _s, Interval& parsing )
+	{
+		wxString s( _s );
+
+		if ( s.IsEmpty() )
+		{
+			return false;
+		}
+
+		bool bTruncate = true;
+		wxChar c = s.Last();
+
+		switch( c )
+		{
+			case wxT('s'):
+			parsing.m_eUnit = INTERVAL_UNIT_SECOND;
+			break;
+
+			case wxT('m'):
+			parsing.m_eUnit = INTERVAL_UNIT_MINUTE;
+			break;
+
+			case wxT('h'):
+			parsing.m_eUnit = INTERVAL_UNIT_HOUR;
+			break;
+
+			case wxT('%'):
+			parsing.m_eUnit = INTERVAL_UNIT_PERCENT;
+			break;
+
+			default:
+			parsing.m_eUnit = INTERVAL_UNIT_MINUTE;
+			bTruncate = false;
+			break;
+		}
+
+		if ( bTruncate )
+		{
+			s.RemoveLast();
+			if ( s.IsEmpty() )
+			{
+				return false;
+			}
+		}
+
+		unsigned long v;
+		if ( s.ToCULong( &v ) || s.ToULong( &v ) )
+		{
+			parsing.m_nValue = v;
+			return true;
+		}
+
+		return false;
+	}
+};
+
 class wxConfiguration:
 	public wxObject
 {
@@ -55,6 +179,7 @@ protected:
 	wxUint16 m_nFrequency;
 
 	wxFileName m_cuePointsFile;
+	Interval m_interval;
 
 protected:
 
@@ -123,6 +248,9 @@ public:
 	bool HasCuePointsFile() const;
 	const wxFileName& GetCuePointsFile() const;
 	bool ReadCuePoints( wxTimeSpanArray& ) const;
+
+	bool HasCuePointsInterval() const;
+	bool GenerateCuePoints( const wxTimeSpan&, wxTimeSpanArray& ) const;
 
 public:
 

@@ -131,6 +131,8 @@ bool wxMyApp::OnInit()
 	wxTheColourDatabase = m_pColourDatabase.get();
 	InitImageHandlers();
 
+	CoInitializeEx( NULL, COINIT_MULTITHREADED | COINIT_DISABLE_OLE1DDE );
+
 	if ( !wxAppConsole::OnInit() )
 	{
 		return false;
@@ -327,6 +329,7 @@ static bool save_rendered_wave( McChainWaveDrawer* pWaveDrawer, const wxConfigur
 int wxMyApp::OnRun()
 {
 	wxTimeSpanArray cuePoints;
+	bool bUseCuePoints = false;
 
 	if ( m_cfg.HasCuePointsFile() )
 	{
@@ -340,6 +343,8 @@ int wxMyApp::OnRun()
 			wxLogWarning( _( "No cue points found" ) );
 			return 1001;
 		}
+
+		bUseCuePoints = true;
 	}
 
 	wxFileName inputFile( m_cfg.GetInputFile() );
@@ -357,19 +362,23 @@ int wxMyApp::OnRun()
 		return false;
 	}
 
-	if ( m_cfg.HasCuePointsFile() )
+	if ( m_cfg.HasCuePointsFile() || m_cfg.HasCuePointsInterval() )
 	{
 		const SF_INFO& sfInfo	  = sfReader.GetInfo();
-		wxUint64	   frames	  = sfInfo.frames;
-		wxUint32	   samplerate = sfInfo.samplerate;
+		wxTimeSpan duration = wxTimeSpan::Milliseconds( sfInfo.frames * 1000 / sfInfo.samplerate );
+		wxLogInfo( _( "Input file duration: %s" ), duration.Format() );
 
-		wxTimeSpan ts = wxTimeSpan::Milliseconds( frames * 1000 / samplerate );
-		cuePoints.Add( ts );
-		wxLogInfo( _( "Input file duration: %s" ), ts.Format() );
+		if ( m_cfg.HasCuePointsInterval() )
+		{
+			bool bGenerated = m_cfg.GenerateCuePoints( duration, cuePoints );
+			bUseCuePoints = bUseCuePoints || bGenerated;
+		}
+
+		cuePoints.Add( duration );
 	}
 
 	wxLogInfo( _( "Creating wave drawer" ) );
-	wxScopedPtr<McChainWaveDrawer> pWaveDrawer( create_wave_drawer( m_cfg, sfReader.GetInfo(), m_cfg.HasCuePointsFile(), cuePoints ) );
+	wxScopedPtr<McChainWaveDrawer> pWaveDrawer( create_wave_drawer( m_cfg, sfReader.GetInfo(), bUseCuePoints, cuePoints ) );
 
 	if ( !pWaveDrawer )
 	{
@@ -390,7 +399,7 @@ int wxMyApp::OnRun()
 int wxMyApp::OnExit()
 {
 	int res = wxAppConsole::OnExit();
-
+	CoUninitialize();
 	wxLogMessage( _( "Done" ) );
 	return res;
 }

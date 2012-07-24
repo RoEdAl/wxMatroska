@@ -62,6 +62,7 @@ typedef struct tagMSG
 #include <wx/stdpaths.h>
 #include <wx/scopedptr.h>
 #include <wx/scopedarray.h>
+#include <wx/sharedptr.h>
 #include <wx/gdicmn.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
@@ -71,6 +72,10 @@ typedef struct tagMSG
 #include <wx/display.h>
 
 #include <math.h>
+
+#ifdef WIN32
+#include <objbase.h>
+#endif
 
 #endif // _STD_WX_H
 
