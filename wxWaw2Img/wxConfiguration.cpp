@@ -5,8 +5,14 @@
 #include "StdWx.h"
 #include "FloatArray.h"
 #include "CuePointsReader.h"
+#include "Interval.h"
 #include "wxConfiguration.h"
 #include "wxApp.h"
+
+// ===============================================================================
+
+const wxSystemColour wxConfiguration::COLOR_BACKGROUND	= wxSYS_COLOUR_WINDOW;
+const wxSystemColour wxConfiguration::COLOR_BACKGROUND2 = wxSYS_COLOUR_MENUBAR;
 
 // ===============================================================================
 
@@ -48,6 +54,7 @@ wxConfiguration::wxConfiguration( void ):
 	m_fLogBase( 10 ),
 	m_bPowerMix( true ),
 	m_nFrequency( 50 ),
+	m_interval( INTERVAL_UNIT_PERCENT, 10 ),
 	m_bUseMLang( true )
 {}
 
@@ -99,7 +106,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddOption( "f", "frequency", wxString::Format( _( "Frequency (in Hz) of rendered audio file (default %u)" ), m_nFrequency ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "cp", "cue-point-file", _( "Cue point file" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( "cg", "generate-cue-points", _( "Multi channel mode (default: off)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
-	cmdLine.AddOption( "ci", "cue-points-interval", _( "Cue points interval" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( "ci", "cue-points-interval", wxString::Format( _( "Cue points interval (default: %s)" ), m_interval.AsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 
 	cmdLine.AddSwitch( wxEmptyString, "use-mlang", wxString::Format( _( "Use MLang library (default: %s)" ), GetSwitchAsText( m_bUseMLang ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 }
@@ -152,7 +159,7 @@ void wxConfiguration::GetDefaultsFromDisplay()
 	int	   nDepth  = wxDisplayDepth();
 	wxSize res	   = wxGetDisplayPPI();
 
-	wxLogInfo( _( "Display size in pixels: %dx%d" ), dplRect.GetWidth(), dplRect.GetHeight() );
+	wxLogInfo( _( "Display size in pixels: %dx%d (%dx%d)" ), dplRect.GetWidth(), dplRect.GetHeight(), dplRect.x, dplRect.y );
 	wxLogInfo( _( "Display color depth: %d bits" ), nDepth );
 	wxLogInfo( _( "Display resolution in pixels per inch: %dx%d" ), res.x, res.y );
 
@@ -359,8 +366,8 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	if ( ReadNegatableSwitchValue( cmdLine, "bs", bRes ) && bRes )
 	{
-		m_clrBackground	 = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW );
-		m_clrBackground2 = wxSystemSettings::GetColour( wxSYS_COLOUR_BACKGROUND );
+		m_clrBackground	 = wxSystemSettings::GetColour( COLOR_BACKGROUND );
+		m_clrBackground2 = wxSystemSettings::GetColour( COLOR_BACKGROUND2 );
 		wxLogInfo( _( "Background color: %s" ), m_clrBackground.GetAsString() );
 		wxLogInfo( _( "Secondary background color: %s" ), m_clrBackground2.GetAsString() );
 	}

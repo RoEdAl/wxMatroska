@@ -95,6 +95,7 @@
     <ClInclude Include="ChannelMixer.h" />
     <ClInclude Include="CuePointsReader.h" />
     <ClInclude Include="FloatArray.h" />
+    <ClInclude Include="Interval.h" />
     <ClInclude Include="LogarithmicScale.h" />
     <ClInclude Include="MCChainWaveDrawer.h" />
     <ClInclude Include="MCGraphicsContextWaveDrawer.h" />
@@ -120,6 +121,7 @@
     <ClCompile Include="ChannelMixer.cpp" />
     <ClCompile Include="CuePointsReader.cpp" />
     <ClCompile Include="FloatArray.cpp" />
+    <ClCompile Include="Interval.cpp" />
     <ClCompile Include="MCChainWaveDrawer.cpp" />
     <ClCompile Include="MCGraphicsContextWaveDrawer.cpp" />
     <ClCompile Include="MultiChannelWaveDrawer.cpp" />

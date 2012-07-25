@@ -5,6 +5,7 @@
 #include <sndfile.h>
 #include "FloatArray.h"
 #include "LogarithmicScale.h"
+#include "Interval.h"
 #include "wxConfiguration.h"
 #include "wxApp.h"
 
@@ -65,7 +66,8 @@ void wxMyApp::AddVersionInfos( wxCmdLineParser& cmdline )
 	cmdline.AddUsageText( wxString::Format( _( "Application version: %s" ), APP_VERSION ) );
 	cmdline.AddUsageText( wxString::Format( _( "Author: %s" ), APP_AUTHOR ) );
 	cmdline.AddUsageText( _( "License: Simplified BSD License - http://www.opensource.org/licenses/bsd-license.php" ) );
-	cmdline.AddUsageText( wxString::Format( _( "libsndfile version: %s" ), get_libsndfile_version() ) );
+	cmdline.AddUsageText( wxString::Format( _( "wxWidgets version: %d.%d.%d. Copyright \u00A9 1992-2008 Julian Smart, Robert Roebling, Vadim Zeitlin and other members of the wxWidgets team" ), wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER ) );
+	cmdline.AddUsageText( wxString::Format( _( "libsndfile version: %s. Copyright \u00A9 1999-2011 Erik de Castro Lopo" ), get_libsndfile_version() ) );
 	cmdline.AddUsageText( wxString::Format( _( "Operating system: %s" ), wxPlatformInfo::Get().GetOperatingSystemDescription() ) );
 }
 
@@ -80,15 +82,17 @@ void wxMyApp::AddColourFormatDescription( wxCmdLineParser& cmdline )
 
 void wxMyApp::AddDisplayDescription( wxCmdLineParser& cmdline )
 {
+	cmdline.AddUsageText( _( "System settings:" ) );
+
 	wxRect dplRect = wxGetClientDisplayRect();
 	int	   nDepth  = wxDisplayDepth();
 	wxSize res	   = wxGetDisplayPPI();
 
-	cmdline.AddUsageText( wxString::Format( _( "Display position (pixels): %dx%d" ), dplRect.x, dplRect.y ) );
-	cmdline.AddUsageText( wxString::Format( _( "Display size: %dx%d" ), dplRect.width, dplRect.height ) );
-	cmdline.AddUsageText( wxString::Format( _( "Display color depth: %d bits" ), nDepth ) );
-	cmdline.AddUsageText( wxString::Format( _( "Display resolution (pixels per inch): %dx%d" ), res.x, res.y ) );
-	cmdline.AddUsageText( wxString::Format( _( "Window color: %s" ), wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW ).GetAsString() ) );
+	cmdline.AddUsageText( wxString::Format( _( "Display size (pixels): %dx%d (%dx%d)" ), dplRect.width, dplRect.height, dplRect.x, dplRect.y ) );
+	cmdline.AddUsageText( wxString::Format( _( "Display color depth (bits): %d" ), nDepth ) );
+	cmdline.AddUsageText( wxString::Format( _( "Display resolution (pixels/inch): %dx%d" ), res.x, res.y ) );
+	cmdline.AddUsageText( wxString::Format( _( "Background color: %s" ), wxSystemSettings::GetColour( wxConfiguration::COLOR_BACKGROUND ).GetAsString() ) );
+	cmdline.AddUsageText( wxString::Format( _( "Second background color: %s" ), wxSystemSettings::GetColour( wxConfiguration::COLOR_BACKGROUND2 ).GetAsString() ) );
 }
 
 void wxMyApp::OnInitCmdLine( wxCmdLineParser& cmdline )
@@ -381,6 +385,7 @@ int wxMyApp::OnRun()
 	{
 		const SF_INFO& sfInfo	= sfReader.GetInfo();
 		wxTimeSpan	   duration = wxTimeSpan::Milliseconds( sfInfo.frames * 1000 / sfInfo.samplerate );
+
 		wxLogInfo( _( "Input file duration: %s" ), duration.Format() );
 
 		if ( m_cfg.HasCuePointsInterval() )
