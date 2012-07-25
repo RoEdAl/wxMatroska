@@ -246,12 +246,18 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 		case DRAWING_MODE_RASTER2:
 		case DRAWING_MODE_POLY:
 		{
+			const DrawerSettings&		  drawerSettings = cfg.GetDrawerSettings();
+
 			if ( cfg.MultiChannel() )
 			{
-				McGraphicalContextWaveDrawer* pGc			 = new McGraphicalContextWaveDrawer( 1 );
-				const DrawerSettings&		  drawerSettings = cfg.GetDrawerSettings();
+				McGraphicalContextWaveDrawer* pGc			 = new McGraphicalContextWaveDrawer( nChannels );
 
-				wxGraphicsContext* gc = pGc->Initialize( cfg.GetImageSize(), cfg.GetImageColorDepth(), drawerSettings.GetBackgroundColour() );
+				wxGraphicsContext* gc = pGc->Initialize(
+					cfg.GetImageSize(),
+					cfg.GetImageColorDepth(),
+					drawerSettings.GetTopBackgroundColour(),
+					drawerSettings.GetBottomBackgroundColour(),
+					drawerSettings.GetBaselinePosition() );
 
 				if ( gc == NULL )
 				{
@@ -270,7 +276,12 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 			{
 				McGraphicalContextWaveDrawer* pGc = new McGraphicalContextWaveDrawer( 1 );
 
-				wxGraphicsContext* gc = pGc->Initialize( cfg.GetImageSize(), cfg.GetImageColorDepth(), drawerSettings.GetBackgroundColour() );
+				wxGraphicsContext* gc = pGc->Initialize(
+					cfg.GetImageSize(),
+					cfg.GetImageColorDepth(),
+					drawerSettings.GetTopBackgroundColour(),
+					drawerSettings.GetBottomBackgroundColour(),
+					drawerSettings.GetBaselinePosition() );
 
 				if ( gc == NULL )
 				{

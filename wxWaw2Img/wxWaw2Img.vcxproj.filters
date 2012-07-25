@@ -90,6 +90,9 @@
     <ClInclude Include="DrawerSettings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ColourInterpolation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StdWx.cpp">
@@ -159,6 +162,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DrawerSettings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ColourInterpolation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

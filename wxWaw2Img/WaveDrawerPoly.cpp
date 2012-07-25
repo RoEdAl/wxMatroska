@@ -66,24 +66,25 @@ void PolyWaveDrawer::ProcessFinalizer()
 
 	path.AddLineToPoint( first_point );
 
-	wxGraphicsGradientStops stops( m_drawerSettings.GetColourTo(), m_drawerSettings.GetColourTo() );
+	wxGraphicsGradientStops stops( m_drawerSettings.GetColourTop(), m_drawerSettings.GetColourBottom() );
 
 	if ( m_drawerSettings.UseLogarithmicColorGradient() )
 	{
 		create_log_stops(
 				stops,
-				m_drawerSettings.GetColourFrom(),
-				m_drawerSettings.GetColourTo(),
+				m_drawerSettings.GetColourTop(),
+				m_drawerSettings.GetColourCenter(),
+				m_drawerSettings.GetColourBottom(),
 				m_rc.m_height,
 				m_drawerSettings.GetBaselinePosition(),
 				GetLogarithmicScale() );
 	}
 	else
 	{
-		stops.Add( m_drawerSettings.GetColourFrom(), 1.0f - m_drawerSettings.GetBaselinePosition() );
+		stops.Add( m_drawerSettings.GetColourCenter(), 1.0f - m_drawerSettings.GetBaselinePosition() );
 	}
 
-	wxGraphicsBrush brush = m_gc->CreateLinearGradientBrush( 0, 0, 0, m_rc.m_height, stops );
+	wxGraphicsBrush brush = m_gc->CreateLinearGradientBrush( m_rc.m_x, m_rc.m_y, m_rc.m_x, m_rc.m_y + m_rc.m_height - 1, stops );
 
 	m_gc->SetBrush( brush );
 	m_gc->FillPath( path );

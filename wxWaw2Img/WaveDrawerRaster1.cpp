@@ -28,11 +28,23 @@ void Raster1WaveDrawer::ProcessInitializer()
 
 	if ( m_drawerSettings.UseLogarithmicColorGradient() )
 	{
-		img = create_log_gradient_bitmap( m_drawerSettings.GetColourFrom(), m_drawerSettings.GetColourTo(), m_rc.m_height, m_drawerSettings.GetBaselinePosition(), GetLogarithmicScale() );
+		img = create_log_gradient_bitmap( 
+			m_drawerSettings.GetColourTop(),
+			m_drawerSettings.GetColourCenter(),
+			m_drawerSettings.GetColourBottom(),
+			m_rc.m_height,
+			m_drawerSettings.GetBaselinePosition(),
+			GetLogarithmicScale()
+		);
 	}
 	else
 	{
-		img = create_gradient_bitmap( m_drawerSettings.GetColourFrom(), m_drawerSettings.GetColourTo(), m_rc.m_height, m_drawerSettings.GetBaselinePosition() );
+		img = create_gradient_bitmap(
+			m_drawerSettings.GetColourTop(),
+			m_drawerSettings.GetColourCenter(),
+			m_drawerSettings.GetColourBottom(),
+			m_rc.m_height,
+			m_drawerSettings.GetBaselinePosition() );
 	}
 
 	m_bm = m_gc->CreateBitmapFromImage( img );

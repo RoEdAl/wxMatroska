@@ -2,6 +2,7 @@
  *      DrawerSettings.h
  */
 #include "StdWx.h"
+#include "ColourInterpolation.h"
 #include "DrawerSettings.h"
 
 DrawerSettings::DrawerSettings():
@@ -9,10 +10,13 @@ DrawerSettings::DrawerSettings():
 	m_bLogarithmicScale( false ),
 	m_bLogarithmicColorGradient( false ),
 	m_fLogBase( exp( 1.0f ) ),
-	m_clrFrom( 0, 0, 0, wxALPHA_OPAQUE ),
-	m_clrTo( 0, 0, 0, wxALPHA_TRANSPARENT ),
-	m_clrBg( wxTransparentColour ),
-	m_clrBgSecond( 0, 0, 0, 15 ),
+	m_clrCenter( 0, 0, 0, wxALPHA_OPAQUE ),
+	m_clrTop( 0, 0, 0, wxALPHA_TRANSPARENT ),
+	m_clrBottom( 0, 0, 0, wxALPHA_TRANSPARENT ),
+	m_clrBgTop( wxTransparentColour ),
+	m_clrBgTop2( 0, 0, 0, 15 ),
+	m_clrBgBottom( wxTransparentColour ),
+	m_clrBgBottom2( 0, 0, 0, 15 ),
 	m_nFrequency( 50 ),
 	m_fBaselinePosition( 0.5f )
 {}
@@ -39,31 +43,53 @@ wxFloat32 DrawerSettings::GetLogarithmBase() const
 	return m_fLogBase;
 }
 
-const wxColour& DrawerSettings::GetColourFrom() const
+const wxColour& DrawerSettings::GetColourCenter() const
 {
-	return m_clrFrom;
+	return m_clrCenter;
 }
 
-const wxColour& DrawerSettings::GetColourTo() const
+const wxColour& DrawerSettings::GetColourTop() const
 {
 	if ( m_bDrawWithGradient )
 	{
-		return m_clrTo;
+		return m_clrTop;
 	}
 	else
 	{
-		return m_clrFrom;
+		return m_clrCenter;
 	}
 }
 
-const wxColour& DrawerSettings::GetBackgroundColour() const
+const wxColour& DrawerSettings::GetColourBottom() const
 {
-	return m_clrBg;
+	if ( m_bDrawWithGradient )
+	{
+		return m_clrBottom;
+	}
+	else
+	{
+		return m_clrCenter;
+	}
 }
 
-const wxColour& DrawerSettings::GetSecondaryBackgroundColour() const
+const wxColour& DrawerSettings::GetTopBackgroundColour() const
 {
-	return m_clrBgSecond;
+	return m_clrBgTop;
+}
+
+const wxColour& DrawerSettings::GetTopBackgroundColour2() const
+{
+	return m_clrBgTop2;
+}
+
+const wxColour& DrawerSettings::GetBottomBackgroundColour() const
+{
+	return m_clrBgBottom;
+}
+
+const wxColour& DrawerSettings::GetBottomBackgroundColour2() const
+{
+	return m_clrBgBottom2;
 }
 
 wxUint16 DrawerSettings::GetFrequency() const
@@ -103,24 +129,39 @@ wxFloat32& DrawerSettings::GetLogarithmBase()
 	return m_fLogBase;
 }
 
-wxColour& DrawerSettings::GetColourFrom()
+wxColour& DrawerSettings::GetColourCenter()
 {
-	return m_clrFrom;
+	return m_clrCenter;
 }
 
-wxColour& DrawerSettings::GetColourTo()
+wxColour& DrawerSettings::GetColourTop()
 {
-	return m_clrTo;
+	return m_clrTop;
 }
 
-wxColour& DrawerSettings::GetBackgroundColour()
+wxColour& DrawerSettings::GetColourBottom()
 {
-	return m_clrBg;
+	return m_clrBottom;
 }
 
-wxColour& DrawerSettings::GetSecondaryBackgroundColour()
+wxColour& DrawerSettings::GetTopBackgroundColour()
 {
-	return m_clrBgSecond;
+	return m_clrBgTop;
+}
+
+wxColour& DrawerSettings::GetTopBackgroundColour2()
+{
+	return m_clrBgTop2;
+}
+
+wxColour& DrawerSettings::GetBottomBackgroundColour()
+{
+	return m_clrBgBottom;
+}
+
+wxColour& DrawerSettings::GetBottomBackgroundColour2()
+{
+	return m_clrBgBottom2;
 }
 
 wxUint16& DrawerSettings::GetFrequency()
@@ -159,27 +200,72 @@ DrawerSettings& DrawerSettings::SetLogarithmBase( wxFloat32 fLogBase )
 	return *this;
 }
 
-DrawerSettings& DrawerSettings::SetColourFrom( const wxColour& clrFrom )
+DrawerSettings& DrawerSettings::SetColourCenter( const wxColour& clr )
 {
-	m_clrFrom = clrFrom;
+	m_clrCenter = clr;
 	return *this;
 }
 
-DrawerSettings& DrawerSettings::SetColourTo( const wxColour& clrTo )
+const wxColour& DrawerSettings::CalcCenterColour()
 {
-	m_clrTo = clrTo;
+	m_clrCenter = ColourInterpolation::linear_interpolation( m_clrBottom, m_clrTop, m_fBaselinePosition );
+	return m_clrCenter;
+}
+
+DrawerSettings& DrawerSettings::SetSecondaryColour( const wxColour& clr )
+{
+	m_clrTop = clr;
+	m_clrBottom = clr;
 	return *this;
 }
 
-DrawerSettings& DrawerSettings::SetBackgroundColour( const wxColour& clrBg )
+DrawerSettings& DrawerSettings::SetColourTop( const wxColour& clr )
 {
-	m_clrBg = clrBg;
+	m_clrTop = clr;
 	return *this;
 }
 
-DrawerSettings& DrawerSettings::SetSecondaryBackgroundColour( const wxColour& clrBgSecond )
+DrawerSettings& DrawerSettings::SetColourBottom( const wxColour& clr )
 {
-	m_clrBgSecond = clrBgSecond;
+	m_clrBottom = clr;
+	return *this;
+}
+
+DrawerSettings& DrawerSettings::SetBackgroundColour( const wxColour& clr )
+{
+	m_clrBgTop = clr;
+	m_clrBgBottom = clr;
+	return *this;
+}
+
+DrawerSettings& DrawerSettings::SetBackgroundColour2( const wxColour& clr )
+{
+	m_clrBgTop2 = clr;
+	m_clrBgBottom2 = clr;
+	return *this;
+}
+
+DrawerSettings& DrawerSettings::SetTopBackgroundColour( const wxColour& clr )
+{
+	m_clrBgTop = clr;
+	return *this;
+}
+
+DrawerSettings& DrawerSettings::SetTopBackgroundColour2( const wxColour& clr )
+{
+	m_clrBgTop2 = clr;
+	return *this;
+}
+
+DrawerSettings& DrawerSettings::SetBottomBackgroundColour( const wxColour& clr )
+{
+	m_clrBgBottom = clr;
+	return *this;
+}
+
+DrawerSettings& DrawerSettings::SetBottomBackgroundColour2( const wxColour& clr )
+{
+	m_clrBgBottom2 = clr;
 	return *this;
 }
 

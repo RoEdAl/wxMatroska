@@ -4,6 +4,7 @@
 #include "StdWx.h"
 #include "FloatArray.h"
 #include "LogarithmicScale.h"
+#include "ColourInterpolation.h"
 #include "SampleProcessor.h"
 #include "WaveDrawer.h"
 #include "SampleChunker.h"
@@ -29,31 +30,51 @@ void Raster2WaveDrawer::ProcessInitializer()
 
 void Raster2WaveDrawer::NextColumn( wxFloat32 fValue, wxFloat32 fLogValue )
 {
-	// wxColour clrFrom = linear_interpolation( m_clrTo, m_clrFrom, abs( m_bLogarithmicColorGradient? fLogValue : fValue ) );
-	wxColour clrFrom = linear_interpolation( m_drawerSettings.GetColourTo(), m_drawerSettings.GetColourFrom(), abs( fValue ) );
-	wxColour clrTo	 = m_drawerSettings.GetColourTo();
+	wxPoint2DDouble point_central( m_nCurrentColumn + m_rc.m_x, m_yoffset );
+	wxFloat32 va = abs( fValue );
+	wxFloat32	   v = abs( m_drawerSettings.UseLogarithmicScale() ? fLogValue : fValue );
+
+	wxColour clrTo = ColourInterpolation::linear_interpolation( m_drawerSettings.GetColourTop(), m_drawerSettings.GetColourCenter(), va );
+	wxColour clrFrom = m_drawerSettings.GetColourTop();
 
 	wxImage img;
 
 	if ( m_drawerSettings.UseLogarithmicColorGradient() )
 	{
 		wxASSERT( UseLogarithmicScale() );
-		img = create_log_gradient_bitmap( *m_mdc, clrFrom, clrTo, m_rc.m_height, m_drawerSettings.GetBaselinePosition(), GetLogarithmicScale() );
+		img = create_log_gradient_bitmap( *m_mdc, clrTo, clrFrom, clrFrom, m_rc.m_height, 0.0f, GetLogarithmicScale() );
 	}
 	else
 	{
-		img = create_gradient_bitmap( *m_mdc, clrFrom, clrTo, m_rc.m_height, m_drawerSettings.GetBaselinePosition() );
+		img = create_gradient_bitmap( *m_mdc, clrTo, clrFrom, clrFrom, m_rc.m_height, m_drawerSettings.GetBaselinePosition() );
 	}
 
-	wxPoint2DDouble point_central( m_nCurrentColumn + m_rc.m_x, m_yoffset );
-
-	wxFloat32	   v = abs( m_drawerSettings.UseLogarithmicScale() ? fLogValue : fValue );
-	wxRect2DDouble rc( 0, 0, 1, v * m_rc.m_height );
+	wxRect2DDouble rcTop( 0, 0, 1, v * m_heightUp );
 	m_gc->DrawBitmap( m_gc->CreateBitmapFromImage( img ),
 			point_central.m_x,
-			point_central.m_y - ( v * m_heightUp ),
-			rc.m_width,
-			rc.m_height );
+			point_central.m_y,
+			rcTop.m_width,
+			-rcTop.m_height );
+
+	clrFrom = ColourInterpolation::linear_interpolation( m_drawerSettings.GetColourBottom(), m_drawerSettings.GetColourCenter(), va );
+	clrTo = m_drawerSettings.GetColourBottom();
+
+	if ( m_drawerSettings.UseLogarithmicColorGradient() )
+	{
+		wxASSERT( UseLogarithmicScale() );
+		img = create_log_gradient_bitmap( *m_mdc, clrFrom, clrTo, clrTo, m_rc.m_height, 0.0f, GetLogarithmicScale() );
+	}
+	else
+	{
+		img = create_gradient_bitmap( *m_mdc, clrFrom, clrTo, clrTo, m_rc.m_height, m_drawerSettings.GetBaselinePosition() );
+	}
+
+	wxRect2DDouble rcBottom( 0, 0, 1, v * m_heightDown );
+	m_gc->DrawBitmap( m_gc->CreateBitmapFromImage( img ),
+			point_central.m_x,
+			point_central.m_y,
+			rcBottom.m_width,
+			rcBottom.m_height );
 }
 
 void Raster2WaveDrawer::ProcessFinalizer()
