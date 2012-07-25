@@ -1,5 +1,5 @@
 /*
-        SoundFileReader.cpp
+ *      SoundFileReader.cpp
  */
 #include "StdWx.h"
 #include "WaveDrawer.h"
@@ -41,16 +41,16 @@ void SoundFileReader::ReadSamples( MultiChannelWaveDrawer& waveDrawer )
 	SNDFILE* sndfile = m_soundFile.GetHandle();
 
 	/*
-	   double d;
-
-	   if ( !sf_command( m_soundFile.GetHandle(), SFC_CALC_NORM_SIGNAL_MAX, &d, sizeof(d) ) )
-	   {
-	        wxLogMessage( _("Normalized value: %f"), d );
-	   }
-	   else
-	   {
-	        d = 1;
-	   }
+	 * double d;
+	 *
+	 * if ( !sf_command( m_soundFile.GetHandle(), SFC_CALC_NORM_SIGNAL_MAX, &d, sizeof(d) ) )
+	 * {
+	 *      wxLogMessage( _("Normalized value: %f"), d );
+	 * }
+	 * else
+	 * {
+	 *      d = 1;
+	 * }
 	 */
 
 	int		   nChannels   = m_soundFile.GetInfo().channels;

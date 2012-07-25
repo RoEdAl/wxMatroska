@@ -1,5 +1,5 @@
 /*
-   wxEllipsizer.h
+ * wxEllipsizer.h
  */
 
 #ifndef _WX_ELLIPSIZER_H_
@@ -8,19 +8,19 @@
 class wxEllipsizer:
 	public wxObject
 {
-public:
+	public:
 
-	wxEllipsizer( void );
+		wxEllipsizer( void );
 
-	static const wxChar REG_EX[];
-	static const wxChar ELLIPSIS;
+		static const wxChar REG_EX[];
+		static const wxChar ELLIPSIS;
 
-	bool EllipsizeEx( const wxString&, wxString& ) const;
-	wxString Ellipsize( const wxString& ) const;
+		bool EllipsizeEx( const wxString&, wxString& ) const;
+		wxString Ellipsize( const wxString& ) const;
 
-protected:
+	protected:
 
-	wxRegEx m_reEllipsis;
+		wxRegEx m_reEllipsis;
 };
 
 #endif

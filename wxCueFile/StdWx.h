@@ -1,5 +1,5 @@
 /*
-        StdWx.h
+ *      StdWx.h
  */
 
 #ifndef _STD_WX_H
@@ -7,7 +7,7 @@
 
 #ifdef WIN32
 #include <targetver.h>
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from
+#define WIN32_LEAN_AND_MEAN				// Exclude rarely-used stuff from
 // Windows headers
 #endif
 
@@ -31,5 +31,5 @@
 #include <FLAC++/all.h>
 #include <wavpack.h>
 
-#endif // _STD_WX_H
+#endif	// _STD_WX_H
 

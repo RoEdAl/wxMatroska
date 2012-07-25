@@ -1,5 +1,5 @@
 /*
-   wxFlacMetaDataReader.h
+ * wxFlacMetaDataReader.h
  */
 
 #ifndef _WX_FLAC_META_DATA_READER_H_
@@ -20,57 +20,57 @@ class wxArrayCueTag;
 class wxFlacMetaDataReader:
 	protected wxAbstractMetaDataReader
 {
-protected:
+	protected:
 
-	class FlacDecoder:
-		public wxFlacDecoder
-	{
-public:
-
-		FlacDecoder( wxInputStream& inputStream, wxOutputStream& outputStream, wxFlacMetaDataReader& fmtr ):
-			wxFlacDecoder( inputStream, outputStream ), m_fmtr( fmtr )
-		{}
-
-protected:
-
-		virtual void metadata_callback( const::FLAC__StreamMetadata* metadata )
+		class FlacDecoder:
+			public wxFlacDecoder
 		{
-			m_fmtr.metadata_callback( metadata );
-		}
+			public:
 
-protected:
+				FlacDecoder( wxInputStream& inputStream, wxOutputStream& outputStream, wxFlacMetaDataReader& fmtr ):
+					wxFlacDecoder( inputStream, outputStream ), m_fmtr( fmtr )
+				{}
 
-		wxFlacMetaDataReader& m_fmtr;
-	};
+			protected:
 
-protected:
+				virtual void metadata_callback( const::FLAC__StreamMetadata* metadata )
+				{
+					m_fmtr.metadata_callback( metadata );
+				}
 
-	void metadata_callback( const::FLAC__StreamMetadata* );
+			protected:
 
-	FLAC::Metadata::VorbisComment* m_pVorbisComment;
-	FLAC::Metadata::CueSheet*	   m_pCueSheet;
-	FLAC::Metadata::StreamInfo*	   m_pStreamInfo;
-	wxString					   m_sFlacFile;
+				wxFlacMetaDataReader& m_fmtr;
+		};
 
-public:
+	protected:
 
-	wxFlacMetaDataReader( void );
-	~wxFlacMetaDataReader( void );
+		void metadata_callback( const::FLAC__StreamMetadata* );
 
-	bool ReadMetadata( const wxString& );
+		FLAC::Metadata::VorbisComment* m_pVorbisComment;
+		FLAC::Metadata::CueSheet*	   m_pCueSheet;
+		FLAC::Metadata::StreamInfo*	   m_pStreamInfo;
+		wxString					   m_sFlacFile;
 
-	const wxString& GetFlacFile() const;
+	public:
 
-	bool HasVorbisComment() const;
-	bool HasCueSheet() const;
-	bool HasStreamInfo() const;
+		wxFlacMetaDataReader( void );
+		~wxFlacMetaDataReader( void );
 
-	const FLAC::Metadata::VorbisComment& GetVorbisComment() const;
-	bool GetCueSheetFromVorbisComment( wxString& ) const;
-	void ReadVorbisComments( wxArrayCueTag& ) const;
+		bool ReadMetadata( const wxString& );
 
-	const FLAC::Metadata::CueSheet& GetCueSheet() const;
-	const FLAC::Metadata::StreamInfo& GetStreamInfo() const;
+		const wxString& GetFlacFile() const;
+
+		bool HasVorbisComment() const;
+		bool HasCueSheet() const;
+		bool HasStreamInfo() const;
+
+		const FLAC::Metadata::VorbisComment& GetVorbisComment() const;
+		bool GetCueSheetFromVorbisComment( wxString& ) const;
+		void ReadVorbisComments( wxArrayCueTag& ) const;
+
+		const FLAC::Metadata::CueSheet& GetCueSheet() const;
+		const FLAC::Metadata::StreamInfo& GetStreamInfo() const;
 };
 
 #endif

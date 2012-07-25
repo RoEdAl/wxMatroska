@@ -1,5 +1,5 @@
 /*
-        MCGrpahicsContextWaveDrawer.cpp
+ *      MCGrpahicsContextWaveDrawer.cpp
  */
 
 #include "StdWx.h"
@@ -28,6 +28,7 @@ wxGraphicsContext* McGraphicalContextWaveDrawer::Initialize( wxUint32 nWidth, wx
 	m_mc.reset( new wxMemoryDC() );
 
 	m_mc->SelectObject( *m_bmp );
+
 	if ( !m_mc->IsOk() )
 	{
 		m_mc.release();

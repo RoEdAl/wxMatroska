@@ -1,5 +1,5 @@
 /*
-        SoundFileReader.h
+ *      SoundFileReader.h
  */
 
 #ifndef _SOUND_FILE_READER_H_
@@ -7,19 +7,19 @@
 
 class SoundFileReader
 {
-protected:
+	protected:
 
-	SoundFile m_soundFile;
+		SoundFile m_soundFile;
 
-public:
+	public:
 
-	SoundFileReader();
-	~SoundFileReader();
+		SoundFileReader();
+		~SoundFileReader();
 
-	bool Open( const wxFileName& fileName );
-	wxUint64 GetSize() const;
-	wxUint16 GetChannels() const;
-	void ReadSamples( MultiChannelWaveDrawer& );
+		bool Open( const wxFileName& fileName );
+		wxUint64 GetSize() const;
+		wxUint16 GetChannels() const;
+		void ReadSamples( MultiChannelWaveDrawer& );
 };
 
 #endif

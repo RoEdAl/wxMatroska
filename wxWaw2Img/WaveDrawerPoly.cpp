@@ -1,5 +1,5 @@
 /*
-        WaveDrawerRaster1.cpp
+ *      WaveDrawerRaster1.cpp
  */
 #include "StdWx.h"
 #include "FloatArray.h"
@@ -67,6 +67,7 @@ void PolyWaveDrawer::ProcessFinalizer()
 	path.AddLineToPoint( first_point );
 
 	wxGraphicsGradientStops stops( m_clrTo, m_clrTo );
+
 	if ( m_bLogarithmicColorGradient )
 	{
 		create_log_stops( stops, m_clrFrom, m_clrTo, m_nImgHeight, GetLogarithmicScale() );

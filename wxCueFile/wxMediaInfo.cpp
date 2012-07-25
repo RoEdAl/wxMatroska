@@ -1,5 +1,5 @@
 /*
-   wxMediaInfo.cpp
+ * wxMediaInfo.cpp
  */
 
 #include "StdWx.h"
@@ -108,15 +108,15 @@ void wxMediaInfo::MediaInfoClose( void* handle )
 }
 
 const wxChar* wxMediaInfo::MediaInfoGet(
-	void* handle,
-	MediaInfo_stream_C StreamKind,
-	size_t StreamNumber,
-	const wxChar* Parameter,
-	MediaInfo_info_C KindOfInfo,
-	MediaInfo_info_C KindOfSearch )
+		void* handle,
+		MediaInfo_stream_C StreamKind,
+		size_t StreamNumber,
+		const wxChar* Parameter,
+		MediaInfo_info_C KindOfInfo,
+		MediaInfo_info_C KindOfSearch )
 {
 	wxASSERT( IsLoaded() );
 	return m_fnGet( handle, StreamKind, StreamNumber, Parameter, KindOfInfo,
-		KindOfSearch );
+			KindOfSearch );
 }
 

@@ -1,5 +1,5 @@
 /*
-        SampleProcessor.cpp
+ *      SampleProcessor.cpp
  */
 
 #include "StdWx.h"

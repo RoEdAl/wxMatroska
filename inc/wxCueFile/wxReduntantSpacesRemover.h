@@ -1,5 +1,5 @@
 /*
-   wxReduntantSpacesRemover.h
+ * wxReduntantSpacesRemover.h
  */
 
 #ifndef _WX_REDUNTANT_SPACES_REMOVER_H_
@@ -8,21 +8,21 @@
 class wxReduntantSpacesRemover:
 	public wxObject
 {
-public:
+	public:
 
-	static const wxChar REG_EX[];
+		static const wxChar REG_EX[];
 
-	wxReduntantSpacesRemover( void );
+		wxReduntantSpacesRemover( void );
 
-	int Remove( wxString& ) const;
-	int RemoveEx( const wxString&, wxString& ) const;
+		int Remove( wxString& ) const;
+		int RemoveEx( const wxString&, wxString& ) const;
 
-	const wxRegEx& GetRegEx() const;
+		const wxRegEx& GetRegEx() const;
 
-protected:
+	protected:
 
-	wxRegEx	 m_reReduntantSpaces;
-	wxString m_sReplacement;
+		wxRegEx	 m_reReduntantSpaces;
+		wxString m_sReplacement;
 };
 
 #endif

@@ -1,5 +1,5 @@
 /*
-        WaveDrawerSimple.cpp
+ *      WaveDrawerSimple.cpp
  */
 #include "StdWx.h"
 #include "FloatArray.h"

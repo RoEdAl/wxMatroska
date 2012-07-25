@@ -1,5 +1,5 @@
 /*
-        WaveDrawerRasrer2.h
+ *      WaveDrawerRasrer2.h
  */
 #ifndef _WAVE_DRAWER_RASTER2_H_
 #define _WAVE_DRAWER_RASTER2_H_
@@ -7,24 +7,24 @@
 class Raster2WaveDrawer:
 	public RasterWaveDrawer
 {
-public:
+	public:
 
-	Raster2WaveDrawer( wxUint64,
-					   wxGraphicsContext*,
-					   bool, bool, wxFloat32,
-					   wxRect2DInt, const wxColour&, const wxColour&,
-					   bool, const wxTimeSpanArray&, const wxColour& );
+		Raster2WaveDrawer( wxUint64,
+						   wxGraphicsContext*,
+						   bool, bool, wxFloat32,
+						   wxRect2DInt, const wxColour&, const wxColour&,
+						   bool, const wxTimeSpanArray&, const wxColour& );
 
-protected:
+	protected:
 
-	virtual void ProcessInitializer();
+		virtual void ProcessInitializer();
 
-	virtual void NextColumn( wxFloat32, wxFloat32 );
-	virtual void ProcessFinalizer();
+		virtual void NextColumn( wxFloat32, wxFloat32 );
+		virtual void ProcessFinalizer();
 
-protected:
+	protected:
 
-	wxScopedPtr<wxMemoryDC> m_mdc;
+		wxScopedPtr< wxMemoryDC > m_mdc;
 };
 
 #endif

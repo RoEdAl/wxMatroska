@@ -1,5 +1,5 @@
 /*
-   wxDuration.cpp
+ * wxDuration.cpp
  */
 
 #include "StdWx.h"
@@ -10,6 +10,7 @@
 // ===============================================================================
 
 wxIMPLEMENT_ABSTRACT_CLASS( wxDuration, wxObject )
+
 // ===============================================================================
 
 wxDuration::wxDuration( void )

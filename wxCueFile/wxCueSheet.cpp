@@ -1,5 +1,5 @@
 /*
-   wxCueSheet.cpp
+ * wxCueSheet.cpp
  */
 
 #include "StdWx.h"
@@ -471,6 +471,7 @@ wxCueSheet& wxCueSheet::Append( const wxCueSheet& _cs )
 	WX_APPEND_ARRAY( m_dataFiles, cs.m_dataFiles );
 
 	size_t nNumberOffset = 0;
+
 	if ( !m_tracks.IsEmpty() )
 	{
 		wxTrack& lastTrack = GetLastTrack();
@@ -662,6 +663,7 @@ wxDuration wxCueSheet::GetDuration( size_t nDataFileIdx ) const
 		}
 
 		const wxDuration& dfDuration = m_dataFiles[ i ].GetDuration();
+
 		if ( bFirst )
 		{
 			duration = dfDuration;
@@ -812,9 +814,9 @@ void wxCueSheet::FindCommonTags( const wxTagSynonimsCollection& discSynonims, co
 	if ( bMerge )
 	{
 		AddTag( wxCueTag(
-				wxCueTag::TAG_AUTO_GENERATED,
-				wxCueTag::Name::TOTALDISCS,
-				wxString::Format( wxT( "%d" ), m_content.GetCount() ) ) );
+						wxCueTag::TAG_AUTO_GENERATED,
+						wxCueTag::Name::TOTALDISCS,
+						wxString::Format( wxT( "%d" ), m_content.GetCount() ) ) );
 
 		wxArrayCueTag albumTags;
 		size_t		  nElements = 1;
@@ -840,6 +842,7 @@ void wxCueSheet::FindCommonTags( const wxTagSynonimsCollection& discSynonims, co
 			for ( size_t j = 0, nCount = albumTags.GetCount(); j < nCount && bIsCommon; j++ )
 			{
 				wxString sAlbum( albumTags[ j ].GetValue() );
+
 				if ( reDisc1.Matches( sAlbum ) )
 				{
 					wxASSERT( reDisc1.GetMatchCount() > 5 );
@@ -848,6 +851,7 @@ void wxCueSheet::FindCommonTags( const wxTagSynonimsCollection& discSynonims, co
 					wxString sLocalAlbum2( reDisc1.GetMatch( sAlbum, 5 ) );
 
 					unsigned long u;
+
 					if ( sDiscNumber.ToULong( &u ) )
 					{
 						albumNumbers[ albumTags[ j ].GetValue() ] = u;
@@ -863,6 +867,7 @@ void wxCueSheet::FindCommonTags( const wxTagSynonimsCollection& discSynonims, co
 					wxString sLocalAlbum2( reDisc2.GetMatch( sAlbum, 5 ) );
 
 					unsigned long u;
+
 					if ( sDiscNumber.ToULong( &u ) )
 					{
 						albumNumbers[ albumTags[ j ].GetValue() ] = u;

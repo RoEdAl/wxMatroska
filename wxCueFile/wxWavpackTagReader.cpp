@@ -1,5 +1,5 @@
 /*
-   wxWavpackTagReader.cpp
+ * wxWavpackTagReader.cpp
  */
 
 #include "StdWx.h"
@@ -18,16 +18,17 @@ int wxWavpackTagReader::wxWavpackContext::GetNumTagItems()
 }
 
 size_t wxWavpackTagReader::wxWavpackContext::GetTagItemIndexed(
-	int nItem,
-	wxWritableCharBuffer& itemBuffer,
-	wxWritableCharBuffer& valueBuffer,
-	wxString& sItem,
-	wxString& sValue
-	)
+		int nItem,
+		wxWritableCharBuffer& itemBuffer,
+		wxWritableCharBuffer& valueBuffer,
+		wxString& sItem,
+		wxString& sValue
+		)
 {
 	wxASSERT( this->operator bool() );
 
 	size_t nSize = WavpackGetTagItemIndexed( m_pContext, nItem, NULL, 0 );
+
 	if ( nSize == 0 )
 	{
 		return nSize;
@@ -45,6 +46,7 @@ size_t wxWavpackTagReader::wxWavpackContext::GetTagItemIndexed(
 
 	nSize = WavpackGetTagItem( m_pContext, itemBuffer, NULL, 0 );
 	wxASSERT( nSize > 0 );
+
 	if ( ( nSize + 1 ) > valueBuffer.length() )
 	{
 		valueBuffer.extend( nSize + 1 );
@@ -95,6 +97,7 @@ bool wxWavpackTagReader::ReadCueSheetTag( const wxString& sWavpackFile, wxString
 
 	{
 		wxFileInputStream is( sWavpackFile );
+
 		if ( !is.IsOk() )
 		{
 			wxLogError( _( "Fail to open Wavpack file \u201C%s\u201D." ), sWavpackFile );
@@ -108,12 +111,12 @@ bool wxWavpackTagReader::ReadCueSheetTag( const wxString& sWavpackFile, wxString
 		errBuffer.extend( 80 );
 		wxWavpackContext ctx(
 			WavpackOpenFileInputEx(
-				wavpackStream.GetStream(),
-				&wavpackStream, NULL,
-				errBuffer,
-				OPEN_TAGS,
-				0
-				)
+					wavpackStream.GetStream(),
+					&wavpackStream, NULL,
+					errBuffer,
+					OPEN_TAGS,
+					0
+					)
 			);
 
 		if ( !ctx )
@@ -124,7 +127,7 @@ bool wxWavpackTagReader::ReadCueSheetTag( const wxString& sWavpackFile, wxString
 		}
 
 		nSize = ctx.GetTagItem( wxCueTag::Name::CUESHEET, valueBuffer );
-	} // Wavpack file closed here
+	}	// Wavpack file closed here
 
 	if ( nSize > 0 )
 	{
@@ -132,6 +135,7 @@ bool wxWavpackTagReader::ReadCueSheetTag( const wxString& sWavpackFile, wxString
 			wxString::FromUTF8( valueBuffer, nSize ),
 			wxT( '\0' ),
 			wxTOKEN_DEFAULT );
+
 		if ( valueTokenizer.HasMoreTokens() )
 		{
 			sCueSheet = valueTokenizer.NextToken();
@@ -166,19 +170,19 @@ bool wxWavpackTagReader::ReadTags( const wxString& sWavpackFile, wxArrayCueTag& 
 	wxWritableCharBuffer errBuffer;
 	errBuffer.extend( 80 );
 	wxWavpackContext ctx( WavpackOpenFileInputEx(
-							  wavpackStream.GetStream(),
-							  &wavpackStream, NULL,
-							  errBuffer,
-							  OPEN_TAGS,
-							  0
-							  )
+								  wavpackStream.GetStream(),
+								  &wavpackStream, NULL,
+								  errBuffer,
+								  OPEN_TAGS,
+								  0
+								  )
 						  );
 
 	if ( !ctx )
 	{
 		wxString sErr( wxString::FromUTF8( errBuffer ) );
 		wxLogError( _( "Fail to open (using WavpackOpenFileInputEx) Wavpack file \u201C%s\u201D. Error message: \u201C%s\u201D" ),
-			sWavpackFile, sErr );
+				sWavpackFile, sErr );
 		return false;
 	}
 

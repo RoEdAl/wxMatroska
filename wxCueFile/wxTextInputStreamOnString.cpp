@@ -1,5 +1,5 @@
 /*
-   wxTextInputStreamOnString.cpp
+ * wxTextInputStreamOnString.cpp
  */
 
 #include "StdWx.h"

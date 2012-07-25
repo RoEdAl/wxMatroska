@@ -1,5 +1,5 @@
 /*
-   wxDuration.h
+ * wxDuration.h
  */
 
 #ifndef _WX_DURATION_H_
@@ -18,67 +18,67 @@ class wxDuration:
 {
 	wxDECLARE_DYNAMIC_CLASS( wxCueSheet );
 
-protected:
+	protected:
 
-	wxSamplingInfo m_si;
-	wxULongLong m_numberOfSamples;
+		wxSamplingInfo m_si;
+		wxULongLong	   m_numberOfSamples;
 
-public:
+	public:
 
-	wxDuration( void );
-	wxDuration( const wxSamplingInfo&, wxULongLong );
-	wxDuration( const wxDuration& );
+		wxDuration( void );
+		wxDuration( const wxSamplingInfo&, wxULongLong );
+		wxDuration( const wxDuration& );
 
-	wxDuration& operator =( const wxDuration& );
+		wxDuration& operator =( const wxDuration& );
 
-	wxDuration& Assign( const wxSamplingInfo &, wxULongLong );
+		wxDuration& Assign( const wxSamplingInfo &, wxULongLong );
 
-	const wxSamplingInfo& GetSamplingInfo() const;
-	const wxULongLong&	  GetNumberOfSamples() const;
-	wxString GetSamplesStr() const;
+		const wxSamplingInfo& GetSamplingInfo() const;
+		const wxULongLong&	  GetNumberOfSamples() const;
+		wxString GetSamplesStr() const;
 
-	wxString GetCdFramesStr( wxULongLong ) const;
+		wxString GetCdFramesStr( wxULongLong ) const;
 
-	bool IsValid() const;
-	void Clear();
-	void Invalidate();
-	bool Add( const wxDuration& );
+		bool IsValid() const;
+		void Clear();
+		void Invalidate();
+		bool Add( const wxDuration& );
 
-	wxDuration& Add( wxULongLong );
+		wxDuration& Add( wxULongLong );
 
-	wxIndex ConvertIndex( const wxIndex&, bool = true ) const;
+		wxIndex ConvertIndex( const wxIndex&, bool = true ) const;
 
-protected:
+	protected:
 
-	void copy( const wxDuration& );
+		void copy( const wxDuration& );
 };
 
 class wxAbstractDurationHolder
 {
-public:
+	public:
 
-	virtual bool HasDuration() const	   = 0;
-	virtual wxDuration GetDuration() const = 0;
+		virtual bool HasDuration() const	   = 0;
+		virtual wxDuration GetDuration() const = 0;
 };
 
 class wxDurationHolder:
 	public wxAbstractDurationHolder
 {
-protected:
+	protected:
 
-	wxScopedPtr<wxDuration> m_pDuration;
+		wxScopedPtr< wxDuration > m_pDuration;
 
-public:
+	public:
 
-	wxDurationHolder();
+		wxDurationHolder();
 
-	virtual bool HasDuration() const;
-	virtual wxDuration GetDuration() const;
+		virtual bool HasDuration() const;
+		virtual wxDuration GetDuration() const;
 
-protected:
+	protected:
 
-	void SetDuration( const wxDuration& );
-	void ClearDuration();
+		void SetDuration( const wxDuration& );
+		void ClearDuration();
 };
 
 #endif

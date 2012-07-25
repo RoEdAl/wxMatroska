@@ -1,5 +1,5 @@
 /*
-        SampleChunker.cpp
+ *      SampleChunker.cpp
  */
 #include "StdWx.h"
 #include "LogarithmicScale.h"
@@ -63,6 +63,7 @@ void SampleChunker::ProcessSample( wxFloat32 fSample )
 	}
 
 	wxFloat32 fAbsSample = abs( fSample );
+
 	if ( fAbsSample > m_fAbsMaxSample )
 	{
 		m_fMaxSample	= fSample;

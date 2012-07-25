@@ -1,5 +1,5 @@
 /*
-   wxWavpackTagReader.h
+ * wxWavpackTagReader.h
  */
 
 #ifndef _WX_WAVPACK_TAG_READER_H_
@@ -20,64 +20,64 @@ class wxArrayCueTag;
 class wxWavpackTagReader:
 	protected wxAbstractMetaDataReader
 {
-protected:
+	protected:
 
-	wxWavpackTagReader( void );
+		wxWavpackTagReader( void );
 
-protected:
+	protected:
 
-	class wxWavpackContext
-	{
-protected:
-
-		WavpackContext* m_pContext;
-
-public:
-
-		static WavpackContext* const Null;
-
-		wxWavpackContext():
-			m_pContext( Null ){}
-
-		wxWavpackContext( WavpackContext* pContext ):
-			m_pContext( pContext ){}
-
-		~wxWavpackContext()
+		class wxWavpackContext
 		{
-			if ( this->operator bool() )
-			{
-				WavpackCloseFile( m_pContext );
-			}
-		}
+			protected:
 
-		WavpackContext* Close()
-		{
-			if ( this->operator bool() )
-			{
-				WavpackContext* pRet = WavpackCloseFile( m_pContext );
-				m_pContext = Null;
-				return pRet;
-			}
-			else
-			{
-				return Null;
-			}
-		}
+				WavpackContext* m_pContext;
 
-		int GetNumTagItems();
-		size_t GetTagItemIndexed( int, wxWritableCharBuffer&, wxWritableCharBuffer&, wxString&, wxString& );
-		size_t GetTagItem( const wxString&, wxWritableCharBuffer& );
+			public:
 
-		operator bool() const
-		{
-			return ( m_pContext != Null );
-		}
-	};
+				static WavpackContext* const Null;
 
-public:
+				wxWavpackContext():
+					m_pContext( Null ){}
 
-	static bool ReadTags( const wxString&, wxArrayCueTag& );
-	static bool ReadCueSheetTag( const wxString&, wxString& );
+				wxWavpackContext( WavpackContext* pContext ):
+					m_pContext( pContext ){}
+
+				~wxWavpackContext()
+				{
+					if ( this->operator bool() )
+					{
+						WavpackCloseFile( m_pContext );
+					}
+				}
+
+				WavpackContext* Close()
+				{
+					if ( this->operator bool() )
+					{
+						WavpackContext* pRet = WavpackCloseFile( m_pContext );
+						m_pContext = Null;
+						return pRet;
+					}
+					else
+					{
+						return Null;
+					}
+				}
+
+				int GetNumTagItems();
+				size_t GetTagItemIndexed( int, wxWritableCharBuffer&, wxWritableCharBuffer&, wxString&, wxString& );
+				size_t GetTagItem( const wxString&, wxWritableCharBuffer& );
+
+				operator bool() const
+				{
+					return ( m_pContext != Null );
+				}
+		};
+
+	public:
+
+		static bool ReadTags( const wxString&, wxArrayCueTag& );
+		static bool ReadCueSheetTag( const wxString&, wxString& );
 };
 
 #endif

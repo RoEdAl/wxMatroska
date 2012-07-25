@@ -1,5 +1,5 @@
 /*
-        ChannelMixer.h
+ *      ChannelMixer.h
  */
 
 #ifndef _CHANNEL_MIXER_H_
@@ -8,15 +8,15 @@
 class ChannelMixer:
 	public McChainWaveDrawer
 {
-public:
+	public:
 
-	ChannelMixer( wxUint16, MultiChannelWaveDrawer*, bool );
+		ChannelMixer( wxUint16, MultiChannelWaveDrawer*, bool );
 
-	virtual void ProcessFrame( const wxFloat32* );
+		virtual void ProcessFrame( const wxFloat32* );
 
-protected:
+	protected:
 
-	wxFloat32 m_fFactor;
+		wxFloat32 m_fFactor;
 };
 
 #endif

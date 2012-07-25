@@ -1,5 +1,5 @@
 /*
-   wxSamplingInfo.cpp
+ * wxSamplingInfo.cpp
  */
 
 #include "StdWx.h"
@@ -13,7 +13,7 @@ wxIMPLEMENT_DYNAMIC_CLASS( wxSamplingInfo, wxObject );
 // ===============================================================================
 
 const wxTimeSpan wxSamplingInfo::wxInvalidDuration		 = wxTimeSpan::Hours( -1 );
-const wxUint64 wxSamplingInfo::	 wxInvalidNumberOfFrames = wxULL( 0xFFFFFFFFFFFFFFFF );
+const wxUint64	 wxSamplingInfo::wxInvalidNumberOfFrames = wxULL( 0xFFFFFFFFFFFFFFFF );
 
 // ===============================================================================
 

@@ -1,5 +1,5 @@
 /*
-   wxCueSheetReader.cpp
+ * wxCueSheetReader.cpp
  */
 
 #include "StdWx.h"
@@ -105,7 +105,8 @@ wxString wxCueSheetReader::GetDataFileRegExp()
 bool wxCueSheetReader::GetLogFile( const wxFileName& inputFile, bool bAnyLog, wxFileName& logFile )
 {
 	wxASSERT( inputFile.IsOk() );
-	if ( bAnyLog ) // any lof file in the same directory
+
+	if ( bAnyLog )	// any lof file in the same directory
 	{
 		wxFileName sourceDirFn( inputFile );
 
@@ -114,6 +115,7 @@ bool wxCueSheetReader::GetLogFile( const wxFileName& inputFile, bool bAnyLog, wx
 		wxASSERT( sourceDirFn.IsDirReadable() );
 
 		wxDir sourceDir( sourceDirFn.GetPath() );
+
 		if ( !sourceDir.IsOpened() )
 		{
 			wxLogError( _( "Fail to open directory \u201C%s\u201D" ), sourceDirFn.GetPath() );
@@ -121,6 +123,7 @@ bool wxCueSheetReader::GetLogFile( const wxFileName& inputFile, bool bAnyLog, wx
 		}
 
 		wxString sFileName;
+
 		if ( sourceDir.GetFirst( &sFileName, LOG_MASK, wxDIR_FILES ) )
 		{
 			while ( true )
@@ -168,6 +171,7 @@ bool wxCueSheetReader::GetCoverFile( const wxDir& sourceDir, const wxString& sFi
 		while ( true )
 		{
 			wxFileName fileName( sourceDir.GetName(), sFileName );
+
 			if ( IsCoverFile( fileName ) )
 			{
 				coverFile = fileName;
@@ -193,6 +197,7 @@ bool wxCueSheetReader::GetCoverFile( const wxFileName& inputFile, wxFileName& co
 	wxASSERT( sourceDirFn.IsDirReadable() );
 
 	wxDir sourceDir( sourceDirFn.GetPath() );
+
 	if ( !sourceDir.IsOpened() )
 	{
 		wxLogError( _( "Fail to open directory \u201C%s\u201D" ), sourceDirFn.GetPath() );
@@ -333,6 +338,7 @@ bool wxCueSheetReader::FindLog( const wxCueSheetContent& content, ReadFlags nMod
 {
 	wxASSERT( TestReadFlags( nMode, EC_FIND_LOG ) );
 	wxFileName logFile;
+
 	if ( GetLogFile( content.GetSource(), TestReadFlags( nMode, EC_SINGLE_MEDIA_FILE ), logFile ) )
 	{
 		m_cueSheet.AddLog( logFile );
@@ -348,6 +354,7 @@ bool wxCueSheetReader::FindCover( const wxCueSheetContent& content, ReadFlags nM
 {
 	wxASSERT( TestReadFlags( nMode, EC_FIND_COVER ) );
 	wxFileName coverFile;
+
 	if ( GetCoverFile( content.GetSource(), coverFile ) )
 	{
 		m_cueSheet.AddCover( coverFile );
@@ -388,6 +395,7 @@ bool wxCueSheetReader::ReadCueSheet( const wxString& sCueFile, wxMBConv& conv, R
 	}
 
 	wxFileInputStream fis( cueFileName.GetFullPath() );
+
 	if ( !fis.IsOk() )
 	{
 		wxLogError( _( "Unable to open CUE file \u201C%s\u201D" ), cueFileName.GetFullPath() );
@@ -417,12 +425,12 @@ void wxCueSheetReader::ProcessMediaInfoCueSheet( wxString& sCueSheet )
 	// double quotes
 	wxRegEx re( wxT( "(\\u201E.*?)/([^\\u201E]*?\\u201D)" ), wxRE_ADVANCED | wxRE_NEWLINE );
 	wxASSERT( re.IsValid() );
-	re.ReplaceAll( &sCueSheet, wxT( "\\1\u2215\\2" ) ); // division slash
+	re.ReplaceAll( &sCueSheet, wxT( "\\1\u2215\\2" ) );	// division slash
 
 	// single quotes
 	re.Compile( wxT( "(\\u201A.*?)/([^\\u201A]*?\\u2019)" ), wxRE_ADVANCED | wxRE_NEWLINE );
 	wxASSERT( re.IsValid() );
-	re.ReplaceAll( &sCueSheet, wxT( "\\1\u2215\\2" ) ); // division slash
+	re.ReplaceAll( &sCueSheet, wxT( "\\1\u2215\\2" ) );	// division slash
 
 	// rest slashes to newline
 	sCueSheet.Replace( wxT( "/" ), wxT( "\n" ) );
@@ -451,6 +459,7 @@ bool wxCueSheetReader::ReadCueSheetFromVorbisComment( const wxDataFile& mediaFil
 	}
 
 	wxString sCueSheet;
+
 	if ( !flacReader.GetCueSheetFromVorbisComment( sCueSheet ) )
 	{
 		wxLogWarning( _( "Cannot find CUESHEET comment" ) );
@@ -458,6 +467,7 @@ bool wxCueSheetReader::ReadCueSheetFromVorbisComment( const wxDataFile& mediaFil
 	}
 
 	bool res = ParseCue( wxCueSheetContent( sCueSheet, mediaFile.GetRealFileName(), true ), ( nMode & ~EC_MEDIA_READ_TAGS ) );
+
 	if ( res )
 	{
 		m_cueSheet.SetSingleDataFile( mediaFile );
@@ -483,6 +493,7 @@ bool wxCueSheetReader::ReadCueSheetFromCueSheetTag( const wxDataFile& mediaFile,
 
 	m_cueSheet.Clear();
 	wxString sCatalog( cueSheet.get_media_catalog_number() );
+
 	if ( !sCatalog.IsEmpty() )
 	{
 		m_cueSheet.AddCatalog( sCatalog );
@@ -553,20 +564,29 @@ bool wxCueSheetReader::ReadEmbeddedInFlacCueSheet( const wxDataFile& mediaFile, 
 	switch ( nMode & EC_FLAC_READ_MASK )
 	{
 		case EC_FLAC_READ_COMMENT_ONLY:
-		return ReadCueSheetFromVorbisComment( mediaFile, flacReader, nMode );
+		{
+			return ReadCueSheetFromVorbisComment( mediaFile, flacReader, nMode );
+		}
 
 		case EC_FLAC_READ_TAG_ONLY:
-		return ReadCueSheetFromCueSheetTag( mediaFile, flacReader, nMode );
+		{
+			return ReadCueSheetFromCueSheetTag( mediaFile, flacReader, nMode );
+		}
 
 		case EC_FLAC_READ_TAG_FIRST_THEN_COMMENT:
-		return ReadCueSheetFromCueSheetTag( mediaFile, flacReader, nMode ) || ReadCueSheetFromVorbisComment( mediaFile, flacReader, nMode );
+		{
+			return ReadCueSheetFromCueSheetTag( mediaFile, flacReader, nMode ) || ReadCueSheetFromVorbisComment( mediaFile, flacReader, nMode );
+		}
 
 		case EC_FLAC_READ_COMMENT_FIRST_THEN_TAG:
-		return ReadCueSheetFromVorbisComment( mediaFile, flacReader, nMode ) || ReadCueSheetFromCueSheetTag( mediaFile, flacReader, nMode );
+		{
+			return ReadCueSheetFromVorbisComment( mediaFile, flacReader, nMode ) || ReadCueSheetFromCueSheetTag( mediaFile, flacReader, nMode );
+		}
 
 		default:
 		return false;
 	}
+
 	return true;
 }
 
@@ -583,6 +603,7 @@ void wxCueSheetReader::AppendTags( const wxArrayCueTag& comments, bool bSingleMe
 
 		comment.Unquote( m_unquoter );
 		comment.RemoveTrailingSpaces( m_trailingSpacesRemover );
+
 		if ( m_bRemoveExtraSpaces )
 		{
 			comment.RemoveExtraSpaces( m_reduntantSpacesRemover );
@@ -593,7 +614,7 @@ void wxCueSheetReader::AppendTags( const wxArrayCueTag& comments, bool bSingleMe
 			comment.Ellipsize( m_ellipsizer );
 		}
 
-		if ( bSingleMediaFile ) // just add to first track
+		if ( bSingleMediaFile )	// just add to first track
 		{
 			wxASSERT( m_cueSheet.HasTrack( 1 ) );
 			wxTrack& firstTrack = m_cueSheet.GetTrackByNumber( 1 );
@@ -656,6 +677,7 @@ void wxCueSheetReader::AppendTags( const wxArrayCueTag& tags, size_t nTrackFrom,
 
 		tag.Unquote( m_unquoter );
 		tag.RemoveTrailingSpaces( m_trailingSpacesRemover );
+
 		if ( m_bRemoveExtraSpaces )
 		{
 			tag.RemoveExtraSpaces( m_reduntantSpacesRemover );
@@ -798,6 +820,7 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, ReadFla
 	}
 
 	bool bRes = false;
+
 	if ( bSingleMediaFile )
 	{
 		bRes = BuildFromSingleMediaFile( sMediaFile, nMode );
@@ -807,12 +830,16 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile, ReadFla
 		switch ( dataFile.GetMediaType() )
 		{
 			case wxDataFile::MEDIA_TYPE_FLAC:
-			bRes = ReadEmbeddedInFlacCueSheet( dataFile, nMode );
-			break;
+			{
+				bRes = ReadEmbeddedInFlacCueSheet( dataFile, nMode );
+				break;
+			}
 
 			case wxDataFile::MEDIA_TYPE_WAVPACK:
-			bRes = ReadEmbeddedInWavpackCueSheet( dataFile, nMode );
-			break;
+			{
+				bRes = ReadEmbeddedInWavpackCueSheet( dataFile, nMode );
+				break;
+			}
 
 			default:
 			{
@@ -834,6 +861,7 @@ bool wxCueSheetReader::BuildFromSingleMediaFile( const wxString& sMediaFile, Rea
 	wxString sOneTrackCue( m_sOneTrackCue );
 	size_t	 nRepl = sOneTrackCue.Replace( wxT( "%source%" ), sMediaFile );
 	wxASSERT( nRepl > 0 );
+
 	if ( ParseCue( wxCueSheetContent( sOneTrackCue, sMediaFile, true ), nMode ) )
 	{
 		wxASSERT( m_cueSheet.GetTracksCount() == 1u );
@@ -922,6 +950,7 @@ void wxCueSheetReader::ParseLine( size_t WXUNUSED( nLine ), const wxString& sTok
 			wxCueComponent::ENTRY_TYPE et;
 			wxCueComponent::GetEntryType( parseArray[ i ].token, et );
 			m_errors.Clear();
+
 			if ( CheckEntryType( et ) )
 			{
 				PARSE_METHOD method = parseArray[ i ].method;
@@ -946,6 +975,7 @@ void wxCueSheetReader::ParseCdTextInfo( size_t WXUNUSED( nLine ), const wxString
 
 	wxCueComponent::GetCdTextInfoFormat( sToken, fmt );
 	wxString s;
+
 	if ( fmt == wxCueComponent::CHARACTER )
 	{
 		s = Unquote( sBody );
@@ -956,6 +986,7 @@ void wxCueSheetReader::ParseCdTextInfo( size_t WXUNUSED( nLine ), const wxString
 	}
 
 	bool add = true;
+
 	if ( sToken.CmpNoCase( wxT( "ISRC" ) ) == 0 )
 	{
 		if ( !m_reIsrc.Matches( sBody ) )
@@ -1027,6 +1058,7 @@ bool wxCueSheetReader::ParseCue( const wxCueSheetContent& content, ReadFlags nMo
 	while ( !tis.Eof() )
 	{
 		sLine = ( *tis ).ReadLine();
+
 		if ( m_reEmpty.Matches( sLine ) )
 		{
 			wxLogDebug( wxT( "Skipping empty line %d" ), nLine );
@@ -1076,6 +1108,7 @@ bool wxCueSheetReader::ParseCueLine( const wxString& sLine, size_t nLine )
 		wxString sRest	= m_reKeywords.GetMatch( sLine, 2 );
 		m_errors.Clear();
 		ParseLine( nLine, sToken, sRest );
+
 		if ( m_errors.GetCount() > 0 )
 		{
 			DumpErrors( nLine );
@@ -1090,6 +1123,7 @@ bool wxCueSheetReader::ParseCueLine( const wxString& sLine, size_t nLine )
 		wxString sRest	= m_reCdTextInfo.GetMatch( sLine, 2 );
 		m_errors.Clear();
 		ParseCdTextInfo( nLine, sToken, sRest );
+
 		if ( m_errors.GetCount() > 0 )
 		{
 			DumpErrors( nLine );
@@ -1215,6 +1249,7 @@ void wxCueSheetReader::ParseIndex( const wxString& WXUNUSED( sToken ), const wxS
 	if ( m_reIndex.Matches( sBody ) )
 	{
 		unsigned long number;
+
 		if ( !m_reIndex.GetMatch( sBody, 1 ).ToULong( &number ) )
 		{
 			AddError0( _( "Invalid index specification" ) );
@@ -1223,9 +1258,11 @@ void wxCueSheetReader::ParseIndex( const wxString& WXUNUSED( sToken ), const wxS
 		{
 			wxString sMsf = m_reIndex.GetMatch( sBody, 2 );
 			wxIndex	 idx;
+
 			if ( ParseMsf( sMsf, idx ) )
 			{
 				idx.SetNumber( number );
+
 				if ( idx.IsValid() )
 				{
 					if ( m_cueSheet.HasDataFiles() )
@@ -1263,12 +1300,14 @@ void wxCueSheetReader::ParseFile( const wxString& WXUNUSED( sToken ), const wxSt
 		wxString sType( m_reDataFile.GetMatch( sBody, 2 ) );
 
 		wxDataFile::FileType ftype = wxDataFile::BINARY;
+
 		if ( !sType.IsEmpty() )
 		{
 			wxDataFile::StringToFileType( sType, ftype );
 		}
 
 		wxFileName fn( Unquote( sFile ) );
+
 		if ( m_cueSheetContent.HasSource() )
 		{
 			fn.SetPath( m_cueSheetContent.GetSource().GetPath() );
@@ -1287,6 +1326,7 @@ void wxCueSheetReader::ParseFlags( const wxString& WXUNUSED( sToken ), const wxS
 	while ( tokenizer.HasMoreTokens() )
 	{
 		wxString sFlag( tokenizer.GetNextToken() );
+
 		if ( !m_cueSheet.GetLastTrack().AddFlag( sFlag ) )
 		{
 			AddError( _( "Invalid flag %s" ), sFlag );
@@ -1299,15 +1339,17 @@ void wxCueSheetReader::ParseTrack( const wxString& sToken, const wxString& sBody
 	if ( m_reDataMode.Matches( sBody ) )
 	{
 		unsigned long trackNo;
+
 		if ( !m_reDataMode.GetMatch( sBody, 1 ).ToULong( &trackNo ) )
 		{
 			AddError( _( "Invalid track number %s" ),
-				m_reDataMode.GetMatch( sBody, 1 ) );
+					m_reDataMode.GetMatch( sBody, 1 ) );
 		}
 		else
 		{
 			wxString sMode( m_reDataMode.GetMatch( sBody, 2 ) );
 			wxTrack	 newTrack( trackNo );
+
 			if ( newTrack.IsValid() && newTrack.SetMode( sMode ) )
 			{
 				m_cueSheet.AddTrack( newTrack );
@@ -1355,6 +1397,7 @@ bool wxCueSheetReader::ReadTagsFromRelatedFiles()
 	for ( size_t i = 0, nCount = dataFiles.GetCount(); i < nCount; i++ )
 	{
 		wxASSERT( dataFiles[ i ].HasRealFileName() );
+
 		if ( m_cueSheet.GetRelatedTracks( i, nTrackFrom, nTrackTo ) )
 		{
 			if ( !ReadTagsFromMediaFile( dataFiles[ i ], nTrackFrom, nTrackTo ) )
@@ -1380,6 +1423,7 @@ bool wxCueSheetReader::ReadTagsFromMediaFile( const wxDataFile& dataFile, size_t
 		case wxDataFile::MEDIA_TYPE_FLAC:
 		{
 			wxFlacMetaDataReader flacReader;
+
 			if ( flacReader.ReadMetadata( dataFile.GetRealFileName().GetFullPath() ) && flacReader.HasVorbisComment() )
 			{
 				bRes = AppendFlacTags( flacReader, nTrackFrom, nTrackTo );
@@ -1395,10 +1439,13 @@ bool wxCueSheetReader::ReadTagsFromMediaFile( const wxDataFile& dataFile, size_t
 		}
 
 		default:
-		bRes = false;
-		wxLogWarning( _( "Cannot read metadata from %s" ), dataFile.GetMIFormat() );
-		break;
+		{
+			bRes = false;
+			wxLogWarning( _( "Cannot read metadata from %s" ), dataFile.GetMIFormat() );
+			break;
+		}
 	}
+
 	return bRes;
 }
 

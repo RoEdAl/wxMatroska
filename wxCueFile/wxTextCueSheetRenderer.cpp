@@ -1,5 +1,5 @@
 /*
-   wxTextCueSheetRenderer.cpp
+ * wxTextCueSheetRenderer.cpp
  */
 
 #include "StdWx.h"
@@ -91,8 +91,8 @@ void wxTextCueSheetRenderer::DumpComponentTag( const wxCueComponent& component, 
 }
 
 void wxTextCueSheetRenderer::DumpComponentString(
-	const wxCueComponent& component, const wxString& sEntry,
-	const wxString& text )
+		const wxCueComponent& component, const wxString& sEntry,
+		const wxString& text )
 {
 	if ( !text.IsEmpty() )
 	{
@@ -132,9 +132,9 @@ void wxTextCueSheetRenderer::InternalRenderComponent( const wxCueComponent& comp
 	for ( size_t i = 0, nCount = tags.GetCount(); i < nCount; i++ )
 	{
 		DumpComponentString( component,
-			tags[ i ].GetName(),
-			wxCueComponent::FormatCdTextData( tags[ i ].GetName(),
-				tags[ i ].GetValue() ) );
+				tags[ i ].GetName(),
+				wxCueComponent::FormatCdTextData( tags[ i ].GetName(),
+						tags[ i ].GetValue() ) );
 	}
 
 	// dump garbage

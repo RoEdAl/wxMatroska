@@ -1,5 +1,5 @@
 /*
-   StdWx.h
+ * StdWx.h
  */
 
 #ifndef _STD_WX_H
@@ -9,32 +9,33 @@
 #include <targetver.h>
 
 /*
-   When Winuser.h is defined GetClassInfo is is a macro defined as:
-
-   #define GetClassInfo GetClassInfoW
-
-   wxWidgets macros such as:
-
-   wxDECLARE_..._CLASS
-
-   declares method GetClassInfo
-   so when Winuser.h is included method GetClassInfo is renamed to
-      GetClassInfoW.
-   That's why we define NOUSER.
+ * When Winuser.h is defined GetClassInfo is is a macro defined as:
+ *
+ * #define GetClassInfo GetClassInfoW
+ *
+ * wxWidgets macros such as:
+ *
+ * wxDECLARE_..._CLASS
+ *
+ * declares method GetClassInfo
+ * so when Winuser.h is included method GetClassInfo is renamed to
+ *    GetClassInfoW.
+ * That's why we define NOUSER.
  */
-#define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers
+#define WIN32_LEAN_AND_MEAN	// Exclude rarely-used stuff from Windows headers
 #define NOUSER
+
 // #define NOGDI
 // #define NOMB
 // #define NOCOMM
 
 /*
-   Dummy definition of MSG (LPMSG) to make
-
-   oleidl.h
-   ole2.h
-
-   happy.
+ * Dummy definition of MSG (LPMSG) to make
+ *
+ * oleidl.h
+ * ole2.h
+ *
+ * happy.
  */
 typedef struct tagMSG
 {} MSG, * LPMSG;
@@ -77,5 +78,5 @@ typedef struct tagMSG
 #include <objbase.h>
 #endif
 
-#endif // _STD_WX_H
+#endif	// _STD_WX_H
 

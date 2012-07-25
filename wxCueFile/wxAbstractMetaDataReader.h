@@ -1,5 +1,5 @@
 /*
-   wxAbstractMetaDataReader.h
+ * wxAbstractMetaDataReader.h
  */
 
 #ifndef _WX_ABSTRACT_META_DATA_READER_H_
@@ -8,19 +8,19 @@
 class wxAbstractMetaDataReader:
 	public wxObject
 {
-public:
+	public:
 
-	class wxNullOutputStream:
-		public wxOutputStream
-	{
-public:
+		class wxNullOutputStream:
+			public wxOutputStream
+		{
+			public:
 
-		wxNullOutputStream(){}
+				wxNullOutputStream(){}
 
-protected:
+			protected:
 
-		virtual size_t OnSysWrite( const void* WXUNUSED( buffer ), size_t bufsize ){ return bufsize; }
-	};
+				virtual size_t OnSysWrite( const void* WXUNUSED( buffer ), size_t bufsize ){ return bufsize; }
+		};
 };
 
 #endif

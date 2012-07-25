@@ -1,5 +1,5 @@
 /*
-   wxTagSynonims.cpp
+ * wxTagSynonims.cpp
  */
 
 #include "StdWx.h"
@@ -9,6 +9,7 @@
 // ===============================================================================
 
 IMPLEMENT_DYNAMIC_CLASS( wxTagSynonims, wxObject )
+
 // ===============================================================================
 
 wxTagSynonims::wxTagSynonims( void )

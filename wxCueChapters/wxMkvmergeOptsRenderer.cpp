@@ -1,5 +1,5 @@
 /*
-   wxMkvmergeOptsRenderer.cpp
+ * wxMkvmergeOptsRenderer.cpp
  */
 
 #include "StdWx.h"
@@ -69,20 +69,24 @@ void wxMkvmergeOptsRenderer::write_cover_attachments( const wxArrayFileName& cov
 	switch ( nAttachments )
 	{
 		case 0:
-		wxLogWarning( _( "Cover(s) not found." ) );
-		*m_os << wxT( "# Cover(s) not found" ) << endl;
-		return;
+		{
+			wxLogWarning( _( "Cover(s) not found." ) );
+			*m_os << wxT( "# Cover(s) not found" ) << endl;
+			return;
+		}
 
 		case 1:
-		*m_os <<
-		wxT( "# cover" ) << endl <<
-		wxT( "--attachment-name" ) << endl <<
-		wxT( "cover." ) << coverFiles[ 0 ].GetExt().Lower() << endl <<
-		wxT( "--attachment-description" ) << endl <<
-		coverFiles[ 0 ].GetFullName() << endl <<
-		wxT( "--attach-file" ) << endl <<
-		mkvmerge_escape( coverFiles[ 0 ] ) << endl;
-		break;
+		{
+			*m_os <<
+			wxT( "# cover" ) << endl <<
+			wxT( "--attachment-name" ) << endl <<
+			wxT( "cover." ) << coverFiles[ 0 ].GetExt().Lower() << endl <<
+			wxT( "--attachment-description" ) << endl <<
+			coverFiles[ 0 ].GetFullName() << endl <<
+			wxT( "--attach-file" ) << endl <<
+			mkvmerge_escape( coverFiles[ 0 ] ) << endl;
+			break;
+		}
 
 		case 2:
 		case 3:
@@ -92,54 +96,58 @@ void wxMkvmergeOptsRenderer::write_cover_attachments( const wxArrayFileName& cov
 		case 7:
 		case 8:
 		case 9:
-		*m_os << wxT( "# covers (" ) << nAttachments << wxT( ')' ) << endl <<
-
-		// first attachment
-		wxT( "--attachment-name" ) << endl <<
-		wxT( "cover." ) << coverFiles[ 0 ].GetExt().Lower() << endl <<
-		wxT( "--attachment-description" ) << endl <<
-		coverFiles[ 0 ].GetFullName() << endl <<
-		wxT( "--attach-file" ) << endl <<
-		mkvmerge_escape( coverFiles[ 0 ] ) << endl;
-
-		// rest
-		for ( size_t i = 1; i < nAttachments; i++ )
 		{
-			*m_os <<
-			wxT( "--attachment-name" ) << endl <<
-			wxString::Format( wxT( "cover%d." ), i + 1 ) << coverFiles[ i ].GetExt().Lower() << endl <<
-			wxT( "--attachment-description" ) << endl <<
-			coverFiles[ i ].GetFullName() << endl <<
-			wxT( "--attach-file" ) << endl <<
-			mkvmerge_escape( coverFiles[ i ] ) << endl;
-		}
+			*m_os << wxT( "# covers (" ) << nAttachments << wxT( ')' ) << endl <<
 
-		break;
+			// first attachment
+			wxT( "--attachment-name" ) << endl <<
+			wxT( "cover." ) << coverFiles[ 0 ].GetExt().Lower() << endl <<
+			wxT( "--attachment-description" ) << endl <<
+			coverFiles[ 0 ].GetFullName() << endl <<
+			wxT( "--attach-file" ) << endl <<
+			mkvmerge_escape( coverFiles[ 0 ] ) << endl;
+
+			// rest
+			for ( size_t i = 1; i < nAttachments; i++ )
+			{
+				*m_os <<
+				wxT( "--attachment-name" ) << endl <<
+				wxString::Format( wxT( "cover%d." ), i + 1 ) << coverFiles[ i ].GetExt().Lower() << endl <<
+				wxT( "--attachment-description" ) << endl <<
+				coverFiles[ i ].GetFullName() << endl <<
+				wxT( "--attach-file" ) << endl <<
+				mkvmerge_escape( coverFiles[ i ] ) << endl;
+			}
+
+			break;
+		}
 
 		default:
-		*m_os << wxT( "# covers (" ) << nAttachments << wxT( ')' ) << endl <<
-
-		// first attachment
-		wxT( "--attachment-name" ) << endl <<
-		wxT( "cover." ) << coverFiles[ 0 ].GetExt().Lower() << endl <<
-		wxT( "--attachment-description" ) << endl <<
-		coverFiles[ 0 ].GetFullName() << endl <<
-		wxT( "--attach-file" ) << endl <<
-		mkvmerge_escape( coverFiles[ 0 ] ) << endl;
-
-		// rest
-		for ( size_t i = 1; i < nAttachments; i++ )
 		{
-			*m_os <<
-			wxT( "--attachment-name" ) << endl <<
-			wxString::Format( wxT( "cover%02d." ), i + 1 ) << coverFiles[ i ].GetExt().Lower() << endl <<
-			wxT( "--attachment-description" ) << endl <<
-			coverFiles[ i ].GetFullName() << endl <<
-			wxT( "--attach-file" ) << endl <<
-			mkvmerge_escape( coverFiles[ i ] ) << endl;
-		}
+			*m_os << wxT( "# covers (" ) << nAttachments << wxT( ')' ) << endl <<
 
-		break;
+			// first attachment
+			wxT( "--attachment-name" ) << endl <<
+			wxT( "cover." ) << coverFiles[ 0 ].GetExt().Lower() << endl <<
+			wxT( "--attachment-description" ) << endl <<
+			coverFiles[ 0 ].GetFullName() << endl <<
+			wxT( "--attach-file" ) << endl <<
+			mkvmerge_escape( coverFiles[ 0 ] ) << endl;
+
+			// rest
+			for ( size_t i = 1; i < nAttachments; i++ )
+			{
+				*m_os <<
+				wxT( "--attachment-name" ) << endl <<
+				wxString::Format( wxT( "cover%02d." ), i + 1 ) << coverFiles[ i ].GetExt().Lower() << endl <<
+				wxT( "--attachment-description" ) << endl <<
+				coverFiles[ i ].GetFullName() << endl <<
+				wxT( "--attach-file" ) << endl <<
+				mkvmerge_escape( coverFiles[ i ] ) << endl;
+			}
+
+			break;
+		}
 	}
 }
 
@@ -150,20 +158,24 @@ void wxMkvmergeOptsRenderer::write_log_attachments( const wxArrayFileName& logFi
 	switch ( nAttachments )
 	{
 		case 0:
-		wxLogWarning( _( "EAC log(s) not found." ) );
-		*m_os << wxT( "# EAC log(s) not found" ) << endl;
-		return;
+		{
+			wxLogWarning( _( "EAC log(s) not found." ) );
+			*m_os << wxT( "# EAC log(s) not found" ) << endl;
+			return;
+		}
 
 		case 1:
-		*m_os <<
-		wxT( "# EAC log" ) << endl <<
-		wxT( "--attachment-name" ) << endl <<
-		wxT( "eac.log" ) << endl <<
-		wxT( "--attachment-description" ) << endl <<
-		logFiles[ 0 ].GetFullName() << endl <<
-		wxT( "--attach-file" ) << endl <<
-		mkvmerge_escape( logFiles[ 0 ] ) << endl;
-		break;
+		{
+			*m_os <<
+			wxT( "# EAC log" ) << endl <<
+			wxT( "--attachment-name" ) << endl <<
+			wxT( "eac.log" ) << endl <<
+			wxT( "--attachment-description" ) << endl <<
+			logFiles[ 0 ].GetFullName() << endl <<
+			wxT( "--attach-file" ) << endl <<
+			mkvmerge_escape( logFiles[ 0 ] ) << endl;
+			break;
+		}
 
 		case 2:
 		case 3:
@@ -173,58 +185,68 @@ void wxMkvmergeOptsRenderer::write_log_attachments( const wxArrayFileName& logFi
 		case 7:
 		case 8:
 		case 9:
-		*m_os << wxT( "# EAC logs (" ) << nAttachments << wxT( ')' ) << endl;
-		for ( size_t i = 0; i < nAttachments; i++ )
 		{
-			*m_os <<
-			wxT( "--attachment-name" ) << endl <<
-			wxString::Format( wxT( "eac%d.log" ), i + 1 ) << endl <<
-			wxT( "--attachment-description" ) << endl <<
-			logFiles[ i ].GetFullName() << endl <<
-			wxT( "--attach-file" ) << endl <<
-			mkvmerge_escape( logFiles[ i ] ) << endl;
-		}
+			*m_os << wxT( "# EAC logs (" ) << nAttachments << wxT( ')' ) << endl;
+			for ( size_t i = 0; i < nAttachments; i++ )
+			{
+				*m_os <<
+				wxT( "--attachment-name" ) << endl <<
+				wxString::Format( wxT( "eac%d.log" ), i + 1 ) << endl <<
+				wxT( "--attachment-description" ) << endl <<
+				logFiles[ i ].GetFullName() << endl <<
+				wxT( "--attach-file" ) << endl <<
+				mkvmerge_escape( logFiles[ i ] ) << endl;
+			}
 
-		break;
+			break;
+		}
 
 		default:
-		*m_os << wxT( "# EAC logs (" ) << nAttachments << wxT( ')' ) << endl;
-		for ( size_t i = 0; i < nAttachments; i++ )
 		{
-			*m_os <<
-			wxT( "--attachment-name" ) << endl <<
-			wxString::Format( wxT( "eac%02d.log" ), i + 1 ) << endl <<
-			wxT( "--attachment-description" ) << endl <<
-			logFiles[ i ].GetFullName() << endl <<
-			wxT( "--attach-file" ) << endl <<
-			mkvmerge_escape( logFiles[ i ] ) << endl;
-		}
+			*m_os << wxT( "# EAC logs (" ) << nAttachments << wxT( ')' ) << endl;
+			for ( size_t i = 0; i < nAttachments; i++ )
+			{
+				*m_os <<
+				wxT( "--attachment-name" ) << endl <<
+				wxString::Format( wxT( "eac%02d.log" ), i + 1 ) << endl <<
+				wxT( "--attachment-description" ) << endl <<
+				logFiles[ i ].GetFullName() << endl <<
+				wxT( "--attach-file" ) << endl <<
+				mkvmerge_escape( logFiles[ i ] ) << endl;
+			}
 
-		break;
+			break;
+		}
 	}
 }
 
 void wxMkvmergeOptsRenderer::write_eac_attachments(
-	const wxInputFile& inputFile, const wxCueSheet& cueSheet )
+		const wxInputFile& inputFile, const wxCueSheet& cueSheet )
 {
 	switch ( m_cfg.GetCueSheetAttachMode() )
 	{
 		case wxConfiguration::CUESHEET_ATTACH_SOURCE:
-		write_source_eac_attachments( inputFile, cueSheet.GetContents() );
-		break;
+		{
+			write_source_eac_attachments( inputFile, cueSheet.GetContents() );
+			break;
+		}
 
 		case wxConfiguration::CUESHEET_ATTACH_DECODED:
-		write_decoded_eac_attachments( inputFile, cueSheet.GetContents() );
-		break;
+		{
+			write_decoded_eac_attachments( inputFile, cueSheet.GetContents() );
+			break;
+		}
 
 		case wxConfiguration::CUESHEET_ATTACH_RENDERED:
-		write_rendered_eac_attachments( inputFile, cueSheet );
-		break;
+		{
+			write_rendered_eac_attachments( inputFile, cueSheet );
+			break;
+		}
 	}
 }
 
 void wxMkvmergeOptsRenderer::write_source_eac_attachments(
-	const wxInputFile& WXUNUSED( inputFile ), const wxArrayCueSheetContent& contents )
+		const wxInputFile& WXUNUSED( inputFile ), const wxArrayCueSheetContent& contents )
 {
 	size_t nContents	   = contents.GetCount();
 	size_t nSourceContents = 0;
@@ -240,28 +262,32 @@ void wxMkvmergeOptsRenderer::write_source_eac_attachments(
 	switch ( nSourceContents )
 	{
 		case 0:
-		*m_os << wxT( "# no source cuesheets" ) << endl;
-		return;
-
-		case 1:
-		for ( size_t i = 0; i < nContents; i++ )
 		{
-			if ( !contents[ i ].HasSource() )
-			{
-				continue;
-			}
-
-			*m_os <<
-			wxT( "# cuesheet" ) << endl <<
-			wxT( "--attachment-name" ) << endl <<
-			wxT( "cuesheet.cue" ) << endl <<
-			wxT( "--attachment-description" ) << endl <<
-			contents[ i ].GetSource().GetFullName() << endl <<
-			wxT( "--attach-file" ) << endl <<
-			mkvmerge_escape( contents[ i ].GetSource() ) << endl;
+			*m_os << wxT( "# no source cuesheets" ) << endl;
+			return;
 		}
 
-		break;
+		case 1:
+		{
+			for ( size_t i = 0; i < nContents; i++ )
+			{
+				if ( !contents[ i ].HasSource() )
+				{
+					continue;
+				}
+
+				*m_os <<
+				wxT( "# cuesheet" ) << endl <<
+				wxT( "--attachment-name" ) << endl <<
+				wxT( "cuesheet.cue" ) << endl <<
+				wxT( "--attachment-description" ) << endl <<
+				contents[ i ].GetSource().GetFullName() << endl <<
+				wxT( "--attach-file" ) << endl <<
+				mkvmerge_escape( contents[ i ].GetSource() ) << endl;
+			}
+
+			break;
+		}
 
 		case 2:
 		case 3:
@@ -271,54 +297,58 @@ void wxMkvmergeOptsRenderer::write_source_eac_attachments(
 		case 7:
 		case 8:
 		case 9:
-		*m_os << wxT( "# cuesheets (" ) << nSourceContents << wxT( ')' ) << endl;
-		for ( size_t i = 0, nCounter = 1; i < nContents; i++ )
 		{
-			if ( !contents[ i ].HasSource() )
+			*m_os << wxT( "# cuesheets (" ) << nSourceContents << wxT( ')' ) << endl;
+			for ( size_t i = 0, nCounter = 1; i < nContents; i++ )
 			{
-				continue;
+				if ( !contents[ i ].HasSource() )
+				{
+					continue;
+				}
+
+				*m_os <<
+				wxT( "--attachment-name" ) << endl <<
+				wxString::Format( wxT( "cuesheet%d.cue" ), nCounter ) << endl <<
+				wxT( "--attachment-description" ) << endl <<
+				contents[ i ].GetSource().GetFullName() << endl <<
+				wxT( "--attach-file" ) << endl <<
+				mkvmerge_escape( contents[ i ].GetSource() ) << endl;
+
+				nCounter += 1;
 			}
 
-			*m_os <<
-			wxT( "--attachment-name" ) << endl <<
-			wxString::Format( wxT( "cuesheet%d.cue" ), nCounter ) << endl <<
-			wxT( "--attachment-description" ) << endl <<
-			contents[ i ].GetSource().GetFullName() << endl <<
-			wxT( "--attach-file" ) << endl <<
-			mkvmerge_escape( contents[ i ].GetSource() ) << endl;
-
-			nCounter += 1;
+			break;
 		}
-
-		break;
 
 		default:
-		*m_os << wxT( "# cuesheets (" ) << nSourceContents << wxT( ')' ) << endl;
-		for ( size_t i = 0, nCounter = 1; i < nContents; i++ )
 		{
-			if ( !contents[ i ].HasSource() )
+			*m_os << wxT( "# cuesheets (" ) << nSourceContents << wxT( ')' ) << endl;
+			for ( size_t i = 0, nCounter = 1; i < nContents; i++ )
 			{
-				continue;
+				if ( !contents[ i ].HasSource() )
+				{
+					continue;
+				}
+
+				*m_os <<
+				wxT( "--attachment-name" ) << endl <<
+				wxString::Format( wxT( "cuesheet%02d.cue" ), nCounter ) << endl <<
+				wxT( "--attachment-description" ) << endl <<
+				contents[ i ].GetSource().GetFullName() << endl <<
+				wxT( "--attach-file" ) << endl <<
+				mkvmerge_escape( contents[ i ].GetSource() ) << endl;
+
+				nCounter += 1;
 			}
 
-			*m_os <<
-			wxT( "--attachment-name" ) << endl <<
-			wxString::Format( wxT( "cuesheet%02d.cue" ), nCounter ) << endl <<
-			wxT( "--attachment-description" ) << endl <<
-			contents[ i ].GetSource().GetFullName() << endl <<
-			wxT( "--attach-file" ) << endl <<
-			mkvmerge_escape( contents[ i ].GetSource() ) << endl;
-
-			nCounter += 1;
+			break;
 		}
-
-		break;
 	}
 }
 
 bool wxMkvmergeOptsRenderer::save_cuesheet( const wxInputFile& inputFile,
-	const wxString& sPostfix, const wxString& sContent,
-	wxFileName& cueSheet )
+		const wxString& sPostfix, const wxString& sContent,
+		wxFileName& cueSheet )
 {
 	if ( !m_cfg.GetOutputCueSheetFile( inputFile, sPostfix, cueSheet ) )
 	{
@@ -326,10 +356,11 @@ bool wxMkvmergeOptsRenderer::save_cuesheet( const wxInputFile& inputFile,
 	}
 
 	wxFileOutputStream os( cueSheet.GetFullPath() );
+
 	if ( os.IsOk() )
 	{
 		wxLogInfo( _( "Creating cue sheet file \u201C%s\u201D" ), cueSheet.GetFullName() );
-		wxSharedPtr<wxTextOutputStream> pStream( m_cfg.GetOutputTextStream( os ) );
+		wxSharedPtr< wxTextOutputStream > pStream( m_cfg.GetOutputTextStream( os ) );
 		save_string_to_stream( *pStream, sContent );
 		return true;
 	}
@@ -341,8 +372,8 @@ bool wxMkvmergeOptsRenderer::save_cuesheet( const wxInputFile& inputFile,
 }
 
 bool wxMkvmergeOptsRenderer::render_cuesheet( const wxInputFile& inputFile,
-	const wxString& sPostfix, const wxCueSheet& cueSheet,
-	wxFileName& fn )
+		const wxString& sPostfix, const wxCueSheet& cueSheet,
+		wxFileName& fn )
 {
 	wxString sValue( wxTextCueSheetRenderer::ToString( cueSheet ) );
 
@@ -358,7 +389,7 @@ bool wxMkvmergeOptsRenderer::render_cuesheet( const wxInputFile& inputFile,
 }
 
 void wxMkvmergeOptsRenderer::write_decoded_eac_attachments( const wxInputFile& inputFile,
-	const wxArrayCueSheetContent& contents )
+		const wxArrayCueSheetContent& contents )
 {
 	size_t	   nContents = contents.GetCount();
 	wxFileName cueSheetPath;
@@ -366,21 +397,25 @@ void wxMkvmergeOptsRenderer::write_decoded_eac_attachments( const wxInputFile& i
 	switch ( nContents )
 	{
 		case 0:
-		*m_os << wxT( "# no decoded cuesheets" ) << endl;
-		return;
-
-		case 1:
-		if ( save_cuesheet( inputFile, wxT( "embedded" ), contents[ 0 ].GetValue(), cueSheetPath ) )
 		{
-			*m_os <<
-			wxT( "# cuesheet" ) << endl <<
-			wxT( "--attachment-name" ) << endl <<
-			wxT( "cuesheet.cue" ) << endl <<
-			wxT( "--attach-file" ) << endl <<
-			mkvmerge_escape( cueSheetPath ) << endl;
+			*m_os << wxT( "# no decoded cuesheets" ) << endl;
+			return;
 		}
 
-		break;
+		case 1:
+		{
+			if ( save_cuesheet( inputFile, wxT( "embedded" ), contents[ 0 ].GetValue(), cueSheetPath ) )
+			{
+				*m_os <<
+				wxT( "# cuesheet" ) << endl <<
+				wxT( "--attachment-name" ) << endl <<
+				wxT( "cuesheet.cue" ) << endl <<
+				wxT( "--attach-file" ) << endl <<
+				mkvmerge_escape( cueSheetPath ) << endl;
+			}
+
+			break;
+		}
 
 		case 2:
 		case 3:
@@ -390,36 +425,40 @@ void wxMkvmergeOptsRenderer::write_decoded_eac_attachments( const wxInputFile& i
 		case 7:
 		case 8:
 		case 9:
-		*m_os << wxT( "# cuesheets" ) << endl;
-		for ( size_t i = 0; i < nContents; i++ )
 		{
-			if ( save_cuesheet( inputFile, wxString::Format( wxT( "embedded%d" ), i + 1 ), contents[ i ].GetValue(), cueSheetPath ) )
+			*m_os << wxT( "# cuesheets" ) << endl;
+			for ( size_t i = 0; i < nContents; i++ )
 			{
-				*m_os <<
-				wxT( "--attachment-name" ) << endl <<
-				wxString::Format( wxT( "cuesheet%d.cue" ), i + 1 ) << endl <<
-				wxT( "--attach-file" ) << endl <<
-				mkvmerge_escape( cueSheetPath ) << endl;
+				if ( save_cuesheet( inputFile, wxString::Format( wxT( "embedded%d" ), i + 1 ), contents[ i ].GetValue(), cueSheetPath ) )
+				{
+					*m_os <<
+					wxT( "--attachment-name" ) << endl <<
+					wxString::Format( wxT( "cuesheet%d.cue" ), i + 1 ) << endl <<
+					wxT( "--attach-file" ) << endl <<
+					mkvmerge_escape( cueSheetPath ) << endl;
+				}
 			}
-		}
 
-		break;
+			break;
+		}
 
 		default:
-		*m_os << wxT( "# cuesheets" ) << endl;
-		for ( size_t i = 0; i < nContents; i++ )
 		{
-			if ( save_cuesheet( inputFile, wxString::Format( wxT( "embedded%02d" ), i + 1 ), contents[ i ].GetValue(), cueSheetPath ) )
+			*m_os << wxT( "# cuesheets" ) << endl;
+			for ( size_t i = 0; i < nContents; i++ )
 			{
-				*m_os <<
-				wxT( "--attachment-name" ) << endl <<
-				wxString::Format( wxT( "cuesheet%d.cue" ), i + 1 ) << endl <<
-				wxT( "--attach-file" ) << endl <<
-				mkvmerge_escape( cueSheetPath ) << endl;
+				if ( save_cuesheet( inputFile, wxString::Format( wxT( "embedded%02d" ), i + 1 ), contents[ i ].GetValue(), cueSheetPath ) )
+				{
+					*m_os <<
+					wxT( "--attachment-name" ) << endl <<
+					wxString::Format( wxT( "cuesheet%d.cue" ), i + 1 ) << endl <<
+					wxT( "--attach-file" ) << endl <<
+					mkvmerge_escape( cueSheetPath ) << endl;
+				}
 			}
-		}
 
-		break;
+			break;
+		}
 	}
 }
 
@@ -454,7 +493,7 @@ wxString wxMkvmergeOptsRenderer::get_mapping_str( const wxCueSheet& cueSheet )
 }
 
 void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile,
-	const wxCueSheet& cueSheet )
+		const wxCueSheet& cueSheet )
 {
 	wxFileName outputFile, tagsFile, matroskaFile;
 
@@ -545,10 +584,11 @@ bool wxMkvmergeOptsRenderer::Save()
 {
 	wxASSERT( m_cfg.GenerateMkvmergeOpts() );
 	wxFileOutputStream os( m_matroskaOptsFile.GetFullPath() );
+
 	if ( os.IsOk() )
 	{
 		wxLogInfo( _( "Creating mkvmerge options file \u201C%s\u201D" ), m_matroskaOptsFile.GetFullName() );
-		wxSharedPtr<wxTextOutputStream> pStream( wxTextOutputStreamWithBOMFactory::CreateUTF8( os, wxEOL_NATIVE, true, m_cfg.UseMLang() ) );
+		wxSharedPtr< wxTextOutputStream > pStream( wxTextOutputStreamWithBOMFactory::CreateUTF8( os, wxEOL_NATIVE, true, m_cfg.UseMLang() ) );
 		save_string_to_stream( *pStream, m_os.GetString() );
 		return true;
 	}
@@ -567,6 +607,7 @@ void wxMkvmergeOptsRenderer::save_string_to_stream( wxTextOutputStream& stream, 
 	while ( !tis.Eof() )
 	{
 		sLine = ( *tis ).ReadLine();
+
 		if ( sLine.IsEmpty() )
 		{
 			stream << endl;

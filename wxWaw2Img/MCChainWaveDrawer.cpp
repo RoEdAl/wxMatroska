@@ -1,5 +1,5 @@
 /*
-        MultiChannelWaveDrawer.cpp
+ *      MultiChannelWaveDrawer.cpp
  */
 
 #include "StdWx.h"

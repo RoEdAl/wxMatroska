@@ -1,5 +1,5 @@
 /*
-   StdWx.h
+ * StdWx.h
  */
 
 #ifndef _STD_WX_H
@@ -20,5 +20,5 @@
 #include <mlang.h>
 #include <shlwapi.h>
 
-#endif // _STD_WX_H
+#endif	// _STD_WX_H
 

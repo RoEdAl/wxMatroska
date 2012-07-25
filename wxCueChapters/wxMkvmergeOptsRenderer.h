@@ -1,5 +1,5 @@
 /*
-   wxMkvmergeOptsRenderer.h
+ * wxMkvmergeOptsRenderer.h
  */
 
 #ifndef _WX_MKVMERGE_OPTS_RENDERER_H_
@@ -28,39 +28,39 @@ class wxArrayFileName;
 class wxMkvmergeOptsRenderer:
 	public wxObject
 {
-protected:
+	protected:
 
-	const wxConfiguration&	   m_cfg;
-	wxTextOutputStreamOnString m_os;
-	wxFileName				   m_matroskaOptsFile;
+		const wxConfiguration&	   m_cfg;
+		wxTextOutputStreamOnString m_os;
+		wxFileName				   m_matroskaOptsFile;
 
-protected:
+	protected:
 
-	static wxString mkvmerge_escape( const wxString& );
-	static wxString mkvmerge_escape( const wxFileName& );
-	static wxString mkvmerge_escape( const wxDataFile& );
+		static wxString mkvmerge_escape( const wxString& );
+		static wxString mkvmerge_escape( const wxFileName& );
+		static wxString mkvmerge_escape( const wxDataFile& );
 
-	wxString GetEscapedFile( const wxFileName& );
+		wxString GetEscapedFile( const wxFileName& );
 
-	void write_cover_attachments( const wxArrayFileName& );
-	void write_log_attachments( const wxArrayFileName& );
-	void write_eac_attachments( const wxInputFile&, const wxCueSheet& );
-	void write_source_eac_attachments( const wxInputFile&, const wxArrayCueSheetContent& );
-	void write_decoded_eac_attachments( const wxInputFile&, const wxArrayCueSheetContent& );
-	void write_rendered_eac_attachments( const wxInputFile&, const wxCueSheet& );
-	bool save_cuesheet( const wxInputFile&, const wxString&, const wxString&, wxFileName& );
-	bool render_cuesheet( const wxInputFile&, const wxString&, const wxCueSheet&, wxFileName& );
-	static void save_string_to_stream( wxTextOutputStream&, const wxString& );
+		void write_cover_attachments( const wxArrayFileName& );
+		void write_log_attachments( const wxArrayFileName& );
+		void write_eac_attachments( const wxInputFile&, const wxCueSheet& );
+		void write_source_eac_attachments( const wxInputFile&, const wxArrayCueSheetContent& );
+		void write_decoded_eac_attachments( const wxInputFile&, const wxArrayCueSheetContent& );
+		void write_rendered_eac_attachments( const wxInputFile&, const wxCueSheet& );
+		bool save_cuesheet( const wxInputFile&, const wxString&, const wxString&, wxFileName& );
+		bool render_cuesheet( const wxInputFile&, const wxString&, const wxCueSheet&, wxFileName& );
+		static void save_string_to_stream( wxTextOutputStream&, const wxString& );
 
-	static wxString get_mapping_str( const wxCueSheet& );
+		static wxString get_mapping_str( const wxCueSheet& );
 
-public:
+	public:
 
-	wxMkvmergeOptsRenderer( const wxConfiguration& );
+		wxMkvmergeOptsRenderer( const wxConfiguration& );
 
-	void RenderDisc( const wxInputFile&, const wxCueSheet& );
-	bool Save();
-	const wxFileName& GetMkvmergeOptsFile() const;
+		void RenderDisc( const wxInputFile&, const wxCueSheet& );
+		bool Save();
+		const wxFileName& GetMkvmergeOptsFile() const;
 };
 
 #endif

@@ -1,5 +1,5 @@
 /*
-   wxConfiguration.cpp
+ * wxConfiguration.cpp
  */
 
 #include "StdWx.h"
@@ -49,29 +49,42 @@ wxString wxConfiguration::GetFileEncodingStr( wxConfiguration::FILE_ENCODING eFi
 	switch ( eFileEncoding )
 	{
 		case ENCODING_LOCAL:
-		s = wxT( "LOCAL" );
-		break;
+		{
+			s = wxT( "LOCAL" );
+			break;
+		}
 
 		case ENCODING_UTF8:
-		s = wxT( "UTF-8" );
-		break;
+		{
+			s = wxT( "UTF-8" );
+			break;
+		}
 
 		case ENCODING_UTF8_WITH_BOM:
-		s = wxT( "UTF-8 (BOM)" );
-		break;
+		{
+			s = wxT( "UTF-8 (BOM)" );
+			break;
+		}
 
 		case ENCODING_UTF16:
-		s = wxT( "UTF-16" );
-		break;
+		{
+			s = wxT( "UTF-16" );
+			break;
+		}
 
 		case ENCODING_UTF16_WITH_BOM:
-		s = wxT( "UTF-16 (BOM)" );
-		break;
+		{
+			s = wxT( "UTF-16 (BOM)" );
+			break;
+		}
 
 		default:
-		s.Printf( wxT( "UNKNOWN %d" ), eFileEncoding );
-		break;
+		{
+			s.Printf( wxT( "UNKNOWN %d" ), eFileEncoding );
+			break;
+		}
 	}
+
 	return s;
 }
 
@@ -179,6 +192,7 @@ bool wxConfiguration::ReadLanguagesStrings( wxSortedArrayString& as )
 	wxFileName			   fn( paths.GetExecutablePath() );
 
 	fn.SetFullName( LANG_FILE_NAME );
+
 	if ( !fn.IsFileReadable() )
 	{
 		wxLogInfo( _( "Cannot find language file \u201C%s\u201D" ), fn.GetFullPath() );
@@ -187,6 +201,7 @@ bool wxConfiguration::ReadLanguagesStrings( wxSortedArrayString& as )
 	}
 
 	wxFileInputStream fis( fn.GetFullPath() );
+
 	if ( !fis.IsOk() )
 	{
 		wxLogDebug( wxT( "Cannot open language file \u201C%s\u201D" ), fn.GetFullPath() );
@@ -199,15 +214,18 @@ bool wxConfiguration::ReadLanguagesStrings( wxSortedArrayString& as )
 	while ( !fis.Eof() )
 	{
 		wxString sLine( tis.ReadLine() );
+
 		if ( sLine.IsEmpty() )
 		{
 			continue;
 		}
 
 		wxStringTokenizer tokenizer( sLine, wxT( "|" ) );
+
 		if ( tokenizer.HasMoreTokens() )
 		{
 			wxString sLang( tokenizer.GetNextToken() );
+
 			if ( sLang.IsEmpty() || ( sLang.Length() > 3 ) )
 			{
 				wxLogDebug( wxT( "Skipping language %s" ), sLang );
@@ -351,17 +369,24 @@ bool wxConfiguration::ReadNegatableSwitchValue( const wxCmdLineParser& cmdLine, 
 	switch ( state )
 	{
 		case wxCMD_SWITCH_ON:
-		switchVal = true;
-		break;
+		{
+			switchVal = true;
+			break;
+		}
 
 		case wxCMD_SWITCH_OFF:
-		switchVal = false;
-		break;
+		{
+			switchVal = false;
+			break;
+		}
 
 		default:
-		res = false;
-		break;
+		{
+			res = false;
+			break;
+		}
 	}
+
 	return res;
 }
 
@@ -532,6 +557,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		for ( size_t i = 0; i < cmdLine.GetParamCount(); i++ )
 		{
 			wxInputFile inputFile( cmdLine.GetParam( i ) );
+
 			if ( inputFile.IsOk() )
 			{
 				m_inputFile.Add( inputFile );
@@ -560,6 +586,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	if ( cmdLine.Found( wxT( "o" ), &s ) )
 	{
 		m_outputFile.Assign( s );
+
 		if ( !m_outputFile.MakeAbsolute() )
 		{
 			wxLogInfo( _( "Fail to normalize path \u201C%s\u201D" ), s );
@@ -570,6 +597,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	if ( cmdLine.Found( wxT( "od" ), &s ) )
 	{
 		m_outputFile.AssignDir( s );
+
 		if ( !m_outputFile.MakeAbsolute() )
 		{
 			wxLogInfo( _( "Fail to normalize path \u201C%s\u201D" ), s );
@@ -580,6 +608,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	if ( cmdLine.Found( wxT( "mkvmerge-directory" ), &s ) )
 	{
 		m_mkvmergeDir.AssignDir( s );
+
 		if ( !m_mkvmergeDir.MakeAbsolute() )
 		{
 			wxLogInfo( _( "Fail to normalize path \u201C%s\u201D" ), s );
@@ -633,6 +662,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	if ( cmdLine.Found( wxT( "cue-sheet-attach-mode" ), &s ) )
 	{
 		bool bDefault;
+
 		if ( GetCueSheetAttachModeFromStr( s, m_eCsAttachMode, bDefault ) )
 		{
 			if ( bDefault )
@@ -677,29 +707,42 @@ wxString wxConfiguration::GetReadFlagsDesc( wxCueSheetReader::ReadFlags flags )
 	switch ( flags & wxCueSheetReader::EC_FLAC_READ_MASK )
 	{
 		case wxCueSheetReader::EC_FLAC_READ_NONE:
-		s = wxT( "flac-read-none" );
-		break;
+		{
+			s = wxT( "flac-read-none" );
+			break;
+		}
 
 		case wxCueSheetReader::EC_FLAC_READ_TAG_FIRST_THEN_COMMENT:
-		s = wxT( "flac-read-cuesheet-tag-first" );
-		break;
+		{
+			s = wxT( "flac-read-cuesheet-tag-first" );
+			break;
+		}
 
 		case wxCueSheetReader::EC_FLAC_READ_COMMENT_FIRST_THEN_TAG:
-		s = wxT( "flac-read-vorbis-comment-first" );
-		break;
+		{
+			s = wxT( "flac-read-vorbis-comment-first" );
+			break;
+		}
 
 		case wxCueSheetReader::EC_FLAC_READ_COMMENT_ONLY:
-		s = wxT( "flac-read-cuesheet-tag-only" );
-		break;
+		{
+			s = wxT( "flac-read-cuesheet-tag-only" );
+			break;
+		}
 
 		case wxCueSheetReader::EC_FLAC_READ_TAG_ONLY:
-		s = wxT( "flac-read-vorbis-comment-only" );
-		break;
+		{
+			s = wxT( "flac-read-vorbis-comment-only" );
+			break;
+		}
 
 		default:
-		s.Printf( wxT( "flac-read-<%08x>" ), ( flags & wxCueSheetReader::EC_FLAC_READ_MASK ) );
-		break;
+		{
+			s.Printf( wxT( "flac-read-<%08x>" ), ( flags & wxCueSheetReader::EC_FLAC_READ_MASK ) );
+			break;
+		}
 	}
+
 	as.Add( s );
 
 	AddFlag( as, flags, wxCueSheetReader::EC_SINGLE_MEDIA_FILE, wxT( "single-media-file" ) );
@@ -723,9 +766,11 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
 	as.Add( wxString::Format( wxT( "Save cue sheet: %s" ), BoolToStr( m_bSaveCueSheet ) ) );
 	as.Add( wxString::Format( wxT( "Generate tags file: %s" ), BoolToStr( m_bGenerateTags ) ) );
 	as.Add( wxString::Format( wxT( "Generate mkvmerge options file: %s" ), BoolToStr( m_bGenerateMkvmergeOpts ) ) );
+
 	if ( m_bGenerateMkvmergeOpts )
 	{
 		as.Add( wxString::Format( wxT( "Run mkvmerge: %s" ), BoolToStr( m_bRunMkvmerge ) ) );
+
 		if ( m_mkvmergeDir.IsOk() )
 		{
 			as.Add( wxString::Format( wxT( "mkvmerge dir: %s" ), m_mkvmergeDir.GetFullPath() ) );
@@ -895,6 +940,7 @@ void wxConfiguration::GetOutputFile( const wxInputFile& _inputFile, wxFileName& 
 	tagsFile.Clear();
 
 	wxFileName inputFile( _inputFile.GetInputFile() );
+
 	if ( !inputFile.IsOk() )
 	{
 		return;
@@ -924,6 +970,7 @@ void wxConfiguration::GetOutputFile( const wxInputFile& _inputFile, wxFileName& 
 		}
 
 		outputFile = inputFile;
+
 		if ( !m_bSaveCueSheet && m_bGenerateTags )
 		{
 			inputFile.SetExt( m_sMatroskaTagsXmlExt );
@@ -938,6 +985,7 @@ void wxConfiguration::GetOutputMatroskaFile( const wxInputFile& _inputFile, wxFi
 	optionsFile.Clear();
 
 	wxFileName inputFile( _inputFile.GetInputFile() );
+
 	if ( !inputFile.IsOk() )
 	{
 		return;
@@ -1081,31 +1129,42 @@ wxConfiguration::FILE_ENCODING wxConfiguration::GetCueSheetFileEncoding() const
 	return m_eCueSheetFileEncoding;
 }
 
-wxSharedPtr<wxTextOutputStream> wxConfiguration::GetOutputTextStream( wxOutputStream& os ) const
+wxSharedPtr< wxTextOutputStream > wxConfiguration::GetOutputTextStream( wxOutputStream& os ) const
 {
-	wxSharedPtr<wxTextOutputStream> pRes;
+	wxSharedPtr< wxTextOutputStream > pRes;
 	switch ( m_eCueSheetFileEncoding )
 	{
 		case ENCODING_UTF8:
-		pRes = wxTextOutputStreamWithBOMFactory::CreateUTF8( os, wxEOL_NATIVE, false, m_bUseMLang );
-		break;
+		{
+			pRes = wxTextOutputStreamWithBOMFactory::CreateUTF8( os, wxEOL_NATIVE, false, m_bUseMLang );
+			break;
+		}
 
 		case ENCODING_UTF8_WITH_BOM:
-		pRes = wxTextOutputStreamWithBOMFactory::CreateUTF8( os, wxEOL_NATIVE, true, m_bUseMLang );
-		break;
+		{
+			pRes = wxTextOutputStreamWithBOMFactory::CreateUTF8( os, wxEOL_NATIVE, true, m_bUseMLang );
+			break;
+		}
 
 		case ENCODING_UTF16:
-		pRes = wxTextOutputStreamWithBOMFactory::CreateUTF16( os, wxEOL_NATIVE, false, m_bUseMLang );
-		break;
+		{
+			pRes = wxTextOutputStreamWithBOMFactory::CreateUTF16( os, wxEOL_NATIVE, false, m_bUseMLang );
+			break;
+		}
 
 		case ENCODING_UTF16_WITH_BOM:
-		pRes = wxTextOutputStreamWithBOMFactory::CreateUTF16( os, wxEOL_NATIVE, true, m_bUseMLang );
-		break;
+		{
+			pRes = wxTextOutputStreamWithBOMFactory::CreateUTF16( os, wxEOL_NATIVE, true, m_bUseMLang );
+			break;
+		}
 
 		default:
-		pRes = new wxTextOutputStream( os, wxEOL_NATIVE, wxConvLocal );
-		break;
+		{
+			pRes = new wxTextOutputStream( os, wxEOL_NATIVE, wxConvLocal );
+			break;
+		}
 	}
+
 	return pRes;
 }
 
@@ -1179,6 +1238,6 @@ wxConfiguration::CUESHEET_ATTACH_MODE wxConfiguration::GetCueSheetAttachMode() c
 	return m_eCsAttachMode;
 }
 
-#include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
+#include <wx/arrimpl.cpp>	// this is a magic incantation which must be done!
 WX_DEFINE_OBJARRAY( wxArrayInputFile );
 

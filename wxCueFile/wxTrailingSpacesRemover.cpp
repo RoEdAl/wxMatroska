@@ -1,5 +1,5 @@
 /*
-   wxTriailingSpacesRemover.cpp
+ * wxTriailingSpacesRemover.cpp
  */
 
 #include "StdWx.h"

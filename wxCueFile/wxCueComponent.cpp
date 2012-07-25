@@ -1,5 +1,5 @@
 /*
-   wxCueComponent.cpp
+ * wxCueComponent.cpp
  */
 
 #include "StdWx.h"
@@ -226,11 +226,11 @@ size_t wxCueComponent::MoveTags( const wxString& sTagName, wxArrayCueTag& tags )
 }
 
 void wxCueComponent::GetTags(
-	wxCueTag::TagSources nTagSources,
-	const wxTagSynonimsCollection& cdTagsSynonims,
-	const wxTagSynonimsCollection& tagsSynonims,
-	wxArrayCueTag& tags,
-	wxArrayCueTag& rest ) const
+		wxCueTag::TagSources nTagSources,
+		const wxTagSynonimsCollection& cdTagsSynonims,
+		const wxTagSynonimsCollection& tagsSynonims,
+		wxArrayCueTag& tags,
+		wxArrayCueTag& rest ) const
 {
 	tags.Clear();
 	rest.Clear();
@@ -484,11 +484,12 @@ wxString wxCueComponent::FormatCdTextData( const wxString& sKeyword, const wxStr
 	ENTRY_FORMAT fmt;
 
 	wxCHECK( GetCdTextInfoFormat( sKeyword, fmt ), wxT( "" ) );
+
 	if ( fmt == BINARY )
 	{
 		return sValue;
 	}
-	else // characters
+	else// characters
 	{
 		return wxCueTag::Quote( wxCueTag::Escape( sValue ) );
 	}
@@ -538,21 +539,26 @@ void wxCueComponent::GetReplacements( wxCueComponent::wxHashString& replacements
 			}
 
 			case TRACK:
-			if ( m_bTrack )
 			{
-				bAdd = true;
-			}
+				if ( m_bTrack )
+				{
+					bAdd = true;
+				}
 
-			break;
+				break;
+			}
 
 			case DISC:
-			if ( !m_bTrack )
 			{
-				bAdd = true;
-			}
+				if ( !m_bTrack )
+				{
+					bAdd = true;
+				}
 
-			break;
+				break;
+			}
 		}
+
 		replacements[ s ] = sValue;
 	}
 }

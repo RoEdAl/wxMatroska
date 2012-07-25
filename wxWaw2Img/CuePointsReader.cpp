@@ -1,12 +1,12 @@
 /*
-	CuePointsReader.cpp
-*/
+ *      CuePointsReader.cpp
+ */
 #include "StdWx.h"
 #include <wxEncodingDetection/wxEncodingDetection.h>
 #include "FloatArray.h"
 #include "CuePointsReader.h"
 
-CuePointsReader::CuePointsReader() :
+CuePointsReader::CuePointsReader():
 	m_reMsf( "\\A(\\d{1,4}):(\\d{1,2}):(\\d{2})\\Z", wxRE_ADVANCED ),
 	m_reMsms( "\\A(\\d{1,4}):(\\d{1,2}).(\\d{3})\\Z", wxRE_ADVANCED )
 {
@@ -92,7 +92,7 @@ static bool parse_msms( const wxRegEx& reMsms, const wxString& s, wxTimeSpan& ts
 bool CuePointsReader::ParseCuePointPosition( const wxString& s, wxTimeSpan& ts )
 {
 	unsigned long sec;
-	double dsec;
+	double		  dsec;
 
 	if ( parse_msf( m_reMsf, s, ts ) || parse_msms( m_reMsms, s, ts ) )
 	{
@@ -143,26 +143,29 @@ bool CuePointsReader::Read( wxTimeSpanArray& cuePoints, const wxFileName& inputF
 	}
 
 	wxFileInputStream fis( inputFile.GetFullPath() );
+
 	if ( !fis.IsOk() )
 	{
 		wxLogWarning( _( "Fail to open cuesheet file" ) );
 		return false;
 	}
-	wxString s;
+	wxString   s;
 	wxTimeSpan ts;
 
-	wxTextInputStream tis( fis, wxT('\t'), *pConv );
+	wxTextInputStream tis( fis, wxT( '\t' ), *pConv );
 	while ( !tis.GetInputStream().Eof() )
 	{
 		s = tis.ReadLine();
 		s.Trim( false );
 		s.Trim( true );
+
 		if ( s.IsEmpty() || s.StartsWith( "#" ) )
 		{
 			continue;
 		}
 
 		wxStringTokenizer tokenizer( s );
+
 		if ( !tokenizer.HasMoreTokens() )
 		{
 			continue;
@@ -179,3 +182,4 @@ bool CuePointsReader::Read( wxTimeSpanArray& cuePoints, const wxFileName& inputF
 	wxLogInfo( _( "Closing cuesheet file" ) );
 	return true;
 }
+

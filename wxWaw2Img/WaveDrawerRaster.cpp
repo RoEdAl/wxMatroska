@@ -1,5 +1,5 @@
 /*
-        WaveDrawerRaster.cpp
+ *      WaveDrawerRaster.cpp
  */
 #include "StdWx.h"
 #include "FloatArray.h"
@@ -81,7 +81,7 @@ wxImage RasterWaveDrawer::draw_gradient_bitmap( wxMemoryDC& mdc, const wxColour&
 	{
 		mdc.SelectObject( bmp );
 
-		wxScopedPtr<wxGraphicsContext> gc( wxGraphicsContext::Create( mdc ) );
+		wxScopedPtr< wxGraphicsContext > gc( wxGraphicsContext::Create( mdc ) );
 
 		wxGraphicsGradientStops gstops( clrTo, clrTo );
 		gstops.Add( clrFrom, 0.5f );
@@ -119,7 +119,7 @@ wxImage RasterWaveDrawer::draw_log_gradient_bitmap( wxMemoryDC& mdc, const wxCol
 	{
 		mdc.SelectObject( bmp );
 
-		wxScopedPtr<wxGraphicsContext> gc( wxGraphicsContext::Create( mdc ) );
+		wxScopedPtr< wxGraphicsContext > gc( wxGraphicsContext::Create( mdc ) );
 
 		wxGraphicsGradientStops gstops( clrTo, clrTo );
 		create_log_stops( gstops, clrFrom, clrTo, nHeight, logarithmicScale );

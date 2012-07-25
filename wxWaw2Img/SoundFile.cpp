@@ -1,5 +1,5 @@
 /*
-        SoundFile.cpp
+ *      SoundFile.cpp
  */
 
 #include "StdWx.h"
@@ -29,10 +29,14 @@ static int wxfile_mode_2_sf_mode( wxFile::OpenMode mode )
 	{
 		default:
 		case wxFile::read:
-		return SFM_READ;
+		{
+			return SFM_READ;
+		}
 
 		case wxFile::write:
-		return SFM_WRITE;
+		{
+			return SFM_WRITE;
+		}
 
 		case wxFile::read_write:
 		return SFM_RDWR;
@@ -46,7 +50,7 @@ bool SoundFile::Open( const wxString& filename, wxFile::OpenMode mode )
 		return false;
 	}
 
-	m_sndfile = sf_open_virtual( const_cast<SF_VIRTUAL_IO*>( &sf_virtual_io ), wxfile_mode_2_sf_mode( mode ), &m_sf_info, this );
+	m_sndfile = sf_open_virtual( const_cast< SF_VIRTUAL_IO* >( &sf_virtual_io ), wxfile_mode_2_sf_mode( mode ), &m_sf_info, this );
 
 	if ( m_sndfile == NULL )
 	{
@@ -65,7 +69,7 @@ bool SoundFile::Open( const wxString& filename, const SF_INFO& sf_info, wxFile::
 	}
 
 	m_sf_info = sf_info;
-	m_sndfile = sf_open_virtual( const_cast<SF_VIRTUAL_IO*>( &sf_virtual_io ), wxfile_mode_2_sf_mode( mode ), &m_sf_info, this );
+	m_sndfile = sf_open_virtual( const_cast< SF_VIRTUAL_IO* >( &sf_virtual_io ), wxfile_mode_2_sf_mode( mode ), &m_sf_info, this );
 
 	if ( m_sndfile == NULL )
 	{
@@ -87,7 +91,7 @@ bool SoundFile::Close()
 		return true;
 	}
 
-	return true; // already closed
+	return true;// already closed
 }
 
 SNDFILE* SoundFile::GetHandle() const
@@ -102,32 +106,32 @@ const SF_INFO& SoundFile::GetInfo() const
 
 wxFile& SoundFile::GetFile() const
 {
-	return const_cast<wxFile&>( m_file );
+	return const_cast< wxFile& >( m_file );
 }
 
 sf_count_t SoundFile::vio_get_filelen( void* user_data )
 {
-	return static_cast<SoundFile*>( user_data )->vio_get_filelen();
+	return static_cast< SoundFile* >( user_data )->vio_get_filelen();
 }
 
 sf_count_t SoundFile::vio_seek( sf_count_t offset, int whence, void* user_data )
 {
-	return static_cast<SoundFile*>( user_data )->vio_seek( offset, whence );
+	return static_cast< SoundFile* >( user_data )->vio_seek( offset, whence );
 }
 
 sf_count_t SoundFile::vio_read( void* ptr, sf_count_t count, void* user_data )
 {
-	return static_cast<SoundFile*>( user_data )->vio_read( ptr, count );
+	return static_cast< SoundFile* >( user_data )->vio_read( ptr, count );
 }
 
 sf_count_t SoundFile::vio_write( const void* ptr, sf_count_t count, void* user_data )
 {
-	return static_cast<SoundFile*>( user_data )->vio_write( ptr, count );
+	return static_cast< SoundFile* >( user_data )->vio_write( ptr, count );
 }
 
 sf_count_t SoundFile::vio_tell( void* user_data )
 {
-	return static_cast<SoundFile*>( user_data )->vio_tell();
+	return static_cast< SoundFile* >( user_data )->vio_tell();
 }
 
 sf_count_t SoundFile::vio_get_filelen()
@@ -140,13 +144,19 @@ sf_count_t SoundFile::vio_seek( sf_count_t offset, int whence )
 	switch ( whence )
 	{
 		case SEEK_CUR:
-		return m_file.Seek( offset, wxFromCurrent );
+		{
+			return m_file.Seek( offset, wxFromCurrent );
+		}
 
 		case SEEK_SET:
-		return m_file.Seek( offset, wxFromStart );
+		{
+			return m_file.Seek( offset, wxFromStart );
+		}
 
 		case SEEK_END:
-		return m_file.Seek( offset, wxFromEnd );
+		{
+			return m_file.Seek( offset, wxFromEnd );
+		}
 
 		default:
 		wxLogDebug( _( "Where should I seek ? - %d" ), whence );

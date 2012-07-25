@@ -1,5 +1,5 @@
 /*
-   wxApp.cpp
+ * wxApp.cpp
  */
 
 #include "StdWx.h"
@@ -116,12 +116,14 @@ bool wxMyApp::CheckLicense()
 	const wxStandardPaths& paths = wxStandardPaths::Get();
 	wxFileName			   fn( paths.GetExecutablePath() );
 	fn.SetFullName( LICENSE_FILE_NAME );
+
 	if ( !fn.IsFileReadable() )
 	{
 		return false;
 	}
 
 	wxULongLong fs( fn.GetSize() );
+
 	if ( fs == wxInvalidSize )
 	{
 		wxLogInfo( _( "Unable to read license \u201C%s\u201D" ), fn.GetFullPath() );
@@ -129,6 +131,7 @@ bool wxMyApp::CheckLicense()
 	}
 
 	wxULongLong maxSize( 0, MAX_LICENSE_FILE_SIZE );
+
 	if ( fs > maxSize )
 	{
 		wxLogInfo( _( "License file \u201C%s\u201D is too big" ), fn.GetFullPath() );
@@ -144,6 +147,7 @@ void wxMyApp::ShowLicense()
 	wxFileName			   fn( paths.GetExecutablePath() );
 
 	fn.SetFullName( LICENSE_FILE_NAME );
+
 	if ( !fn.IsFileReadable() )
 	{
 		wxLogError( _( "Cannot find license file \u201C%s\u201D" ), fn.GetFullPath() );
@@ -151,6 +155,7 @@ void wxMyApp::ShowLicense()
 	}
 
 	wxULongLong fs( fn.GetSize() );
+
 	if ( fs == wxInvalidSize )
 	{
 		wxLogError( _( "Unable to read license \u201C%s\u201D" ), fn.GetFullPath() );
@@ -158,6 +163,7 @@ void wxMyApp::ShowLicense()
 	}
 
 	wxULongLong maxSize( 0, MAX_LICENSE_FILE_SIZE );
+
 	if ( fs > maxSize )
 	{
 		wxLogError( _( "License file \u201C%s\u201D is too big" ), fn.GetFullPath() );
@@ -165,6 +171,7 @@ void wxMyApp::ShowLicense()
 	}
 
 	wxFileInputStream fis( fn.GetFullPath() );
+
 	if ( !fis.IsOk() )
 	{
 		wxLogError( _( "Cannot open license file \u201C%s\u201D" ), fn.GetFullPath() );
@@ -267,14 +274,16 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, wxCueSheet& cueSheet
 		wxString sOutputFile( m_cfg.GetOutputFile( inputFile ) );
 		wxLogInfo( _( "Saving cue scheet to \u201C%s\u201D" ), sOutputFile );
 		wxFileOutputStream fos( sOutputFile );
+
 		if ( !fos.IsOk() )
 		{
 			wxLogError( _( "Fail to open \u201C%s\u201D" ), sOutputFile );
 			return 1;
 		}
 
-		wxSharedPtr<wxTextOutputStream> pTos( m_cfg.GetOutputTextStream( fos ) );
-		wxTextCueSheetRenderer			renderer( pTos.get() );
+		wxSharedPtr< wxTextOutputStream > pTos( m_cfg.GetOutputTextStream( fos ) );
+		wxTextCueSheetRenderer			  renderer( pTos.get() );
+
 		if ( !renderer.Render( cueSheet ) )
 		{
 			return 1;
@@ -283,8 +292,9 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, wxCueSheet& cueSheet
 	else
 	{
 		wxLogInfo( _( "Converting cue scheet to XML format" ) );
-		wxSharedPtr<wxXmlCueSheetRenderer> pXmlRenderer = GetXmlRenderer(
-			inputFile );
+		wxSharedPtr< wxXmlCueSheetRenderer > pXmlRenderer = GetXmlRenderer(
+				inputFile );
+
 		if ( pXmlRenderer->Render( cueSheet ) )
 		{
 			if ( m_cfg.GenerateMkvmergeOpts() )
@@ -301,6 +311,7 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, wxCueSheet& cueSheet
 			if ( m_cfg.GenerateMkvmergeOpts() )
 			{
 				wxMkvmergeOptsRenderer& optsRenderer = GetMkvmergeOptsRenderer( false );
+
 				if ( !optsRenderer.Save() )
 				{
 					return 1;
@@ -343,6 +354,7 @@ int wxMyApp::ProcessCueFile( const wxInputFile& inputFile, const wxTagSynonimsCo
 	if ( m_cfg.IsEmbedded() )
 	{
 		wxLogInfo( _( "Reading cue sheet from media file" ) );
+
 		if ( !reader.ReadEmbeddedCueSheet( sInputFile, m_cfg.GetReadFlags() ) )
 		{
 			wxLogError( _( "Fail to read embedded sue sheet from \u201C%s\u201D or parse error" ), sInputFile );
@@ -352,6 +364,7 @@ int wxMyApp::ProcessCueFile( const wxInputFile& inputFile, const wxTagSynonimsCo
 	else
 	{
 		wxLogInfo( _( "Reading cue sheet from text file" ) );
+
 		if ( !reader.ReadCueSheet( sInputFile, m_cfg.GetReadFlags(), m_cfg.UseMLang() ) )
 		{
 			wxLogError( _( "Fail to read or parse input cue file \u201C%s\u201D" ), sInputFile );
@@ -360,6 +373,7 @@ int wxMyApp::ProcessCueFile( const wxInputFile& inputFile, const wxTagSynonimsCo
 	}
 
 	wxCueSheet cueSheet( reader.GetCueSheet() );
+
 	if ( inputFile.HasDataFiles() )
 	{
 		// obsolete code
@@ -401,6 +415,7 @@ int wxMyApp::OnRun()
 		{
 			wxLogMessage( _( "Directory \u201C%s\u201D doesn't exists" ), fn.GetPath() );
 			res = 1;
+
 			if ( m_cfg.AbortOnError() )
 			{
 				break;
@@ -412,10 +427,12 @@ int wxMyApp::OnRun()
 		}
 
 		wxDir dir( fn.GetPath() );
+
 		if ( !dir.IsOpened() )
 		{
 			wxLogError( _( "Cannot open directory \u201C%s\u201D" ), fn.GetPath() );
 			res = 1;
+
 			if ( m_cfg.AbortOnError() )
 			{
 				break;
@@ -444,6 +461,7 @@ int wxMyApp::OnRun()
 				}
 
 				res = ProcessCueFile( singleFile, discSynonims, trackSynonims );
+
 				if ( ( res != 0 ) && ( m_cfg.AbortOnError() || m_cfg.GetMerge() ) )
 				{
 					break;
@@ -478,9 +496,9 @@ int wxMyApp::OnExit()
 	return res;
 }
 
-wxSharedPtr<wxXmlCueSheetRenderer> wxMyApp::GetXmlRenderer( const wxInputFile& inputFile )
+wxSharedPtr< wxXmlCueSheetRenderer > wxMyApp::GetXmlRenderer( const wxInputFile& inputFile )
 {
-	wxSharedPtr<wxXmlCueSheetRenderer> pRes( wxXmlCueSheetRenderer::CreateObject( m_cfg, inputFile ) );
+	wxSharedPtr< wxXmlCueSheetRenderer > pRes( wxXmlCueSheetRenderer::CreateObject( m_cfg, inputFile ) );
 	return pRes;
 }
 
@@ -538,9 +556,11 @@ bool wxMyApp::RunMkvmerge( const wxFileName& optionsFile )
 	wxASSERT( m_cfg.RunMkvmerge() );
 
 	wxString sCmdLine;
+
 	if ( m_cfg.GetMkvmergeDir().IsOk() )
 	{
 		wxFileName mkvmerge( m_cfg.GetMkvmergeDir().GetFullPath(), wxT( "mkvmerge" ) );
+
 		if ( wxLog::GetVerbose() )
 		{
 			sCmdLine.Printf( wxT( "\"%s\" \"@%s\"" ), mkvmerge.GetFullPath(), optionsFile.GetFullPath() );
@@ -566,6 +586,7 @@ bool wxMyApp::RunMkvmerge( const wxFileName& optionsFile )
 	wxLogDebug( wxT( "Running commad: %s" ), sCmdLine );
 
 	long nRes = 0;
+
 	if ( m_cfg.UseFullPaths() )
 	{
 		nRes = wxExecute( sCmdLine, wxEXEC_SYNC | wxEXEC_NOEVENTS );

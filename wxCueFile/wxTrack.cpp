@@ -1,5 +1,5 @@
 /*
-   wxTrack.cpp
+ * wxTrack.cpp
  */
 
 #include "StdWx.h"
@@ -159,7 +159,7 @@ const wxIndex& wxTrack::GetPreGap() const
 	else
 	{
 		wxFAIL_MSG( wxT( "Trying to access nonexistient pre-gap" ) );
-		return *m_pPreGap; // to make compiler happy
+		return *m_pPreGap;	// to make compiler happy
 	}
 }
 
@@ -172,7 +172,7 @@ const wxIndex& wxTrack::GetPostGap() const
 	else
 	{
 		wxFAIL_MSG( wxT( "Trying to access nonexistient post-gap" ) );
-		return *m_pPostGap; // to make compiler happy
+		return *m_pPostGap;	// to make compiler happy
 	}
 }
 
@@ -199,6 +199,7 @@ void wxTrack::SetPostGap( const wxIndex& postGap )
 bool wxTrack::IsRelatedToDataFileIdx( size_t nDataFileIdx, bool bPrePost ) const
 {
 	wxASSERT( nDataFileIdx != wxIndex::UnknownDataFileIdx );
+
 	if ( bPrePost )
 	{
 		if ( HasPreGap() )
@@ -583,6 +584,6 @@ void wxTrack::GetReplacements( wxHashString& replacements ) const
 	replacements[ wxT( "tn" ) ] = sValue;
 }
 
-#include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
+#include <wx/arrimpl.cpp>	// this is a magic incantation which must be done!
 WX_DEFINE_OBJARRAY( wxArrayTrack );
 

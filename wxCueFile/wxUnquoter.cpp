@@ -1,5 +1,5 @@
 /*
-   wxUnquoter.cpp
+ * wxUnquoter.cpp
  */
 
 #include "StdWx.h"
@@ -100,7 +100,7 @@ wxUnquoter::wxUnquoter( void ):
 }
 
 /*
-        http://en.wikipedia.org/wiki/Quotation_mark,_non-English_usage
+ *      http://en.wikipedia.org/wiki/Quotation_mark,_non-English_usage
  */
 bool wxUnquoter::correct_polish_qm( const wxString& sLang )
 {

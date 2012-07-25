@@ -1,5 +1,5 @@
 /*
-   wxUTF8TextOutputStream.cpp
+ * wxUTF8TextOutputStream.cpp
  */
 
 #include "StdWx.h"
@@ -16,37 +16,37 @@ void wxTextOutputStreamWithBOMFactory::WriteBOM( wxOutputStream& s, const wxEnco
 class wxTextOutputStreamWithBOM:
 	public wxTextOutputStream
 {
-public:
+	public:
 
-	wxTextOutputStreamWithBOM( wxOutputStream& s,
-							   wxEOL mode,
-							   bool bWriteBOM,
-							   const wxMBConv& conv,
-							   const wxTextOutputStreamWithBOMFactory::
-							   wxByteBuffer& bom ):
-		wxTextOutputStream( s, mode, conv )
-	{
-		if ( bWriteBOM )
+		wxTextOutputStreamWithBOM( wxOutputStream& s,
+								   wxEOL mode,
+								   bool bWriteBOM,
+								   const wxMBConv& conv,
+								   const wxTextOutputStreamWithBOMFactory::
+								   wxByteBuffer& bom ):
+			wxTextOutputStream( s, mode, conv )
 		{
-			wxTextOutputStreamWithBOMFactory::WriteBOM( s, bom );
+			if ( bWriteBOM )
+			{
+				wxTextOutputStreamWithBOMFactory::WriteBOM( s, bom );
+			}
 		}
-	}
 };
 
 wxTextOutputStreamWithBOMFactory::wxTextOutputStreamSharedPtr wxTextOutputStreamWithBOMFactory::Create(
-	wxOutputStream& s,
-	wxEOL mode,
-	bool bWriteBOM,
-	wxUint32 nCodePage,
-	bool bUseMLang )
+		wxOutputStream& s,
+		wxEOL mode,
+		bool bWriteBOM,
+		wxUint32 nCodePage,
+		bool bUseMLang )
 {
 	wxTextOutputStreamSharedPtr pRes;
 	wxByteBuffer				bom;
 
 	if ( wxEncodingDetection::GetBOM( nCodePage, bom ) )
 	{
-		wxString			  sDescription;
-		wxSharedPtr<wxMBConv> pConv( wxEncodingDetection::GetStandardMBConv( nCodePage, bUseMLang, sDescription ) );
+		wxString				sDescription;
+		wxSharedPtr< wxMBConv > pConv( wxEncodingDetection::GetStandardMBConv( nCodePage, bUseMLang, sDescription ) );
 		pRes = new wxTextOutputStreamWithBOM( s, mode, bWriteBOM, *pConv, bom );
 	}
 
@@ -54,10 +54,10 @@ wxTextOutputStreamWithBOMFactory::wxTextOutputStreamSharedPtr wxTextOutputStream
 }
 
 wxTextOutputStreamWithBOMFactory::wxTextOutputStreamSharedPtr wxTextOutputStreamWithBOMFactory::CreateUTF8(
-	wxOutputStream& s,
-	wxEOL mode,
-	bool bWriteBOM,
-	bool bUseMLang )
+		wxOutputStream& s,
+		wxEOL mode,
+		bool bWriteBOM,
+		bool bUseMLang )
 {
 	return Create( s, mode, bWriteBOM, wxEncodingDetection::CP::UTF8, bUseMLang );
 }

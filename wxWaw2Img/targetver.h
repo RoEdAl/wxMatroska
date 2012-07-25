@@ -1,5 +1,5 @@
 /*
-        targetver.h
+ *      targetver.h
  */
 #ifndef _TARGET_VER_H_
 #define _TARGET_VER_H_

@@ -1,5 +1,5 @@
 /*
-        WaveDrawerRaster1.cpp
+ *      WaveDrawerRaster1.cpp
  */
 #include "StdWx.h"
 #include "FloatArray.h"
@@ -25,6 +25,7 @@ void Raster1WaveDrawer::ProcessInitializer()
 	__super::ProcessInitializer();
 
 	wxImage img;
+
 	if ( m_bLogarithmicColorGradient )
 	{
 		img = create_log_gradient_bitmap( m_clrFrom, m_clrTo, m_nImgHeight, GetLogarithmicScale() );

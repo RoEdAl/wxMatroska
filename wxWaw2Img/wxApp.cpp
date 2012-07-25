@@ -1,5 +1,5 @@
 /*
-   wxApp.cpp
+ * wxApp.cpp
  */
 #include "StdWx.h"
 #include <sndfile.h>
@@ -52,8 +52,8 @@ static wxString get_libsndfile_version()
 	wxString v;
 
 	{
-		wxStringTypeBufferLength<char> vl( v, 128 );
-		int							   nRes = sf_command ( NULL, SFC_GET_LIB_VERSION, vl, 128 );
+		wxStringTypeBufferLength< char > vl( v, 128 );
+		int								 nRes = sf_command( NULL, SFC_GET_LIB_VERSION, vl, 128 );
 		vl.SetLength( nRes );
 	}
 
@@ -153,16 +153,16 @@ static void read_audio_samples( SoundFile& soundFile, MultiChannelWaveDrawer& wa
 	SNDFILE* sndfile = soundFile.GetHandle();
 
 	/*
-	   double d;
-
-	   if ( !sf_command( m_soundFile.GetHandle(), SFC_CALC_NORM_SIGNAL_MAX, &d, sizeof(d) ) )
-	   {
-	        wxLogMessage( _("Normalized value: %f"), d );
-	   }
-	   else
-	   {
-	        d = 1;
-	   }
+	 * double d;
+	 *
+	 * if ( !sf_command( m_soundFile.GetHandle(), SFC_CALC_NORM_SIGNAL_MAX, &d, sizeof(d) ) )
+	 * {
+	 *      wxLogMessage( _("Normalized value: %f"), d );
+	 * }
+	 * else
+	 * {
+	 *      d = 1;
+	 * }
 	 */
 
 	int		   nChannels   = soundFile.GetInfo().channels;
@@ -187,17 +187,24 @@ static WaveDrawer* create_wave_drawer( DRAWING_MODE eMode, const wxConfiguration
 	switch ( eMode )
 	{
 		case DRAWING_MODE_SIMPLE:
-		return new SimpleWaveDrawer( nNumberOfSamples, gc, cfg.UseLogarithmicScale(), cfg.GetLogarithmBase(), rc, cfg.GetColourFrom(), bUseCuePoints, cuePoints, cfg.GetSecondaryBackgroundColor() );
+		{
+			return new SimpleWaveDrawer( nNumberOfSamples, gc, cfg.UseLogarithmicScale(), cfg.GetLogarithmBase(), rc, cfg.GetColourFrom(), bUseCuePoints, cuePoints, cfg.GetSecondaryBackgroundColor() );
+		}
 
 		case DRAWING_MODE_RASTER1:
-		return new Raster1WaveDrawer( nNumberOfSamples, gc, cfg.UseLogarithmicScale(), cfg.UseLogarithmicColorPalette(), cfg.GetLogarithmBase(), rc, cfg.GetColourFrom(), cfg.GetColourTo(), bUseCuePoints, cuePoints, cfg.GetSecondaryBackgroundColor() );
+		{
+			return new Raster1WaveDrawer( nNumberOfSamples, gc, cfg.UseLogarithmicScale(), cfg.UseLogarithmicColorPalette(), cfg.GetLogarithmBase(), rc, cfg.GetColourFrom(), cfg.GetColourTo(), bUseCuePoints, cuePoints, cfg.GetSecondaryBackgroundColor() );
+		}
 
 		case DRAWING_MODE_RASTER2:
-		return new Raster2WaveDrawer( nNumberOfSamples, gc, cfg.UseLogarithmicScale(), cfg.UseLogarithmicColorPalette(), cfg.GetLogarithmBase(), rc, cfg.GetColourFrom(), cfg.GetColourTo(), bUseCuePoints, cuePoints, cfg.GetSecondaryBackgroundColor() );
+		{
+			return new Raster2WaveDrawer( nNumberOfSamples, gc, cfg.UseLogarithmicScale(), cfg.UseLogarithmicColorPalette(), cfg.GetLogarithmBase(), rc, cfg.GetColourFrom(), cfg.GetColourTo(), bUseCuePoints, cuePoints, cfg.GetSecondaryBackgroundColor() );
+		}
 
 		case DRAWING_MODE_POLY:
 		return new PolyWaveDrawer( nNumberOfSamples, gc, cfg.UseLogarithmicScale(), cfg.UseLogarithmicColorPalette(), cfg.GetLogarithmBase(), rc, cfg.GetColourFrom(), cfg.GetColourTo(), bUseCuePoints, cuePoints, cfg.GetSecondaryBackgroundColor() );
 	}
+
 	wxASSERT( false );
 	return NULL;
 }
@@ -230,41 +237,46 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 		case DRAWING_MODE_RASTER1:
 		case DRAWING_MODE_RASTER2:
 		case DRAWING_MODE_POLY:
-		if ( cfg.MultiChannel() )
 		{
-			McGraphicalContextWaveDrawer* pGc = new McGraphicalContextWaveDrawer( 1 );
-
-			wxGraphicsContext* gc = pGc->Initialize( cfg.GetWidth(), cfg.GetHeight(), cfg.GetImageColorDepth(), cfg.GetBackgroundColor() );
-			if ( gc == NULL )
+			if ( cfg.MultiChannel() )
 			{
-				delete pGc;
-				return NULL;
+				McGraphicalContextWaveDrawer* pGc = new McGraphicalContextWaveDrawer( 1 );
+
+				wxGraphicsContext* gc = pGc->Initialize( cfg.GetWidth(), cfg.GetHeight(), cfg.GetImageColorDepth(), cfg.GetBackgroundColor() );
+
+				if ( gc == NULL )
+				{
+					delete pGc;
+					return NULL;
+				}
+
+				for ( wxUint16 nChannel = 0; nChannel < nChannels; nChannel++ )
+				{
+					pGc->AddDrawer( create_wave_drawer( cfg.GetDrawingMode(), cfg, nSamples, gc, cfg.GetDrawerRect( nChannel, nChannels ), bUseCuePoints, cuePoints ) );
+				}
+
+				pMcwd = pGc;
+			}
+			else
+			{
+				McGraphicalContextWaveDrawer* pGc = new McGraphicalContextWaveDrawer( 1 );
+
+				wxGraphicsContext* gc = pGc->Initialize( cfg.GetWidth(), cfg.GetHeight(), cfg.GetImageColorDepth(), cfg.GetBackgroundColor() );
+
+				if ( gc == NULL )
+				{
+					delete pGc;
+					return NULL;
+				}
+
+				pGc->AddDrawer( create_wave_drawer( cfg.GetDrawingMode(), cfg, nSamples, gc, cfg.GetDrawerRect(), bUseCuePoints, cuePoints ) );
+				pMcwd = pGc;
 			}
 
-			for ( wxUint16 nChannel = 0; nChannel < nChannels; nChannel++ )
-			{
-				pGc->AddDrawer( create_wave_drawer( cfg.GetDrawingMode(), cfg, nSamples, gc, cfg.GetDrawerRect( nChannel, nChannels ), bUseCuePoints, cuePoints ) );
-			}
-
-			pMcwd = pGc;
+			break;
 		}
-		else
-		{
-			McGraphicalContextWaveDrawer* pGc = new McGraphicalContextWaveDrawer( 1 );
-
-			wxGraphicsContext* gc = pGc->Initialize( cfg.GetWidth(), cfg.GetHeight(), cfg.GetImageColorDepth(), cfg.GetBackgroundColor() );
-			if ( gc == NULL )
-			{
-				delete pGc;
-				return NULL;
-			}
-
-			pGc->AddDrawer( create_wave_drawer( cfg.GetDrawingMode(), cfg, nSamples, gc, cfg.GetDrawerRect(), bUseCuePoints, cuePoints ) );
-			pMcwd = pGc;
-		}
-
-		break;
 	}
+
 	if ( cfg.MultiChannel() )
 	{
 		McChainWaveDrawer* pDrawer = new McChainWaveDrawer( nChannels, pMcwd );
@@ -290,8 +302,8 @@ static bool save_rendered_wave( McChainWaveDrawer& waveDrawer, const wxConfigura
 	{
 		case DRAWING_MODE_AUDIO:
 		{
-			ArrayWaveDrawer* pAwd			= static_cast<ArrayWaveDrawer*>( waveDrawer.GetWaveDrawer() );
-			AudioRenderer*	 pAudioRenderer = static_cast<AudioRenderer*>( pAwd->GetDrawer( 0 ) );
+			ArrayWaveDrawer* pAwd			= static_cast< ArrayWaveDrawer* >( waveDrawer.GetWaveDrawer() );
+			AudioRenderer*	 pAudioRenderer = static_cast< AudioRenderer* >( pAwd->GetDrawer( 0 ) );
 			return pAudioRenderer->GenerateAudio( fn.GetFullPath(), cfg.GetFrequency() );
 		}
 
@@ -300,7 +312,7 @@ static bool save_rendered_wave( McChainWaveDrawer& waveDrawer, const wxConfigura
 		case DRAWING_MODE_RASTER2:
 		case DRAWING_MODE_POLY:
 		{
-			McGraphicalContextWaveDrawer* pGc = static_cast<McGraphicalContextWaveDrawer*>( waveDrawer.GetWaveDrawer() );
+			McGraphicalContextWaveDrawer* pGc = static_cast< McGraphicalContextWaveDrawer* >( waveDrawer.GetWaveDrawer() );
 			wxImage						  img( pGc->GetBitmap() );
 
 			img.SetOption( wxIMAGE_OPTION_RESOLUTIONX, cfg.GetImageResolution().GetWidth() );
@@ -311,6 +323,7 @@ static bool save_rendered_wave( McChainWaveDrawer& waveDrawer, const wxConfigura
 
 			wxLogInfo( _( "Saving image to file \u201C%s\u201D" ), fn.GetFullName() );
 			bool res = img.SaveFile( fn.GetFullPath() );
+
 			if ( res )
 			{
 				wxLogInfo( _( "Image sucessfully saved to file \u201C%s\u201D" ), fn.GetFullName() );
@@ -323,13 +336,14 @@ static bool save_rendered_wave( McChainWaveDrawer& waveDrawer, const wxConfigura
 			}
 		}
 	}
+
 	return true;
 }
 
 int wxMyApp::OnRun()
 {
 	wxTimeSpanArray cuePoints;
-	bool bUseCuePoints = false;
+	bool			bUseCuePoints = false;
 
 	if ( m_cfg.HasCuePointsFile() )
 	{
@@ -356,6 +370,7 @@ int wxMyApp::OnRun()
 
 	wxLogInfo( _( "Opening audio file" ) );
 	SoundFile sfReader;
+
 	if ( !sfReader.Open( inputFile.GetFullPath() ) )
 	{
 		wxLogError( _( "Cannot open sound file \u201C%s\u201D" ), inputFile.GetFullName() );
@@ -364,8 +379,8 @@ int wxMyApp::OnRun()
 
 	if ( m_cfg.HasCuePointsFile() || m_cfg.HasCuePointsInterval() )
 	{
-		const SF_INFO& sfInfo	  = sfReader.GetInfo();
-		wxTimeSpan duration = wxTimeSpan::Milliseconds( sfInfo.frames * 1000 / sfInfo.samplerate );
+		const SF_INFO& sfInfo	= sfReader.GetInfo();
+		wxTimeSpan	   duration = wxTimeSpan::Milliseconds( sfInfo.frames * 1000 / sfInfo.samplerate );
 		wxLogInfo( _( "Input file duration: %s" ), duration.Format() );
 
 		if ( m_cfg.HasCuePointsInterval() )
@@ -378,7 +393,7 @@ int wxMyApp::OnRun()
 	}
 
 	wxLogInfo( _( "Creating wave drawer" ) );
-	wxScopedPtr<McChainWaveDrawer> pWaveDrawer( create_wave_drawer( m_cfg, sfReader.GetInfo(), bUseCuePoints, cuePoints ) );
+	wxScopedPtr< McChainWaveDrawer > pWaveDrawer( create_wave_drawer( m_cfg, sfReader.GetInfo(), bUseCuePoints, cuePoints ) );
 
 	if ( !pWaveDrawer )
 	{
@@ -398,6 +413,7 @@ int wxMyApp::OnRun()
 int wxMyApp::OnExit()
 {
 	int res = wxAppConsole::OnExit();
+
 	CoUninitialize();
 	wxLogMessage( _( "Done" ) );
 	return res;

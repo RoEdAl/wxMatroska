@@ -1,5 +1,5 @@
 /*
-        wxCueSheetContent.cpp
+ *      wxCueSheetContent.cpp
  */
 
 #include "StdWx.h"

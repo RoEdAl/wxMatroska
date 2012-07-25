@@ -1,5 +1,5 @@
 /*
-   targetver.h
+ * targetver.h
  */
 
 #ifndef _TARGET_VER_H
@@ -9,5 +9,5 @@
 #define _WIN32_WINNT 0x0500
 #endif
 
-#endif // _TARGET_VER_H
+#endif	// _TARGET_VER_H
 

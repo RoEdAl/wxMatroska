@@ -1,5 +1,5 @@
 /*
-        WaveDrawerGraphicsContext.cpp
+ *      WaveDrawerGraphicsContext.cpp
  */
 
 #include "StdWx.h"
@@ -26,7 +26,7 @@ void GraphicsContextWaveDrawer::ProcessInitializer()
 {
 	m_height2	 = m_rc.m_height / 2.0f;
 	m_yoffset	 = m_rc.m_y + m_height2;
-	m_nImgHeight = ceil ( m_height2 );
+	m_nImgHeight = ceil( m_height2 );
 
 	if ( m_bUseCuePoints )
 	{

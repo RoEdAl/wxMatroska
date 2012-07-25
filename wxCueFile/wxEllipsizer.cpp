@@ -1,5 +1,5 @@
 /*
-   wxEllipsizer.cpp
+ * wxEllipsizer.cpp
  */
 
 #include "StdWx.h"

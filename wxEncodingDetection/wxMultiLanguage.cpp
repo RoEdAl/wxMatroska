@@ -1,5 +1,5 @@
 /*
-   wxMultiLanguage.cpp
+ * wxMultiLanguage.cpp
  */
 
 #include "StdWx.h"
@@ -12,12 +12,12 @@ wxMultiLanguage::wxMultiLanguage( void )
 	m_pMLang = (IMultiLanguage2*)NULL;
 
 	HRESULT hRes = CoCreateInstance(
-		CLSID_CMultiLanguage,
-		NULL,
-		CLSCTX_INPROC_SERVER,
-		IID_IMultiLanguage2,
-		(LPVOID*)&m_pMLang
-		);
+			CLSID_CMultiLanguage,
+			NULL,
+			CLSCTX_INPROC_SERVER,
+			IID_IMultiLanguage2,
+			(LPVOID*)&m_pMLang
+			);
 
 	if ( hRes != S_OK )
 	{
@@ -54,43 +54,44 @@ void wxMultiLanguage::Close()
 }
 
 HRESULT wxMultiLanguage::DetectInputCodepage(
-	DWORD dwFlag,
-	DWORD dwPrefWinCodePage,
-	const wxCharBuffer& srcStr,
-	DetectEncodingInfo* lpEncoding, INT* pnScores )
+		DWORD dwFlag,
+		DWORD dwPrefWinCodePage,
+		const wxCharBuffer& srcStr,
+		DetectEncodingInfo* lpEncoding, INT* pnScores )
 {
 	wxASSERT( IsValid() );
 
 	INT		nSize = (INT)srcStr.length();
 	HRESULT hRes  = m_pMLang->DetectInputCodepage(
-		dwFlag,
-		dwPrefWinCodePage,
-		const_cast<CHAR*>( srcStr.data() ), &nSize,
-		lpEncoding, pnScores );
+			dwFlag,
+			dwPrefWinCodePage,
+			const_cast< CHAR* >( srcStr.data() ), &nSize,
+			lpEncoding, pnScores );
 
 	return hRes;
 }
 
 HRESULT wxMultiLanguage::DetectCodepageInStream(
-	DWORD dwFlag,
-	DWORD dwPrefWinCodePage,
-	const wxFileName& fn,
-	DetectEncodingInfo* lpEncoding, INT* pnScores )
+		DWORD dwFlag,
+		DWORD dwPrefWinCodePage,
+		const wxFileName& fn,
+		DetectEncodingInfo* lpEncoding, INT* pnScores )
 {
 	wxASSERT( IsValid() );
 
 	IStream* pStream;
 	HRESULT	 hRes = SHCreateStreamOnFile( fn.GetFullPath(), STGM_READ, &pStream );
+
 	if ( hRes != S_OK )
 	{
 		return hRes;
 	}
 
 	hRes = m_pMLang->DetectCodepageInIStream(
-		dwFlag,
-		dwPrefWinCodePage,
-		pStream,
-		lpEncoding, pnScores );
+			dwFlag,
+			dwPrefWinCodePage,
+			pStream,
+			lpEncoding, pnScores );
 
 	pStream->Release();
 	return hRes;
@@ -103,6 +104,7 @@ HRESULT wxMultiLanguage::GetCodePageDescription( UINT nCodePage, wxString& sDesc
 	MIMECPINFO cpinfo;
 	LANGID	   langid = LANG_USER_DEFAULT;
 	HRESULT	   hRes	  = m_pMLang->GetCodePageInfo( nCodePage, langid, &cpinfo );
+
 	if ( hRes == S_OK )
 	{
 		sDescription = cpinfo.wszDescription;

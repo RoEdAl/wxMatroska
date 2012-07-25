@@ -1,5 +1,5 @@
 /*
-   wxDataFile.cpp
+ * wxDataFile.cpp
  */
 
 #include "StdWx.h"
@@ -245,13 +245,14 @@ wxDataFile& wxDataFile::Assign( const wxFileName& fileName, wxDataFile::FileType
 
 bool wxDataFile::FindFile( wxFileName& fn, const wxString& sAlternateExt ) const
 {
-	if ( m_fileName.IsFileReadable() ) // file just exists
+	if ( m_fileName.IsFileReadable() )	// file just exists
 	{
 		fn = m_fileName;
 		return true;
 	}
 
 	wxString sTokens( sAlternateExt );
+
 	if ( IsBinary() )
 	{
 		return false;
@@ -266,6 +267,7 @@ bool wxDataFile::FindFile( wxFileName& fn, const wxString& sAlternateExt ) const
 	while ( tokenizer.HasMoreTokens() )
 	{
 		fnTry.SetExt( tokenizer.GetNextToken() );
+
 		if ( fnTry.IsFileReadable() )
 		{
 			fn = fnTry;
@@ -313,6 +315,7 @@ bool wxDataFile::GetFromMediaInfo( const wxFileName& fileName, wxULongLong& fram
 
 	void*  handle = dll.MediaInfoNew();
 	size_t res	  = dll.MediaInfoOpen( handle, fileName.GetFullPath() );
+
 	if ( res == 0 )
 	{
 		wxLogError( _( "MediaInfo - fail to open file" ) );
@@ -325,21 +328,21 @@ bool wxDataFile::GetFromMediaInfo( const wxFileName& fileName, wxULongLong& fram
 	{
 		wxString s1(
 			dll.MediaInfoGet(
-				handle,
-				wxMediaInfo::MediaInfo_Stream_General,
-				0,
-				INFOS[ i ]
-				)
+					handle,
+					wxMediaInfo::MediaInfo_Stream_General,
+					0,
+					INFOS[ i ]
+					)
 			);
 
 		wxString s2(
 			dll.MediaInfoGet(
-				handle,
-				wxMediaInfo::MediaInfo_Stream_General,
-				0,
-				INFOS[ i ],
-				wxMediaInfo::MediaInfo_Info_Measure
-				)
+					handle,
+					wxMediaInfo::MediaInfo_Stream_General,
+					0,
+					INFOS[ i ],
+					wxMediaInfo::MediaInfo_Info_Measure
+					)
 			);
 
 		as1.Add( s1 );
@@ -350,21 +353,21 @@ bool wxDataFile::GetFromMediaInfo( const wxFileName& fileName, wxULongLong& fram
 	{
 		wxString s1(
 			dll.MediaInfoGet(
-				handle,
-				wxMediaInfo::MediaInfo_Stream_Audio,
-				0,
-				AUDIO_INFOS[ i ]
-				)
+					handle,
+					wxMediaInfo::MediaInfo_Stream_Audio,
+					0,
+					AUDIO_INFOS[ i ]
+					)
 			);
 
 		wxString s2(
 			dll.MediaInfoGet(
-				handle,
-				wxMediaInfo::MediaInfo_Stream_Audio,
-				0,
-				AUDIO_INFOS[ i ],
-				wxMediaInfo::MediaInfo_Info_Measure
-				)
+					handle,
+					wxMediaInfo::MediaInfo_Stream_Audio,
+					0,
+					AUDIO_INFOS[ i ],
+					wxMediaInfo::MediaInfo_Info_Measure
+					)
 			);
 
 		as1.Add( s1 );
@@ -382,117 +385,138 @@ bool wxDataFile::GetFromMediaInfo( const wxFileName& fileName, wxULongLong& fram
 	{
 		switch ( i )
 		{
-			case 0: // count of audio streams
-			if ( !as1[ i ].ToULong( &u ) || !( u > 0 ) )
+			case 0:	// count of audio streams
 			{
-				wxLogWarning( _( "MediaInfo - cannot find audio stream" ) );
-				bCheck = false;
-			}
-
-			break;
-
-			case 1: // cue sheet #1
-			if ( !bCueSheet )
-			{
-				if ( !as1[ i ].IsEmpty() )
+				if ( !as1[ i ].ToULong( &u ) || !( u > 0 ) )
 				{
-					sCueSheet = as1[ i ];
-					bCueSheet = true;
+					wxLogWarning( _( "MediaInfo - cannot find audio stream" ) );
+					bCheck = false;
 				}
+
+				break;
 			}
 
-			break;
-
-			case 2: // cue sheet #2
-			if ( !bCueSheet )
+			case 1:	// cue sheet #1
 			{
-				if ( !as1[ i ].IsEmpty() )
+				if ( !bCueSheet )
 				{
-					sCueSheet = as1[ i ];
-					bCueSheet = true;
+					if ( !as1[ i ].IsEmpty() )
+					{
+						sCueSheet = as1[ i ];
+						bCueSheet = true;
+					}
 				}
+
+				break;
 			}
 
-			break;
-
-			case 3: // stream size
-			break;
-
-			case 4: // duration
-			if ( !as1[ i ].ToULong( &u ) )
+			case 2:	// cue sheet #2
 			{
-				wxLogWarning( _( "MediaInfo - Invalid duration - %s" ), as1[ i ] );
-				bCheck = false;
-			}
-
-			break;
-
-			case 5: // format
-			sMIFormat = as1[ i ];
-			break;
-
-			case 6: // sampling rate
-			if ( !as1[ i ].ToULong( &u ) || ( u == 0u ) )
-			{
-				wxLogWarning( _( "MediaInfo - Invalid sample rate - %s" ), as1[ i ] );
-				bCheck = false;
-			}
-			else
-			{
-				si.SetSamplingRate( u );
-			}
-
-			break;
-
-			case 7: // bit depth
-			if ( !as1[ i ].IsEmpty() )
-			{
-				if ( !as1[ i ].ToULong( &u ) || ( u == 0u ) || ( u > 10000u ) )
+				if ( !bCueSheet )
 				{
-					wxLogWarning( _( "MediaInfo - Invalid bit depth - %s" ), as1[ i ] );
+					if ( !as1[ i ].IsEmpty() )
+					{
+						sCueSheet = as1[ i ];
+						bCueSheet = true;
+					}
+				}
+
+				break;
+			}
+
+			case 3:	// stream size
+			{
+				break;
+			}
+
+			case 4:	// duration
+			{
+				if ( !as1[ i ].ToULong( &u ) )
+				{
+					wxLogWarning( _( "MediaInfo - Invalid duration - %s" ), as1[ i ] );
+					bCheck = false;
+				}
+
+				break;
+			}
+
+			case 5:	// format
+			{
+				sMIFormat = as1[ i ];
+				break;
+			}
+
+			case 6:	// sampling rate
+			{
+				if ( !as1[ i ].ToULong( &u ) || ( u == 0u ) )
+				{
+					wxLogWarning( _( "MediaInfo - Invalid sample rate - %s" ), as1[ i ] );
 					bCheck = false;
 				}
 				else
 				{
-					si.SetBitsPerSample( (unsigned short)u );
+					si.SetSamplingRate( u );
 				}
-			}
-			else
-			{
-				si.SetBitsPerSample( 0 ); // unknown MP3
+
+				break;
 			}
 
-			break;
-
-			case 8: // channels
-			if ( !as1[ i ].ToULong( &u ) || ( u == 0u ) || ( u > 128u ) )
+			case 7:	// bit depth
 			{
-				wxLogWarning( _( "MediaInfo - Invalid number of channels - %s" ), as1[ i ] );
-				bCheck = false;
-			}
-			else
-			{
-				si.SetNumberOfChannels( (unsigned short)u );
-			}
-
-			break;
-
-			case 9: // SamplingCount
-			if ( !as1[ i ].IsEmpty() )
-			{
-				wxUint64 ul;
-				if ( as1[ i ].ToULongLong( &ul ) ) // calculate duration
-				{ // according to duration
-					frames = ul;
+				if ( !as1[ i ].IsEmpty() )
+				{
+					if ( !as1[ i ].ToULong( &u ) || ( u == 0u ) || ( u > 10000u ) )
+					{
+						wxLogWarning( _( "MediaInfo - Invalid bit depth - %s" ), as1[ i ] );
+						bCheck = false;
+					}
+					else
+					{
+						si.SetBitsPerSample( (unsigned short)u );
+					}
 				}
 				else
 				{
-					wxLogWarning( _( "MediaInfo - Invalid samples count - %s" ), as1[ i ] );
-					bCheck = false;
+					si.SetBitsPerSample( 0 );	// unknown MP3
 				}
+
+				break;
 			}
 
-			break;
+			case 8:	// channels
+			{
+				if ( !as1[ i ].ToULong( &u ) || ( u == 0u ) || ( u > 128u ) )
+				{
+					wxLogWarning( _( "MediaInfo - Invalid number of channels - %s" ), as1[ i ] );
+					bCheck = false;
+				}
+				else
+				{
+					si.SetNumberOfChannels( (unsigned short)u );
+				}
+
+				break;
+			}
+
+			case 9:	// SamplingCount
+			{
+				if ( !as1[ i ].IsEmpty() )
+				{
+					wxUint64 ul;
+
+					if ( as1[ i ].ToULongLong( &ul ) )	// calculate duration
+					{	// according to duration
+						frames = ul;
+					}
+					else
+					{
+						wxLogWarning( _( "MediaInfo - Invalid samples count - %s" ), as1[ i ] );
+						bCheck = false;
+					}
+				}
+
+				break;
+			}
 		}
 	}
 
@@ -539,7 +563,7 @@ bool wxDataFile::GetInfo( const wxString& sAlternateExt )
 	return res;
 }
 
-#include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
+#include <wx/arrimpl.cpp>	// this is a magic incantation which must be done!
 WX_DEFINE_OBJARRAY( wxArrayDataFile );
 WX_DEFINE_OBJARRAY( wxArrayFileName );
 

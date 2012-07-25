@@ -1,5 +1,5 @@
 /*
-   wxTextInputStreamOnString.h
+ * wxTextInputStreamOnString.h
  */
 
 #ifndef _WX_TEXT_INPUT_STREAM_ON_STRING_H_
@@ -8,18 +8,18 @@
 class wxTextInputStreamOnString:
 	public wxObject
 {
-public:
+	public:
 
-	wxTextInputStreamOnString( const wxString& );
-	const wxStringInputStream& GetStringStream() const;
-	wxTextInputStream&		   GetStream();
-	wxTextInputStream&		   operator *();
-	bool Eof() const;
+		wxTextInputStreamOnString( const wxString& );
+		const wxStringInputStream& GetStringStream() const;
+		wxTextInputStream&		   GetStream();
+		wxTextInputStream&		   operator *();
+		bool Eof() const;
 
-protected:
+	protected:
 
-	wxStringInputStream m_inputStream;
-	wxTextInputStream	m_textInputStream;
+		wxStringInputStream m_inputStream;
+		wxTextInputStream	m_textInputStream;
 };
 
 #endif

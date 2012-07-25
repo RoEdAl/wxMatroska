@@ -1,5 +1,5 @@
 /*
-   wxUnquoter.h
+ * wxUnquoter.h
  */
 
 #ifndef _WX_UNQUOTER_H_
@@ -10,95 +10,95 @@ class wxUnquoter:
 {
 	wxDECLARE_DYNAMIC_CLASS( wxUnquoter );
 
-protected:
+	protected:
 
-	wxRegEx m_reSingleQuotes;
-	wxRegEx m_reDoubleQuotes;
-	wxRegEx m_rePseudoDoubleQuotes;
+		wxRegEx m_reSingleQuotes;
+		wxRegEx m_reDoubleQuotes;
+		wxRegEx m_rePseudoDoubleQuotes;
 
-	wxString m_sGenericReplacement;
+		wxString m_sGenericReplacement;
 
-	wxRegEx m_reFullQuotes;
-	wxRegEx m_reFullDoubleQuotes;
+		wxRegEx m_reFullQuotes;
+		wxRegEx m_reFullDoubleQuotes;
 
-public:
+	public:
 
-	static const wxChar RE_SINGLE_QUOTES[];
-	static const wxChar RE_SINGLE_QUOTES_EX[];
-	static const wxChar RE_DOUBLE_QUOTES[];
-	static const wxChar RE_PSEUDO_DOUUBLE_QUOTES[];
-	static const wxChar RE_FULL_SINGLE_QUOTES[];
-	static const wxChar RE_FULL_DOUBLE_QUOTES[];
+		static const wxChar RE_SINGLE_QUOTES[];
+		static const wxChar RE_SINGLE_QUOTES_EX[];
+		static const wxChar RE_DOUBLE_QUOTES[];
+		static const wxChar RE_PSEUDO_DOUUBLE_QUOTES[];
+		static const wxChar RE_FULL_SINGLE_QUOTES[];
+		static const wxChar RE_FULL_DOUBLE_QUOTES[];
 
-	static const wxChar POLISH_DOUBLE_QUOTES[];
-	static const wxChar POLISH_SINGLE_QUOTES[];
+		static const wxChar POLISH_DOUBLE_QUOTES[];
+		static const wxChar POLISH_SINGLE_QUOTES[];
 
-	static bool correct_polish_qm( const wxString& );
-	static bool correct_english_qm( const wxString& );
-	static bool correct_german_qm( const wxString& );
-	static bool correct_french_qm( const wxString& );
+		static bool correct_polish_qm( const wxString& );
+		static bool correct_english_qm( const wxString& );
+		static bool correct_german_qm( const wxString& );
+		static bool correct_french_qm( const wxString& );
 
-protected:
+	protected:
 
-	static const wxChar OPENING_QOUTATION_MARK_REPLACEMENT;
-	static const wxChar CLOSING_QOUTATION_MARK_REPLACEMENT;
-	static const wxChar GENERIC_REPLACEMENT[];
+		static const wxChar OPENING_QOUTATION_MARK_REPLACEMENT;
+		static const wxChar CLOSING_QOUTATION_MARK_REPLACEMENT;
+		static const wxChar GENERIC_REPLACEMENT[];
 
-	typedef struct _QUOTATION_MARKS
-	{
-		const wxChar* opening;
-		const wxChar* closing;
-	} QUOTATION_MARKS;
+		typedef struct _QUOTATION_MARKS
+		{
+			const wxChar* opening;
+			const wxChar* closing;
+		} QUOTATION_MARKS;
 
-	static const QUOTATION_MARKS ASCII_QUOTES[];
-	static const size_t			 ASCII_QUOTES_SIZE;
+		static const QUOTATION_MARKS ASCII_QUOTES[];
+		static const size_t			 ASCII_QUOTES_SIZE;
 
-	static const QUOTATION_MARKS ENGLISH_QUOTES[];
-	static const size_t			 ENGLISH_QUOTES_SIZE;
+		static const QUOTATION_MARKS ENGLISH_QUOTES[];
+		static const size_t			 ENGLISH_QUOTES_SIZE;
 
-	static const QUOTATION_MARKS POLISH_QUOTES[];
-	static const size_t			 POLISH_QUOTES_SIZE;
+		static const QUOTATION_MARKS POLISH_QUOTES[];
+		static const size_t			 POLISH_QUOTES_SIZE;
 
-	static const QUOTATION_MARKS GERMAN_QUOTES[];
-	static const size_t			 GERMAN_QUOTES_SIZE;
+		static const QUOTATION_MARKS GERMAN_QUOTES[];
+		static const size_t			 GERMAN_QUOTES_SIZE;
 
-	static const QUOTATION_MARKS FRENCH_QUOTES[];
-	static const size_t			 FRENCH_QUOTES_SIZE;
+		static const QUOTATION_MARKS FRENCH_QUOTES[];
+		static const size_t			 FRENCH_QUOTES_SIZE;
 
-	typedef wxScopedCharTypeBuffer<wxChar> wxScopedCharBuffer;
-	typedef wxScopedCharBuffer ( wxUnquoter::* GET_REPLACEMENT_METHOD )( int, bool ) const;
+		typedef wxScopedCharTypeBuffer< wxChar > wxScopedCharBuffer;
+		typedef wxScopedCharBuffer ( wxUnquoter::* GET_REPLACEMENT_METHOD )( int, bool ) const;
 
-	wxScopedCharBuffer get_standard_replacement( int, bool ) const;
-	wxScopedCharBuffer get_english_replacement( int, bool ) const;
-	wxScopedCharBuffer get_polish_replacement( int, bool ) const;
-	wxScopedCharBuffer get_german_replacement( int, bool ) const;
-	wxScopedCharBuffer get_french_replacement( int, bool ) const;
+		wxScopedCharBuffer get_standard_replacement( int, bool ) const;
+		wxScopedCharBuffer get_english_replacement( int, bool ) const;
+		wxScopedCharBuffer get_polish_replacement( int, bool ) const;
+		wxScopedCharBuffer get_german_replacement( int, bool ) const;
+		wxScopedCharBuffer get_french_replacement( int, bool ) const;
 
-	static wxScopedCharBuffer get_replacement( const QUOTATION_MARKS *, size_t, int, bool );
+		static wxScopedCharBuffer get_replacement( const QUOTATION_MARKS *, size_t, int, bool );
 
-	void InternalCorrectQuotes( wxString& ) const;
+		void InternalCorrectQuotes( wxString& ) const;
 
-protected:
+	protected:
 
-	GET_REPLACEMENT_METHOD m_replacement_method;
+		GET_REPLACEMENT_METHOD m_replacement_method;
 
-public:
+	public:
 
-	wxUnquoter( void );
+		wxUnquoter( void );
 
-	void SetLang( const wxString& );
+		void SetLang( const wxString& );
 
-	wxString Unquote( const wxString& ) const;
-	int CorrectQuotes( wxString& ) const;
-	wxString UnquoteAndCorrect( const wxString& ) const;
+		wxString Unquote( const wxString& ) const;
+		int CorrectQuotes( wxString& ) const;
+		wxString UnquoteAndCorrect( const wxString& ) const;
 
-	const wxRegEx& GetReSingleQuotes() const;
-	const wxRegEx& GetReDoubleQuotes() const;
+		const wxRegEx& GetReSingleQuotes() const;
+		const wxRegEx& GetReDoubleQuotes() const;
 
-	const wxRegEx& GetReFullSingleQuotes() const;
-	const wxRegEx& GetReFullDoubleQuotes() const;
+		const wxRegEx& GetReFullSingleQuotes() const;
+		const wxRegEx& GetReFullDoubleQuotes() const;
 
-	bool IsQuoted( const wxString& ) const;
+		bool IsQuoted( const wxString& ) const;
 };
 
 #endif

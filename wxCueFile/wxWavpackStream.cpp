@@ -1,5 +1,5 @@
 /*
-   wxWavpackStream.cpp
+ * wxWavpackStream.cpp
  */
 
 #include "StdWx.h"
@@ -90,17 +90,24 @@ int wxWavpackStream::set_pos_rel( int32_t delta, int mode )
 	{
 		case SEEK_CUR:
 		default:
-		seekMode = wxFromCurrent;
-		break;
+		{
+			seekMode = wxFromCurrent;
+			break;
+		}
 
 		case SEEK_END:
-		seekMode = wxFromEnd;
-		break;
+		{
+			seekMode = wxFromEnd;
+			break;
+		}
 
 		case SEEK_SET:
-		seekMode = wxFromStart;
-		break;
+		{
+			seekMode = wxFromStart;
+			break;
+		}
 	}
+
 	wxFileOffset offset = m_inputStream.SeekI( delta, seekMode );
 	return ( offset == wxInvalidOffset ) ? 1 : 0;
 }

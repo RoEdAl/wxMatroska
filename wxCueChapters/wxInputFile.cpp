@@ -1,5 +1,5 @@
 /*
-   wxInputFile.cpp
+ * wxInputFile.cpp
  */
 
 #include "StdWx.h"

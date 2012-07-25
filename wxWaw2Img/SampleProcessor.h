@@ -1,5 +1,5 @@
 /*
-        SampleProcessor.h
+ *      SampleProcessor.h
  */
 
 #ifndef _SAMPLE_PROCESSOR_H_
@@ -7,35 +7,35 @@
 
 class SampleProcessor
 {
-public:
+	public:
 
-	SampleProcessor( void );
-	virtual ~SampleProcessor( void );
+		SampleProcessor( void );
+		virtual ~SampleProcessor( void );
 
-public:
+	public:
 
-	virtual void ProcessInitializer() = 0;
-	virtual void ProcessFinalizer()	  = 0;
+		virtual void ProcessInitializer() = 0;
+		virtual void ProcessFinalizer()	  = 0;
 };
 
 class ProcessorHolder
 {
-public:
+	public:
 
-	ProcessorHolder( SampleProcessor& processor ):
-		m_processor( processor )
-	{
-		processor.ProcessInitializer();
-	}
+		ProcessorHolder( SampleProcessor& processor ):
+			m_processor( processor )
+		{
+			processor.ProcessInitializer();
+		}
 
-	~ProcessorHolder()
-	{
-		m_processor.ProcessFinalizer();
-	}
+		~ProcessorHolder()
+		{
+			m_processor.ProcessFinalizer();
+		}
 
-protected:
+	protected:
 
-	SampleProcessor& m_processor;
+		SampleProcessor& m_processor;
 };
 
 #endif;

@@ -1,5 +1,5 @@
 /*
-   wxFlacDecoder.cpp
+ * wxFlacDecoder.cpp
  */
 
 #include "StdWx.h"
@@ -40,6 +40,7 @@ wxFlacDecoder::~wxFlacDecoder( void )
 	}
 
 	wxFileOffset pos = m_inputStream.TellI();
+
 	if ( pos != wxInvalidOffset )
 	{
 		*absolute_byte_offset = pos;

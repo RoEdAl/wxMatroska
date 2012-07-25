@@ -1,5 +1,5 @@
 /*
-   wxCueTag.cpp
+ * wxCueTag.cpp
  */
 #include "StdWx.h"
 #include <wxCueFile/wxCueTag.h>
@@ -504,6 +504,7 @@ bool wxCueTag::FindCommonPart( wxCueTag& commonTag, const wxCueTag& tag1, const 
 	wxString sValue1( tag1.GetValue() ), sValue2( tag2.GetValue() );
 
 	size_t nLen = sValue1.Length();
+
 	if ( sValue2.Length() < nLen )
 	{
 		nLen = sValue2.Length();

@@ -1,5 +1,5 @@
 /*
-        WaveDrawer.cpp
+ *      WaveDrawer.cpp
  */
 
 #include "StdWx.h"

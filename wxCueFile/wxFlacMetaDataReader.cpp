@@ -1,5 +1,5 @@
 /*
-   wxFlacMetaDataReader.cpp
+ * wxFlacMetaDataReader.cpp
  */
 
 #include "StdWx.h"
@@ -68,6 +68,7 @@ bool wxFlacMetaDataReader::GetCueSheetFromVorbisComment( wxString& sCueSheet ) c
 	{
 		FLAC::Metadata::VorbisComment::Entry entry = vorbisComment.get_comment( i );
 		wxString							 sEntryName( wxString::FromUTF8( entry.get_field_name(), entry.get_field_name_length() ) );
+
 		if ( sEntryName.CmpNoCase( wxCueTag::Name::CUESHEET ) == 0 )
 		{
 			sCueSheet = wxString::FromUTF8( entry.get_field_value(), entry.get_field_value_length() );
@@ -142,6 +143,7 @@ bool wxFlacMetaDataReader::ReadMetadata( const wxString& sFlacFile )
 	decoder.set_md5_checking( true );
 	decoder.set_metadata_respond_all();
 	::FLAC__StreamDecoderInitStatus status = decoder.init();
+
 	if ( status != FLAC__STREAM_DECODER_INIT_STATUS_OK )
 	{
 		wxString sStatusStr( FLAC__StreamDecoderInitStatusString[ status ] );
@@ -150,6 +152,7 @@ bool wxFlacMetaDataReader::ReadMetadata( const wxString& sFlacFile )
 	}
 
 	bool process = decoder.process_until_end_of_metadata();
+
 	if ( !process )
 	{
 		wxLogWarning( _( "Fail to process FLAC metadata" ) );

@@ -1,5 +1,5 @@
 /*
-   wxConfiguration.cpp
+ * wxConfiguration.cpp
  */
 
 #include "StdWx.h"
@@ -48,7 +48,7 @@ wxConfiguration::wxConfiguration( void ):
 	m_fLogBase( 10 ),
 	m_bPowerMix( true ),
 	m_nFrequency( 50 ),
-	m_bUseMLang(true)
+	m_bUseMLang( true )
 {}
 
 wxString wxConfiguration::GetSwitchAsText( bool b )
@@ -112,17 +112,24 @@ bool wxConfiguration::ReadNegatableSwitchValue( const wxCmdLineParser& cmdLine, 
 	switch ( state )
 	{
 		case wxCMD_SWITCH_ON:
-		switchVal = true;
-		break;
+		{
+			switchVal = true;
+			break;
+		}
 
 		case wxCMD_SWITCH_OFF:
-		switchVal = false;
-		break;
+		{
+			switchVal = false;
+			break;
+		}
 
 		default:
-		res = false;
-		break;
+		{
+			res = false;
+			break;
+		}
 	}
+
 	return res;
 }
 
@@ -174,6 +181,7 @@ static int time_span_compare_fn( wxTimeSpan* ts1, wxTimeSpan* ts2 )
 bool wxConfiguration::ReadCuePoints( wxTimeSpanArray& cuePoints ) const
 {
 	CuePointsReader reader;
+
 	if ( reader.Read( cuePoints, m_cuePointsFile, m_bUseMLang ) )
 	{
 		cuePoints.Sort( time_span_compare_fn );
@@ -192,10 +200,14 @@ static wxColour get_default_bg_color( int nDepth )
 		case 8:
 		case 16:
 		case 24:
-		return wxColour( "white" );
+		{
+			return wxColour( "white" );
+		}
 
 		case 32:
-		return wxTransparentColour;
+		{
+			return wxTransparentColour;
+		}
 
 		default:
 		wxFAIL_MSG( "Invalid image color depth" );
@@ -227,7 +239,7 @@ wxString wxConfiguration::GetDrawingModeAsText( DRAWING_MODE e )
 		}
 	}
 
-	return wxString::Format( "<%d>", static_cast<int>( e ) );
+	return wxString::Format( "<%d>", static_cast< int >( e ) );
 }
 
 wxString wxConfiguration::GetDrawingModeTexts()
@@ -325,8 +337,10 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 			case 16:
 			case 24:
 			case 32:
-			m_nImageColorDepth = v;
-			break;
+			{
+				m_nImageColorDepth = v;
+				break;
+			}
 
 			default:
 			wxLogWarning( _( "Invalid image color depth - %d" ), v );
@@ -447,6 +461,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	ReadNegatableSwitchValue( cmdLine, "lc", m_bLogarithmicColorGradient );
 
 	ReadNegatableSwitchValue( cmdLine, "mc", m_bMultiChannel );
+
 	if ( cmdLine.Found( "cn", &v ) )
 	{
 		if ( v < 1 || v > 10 )
@@ -515,13 +530,13 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		{
 			if ( !Interval::Parse( s, m_interval ) )
 			{
-				wxLogWarning( _("Invalid interval - %s"), s );
+				wxLogWarning( _( "Invalid interval - %s" ), s );
 				return false;
 			}
 		}
 		else
 		{
-			wxLogWarning( _("Cue points interval must be specified") );
+			wxLogWarning( _( "Cue points interval must be specified" ) );
 			return false;
 		}
 	}
@@ -557,19 +572,19 @@ bool wxConfiguration::GenerateCuePoints( const wxTimeSpan& duration, wxTimeSpanA
 
 	wxTimeSpan step;
 	m_interval.Get( duration, step );
-	wxTimeSpan pos = step;
-	wxUint32 nCounter = 0;
+	wxTimeSpan pos		= step;
+	wxUint32   nCounter = 0;
 
-	while( pos < duration )
+	while ( pos < duration )
 	{
 		cuePoints.Add( pos );
-		pos += step;
+		pos		 += step;
 		nCounter += 1U;
 	}
 
 	if ( nCounter == 0 )
 	{
-		wxLogWarning( _("No cue points generated. Propably too big interval.") );
+		wxLogWarning( _( "No cue points generated. Propably too big interval." ) );
 	}
 
 	cuePoints.Sort( time_span_compare_fn );
@@ -591,13 +606,18 @@ wxFileName wxConfiguration::GetOutputFile() const
 			switch ( m_eDrawingMode )
 			{
 				case DRAWING_MODE_AUDIO:
-				fn.SetExt( "wav" );
-				break;
+				{
+					fn.SetExt( "wav" );
+					break;
+				}
 
 				default:
-				fn.SetExt( "png" );
-				break;
+				{
+					fn.SetExt( "png" );
+					break;
+				}
 			}
+
 			return fn;
 		}
 		else
@@ -777,3 +797,4 @@ bool wxConfiguration::UseMLang() const
 {
 	return m_bUseMLang;
 }
+

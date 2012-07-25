@@ -1,5 +1,5 @@
 /*
-        AudioRenderer.cpp
+ *      AudioRenderer.cpp
  */
 #include "StdWx.h"
 #include "FloatArray.h"
@@ -75,63 +75,64 @@ void AudioRenderer::ProcessFinalizer()
 
 class QGen
 {
-public:
+	public:
 
-	QGen( wxUint32 nLen ):
-		m_nLen( nLen ), m_sign( true ), m_nPos( 0 ), m_nSamplesCounter( wxULL( 0 ) ),
-		m_ar1( new wxFloat32[ nLen ] ), m_ar2( new wxFloat32[ nLen ] )
-	{}
+		QGen( wxUint32 nLen ):
+			m_nLen( nLen ), m_sign( true ), m_nPos( 0 ), m_nSamplesCounter( wxULL( 0 ) ),
+			m_ar1( new wxFloat32[ nLen ] ), m_ar2( new wxFloat32[ nLen ] )
+		{}
 
-	void SetAmplitude( wxFloat32 fAmplitude )
-	{
-		float fNAmplitude = -fAmplitude;
-
-		for ( wxUint32 i = 0; i < m_nLen; i++ )
+		void SetAmplitude( wxFloat32 fAmplitude )
 		{
-			m_ar1[ i ] = fAmplitude;
-			m_ar2[ i ] = fNAmplitude;
-		}
-	}
+			float fNAmplitude = -fAmplitude;
 
-	void Generate( SNDFILE* sf, wxUint32 nNumberOfSamples )
-	{
-		while ( nNumberOfSamples > 0 )
+			for ( wxUint32 i = 0; i < m_nLen; i++ )
+			{
+				m_ar1[ i ] = fAmplitude;
+				m_ar2[ i ] = fNAmplitude;
+			}
+		}
+
+		void Generate( SNDFILE* sf, wxUint32 nNumberOfSamples )
 		{
-			wxUint32 n			 = m_nLen - m_nPos;
-			bool	 sign_change = true;
-			if ( n > nNumberOfSamples )
+			while ( nNumberOfSamples > 0 )
 			{
-				n			= nNumberOfSamples;
-				sign_change = false;
+				wxUint32 n			 = m_nLen - m_nPos;
+				bool	 sign_change = true;
+
+				if ( n > nNumberOfSamples )
+				{
+					n			= nNumberOfSamples;
+					sign_change = false;
+				}
+
+				sf_writef_float( sf, ( m_sign ? m_ar1 : m_ar2 ).get(), n );
+
+				if ( sign_change )
+				{
+					m_sign = !m_sign;
+				}
+
+				nNumberOfSamples  -= n;
+				m_nPos			   = ( m_nPos + n ) % m_nLen;
+				m_nSamplesCounter += n;
 			}
-
-			sf_writef_float( sf, ( m_sign ? m_ar1 : m_ar2 ).get(), n );
-
-			if ( sign_change )
-			{
-				m_sign = !m_sign;
-			}
-
-			nNumberOfSamples  -= n;
-			m_nPos			   = ( m_nPos + n ) % m_nLen;
-			m_nSamplesCounter += n;
 		}
-	}
 
-	wxUint64 GetNumberOfSavedSamples() const
-	{
-		return m_nSamplesCounter;
-	}
+		wxUint64 GetNumberOfSavedSamples() const
+		{
+			return m_nSamplesCounter;
+		}
 
-protected:
+	protected:
 
-	wxUint32	 m_nLen;
-	wxFloatArray m_ar1;
-	wxFloatArray m_ar2;
+		wxUint32	 m_nLen;
+		wxFloatArray m_ar1;
+		wxFloatArray m_ar2;
 
-	bool	 m_sign;
-	wxUint32 m_nPos;
-	wxUint64 m_nSamplesCounter;
+		bool	 m_sign;
+		wxUint32 m_nPos;
+		wxUint64 m_nSamplesCounter;
 };
 
 bool AudioRenderer::GenerateAudio( const wxString& filename, const AudioColumnArray& ac, wxUint32 nSamplerate, wxUint32 nFrequency )
@@ -148,6 +149,7 @@ bool AudioRenderer::GenerateAudio( const wxString& filename, const AudioColumnAr
 	sf_info.format	   = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
 
 	SoundFile sf;
+
 	if ( !sf.Open( filename, sf_info, wxFile::write ) )
 	{
 		wxLogInfo( _( "Fail to open destination audio file %s" ), filename );

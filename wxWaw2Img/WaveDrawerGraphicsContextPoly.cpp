@@ -1,5 +1,5 @@
 /*
-        WaveDrawerGraphicsContext.cpp
+ *      WaveDrawerGraphicsContext.cpp
  */
 
 #include "StdWx.h"
@@ -42,6 +42,7 @@ void GraphicsContextWaveDrawerPoly::NextColumn( wxFloat32 fValue, wxFloat32 flog
 void GraphicsContextWaveDrawerPoly::EndOfSamples()
 {
 	m_gc->StrokePath( m_path );
+
 	// TODO : Destroy path if possible
 }
 

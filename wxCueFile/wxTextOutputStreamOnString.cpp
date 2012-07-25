@@ -1,5 +1,5 @@
 /*
-   wxTextOutputStreamOnString.cpp
+ * wxTextOutputStreamOnString.cpp
  */
 
 #include "StdWx.h"
@@ -45,7 +45,7 @@ bool wxTextOutputStreamOnString::SaveTo( const wxString& sOutputFile, bool bUseM
 
 	if ( os.IsOk() )
 	{
-		wxSharedPtr<wxTextOutputStream> pStream( wxTextOutputStreamWithBOMFactory::CreateUTF8( os, wxEOL_NATIVE, true, bUseMLang ) );
+		wxSharedPtr< wxTextOutputStream > pStream( wxTextOutputStreamWithBOMFactory::CreateUTF8( os, wxEOL_NATIVE, true, bUseMLang ) );
 		pStream->WriteString( GetString() );
 		pStream->Flush();
 		return true;

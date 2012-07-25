@@ -1,5 +1,5 @@
 /*
-   wxApp.h
+ * wxApp.h
  */
 
 #ifndef _WX_MY_APP_H_
@@ -12,38 +12,38 @@
 class wxMyApp:
 	public wxAppConsole
 {
-protected:
+	protected:
 
-	wxString					  m_sSeparator;
-	wxConfiguration				  m_cfg;
-	wxScopedPtr<wxColourDatabase> m_pColourDatabase;
+		wxString						m_sSeparator;
+		wxConfiguration					m_cfg;
+		wxScopedPtr< wxColourDatabase > m_pColourDatabase;
 
-protected:
+	protected:
 
-	void AddSeparator( wxCmdLineParser& );
-	static void AddVersionInfos( wxCmdLineParser& );
-	static void AddColourFormatDescription( wxCmdLineParser& );
-	static void AddDisplayDescription( wxCmdLineParser& );
-	static void InitImageHandlers();
+		void AddSeparator( wxCmdLineParser& );
+		static void AddVersionInfos( wxCmdLineParser& );
+		static void AddColourFormatDescription( wxCmdLineParser& );
+		static void AddDisplayDescription( wxCmdLineParser& );
+		static void InitImageHandlers();
 
-protected:
+	protected:
 
-	virtual bool OnInit();
-	virtual void OnInitCmdLine( wxCmdLineParser& );
-	virtual bool OnCmdLineParsed( wxCmdLineParser& );
-	virtual int OnRun();
-	virtual int OnExit();
+		virtual bool OnInit();
+		virtual void OnInitCmdLine( wxCmdLineParser& );
+		virtual bool OnCmdLineParsed( wxCmdLineParser& );
+		virtual int OnRun();
+		virtual int OnExit();
 
-public:
+	public:
 
-	static const wxChar APP_NAME[];
-	static const wxChar APP_VENDOR_NAME[];
-	static const wxChar APP_VERSION[];
-	static const wxChar APP_AUTHOR[];
+		static const wxChar APP_NAME[];
+		static const wxChar APP_VENDOR_NAME[];
+		static const wxChar APP_VERSION[];
+		static const wxChar APP_AUTHOR[];
 
-public:
+	public:
 
-	wxMyApp( void );
+		wxMyApp( void );
 };
 
 wxDECLARE_APP( wxMyApp );

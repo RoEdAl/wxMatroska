@@ -1,5 +1,5 @@
 /*
-        WaveDrawerSimple.h
+ *      WaveDrawerSimple.h
  */
 
 #ifndef _WAVE_DRAWER_SIMPLE_H_
@@ -8,28 +8,28 @@
 class SimpleWaveDrawer:
 	public GraphicsContextWaveDrawer
 {
-public:
+	public:
 
-	SimpleWaveDrawer( wxUint64,
-					  wxGraphicsContext* gc,
-					  bool, wxFloat32,
-					  wxRect2DInt,
-					  const wxColour&,
-					  bool, const wxTimeSpanArray&, const wxColour& );
+		SimpleWaveDrawer( wxUint64,
+						  wxGraphicsContext* gc,
+						  bool, wxFloat32,
+						  wxRect2DInt,
+						  const wxColour&,
+						  bool, const wxTimeSpanArray&, const wxColour& );
 
-protected:
+	protected:
 
-	virtual void ProcessInitializer();
+		virtual void ProcessInitializer();
 
-	virtual void NextColumn( wxFloat32, wxFloat32 );
-	virtual void ProcessFinalizer();
+		virtual void NextColumn( wxFloat32, wxFloat32 );
+		virtual void ProcessFinalizer();
 
-protected:
+	protected:
 
-	wxColour m_clr;
-	bool	 m_bLogarithmicScale;
+		wxColour m_clr;
+		bool	 m_bLogarithmicScale;
 
-	wxGraphicsPath m_path;
+		wxGraphicsPath m_path;
 };
 
 #endif

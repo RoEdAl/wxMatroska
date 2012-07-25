@@ -1,5 +1,5 @@
 /*
-   wxIndex.cpp
+ * wxIndex.cpp
  */
 
 #include "StdWx.h"
@@ -129,18 +129,18 @@ wxIndex& wxIndex::Assign( size_t number, wxULongLong offset, size_t nDataFileIdx
 }
 
 wxIndex& wxIndex::Assign( size_t number,
-	unsigned long minutes,
-	unsigned long seconds,
-	unsigned long frames )
+		unsigned long minutes,
+		unsigned long seconds,
+		unsigned long frames )
 {
 	return Assign( number, minutes, seconds, frames, UnknownDataFileIdx );
 }
 
 wxIndex& wxIndex::Assign( size_t number,
-	unsigned long minutes,
-	unsigned long seconds,
-	unsigned long frames,
-	size_t nDataFileIdx )
+		unsigned long minutes,
+		unsigned long seconds,
+		unsigned long frames,
+		size_t nDataFileIdx )
 {
 	m_number = number;
 	wxULongLong cdFrames( 0, minutes );
@@ -166,14 +166,15 @@ void wxIndex::FixDecimalPoint( wxString& s )
 {
 #if wxUSE_INTL
 	wxString sep = wxLocale::GetInfo( wxLOCALE_DECIMAL_POINT, wxLOCALE_CAT_NUMBER );
-#else // !wxUSE_INTL
-/*
-   As above, this is the most common alternative value. Notice that here it
-   doesn't matter if we guess wrongly and the current separator is already
-   ".": we'll just waste a call to Replace() in this case.
- */
+#else	// !wxUSE_INTL
+
+	/*
+	 * As above, this is the most common alternative value. Notice that here it
+	 * doesn't matter if we guess wrongly and the current separator is already
+	 * ".": we'll just waste a call to Replace() in this case.
+	 */
 	wxString sep( "," );
-#endif // wxUSE_INTL/!wxUSE_INTL
+#endif	// wxUSE_INTL/!wxUSE_INTL
 
 	s.Replace( sep, wxT( '.' ) );
 }
@@ -208,6 +209,6 @@ int wxIndex::CompareFn( wxIndex** i1, wxIndex** i2 )
 	}
 }
 
-#include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
+#include <wx/arrimpl.cpp>	// this is a magic incantation which must be done!
 WX_DEFINE_OBJARRAY( wxArrayIndex );
 

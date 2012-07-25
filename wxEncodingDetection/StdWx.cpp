@@ -1,5 +1,5 @@
 /*
-   StdWx.cpp
+ * StdWx.cpp
  */
 #include "StdWx.h"
 
