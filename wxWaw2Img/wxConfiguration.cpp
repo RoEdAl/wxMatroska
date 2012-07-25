@@ -3,8 +3,8 @@
  */
 
 #include "StdWx.h"
-#include <wxEncodingDetection/wxEncodingDetection.h>
 #include "FloatArray.h"
+#include "CuePointsReader.h"
 #include "wxConfiguration.h"
 #include "wxApp.h"
 
@@ -47,7 +47,8 @@ wxConfiguration::wxConfiguration( void ):
 	m_margins( 4, 4 ),
 	m_fLogBase( 10 ),
 	m_bPowerMix( true ),
-	m_nFrequency( 50 )
+	m_nFrequency( 50 ),
+	m_bUseMLang(true)
 {}
 
 wxString wxConfiguration::GetSwitchAsText( bool b )
@@ -99,6 +100,8 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddOption( "cp", "cue-point-file", _( "Cue point file" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( "cg", "generate-cue-points", _( "Multi channel mode (default: off)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddOption( "ci", "cue-points-interval", _( "Cue points interval" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+
+	cmdLine.AddSwitch( wxEmptyString, "use-mlang", wxString::Format( _( "Use MLang library (default: %s)" ), GetSwitchAsText( m_bUseMLang ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 }
 
 bool wxConfiguration::ReadNegatableSwitchValue( const wxCmdLineParser& cmdLine, const wxString& name, bool& switchVal )
@@ -168,182 +171,18 @@ static int time_span_compare_fn( wxTimeSpan* ts1, wxTimeSpan* ts2 )
 	}
 }
 
-static bool parse_msf( const wxRegEx& reMsf, const wxString& s, wxTimeSpan& ts )
-{
-	bool		  res = true;
-	unsigned long min, sec, frames;
-
-	if ( reMsf.Matches( s ) )
-	{
-		if ( !reMsf.GetMatch( s, 1 ).ToULong( &min ) )
-		{
-			res = false;
-		}
-
-		if ( !reMsf.GetMatch( s, 2 ).ToULong( &sec ) )
-		{
-			res = false;
-		}
-
-		if ( !reMsf.GetMatch( s, 3 ).ToULong( &frames ) )
-		{
-			res = false;
-		}
-
-		if ( frames >= 75 )
-		{
-			res = false;
-		}
-	}
-	else
-	{
-		res = false;
-	}
-
-	if ( res )
-	{
-		ts = wxTimeSpan( 0, min, sec, frames * 1000 / 75 );
-	}
-
-	return res;
-}
-
-static bool parse_msms( const wxRegEx& reMsms, const wxString& s, wxTimeSpan& ts )
-{
-	bool		  res = true;
-	unsigned long min, sec, msec;
-
-	if ( reMsms.Matches( s ) )
-	{
-		if ( !reMsms.GetMatch( s, 1 ).ToULong( &min ) )
-		{
-			res = false;
-		}
-
-		if ( !reMsms.GetMatch( s, 2 ).ToULong( &sec ) )
-		{
-			res = false;
-		}
-
-		if ( !reMsms.GetMatch( s, 3 ).ToULong( &msec ) )
-		{
-			res = false;
-		}
-	}
-	else
-	{
-		res = false;
-	}
-
-	if ( res )
-	{
-		ts = wxTimeSpan( 0, min, sec, msec );
-	}
-
-	return res;
-}
-
-bool wxConfiguration::ReadCuePoints( wxTimeSpanArray& cuePoints, const wxString& sFilePath )
-{
-	wxLogInfo( _( "Opening cuesheet file %s" ), sFilePath );
-
-	wxString							   sCPDescription;
-	wxEncodingDetection::wxMBConvSharedPtr pConv( wxEncodingDetection::GetFileEncoding( sFilePath, true, sCPDescription ) );
-
-	if ( pConv )
-	{
-		wxLogInfo( _( "Detected encoding of file \u201C%s\u201D file is \u201C%s\u201D" ), sFilePath, sCPDescription );
-	}
-	else
-	{
-		pConv = wxEncodingDetection::GetDefaultEncoding( true, sCPDescription );
-		wxLogInfo( _( "Using default file encoding \u201C%s\u201D" ), sCPDescription );
-	}
-
-	wxFileInputStream fis( sFilePath );
-	if ( !fis.IsOk() )
-	{
-		wxLogWarning( _( "Fail to open cuesheet file" ) );
-		return false;
-	}
-
-	// MM:SS:FF
-	wxRegEx reMsf( "\\A(\\d{1,4}):(\\d{1,2}):(\\d{2})\\Z", wxRE_ADVANCED );
-	wxASSERT( reMsf.IsValid() );
-
-	// MM:SS:XXX
-	wxRegEx reMsms( "\\A(\\d{1,4}):(\\d{1,2}).(\\d{3})\\Z", wxRE_ADVANCED );
-	wxASSERT( reMsms.IsValid() );
-
-	wxString		  s;
-	unsigned long	  sec;
-	double			  dsec;
-	wxTextInputStream tis( fis, wxT('\t'), *pConv );
-	while ( !tis.GetInputStream().Eof() )
-	{
-		s = tis.ReadLine();
-		s.Trim( false );
-		s.Trim( true );
-		if ( s.IsEmpty() || s.StartsWith( "#" ) )
-		{
-			continue;
-		}
-
-		wxStringTokenizer tokenizer( s );
-		if ( !tokenizer.HasMoreTokens() )
-		{
-			continue;
-		}
-
-		// first only token
-		s = tokenizer.GetNextToken();
-
-		wxTimeSpan ts;
-		if ( parse_msf( reMsf, s, ts ) )
-		{
-			cuePoints.Add( ts );
-		}
-		else if ( parse_msms( reMsms, s, ts ) )
-		{
-			cuePoints.Add( ts );
-		}
-		else if ( s.ToCULong( &sec ) )
-		{
-			ts = wxTimeSpan::Seconds( sec );
-			cuePoints.Add( ts );
-		}
-		else if ( s.ToULong( &sec ) )
-		{
-			ts = wxTimeSpan::Seconds( sec );
-			cuePoints.Add( ts );
-		}
-		else if ( s.ToCDouble( &dsec ) && dsec > 0.0 )
-		{
-			ts = wxTimeSpan::Milliseconds( dsec * 1000 );
-			cuePoints.Add( ts );
-		}
-		else if ( s.ToDouble( &dsec ) && dsec > 0.0 )
-		{
-			ts = wxTimeSpan::Milliseconds( dsec * 1000 );
-			cuePoints.Add( ts );
-		}
-		else
-		{
-			wxLogWarning( _( "Unable to parse cue point: %s" ), s );
-			return false;
-		}
-
-		wxLogInfo( _( "Cue point: %s -> %s" ), s, ts.Format() );
-	}
-
-	wxLogInfo( _( "Closing cuesheet file" ) );
-	cuePoints.Sort( time_span_compare_fn );
-	return true;
-}
-
 bool wxConfiguration::ReadCuePoints( wxTimeSpanArray& cuePoints ) const
 {
-	return ReadCuePoints( cuePoints, m_cuePointsFile.GetFullPath() );
+	CuePointsReader reader;
+	if ( reader.Read( cuePoints, m_cuePointsFile, m_bUseMLang ) )
+	{
+		cuePoints.Sort( time_span_compare_fn );
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 static wxColour get_default_bg_color( int nDepth )
@@ -687,6 +526,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		}
 	}
 
+	ReadNegatableSwitchValue( cmdLine, "use-mlang", m_bUseMLang );
 	return true;
 }
 
@@ -933,3 +773,7 @@ wxUint16 wxConfiguration::GetFrequency() const
 	return m_nFrequency;
 }
 
+bool wxConfiguration::UseMLang() const
+{
+	return m_bUseMLang;
+}

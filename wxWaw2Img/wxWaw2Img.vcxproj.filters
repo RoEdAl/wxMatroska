@@ -81,6 +81,9 @@
     <ClInclude Include="LogarithmicScale.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CuePointsReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StdWx.cpp">
@@ -141,6 +144,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WaveDrawerPoly.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CuePointsReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

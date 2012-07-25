@@ -94,7 +94,7 @@ void wxMyApp::AddDisplayDescription( wxCmdLineParser& cmdline )
 void wxMyApp::OnInitCmdLine( wxCmdLineParser& cmdline )
 {
 	wxAppConsole::OnInitCmdLine( cmdline );
-	cmdline.SetLogo( _( "This application draws a wave file." ) );
+	cmdline.SetLogo( _( "This application draws a waveform from audio file." ) );
 	m_cfg.AddCmdLineParams( cmdline );
 	AddSeparator( cmdline );
 	AddColourFormatDescription( cmdline );
@@ -277,7 +277,7 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 	}
 }
 
-static bool save_rendered_wave( McChainWaveDrawer* pWaveDrawer, const wxConfiguration& cfg )
+static bool save_rendered_wave( McChainWaveDrawer& waveDrawer, const wxConfiguration& cfg )
 {
 	wxFileName fn( cfg.GetOutputFile() );
 
@@ -290,7 +290,7 @@ static bool save_rendered_wave( McChainWaveDrawer* pWaveDrawer, const wxConfigur
 	{
 		case DRAWING_MODE_AUDIO:
 		{
-			ArrayWaveDrawer* pAwd			= static_cast<ArrayWaveDrawer*>( pWaveDrawer->GetWaveDrawer() );
+			ArrayWaveDrawer* pAwd			= static_cast<ArrayWaveDrawer*>( waveDrawer.GetWaveDrawer() );
 			AudioRenderer*	 pAudioRenderer = static_cast<AudioRenderer*>( pAwd->GetDrawer( 0 ) );
 			return pAudioRenderer->GenerateAudio( fn.GetFullPath(), cfg.GetFrequency() );
 		}
@@ -300,7 +300,7 @@ static bool save_rendered_wave( McChainWaveDrawer* pWaveDrawer, const wxConfigur
 		case DRAWING_MODE_RASTER2:
 		case DRAWING_MODE_POLY:
 		{
-			McGraphicalContextWaveDrawer* pGc = static_cast<McGraphicalContextWaveDrawer*>( pWaveDrawer->GetWaveDrawer() );
+			McGraphicalContextWaveDrawer* pGc = static_cast<McGraphicalContextWaveDrawer*>( waveDrawer.GetWaveDrawer() );
 			wxImage						  img( pGc->GetBitmap() );
 
 			img.SetOption( wxIMAGE_OPTION_RESOLUTIONX, cfg.GetImageResolution().GetWidth() );
@@ -309,16 +309,16 @@ static bool save_rendered_wave( McChainWaveDrawer* pWaveDrawer, const wxConfigur
 			img.SetOption( wxIMAGE_OPTION_QUALITY, cfg.GetImageQuality() );
 			img.SetOption( wxIMAGE_OPTION_FILENAME, fn.GetName() );
 
-			wxLogInfo( _( "Saving image to file %s" ), fn.GetFullPath() );
+			wxLogInfo( _( "Saving image to file \u201C%s\u201D" ), fn.GetFullName() );
 			bool res = img.SaveFile( fn.GetFullPath() );
 			if ( res )
 			{
-				wxLogInfo( _( "Image sucessfully saved to file %s" ), fn.GetFullPath() );
+				wxLogInfo( _( "Image sucessfully saved to file \u201C%s\u201D" ), fn.GetFullName() );
 				return true;
 			}
 			else
 			{
-				wxLogError( _( "Fail to save image to file %s" ), fn.GetFullPath() );
+				wxLogError( _( "Fail to save image to file \u201C%s\u201D" ), fn.GetFullName() );
 				return false;
 			}
 		}
@@ -358,7 +358,7 @@ int wxMyApp::OnRun()
 	SoundFile sfReader;
 	if ( !sfReader.Open( inputFile.GetFullPath() ) )
 	{
-		wxLogError( _( "Cannot open sound file %s" ), inputFile.GetFullName() );
+		wxLogError( _( "Cannot open sound file \u201C%s\u201D" ), inputFile.GetFullName() );
 		return false;
 	}
 
@@ -387,13 +387,12 @@ int wxMyApp::OnRun()
 
 	{
 		ProcessorHolder holder( *pWaveDrawer );
-		wxLogInfo( _( "Drawing wave" ) );
+		wxLogInfo( _( "Drawing waveform" ) );
 		read_audio_samples( sfReader, *pWaveDrawer );
 	}
 
-	wxLogInfo( _( "Wave drawed" ) );
-
-	return save_rendered_wave( pWaveDrawer.get(), m_cfg ) ? 0 : 1;
+	wxLogInfo( _( "Waveform drawed" ) );
+	return save_rendered_wave( *pWaveDrawer, m_cfg ) ? 0 : 1;
 }
 
 int wxMyApp::OnExit()

@@ -181,6 +181,8 @@ protected:
 	wxFileName m_cuePointsFile;
 	Interval m_interval;
 
+	bool m_bUseMLang;
+
 protected:
 
 	bool ReadNegatableSwitchValue( const wxCmdLineParser& cmdLine, const wxString& name, bool& switchVal );
@@ -188,7 +190,6 @@ protected:
 	bool ParseColourString( const wxString&, wxColour& );
 	void GetDefaultsFromDisplay();
 	static bool ConvertStringToDrawingMode( const wxString&, DRAWING_MODE& );
-	static bool ReadCuePoints( wxTimeSpanArray&, const wxString& );
 
 	static wxString GetDrawingModeAsText( DRAWING_MODE );
 	static wxString GetDrawingModeTexts();
@@ -251,6 +252,8 @@ public:
 
 	bool HasCuePointsInterval() const;
 	bool GenerateCuePoints( const wxTimeSpan&, wxTimeSpanArray& ) const;
+
+	bool UseMLang() const;
 
 public:
 

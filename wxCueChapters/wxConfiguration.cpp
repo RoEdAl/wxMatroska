@@ -301,7 +301,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine )
 	cmdLine.AddSwitch( wxEmptyString, wxT( "read-media-tags" ), _( "Embedded mode flag. Read tags from media file (default: yes)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 
 	// advanced options
-	cmdLine.AddSwitch( wxEmptyString, wxT( "use-mlang" ), _( "Use MLang library (default)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( wxEmptyString, wxT( "use-mlang" ), _( "Use MLang library (default: yes)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxT( "t1i0" ), wxT( "track-01-index-00" ), _( "For first track use index 00 as beginning of track (by default index 01 is used)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxEmptyString, wxT( "hidden-indexes" ), _( "Convert indexes to hidden (sub)chapters (default no)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxEmptyString, wxT( "attach-eac-log" ), _( "Attach EAC log file to mkvmerge options file (default: yes)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );

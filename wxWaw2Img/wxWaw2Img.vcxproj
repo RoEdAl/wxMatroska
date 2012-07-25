@@ -93,6 +93,7 @@
     <ClInclude Include="ArrayWaveDrawer.h" />
     <ClInclude Include="AudioRenderer.h" />
     <ClInclude Include="ChannelMixer.h" />
+    <ClInclude Include="CuePointsReader.h" />
     <ClInclude Include="FloatArray.h" />
     <ClInclude Include="LogarithmicScale.h" />
     <ClInclude Include="MCChainWaveDrawer.h" />
@@ -117,6 +118,7 @@
     <ClCompile Include="ArrayWaveDrawer.cpp" />
     <ClCompile Include="AudioRenderer.cpp" />
     <ClCompile Include="ChannelMixer.cpp" />
+    <ClCompile Include="CuePointsReader.cpp" />
     <ClCompile Include="FloatArray.cpp" />
     <ClCompile Include="MCChainWaveDrawer.cpp" />
     <ClCompile Include="MCGraphicsContextWaveDrawer.cpp" />
