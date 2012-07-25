@@ -7,17 +7,22 @@
 #include "SampleProcessor.h"
 #include "WaveDrawer.h"
 #include "SampleChunker.h"
+#include "DrawerSettings.h"
 #include "WaveDrawerGraphicsContext.h"
 #include "WaveDrawerSimple.h"
 
 SimpleWaveDrawer::SimpleWaveDrawer( wxUint64 nNumberOfSamples,
 									wxGraphicsContext* gc,
-									bool bLogarithmicScale, wxFloat32 fLogBase,
-									wxRect2DInt rc, const wxColour& clr,
-									bool bUseCuePoints, const wxTimeSpanArray& cuePoints,
-									const wxColour& clrBgSecond ):
-	GraphicsContextWaveDrawer( nNumberOfSamples, gc, bLogarithmicScale, fLogBase, rc, bUseCuePoints, cuePoints, clrBgSecond ),
-	m_clr( clr ), m_bLogarithmicScale( bLogarithmicScale )
+									const wxRect2DInt& rc,
+									const DrawerSettings& drawerSettings,
+									bool bUseCuePoints, const wxTimeSpanArray& cuePoints ):
+GraphicsContextWaveDrawer( 
+	nNumberOfSamples,
+	gc,
+	drawerSettings.UseLogarithmicScale(),
+	drawerSettings.GetLogarithmBase(),
+	rc,
+	drawerSettings, bUseCuePoints, cuePoints )
 {}
 
 void SimpleWaveDrawer::ProcessInitializer()
@@ -29,7 +34,7 @@ void SimpleWaveDrawer::ProcessInitializer()
 
 void SimpleWaveDrawer::NextColumn( wxFloat32 fValue, wxFloat32 fLogValue )
 {
-	wxFloat32		p = ( m_bLogarithmicScale ? fLogValue : fValue ) * m_nImgHeight;
+	wxFloat32		p = ( m_drawerSettings.UseLogarithmicScale() ? fLogValue : fValue ) * m_nImgHeight;
 	wxPoint2DDouble point_central( m_nCurrentColumn + m_rc.m_x, m_yoffset );
 
 	m_path.MoveToPoint( point_central.m_x, point_central.m_y - p );
@@ -40,7 +45,7 @@ void SimpleWaveDrawer::ProcessFinalizer()
 {
 	__super::ProcessFinalizer();
 
-	wxGraphicsPen pen = m_gc->CreatePen( wxPen( m_clr ) );
+	wxGraphicsPen pen = m_gc->CreatePen( wxPen( m_drawerSettings.GetColourFrom() ) );
 	m_gc->SetPen( pen );
 	m_gc->DrawPath( m_path );
 }

@@ -7,18 +7,23 @@
 #include "SampleProcessor.h"
 #include "WaveDrawer.h"
 #include "SampleChunker.h"
+#include "DrawerSettings.h"
 #include "WaveDrawerGraphicsContext.h"
 #include "WaveDrawerRaster.h"
 
 RasterWaveDrawer::RasterWaveDrawer( wxUint64 nNumberOfSamples,
 									wxGraphicsContext* gc,
-									bool bLogarithmicScale, bool bLogarithmicColorGradient, wxFloat32 fLogBase,
-									wxRect2DInt rc, const wxColour& clrFrom, const wxColour& clrTo,
-									bool bUseCuePoints, const wxTimeSpanArray& cuePoints,
-									const wxColour& clrBgSecond ):
-	GraphicsContextWaveDrawer( nNumberOfSamples, gc, bLogarithmicScale || bLogarithmicColorGradient, fLogBase, rc, bUseCuePoints, cuePoints, clrBgSecond ),
-	m_clrFrom( clrFrom ), m_clrTo( clrTo ),
-	m_bLogarithmicScale( bLogarithmicScale ), m_bLogarithmicColorGradient( bLogarithmicColorGradient )
+									const wxRect2DInt& rc, 
+									const DrawerSettings& drawerSettings,
+									bool bUseCuePoints, const wxTimeSpanArray& cuePoints ):
+GraphicsContextWaveDrawer( 
+	nNumberOfSamples,
+	gc,
+	drawerSettings.UseLogarithmicScale() || drawerSettings.UseLogarithmicColorGradient(),
+	drawerSettings.GetLogarithmBase(),
+	rc,
+	drawerSettings,
+	bUseCuePoints, cuePoints )
 {}
 
 bool RasterWaveDrawer::has_alpha( const wxColour& clr )

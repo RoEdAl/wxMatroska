@@ -13,8 +13,9 @@ class GraphicsContextWaveDrawer:
 		GraphicsContextWaveDrawer( wxUint64,
 								   wxGraphicsContext* gc,
 								   bool, wxFloat32,
-								   wxRect2DInt,
-								   bool, const wxTimeSpanArray&, const wxColour& );
+								   const wxRect2DInt&,
+								   const DrawerSettings&,
+								   bool, const wxTimeSpanArray& );
 
 	protected:
 
@@ -32,9 +33,10 @@ class GraphicsContextWaveDrawer:
 		wxFloat32			   m_height2;
 		wxFloat32			   m_yoffset;
 		wxInt32				   m_nImgHeight;
+
+		const DrawerSettings& m_drawerSettings;
 		bool				   m_bUseCuePoints;
 		const wxTimeSpanArray& m_cuePoints;
-		wxColour			   m_clrBgSecond;
 };
 
 #endif

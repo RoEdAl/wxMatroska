@@ -11,9 +11,9 @@ class Raster2WaveDrawer:
 
 		Raster2WaveDrawer( wxUint64,
 						   wxGraphicsContext*,
-						   bool, bool, wxFloat32,
-						   wxRect2DInt, const wxColour&, const wxColour&,
-						   bool, const wxTimeSpanArray&, const wxColour& );
+						   const wxRect2DInt&,
+						   const DrawerSettings&,
+						   bool, const wxTimeSpanArray& );
 
 	protected:
 

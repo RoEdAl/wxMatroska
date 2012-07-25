@@ -22,41 +22,20 @@ class wxConfiguration:
 	protected:
 
 		DRAWING_MODE m_eDrawingMode;
-
 		wxFileName m_inputFile;
 		wxFileName m_outputFile;
-
-		wxUint32 m_nWidth;
-		wxUint32 m_nHeight;
-
-		wxColour m_clrFrom;
-		wxColour m_clrTo;
-		bool	 m_bDrawWithGradient;
-
-		wxColour m_clrBackground;
-		wxColour m_clrBackground2;
-
+		DrawerSettings m_drawerSettings;
 		wxImageResolution m_imageResolutionUnits;
+		wxSize m_imageSize;
 		wxSize			  m_imageResolution;
 		wxUint16		  m_nImageQuality;
-
 		int m_nImageColorDepth;
-
-		bool	  m_bLogarithmicScale;
-		bool	  m_bLogarithmicColorGradient;
-		wxFloat32 m_fLogBase;
-
 		bool	 m_bMultiChannel;
 		wxUint16 m_nColumnNumber;
 		wxSize	 m_margins;
-
 		bool m_bPowerMix;
-
-		wxUint16 m_nFrequency;
-
 		wxFileName m_cuePointsFile;
 		Interval   m_interval;
-
 		bool m_bUseMLang;
 
 	protected:
@@ -66,7 +45,6 @@ class wxConfiguration:
 		bool ParseColourString( const wxString&, wxColour& );
 		void GetDefaultsFromDisplay();
 		static bool ConvertStringToDrawingMode( const wxString&, DRAWING_MODE& );
-
 		static wxString GetDrawingModeAsText( DRAWING_MODE );
 		static wxString GetDrawingModeTexts();
 		static wxString GetSwitchAsText( bool );
@@ -88,54 +66,31 @@ class wxConfiguration:
 
 		const wxFileName& GetInputFile() const;
 		wxFileName GetOutputFile() const;
-
-		wxUint32 GetWidth() const;
-		wxUint32 GetHeight() const;
-
-		const wxColour& GetColourFrom() const;
-		const wxColour& GetColourTo() const;
-		bool DrawWithGradient() const;
-
-		const wxColour& GetBackgroundColor() const;
-		const wxColour& GetSecondaryBackgroundColor() const;
-
+		const DrawerSettings& GetDrawerSettings() const;
+		const wxSize& GetImageSize() const;
 		wxImageResolution GetImageResolutionUnits() const;
 		const wxSize& GetImageResolution() const;
 		wxUint16 GetImageQuality() const;
-
 		int GetImageColorDepth() const;
-
-		bool UseLogarithmicScale() const;
-		bool UseLogarithmicColorPalette() const;
-		wxFloat32 GetLogarithmBase() const;
-
 		bool MultiChannel() const;
 		wxUint16 GetNumberOfColumns() const;
 		wxSize GetMargins() const;
-
 		wxRect2DInt GetDrawerRect() const;
-
 		wxRect2DInt GetDrawerRect( wxUint16, wxUint16 ) const;
-
 		bool PowerMix() const;
-
 		DRAWING_MODE GetDrawingMode() const;
-		wxUint16 GetFrequency() const;
-
 		bool HasCuePointsFile() const;
 		const wxFileName& GetCuePointsFile() const;
 		bool ReadCuePoints( wxTimeSpanArray& ) const;
-
 		bool HasCuePointsInterval() const;
 		bool GenerateCuePoints( const wxTimeSpan&, wxTimeSpanArray& ) const;
-
 		bool UseMLang() const;
 
 	public:
 
 		wxConfiguration( void );
 
-		void AddCmdLineParams( wxCmdLineParser& );
+		void AddCmdLineParams( wxCmdLineParser& ) const;
 		bool Read( const wxCmdLineParser& );
 
 		static const wxSystemColour COLOR_BACKGROUND;

@@ -12,10 +12,9 @@ class SimpleWaveDrawer:
 
 		SimpleWaveDrawer( wxUint64,
 						  wxGraphicsContext* gc,
-						  bool, wxFloat32,
-						  wxRect2DInt,
-						  const wxColour&,
-						  bool, const wxTimeSpanArray&, const wxColour& );
+						  const wxRect2DInt&,
+						  const DrawerSettings&,
+						  bool, const wxTimeSpanArray& );
 
 	protected:
 
@@ -25,9 +24,6 @@ class SimpleWaveDrawer:
 		virtual void ProcessFinalizer();
 
 	protected:
-
-		wxColour m_clr;
-		bool	 m_bLogarithmicScale;
 
 		wxGraphicsPath m_path;
 };

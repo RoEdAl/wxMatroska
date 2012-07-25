@@ -6,6 +6,7 @@
 #include "FloatArray.h"
 #include "LogarithmicScale.h"
 #include "Interval.h"
+#include "DrawerSettings.h"
 #include "wxConfiguration.h"
 #include "wxApp.h"
 
@@ -192,21 +193,21 @@ static WaveDrawer* create_wave_drawer( DRAWING_MODE eMode, const wxConfiguration
 	{
 		case DRAWING_MODE_SIMPLE:
 		{
-			return new SimpleWaveDrawer( nNumberOfSamples, gc, cfg.UseLogarithmicScale(), cfg.GetLogarithmBase(), rc, cfg.GetColourFrom(), bUseCuePoints, cuePoints, cfg.GetSecondaryBackgroundColor() );
+			return new SimpleWaveDrawer( nNumberOfSamples, gc, rc, cfg.GetDrawerSettings(), bUseCuePoints, cuePoints );
 		}
 
 		case DRAWING_MODE_RASTER1:
 		{
-			return new Raster1WaveDrawer( nNumberOfSamples, gc, cfg.UseLogarithmicScale(), cfg.UseLogarithmicColorPalette(), cfg.GetLogarithmBase(), rc, cfg.GetColourFrom(), cfg.GetColourTo(), bUseCuePoints, cuePoints, cfg.GetSecondaryBackgroundColor() );
+			return new Raster1WaveDrawer( nNumberOfSamples, gc, rc, cfg.GetDrawerSettings(), bUseCuePoints, cuePoints );
 		}
 
 		case DRAWING_MODE_RASTER2:
 		{
-			return new Raster2WaveDrawer( nNumberOfSamples, gc, cfg.UseLogarithmicScale(), cfg.UseLogarithmicColorPalette(), cfg.GetLogarithmBase(), rc, cfg.GetColourFrom(), cfg.GetColourTo(), bUseCuePoints, cuePoints, cfg.GetSecondaryBackgroundColor() );
+			return new Raster2WaveDrawer( nNumberOfSamples, gc, rc, cfg.GetDrawerSettings(), bUseCuePoints, cuePoints );
 		}
 
 		case DRAWING_MODE_POLY:
-		return new PolyWaveDrawer( nNumberOfSamples, gc, cfg.UseLogarithmicScale(), cfg.UseLogarithmicColorPalette(), cfg.GetLogarithmBase(), rc, cfg.GetColourFrom(), cfg.GetColourTo(), bUseCuePoints, cuePoints, cfg.GetSecondaryBackgroundColor() );
+		return new PolyWaveDrawer( nNumberOfSamples, gc, rc, cfg.GetDrawerSettings(), bUseCuePoints, cuePoints );
 	}
 
 	wxASSERT( false );
@@ -221,6 +222,8 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 		return NULL;
 	}
 
+	const DrawerSettings& drawerSettings = cfg.GetDrawerSettings();
+
 	wxUint64 nSamples	 = sfInfo.frames;
 	wxUint16 nChannels	 = sfInfo.channels;
 	wxUint32 nSamplerate = sfInfo.samplerate;
@@ -232,7 +235,8 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 		case DRAWING_MODE_AUDIO:
 		{
 			ArrayWaveDrawer* pAwd = new ArrayWaveDrawer( 1 );
-			pAwd->AddDrawer( new AudioRenderer( nSamples, cfg.GetWidth(), cfg.UseLogarithmicScale(), cfg.GetLogarithmBase(), nSamplerate ) );
+
+			pAwd->AddDrawer( new AudioRenderer( nSamples, cfg.GetImageSize().GetWidth(), drawerSettings.UseLogarithmicScale(), drawerSettings.GetLogarithmBase(), nSamplerate ) );
 			pMcwd = pAwd;
 			break;
 		}
@@ -245,8 +249,9 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 			if ( cfg.MultiChannel() )
 			{
 				McGraphicalContextWaveDrawer* pGc = new McGraphicalContextWaveDrawer( 1 );
+				const DrawerSettings& drawerSettings = cfg.GetDrawerSettings();
 
-				wxGraphicsContext* gc = pGc->Initialize( cfg.GetWidth(), cfg.GetHeight(), cfg.GetImageColorDepth(), cfg.GetBackgroundColor() );
+				wxGraphicsContext* gc = pGc->Initialize( cfg.GetImageSize(), cfg.GetImageColorDepth(), drawerSettings.GetBackgroundColour() );
 
 				if ( gc == NULL )
 				{
@@ -265,7 +270,7 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 			{
 				McGraphicalContextWaveDrawer* pGc = new McGraphicalContextWaveDrawer( 1 );
 
-				wxGraphicsContext* gc = pGc->Initialize( cfg.GetWidth(), cfg.GetHeight(), cfg.GetImageColorDepth(), cfg.GetBackgroundColor() );
+				wxGraphicsContext* gc = pGc->Initialize( cfg.GetImageSize(), cfg.GetImageColorDepth(), drawerSettings.GetBackgroundColour() );
 
 				if ( gc == NULL )
 				{
@@ -308,7 +313,7 @@ static bool save_rendered_wave( McChainWaveDrawer& waveDrawer, const wxConfigura
 		{
 			ArrayWaveDrawer* pAwd			= static_cast< ArrayWaveDrawer* >( waveDrawer.GetWaveDrawer() );
 			AudioRenderer*	 pAudioRenderer = static_cast< AudioRenderer* >( pAwd->GetDrawer( 0 ) );
-			return pAudioRenderer->GenerateAudio( fn.GetFullPath(), cfg.GetFrequency() );
+			return pAudioRenderer->GenerateAudio( fn.GetFullPath(), cfg.GetDrawerSettings().GetFrequency() );
 		}
 
 		case DRAWING_MODE_SIMPLE:

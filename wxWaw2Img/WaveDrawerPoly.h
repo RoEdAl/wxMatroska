@@ -13,14 +13,13 @@ class PolyWaveDrawer:
 
 		PolyWaveDrawer( wxUint64,
 						wxGraphicsContext*,
-						bool, bool, wxFloat32,
-						wxRect2DInt, const wxColour&, const wxColour&,
-						bool, const wxTimeSpanArray&, const wxColour& );
+						const wxRect2DInt&,
+						const DrawerSettings&,
+						bool, const wxTimeSpanArray& );
 
 	protected:
 
 		virtual void ProcessInitializer();
-
 		virtual void NextColumn( wxFloat32, wxFloat32 );
 		virtual void ProcessFinalizer();
 

@@ -19,10 +19,10 @@ wxImage McGraphicalContextWaveDrawer::GetBitmap() const
 	return m_bmp->ConvertToImage();
 }
 
-wxGraphicsContext* McGraphicalContextWaveDrawer::Initialize( wxUint32 nWidth, wxUint32 nHeight, int nImageColourDepth, const wxColour& clrBg )
+wxGraphicsContext* McGraphicalContextWaveDrawer::Initialize( const wxSize& imageSize, int nImageColourDepth, const wxColour& clrBg )
 {
 	wxLogInfo( _( "Creating bitmap" ) );
-	m_bmp.reset( new wxBitmap( nWidth, nHeight, nImageColourDepth ) );
+	m_bmp.reset( new wxBitmap( imageSize.GetWidth(), imageSize.GetHeight(), nImageColourDepth ) );
 
 	wxLogInfo( _( "Creating memory context" ) );
 	m_mc.reset( new wxMemoryDC() );
@@ -44,7 +44,7 @@ wxGraphicsContext* McGraphicalContextWaveDrawer::Initialize( wxUint32 nWidth, wx
 	m_gc->SetInterpolationQuality( wxINTERPOLATION_BEST );
 	m_gc->SetPen( wxNullPen );
 	m_gc->SetBrush( clrBg );
-	m_gc->DrawRectangle( 0, 0, nWidth, nHeight );
+	m_gc->DrawRectangle( 0, 0, imageSize.GetWidth(), imageSize.GetHeight() );
 	m_gc->SetBrush( *wxTRANSPARENT_BRUSH );
 
 	return m_gc.get();

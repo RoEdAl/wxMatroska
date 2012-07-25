@@ -11,9 +11,9 @@ class RasterWaveDrawer:
 
 		RasterWaveDrawer( wxUint64,
 						  wxGraphicsContext*,
-						  bool, bool, wxFloat32,
-						  wxRect2DInt, const wxColour&, const wxColour&,
-						  bool, const wxTimeSpanArray&, const wxColour& );
+						  const wxRect2DInt&,
+						  const DrawerSettings&,
+						  bool, const wxTimeSpanArray& );
 
 	protected:
 
@@ -35,13 +35,6 @@ class RasterWaveDrawer:
 		static wxImage draw_gradient_bitmap( wxMemoryDC &, const wxColour &, const wxColour &, wxUint32 );
 		static wxImage draw_log_gradient_bitmap( wxMemoryDC &, const wxColour &, const wxColour &, wxUint32, const LogarithmicScale & );
 
-	protected:
-
-		wxColour m_clrFrom;
-		wxColour m_clrTo;
-
-		bool m_bLogarithmicScale;
-		bool m_bLogarithmicColorGradient;
 };
 
 #endif

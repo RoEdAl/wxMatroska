@@ -7,17 +7,17 @@
 #include "SampleProcessor.h"
 #include "WaveDrawer.h"
 #include "SampleChunker.h"
+#include "DrawerSettings.h"
 #include "WaveDrawerGraphicsContext.h"
 #include "WaveDrawerRaster.h"
 #include "WaveDrawerPoly.h"
 
 PolyWaveDrawer::PolyWaveDrawer( wxUint64 nNumberOfSamples,
 								wxGraphicsContext* gc,
-								bool bLogarithmicScale, bool bLogarithmicColorGradient, wxFloat32 fLogBase,
-								wxRect2DInt rc, const wxColour& clrFrom, const wxColour& clrTo,
-								bool bUseCuePoints, const wxTimeSpanArray& cuePoints,
-								const wxColour& clrBgSecond ):
-	RasterWaveDrawer( nNumberOfSamples, gc, bLogarithmicScale, bLogarithmicColorGradient, fLogBase, rc, clrFrom, clrTo, bUseCuePoints, cuePoints, clrBgSecond )
+								const wxRect2DInt& rc,
+								const DrawerSettings& drawerSettings,
+								bool bUseCuePoints, const wxTimeSpanArray& cuePoints ):
+	RasterWaveDrawer( nNumberOfSamples, gc, rc, drawerSettings, bUseCuePoints, cuePoints )
 {}
 
 void PolyWaveDrawer::ProcessInitializer()
@@ -28,7 +28,7 @@ void PolyWaveDrawer::ProcessInitializer()
 
 void PolyWaveDrawer::NextColumn( wxFloat32 fValue, wxFloat32 fLogValue )
 {
-	m_points.Add( wxPoint2DDouble( m_nCurrentColumn, m_bLogarithmicScale ? fLogValue : fValue ) );
+	m_points.Add( wxPoint2DDouble( m_nCurrentColumn, m_drawerSettings.UseLogarithmicScale() ? fLogValue : fValue ) );
 }
 
 void PolyWaveDrawer::ProcessFinalizer()
@@ -66,15 +66,15 @@ void PolyWaveDrawer::ProcessFinalizer()
 
 	path.AddLineToPoint( first_point );
 
-	wxGraphicsGradientStops stops( m_clrTo, m_clrTo );
+	wxGraphicsGradientStops stops( m_drawerSettings.GetColourTo(), m_drawerSettings.GetColourTo() );
 
-	if ( m_bLogarithmicColorGradient )
+	if ( m_drawerSettings.UseLogarithmicColorGradient() )
 	{
-		create_log_stops( stops, m_clrFrom, m_clrTo, m_nImgHeight, GetLogarithmicScale() );
+		create_log_stops( stops, m_drawerSettings.GetColourFrom(), m_drawerSettings.GetColourTo(), m_nImgHeight, GetLogarithmicScale() );
 	}
 	else
 	{
-		stops.Add( m_clrFrom, 0.5f );
+		stops.Add( m_drawerSettings.GetColourFrom(), 0.5f );
 	}
 
 	wxGraphicsBrush brush = m_gc->CreateLinearGradientBrush( 0, 0, 0, 2 * m_nImgHeight, stops );

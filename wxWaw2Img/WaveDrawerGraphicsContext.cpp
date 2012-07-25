@@ -8,18 +8,19 @@
 #include "SampleProcessor.h"
 #include "WaveDrawer.h"
 #include "SampleChunker.h"
+#include "DrawerSettings.h"
 #include "WaveDrawerGraphicsContext.h"
 
 GraphicsContextWaveDrawer::GraphicsContextWaveDrawer( wxUint64 nNumberOfSamples, wxGraphicsContext* gc,
 													  bool bCalcLogarithmic, wxFloat32 fLogBase,
-													  wxRect2DInt rc,
-													  bool bUseCuePoints, const wxTimeSpanArray& cuePoints,
-													  const wxColour& clrBgSecond ):
+													  const wxRect2DInt& rc,
+													  const DrawerSettings& drawerSettings,
+													  bool bUseCuePoints, const wxTimeSpanArray& cuePoints ):
 	SampleChunker( nNumberOfSamples, rc.m_width, bCalcLogarithmic, fLogBase ),
 	m_gc( gc ),
 	m_rc( rc ),
-	m_bUseCuePoints( bUseCuePoints ), m_cuePoints( cuePoints ),
-	m_clrBgSecond( clrBgSecond )
+	m_drawerSettings( drawerSettings ),
+	m_bUseCuePoints( bUseCuePoints ), m_cuePoints( cuePoints )
 {}
 
 void GraphicsContextWaveDrawer::ProcessInitializer()
@@ -31,7 +32,7 @@ void GraphicsContextWaveDrawer::ProcessInitializer()
 	if ( m_bUseCuePoints )
 	{
 		wxGraphicsPath path = create_cue_region( *m_gc, m_rc, m_cuePoints );
-		m_gc->SetBrush( m_clrBgSecond );
+		m_gc->SetBrush( m_drawerSettings.GetBackgroundColour() );
 		m_gc->FillPath( path );
 		m_gc->SetBrush( wxNullBrush );
 	}

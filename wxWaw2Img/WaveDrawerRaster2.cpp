@@ -7,17 +7,17 @@
 #include "SampleProcessor.h"
 #include "WaveDrawer.h"
 #include "SampleChunker.h"
+#include "DrawerSettings.h"
 #include "WaveDrawerGraphicsContext.h"
 #include "WaveDrawerRaster.h"
 #include "WaveDrawerRaster2.h"
 
-Raster2WaveDrawer::Raster2WaveDrawer( wxUint64 nNumberOfSamples, wxGraphicsContext* gc,
-									  bool bLogarithmicScale, bool bLogarithmicColorGradient, wxFloat32 fLogBase,
-									  wxRect2DInt rc,
-									  const wxColour& clrFrom, const wxColour& clrTo,
-									  bool bUseCuePoints, const wxTimeSpanArray& cuePoints,
-									  const wxColour& clrBgSecond ):
-	RasterWaveDrawer( nNumberOfSamples, gc, bLogarithmicScale, bLogarithmicColorGradient, fLogBase, rc, clrFrom, clrTo, bUseCuePoints, cuePoints, clrBgSecond )
+Raster2WaveDrawer::Raster2WaveDrawer( wxUint64 nNumberOfSamples,
+									 wxGraphicsContext* gc,
+									  const wxRect2DInt& rc,
+									  const DrawerSettings& drawerSettings,
+									  bool bUseCuePoints, const wxTimeSpanArray& cuePoints ):
+	RasterWaveDrawer( nNumberOfSamples, gc, rc, drawerSettings, bUseCuePoints, cuePoints )
 {}
 
 void Raster2WaveDrawer::ProcessInitializer()
@@ -30,12 +30,12 @@ void Raster2WaveDrawer::ProcessInitializer()
 void Raster2WaveDrawer::NextColumn( wxFloat32 fValue, wxFloat32 fLogValue )
 {
 	// wxColour clrFrom = linear_interpolation( m_clrTo, m_clrFrom, abs( m_bLogarithmicColorGradient? fLogValue : fValue ) );
-	wxColour clrFrom = linear_interpolation( m_clrTo, m_clrFrom, abs( fValue ) );
-	wxColour clrTo	 = m_clrTo;
+	wxColour clrFrom = linear_interpolation( m_drawerSettings.GetColourTo(), m_drawerSettings.GetColourFrom(), abs( fValue ) );
+	wxColour clrTo	 = m_drawerSettings.GetColourTo();
 
 	wxImage img;
 
-	if ( m_bLogarithmicColorGradient )
+	if ( m_drawerSettings.UseLogarithmicColorGradient() )
 	{
 		wxASSERT( UseLogarithmicScale() );
 		img = create_log_gradient_bitmap( *m_mdc, clrFrom, clrTo, m_nImgHeight, GetLogarithmicScale() );
@@ -46,7 +46,7 @@ void Raster2WaveDrawer::NextColumn( wxFloat32 fValue, wxFloat32 fLogValue )
 	}
 
 	wxPoint2DDouble point_central( m_nCurrentColumn + m_rc.m_x, m_yoffset );
-	wxRect2DDouble	rc( 0, 0, 1, abs( ( m_bLogarithmicScale ? fLogValue : fValue ) * m_nImgHeight ) );
+	wxRect2DDouble	rc( 0, 0, 1, abs( ( m_drawerSettings.UseLogarithmicScale() ? fLogValue : fValue ) * m_nImgHeight ) );
 	m_gc->DrawBitmap( m_gc->CreateBitmapFromImage( img ), point_central.m_x, point_central.m_y - rc.m_height, rc.m_width, 2 * rc.m_height );
 }
 
