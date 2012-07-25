@@ -26,12 +26,10 @@ class AudioRenderer:
 	public:
 
 		AudioRenderer( wxUint64, wxUint32, bool, wxFloat32, wxUint32 );
-
 		const AudioColumnArray& GetAudioColumns() const;
 
-		bool GenerateAudio( const wxString &, wxUint32 ) const;
-
-		static bool GenerateAudio( const wxString &, const AudioColumnArray &, wxUint32, wxUint32 );
+		bool		GenerateAudio( const wxFileName &, wxUint32, wxFloat32 ) const;
+		static bool GenerateAudio( const wxFileName &, const AudioColumnArray &, wxUint32, wxUint32, wxFloat32 );
 
 	protected:
 

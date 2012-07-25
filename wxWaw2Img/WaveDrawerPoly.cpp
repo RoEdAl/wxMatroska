@@ -41,7 +41,7 @@ void PolyWaveDrawer::ProcessFinalizer()
 		wxPoint2DDouble pt( m_points[ i ] );
 
 		pt.m_x += m_rc.m_x;
-		pt.m_y	= m_yoffset + ( abs( pt.m_y ) * m_nImgHeight );
+		pt.m_y	= m_yoffset - ( abs( pt.m_y ) * m_heightUp );
 
 		if ( i == 0 )
 		{
@@ -59,7 +59,7 @@ void PolyWaveDrawer::ProcessFinalizer()
 		wxPoint2DDouble pt( m_points[ i - 1 ] );
 
 		pt.m_x += m_rc.m_x;
-		pt.m_y	= m_yoffset - ( abs( pt.m_y ) * m_nImgHeight );
+		pt.m_y	= m_yoffset + ( abs( pt.m_y ) * m_heightDown );
 
 		path.AddLineToPoint( pt );
 	}
@@ -70,14 +70,20 @@ void PolyWaveDrawer::ProcessFinalizer()
 
 	if ( m_drawerSettings.UseLogarithmicColorGradient() )
 	{
-		create_log_stops( stops, m_drawerSettings.GetColourFrom(), m_drawerSettings.GetColourTo(), m_nImgHeight, GetLogarithmicScale() );
+		create_log_stops(
+				stops,
+				m_drawerSettings.GetColourFrom(),
+				m_drawerSettings.GetColourTo(),
+				m_rc.m_height,
+				m_drawerSettings.GetBaselinePosition(),
+				GetLogarithmicScale() );
 	}
 	else
 	{
-		stops.Add( m_drawerSettings.GetColourFrom(), 0.5f );
+		stops.Add( m_drawerSettings.GetColourFrom(), 1.0f - m_drawerSettings.GetBaselinePosition() );
 	}
 
-	wxGraphicsBrush brush = m_gc->CreateLinearGradientBrush( 0, 0, 0, 2 * m_nImgHeight, stops );
+	wxGraphicsBrush brush = m_gc->CreateLinearGradientBrush( 0, 0, 0, m_rc.m_height, stops );
 
 	m_gc->SetBrush( brush );
 	m_gc->FillPath( path );

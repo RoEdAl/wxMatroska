@@ -61,9 +61,9 @@ void AudioRenderer::NextColumn( wxFloat32 fSample, wxFloat32 fLogSample )
 	m_ac.Add( AudioColumn( m_bUseLogarithmicScale ? fLogSample : fSample, m_nSamplesInColumn ) );
 }
 
-bool AudioRenderer::GenerateAudio( const wxString& filename, wxUint32 nFrequency ) const
+bool AudioRenderer::GenerateAudio( const wxFileName& filename, wxUint32 nFrequency, wxFloat32 fBaseline ) const
 {
-	return GenerateAudio( filename, m_ac, m_nSourceSamplerate, nFrequency );
+	return GenerateAudio( filename, m_ac, m_nSourceSamplerate, nFrequency, fBaseline );
 }
 
 void AudioRenderer::ProcessFinalizer()
@@ -77,19 +77,27 @@ class QGen
 {
 	public:
 
-		QGen( wxUint32 nLen ):
-			m_nLen( nLen ), m_sign( true ), m_nPos( 0 ), m_nSamplesCounter( wxULL( 0 ) ),
+		QGen( wxUint32 nLen, wxFloat32 fBaseline ):
+			m_nLen( nLen ),
+			m_fBaseline( fBaseline ),
+			m_sign( true ), m_nPos( 0 ), m_nSamplesCounter( wxULL( 0 ) ),
 			m_ar1( new wxFloat32[ nLen ] ), m_ar2( new wxFloat32[ nLen ] )
-		{}
+		{
+			wxASSERT( fBaseline >= 0.0f && fBaseline <= 1.0f );
+		}
 
 		void SetAmplitude( wxFloat32 fAmplitude )
 		{
-			float fNAmplitude = -fAmplitude;
+			wxFloat32 fUpFactor	  = ( 1.0f - m_fBaseline ) / 0.5f;
+			wxFloat32 fDownFactor = m_fBaseline / 0.5f;
+
+			wxFloat32 fUpAmplitude	 = fAmplitude * fUpFactor;
+			wxFloat32 fDownAmplitude = -fAmplitude * fDownFactor;
 
 			for ( wxUint32 i = 0; i < m_nLen; i++ )
 			{
-				m_ar1[ i ] = fAmplitude;
-				m_ar2[ i ] = fNAmplitude;
+				m_ar1[ i ] = fUpAmplitude;
+				m_ar2[ i ] = fDownAmplitude;
 			}
 		}
 
@@ -127,20 +135,20 @@ class QGen
 	protected:
 
 		wxUint32	 m_nLen;
+		wxFloat32	 m_fBaseline;
 		wxFloatArray m_ar1;
 		wxFloatArray m_ar2;
-
 		bool	 m_sign;
 		wxUint32 m_nPos;
 		wxUint64 m_nSamplesCounter;
 };
 
-bool AudioRenderer::GenerateAudio( const wxString& filename, const AudioColumnArray& ac, wxUint32 nSamplerate, wxUint32 nFrequency )
+bool AudioRenderer::GenerateAudio( const wxFileName& filename, const AudioColumnArray& ac, wxUint32 nSamplerate, wxUint32 nFrequency, wxFloat32 fBaseline )
 {
 	wxASSERT( nFrequency > 0 );
 	wxASSERT( nSamplerate > 8000 );
 
-	wxLogInfo( _( "Opening audio file for writing. Samplerate %d, frequency %d" ), nSamplerate, nFrequency );
+	wxLogInfo( _( "Opening audio file \u201C%s\u201D for writing. Samplerate %d, frequency %d" ), filename.GetFullName(), nSamplerate, nFrequency );
 
 	SF_INFO sf_info;
 	memset( &sf_info, 0, sizeof ( SF_INFO ) );
@@ -150,18 +158,18 @@ bool AudioRenderer::GenerateAudio( const wxString& filename, const AudioColumnAr
 
 	SoundFile sf;
 
-	if ( !sf.Open( filename, sf_info, wxFile::write ) )
+	if ( !sf.Open( filename.GetFullPath(), sf_info, wxFile::write ) )
 	{
-		wxLogInfo( _( "Fail to open destination audio file %s" ), filename );
+		wxLogInfo( _( "Fail to open destination audio file \u201C%s\u201D" ), filename.GetFullName() );
 		return false;
 	}
 
 	wxLogInfo( _( "Generating audio" ) );
-	QGen qgen( nSamplerate / ( nFrequency * 2 ) );
+	QGen qgen( nSamplerate / ( nFrequency * 2 ), fBaseline );
 
 	for ( size_t i = 0, nSize = ac.GetCount(); i < nSize; i++ )
 	{
-		qgen.SetAmplitude( ac[ i ].fAmplitude );
+		qgen.SetAmplitude( abs( ac[ i ].fAmplitude ) );
 		qgen.Generate( sf.GetHandle(), ac[ i ].nNumberOfSamples );
 	}
 

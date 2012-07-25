@@ -1,6 +1,6 @@
 /*
-	DrawerSettings.h
-*/
+ *      DrawerSettings.h
+ */
 #include "StdWx.h"
 #include "DrawerSettings.h"
 
@@ -8,13 +8,16 @@ DrawerSettings::DrawerSettings():
 	m_bDrawWithGradient( true ),
 	m_bLogarithmicScale( false ),
 	m_bLogarithmicColorGradient( false ),
-	m_fLogBase( exp(1.0f) ),
+	m_fLogBase( exp( 1.0f ) ),
 	m_clrFrom( 0, 0, 0, wxALPHA_OPAQUE ),
 	m_clrTo( 0, 0, 0, wxALPHA_TRANSPARENT ),
 	m_clrBg( wxTransparentColour ),
-	m_clrBgSecond(  0, 0, 0, 15 ),
-	m_nFrequency( 50 )
+	m_clrBgSecond( 0, 0, 0, 15 ),
+	m_nFrequency( 50 ),
+	m_fBaselinePosition( 0.5f )
 {}
+
+// ===============================================================
 
 bool DrawerSettings::DrawWithGradient() const
 {
@@ -52,6 +55,33 @@ const wxColour& DrawerSettings::GetColourTo() const
 		return m_clrFrom;
 	}
 }
+
+const wxColour& DrawerSettings::GetBackgroundColour() const
+{
+	return m_clrBg;
+}
+
+const wxColour& DrawerSettings::GetSecondaryBackgroundColour() const
+{
+	return m_clrBgSecond;
+}
+
+wxUint16 DrawerSettings::GetFrequency() const
+{
+	return m_nFrequency;
+}
+
+wxFloat32 DrawerSettings::GetBaselinePosition() const
+{
+	return m_fBaselinePosition;
+}
+
+wxInt32 DrawerSettings::GetBaselinePositionPercent() const
+{
+	return ceil( m_fBaselinePosition * 100 );
+}
+
+// ===============================================================
 
 bool& DrawerSettings::GetDrawWithGradient()
 {
@@ -98,20 +128,12 @@ wxUint16& DrawerSettings::GetFrequency()
 	return m_nFrequency;
 }
 
-const wxColour& DrawerSettings::GetBackgroundColour() const
+wxFloat32& DrawerSettings::GetBaselinePosition()
 {
-	return m_clrBg;
+	return m_fBaselinePosition;
 }
 
-const wxColour& DrawerSettings::GetSecondaryBackgroundColour() const
-{
-	return m_clrTo;
-}
-
-wxUint16 DrawerSettings::GetFrequency() const
-{
-	return m_nFrequency;
-}
+// ===============================================================
 
 DrawerSettings& DrawerSettings::SetDrawWithGradient( bool bDrawWithGradient )
 {
@@ -166,3 +188,17 @@ DrawerSettings& DrawerSettings::SetFrequency( wxUint16 nFrequency )
 	m_nFrequency = nFrequency;
 	return *this;
 }
+
+DrawerSettings& DrawerSettings::SetBaselinePosition( wxFloat32 fBaseLineposition )
+{
+	m_fBaselinePosition = fBaseLineposition;
+	return *this;
+}
+
+DrawerSettings& DrawerSettings::SetBaselinePositionPercent( wxInt32 nBaselinePosition )
+{
+	wxASSERT( nBaselinePosition >= 0 && nBaselinePosition <= 100 );
+	m_fBaselinePosition = nBaselinePosition / 100.0f;
+	return *this;
+}
+

@@ -45,6 +45,7 @@ wxConfiguration::wxConfiguration( void ):
 	m_nColumnNumber( 1 ),
 	m_margins( 4, 4 ),
 	m_bPowerMix( true ),
+	m_bGenerateCuePoints( false ),
 	m_interval( INTERVAL_UNIT_PERCENT, 10 ),
 	m_bUseMLang( true )
 {}
@@ -94,9 +95,11 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 	cmdLine.AddOption( "mx", "margin-x", wxString::Format( _( "Horizontal margin (default %u)" ), m_margins.x ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "my", "margin-y", wxString::Format( _( "Vertical margin (default %u)" ), m_margins.y ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 
+	cmdLine.AddOption( "bl", "baseline-position", wxString::Format( _( "Position of baseline (default %d%%)" ), m_drawerSettings.GetBaselinePositionPercent() ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
+
 	cmdLine.AddOption( "f", "frequency", wxString::Format( _( "Frequency (in Hz) of rendered audio file (default %u)" ), m_drawerSettings.GetFrequency() ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "cp", "cue-point-file", _( "Cue point file" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( "cg", "generate-cue-points", _( "Multi channel mode (default: off)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( "cg", "generate-cue-points", wxString::Format( _( "Multi channel mode (default: %s)" ), GetSwitchAsText( m_bGenerateCuePoints ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddOption( "ci", "cue-points-interval", wxString::Format( _( "Cue points interval (default: %s)" ), m_interval.AsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 
 	cmdLine.AddSwitch( wxEmptyString, "use-mlang", wxString::Format( _( "Use MLang library (default: %s)" ), GetSwitchAsText( m_bUseMLang ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
@@ -154,7 +157,7 @@ void wxConfiguration::GetDefaultsFromDisplay()
 	wxLogInfo( _( "Display color depth: %d bits" ), nDepth );
 	wxLogInfo( _( "Display resolution in pixels per inch: %dx%d" ), res.x, res.y );
 
-	m_imageSize = dplRect.GetSize();
+	m_imageSize		   = dplRect.GetSize();
 	m_nImageColorDepth = nDepth;
 	m_imageResolution  = res;
 }
@@ -291,7 +294,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 			return false;
 		}
 
-		m_imageSize.SetWidth( v ); 
+		m_imageSize.SetWidth( v );
 	}
 
 	if ( cmdLine.Found( "y", &v ) )
@@ -522,24 +525,30 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		m_cuePointsFile = s;
 	}
 
-	if ( ReadNegatableSwitchValue( cmdLine, "cg", bRes ) && bRes )
+	ReadNegatableSwitchValue( cmdLine, "cg", m_bGenerateCuePoints );
+
+	if ( cmdLine.Found( "ci", &s ) )
 	{
-		if ( cmdLine.Found( "ci", &s ) )
+		if ( !Interval::Parse( s, m_interval ) )
 		{
-			if ( !Interval::Parse( s, m_interval ) )
-			{
-				wxLogWarning( _( "Invalid interval - %s" ), s );
-				return false;
-			}
-		}
-		else
-		{
-			wxLogWarning( _( "Cue points interval must be specified" ) );
+			wxLogWarning( _( "Invalid interval - %s" ), s );
 			return false;
 		}
 	}
 
 	ReadNegatableSwitchValue( cmdLine, "use-mlang", m_bUseMLang );
+
+	if ( cmdLine.Found( "bl", &v ) )
+	{
+		if ( v <= 0 || v > 100 )
+		{
+			wxLogWarning( _( "Invalid baseline position - %d" ), v );
+			return false;
+		}
+
+		m_drawerSettings.SetBaselinePositionPercent( v );
+	}
+
 	return true;
 }
 
@@ -559,14 +568,14 @@ const wxFileName& wxConfiguration::GetCuePointsFile() const
 	return m_cuePointsFile;
 }
 
-bool wxConfiguration::HasCuePointsInterval() const
+bool wxConfiguration::GenerateCuePoints() const
 {
-	return m_interval;
+	return m_bGenerateCuePoints;
 }
 
 bool wxConfiguration::GenerateCuePoints( const wxTimeSpan& duration, wxTimeSpanArray& cuePoints ) const
 {
-	wxASSERT( HasCuePointsInterval() );
+	wxASSERT( GenerateCuePoints() );
 
 	wxTimeSpan step;
 	m_interval.Get( duration, step );
@@ -724,7 +733,7 @@ wxRect2DInt wxConfiguration::GetDrawerRect( wxUint16 nChannel, wxUint16 nChannel
 	wxUint32 nWidth	 = m_imageSize.GetWidth() / m_nColumnNumber;
 	wxUint32 nHeight = m_imageSize.GetWidth() / nRowsNumber;
 
-	wxRect2DInt rc( nColumn *  m_imageSize.GetWidth() / m_nColumnNumber, nRow * m_imageSize.GetWidth() / nRowsNumber, nWidth, nHeight );
+	wxRect2DInt rc( nColumn * m_imageSize.GetWidth() / m_nColumnNumber, nRow * m_imageSize.GetWidth() / nRowsNumber, nWidth, nHeight );
 	add_margin( rc );
 	return rc;
 }

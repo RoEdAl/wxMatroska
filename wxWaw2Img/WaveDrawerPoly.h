@@ -20,6 +20,7 @@ class PolyWaveDrawer:
 	protected:
 
 		virtual void ProcessInitializer();
+
 		virtual void NextColumn( wxFloat32, wxFloat32 );
 		virtual void ProcessFinalizer();
 

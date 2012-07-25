@@ -25,14 +25,14 @@ GraphicsContextWaveDrawer::GraphicsContextWaveDrawer( wxUint64 nNumberOfSamples,
 
 void GraphicsContextWaveDrawer::ProcessInitializer()
 {
-	m_height2	 = m_rc.m_height / 2.0f;
-	m_yoffset	 = m_rc.m_y + m_height2;
-	m_nImgHeight = ceil( m_height2 );
+	m_heightUp	 = m_rc.m_height * ( 1.0f - m_drawerSettings.GetBaselinePosition() );
+	m_heightDown = m_rc.m_height * m_drawerSettings.GetBaselinePosition();
+	m_yoffset	 = m_rc.m_y + m_heightUp;
 
 	if ( m_bUseCuePoints )
 	{
 		wxGraphicsPath path = create_cue_region( *m_gc, m_rc, m_cuePoints );
-		m_gc->SetBrush( m_drawerSettings.GetBackgroundColour() );
+		m_gc->SetBrush( m_drawerSettings.GetSecondaryBackgroundColour() );
 		m_gc->FillPath( path );
 		m_gc->SetBrush( wxNullBrush );
 	}

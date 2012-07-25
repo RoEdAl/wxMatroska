@@ -30,11 +30,10 @@ class GraphicsContextWaveDrawer:
 
 		wxGraphicsContext*	   m_gc;
 		wxRect2DInt			   m_rc;
-		wxFloat32			   m_height2;
+		wxFloat32			   m_heightUp;
+		wxFloat32			   m_heightDown;
 		wxFloat32			   m_yoffset;
-		wxInt32				   m_nImgHeight;
-
-		const DrawerSettings& m_drawerSettings;
+		const DrawerSettings&  m_drawerSettings;
 		bool				   m_bUseCuePoints;
 		const wxTimeSpanArray& m_cuePoints;
 };

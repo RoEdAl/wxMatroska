@@ -25,7 +25,9 @@ class SimpleWaveDrawer:
 
 	protected:
 
-		wxGraphicsPath m_path;
+		bool		   m_bBaseline50;
+		wxGraphicsPath m_pathUp;
+		wxGraphicsPath m_pathDown;
 };
 
 #endif

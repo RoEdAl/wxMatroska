@@ -16,29 +16,56 @@ SimpleWaveDrawer::SimpleWaveDrawer( wxUint64 nNumberOfSamples,
 									const wxRect2DInt& rc,
 									const DrawerSettings& drawerSettings,
 									bool bUseCuePoints, const wxTimeSpanArray& cuePoints ):
-GraphicsContextWaveDrawer( 
-	nNumberOfSamples,
-	gc,
-	drawerSettings.UseLogarithmicScale(),
-	drawerSettings.GetLogarithmBase(),
-	rc,
-	drawerSettings, bUseCuePoints, cuePoints )
+	GraphicsContextWaveDrawer(
+		nNumberOfSamples,
+		gc,
+		drawerSettings.UseLogarithmicScale(),
+		drawerSettings.GetLogarithmBase(),
+		rc,
+		drawerSettings, bUseCuePoints, cuePoints ),
+	m_bBaseline50( false )
 {}
 
 void SimpleWaveDrawer::ProcessInitializer()
 {
 	__super::ProcessInitializer();
 
-	m_path = m_gc->CreatePath();
+	m_bBaseline50 = ( m_drawerSettings.GetBaselinePosition() == 0.5f ) && !m_drawerSettings.DrawWithGradient();
+
+	if ( m_bBaseline50 )
+	{
+		m_pathUp = m_gc->CreatePath();
+	}
+	else
+	{
+		m_pathUp   = m_gc->CreatePath();
+		m_pathDown = m_gc->CreatePath();
+	}
 }
 
 void SimpleWaveDrawer::NextColumn( wxFloat32 fValue, wxFloat32 fLogValue )
 {
-	wxFloat32		p = ( m_drawerSettings.UseLogarithmicScale() ? fLogValue : fValue ) * m_nImgHeight;
 	wxPoint2DDouble point_central( m_nCurrentColumn + m_rc.m_x, m_yoffset );
 
-	m_path.MoveToPoint( point_central.m_x, point_central.m_y - p );
-	m_path.AddLineToPoint( point_central.m_x, point_central.m_y + p );
+	if ( m_bBaseline50 )
+	{
+		wxFloat32 p = ( m_drawerSettings.UseLogarithmicScale() ? fLogValue : fValue ) * m_heightUp;
+
+		m_pathUp.MoveToPoint( point_central.m_x, point_central.m_y - p );
+		m_pathUp.AddLineToPoint( point_central.m_x, point_central.m_y + p );
+	}
+	else
+	{
+		wxFloat32 v = abs( m_drawerSettings.UseLogarithmicScale() ? fLogValue : fValue );
+
+		wxFloat32 p = v * m_heightUp;
+		m_pathUp.MoveToPoint( point_central.m_x, point_central.m_y );
+		m_pathUp.AddLineToPoint( point_central.m_x, point_central.m_y - p );
+
+		p = v * m_heightDown;
+		m_pathDown.MoveToPoint( point_central.m_x, point_central.m_y );
+		m_pathDown.AddLineToPoint( point_central.m_x, point_central.m_y + p );
+	}
 }
 
 void SimpleWaveDrawer::ProcessFinalizer()
@@ -47,6 +74,13 @@ void SimpleWaveDrawer::ProcessFinalizer()
 
 	wxGraphicsPen pen = m_gc->CreatePen( wxPen( m_drawerSettings.GetColourFrom() ) );
 	m_gc->SetPen( pen );
-	m_gc->DrawPath( m_path );
+	m_gc->DrawPath( m_pathUp );
+
+	if ( !m_bBaseline50 )
+	{
+		pen = m_gc->CreatePen( wxPen( m_drawerSettings.GetColourTo() ) );
+		m_gc->SetPen( pen );
+		m_gc->DrawPath( m_pathDown );
+	}
 }
 

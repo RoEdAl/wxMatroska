@@ -248,8 +248,8 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 		{
 			if ( cfg.MultiChannel() )
 			{
-				McGraphicalContextWaveDrawer* pGc = new McGraphicalContextWaveDrawer( 1 );
-				const DrawerSettings& drawerSettings = cfg.GetDrawerSettings();
+				McGraphicalContextWaveDrawer* pGc			 = new McGraphicalContextWaveDrawer( 1 );
+				const DrawerSettings&		  drawerSettings = cfg.GetDrawerSettings();
 
 				wxGraphicsContext* gc = pGc->Initialize( cfg.GetImageSize(), cfg.GetImageColorDepth(), drawerSettings.GetBackgroundColour() );
 
@@ -313,7 +313,7 @@ static bool save_rendered_wave( McChainWaveDrawer& waveDrawer, const wxConfigura
 		{
 			ArrayWaveDrawer* pAwd			= static_cast< ArrayWaveDrawer* >( waveDrawer.GetWaveDrawer() );
 			AudioRenderer*	 pAudioRenderer = static_cast< AudioRenderer* >( pAwd->GetDrawer( 0 ) );
-			return pAudioRenderer->GenerateAudio( fn.GetFullPath(), cfg.GetDrawerSettings().GetFrequency() );
+			return pAudioRenderer->GenerateAudio( fn, cfg.GetDrawerSettings().GetFrequency(), cfg.GetDrawerSettings().GetBaselinePosition() );
 		}
 
 		case DRAWING_MODE_SIMPLE:
@@ -386,14 +386,14 @@ int wxMyApp::OnRun()
 		return false;
 	}
 
-	if ( m_cfg.HasCuePointsFile() || m_cfg.HasCuePointsInterval() )
+	if ( m_cfg.HasCuePointsFile() || m_cfg.GenerateCuePoints() )
 	{
 		const SF_INFO& sfInfo	= sfReader.GetInfo();
 		wxTimeSpan	   duration = wxTimeSpan::Milliseconds( sfInfo.frames * 1000 / sfInfo.samplerate );
 
 		wxLogInfo( _( "Input file duration: %s" ), duration.Format() );
 
-		if ( m_cfg.HasCuePointsInterval() )
+		if ( m_cfg.GenerateCuePoints() )
 		{
 			bool bGenerated = m_cfg.GenerateCuePoints( duration, cuePoints );
 			bUseCuePoints = bUseCuePoints || bGenerated;
