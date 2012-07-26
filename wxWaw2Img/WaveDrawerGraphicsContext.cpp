@@ -29,17 +29,31 @@ void GraphicsContextWaveDrawer::ProcessInitializer()
 	m_heightDown = m_rc.m_height * m_drawerSettings.GetBaselinePosition();
 	m_yoffset	 = m_rc.m_y + m_heightUp;
 
+	// Background colour
+
+	wxRect2DDouble rc( m_rc.m_x, m_rc.m_y, m_rc.m_width, m_heightUp );
+	m_gc->SetBrush( m_drawerSettings.GetTopColourSettings().GetBackgroundColour() );
+	m_gc->DrawRectangle( rc.m_x, rc.m_y, rc.m_width, rc.m_height );
+
+	m_rc.m_y += m_rc.m_height;
+	m_rc.m_height = m_heightDown;
+	m_gc->SetBrush( m_drawerSettings.GetBottomColourSettings().GetBackgroundColour() );
+	m_gc->DrawRectangle( rc.m_x, rc.m_y, rc.m_width, rc.m_height );
+
+	// Secondary background colour
+
 	if ( m_bUseCuePoints )
 	{
 		wxGraphicsPath pathTop = m_gc->CreatePath();
 		wxGraphicsPath pathBottom = m_gc->CreatePath();
 		create_cue_region( m_rc, m_drawerSettings.GetBaselinePosition(), m_cuePoints, pathTop, pathBottom );
-		m_gc->SetBrush( m_drawerSettings.GetTopBackgroundColour2() );
+		m_gc->SetBrush( m_drawerSettings.GetTopColourSettings().GetBackgroundColour2() );
 		m_gc->FillPath( pathTop );
-		m_gc->SetBrush( m_drawerSettings.GetBottomBackgroundColour2() );
+		m_gc->SetBrush( m_drawerSettings.GetBottomColourSettings().GetBackgroundColour2() );
 		m_gc->FillPath( pathBottom );
-		m_gc->SetBrush( wxNullBrush );
 	}
+
+	m_gc->SetBrush( wxNullBrush );
 }
 
 void GraphicsContextWaveDrawer::ProcessFinalizer()

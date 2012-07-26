@@ -67,18 +67,18 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 
 	cmdLine.AddSwitch( "g", "gradient", wxString::Format( _( "Draw gradient (default: %s)" ), GetSwitchAsText( m_drawerSettings.DrawWithGradient() ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 
-	cmdLine.AddOption( "c", "colour", wxString::Format( _( "Center colour to draw (default: %s)" ), m_drawerSettings.GetColourCenter().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddOption( "c2", "second-colour", wxString::Format( _( "Top and bottom colour to use when drawing gradient (default: %s)" ), m_drawerSettings.GetColourTop().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddOption( "ct", "top-colour", wxString::Format( _( "Top colour to to use when drawing gradient (default: %s)" ), m_drawerSettings.GetColourTop().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddOption( "cb", "bottom-colour", wxString::Format( _( "Bottom colour to use when drawing gradient (default: %s)" ), m_drawerSettings.GetColourBottom().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( "cc", "calculate-center-colour", _( "Calculate center color from top and bottom colours (default: off)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddOption( "c", "colour", wxString::Format( _( "Middle colour (default: %s)" ), m_drawerSettings.GetTopColourSettings().GetMiddleColour().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( "c2", "edge-colour", wxString::Format( _( "Top and bottom colour to use when drawing gradient (default: %s)" ), m_drawerSettings.GetTopColourSettings().GetEdgeColour().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( "ct", "top-colour", wxString::Format( _( "Top colour to to use when drawing gradient (default: %s)" ), m_drawerSettings.GetTopColourSettings().GetEdgeColour().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( "cb", "bottom-colour", wxString::Format( _( "Bottom colour to use when drawing gradient (default: %s)" ), m_drawerSettings.GetBottomColourSettings().GetEdgeColour().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( "cm", "calculate-middle-colour", _( "Calculate middle color from top and bottom colours (default: off)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 
 	cmdLine.AddOption( "b", "background", _( "Background color (default: transparent or white)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddOption( "b2", "secondary-background", wxString::Format( _( "Secondary background color (default: %s)" ), m_drawerSettings.GetTopBackgroundColour2().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddOption( "bt", "top-background", wxString::Format( _( "Background color at top (default: %s)" ), m_drawerSettings.GetTopBackgroundColour().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddOption( "bb", "bottom-background", wxString::Format( _( "Background color at bottom (default: %s)" ), m_drawerSettings.GetBottomBackgroundColour().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddOption( "bt2", "secondary-top-background", wxString::Format( _( "Secondary background color at top (default: %s)" ), m_drawerSettings.GetTopBackgroundColour2().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddOption( "bb2", "secondary-bottom-background", wxString::Format( _( "Secondary background color at bottom (default: %s)" ), m_drawerSettings.GetBottomBackgroundColour2().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( "b2", "secondary-background", wxString::Format( _( "Secondary background color (default: %s)" ), m_drawerSettings.GetTopColourSettings().GetBackgroundColour2().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( "bt", "top-background", wxString::Format( _( "Background color at top (default: %s)" ), m_drawerSettings.GetTopColourSettings().GetBackgroundColour().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( "bb", "bottom-background", wxString::Format( _( "Background color at bottom (default: %s)" ), m_drawerSettings.GetBottomColourSettings().GetBackgroundColour().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( "bt2", "secondary-top-background", wxString::Format( _( "Secondary background color at top (default: %s)" ), m_drawerSettings.GetTopColourSettings().GetBackgroundColour2().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( "bb2", "secondary-bottom-background", wxString::Format( _( "Secondary background color at bottom (default: %s)" ), m_drawerSettings.GetBottomColourSettings().GetBackgroundColour2().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( "bs", "background-from-system", _( "Take background colors from system settings (default: off)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 
 	cmdLine.AddOption( "r", "resolution", wxString::Format( _( "Image horizontal and vertical resolution (default: %d)" ), m_imageResolution.x ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
@@ -317,7 +317,12 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	if ( cmdLine.Found( "c", &s ) )
 	{
-		if ( !ParseColourString( s, m_drawerSettings.GetColourCenter() ) )
+		wxColour clr;
+		if ( ParseColourString( s, clr ) )
+		{
+			m_drawerSettings.SetMiddleColour( clr );
+		}
+		else
 		{
 			wxLogWarning( _( "Invalid color - %s" ), s );
 			return false;
@@ -329,37 +334,31 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		wxColour clr;
 		if ( ParseColourString( s, clr ) )
 		{
-			m_drawerSettings.SetBackgroundColour2( clr );
+			m_drawerSettings.SetEdgeColour( clr );
 		}
 		else
 		{
 			wxLogWarning( _( "Invalid top and bottom color - %s" ), s );
 			return false;
 		}
-
-		m_drawerSettings.SetDrawWithGradient( true );
 	}
 
 	if ( cmdLine.Found( "ct", &s ) )
 	{
-		if ( !ParseColourString( s, m_drawerSettings.GetColourTop() ) )
+		if ( !ParseColourString( s, m_drawerSettings.GetTopColourSettings().GetEdgeColour() ) )
 		{
 			wxLogWarning( _( "Invalid top color - %s" ), s );
 			return false;
 		}
-
-		m_drawerSettings.SetDrawWithGradient( true );
 	}
 
 	if ( cmdLine.Found( "cb", &s ) )
 	{
-		if ( !ParseColourString( s, m_drawerSettings.GetColourBottom() ) )
+		if ( !ParseColourString( s, m_drawerSettings.GetBottomColourSettings().GetEdgeColour() ) )
 		{
 			wxLogWarning( _( "Invalid bottom color - %s" ), s );
 			return false;
 		}
-
-		m_drawerSettings.SetDrawWithGradient( true );
 	}
 
 	if ( cmdLine.Found( "bl", &v ) )
@@ -369,13 +368,11 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 			wxLogWarning( _( "Invalid baseline position - %d" ), v );
 			return false;
 		}
-
-		m_drawerSettings.SetBaselinePositionPercent( v );
 	}
 
-	if ( ReadNegatableSwitchValue( cmdLine, "cc", bRes ) && bRes )
+	if ( ReadNegatableSwitchValue( cmdLine, "cm", bRes ) && bRes )
 	{
-		const wxColour& clr = m_drawerSettings.CalcCenterColour();
+		const wxColour& clr = m_drawerSettings.CalcMiddleColour();
 		wxLogInfo( _("Center color calculated to %s"), clr.GetAsString() );
 	}
 
@@ -413,8 +410,8 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		m_drawerSettings.SetBackgroundColour( wxSystemSettings::GetColour( COLOR_BACKGROUND ) );
 		m_drawerSettings.SetBackgroundColour2( wxSystemSettings::GetColour( COLOR_BACKGROUND2 ) );
-		wxLogInfo( _( "Background color: %s" ), m_drawerSettings.GetTopBackgroundColour().GetAsString() );
-		wxLogInfo( _( "Secondary background color: %s" ), m_drawerSettings.GetTopBackgroundColour2().GetAsString() );
+		wxLogInfo( _( "Background color: %s" ), m_drawerSettings.GetTopColourSettings().GetBackgroundColour().GetAsString() );
+		wxLogInfo( _( "Secondary background color: %s" ), m_drawerSettings.GetTopColourSettings().GetBackgroundColour2().GetAsString() );
 	}
 
 	if ( cmdLine.Found( "b", &s ) )
@@ -433,7 +430,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	if ( cmdLine.Found( "bt", &s ) )
 	{
-		if ( !ParseColourString( s, m_drawerSettings.GetTopBackgroundColour() ) )
+		if ( !ParseColourString( s, m_drawerSettings.GetTopColourSettings().GetBackgroundColour() ) )
 		{
 			wxLogWarning( _( "Invalid top background color - %s" ), s );
 			return false;
@@ -442,7 +439,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	if ( cmdLine.Found( "bb", &s ) )
 	{
-		if ( !ParseColourString( s, m_drawerSettings.GetBottomBackgroundColour() ) )
+		if ( !ParseColourString( s, m_drawerSettings.GetBottomColourSettings().GetBackgroundColour() ) )
 		{
 			wxLogWarning( _( "Invalid bottom background color - %s" ), s );
 			return false;
@@ -465,7 +462,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	if ( cmdLine.Found( "bt2", &s ) )
 	{
-		if ( !ParseColourString( s, m_drawerSettings.GetTopBackgroundColour2() ) )
+		if ( !ParseColourString( s, m_drawerSettings.GetTopColourSettings().GetBackgroundColour2() ) )
 		{
 			wxLogWarning( _( "Invalid second top background color - %s" ), s );
 			return false;
@@ -474,7 +471,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	if ( cmdLine.Found( "bb2", &s ) )
 	{
-		if ( !ParseColourString( s, m_drawerSettings.GetBottomBackgroundColour2() ) )
+		if ( !ParseColourString( s, m_drawerSettings.GetBottomColourSettings().GetBackgroundColour2() ) )
 		{
 			wxLogWarning( _( "Invalid second bottom background color - %s" ), s );
 			return false;
@@ -772,26 +769,29 @@ wxUint16 wxConfiguration::GetNumberOfColumns() const
 	return m_nColumnNumber;
 }
 
-void wxConfiguration::add_margin( wxRect2DInt& rc ) const
+void wxConfiguration::add_margin( wxRect2DInt& rc, bool bTop, bool bRight, bool bBottom, bool bLeft ) const
 {
-	if ( rc.m_width > ( 2 * m_margins.x ) )
-	{
-		rc.m_x	   += m_margins.x;
-		rc.m_width -= 2 * m_margins.x;
-	}
-	else
-	{
-		wxLogWarning( _( "Horizontal margin too big" ) );
-	}
+	wxPoint2DInt left_top( rc.GetLeftTop() );
+	wxPoint2DInt right_bottom( rc.GetRightBottom() );
 
-	if ( rc.m_height > ( 2 * m_margins.y ) )
+	wxSize margins( m_margins );
+	margins.Scale( 0.5f, 0.5f );
+
+	left_top.m_x += (bLeft? 2 : 1) * margins.x;
+	left_top.m_y += (bTop? 2 : 1 ) * margins.y;
+
+	right_bottom.m_x -= (bRight? 2 : 1) * margins.x;
+	right_bottom.m_y -= (bBottom? 2 : 1 ) * margins.y;
+
+	wxRect2DInt rcM( left_top, right_bottom );
+
+	if( rcM.IsEmpty() )
 	{
-		rc.m_y		+= m_margins.y;
-		rc.m_height -= 2 * m_margins.y;
+		wxLogWarning( _( "Cannot set margins" ) );
 	}
 	else
 	{
-		wxLogWarning( _( "Vertical margin too big" ) );
+		rc = rcM;
 	}
 }
 
@@ -800,26 +800,33 @@ wxRect2DInt wxConfiguration::GetDrawerRect() const
 	wxASSERT( !m_bMultiChannel );
 
 	wxRect2DInt rc( 0, 0, m_imageSize.GetWidth(), m_imageSize.GetHeight() );
-	add_margin( rc );
+	add_margin( rc, true, true, true, true );
 	return rc;
 }
 
-wxRect2DInt wxConfiguration::GetDrawerRect( wxUint16 nChannel, wxUint16 nChannels ) const
+void wxConfiguration::GetDrawerRects( wxUint16 nChannels, wxRect2DIntArray& drawerRects ) const
 {
 	wxASSERT( m_bMultiChannel );
-
-	wxUint16 nRow	 = nChannel / m_nColumnNumber;
-	wxUint16 nColumn = nChannel % m_nColumnNumber;
+	drawerRects.Clear();
 
 	wxUint16 nRowsNumber = nChannels / m_nColumnNumber;
 	nRowsNumber += ( ( nChannels % m_nColumnNumber ) == 0 ) ? 0 : 1;
 
+	wxUint16 nRowsNumber1 = nRowsNumber - 1U;
+	wxUint16 nColumnNumber1 = m_nColumnNumber - 1U;
+
 	wxUint32 nWidth	 = m_imageSize.GetWidth() / m_nColumnNumber;
 	wxUint32 nHeight = m_imageSize.GetHeight() / nRowsNumber;
 
-	wxRect2DInt rc( nColumn * m_imageSize.GetWidth() / m_nColumnNumber, nRow * m_imageSize.GetHeight() / nRowsNumber, nWidth, nHeight );
-	add_margin( rc );
-	return rc;
+	for( wxUint16 nChannel =0; nChannel < nChannels; nChannel++ )
+	{
+		wxUint16 nRow	 = nChannel / m_nColumnNumber;
+		wxUint16 nColumn = nChannel % m_nColumnNumber;
+
+		wxRect2DInt rc( nColumn * m_imageSize.GetWidth() / m_nColumnNumber, nRow * m_imageSize.GetHeight() / nRowsNumber, nWidth, nHeight );
+		add_margin( rc, (nRow == 0), (nColumn==nColumnNumber1), (nRow == nRowsNumber1 ), (nColumn == 0 ) );
+		drawerRects.Add( rc );
+	}
 }
 
 bool wxConfiguration::PowerMix() const

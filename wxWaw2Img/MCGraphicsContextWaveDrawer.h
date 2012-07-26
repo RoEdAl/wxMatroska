@@ -17,7 +17,7 @@ class McGraphicalContextWaveDrawer:
 	public:
 
 		McGraphicalContextWaveDrawer( wxUint16 );
-		wxGraphicsContext* Initialize( const wxSize&, int, const wxColour&, const wxColour&, wxFloat32 );
+		wxGraphicsContext* Initialize( const wxSize&, int, const wxColour& );
 		wxImage GetBitmap() const;
 
 	protected:

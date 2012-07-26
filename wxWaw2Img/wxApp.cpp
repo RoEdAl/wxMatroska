@@ -255,9 +255,7 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 				wxGraphicsContext* gc = pGc->Initialize(
 					cfg.GetImageSize(),
 					cfg.GetImageColorDepth(),
-					drawerSettings.GetTopBackgroundColour(),
-					drawerSettings.GetBottomBackgroundColour(),
-					drawerSettings.GetBaselinePosition() );
+					drawerSettings.GetBackgroundColour() );
 
 				if ( gc == NULL )
 				{
@@ -265,9 +263,12 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 					return NULL;
 				}
 
+				wxRect2DIntArray drawerRects;
+				cfg.GetDrawerRects( nChannels, drawerRects );
+
 				for ( wxUint16 nChannel = 0; nChannel < nChannels; nChannel++ )
 				{
-					pGc->AddDrawer( create_wave_drawer( cfg.GetDrawingMode(), cfg, nSamples, gc, cfg.GetDrawerRect( nChannel, nChannels ), bUseCuePoints, cuePoints ) );
+					pGc->AddDrawer( create_wave_drawer( cfg.GetDrawingMode(), cfg, nSamples, gc, drawerRects[ nChannel ], bUseCuePoints, cuePoints ) );
 				}
 
 				pMcwd = pGc;
@@ -279,9 +280,7 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 				wxGraphicsContext* gc = pGc->Initialize(
 					cfg.GetImageSize(),
 					cfg.GetImageColorDepth(),
-					drawerSettings.GetTopBackgroundColour(),
-					drawerSettings.GetBottomBackgroundColour(),
-					drawerSettings.GetBaselinePosition() );
+					drawerSettings.GetBackgroundColour() );
 
 				if ( gc == NULL )
 				{

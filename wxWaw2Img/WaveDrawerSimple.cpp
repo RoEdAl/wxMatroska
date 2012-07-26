@@ -72,13 +72,13 @@ void SimpleWaveDrawer::ProcessFinalizer()
 {
 	__super::ProcessFinalizer();
 
-	wxGraphicsPen pen = m_gc->CreatePen( wxPen( m_drawerSettings.GetColourTop() ) );
+	wxGraphicsPen pen = m_gc->CreatePen( wxPen( m_drawerSettings.GetTopColourSettings().GetMiddleColour() ) );
 	m_gc->SetPen( pen );
 	m_gc->DrawPath( m_pathUp );
 
 	if ( !m_bBaseline50 )
 	{
-		pen = m_gc->CreatePen( wxPen( m_drawerSettings.GetColourBottom() ) );
+		pen = m_gc->CreatePen( wxPen( m_drawerSettings.GetBottomColourSettings().GetMiddleColour() ) );
 		m_gc->SetPen( pen );
 		m_gc->DrawPath( m_pathDown );
 	}

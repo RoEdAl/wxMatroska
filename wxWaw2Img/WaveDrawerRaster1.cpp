@@ -29,9 +29,9 @@ void Raster1WaveDrawer::ProcessInitializer()
 	if ( m_drawerSettings.UseLogarithmicColorGradient() )
 	{
 		img = create_log_gradient_bitmap( 
-			m_drawerSettings.GetColourTop(),
-			m_drawerSettings.GetColourCenter(),
-			m_drawerSettings.GetColourBottom(),
+			m_drawerSettings.GetTopColourSettings().GetEdgeColour(),
+			m_drawerSettings.GetTopColourSettings().GetMiddleColour(),
+			m_drawerSettings.GetBottomColourSettings().GetEdgeColour(),
 			m_rc.m_height,
 			m_drawerSettings.GetBaselinePosition(),
 			GetLogarithmicScale()
@@ -40,9 +40,9 @@ void Raster1WaveDrawer::ProcessInitializer()
 	else
 	{
 		img = create_gradient_bitmap(
-			m_drawerSettings.GetColourTop(),
-			m_drawerSettings.GetColourCenter(),
-			m_drawerSettings.GetColourBottom(),
+			m_drawerSettings.GetTopColourSettings().GetEdgeColour(),
+			m_drawerSettings.GetTopColourSettings().GetMiddleColour(),
+			m_drawerSettings.GetBottomColourSettings().GetEdgeColour(),
 			m_rc.m_height,
 			m_drawerSettings.GetBaselinePosition() );
 	}

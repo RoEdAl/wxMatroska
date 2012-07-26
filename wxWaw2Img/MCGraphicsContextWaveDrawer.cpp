@@ -22,8 +22,7 @@ wxImage McGraphicalContextWaveDrawer::GetBitmap() const
 wxGraphicsContext* McGraphicalContextWaveDrawer::Initialize(
 	const wxSize& imageSize,
 	int nImageColourDepth,
-	const wxColour& clrBgTop, const wxColour& clrBgBottom,
-	wxFloat32 fBaseline
+	const wxColour& clrBg
 )
 {
 	wxLogInfo( _( "Creating bitmap" ) );
@@ -33,9 +32,6 @@ wxGraphicsContext* McGraphicalContextWaveDrawer::Initialize(
 	m_mc.reset( new wxMemoryDC() );
 
 	m_mc->SelectObject( *m_bmp );
-
-	wxRect2DDouble rcTop( 0,0, imageSize.GetWidth(), ( 1.0f - fBaseline ) * imageSize.GetHeight() );
-	wxRect2DDouble rcBottom( 0, rcTop.m_height, imageSize.GetWidth(), ( 1.0f * imageSize.GetHeight() ) - rcTop.m_height );
 
 	if ( !m_mc->IsOk() )
 	{
@@ -51,10 +47,8 @@ wxGraphicsContext* McGraphicalContextWaveDrawer::Initialize(
 	m_gc->SetAntialiasMode( wxANTIALIAS_DEFAULT );
 	m_gc->SetInterpolationQuality( wxINTERPOLATION_BEST );
 	m_gc->SetPen( wxNullPen );
-	m_gc->SetBrush( clrBgTop );
-	m_gc->DrawRectangle( rcTop.m_x, rcTop.m_y, rcTop.m_width, rcTop.m_height );
-	m_gc->SetBrush( clrBgTop );
-	m_gc->DrawRectangle( rcBottom.m_x, rcBottom.m_y, rcBottom.m_width, rcBottom.m_height );
+	m_gc->SetBrush( clrBg );
+	m_gc->DrawRectangle( 0, 0, imageSize.GetWidth(), imageSize.GetHeight() );
 	m_gc->SetBrush( *wxTRANSPARENT_BRUSH );
 
 	return m_gc.get();

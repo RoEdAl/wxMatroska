@@ -34,8 +34,8 @@ void Raster2WaveDrawer::NextColumn( wxFloat32 fValue, wxFloat32 fLogValue )
 	wxFloat32 va = abs( fValue );
 	wxFloat32	   v = abs( m_drawerSettings.UseLogarithmicScale() ? fLogValue : fValue );
 
-	wxColour clrTo = ColourInterpolation::linear_interpolation( m_drawerSettings.GetColourTop(), m_drawerSettings.GetColourCenter(), va );
-	wxColour clrFrom = m_drawerSettings.GetColourTop();
+	wxColour clrTo = ColourInterpolation::linear_interpolation( m_drawerSettings.GetTopColourSettings().GetEdgeColour(), m_drawerSettings.GetTopColourSettings().GetMiddleColour(), va );
+	wxColour clrFrom = m_drawerSettings.GetTopColourSettings().GetEdgeColour();
 
 	wxImage img;
 
@@ -56,8 +56,8 @@ void Raster2WaveDrawer::NextColumn( wxFloat32 fValue, wxFloat32 fLogValue )
 			rcTop.m_width,
 			-rcTop.m_height );
 
-	clrFrom = ColourInterpolation::linear_interpolation( m_drawerSettings.GetColourBottom(), m_drawerSettings.GetColourCenter(), va );
-	clrTo = m_drawerSettings.GetColourBottom();
+	clrFrom = ColourInterpolation::linear_interpolation( m_drawerSettings.GetBottomColourSettings().GetEdgeColour(), m_drawerSettings.GetBottomColourSettings().GetMiddleColour(), va );
+	clrTo = m_drawerSettings.GetBottomColourSettings().GetEdgeColour();
 
 	if ( m_drawerSettings.UseLogarithmicColorGradient() )
 	{

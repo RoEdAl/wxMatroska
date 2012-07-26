@@ -62,7 +62,7 @@ class wxConfiguration:
 
 	private:
 
-		void add_margin( wxRect2DInt& ) const;
+		void add_margin( wxRect2DInt&, bool, bool, bool, bool ) const;
 
 	public:
 
@@ -78,8 +78,7 @@ class wxConfiguration:
 		wxUint16 GetNumberOfColumns() const;
 		wxSize GetMargins() const;
 		wxRect2DInt GetDrawerRect() const;
-
-		wxRect2DInt GetDrawerRect( wxUint16, wxUint16 ) const;
+		void GetDrawerRects( wxUint16, wxRect2DIntArray& ) const;
 		bool PowerMix() const;
 		DRAWING_MODE GetDrawingMode() const;
 		bool HasCuePointsFile() const;
