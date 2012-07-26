@@ -23,16 +23,16 @@ SimpleWaveDrawer::SimpleWaveDrawer( wxUint64 nNumberOfSamples,
 		drawerSettings.GetLogarithmBase(),
 		rc,
 		drawerSettings, bUseCuePoints, cuePoints ),
-	m_bBaseline50( false )
+	m_bOneMiddleColour( false )
 {}
 
 void SimpleWaveDrawer::ProcessInitializer()
 {
 	__super::ProcessInitializer();
 
-	m_bBaseline50 = ( m_drawerSettings.GetBaselinePosition() == 0.5f ) && !m_drawerSettings.DrawWithGradient();
+	m_bOneMiddleColour = m_drawerSettings.OneMiddleColour();
 
-	if ( m_bBaseline50 )
+	if ( m_bOneMiddleColour )
 	{
 		m_pathUp = m_gc->CreatePath();
 	}
@@ -47,40 +47,44 @@ void SimpleWaveDrawer::NextColumn( wxFloat32 fValue, wxFloat32 fLogValue )
 {
 	wxPoint2DDouble point_central( m_nCurrentColumn + m_rc.m_x, m_yoffset );
 
-	if ( m_bBaseline50 )
-	{
-		wxFloat32 p = ( m_drawerSettings.UseLogarithmicScale() ? fLogValue : fValue ) * m_heightUp;
+	wxFloat32 v	 = abs( m_drawerSettings.UseLogarithmicScale() ? fLogValue : fValue );
+	wxFloat32 pu = v * m_heightUp;
+	wxFloat32 pd = v * m_heightDown;
 
-		m_pathUp.MoveToPoint( point_central.m_x, point_central.m_y - p );
-		m_pathUp.AddLineToPoint( point_central.m_x, point_central.m_y + p );
+	if ( m_bOneMiddleColour )
+	{
+		m_pathUp.MoveToPoint( point_central.m_x, point_central.m_y - pu );
+		m_pathUp.AddLineToPoint( point_central.m_x, point_central.m_y + pd );
 	}
 	else
 	{
-		wxFloat32 v = abs( m_drawerSettings.UseLogarithmicScale() ? fLogValue : fValue );
-
-		wxFloat32 p = v * m_heightUp;
 		m_pathUp.MoveToPoint( point_central.m_x, point_central.m_y );
-		m_pathUp.AddLineToPoint( point_central.m_x, point_central.m_y - p );
+		m_pathUp.AddLineToPoint( point_central.m_x, point_central.m_y - pu );
 
-		p = v * m_heightDown;
 		m_pathDown.MoveToPoint( point_central.m_x, point_central.m_y );
-		m_pathDown.AddLineToPoint( point_central.m_x, point_central.m_y + p );
+		m_pathDown.AddLineToPoint( point_central.m_x, point_central.m_y + pd );
 	}
 }
 
 void SimpleWaveDrawer::ProcessFinalizer()
 {
-	__super::ProcessFinalizer();
+	wxGraphicsPen pen = m_gc->CreatePen( m_drawerSettings.GetTopColourSettings().GetMiddleColour() );
 
-	wxGraphicsPen pen = m_gc->CreatePen( wxPen( m_drawerSettings.GetTopColourSettings().GetMiddleColour() ) );
 	m_gc->SetPen( pen );
 	m_gc->DrawPath( m_pathUp );
 
-	if ( !m_bBaseline50 )
+	if ( !m_bOneMiddleColour )
 	{
-		pen = m_gc->CreatePen( wxPen( m_drawerSettings.GetBottomColourSettings().GetMiddleColour() ) );
+		pen = m_gc->CreatePen( m_drawerSettings.GetBottomColourSettings().GetMiddleColour() );
 		m_gc->SetPen( pen );
 		m_gc->DrawPath( m_pathDown );
 	}
+
+	m_gc->SetPen( wxNullPen );
+
+	m_pathUp   = wxNullGraphicsPath;
+	m_pathDown = wxNullGraphicsPath;
+
+	__super::ProcessFinalizer();
 }
 

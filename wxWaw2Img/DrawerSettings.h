@@ -9,35 +9,35 @@ class ColourSettings
 {
 	public:
 
-	ColourSettings( void );
+		ColourSettings( void );
 
 	public:
 
-	const wxColour& GetMiddleColour() const;
-	const wxColour& GetEdgeColour() const;
-	const wxColour& GetBackgroundColour() const;
-	const wxColour& GetBackgroundColour2() const;
+		const wxColour& GetMiddleColour() const;
+		const wxColour& GetEdgeColour() const;
+		const wxColour& GetBackgroundColour() const;
+		const wxColour& GetBackgroundColour2() const;
 
 	public:
 
-	wxColour& GetMiddleColour();
-	wxColour& GetEdgeColour();
-	wxColour& GetBackgroundColour();
-	wxColour& GetBackgroundColour2();
+		wxColour& GetMiddleColour();
+		wxColour& GetEdgeColour();
+		wxColour& GetBackgroundColour();
+		wxColour& GetBackgroundColour2();
 
 	public:
 
-	ColourSettings& SetMiddleColour( const wxColour& );
-	ColourSettings& SetEdgeColour( const wxColour& );
-	ColourSettings& SetBackgroundColour( const wxColour& );
-	ColourSettings& SetBackgroundColour2( const wxColour& );
+		ColourSettings& SetMiddleColour( const wxColour& );
+		ColourSettings& SetEdgeColour( const wxColour& );
+		ColourSettings& SetBackgroundColour( const wxColour& );
+		ColourSettings& SetBackgroundColour2( const wxColour& );
 
 	protected:
 
-	wxColour m_clrMiddle;
-	wxColour m_clrEdge;
-	wxColour  m_clrBg;
-	wxColour  m_clrBg2;
+		wxColour m_clrMiddle;
+		wxColour m_clrEdge;
+		wxColour m_clrBg;
+		wxColour m_clrBg2;
 };
 
 class DrawerSettings
@@ -48,13 +48,13 @@ class DrawerSettings
 
 	protected:
 
-		bool	  m_bDrawWithGradient;
-		bool	  m_bLogarithmicScale;
-		bool	  m_bLogarithmicColorGradient;
-		wxFloat32 m_fLogBase;
-		wxUint16  m_nFrequency;
-		wxFloat32 m_fBaselinePosition;
-		wxColour m_clrBg;
+		bool		   m_bDrawWithGradient;
+		bool		   m_bLogarithmicScale;
+		bool		   m_bLogarithmicColorGradient;
+		wxFloat32	   m_fLogBase;
+		wxUint16	   m_nFrequency;
+		wxFloat32	   m_fBaselinePosition;
+		wxColour	   m_clrBg;
 		ColourSettings m_topColourSettings;
 		ColourSettings m_bottomColourSettings;
 
@@ -67,19 +67,21 @@ class DrawerSettings
 		wxUint16 GetFrequency() const;
 		wxFloat32 GetBaselinePosition() const;
 		wxInt32 GetBaselinePositionPercent() const;
-		const wxColour& GetBackgroundColour() const;
+		const wxColour&		  GetBackgroundColour() const;
 		const ColourSettings& GetTopColourSettings() const;
 		const ColourSettings& GetBottomColourSettings() const;
+		bool OneMiddleColour() const;
+		bool OneEdgeColour() const;
 
 	public:
 
 		bool& GetDrawWithGradient();
 		bool& GetUseLogarithmicScale();
 		bool& GetUseLogarithmicColorGradient();
-		wxFloat32& GetLogarithmBase();
-		wxUint16&  GetFrequency();
-		wxFloat32& GetBaselinePosition();
-		wxColour& GetBackgroundColour();
+		wxFloat32&		GetLogarithmBase();
+		wxUint16&		GetFrequency();
+		wxFloat32&		GetBaselinePosition();
+		wxColour&		GetBackgroundColour();
 		ColourSettings& GetTopColourSettings();
 		ColourSettings& GetBottomColourSettings();
 
@@ -88,6 +90,7 @@ class DrawerSettings
 		DrawerSettings& SetDrawWithGradient( bool );
 		DrawerSettings& SetLogarithmicScale( bool );
 		DrawerSettings& SetLogarithmicColourGradient( bool );
+
 		DrawerSettings& SetLogarithmBase( wxFloat32 );
 		DrawerSettings& SetFrequency( wxUint16 );
 		DrawerSettings& SetBaselinePosition( wxFloat32 );

@@ -20,10 +20,10 @@ wxImage McGraphicalContextWaveDrawer::GetBitmap() const
 }
 
 wxGraphicsContext* McGraphicalContextWaveDrawer::Initialize(
-	const wxSize& imageSize,
-	int nImageColourDepth,
-	const wxColour& clrBg
-)
+		const wxSize& imageSize,
+		int nImageColourDepth,
+		const wxColour& clrBg
+		)
 {
 	wxLogInfo( _( "Creating bitmap" ) );
 	m_bmp.reset( new wxBitmap( imageSize.GetWidth(), imageSize.GetHeight(), nImageColourDepth ) );

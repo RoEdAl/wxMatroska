@@ -1,6 +1,6 @@
 /*
-	ColourInterpolation.cpp
-*/
+ *      ColourInterpolation.cpp
+ */
 #include "StdWx.h"
 #include "ColourInterpolation.h"
 

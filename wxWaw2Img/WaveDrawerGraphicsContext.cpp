@@ -35,8 +35,8 @@ void GraphicsContextWaveDrawer::ProcessInitializer()
 	m_gc->SetBrush( m_drawerSettings.GetTopColourSettings().GetBackgroundColour() );
 	m_gc->DrawRectangle( rc.m_x, rc.m_y, rc.m_width, rc.m_height );
 
-	m_rc.m_y += m_rc.m_height;
-	m_rc.m_height = m_heightDown;
+	rc.m_y	   += m_rc.m_height;
+	rc.m_height = m_heightDown;
 	m_gc->SetBrush( m_drawerSettings.GetBottomColourSettings().GetBackgroundColour() );
 	m_gc->DrawRectangle( rc.m_x, rc.m_y, rc.m_width, rc.m_height );
 
@@ -44,7 +44,7 @@ void GraphicsContextWaveDrawer::ProcessInitializer()
 
 	if ( m_bUseCuePoints )
 	{
-		wxGraphicsPath pathTop = m_gc->CreatePath();
+		wxGraphicsPath pathTop	  = m_gc->CreatePath();
 		wxGraphicsPath pathBottom = m_gc->CreatePath();
 		create_cue_region( m_rc, m_drawerSettings.GetBaselinePosition(), m_cuePoints, pathTop, pathBottom );
 		m_gc->SetBrush( m_drawerSettings.GetTopColourSettings().GetBackgroundColour2() );
@@ -60,16 +60,16 @@ void GraphicsContextWaveDrawer::ProcessFinalizer()
 {}
 
 void GraphicsContextWaveDrawer::create_cue_region(
-	const wxRect2DInt& rect,
-	wxFloat32 fBaseline,
-	const wxTimeSpanArray& cuePoints,
-	wxGraphicsPath& pathTop, wxGraphicsPath& pathBottom )
+		const wxRect2DInt& rect,
+		wxFloat32 fBaseline,
+		const wxTimeSpanArray& cuePoints,
+		wxGraphicsPath& pathTop, wxGraphicsPath& pathBottom )
 {
 	wxASSERT( cuePoints.GetCount() > 1 );
 
 	wxFloat64 endPos = cuePoints.Last().GetMilliseconds().ToDouble();
 
-	wxDouble fHeightTop = rect.m_height * ( 1.0f - fBaseline );
+	wxDouble fHeightTop	   = rect.m_height * ( 1.0f - fBaseline );
 	wxDouble fHeightBottom = rect.m_height * fBaseline;
 
 	for ( size_t i = 0, nCount1 = cuePoints.GetCount() - 1; i < nCount1; i += 2 )
@@ -83,11 +83,10 @@ void GraphicsContextWaveDrawer::create_cue_region(
 
 		pathTop.AddRectangle( rc.m_x, rc.m_y, rc.m_width, rc.m_height );
 
-		rc.m_y += fHeightTop;
+		rc.m_y	   += fHeightTop;
 		rc.m_height = fHeightBottom;
 
 		pathBottom.AddRectangle( rc.m_x, rc.m_y, rc.m_width, rc.m_height );
 	}
 }
-
 

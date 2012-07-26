@@ -24,10 +24,10 @@ class GraphicsContextWaveDrawer:
 
 	private:
 
-		static void create_cue_region( 
-			const wxRect2DInt&, wxFloat32,
-			const wxTimeSpanArray&,
-			wxGraphicsPath&, wxGraphicsPath& );
+		static void create_cue_region(
+			const wxRect2DInt &, wxFloat32,
+			const wxTimeSpanArray &,
+			wxGraphicsPath &, wxGraphicsPath & );
 
 	protected:
 

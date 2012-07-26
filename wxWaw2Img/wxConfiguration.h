@@ -78,7 +78,8 @@ class wxConfiguration:
 		wxUint16 GetNumberOfColumns() const;
 		wxSize GetMargins() const;
 		wxRect2DInt GetDrawerRect() const;
-		void GetDrawerRects( wxUint16, wxRect2DIntArray& ) const;
+
+		void GetDrawerRects( wxUint16, wxRect2DIntArray & ) const;
 		bool PowerMix() const;
 		DRAWING_MODE GetDrawingMode() const;
 		bool HasCuePointsFile() const;

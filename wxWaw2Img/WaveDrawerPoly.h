@@ -27,6 +27,16 @@ class PolyWaveDrawer:
 	protected:
 
 		Point2DDoubleArray m_points;
+
+	protected:
+
+		wxGraphicsPath build_path() const;
+
+		wxGraphicsBrush ceate_logarithmic_brush(
+			wxDouble, wxDouble, wxDouble, wxDouble,
+			const wxColour &, const wxColour &,
+			bool ) const;
+		void build_paths( wxGraphicsPath&, wxGraphicsPath& ) const;
 };
 
 #endif

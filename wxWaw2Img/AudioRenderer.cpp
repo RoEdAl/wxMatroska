@@ -138,9 +138,9 @@ class QGen
 		wxFloat32	 m_fBaseline;
 		wxFloatArray m_ar1;
 		wxFloatArray m_ar2;
-		bool	 m_sign;
-		wxUint32 m_nPos;
-		wxUint64 m_nSamplesCounter;
+		bool		 m_sign;
+		wxUint32	 m_nPos;
+		wxUint64	 m_nSamplesCounter;
 };
 
 bool AudioRenderer::GenerateAudio( const wxFileName& filename, const AudioColumnArray& ac, wxUint32 nSamplerate, wxUint32 nFrequency, wxFloat32 fBaseline )

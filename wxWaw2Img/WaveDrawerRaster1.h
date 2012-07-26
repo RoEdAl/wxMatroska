@@ -20,10 +20,18 @@ class Raster1WaveDrawer:
 		virtual void ProcessInitializer();
 
 		virtual void NextColumn( wxFloat32, wxFloat32 );
+		virtual void ProcessFinalizer();
 
 	protected:
 
-		wxGraphicsBitmap m_bm;
+		wxGraphicsBitmap m_bmUp;
+		wxGraphicsBitmap m_bmDown;
+
+	protected:
+
+		wxImage create_solid_bitmap( wxMemoryDC&, const ColourSettings&, bool ) const;
+		wxImage create_log_gradient_bitmap( wxMemoryDC&, const ColourSettings&, bool ) const;
+		wxImage create_gradient_bitmap( wxMemoryDC&, const ColourSettings&, bool ) const;
 };
 
 #endif
