@@ -44,13 +44,17 @@ wxGraphicsContext* McGraphicalContextWaveDrawer::Initialize(
 	wxLogInfo( _( "Creating graphics context" ) );
 	m_gc.reset( wxGraphicsContext::Create( *m_mc ) );
 
+	//wxCompositionMode mode = m_gc->GetCompositionMode();
+
 	wxLogInfo( _( "Initializing graphics context" ) );
 	m_gc->SetAntialiasMode( wxANTIALIAS_DEFAULT );
 	m_gc->SetInterpolationQuality( wxINTERPOLATION_BEST );
+	m_gc->SetCompositionMode( wxCOMPOSITION_SOURCE );
 	m_gc->SetPen( wxNullPen );
 	m_gc->SetBrush( clrBg );
 	m_gc->DrawRectangle( 0, 0, imageSize.GetWidth(), imageSize.GetHeight() );
 	m_gc->SetBrush( wxNullBrush );
+	m_gc->SetCompositionMode( wxCOMPOSITION_OVER );
 
 	return m_gc.get();
 }

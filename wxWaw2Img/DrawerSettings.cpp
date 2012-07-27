@@ -158,6 +158,16 @@ bool DrawerSettings::OneEdgeColour() const
 	return m_topColourSettings.GetEdgeColour() == m_bottomColourSettings.GetEdgeColour();
 }
 
+bool DrawerSettings::OneBackgroundColour() const
+{
+	return m_topColourSettings.GetBackgroundColour() == m_bottomColourSettings.GetBackgroundColour();
+}
+
+bool DrawerSettings::OneBackgroundColour2() const
+{
+	return m_topColourSettings.GetBackgroundColour2() == m_bottomColourSettings.GetBackgroundColour2();
+}
+
 // ===============================================================
 
 bool& DrawerSettings::GetDrawWithGradient()

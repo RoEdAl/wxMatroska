@@ -72,6 +72,8 @@ class DrawerSettings
 		const ColourSettings& GetBottomColourSettings() const;
 		bool OneMiddleColour() const;
 		bool OneEdgeColour() const;
+		bool OneBackgroundColour() const;
+		bool OneBackgroundColour2() const;
 
 	public:
 

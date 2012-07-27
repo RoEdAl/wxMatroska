@@ -81,6 +81,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 	cmdLine.AddOption( "bb", "bottom-background", wxString::Format( _( "Background color at bottom (default: %s)" ), m_drawerSettings.GetBottomColourSettings().GetBackgroundColour().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "bt2", "secondary-top-background", wxString::Format( _( "Secondary background color at top (default: %s)" ), m_drawerSettings.GetTopColourSettings().GetBackgroundColour2().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "bb2", "secondary-bottom-background", wxString::Format( _( "Secondary background color at bottom (default: %s)" ), m_drawerSettings.GetBottomColourSettings().GetBackgroundColour2().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( "bp", "picture-background", _( "Picture background color (default: transparent or white)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( "bs", "background-from-system", _( "Take background colors from system settings (default: off)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 
 	cmdLine.AddOption( "r", "resolution", wxString::Format( _( "Image horizontal and vertical resolution (default: %d)" ), m_imageResolution.x ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
@@ -500,6 +501,15 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		if ( !ParseColourString( s, m_drawerSettings.GetBottomColourSettings().GetBackgroundColour2() ) )
 		{
 			wxLogWarning( _( "Invalid second bottom background color - %s" ), s );
+			return false;
+		}
+	}
+
+	if ( cmdLine.Found( "bp", &s ) )
+	{
+		if ( !ParseColourString( s, m_drawerSettings.GetBackgroundColour() ) )
+		{
+			wxLogWarning( _( "Invalid picture background color - %s" ), s );
 			return false;
 		}
 	}

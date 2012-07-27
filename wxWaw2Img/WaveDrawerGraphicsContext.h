@@ -29,6 +29,11 @@ class GraphicsContextWaveDrawer:
 			const wxTimeSpanArray &,
 			wxGraphicsPath &, wxGraphicsPath & );
 
+		static void create_cue_region(
+			const wxRect2DInt &,
+			const wxTimeSpanArray &,
+			wxGraphicsPath & );
+
 	protected:
 
 		wxGraphicsContext*	   m_gc;
