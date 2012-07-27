@@ -61,16 +61,12 @@ void AudioRenderer::NextColumn( wxFloat32 fSample, wxFloat32 fLogSample )
 	m_ac.Add( AudioColumn( m_bUseLogarithmicScale ? fLogSample : fSample, m_nSamplesInColumn ) );
 }
 
+void AudioRenderer::ProcessFinalizer()
+{}
+
 bool AudioRenderer::GenerateAudio( const wxFileName& filename, wxUint32 nFrequency, wxFloat32 fBaseline ) const
 {
 	return GenerateAudio( filename, m_ac, m_nSourceSamplerate, nFrequency, fBaseline );
-}
-
-void AudioRenderer::ProcessFinalizer()
-{
-	// __super::ProcessFinalizer();
-
-	// GenerateAudio( "C:/Users/Normal/Documents/Visual Studio 2010/Projects/wxMatroska/render_audio.ogg", 220 );
 }
 
 class QGen
@@ -79,25 +75,32 @@ class QGen
 
 		QGen( wxUint32 nLen, wxFloat32 fBaseline ):
 			m_nLen( nLen ),
-			m_fBaseline( fBaseline ),
 			m_sign( true ), m_nPos( 0 ), m_nSamplesCounter( wxULL( 0 ) ),
 			m_ar1( new wxFloat32[ nLen ] ), m_ar2( new wxFloat32[ nLen ] )
 		{
 			wxASSERT( fBaseline >= 0.0f && fBaseline <= 1.0f );
+
+			if ( fBaseline <= 0.5f )
+			{
+				m_fDownFactor = fBaseline / ( 1.0f - fBaseline );
+				m_fUpFactor = 1.0f;
+			}
+			else
+			{
+				m_fUpFactor = ( 1.0f - fBaseline ) / fBaseline;
+				m_fDownFactor = 1.0f;
+			}
 		}
 
 		void SetAmplitude( wxFloat32 fAmplitude )
 		{
-			wxFloat32 fUpFactor	  = ( 1.0f - m_fBaseline ) / 0.5f;
-			wxFloat32 fDownFactor = m_fBaseline / 0.5f;
-
-			wxFloat32 fUpAmplitude	 = fAmplitude * fUpFactor;
-			wxFloat32 fDownAmplitude = -fAmplitude * fDownFactor;
+			wxFloat32 fUpAmp	 = fAmplitude * m_fUpFactor;
+			wxFloat32 fDownAmp = -fAmplitude * m_fDownFactor;
 
 			for ( wxUint32 i = 0; i < m_nLen; i++ )
 			{
-				m_ar1[ i ] = fUpAmplitude;
-				m_ar2[ i ] = fDownAmplitude;
+				m_ar1[ i ] = fUpAmp;
+				m_ar2[ i ] = fDownAmp;
 			}
 		}
 
@@ -135,7 +138,8 @@ class QGen
 	protected:
 
 		wxUint32	 m_nLen;
-		wxFloat32	 m_fBaseline;
+		wxFloat32	 m_fUpFactor;
+		wxFloat32    m_fDownFactor;
 		wxFloatArray m_ar1;
 		wxFloatArray m_ar2;
 		bool		 m_sign;
