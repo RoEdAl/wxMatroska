@@ -1,0 +1,145 @@
+/*
+ *      WaveDrawerColumnPainter.cpp
+ */
+#include "StdWx.h"
+#include "FloatArray.h"
+#include "LogarithmicScale.h"
+#include "ColourInterpolation.h"
+#include "SampleProcessor.h"
+#include "WaveDrawer.h"
+#include "SampleChunker.h"
+#include "DrawerSettings.h"
+#include "WaveDrawerGraphicsContext.h"
+#include "WaveDrawerColumnPainter.h"
+
+ColumnPainterWaveDrawer::ColumnPainterWaveDrawer( wxUint64 nNumberOfSamples,
+									  wxGraphicsContext* gc,
+									  const wxRect2DInt& rc,
+									  const DrawerSettings& drawerSettings,
+									  bool bUseCuePoints, const wxTimeSpanArray& cuePoints ):
+	GraphicsContextWaveDrawer(
+		nNumberOfSamples,
+		gc,
+		drawerSettings.UseLogarithmicScale() || drawerSettings.UseLogarithmicColorGradient(),
+		drawerSettings.GetLogarithmBase(),
+		rc,
+		drawerSettings,
+		bUseCuePoints, cuePoints )
+{}
+
+void ColumnPainterWaveDrawer::NextColumn( wxFloat32 fValue, wxFloat32 fLogValue )
+{
+	wxPoint2DDouble point_central( m_nCurrentColumn + m_rc.m_x, m_yoffset );
+	wxFloat32		va = abs( fValue );
+	wxFloat32		v  = abs( m_drawerSettings.UseLogarithmicScale() ? fLogValue : fValue );
+
+	if ( m_drawerSettings.OneMiddleColour() && m_drawerSettings.OneEdgeColour() )
+	{
+		wxGraphicsBrush brush;
+
+		wxPoint2DDouble topLeft( point_central.m_x, point_central.m_y - (v * m_heightUp) );
+		wxPoint2DDouble bottomRight( topLeft.m_x + 1, topLeft.m_y + (v * m_rc.m_height) );
+
+		if ( m_drawerSettings.DrawWithGradient() )
+		{
+			wxColour clrTop, clrMiddle, clrBottom;
+			GetThreeColours( va, clrTop, clrMiddle, clrBottom );
+
+			wxGraphicsGradientStops stops( clrTop, clrBottom );
+
+			if ( m_drawerSettings.UseLogarithmicColorGradient() )
+			{
+				create_log_stops(
+						stops,
+						clrTop,
+						clrMiddle,
+						clrBottom,
+						m_rc.m_height,
+						m_drawerSettings.GetBaselinePosition(),
+						GetLogarithmicScale() );
+			}
+			else
+			{
+				stops.Add( clrMiddle, 1.0f - m_drawerSettings.GetBaselinePosition() );
+			}
+
+			brush = m_gc->CreateLinearGradientBrush( topLeft.m_x, topLeft.m_y, bottomRight.m_x, bottomRight.m_y, stops );
+		}
+		else
+		{
+			brush = m_gc->CreateBrush( m_drawerSettings.GetTopColourSettings().GetMiddleColour() );
+		}
+
+		m_gc->SetBrush( brush );
+		m_gc->DrawRectangle( topLeft.m_x, topLeft.m_y, bottomRight.m_x - topLeft.m_x, bottomRight.m_y - topLeft.m_y );
+	}
+	else
+	{
+		wxGraphicsBrush brush;
+
+		// UP
+		wxPoint2DDouble bottomLeft = point_central;
+		wxPoint2DDouble topRight( bottomLeft.m_x + 1.0, bottomLeft.m_y - ( v * m_heightUp ) );
+
+		wxPoint2DDouble topLeft( bottomLeft.m_x, topRight.m_y );
+		wxPoint2DDouble bottomRight( topRight.m_x, bottomLeft.m_y );
+
+		if ( m_drawerSettings.DrawWithGradient() )
+		{
+			wxColour clrFrom, clrTo;
+			GetTwoColours( va, true, clrFrom, clrTo );
+
+			wxGraphicsGradientStops stops( clrFrom, clrTo );
+			if ( m_drawerSettings.UseLogarithmicColorGradient() )
+			{
+				wxASSERT( UseLogarithmicScale() );
+				create_log_stops( stops, clrFrom, clrTo, m_rc.m_height, GetLogarithmicScale().GetInverted() );
+			}
+
+			brush = m_gc->CreateLinearGradientBrush( topLeft.m_x, topLeft.m_y, bottomRight.m_x, bottomRight.m_y, stops );
+		}
+		else
+		{
+			brush = m_gc->CreateBrush( m_drawerSettings.GetTopColourSettings().GetMiddleColour() );
+		}
+
+		m_gc->SetBrush( brush );
+		m_gc->DrawRectangle( topLeft.m_x, topLeft.m_y, bottomRight.m_x - topLeft.m_x, bottomRight.m_y - topLeft.m_y );
+
+		// DOWN
+		topLeft = point_central;
+		bottomRight = topLeft;
+		bottomRight.m_x += 1.0;
+		bottomRight.m_y += v * m_heightDown;
+
+		if ( m_drawerSettings.DrawWithGradient() )
+		{
+			wxColour clrFrom, clrTo;
+			GetTwoColours( va, false, clrFrom, clrTo );
+
+			wxGraphicsGradientStops stops( clrFrom, clrTo );
+			if ( m_drawerSettings.UseLogarithmicColorGradient() )
+			{
+				wxASSERT( UseLogarithmicScale() );
+				create_log_stops( stops, clrFrom, clrTo, m_rc.m_height, GetLogarithmicScale() );
+			}
+
+			brush = m_gc->CreateLinearGradientBrush( topLeft.m_x, topLeft.m_y, bottomRight.m_x, bottomRight.m_y, stops );
+		}
+		else
+		{
+			brush = m_gc->CreateBrush( m_drawerSettings.GetBottomColourSettings().GetMiddleColour() );
+		}
+
+		m_gc->SetBrush( brush );
+		m_gc->DrawRectangle( topLeft.m_x, topLeft.m_y, bottomRight.m_x - topLeft.m_x, bottomRight.m_y - topLeft.m_y );
+	}
+}
+
+void ColumnPainterWaveDrawer::ProcessFinalizer()
+{
+	m_gc->SetBrush( wxNullBrush );
+
+	__super::ProcessFinalizer();
+}
+

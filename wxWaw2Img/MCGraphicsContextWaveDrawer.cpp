@@ -3,6 +3,7 @@
  */
 
 #include "StdWx.h"
+#include "LogarithmicScale.h"
 #include "SampleProcessor.h"
 #include "WaveDrawer.h"
 #include "MultiChannelWaveDrawer.h"
@@ -49,7 +50,7 @@ wxGraphicsContext* McGraphicalContextWaveDrawer::Initialize(
 	m_gc->SetPen( wxNullPen );
 	m_gc->SetBrush( clrBg );
 	m_gc->DrawRectangle( 0, 0, imageSize.GetWidth(), imageSize.GetHeight() );
-	m_gc->SetBrush( *wxTRANSPARENT_BRUSH );
+	m_gc->SetBrush( wxNullBrush );
 
 	return m_gc.get();
 }

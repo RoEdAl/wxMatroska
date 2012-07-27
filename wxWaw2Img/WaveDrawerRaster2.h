@@ -5,7 +5,7 @@
 #define _WAVE_DRAWER_RASTER2_H_
 
 class Raster2WaveDrawer:
-	public RasterWaveDrawer
+	public ColumnPainterWaveDrawer
 {
 	public:
 
@@ -17,14 +17,8 @@ class Raster2WaveDrawer:
 
 	protected:
 
-		virtual void ProcessInitializer();
-
-		virtual void NextColumn( wxFloat32, wxFloat32 );
-		virtual void ProcessFinalizer();
-
-	protected:
-
-		wxScopedPtr< wxMemoryDC > m_mdc;
+		virtual void GetThreeColours( wxFloat32, wxColour&, wxColour&, wxColour& );
+		virtual void GetTwoColours( wxFloat32, bool, wxColour&, wxColour& );
 };
 
 #endif

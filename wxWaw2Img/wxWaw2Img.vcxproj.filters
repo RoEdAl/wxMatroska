@@ -51,12 +51,6 @@
     <ClInclude Include="WaveDrawerRaster1.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="WaveDrawerRaster2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="WaveDrawerRaster.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="WaveDrawerSimple.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -91,6 +85,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ColourInterpolation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WaveDrawerColumnPainter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WaveDrawerRaster2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -131,9 +131,6 @@
     <ClCompile Include="WaveDrawerRaster2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WaveDrawerRaster.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="WaveDrawerSimple.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -165,6 +162,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ColourInterpolation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WaveDrawerColumnPainter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

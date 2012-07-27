@@ -3,6 +3,7 @@
  */
 
 #include "StdWx.h"
+#include "LogarithmicScale.h"
 #include "SampleProcessor.h"
 #include "WaveDrawer.h"
 #include "MultiChannelWaveDrawer.h"

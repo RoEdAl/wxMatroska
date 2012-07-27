@@ -5,7 +5,7 @@
 #define _WAVE_DRAWER_RASTER1_H_
 
 class Raster1WaveDrawer:
-	public RasterWaveDrawer
+	public ColumnPainterWaveDrawer
 {
 	public:
 
@@ -17,21 +17,8 @@ class Raster1WaveDrawer:
 
 	protected:
 
-		virtual void ProcessInitializer();
-
-		virtual void NextColumn( wxFloat32, wxFloat32 );
-		virtual void ProcessFinalizer();
-
-	protected:
-
-		wxGraphicsBitmap m_bmUp;
-		wxGraphicsBitmap m_bmDown;
-
-	protected:
-
-		wxImage create_solid_bitmap( wxMemoryDC&, const ColourSettings&, bool ) const;
-		wxImage create_log_gradient_bitmap( wxMemoryDC&, const ColourSettings&, bool ) const;
-		wxImage create_gradient_bitmap( wxMemoryDC&, const ColourSettings&, bool ) const;
+		virtual void GetThreeColours( wxFloat32, wxColour&, wxColour&, wxColour& );
+		virtual void GetTwoColours( wxFloat32, bool, wxColour&, wxColour& );
 };
 
 #endif

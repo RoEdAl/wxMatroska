@@ -7,7 +7,7 @@
 WX_DEFINE_ARRAY( wxPoint2DDouble, Point2DDoubleArray );
 
 class PolyWaveDrawer:
-	public RasterWaveDrawer
+	public GraphicsContextWaveDrawer
 {
 	public:
 

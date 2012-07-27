@@ -14,7 +14,7 @@
 #include "WaveDrawer.h"
 #include "SampleChunker.h"
 #include "WaveDrawerGraphicsContext.h"
-#include "WaveDrawerRaster.h"
+#include "WaveDrawerColumnPainter.h"
 #include "WaveDrawerRaster1.h"
 #include "WaveDrawerRaster2.h"
 #include "WaveDrawerPoly.h"

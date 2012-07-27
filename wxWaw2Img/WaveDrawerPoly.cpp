@@ -9,7 +9,6 @@
 #include "SampleChunker.h"
 #include "DrawerSettings.h"
 #include "WaveDrawerGraphicsContext.h"
-#include "WaveDrawerRaster.h"
 #include "WaveDrawerPoly.h"
 
 PolyWaveDrawer::PolyWaveDrawer( wxUint64 nNumberOfSamples,
@@ -17,7 +16,14 @@ PolyWaveDrawer::PolyWaveDrawer( wxUint64 nNumberOfSamples,
 								const wxRect2DInt& rc,
 								const DrawerSettings& drawerSettings,
 								bool bUseCuePoints, const wxTimeSpanArray& cuePoints ):
-	RasterWaveDrawer( nNumberOfSamples, gc, rc, drawerSettings, bUseCuePoints, cuePoints )
+	GraphicsContextWaveDrawer(
+		nNumberOfSamples,
+		gc,
+		drawerSettings.UseLogarithmicScale() || drawerSettings.UseLogarithmicColorGradient(),
+		drawerSettings.GetLogarithmBase(),
+		rc,
+		drawerSettings,
+		bUseCuePoints, cuePoints )
 {}
 
 void PolyWaveDrawer::ProcessInitializer()
