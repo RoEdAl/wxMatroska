@@ -23,7 +23,8 @@ wxImage McGraphicalContextWaveDrawer::GetBitmap() const
 wxGraphicsContext* McGraphicalContextWaveDrawer::Initialize(
 		const wxSize& imageSize,
 		int nImageColourDepth,
-		const wxColour& clrBg
+		const wxColour& clrBg,
+		const wxRegion& rgn
 		)
 {
 	wxLogInfo( _( "Creating bitmap" ) );
@@ -54,7 +55,8 @@ wxGraphicsContext* McGraphicalContextWaveDrawer::Initialize(
 	m_gc->SetBrush( clrBg );
 	m_gc->DrawRectangle( 0, 0, imageSize.GetWidth(), imageSize.GetHeight() );
 	m_gc->SetBrush( wxNullBrush );
-	m_gc->SetCompositionMode( wxCOMPOSITION_OVER );
+	m_gc->SetCompositionMode( wxCOMPOSITION_DEST );
+	m_gc->Clip( rgn );
 
 	return m_gc.get();
 }
@@ -63,6 +65,7 @@ void McGraphicalContextWaveDrawer::ProcessFinalizer()
 {
 	__super::ProcessFinalizer();
 
+	m_gc->ResetClip();
 	m_gc.reset();
 	m_mc->SelectObject( wxNullBitmap );
 	m_mc.reset();

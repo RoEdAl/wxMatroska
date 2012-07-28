@@ -34,6 +34,27 @@ const size_t wxConfiguration::DrawingModeDescSize = sizeof ( wxConfiguration::Dr
 
 // ===============================================================================
 
+const wxConfiguration::COMPOSITION_MODE_DESC wxConfiguration::CompositionModeDesc[] = 
+{
+	{ wxCOMPOSITION_CLEAR, wxT("clear") },
+	{ wxCOMPOSITION_SOURCE, wxT("source") },
+	{ wxCOMPOSITION_OVER, wxT("over") },
+	{ wxCOMPOSITION_IN, wxT("in") },
+	{ wxCOMPOSITION_OUT, wxT("out") },
+	{ wxCOMPOSITION_ATOP, wxT("atop") },
+	{ wxCOMPOSITION_DEST, wxT("dest") },
+	{ wxCOMPOSITION_DEST_OVER, wxT("dest_over") },
+	{ wxCOMPOSITION_DEST_IN, wxT("dest_in") },
+	{ wxCOMPOSITION_DEST_OUT, wxT("dest_out") },
+	{ wxCOMPOSITION_DEST_ATOP, wxT("dest_atop") },
+	{ wxCOMPOSITION_XOR, wxT("xor") },
+	{ wxCOMPOSITION_ADD, wxT("and") }
+};
+
+const size_t wxConfiguration::CompositionModeDescSize = sizeof(wxConfiguration::CompositionModeDesc)/sizeof(wxConfiguration::COMPOSITION_MODE_DESC);
+
+// ===============================================================================
+
 wxConfiguration::wxConfiguration( void ):
 	m_eDrawingMode( DRAWING_MODE_POLY ),
 	m_imageSize( 800, 300 ),
@@ -112,6 +133,8 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 	cmdLine.AddSwitch( "cs", "cue-strippes", wxString::Format( _( "Draw segments or lines (default: %s)" ), GetSwitchAsText( m_drawerSettings.GetDrawCueStrippes() ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 
 	cmdLine.AddSwitch( wxEmptyString, "use-mlang", wxString::Format( _( "Use MLang library (default: %s)" ), GetSwitchAsText( m_bUseMLang ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+
+	cmdLine.AddOption( "dm", "composition-mode", wxString::Format( _( "Composition mode [%s] (default: %s)" ), GetCompositionModeTexts(), GetCompositionModeAsText() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 }
 
 bool wxConfiguration::ReadNegatableSwitchValue( const wxCmdLineParser& cmdLine, const wxString& name, bool& switchVal )
@@ -238,6 +261,20 @@ bool wxConfiguration::ConvertStringToDrawingMode( const wxString& s, DRAWING_MOD
 	return false;
 }
 
+bool wxConfiguration::ConvertStringToCompositionMode( const wxString& s, wxCompositionMode& e )
+{
+	for ( size_t i = 0; i < CompositionModeDescSize; i++ )
+	{
+		if ( s.CmpNoCase( CompositionModeDesc[ i ].description ) == 0 )
+		{
+			e = CompositionModeDesc[ i ].compositionMode;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 wxString wxConfiguration::GetDrawingModeAsText( DRAWING_MODE e )
 {
 	for ( size_t i = 0; i < DrawingModeDescSize; i++ )
@@ -251,6 +288,19 @@ wxString wxConfiguration::GetDrawingModeAsText( DRAWING_MODE e )
 	return wxString::Format( "<%d>", static_cast< int >( e ) );
 }
 
+wxString wxConfiguration::GetCompositionModeAsText( wxCompositionMode e )
+{
+	for ( size_t i = 0; i < CompositionModeDescSize; i++ )
+	{
+		if ( CompositionModeDesc[ i ].compositionMode == e )
+		{
+			return CompositionModeDesc[ i ].description;
+		}
+	}
+
+	return wxString::Format( "<%d>", static_cast< int >( e ) );
+}
+
 wxString wxConfiguration::GetDrawingModeTexts()
 {
 	wxString s;
@@ -258,6 +308,18 @@ wxString wxConfiguration::GetDrawingModeTexts()
 	for ( size_t i = 0; i < DrawingModeDescSize; i++ )
 	{
 		s << DrawingModeDesc[ i ].description << "|";
+	}
+
+	return s.RemoveLast();
+}
+
+wxString wxConfiguration::GetCompositionModeTexts()
+{
+	wxString s;
+
+	for ( size_t i = 0; i < CompositionModeDescSize; i++ )
+	{
+		s << CompositionModeDesc[ i ].description << "|";
 	}
 
 	return s.RemoveLast();
@@ -290,7 +352,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		if ( !ConvertStringToDrawingMode( s, m_eDrawingMode ) )
 		{
-			wxLogWarning( _( "Invalid draw mode - %s" ), s );
+			wxLogWarning( _( "Invalid drawing mode - %s" ), s );
 			return false;
 		}
 	}
@@ -667,6 +729,15 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	ReadNegatableSwitchValue( cmdLine, "use-mlang", m_bUseMLang );
 
+	if ( cmdLine.Found( "dm", &s ) )
+	{
+		if ( !ConvertStringToCompositionMode( s, m_drawerSettings.GetCompositionMode() ) )
+		{
+			wxLogWarning( _( "Invalid composition mode - %s" ), s );
+			return false;
+		}
+	}
+
 	return true;
 }
 
@@ -867,6 +938,30 @@ void wxConfiguration::GetDrawerRects( wxUint16 nChannels, wxRect2DIntArray& draw
 	}
 }
 
+wxRegion wxConfiguration::GetDrawersRegion( wxUint16 nChannels ) const
+{
+	if ( m_bMultiChannel )
+	{
+		wxRect2DIntArray drawerRects;
+		GetDrawerRects( nChannels, drawerRects );
+
+		wxRegion rgn;
+		for( size_t i=0, nCount = drawerRects.GetCount(); i < nCount; i++ )
+		{
+			const wxRect2DInt& rc = drawerRects[i];
+			rgn.Union( rc.m_x, rc.m_y, rc.m_width, rc.m_height );
+		}
+
+		return rgn;
+	}
+	else
+	{
+		wxRect2DInt rc( GetDrawerRect() );
+		wxRegion rgn( rc.m_x, rc.m_y, rc.m_width, rc.m_height );
+		return rgn;
+	}
+}
+
 bool wxConfiguration::PowerMix() const
 {
 	return m_bPowerMix;
@@ -887,3 +982,7 @@ bool wxConfiguration::UseMLang() const
 	return m_bUseMLang;
 }
 
+wxString wxConfiguration::GetCompositionModeAsText() const
+{
+	return GetCompositionModeAsText( m_drawerSettings.GetCompositionMode() );
+}

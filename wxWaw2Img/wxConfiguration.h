@@ -46,9 +46,11 @@ class wxConfiguration:
 		bool ParseColourString( const wxString&, wxColour& );
 		void GetDefaultsFromDisplay();
 		static bool ConvertStringToDrawingMode( const wxString&, DRAWING_MODE& );
-
 		static wxString GetDrawingModeAsText( DRAWING_MODE );
+		static bool ConvertStringToCompositionMode( const wxString&, wxCompositionMode& );
+		static wxString GetCompositionModeAsText( wxCompositionMode );
 		static wxString GetDrawingModeTexts();
+		static wxString GetCompositionModeTexts();
 		static wxString GetSwitchAsText( bool );
 
 		struct DRAWING_MODE_DESC
@@ -59,6 +61,15 @@ class wxConfiguration:
 
 		static const DRAWING_MODE_DESC DrawingModeDesc[];
 		static const size_t			   DrawingModeDescSize;
+
+		struct COMPOSITION_MODE_DESC
+		{
+			wxCompositionMode compositionMode;
+			const wxChar* description;
+		};
+
+		static const COMPOSITION_MODE_DESC CompositionModeDesc[];
+		static const size_t CompositionModeDescSize;
 
 	private:
 
@@ -78,8 +89,8 @@ class wxConfiguration:
 		wxUint16 GetNumberOfColumns() const;
 		wxSize GetMargins() const;
 		wxRect2DInt GetDrawerRect() const;
-
 		void GetDrawerRects( wxUint16, wxRect2DIntArray & ) const;
+		wxRegion GetDrawersRegion( wxUint16 ) const;
 		bool PowerMix() const;
 		DRAWING_MODE GetDrawingMode() const;
 		wxString GetDrawingModeAsText() const;
@@ -89,6 +100,7 @@ class wxConfiguration:
 		bool GenerateCuePoints() const;
 		bool GenerateCuePoints( const wxTimeSpan&, wxTimeSpanArray& ) const;
 		bool UseMLang() const;
+		wxString GetCompositionModeAsText() const;
 
 	public:
 

@@ -94,7 +94,8 @@ DrawerSettings::DrawerSettings():
 	m_nFrequency( 50 ),
 	m_fBaselinePosition( 0.5f ),
 	m_clrBg( wxTransparentColour ),
-	m_bDrawCueStrippes( true )
+	m_bDrawCueStrippes( true ),
+	m_eCompositionMode( wxCOMPOSITION_OVER )
 {}
 
 // ===============================================================
@@ -174,6 +175,11 @@ bool DrawerSettings::GetDrawCueStrippes() const
 	return m_bDrawCueStrippes;
 }
 
+wxCompositionMode DrawerSettings::GetCompositionMode() const
+{
+	return m_eCompositionMode;
+}
+
 // ===============================================================
 
 bool& DrawerSettings::GetDrawWithGradient()
@@ -224,6 +230,11 @@ ColourSettings& DrawerSettings::GetBottomColourSettings()
 bool& DrawerSettings::GetDrawCueStrippes()
 {
 	return m_bDrawCueStrippes;
+}
+
+wxCompositionMode& DrawerSettings::GetCompositionMode()
+{
+	return m_eCompositionMode;
 }
 
 // ===============================================================
@@ -311,5 +322,11 @@ DrawerSettings& DrawerSettings::SetBaselinePositionPercent( wxInt32 nBaselinePos
 DrawerSettings& DrawerSettings::SetDrawCueStrippes( bool b )
 {
 	m_bDrawCueStrippes = b;
+	return *this;
+}
+
+DrawerSettings& DrawerSettings::SetCompositionMode( wxCompositionMode e )
+{
+	m_eCompositionMode = e;
 	return *this;
 }

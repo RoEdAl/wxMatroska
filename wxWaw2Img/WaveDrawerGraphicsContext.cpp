@@ -46,12 +46,13 @@ void GraphicsContextWaveDrawer::ProcessInitializer()
 		m_gc->SetBrush( m_drawerSettings.GetBottomColourSettings().GetBackgroundColour() );
 		m_gc->DrawRectangle( rc.m_x, rc.m_y, rc.m_width, rc.m_height );
 	}
-	m_gc->SetCompositionMode( wxCOMPOSITION_OVER );
 
 	// Secondary background colour
 
 	if ( m_bUseCuePoints )
 	{
+		m_gc->SetCompositionMode( wxCOMPOSITION_OVER );
+
 		bool bDrawCueStrippes = m_drawerSettings.GetDrawCueStrippes();
 
 		if ( m_drawerSettings.OneBackgroundColour2() )
@@ -99,6 +100,7 @@ void GraphicsContextWaveDrawer::ProcessInitializer()
 		}
 	}
 
+	m_gc->SetCompositionMode( m_drawerSettings.GetCompositionMode() );
 	m_gc->SetBrush( wxNullBrush );
 }
 
