@@ -82,6 +82,7 @@ class wxConfiguration:
 		void GetDrawerRects( wxUint16, wxRect2DIntArray & ) const;
 		bool PowerMix() const;
 		DRAWING_MODE GetDrawingMode() const;
+		wxString GetDrawingModeAsText() const;
 		bool HasCuePointsFile() const;
 		const wxFileName& GetCuePointsFile() const;
 		bool ReadCuePoints( wxTimeSpanArray& ) const;

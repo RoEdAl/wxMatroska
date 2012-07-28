@@ -57,6 +57,7 @@ class DrawerSettings
 		wxColour	   m_clrBg;
 		ColourSettings m_topColourSettings;
 		ColourSettings m_bottomColourSettings;
+		bool m_bDrawCueStrippes;
 
 	public:
 
@@ -74,6 +75,7 @@ class DrawerSettings
 		bool OneEdgeColour() const;
 		bool OneBackgroundColour() const;
 		bool OneBackgroundColour2() const;
+		bool GetDrawCueStrippes() const;
 
 	public:
 
@@ -86,6 +88,7 @@ class DrawerSettings
 		wxColour&		GetBackgroundColour();
 		ColourSettings& GetTopColourSettings();
 		ColourSettings& GetBottomColourSettings();
+		bool& GetDrawCueStrippes();
 
 	public:
 
@@ -103,6 +106,8 @@ class DrawerSettings
 		DrawerSettings& SetBackgroundColour( const wxColour& );
 		DrawerSettings& SetBackgroundColour2( const wxColour& );
 		const wxColour& CalcMiddleColour();
+
+		DrawerSettings& SetDrawCueStrippes( bool );
 };
 
 #endif

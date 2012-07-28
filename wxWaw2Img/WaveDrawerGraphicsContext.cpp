@@ -52,24 +52,50 @@ void GraphicsContextWaveDrawer::ProcessInitializer()
 
 	if ( m_bUseCuePoints )
 	{
+		bool bDrawCueStrippes = m_drawerSettings.GetDrawCueStrippes();
+
 		if ( m_drawerSettings.OneBackgroundColour2() )
 		{
-			wxGraphicsPath path	  = m_gc->CreatePath();
-			create_cue_region( m_rc, m_cuePoints, path );
-			m_gc->SetBrush( m_drawerSettings.GetTopColourSettings().GetBackgroundColour2() );
-			m_gc->FillPath( path );
+			wxGraphicsPath path	= m_gc->CreatePath();
+
+			if ( bDrawCueStrippes )
+			{
+				create_cue_segments_path( m_rc, m_cuePoints, path );
+				m_gc->SetBrush( m_drawerSettings.GetTopColourSettings().GetBackgroundColour2() );
+				m_gc->FillPath( path );
+			}
+			else
+			{
+				create_cue_lines_path( m_rc, m_cuePoints, path );
+				m_gc->SetPen( m_drawerSettings.GetTopColourSettings().GetBackgroundColour2() );
+				m_gc->StrokePath( path );
+			}
 		}
 		else
 		{
 			wxGraphicsPath pathTop	  = m_gc->CreatePath();
 			wxGraphicsPath pathBottom = m_gc->CreatePath();
-			create_cue_region( m_rc, m_drawerSettings.GetBaselinePosition(), m_cuePoints, pathTop, pathBottom );
 
-			m_gc->SetBrush( m_drawerSettings.GetTopColourSettings().GetBackgroundColour2() );
-			m_gc->FillPath( pathTop );
+			if ( bDrawCueStrippes )
+			{
+				create_cue_segments_paths( m_rc, m_drawerSettings.GetBaselinePosition(), m_cuePoints, pathTop, pathBottom );
 
-			m_gc->SetBrush( m_drawerSettings.GetBottomColourSettings().GetBackgroundColour2() );
-			m_gc->FillPath( pathBottom );
+				m_gc->SetBrush( m_drawerSettings.GetTopColourSettings().GetBackgroundColour2() );
+				m_gc->FillPath( pathTop );
+
+				m_gc->SetBrush( m_drawerSettings.GetBottomColourSettings().GetBackgroundColour2() );
+				m_gc->FillPath( pathBottom );
+			}
+			else
+			{
+				create_cue_lines_paths( m_rc, m_drawerSettings.GetBaselinePosition(), m_cuePoints, pathTop, pathBottom );
+
+				m_gc->SetPen( m_drawerSettings.GetTopColourSettings().GetBackgroundColour2() );
+				m_gc->StrokePath( pathTop );
+
+				m_gc->SetPen( m_drawerSettings.GetBottomColourSettings().GetBackgroundColour2() );
+				m_gc->StrokePath( pathBottom );
+			}
 		}
 	}
 
@@ -79,7 +105,7 @@ void GraphicsContextWaveDrawer::ProcessInitializer()
 void GraphicsContextWaveDrawer::ProcessFinalizer()
 {}
 
-void GraphicsContextWaveDrawer::create_cue_region(
+void GraphicsContextWaveDrawer::create_cue_segments_paths(
 		const wxRect2DInt& rect,
 		wxFloat32 fBaseline,
 		const wxTimeSpanArray& cuePoints,
@@ -110,7 +136,37 @@ void GraphicsContextWaveDrawer::create_cue_region(
 	}
 }
 
-void GraphicsContextWaveDrawer::create_cue_region(
+void GraphicsContextWaveDrawer::create_cue_lines_paths(
+		const wxRect2DInt& rect,
+		wxFloat32 fBaseline,
+		const wxTimeSpanArray& cuePoints,
+		wxGraphicsPath& pathTop, wxGraphicsPath& pathBottom )
+{
+	wxASSERT( cuePoints.GetCount() > 1 );
+
+	wxFloat64 endPos = cuePoints.Last().GetMilliseconds().ToDouble();
+
+	wxDouble fHeightTop	   = rect.m_height * ( 1.0f - fBaseline );
+	wxDouble fHeightBottom = rect.m_height * fBaseline;
+
+	for ( size_t i = 0, nCount1 = cuePoints.GetCount() - 1; i < nCount1; i += 1 )
+	{
+		wxFloat64 ts = cuePoints[ i ].GetMilliseconds().ToDouble();
+
+		wxPoint2DDouble pt( ts * rect.m_width / endPos, 0.0 );
+		pt.m_x += rect.m_x;
+		pt.m_y += rect.m_y;
+
+		pathTop.MoveToPoint( pt );
+		pt.m_y += fHeightTop;
+		pathTop.AddLineToPoint( pt );
+		pathBottom.MoveToPoint( pt );
+		pt.m_y += fHeightBottom;
+		pathBottom.AddLineToPoint( pt );
+	}
+}
+
+void GraphicsContextWaveDrawer::create_cue_segments_path(
 		const wxRect2DInt& rect,
 		const wxTimeSpanArray& cuePoints,
 		wxGraphicsPath& path )
@@ -129,6 +185,29 @@ void GraphicsContextWaveDrawer::create_cue_region(
 		rc.m_y += rect.m_y;
 
 		path.AddRectangle( rc.m_x, rc.m_y, rc.m_width, rc.m_height );
+	}
+}
+
+void GraphicsContextWaveDrawer::create_cue_lines_path(
+		const wxRect2DInt& rect,
+		const wxTimeSpanArray& cuePoints,
+		wxGraphicsPath& path )
+{
+	wxASSERT( cuePoints.GetCount() > 1 );
+
+	wxFloat64 endPos = cuePoints.Last().GetMilliseconds().ToDouble();
+
+	for ( size_t i = 0, nCount1 = cuePoints.GetCount() - 1; i < nCount1; i += 1 )
+	{
+		wxFloat64 ts = cuePoints[ i ].GetMilliseconds().ToDouble();
+
+		wxPoint2DDouble pt( ts * rect.m_width / endPos, 0 );
+		pt.m_x += rect.m_x;
+		pt.m_y += rect.m_y;
+		path.MoveToPoint( pt );
+
+		pt.m_y += rect.m_height;
+		path.AddLineToPoint( pt );
 	}
 }
 

@@ -122,7 +122,7 @@ bool wxMyApp::OnCmdLineParsed( wxCmdLineParser& cmdline )
 		return false;
 	}
 
-	wxLogMessage( _( "%s ver. %s" ), GetAppDisplayName(), APP_VERSION );
+	wxLogInfo( _( "%s ver. %s" ), GetAppDisplayName(), APP_VERSION );
 	return true;
 }
 
@@ -207,7 +207,9 @@ static WaveDrawer* create_wave_drawer( DRAWING_MODE eMode, const wxConfiguration
 		}
 
 		case DRAWING_MODE_POLY:
-		return new PolyWaveDrawer( nNumberOfSamples, gc, rc, cfg.GetDrawerSettings(), bUseCuePoints, cuePoints );
+		{
+			return new PolyWaveDrawer( nNumberOfSamples, gc, rc, cfg.GetDrawerSettings(), bUseCuePoints, cuePoints );
+		}
 	}
 
 	wxASSERT( false );
@@ -218,7 +220,7 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 {
 	if ( sfInfo.frames <= 0 )
 	{
-		wxLogInfo( _( "Unknown length of audio source" ) );
+		wxLogError( _( "Unknown length of audio source" ) );
 		return NULL;
 	}
 
@@ -384,8 +386,11 @@ int wxMyApp::OnRun()
 
 	if ( !inputFile.IsOk() )
 	{
+		wxLogError( _("Invalid input file \u201C%s\u201D"), inputFile.GetFullName() );
 		return 100;
 	}
+
+	wxLogMessage( _( "Processing \u201C%s\u201D, mode %s" ), inputFile.GetFullName(), m_cfg.GetDrawingModeAsText() );
 
 	wxLogInfo( _( "Opening audio file" ) );
 	SoundFile sfReader;
@@ -435,7 +440,7 @@ int wxMyApp::OnExit()
 	int res = wxAppConsole::OnExit();
 
 	CoUninitialize();
-	wxLogMessage( _( "Done" ) );
+	wxLogInfo( _( "Exiting application" ) );
 	return res;
 }
 

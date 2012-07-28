@@ -93,7 +93,8 @@ DrawerSettings::DrawerSettings():
 	m_fLogBase( exp( 1.0f ) ),
 	m_nFrequency( 50 ),
 	m_fBaselinePosition( 0.5f ),
-	m_clrBg( wxTransparentColour )
+	m_clrBg( wxTransparentColour ),
+	m_bDrawCueStrippes( true )
 {}
 
 // ===============================================================
@@ -168,6 +169,11 @@ bool DrawerSettings::OneBackgroundColour2() const
 	return m_topColourSettings.GetBackgroundColour2() == m_bottomColourSettings.GetBackgroundColour2();
 }
 
+bool DrawerSettings::GetDrawCueStrippes() const
+{
+	return m_bDrawCueStrippes;
+}
+
 // ===============================================================
 
 bool& DrawerSettings::GetDrawWithGradient()
@@ -213,6 +219,11 @@ ColourSettings& DrawerSettings::GetTopColourSettings()
 ColourSettings& DrawerSettings::GetBottomColourSettings()
 {
 	return m_bottomColourSettings;
+}
+
+bool& DrawerSettings::GetDrawCueStrippes()
+{
+	return m_bDrawCueStrippes;
 }
 
 // ===============================================================
@@ -297,3 +308,8 @@ DrawerSettings& DrawerSettings::SetBaselinePositionPercent( wxInt32 nBaselinePos
 	return *this;
 }
 
+DrawerSettings& DrawerSettings::SetDrawCueStrippes( bool b )
+{
+	m_bDrawCueStrippes = b;
+	return *this;
+}
