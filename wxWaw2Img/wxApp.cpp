@@ -312,6 +312,57 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 	}
 }
 
+static bool save_image( const wxFileName& fn, wxEnhMetaFile* pEmf )
+{
+	wxASSERT( pEmf != NULL );
+
+	wxLogInfo( _("Opening metafile") );
+	wxEnhMetaFileDC emfDc( fn.GetFullPath() );
+	if ( !emfDc.IsOk() )
+	{
+		wxLogError( _( "Fail to enhanced metafile \u201C%s\u201D" ), fn.GetFullName() );
+		return false;
+	}
+
+	wxLogInfo( _("Copying image") );
+	if ( pEmf->Play( &emfDc ) )
+	{
+		wxEnhMetaFile* pClonedEmf = emfDc.Close();
+		wxASSERT( pClonedEmf != NULL );
+		delete pClonedEmf;
+		wxLogInfo( _( "Image sucessfully saved to file \u201C%s\u201D" ), fn.GetFullName() );
+		return true;
+	}
+	else
+	{
+		wxLogError( _( "Fail to save image to file \u201C%s\u201D" ), fn.GetFullName() );
+		return false;
+	}
+}
+
+static bool save_image( const wxFileName& fn, wxImage img, const wxConfiguration& cfg )
+{
+	img.SetOption( wxIMAGE_OPTION_RESOLUTIONX, cfg.GetImageResolution().GetWidth() );
+	img.SetOption( wxIMAGE_OPTION_RESOLUTIONY, cfg.GetImageResolution().GetHeight() );
+	img.SetOption( wxIMAGE_OPTION_RESOLUTIONUNIT, cfg.GetImageResolutionUnits() );
+	img.SetOption( wxIMAGE_OPTION_QUALITY, cfg.GetImageQuality() );
+	img.SetOption( wxIMAGE_OPTION_FILENAME, fn.GetName() );
+
+	wxLogInfo( _( "Saving image to file \u201C%s\u201D" ), fn.GetFullName() );
+	bool res = img.SaveFile( fn.GetFullPath() );
+
+	if ( res )
+	{
+		wxLogInfo( _( "Image sucessfully saved to file \u201C%s\u201D" ), fn.GetFullName() );
+		return true;
+	}
+	else
+	{
+		wxLogError( _( "Fail to save image to file \u201C%s\u201D" ), fn.GetFullName() );
+		return false;
+	}
+}
+
 static bool save_rendered_wave( McChainWaveDrawer& waveDrawer, const wxConfiguration& cfg )
 {
 	wxFileName fn( cfg.GetOutputFile() );
@@ -336,27 +387,21 @@ static bool save_rendered_wave( McChainWaveDrawer& waveDrawer, const wxConfigura
 		case DRAWING_MODE_POLY:
 		{
 			McGraphicalContextWaveDrawer* pGc = static_cast< McGraphicalContextWaveDrawer* >( waveDrawer.GetWaveDrawer() );
-			wxImage						  img( pGc->GetBitmap() );
-
-			img.SetOption( wxIMAGE_OPTION_RESOLUTIONX, cfg.GetImageResolution().GetWidth() );
-			img.SetOption( wxIMAGE_OPTION_RESOLUTIONY, cfg.GetImageResolution().GetHeight() );
-			img.SetOption( wxIMAGE_OPTION_RESOLUTIONUNIT, cfg.GetImageResolutionUnits() );
-			img.SetOption( wxIMAGE_OPTION_QUALITY, cfg.GetImageQuality() );
-			img.SetOption( wxIMAGE_OPTION_FILENAME, fn.GetName() );
-
-			wxLogInfo( _( "Saving image to file \u201C%s\u201D" ), fn.GetFullName() );
-			bool res = img.SaveFile( fn.GetFullPath() );
-
-			if ( res )
+#ifdef __WXMSW__
+#if wxUSE_ENH_METAFILE
+			wxEnhMetaFile* pEmf = pGc->GetMetafile();
+			if ( pEmf != NULL )
 			{
-				wxLogInfo( _( "Image sucessfully saved to file \u201C%s\u201D" ), fn.GetFullName() );
-				return true;
+				return save_image( fn, pEmf );
 			}
 			else
 			{
-				wxLogError( _( "Fail to save image to file \u201C%s\u201D" ), fn.GetFullName() );
-				return false;
+				return save_image( fn, pGc->GetBitmap(), cfg );
 			}
+#endif
+#else
+			return save_image( fn, pGc->GetBitmap(), cfg );
+#endif
 		}
 	}
 

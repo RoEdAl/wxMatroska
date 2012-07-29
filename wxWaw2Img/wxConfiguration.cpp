@@ -861,7 +861,15 @@ wxUint16 wxConfiguration::GetImageQuality() const
 
 int wxConfiguration::GetImageColorDepth() const
 {
-	return m_nImageColorDepth;
+	wxFileName fn( GetOutputFile() );
+	if ( fn.GetExt().CmpNoCase( "emf" ) == 0 )
+	{
+		return -1;
+	}
+	else
+	{
+		return m_nImageColorDepth;
+	}
 }
 
 bool wxConfiguration::MultiChannel() const

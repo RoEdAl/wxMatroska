@@ -71,6 +71,11 @@ typedef struct tagMSG
 #include <wx/geometry.h>
 #include <wx/graphics.h>
 #include <wx/display.h>
+#ifdef __WXMSW__
+#if wxUSE_ENH_METAFILE
+#include <wx/msw/enhmeta.h>
+#endif
+#endif
 
 #include <math.h>
 
