@@ -1,5 +1,5 @@
 /*
- *      WaveDrawerRaster1.cpp
+ *      WaveDrawerPoly.cpp
  */
 #include "StdWx.h"
 #include "FloatArray.h"

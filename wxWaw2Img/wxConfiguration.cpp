@@ -485,12 +485,9 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	if ( m_nImageColorDepth == wxBITMAP_SCREEN_DEPTH )
 	{
-		m_drawerSettings.SetBackgroundColour( get_default_bg_color( wxGetDisplayDepth() ) );
+		m_nImageColorDepth = wxGetDisplayDepth();
 	}
-	else
-	{
-		m_drawerSettings.SetBackgroundColour( get_default_bg_color( m_nImageColorDepth ) );
-	}
+	m_drawerSettings.SetBackgroundColour( get_default_bg_color( m_nImageColorDepth ) );
 
 	if ( ReadNegatableSwitchValue( cmdLine, "bs", bRes ) && bRes )
 	{
