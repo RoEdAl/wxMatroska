@@ -57,7 +57,7 @@ class DrawerSettings
 		wxColour		  m_clrBg;
 		ColourSettings	  m_topColourSettings;
 		ColourSettings	  m_bottomColourSettings;
-		bool			  m_bDrawCueStrippes;
+		bool			  m_bDrawCueBlocks;
 		wxCompositionMode m_eCompositionMode;
 
 	public:
@@ -76,7 +76,7 @@ class DrawerSettings
 		bool OneEdgeColour() const;
 		bool OneBackgroundColour() const;
 		bool OneBackgroundColour2() const;
-		bool GetDrawCueStrippes() const;
+		bool GetDrawCueBlocks() const;
 		wxCompositionMode GetCompositionMode() const;
 
 	public:
@@ -90,7 +90,7 @@ class DrawerSettings
 		wxColour&		GetBackgroundColour();
 		ColourSettings& GetTopColourSettings();
 		ColourSettings& GetBottomColourSettings();
-		bool& GetDrawCueStrippes();
+		bool& GetDrawCueBlocks();
 		wxCompositionMode& GetCompositionMode();
 
 	public:
@@ -109,9 +109,7 @@ class DrawerSettings
 		DrawerSettings& SetBackgroundColour( const wxColour& );
 		DrawerSettings& SetBackgroundColour2( const wxColour& );
 		const wxColour& CalcMiddleColour();
-
-		DrawerSettings& SetDrawCueStrippes( bool );
-
+		DrawerSettings& SetDrawCueBlocks( bool );
 		DrawerSettings& SetCompositionMode( wxCompositionMode );
 };
 

@@ -78,7 +78,20 @@ void wxMyApp::AddColourFormatDescription( wxCmdLineParser& cmdline )
 	cmdline.AddUsageText( _( "\tCSS sytntax: RGB(176,45,235)" ) );
 	cmdline.AddUsageText( _( "\tCSS syntax with alpha: RGBA(176,45,235,0.7)" ) );
 	cmdline.AddUsageText( _( "\tHTML syntax (no alpha): #AABBFF" ) );
-	cmdline.AddUsageText( _( "\tcolor name: yellow" ) );
+	cmdline.AddUsageText( _( "\tcolor name: yellow, transparent etc." ) );
+}
+
+void wxMyApp::AddCuePointsFileDescription( wxCmdLineParser& cmdline )
+{
+	cmdline.AddUsageText( _("Cue points format:") );
+	cmdline.AddUsageText( _("\tMM::SS:FF - minutes, seconds and CD frames (1/75 s)") );
+	cmdline.AddUsageText( _("\tMM::SS.YYY - minutes, seconds and miliseconds") );
+	cmdline.AddUsageText( _("\ts[.www] - seconds [with optional partial part]") );
+	cmdline.AddUsageText( _("Examples:") );
+	cmdline.AddUsageText( _("\t05:01:65 # 5 minutes, one second and 65 CD frames") );
+	cmdline.AddUsageText( _("\t15:23.456 # 15 minutes, 23 seconds and 456 miliseconds") );
+	cmdline.AddUsageText( _("\t545 # 545 seconds") );
+	cmdline.AddUsageText( _("\t10345.67 # 10345 seconds and 670 miliseconds") );
 }
 
 void wxMyApp::AddDisplayDescription( wxCmdLineParser& cmdline )
@@ -88,10 +101,12 @@ void wxMyApp::AddDisplayDescription( wxCmdLineParser& cmdline )
 	wxRect dplRect = wxGetClientDisplayRect();
 	int	   nDepth  = wxDisplayDepth();
 	wxSize res	   = wxGetDisplayPPI();
+	wxSize dplSizeMm = wxGetDisplaySizeMM();
 
 	cmdline.AddUsageText( wxString::Format( _( "Display size (pixels): %dx%d (%dx%d)" ), dplRect.width, dplRect.height, dplRect.x, dplRect.y ) );
 	cmdline.AddUsageText( wxString::Format( _( "Display color depth (bits): %d" ), nDepth ) );
 	cmdline.AddUsageText( wxString::Format( _( "Display resolution (pixels/inch): %dx%d" ), res.x, res.y ) );
+	cmdline.AddUsageText( wxString::Format( _( "Display size (milimeters): %dx%d" ), dplSizeMm.GetWidth(), dplSizeMm.GetHeight() ) );
 	cmdline.AddUsageText( wxString::Format( _( "Background color: %s" ), wxSystemSettings::GetColour( wxConfiguration::COLOR_BACKGROUND ).GetAsString() ) );
 	cmdline.AddUsageText( wxString::Format( _( "Second background color: %s" ), wxSystemSettings::GetColour( wxConfiguration::COLOR_BACKGROUND2 ).GetAsString() ) );
 }
@@ -103,6 +118,8 @@ void wxMyApp::OnInitCmdLine( wxCmdLineParser& cmdline )
 	m_cfg.AddCmdLineParams( cmdline );
 	AddSeparator( cmdline );
 	AddColourFormatDescription( cmdline );
+	AddSeparator( cmdline );
+	AddCuePointsFileDescription( cmdline );
 	AddSeparator( cmdline );
 	AddDisplayDescription( cmdline );
 	AddSeparator( cmdline );
@@ -312,12 +329,13 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 	}
 }
 
-static bool save_image( const wxFileName& fn, wxEnhMetaFile* pEmf )
+static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, wxEnhMetaFile* pEmf )
 {
 	wxASSERT( pEmf != NULL );
 
 	wxLogInfo( _( "Opening metafile" ) );
-	wxEnhMetaFileDC emfDc( fn.GetFullPath() );
+	const wxSize& imgSize = cfg.GetImageSize();
+	wxEnhMetaFileDC emfDc( fn.GetFullPath(), imgSize.GetWidth(), imgSize.GetHeight(), fn.GetName() );
 
 	if ( !emfDc.IsOk() )
 	{
@@ -329,9 +347,8 @@ static bool save_image( const wxFileName& fn, wxEnhMetaFile* pEmf )
 
 	if ( pEmf->Play( &emfDc ) )
 	{
-		wxEnhMetaFile* pClonedEmf = emfDc.Close();
-		wxASSERT( pClonedEmf != NULL );
-		delete pClonedEmf;
+		wxScopedPtr<wxEnhMetaFile> pClonedEmf( emfDc.Close() );
+		wxASSERT( pClonedEmf );
 		wxLogInfo( _( "Image sucessfully saved to file \u201C%s\u201D" ), fn.GetFullName() );
 		return true;
 	}
@@ -342,7 +359,7 @@ static bool save_image( const wxFileName& fn, wxEnhMetaFile* pEmf )
 	}
 }
 
-static bool save_image( const wxFileName& fn, wxImage img, const wxConfiguration& cfg )
+static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, wxImage img )
 {
 	img.SetOption( wxIMAGE_OPTION_RESOLUTIONX, cfg.GetImageResolution().GetWidth() );
 	img.SetOption( wxIMAGE_OPTION_RESOLUTIONY, cfg.GetImageResolution().GetHeight() );
@@ -395,15 +412,15 @@ static bool save_rendered_wave( McChainWaveDrawer& waveDrawer, const wxConfigura
 
 			if ( pEmf != NULL )
 			{
-				return save_image( fn, pEmf );
+				return save_image( fn, cfg, pEmf );
 			}
 			else
 			{
-				return save_image( fn, pGc->GetBitmap(), cfg );
+				return save_image( fn, cfg, pGc->GetBitmap() );
 			}
 #endif
 #else
-			return save_image( fn, pGc->GetBitmap(), cfg );
+			return save_image( fn, cfg, pGc->GetBitmap() );
 #endif
 		}
 	}

@@ -54,13 +54,13 @@ void GraphicsContextWaveDrawer::ProcessInitializer()
 	{
 		m_gc->SetCompositionMode( wxCOMPOSITION_OVER );
 
-		bool bDrawCueStrippes = m_drawerSettings.GetDrawCueStrippes();
+		bool bDrawCueBlocks = m_drawerSettings.GetDrawCueBlocks();
 
 		if ( m_drawerSettings.OneBackgroundColour2() )
 		{
 			wxGraphicsPath path = m_gc->CreatePath();
 
-			if ( bDrawCueStrippes )
+			if ( bDrawCueBlocks )
 			{
 				create_cue_segments_path( m_rc, m_cuePoints, path );
 				m_gc->SetBrush( m_drawerSettings.GetTopColourSettings().GetBackgroundColour2() );
@@ -78,7 +78,7 @@ void GraphicsContextWaveDrawer::ProcessInitializer()
 			wxGraphicsPath pathTop	  = m_gc->CreatePath();
 			wxGraphicsPath pathBottom = m_gc->CreatePath();
 
-			if ( bDrawCueStrippes )
+			if ( bDrawCueBlocks )
 			{
 				create_cue_segments_paths( m_rc, m_drawerSettings.GetBaselinePosition(), m_cuePoints, pathTop, pathBottom );
 

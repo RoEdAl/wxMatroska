@@ -24,6 +24,7 @@ class wxMyApp:
 		static void AddVersionInfos( wxCmdLineParser& );
 		static void AddColourFormatDescription( wxCmdLineParser& );
 		static void AddDisplayDescription( wxCmdLineParser& );
+		static void AddCuePointsFileDescription( wxCmdLineParser& );
 		static void InitImageHandlers();
 
 	protected:
