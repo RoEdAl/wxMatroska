@@ -46,7 +46,6 @@ wxGraphicsContext* McGraphicalContextWaveDrawer::Initialize(
 {
 #ifdef __WXMSW__
 #if wxUSE_ENH_METAFILE
-
 	if ( nImageColourDepth > 0 )
 	{
 		if ( !create_context_on_bitmap( imageSize, nImageColourDepth ) )
@@ -58,18 +57,15 @@ wxGraphicsContext* McGraphicalContextWaveDrawer::Initialize(
 	{
 		create_context_on_emf( imageSize );
 	}
-
 #endif
 #else
-
 	if ( !create_context_on_bitmap( imageSize, nImageColourDepth ) )
 	{
 		return NULL;
 	}
-
 #endif
 
-	//wxCompositionMode mode = m_gc->GetCompositionMode();
+	// wxCompositionMode mode = m_gc->GetCompositionMode();
 
 	wxLogInfo( _( "Initializing graphics context" ) );
 	m_gc->SetAntialiasMode( wxANTIALIAS_DEFAULT );
@@ -100,13 +96,11 @@ void McGraphicalContextWaveDrawer::ProcessFinalizer()
 
 #ifdef __WXMSW__
 #if wxUSE_ENH_METAFILE
-	
 	if ( m_emfDc )
 	{
 		m_emf.reset( m_emfDc->Close() );
 		m_emfDc.release();
 	}
-
 #endif
 #endif
 }
@@ -148,3 +142,4 @@ void McGraphicalContextWaveDrawer::create_context_on_emf( const wxSize& imageSiz
 
 #endif
 #endif
+

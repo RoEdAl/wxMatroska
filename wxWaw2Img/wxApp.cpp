@@ -316,15 +316,17 @@ static bool save_image( const wxFileName& fn, wxEnhMetaFile* pEmf )
 {
 	wxASSERT( pEmf != NULL );
 
-	wxLogInfo( _("Opening metafile") );
+	wxLogInfo( _( "Opening metafile" ) );
 	wxEnhMetaFileDC emfDc( fn.GetFullPath() );
+
 	if ( !emfDc.IsOk() )
 	{
 		wxLogError( _( "Fail to enhanced metafile \u201C%s\u201D" ), fn.GetFullName() );
 		return false;
 	}
 
-	wxLogInfo( _("Copying image") );
+	wxLogInfo( _( "Copying image" ) );
+
 	if ( pEmf->Play( &emfDc ) )
 	{
 		wxEnhMetaFile* pClonedEmf = emfDc.Close();
@@ -390,6 +392,7 @@ static bool save_rendered_wave( McChainWaveDrawer& waveDrawer, const wxConfigura
 #ifdef __WXMSW__
 #if wxUSE_ENH_METAFILE
 			wxEnhMetaFile* pEmf = pGc->GetMetafile();
+
 			if ( pEmf != NULL )
 			{
 				return save_image( fn, pEmf );
@@ -433,7 +436,7 @@ int wxMyApp::OnRun()
 
 	if ( !inputFile.IsOk() )
 	{
-		wxLogError( _("Invalid input file \u201C%s\u201D"), inputFile.GetFullName() );
+		wxLogError( _( "Invalid input file \u201C%s\u201D" ), inputFile.GetFullName() );
 		return 100;
 	}
 

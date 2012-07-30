@@ -34,24 +34,24 @@ const size_t wxConfiguration::DrawingModeDescSize = sizeof ( wxConfiguration::Dr
 
 // ===============================================================================
 
-const wxConfiguration::COMPOSITION_MODE_DESC wxConfiguration::CompositionModeDesc[] = 
+const wxConfiguration::COMPOSITION_MODE_DESC wxConfiguration::CompositionModeDesc[] =
 {
-	{ wxCOMPOSITION_CLEAR, wxT("clear") },
-	{ wxCOMPOSITION_SOURCE, wxT("source") },
-	{ wxCOMPOSITION_OVER, wxT("over") },
-	{ wxCOMPOSITION_IN, wxT("in") },
-	{ wxCOMPOSITION_OUT, wxT("out") },
-	{ wxCOMPOSITION_ATOP, wxT("atop") },
-	{ wxCOMPOSITION_DEST, wxT("dest") },
-	{ wxCOMPOSITION_DEST_OVER, wxT("dest_over") },
-	{ wxCOMPOSITION_DEST_IN, wxT("dest_in") },
-	{ wxCOMPOSITION_DEST_OUT, wxT("dest_out") },
-	{ wxCOMPOSITION_DEST_ATOP, wxT("dest_atop") },
-	{ wxCOMPOSITION_XOR, wxT("xor") },
-	{ wxCOMPOSITION_ADD, wxT("and") }
+	{ wxCOMPOSITION_CLEAR, wxT( "clear" ) },
+	{ wxCOMPOSITION_SOURCE, wxT( "source" ) },
+	{ wxCOMPOSITION_OVER, wxT( "over" ) },
+	{ wxCOMPOSITION_IN, wxT( "in" ) },
+	{ wxCOMPOSITION_OUT, wxT( "out" ) },
+	{ wxCOMPOSITION_ATOP, wxT( "atop" ) },
+	{ wxCOMPOSITION_DEST, wxT( "dest" ) },
+	{ wxCOMPOSITION_DEST_OVER, wxT( "dest_over" ) },
+	{ wxCOMPOSITION_DEST_IN, wxT( "dest_in" ) },
+	{ wxCOMPOSITION_DEST_OUT, wxT( "dest_out" ) },
+	{ wxCOMPOSITION_DEST_ATOP, wxT( "dest_atop" ) },
+	{ wxCOMPOSITION_XOR, wxT( "xor" ) },
+	{ wxCOMPOSITION_ADD, wxT( "and" ) }
 };
 
-const size_t wxConfiguration::CompositionModeDescSize = sizeof(wxConfiguration::CompositionModeDesc)/sizeof(wxConfiguration::COMPOSITION_MODE_DESC);
+const size_t wxConfiguration::CompositionModeDescSize = sizeof ( wxConfiguration::CompositionModeDesc ) / sizeof ( wxConfiguration::COMPOSITION_MODE_DESC );
 
 // ===============================================================================
 
@@ -862,6 +862,7 @@ wxUint16 wxConfiguration::GetImageQuality() const
 int wxConfiguration::GetImageColorDepth() const
 {
 	wxFileName fn( GetOutputFile() );
+
 	if ( fn.GetExt().CmpNoCase( "emf" ) == 0 )
 	{
 		return -1;
@@ -951,9 +952,9 @@ wxRegion wxConfiguration::GetDrawersRegion( wxUint16 nChannels ) const
 		GetDrawerRects( nChannels, drawerRects );
 
 		wxRegion rgn;
-		for( size_t i=0, nCount = drawerRects.GetCount(); i < nCount; i++ )
+		for ( size_t i = 0, nCount = drawerRects.GetCount(); i < nCount; i++ )
 		{
-			const wxRect2DInt& rc = drawerRects[i];
+			const wxRect2DInt& rc = drawerRects[ i ];
 			rgn.Union( rc.m_x, rc.m_y, rc.m_width, rc.m_height );
 		}
 
@@ -962,7 +963,7 @@ wxRegion wxConfiguration::GetDrawersRegion( wxUint16 nChannels ) const
 	else
 	{
 		wxRect2DInt rc( GetDrawerRect() );
-		wxRegion rgn( rc.m_x, rc.m_y, rc.m_width, rc.m_height );
+		wxRegion	rgn( rc.m_x, rc.m_y, rc.m_width, rc.m_height );
 		return rgn;
 	}
 }
@@ -991,3 +992,4 @@ wxString wxConfiguration::GetCompositionModeAsText() const
 {
 	return GetCompositionModeAsText( m_drawerSettings.GetCompositionMode() );
 }
+

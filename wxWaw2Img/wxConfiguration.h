@@ -46,8 +46,10 @@ class wxConfiguration:
 		bool ParseColourString( const wxString&, wxColour& );
 		void GetDefaultsFromDisplay();
 		static bool ConvertStringToDrawingMode( const wxString&, DRAWING_MODE& );
+
 		static wxString GetDrawingModeAsText( DRAWING_MODE );
 		static bool ConvertStringToCompositionMode( const wxString&, wxCompositionMode& );
+
 		static wxString GetCompositionModeAsText( wxCompositionMode );
 		static wxString GetDrawingModeTexts();
 		static wxString GetCompositionModeTexts();
@@ -69,7 +71,7 @@ class wxConfiguration:
 		};
 
 		static const COMPOSITION_MODE_DESC CompositionModeDesc[];
-		static const size_t CompositionModeDescSize;
+		static const size_t				   CompositionModeDescSize;
 
 	private:
 
@@ -89,7 +91,8 @@ class wxConfiguration:
 		wxUint16 GetNumberOfColumns() const;
 		wxSize GetMargins() const;
 		wxRect2DInt GetDrawerRect() const;
-		void GetDrawerRects( wxUint16, wxRect2DIntArray & ) const;
+
+		void	 GetDrawerRects( wxUint16, wxRect2DIntArray & ) const;
 		wxRegion GetDrawersRegion( wxUint16 ) const;
 		bool PowerMix() const;
 		DRAWING_MODE GetDrawingMode() const;

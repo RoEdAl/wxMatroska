@@ -53,4 +53,3 @@ void WaveDrawer::create_log_stops(
 	}
 }
 
-

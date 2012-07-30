@@ -17,8 +17,8 @@ class Raster1WaveDrawer:
 
 	protected:
 
-		virtual void GetThreeColours( wxFloat32, wxColour&, wxColour&, wxColour& );
-		virtual void GetTwoColours( wxFloat32, bool, wxColour&, wxColour& );
+		virtual void GetThreeColours( wxFloat32, wxColour &, wxColour &, wxColour & );
+		virtual void GetTwoColours( wxFloat32, bool, wxColour &, wxColour & );
 };
 
 #endif

@@ -48,16 +48,16 @@ class DrawerSettings
 
 	protected:
 
-		bool		   m_bDrawWithGradient;
-		bool		   m_bLogarithmicScale;
-		bool		   m_bLogarithmicColorGradient;
-		wxFloat32	   m_fLogBase;
-		wxUint16	   m_nFrequency;
-		wxFloat32	   m_fBaselinePosition;
-		wxColour	   m_clrBg;
-		ColourSettings m_topColourSettings;
-		ColourSettings m_bottomColourSettings;
-		bool m_bDrawCueStrippes;
+		bool			  m_bDrawWithGradient;
+		bool			  m_bLogarithmicScale;
+		bool			  m_bLogarithmicColorGradient;
+		wxFloat32		  m_fLogBase;
+		wxUint16		  m_nFrequency;
+		wxFloat32		  m_fBaselinePosition;
+		wxColour		  m_clrBg;
+		ColourSettings	  m_topColourSettings;
+		ColourSettings	  m_bottomColourSettings;
+		bool			  m_bDrawCueStrippes;
 		wxCompositionMode m_eCompositionMode;
 
 	public:
@@ -111,6 +111,7 @@ class DrawerSettings
 		const wxColour& CalcMiddleColour();
 
 		DrawerSettings& SetDrawCueStrippes( bool );
+
 		DrawerSettings& SetCompositionMode( wxCompositionMode );
 };
 

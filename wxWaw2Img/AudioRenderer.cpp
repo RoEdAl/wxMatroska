@@ -83,18 +83,18 @@ class QGen
 			if ( fBaseline <= 0.5f )
 			{
 				m_fDownFactor = fBaseline / ( 1.0f - fBaseline );
-				m_fUpFactor = 1.0f;
+				m_fUpFactor	  = 1.0f;
 			}
 			else
 			{
-				m_fUpFactor = ( 1.0f - fBaseline ) / fBaseline;
+				m_fUpFactor	  = ( 1.0f - fBaseline ) / fBaseline;
 				m_fDownFactor = 1.0f;
 			}
 		}
 
 		void SetAmplitude( wxFloat32 fAmplitude )
 		{
-			wxFloat32 fUpAmp	 = fAmplitude * m_fUpFactor;
+			wxFloat32 fUpAmp   = fAmplitude * m_fUpFactor;
 			wxFloat32 fDownAmp = -fAmplitude * m_fDownFactor;
 
 			for ( wxUint32 i = 0; i < m_nLen; i++ )
@@ -139,7 +139,7 @@ class QGen
 
 		wxUint32	 m_nLen;
 		wxFloat32	 m_fUpFactor;
-		wxFloat32    m_fDownFactor;
+		wxFloat32	 m_fDownFactor;
 		wxFloatArray m_ar1;
 		wxFloatArray m_ar2;
 		bool		 m_sign;

@@ -10,18 +10,18 @@ class ColumnPainterWaveDrawer:
 	public:
 
 		ColumnPainterWaveDrawer( wxUint64,
-						   wxGraphicsContext*,
-						   const wxRect2DInt&,
-						   const DrawerSettings&,
-						   bool, const wxTimeSpanArray& );
+								 wxGraphicsContext*,
+								 const wxRect2DInt&,
+								 const DrawerSettings&,
+								 bool, const wxTimeSpanArray& );
 
 	protected:
 
 		virtual void NextColumn( wxFloat32, wxFloat32 );
 		virtual void ProcessFinalizer();
 
-		virtual void GetThreeColours( wxFloat32, wxColour&, wxColour&, wxColour& ) = 0;
-		virtual void GetTwoColours( wxFloat32, bool, wxColour&, wxColour& ) = 0;
+		virtual void GetThreeColours( wxFloat32, wxColour &, wxColour &, wxColour & ) = 0;
+		virtual void GetTwoColours( wxFloat32, bool, wxColour &, wxColour & )		  = 0;
 
 	protected:
 

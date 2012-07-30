@@ -30,6 +30,7 @@ void GraphicsContextWaveDrawer::ProcessInitializer()
 	m_yoffset	 = m_rc.m_y + m_heightUp;
 
 	m_gc->SetCompositionMode( wxCOMPOSITION_SOURCE );
+
 	if ( m_drawerSettings.OneBackgroundColour() )
 	{
 		m_gc->SetBrush( m_drawerSettings.GetTopColourSettings().GetBackgroundColour() );
@@ -57,7 +58,7 @@ void GraphicsContextWaveDrawer::ProcessInitializer()
 
 		if ( m_drawerSettings.OneBackgroundColour2() )
 		{
-			wxGraphicsPath path	= m_gc->CreatePath();
+			wxGraphicsPath path = m_gc->CreatePath();
 
 			if ( bDrawCueStrippes )
 			{

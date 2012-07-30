@@ -62,9 +62,9 @@ class wxConfiguration:
 
 	protected:
 
-		bool						m_bChapterTimeEnd;								// default=true
+		bool						m_bChapterTimeEnd;																// default=true
 		bool						m_bUnknownChapterTimeEndToNextChapter;	// default=false
-		unsigned long				m_nChapterOffset;								// in frames
+		unsigned long				m_nChapterOffset;																// in frames
 		bool						m_bUseDataFiles;// default=true
 		bool						m_bEmbedded;
 		bool						m_bCorrectQuotationMarks;

@@ -35,15 +35,13 @@ class GraphicsContextWaveDrawer:
 			const wxTimeSpanArray &,
 			wxGraphicsPath &, wxGraphicsPath & );
 
-		static void create_cue_segments_path(
-			const wxRect2DInt &,
-			const wxTimeSpanArray &,
-			wxGraphicsPath & );
+		static void create_cue_segments_path( const wxRect2DInt&,
+											  const wxTimeSpanArray&,
+											  wxGraphicsPath& );
 
-		static void create_cue_lines_path(
-			const wxRect2DInt &,
-			const wxTimeSpanArray &,
-			wxGraphicsPath & );
+		static void create_cue_lines_path( const wxRect2DInt&,
+										   const wxTimeSpanArray&,
+										   wxGraphicsPath& );
 
 	protected:
 

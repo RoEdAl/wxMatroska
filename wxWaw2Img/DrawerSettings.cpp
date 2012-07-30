@@ -330,3 +330,4 @@ DrawerSettings& DrawerSettings::SetCompositionMode( wxCompositionMode e )
 	m_eCompositionMode = e;
 	return *this;
 }
+

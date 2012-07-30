@@ -13,10 +13,10 @@
 #include "WaveDrawerColumnPainter.h"
 
 ColumnPainterWaveDrawer::ColumnPainterWaveDrawer( wxUint64 nNumberOfSamples,
-									  wxGraphicsContext* gc,
-									  const wxRect2DInt& rc,
-									  const DrawerSettings& drawerSettings,
-									  bool bUseCuePoints, const wxTimeSpanArray& cuePoints ):
+												  wxGraphicsContext* gc,
+												  const wxRect2DInt& rc,
+												  const DrawerSettings& drawerSettings,
+												  bool bUseCuePoints, const wxTimeSpanArray& cuePoints ):
 	GraphicsContextWaveDrawer(
 		nNumberOfSamples,
 		gc,
@@ -37,8 +37,8 @@ void ColumnPainterWaveDrawer::NextColumn( wxFloat32 fValue, wxFloat32 fLogValue 
 	{
 		wxGraphicsBrush brush;
 
-		wxPoint2DDouble topLeft( point_central.m_x, point_central.m_y - (v * m_heightUp) );
-		wxPoint2DDouble bottomRight( topLeft.m_x + 1.0, topLeft.m_y + (v * m_rc.m_height) );
+		wxPoint2DDouble topLeft( point_central.m_x, point_central.m_y - ( v * m_heightUp ) );
+		wxPoint2DDouble bottomRight( topLeft.m_x + 1.0, topLeft.m_y + ( v * m_rc.m_height ) );
 
 		if ( m_drawerSettings.DrawWithGradient() )
 		{
@@ -89,6 +89,7 @@ void ColumnPainterWaveDrawer::NextColumn( wxFloat32 fValue, wxFloat32 fLogValue 
 			GetTwoColours( va, true, clrFrom, clrTo );
 
 			wxGraphicsGradientStops stops( clrFrom, clrTo );
+
 			if ( m_drawerSettings.UseLogarithmicColorGradient() )
 			{
 				wxASSERT( UseLogarithmicScale() );
@@ -105,8 +106,8 @@ void ColumnPainterWaveDrawer::NextColumn( wxFloat32 fValue, wxFloat32 fLogValue 
 		fill_rect( brush, topLeft, bottomRight );
 
 		// DOWN
-		topLeft = point_central;
-		bottomRight = topLeft;
+		topLeft			 = point_central;
+		bottomRight		 = topLeft;
 		bottomRight.m_x += 1.0;
 		bottomRight.m_y += v * m_heightDown;
 
@@ -116,6 +117,7 @@ void ColumnPainterWaveDrawer::NextColumn( wxFloat32 fValue, wxFloat32 fLogValue 
 			GetTwoColours( va, false, clrFrom, clrTo );
 
 			wxGraphicsGradientStops stops( clrFrom, clrTo );
+
 			if ( m_drawerSettings.UseLogarithmicColorGradient() )
 			{
 				wxASSERT( UseLogarithmicScale() );
@@ -155,3 +157,4 @@ void ColumnPainterWaveDrawer::fill_rect( const wxGraphicsBrush& brush, const wxP
 	m_gc->SetBrush( brush );
 	m_gc->DrawRectangle( topLeft.m_x, topLeft.m_y, bottomRight.m_x - topLeft.m_x, bottomRight.m_y - topLeft.m_y );
 }
+
