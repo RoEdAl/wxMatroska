@@ -103,6 +103,7 @@
     <ClInclude Include="MCChainWaveDrawer.h" />
     <ClInclude Include="MCGraphicsContextWaveDrawer.h" />
     <ClInclude Include="MultiChannelWaveDrawer.h" />
+    <ClInclude Include="NinePatchBitmap.h" />
     <ClInclude Include="SampleChunker.h" />
     <ClInclude Include="SampleProcessor.h" />
     <ClInclude Include="SoundFile.h" />
@@ -130,6 +131,7 @@
     <ClCompile Include="MCChainWaveDrawer.cpp" />
     <ClCompile Include="MCGraphicsContextWaveDrawer.cpp" />
     <ClCompile Include="MultiChannelWaveDrawer.cpp" />
+    <ClCompile Include="NinePatchBitmap.cpp" />
     <ClCompile Include="SampleChunker.cpp" />
     <ClCompile Include="SampleProcessor.cpp" />
     <ClCompile Include="SoundFile.cpp" />
