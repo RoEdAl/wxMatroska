@@ -83,24 +83,24 @@ void wxMyApp::AddColourFormatDescription( wxCmdLineParser& cmdline )
 
 void wxMyApp::AddCuePointsFileDescription( wxCmdLineParser& cmdline )
 {
-	cmdline.AddUsageText( _("Cue points format:") );
-	cmdline.AddUsageText( _("\tMM::SS:FF - minutes, seconds and CD frames (1/75 s)") );
-	cmdline.AddUsageText( _("\tMM::SS.YYY - minutes, seconds and miliseconds") );
-	cmdline.AddUsageText( _("\ts[.www] - seconds [with optional partial part]") );
-	cmdline.AddUsageText( _("Examples:") );
-	cmdline.AddUsageText( _("\t05:01:65 # 5 minutes, one second and 65 CD frames") );
-	cmdline.AddUsageText( _("\t15:23.456 # 15 minutes, 23 seconds and 456 miliseconds") );
-	cmdline.AddUsageText( _("\t545 # 545 seconds") );
-	cmdline.AddUsageText( _("\t10345.67 # 10345 seconds and 670 miliseconds") );
+	cmdline.AddUsageText( _( "Cue points format:" ) );
+	cmdline.AddUsageText( _( "\tMM::SS:FF - minutes, seconds and CD frames (1/75 s)" ) );
+	cmdline.AddUsageText( _( "\tMM::SS.YYY - minutes, seconds and miliseconds" ) );
+	cmdline.AddUsageText( _( "\ts[.www] - seconds [with optional partial part]" ) );
+	cmdline.AddUsageText( _( "Examples:" ) );
+	cmdline.AddUsageText( _( "\t05:01:65 # 5 minutes, one second and 65 CD frames" ) );
+	cmdline.AddUsageText( _( "\t15:23.456 # 15 minutes, 23 seconds and 456 miliseconds" ) );
+	cmdline.AddUsageText( _( "\t545 # 545 seconds" ) );
+	cmdline.AddUsageText( _( "\t10345.67 # 10345 seconds and 670 miliseconds" ) );
 }
 
 void wxMyApp::AddDisplayDescription( wxCmdLineParser& cmdline )
 {
 	cmdline.AddUsageText( _( "System settings:" ) );
 
-	wxRect dplRect = wxGetClientDisplayRect();
-	int	   nDepth  = wxDisplayDepth();
-	wxSize res	   = wxGetDisplayPPI();
+	wxRect dplRect	 = wxGetClientDisplayRect();
+	int	   nDepth	 = wxDisplayDepth();
+	wxSize res		 = wxGetDisplayPPI();
 	wxSize dplSizeMm = wxGetDisplaySizeMM();
 
 	cmdline.AddUsageText( wxString::Format( _( "Display size (pixels): %dx%d (%dx%d)" ), dplRect.width, dplRect.height, dplRect.x, dplRect.y ) );
@@ -334,7 +334,7 @@ static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, wxEnhM
 	wxASSERT( pEmf != NULL );
 
 	wxLogInfo( _( "Opening metafile" ) );
-	const wxSize& imgSize = cfg.GetImageSize();
+	const wxSize&	imgSize = cfg.GetImageSize();
 	wxEnhMetaFileDC emfDc( fn.GetFullPath(), imgSize.GetWidth(), imgSize.GetHeight(), fn.GetName() );
 
 	if ( !emfDc.IsOk() )
@@ -347,7 +347,7 @@ static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, wxEnhM
 
 	if ( pEmf->Play( &emfDc ) )
 	{
-		wxScopedPtr<wxEnhMetaFile> pClonedEmf( emfDc.Close() );
+		wxScopedPtr< wxEnhMetaFile > pClonedEmf( emfDc.Close() );
 		wxASSERT( pClonedEmf );
 		wxLogInfo( _( "Image sucessfully saved to file \u201C%s\u201D" ), fn.GetFullName() );
 		return true;

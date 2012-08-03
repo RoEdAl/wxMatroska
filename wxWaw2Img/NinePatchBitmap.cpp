@@ -1,17 +1,14 @@
 /*
-	NinePatchBitmap.cpp
-*/
+ *      NinePatchBitmap.cpp
+ */
 #include "StdWx.h"
 #include "NinePatchBitmap.h"
 
+NinePatchBitmap::NinePatchBitmap( void )
+{}
 
-NinePatchBitmap::NinePatchBitmap(void)
-{
-}
-
-NinePatchBitmap::~NinePatchBitmap(void)
-{
-}
+NinePatchBitmap::~NinePatchBitmap( void )
+{}
 
 bool NinePatchBitmap::IsOk() const
 {
@@ -29,12 +26,12 @@ NinePatchBitmap::PixelColor NinePatchBitmap::get_pixel_color( const wxImage& img
 	{
 		return PixelBlack;
 	}
-	else if ( a == 0u )
-	{ // transparent
+	else if ( a == 0u )	// transparent
+	{
 		return PixelWhiteOrTransparent;
 	}
-	else if ( r == 255u && g == 255u && b == 255u && a == 255u )
-	{ // white
+	else if ( r == 255u && g == 255u && b == 255u && a == 255u )// white
+	{
 		return PixelWhiteOrTransparent;
 	}
 	else
@@ -50,11 +47,11 @@ bool NinePatchBitmap::analyze_image( const wxImage& img, wxRect2DInt& stretchedA
 	wxSize imgSize( img.GetSize() );
 
 	wxPoint pt;
-	int phase = 0;
-	int lineXStart = -1, lineXStop = -1;
-	int lineYStart = -1, lineYStop = -1;
+	int		phase	   = 0;
+	int		lineXStart = -1, lineXStop = -1;
+	int		lineYStart = -1, lineYStop = -1;
 
-	for( int x=0, nWidth = imgSize.GetWidth(); x < nWidth && phase >= 0; x++ )
+	for ( int x = 0, nWidth = imgSize.GetWidth(); x < nWidth && phase >= 0; x++ )
 	{
 		pt.x = x;
 		PixelColor pc = get_pixel_color( img, pt );
@@ -65,7 +62,7 @@ bool NinePatchBitmap::analyze_image( const wxImage& img, wxRect2DInt& stretchedA
 			continue;
 		}
 
-		switch( phase )
+		switch ( phase )
 		{
 			case 0:
 			{
@@ -74,25 +71,25 @@ bool NinePatchBitmap::analyze_image( const wxImage& img, wxRect2DInt& stretchedA
 					if ( x > 1 )
 					{
 						lineXStart = x;
-						phase = 1;
+						phase	   = 1;
 					}
 					else
 					{
 						phase = -1;
 					}
 				}
+				break;
 			}
-			break;
 
 			case 1:
 			{
 				if ( pc == PixelWhiteOrTransparent )
 				{
 					lineXStop = x;
-					phase = 2;
+					phase	  = 2;
 				}
+				break;
 			}
-			break;
 		}
 	}
 
@@ -102,8 +99,8 @@ bool NinePatchBitmap::analyze_image( const wxImage& img, wxRect2DInt& stretchedA
 	}
 
 	phase = 0;
-	pt.x = 0;
-	for( int y=0, nHeight = imgSize.GetHeight(); y < nHeight && phase >= 0; y++ )
+	pt.x  = 0;
+	for ( int y = 0, nHeight = imgSize.GetHeight(); y < nHeight && phase >= 0; y++ )
 	{
 		pt.y = y;
 		PixelColor pc = get_pixel_color( img, pt );
@@ -114,7 +111,7 @@ bool NinePatchBitmap::analyze_image( const wxImage& img, wxRect2DInt& stretchedA
 			continue;
 		}
 
-		switch( phase )
+		switch ( phase )
 		{
 			case 0:
 			{
@@ -123,25 +120,25 @@ bool NinePatchBitmap::analyze_image( const wxImage& img, wxRect2DInt& stretchedA
 					if ( y > 1 )
 					{
 						lineYStart = y;
-						phase = 1;
+						phase	   = 1;
 					}
 					else
 					{
 						phase = -1;
 					}
 				}
+				break;
 			}
-			break;
 
 			case 1:
 			{
 				if ( pc == PixelWhiteOrTransparent )
 				{
 					lineYStop = y;
-					phase = 2;
+					phase	  = 2;
 				}
+				break;
 			}
-			break;
 		}
 	}
 
@@ -150,10 +147,10 @@ bool NinePatchBitmap::analyze_image( const wxImage& img, wxRect2DInt& stretchedA
 		return false;
 	}
 
-	stretchedArea.m_x = lineXStart;
+	stretchedArea.m_x	  = lineXStart;
 	stretchedArea.m_width = lineXStop - lineXStart;
 
-	stretchedArea.m_y = lineYStart;
+	stretchedArea.m_y	   = lineYStart;
 	stretchedArea.m_height = lineYStop - lineYStart;
 
 	stretchedArea.m_x -= 1;
@@ -165,6 +162,7 @@ bool NinePatchBitmap::analyze_image( const wxImage& img, wxRect2DInt& stretchedA
 bool NinePatchBitmap::Init( const wxString& sImg )
 {
 	wxImage img( sImg );
+
 	img.InitAlpha();
 	return Init( img );
 }
@@ -181,7 +179,7 @@ bool NinePatchBitmap::Init( const wxImage& img )
 		return false;
 	}
 
-	m_img = img;
+	m_img		   = img;
 	m_imgTruncated = m_img.GetSubImage( wxRect( 1, 1, m_img.GetWidth() - 2, m_img.GetHeight() - 2 ) );
 	return true;
 }
@@ -199,6 +197,7 @@ wxSize NinePatchBitmap::GetMinimumImageSize() const
 void NinePatchBitmap::draw_bmp( wxImage& img, const wxRect2DInt& rcSrc, const wxRect2DInt& rcDst ) const
 {
 	wxImage simg( m_imgTruncated.GetSubImage( wxRect( rcSrc.m_x, rcSrc.m_y, rcSrc.m_width, rcSrc.m_height ) ) );
+
 	simg.Rescale( rcDst.m_width, rcDst.m_height, wxIMAGE_QUALITY_HIGH );
 	img.Paste( simg, rcDst.m_x, rcDst.m_y );
 }
@@ -220,48 +219,48 @@ wxImage NinePatchBitmap::GetStretched( const wxSize& rcSize ) const
 	wxRect2DInt rcDst;
 
 	// upper-left corner
-	rcSrc.m_x = 0;
-	rcSrc.m_y = 0;
-	rcSrc.m_width = m_stretchedArea.m_x;
+	rcSrc.m_x	   = 0;
+	rcSrc.m_y	   = 0;
+	rcSrc.m_width  = m_stretchedArea.m_x;
 	rcSrc.m_height = m_stretchedArea.m_y;
 
-	rcDst.m_x = 0;
-	rcDst.m_y = 0;
-	rcDst.m_width = rcSrc.m_width;
+	rcDst.m_x	   = 0;
+	rcDst.m_y	   = 0;
+	rcDst.m_width  = rcSrc.m_width;
 	rcDst.m_height = rcSrc.m_height;
 
 	draw_bmp( si, rcSrc, rcDst );
 
 	// upper - middle, stretched horizontally
 
-	rcSrc.m_x += rcSrc.m_width;
+	rcSrc.m_x	 += rcSrc.m_width;
 	rcSrc.m_width = m_stretchedArea.m_width;
 
-	rcDst.m_x += rcDst.m_width;
+	rcDst.m_x	 += rcDst.m_width;
 	rcDst.m_width = rcSize.GetWidth() - ( imgSize.GetWidth() - m_stretchedArea.m_width );
 
 	draw_bmp( si, rcSrc, rcDst );
 
 	// upper - right corner
 
-	rcSrc.m_x += rcSrc.m_width;
+	rcSrc.m_x	 += rcSrc.m_width;
 	rcSrc.m_width = imgSize.GetWidth() - m_stretchedArea.GetRight();
 
-	rcDst.m_x += rcDst.m_width;
+	rcDst.m_x	 += rcDst.m_width;
 	rcDst.m_width = rcSrc.m_width;
 
 	draw_bmp( si, rcSrc, rcDst );
 
 	// middle - left, stretchd vertically
 
-	rcSrc.m_x = 0;
-	rcSrc.m_y = m_stretchedArea.m_y;
-	rcSrc.m_width = m_stretchedArea.m_x;
+	rcSrc.m_x	   = 0;
+	rcSrc.m_y	   = m_stretchedArea.m_y;
+	rcSrc.m_width  = m_stretchedArea.m_x;
 	rcSrc.m_height = m_stretchedArea.m_height;
 
-	rcDst.m_x = 0;
-	rcDst.m_y += rcDst.m_height;
-	rcDst.m_width = rcSrc.m_width;
+	rcDst.m_x	   = 0;
+	rcDst.m_y	  += rcDst.m_height;
+	rcDst.m_width  = rcSrc.m_width;
 	rcDst.m_height = rcSize.GetHeight() - ( imgSize.GetHeight() - m_stretchedArea.m_height );
 
 	draw_bmp( si, rcSrc, rcDst );
@@ -269,51 +268,52 @@ wxImage NinePatchBitmap::GetStretched( const wxSize& rcSize ) const
 	// middle - middle, stretched horizontally and vertically
 	rcSrc = m_stretchedArea;
 
-	rcDst.m_x += rcDst.m_width;
+	rcDst.m_x	 += rcDst.m_width;
 	rcDst.m_width = rcSize.GetWidth() - ( imgSize.GetWidth() - m_stretchedArea.m_width );
 
 	draw_bmp( si, rcSrc, rcDst );
 
 	// middle - right, stretched vertically
-	rcSrc.m_x += rcSrc.m_width;
+	rcSrc.m_x	 += rcSrc.m_width;
 	rcSrc.m_width = imgSize.GetWidth() - m_stretchedArea.GetRight();
 
-	rcDst.m_x += rcDst.m_width;
+	rcDst.m_x	 += rcDst.m_width;
 	rcDst.m_width = rcSrc.m_width;
 
 	draw_bmp( si, rcSrc, rcDst );
 
 	// bottom - left corner
-	rcSrc.m_x = 0;
-	rcSrc.m_y = m_stretchedArea.GetBottom();
-	rcSrc.m_width = m_stretchedArea.m_x;
+	rcSrc.m_x	   = 0;
+	rcSrc.m_y	   = m_stretchedArea.GetBottom();
+	rcSrc.m_width  = m_stretchedArea.m_x;
 	rcSrc.m_height = imgSize.GetHeight() - m_stretchedArea.GetBottom();
 
-	rcDst.m_x = 0;
-	rcDst.m_y += rcDst.m_height;
-	rcDst.m_width = rcSrc.m_width;
+	rcDst.m_x	   = 0;
+	rcDst.m_y	  += rcDst.m_height;
+	rcDst.m_width  = rcSrc.m_width;
 	rcDst.m_height = rcSrc.m_height;
 
 	draw_bmp( si, rcSrc, rcDst );
 
 	// bottom - middle, stretched horizontally
 
-	rcSrc.m_x += rcSrc.m_width;
+	rcSrc.m_x	 += rcSrc.m_width;
 	rcSrc.m_width = m_stretchedArea.m_width;
 
-	rcDst.m_x += rcDst.m_width;
+	rcDst.m_x	 += rcDst.m_width;
 	rcDst.m_width = rcSize.GetWidth() - ( imgSize.GetWidth() - m_stretchedArea.m_width );
 
 	draw_bmp( si, rcSrc, rcDst );
 
 	// bottom - right corner
-	rcSrc.m_x += rcSrc.m_width;
+	rcSrc.m_x	 += rcSrc.m_width;
 	rcSrc.m_width = imgSize.GetWidth() - m_stretchedArea.GetRight();
 
-	rcDst.m_x += rcDst.m_width;
+	rcDst.m_x	 += rcDst.m_width;
 	rcDst.m_width = rcSrc.m_width;
 
 	draw_bmp( si, rcSrc, rcDst );
 
 	return si;
 }
+

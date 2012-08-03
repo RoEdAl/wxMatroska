@@ -110,6 +110,7 @@ class DrawerSettings
 		DrawerSettings& SetBackgroundColour2( const wxColour& );
 		const wxColour& CalcMiddleColour();
 		DrawerSettings& SetDrawCueBlocks( bool );
+
 		DrawerSettings& SetCompositionMode( wxCompositionMode );
 };
 

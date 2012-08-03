@@ -7,8 +7,8 @@
 #include "CuePointsReader.h"
 
 CuePointsReader::CuePointsReader():
-	m_reMsf( wxT("\\A(\\d{1,4}):(\\d{1,2}):(\\d{1,2})\\Z"), wxRE_ADVANCED ),
-	m_reMsms( wxT("\\A(\\d{1,4}):(\\d{1,2}).(\\d{1,3})\\Z"), wxRE_ADVANCED )
+	m_reMsf( wxT( "\\A(\\d{1,4}):(\\d{1,2}):(\\d{1,2})\\Z" ), wxRE_ADVANCED ),
+	m_reMsms( wxT( "\\A(\\d{1,4}):(\\d{1,2}).(\\d{1,3})\\Z" ), wxRE_ADVANCED )
 {
 	wxASSERT( m_reMsf.IsValid() );
 	wxASSERT( m_reMsms.IsValid() );
