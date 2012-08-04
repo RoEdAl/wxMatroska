@@ -68,7 +68,8 @@ wxConfiguration::wxConfiguration( void ):
 	m_bPowerMix( true ),
 	m_bGenerateCuePoints( false ),
 	m_interval( INTERVAL_UNIT_PERCENT, 10 ),
-	m_bUseMLang( true )
+	m_bUseMLang( true ),
+	m_bAnimation( false )
 {}
 
 wxString wxConfiguration::GetSwitchAsText( bool b )
@@ -135,6 +136,9 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 	cmdLine.AddSwitch( wxEmptyString, "use-mlang", wxString::Format( _( "Use MLang library (default: %s)" ), GetSwitchAsText( m_bUseMLang ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 
 	cmdLine.AddOption( "dm", "composition-mode", wxString::Format( _( "Composition mode [%s] (default: %s)" ), GetCompositionModeTexts(), GetCompositionModeAsText() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+
+	cmdLine.AddSwitch( "a", "create_sequence", wxString::Format( _( "Build sequence (default: %s)" ), GetSwitchAsText( m_bAnimation ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddOption( "ab", "progress_bitmap", _( "Path to progress stretched bitmap" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 }
 
 bool wxConfiguration::ReadNegatableSwitchValue( const wxCmdLineParser& cmdLine, const wxString& name, bool& switchVal )
@@ -735,6 +739,13 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		}
 	}
 
+	ReadNegatableSwitchValue( cmdLine, "a", m_bAnimation );
+
+	if ( cmdLine.Found( "ab", &s ) )
+	{
+		m_progressStretchedBitmap.Assign( s );
+	}
+
 	return true;
 }
 
@@ -944,30 +955,6 @@ void wxConfiguration::GetDrawerRects( wxUint16 nChannels, wxRect2DIntArray& draw
 	}
 }
 
-wxRegion wxConfiguration::GetDrawersRegion( wxUint16 nChannels ) const
-{
-	if ( m_bMultiChannel )
-	{
-		wxRect2DIntArray drawerRects;
-		GetDrawerRects( nChannels, drawerRects );
-
-		wxRegion rgn;
-		for ( size_t i = 0, nCount = drawerRects.GetCount(); i < nCount; i++ )
-		{
-			const wxRect2DInt& rc = drawerRects[ i ];
-			rgn.Union( rc.m_x, rc.m_y, rc.m_width, rc.m_height );
-		}
-
-		return rgn;
-	}
-	else
-	{
-		wxRect2DInt rc( GetDrawerRect() );
-		wxRegion	rgn( rc.m_x, rc.m_y, rc.m_width, rc.m_height );
-		return rgn;
-	}
-}
-
 bool wxConfiguration::PowerMix() const
 {
 	return m_bPowerMix;
@@ -993,3 +980,12 @@ wxString wxConfiguration::GetCompositionModeAsText() const
 	return GetCompositionModeAsText( m_drawerSettings.GetCompositionMode() );
 }
 
+bool wxConfiguration::CreateAnimation() const
+{
+	return m_bAnimation;
+}
+
+const wxFileName& wxConfiguration::GetProgressStretchedBitmap() const
+{
+	return m_progressStretchedBitmap;
+}

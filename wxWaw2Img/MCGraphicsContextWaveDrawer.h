@@ -11,8 +11,7 @@ class McGraphicalContextWaveDrawer:
 	protected:
 
 		wxScopedPtr< wxGraphicsContext > m_gc;
-		wxScopedPtr< wxMemoryDC >		 m_mc;
-		wxScopedPtr< wxBitmap >			 m_bmp;
+		wxImage m_img;
 
 #ifdef __WXMSW__
 #if wxUSE_ENH_METAFILE
@@ -21,11 +20,14 @@ class McGraphicalContextWaveDrawer:
 #endif
 #endif
 
+		wxRect2DIntArray m_rects;
+
 	public:
 
 		McGraphicalContextWaveDrawer( wxUint16 );
-		wxGraphicsContext* Initialize( const wxSize&, int, const wxColour&, const wxRegion& );
+		wxGraphicsContext* Initialize( const wxSize&, int, const wxColour&, const wxRect2DIntArray& );
 
+		const wxRect2DIntArray& GetRects() const;
 		wxImage GetBitmap() const;
 
 #ifdef __WXMSW__

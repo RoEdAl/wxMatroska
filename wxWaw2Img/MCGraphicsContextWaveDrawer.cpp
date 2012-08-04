@@ -2,6 +2,7 @@
  *      MCGrpahicsContextWaveDrawer.cpp
  */
 #include "StdWx.h"
+#include "FloatArray.h"
 #include "LogarithmicScale.h"
 #include "SampleProcessor.h"
 #include "WaveDrawer.h"
@@ -13,10 +14,14 @@ McGraphicalContextWaveDrawer::McGraphicalContextWaveDrawer( wxUint16 nChannels )
 	ArrayWaveDrawer( nChannels )
 {}
 
+const wxRect2DIntArray& McGraphicalContextWaveDrawer::GetRects() const
+{
+	return m_rects;
+}
+
 wxImage McGraphicalContextWaveDrawer::GetBitmap() const
 {
-	wxASSERT( m_bmp );
-	return m_bmp->ConvertToImage();
+	return m_img;
 }
 
 #ifdef __WXMSW__
@@ -37,11 +42,23 @@ wxEnhMetaFile* McGraphicalContextWaveDrawer::GetMetafile() const
 #endif
 #endif
 
+static wxRegion GetDrawersRegion( const wxRect2DIntArray& drawerRects )
+{
+	wxRegion rgn;
+	for( wxRect2DIntArray::const_iterator i = drawerRects.begin(), end = drawerRects.end(); i != end; ++i )
+	{
+		const wxRect2DInt& rc = *i;
+		rgn.Union( rc.m_x, rc.m_y, rc.m_width, rc.m_height );
+	}
+
+	return rgn;
+}
+
 wxGraphicsContext* McGraphicalContextWaveDrawer::Initialize(
 		const wxSize& imageSize,
 		int nImageColourDepth,
 		const wxColour& clrBg,
-		const wxRegion& rgn
+		const wxRect2DIntArray& rects
 		)
 {
 #ifdef __WXMSW__
@@ -67,6 +84,12 @@ wxGraphicsContext* McGraphicalContextWaveDrawer::Initialize(
 
 	// wxCompositionMode mode = m_gc->GetCompositionMode();
 
+	m_rects.Empty();
+	for( wxRect2DIntArray::const_iterator i = rects.begin(), end = rects.end(); i != end; ++i )
+	{
+		m_rects.Add( *i );
+	}
+
 	wxLogInfo( _( "Initializing graphics context" ) );
 	m_gc->SetAntialiasMode( wxANTIALIAS_DEFAULT );
 	m_gc->SetInterpolationQuality( wxINTERPOLATION_BEST );
@@ -76,7 +99,7 @@ wxGraphicsContext* McGraphicalContextWaveDrawer::Initialize(
 	m_gc->DrawRectangle( 0, 0, imageSize.GetWidth(), imageSize.GetHeight() );
 	m_gc->SetBrush( wxNullBrush );
 	m_gc->SetCompositionMode( wxCOMPOSITION_DEST );
-	m_gc->Clip( rgn );
+	m_gc->Clip( GetDrawersRegion( rects ) );
 
 	return m_gc.get();
 }
@@ -86,20 +109,14 @@ void McGraphicalContextWaveDrawer::ProcessFinalizer()
 	__super::ProcessFinalizer();
 
 	m_gc->ResetClip();
-	m_gc.release();
-
-	if ( m_mc )
-	{
-		m_mc->SelectObject( wxNullBitmap );
-		m_mc.release();
-	}
+	m_gc.reset();
 
 #ifdef __WXMSW__
 #if wxUSE_ENH_METAFILE
 	if ( m_emfDc )
 	{
 		m_emf.reset( m_emfDc->Close() );
-		m_emfDc.release();
+		m_emfDc.reset();
 	}
 #endif
 #endif
@@ -108,22 +125,15 @@ void McGraphicalContextWaveDrawer::ProcessFinalizer()
 bool McGraphicalContextWaveDrawer::create_context_on_bitmap( const wxSize& imageSize, int nImageColourDepth )
 {
 	wxLogInfo( _( "Creating bitmap" ) );
-	m_bmp.reset( new wxBitmap( imageSize.GetWidth(), imageSize.GetHeight(), nImageColourDepth ) );
-
-	wxLogInfo( _( "Creating memory context" ) );
-	m_mc.reset( new wxMemoryDC() );
-
-	m_mc->SelectObject( *m_bmp );
-
-	if ( !m_mc->IsOk() )
+	wxImage img( imageSize, true );
+	if ( nImageColourDepth == 32 )
 	{
-		m_mc.release();
-		wxLogError( _( "Fail to set bitmap into memory context" ) );
-		return false;
+		img.InitAlpha();
 	}
 
+	m_img = img;
 	wxLogInfo( _( "Creating graphics context" ) );
-	m_gc.reset( wxGraphicsContext::Create( *m_mc ) );
+	m_gc.reset( wxGraphicsContext::Create( m_img ) );
 
 	return true;
 }

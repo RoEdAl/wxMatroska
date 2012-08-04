@@ -212,7 +212,6 @@ bool get_black_position_and_range( const I& startIt, const I& stopIt, wxUint32& 
 
 	nPos = nStart;
 	nLen = nStop - nStart;
-	nPos -= 1;
 
 	return true;
 }
@@ -246,7 +245,7 @@ bool NinePatchBitmap::analyze_image( const wxImage& img, wxRect2DInt& stretchedA
 bool NinePatchBitmap::Init( const wxString& sImg, bool initAlpha )
 {
 	wxImage img( sImg );
-	if ( initAlpha )
+	if ( initAlpha && img.IsOk() && !img.HasAlpha() )
 	{
 		img.InitAlpha();
 	}
@@ -265,7 +264,7 @@ bool NinePatchBitmap::Init( const wxImage& img )
 		return false;
 	}
 
-	m_img = m_img.GetSubImage( wxRect( 1, 1, m_img.GetWidth() - 2, m_img.GetHeight() - 2 ) );
+	m_img = img.GetSubImage( wxRect( 1, 1, img.GetWidth() - 2, img.GetHeight() - 2 ) );
 	return true;
 }
 
@@ -279,6 +278,18 @@ wxSize NinePatchBitmap::GetMinimumImageSize() const
 	return s;
 }
 
+wxImage NinePatchBitmap::GetStretchedEx( wxRect2DInt& rcStretchedArea ) const
+{
+	rcStretchedArea.m_x -= m_stretchedArea.m_x;
+	rcStretchedArea.m_y -= m_stretchedArea.m_y;
+
+	wxSize minSize( GetMinimumImageSize() );
+	rcStretchedArea.m_width += minSize.GetWidth();
+	rcStretchedArea.m_height += minSize.GetHeight();
+
+	return GetStretched( rcStretchedArea.GetSize() );
+}
+
 wxImage NinePatchBitmap::GetStretchedEx( wxSize rcStretchedAreaSize ) const
 {
 	rcStretchedAreaSize.IncBy( GetMinimumImageSize() );
@@ -287,10 +298,12 @@ wxImage NinePatchBitmap::GetStretchedEx( wxSize rcStretchedAreaSize ) const
 
 void NinePatchBitmap::draw_bmp( wxImage& img, const wxRect2DInt& rcSrc, const wxRect2DInt& rcDst ) const
 {
-	wxImage simg( m_img.GetSubImage( wxRect( rcSrc.m_x, rcSrc.m_y, rcSrc.m_width, rcSrc.m_height ) ) );
-
-	simg.Rescale( rcDst.m_width, rcDst.m_height, wxIMAGE_QUALITY_HIGH );
-	img.Paste( simg, rcDst.m_x, rcDst.m_y );
+	if ( !( rcSrc.IsEmpty() || rcDst.IsEmpty() ) )
+	{
+		wxImage simg( m_img.GetSubImage( wxRect( rcSrc.m_x, rcSrc.m_y, rcSrc.m_width, rcSrc.m_height ) ) );
+		simg.Rescale( rcDst.m_width, rcDst.m_height, wxIMAGE_QUALITY_HIGH );
+		img.Paste( simg, rcDst.m_x, rcDst.m_y );
+	}
 }
 
 wxImage NinePatchBitmap::GetStretched( const wxSize& rcSize ) const
@@ -300,7 +313,7 @@ wxImage NinePatchBitmap::GetStretched( const wxSize& rcSize ) const
 
 	if ( rcSize.GetWidth() < sizeMin.GetWidth() || rcSize.GetHeight() < sizeMin.GetHeight() )
 	{
-		return false;
+		return wxNullImage;
 	}
 
 	wxImage si( rcSize, true );

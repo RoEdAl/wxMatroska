@@ -38,6 +38,8 @@ class wxConfiguration:
 		bool			  m_bGenerateCuePoints;
 		Interval		  m_interval;
 		bool			  m_bUseMLang;
+		bool m_bAnimation;
+		wxFileName m_progressStretchedBitmap;
 
 	protected:
 
@@ -91,9 +93,7 @@ class wxConfiguration:
 		wxUint16 GetNumberOfColumns() const;
 		wxSize GetMargins() const;
 		wxRect2DInt GetDrawerRect() const;
-
 		void	 GetDrawerRects( wxUint16, wxRect2DIntArray & ) const;
-		wxRegion GetDrawersRegion( wxUint16 ) const;
 		bool PowerMix() const;
 		DRAWING_MODE GetDrawingMode() const;
 		wxString GetDrawingModeAsText() const;
@@ -104,6 +104,9 @@ class wxConfiguration:
 		bool GenerateCuePoints( const wxTimeSpan&, wxTimeSpanArray& ) const;
 		bool UseMLang() const;
 		wxString GetCompositionModeAsText() const;
+
+		bool CreateAnimation() const;
+		const wxFileName& GetProgressStretchedBitmap() const;
 
 	public:
 

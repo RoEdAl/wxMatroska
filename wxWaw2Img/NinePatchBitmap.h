@@ -16,6 +16,7 @@ class NinePatchBitmap
 
 		wxImage GetStretched( const wxSize& ) const;
 		wxImage GetStretchedEx( wxSize = wxSize() ) const;
+		wxImage GetStretchedEx( wxRect2DInt& ) const;
 
 		bool IsOk() const;
 		wxSize GetMinimumImageSize() const;
