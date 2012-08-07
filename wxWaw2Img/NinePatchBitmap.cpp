@@ -3,6 +3,7 @@
  */
 #include "StdWx.h"
 #include "NinePatchBitmap.h"
+#include "MemoryGraphicsContext.h"
 
 NinePatchBitmap::NinePatchBitmap( void )
 {}
@@ -13,6 +14,46 @@ NinePatchBitmap::~NinePatchBitmap( void )
 bool NinePatchBitmap::IsOk() const
 {
 	return m_img.IsOk() && !m_stretchedArea.IsEmpty();
+}
+
+bool NinePatchBitmap::Init( const wxColour& clrBorder, const wxColour& crlInside, int nBorderWidth  )
+{
+	wxSize s( 8,8 );
+	s.IncBy( 2 * nBorderWidth );
+
+	MemoryGraphicsContext mgc( s, 32 );
+
+	{
+		wxScopedPtr<wxGraphicsContext> pGc( mgc.CreateGraphicsContext() );
+		pGc->SetAntialiasMode( wxANTIALIAS_NONE );
+		pGc->SetInterpolationQuality( wxINTERPOLATION_NONE );
+		pGc->SetCompositionMode( wxCOMPOSITION_SOURCE );
+		pGc->SetPen( wxNullPen );
+
+		if ( nBorderWidth > 0 )
+		{
+			wxPen pen( clrBorder, 2 * nBorderWidth );
+			pGc->SetPen( pen );
+		}
+
+		wxGraphicsPath p = pGc->CreatePath();
+		p.AddRectangle(  0,0, s.GetWidth(), s.GetHeight() );
+
+		wxBrush brush( crlInside );
+		pGc->SetBrush( brush );
+		pGc->DrawPath( p );
+	}
+
+	m_stretchedArea.m_x = nBorderWidth;
+	m_stretchedArea.m_y = nBorderWidth;
+	m_stretchedArea.m_width = 8;
+	m_stretchedArea.m_height = 8;
+
+	wxImage img( mgc.GetImage() );
+	//img.SaveFile( "C:/Users/Normal/Documents/Visual Studio 2010/Projects/wxMatroska/test.png" );
+	m_img = img;
+
+	return true;
 }
 
 class PixelIterator
@@ -308,6 +349,11 @@ void NinePatchBitmap::draw_bmp( wxImage& img, const wxRect2DInt& rcSrc, const wx
 
 wxImage NinePatchBitmap::GetStretched( const wxSize& rcSize ) const
 {
+	if ( rcSize.GetWidth() == 0 || rcSize.GetHeight() == 0 )
+	{
+		return wxNullImage;
+	}
+
 	wxSize sizeMin( GetMinimumImageSize() );
 	wxSize imgSize( m_img.GetSize() );
 
@@ -349,7 +395,6 @@ wxImage NinePatchBitmap::GetStretched( const wxSize& rcSize ) const
 	draw_bmp( si, rcSrc, rcDst );
 
 	// upper - right corner
-
 	rcSrc.m_x	 += rcSrc.m_width;
 	rcSrc.m_width = imgSize.GetWidth() - m_stretchedArea.GetRight();
 

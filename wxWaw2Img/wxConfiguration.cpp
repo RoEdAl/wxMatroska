@@ -7,6 +7,7 @@
 #include "CuePointsReader.h"
 #include "Interval.h"
 #include "DrawerSettings.h"
+#include "AnimationSettings.h"
 #include "wxConfiguration.h"
 #include "wxApp.h"
 
@@ -137,8 +138,11 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 
 	cmdLine.AddOption( "dm", "composition-mode", wxString::Format( _( "Composition mode [%s] (default: %s)" ), GetCompositionModeTexts(), GetCompositionModeAsText() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 
-	cmdLine.AddSwitch( "a", "create_sequence", wxString::Format( _( "Build sequence (default: %s)" ), GetSwitchAsText( m_bAnimation ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
-	cmdLine.AddOption( "ab", "progress_bitmap", _( "Path to progress stretched bitmap" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( "a", "create-sequence", wxString::Format( _( "Build sequence (default: %s)" ), GetSwitchAsText( m_bAnimation ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddOption( "ab", "progress-bitmap", _( "Path to stretched bitmap used in progress animation (default: not specified)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( "ac", "progress-color", wxString::Format( _( "Progress background color (default: %s)" ), m_animationSettings.GetFillColour().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( wxEmptyString, "progress-border-color", wxString::Format( _( "Progress border color (default: %s)" ), m_animationSettings.GetBorderColour().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( wxEmptyString, "progress-border-width", wxString::Format( _( "Progress border width (default: %d)" ), m_animationSettings.GetBorderWidth() ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 }
 
 bool wxConfiguration::ReadNegatableSwitchValue( const wxCmdLineParser& cmdLine, const wxString& name, bool& switchVal )
@@ -743,7 +747,36 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	if ( cmdLine.Found( "ab", &s ) )
 	{
-		m_progressStretchedBitmap.Assign( s );
+		m_animationSettings.GetBitmapFilename().Assign( s );
+	}
+
+	if ( cmdLine.Found( "ac", &s ) )
+	{
+		if ( !ParseColourString( s, m_animationSettings.GetFillColour() ) )
+		{
+			wxLogWarning( _( "Invalid animation background color - %s" ), s );
+			return false;
+		}
+	}
+
+	if ( cmdLine.Found( "progress-border-color", &s ) )
+	{
+		if ( !ParseColourString( s, m_animationSettings.GetBorderColour() ) )
+		{
+			wxLogWarning( _( "Invalid animation border color - %s" ), s );
+			return false;
+		}
+	}
+
+	if ( cmdLine.Found( "progress-border-width", &v ) )
+	{
+		if ( v < 0 || v > 50 )
+		{
+			wxLogWarning( _( "Invalid animation border witdth - %d" ), v );
+			return false;
+		}
+
+		m_animationSettings.GetBorderWidth() = (wxUint16)v;
 	}
 
 	return true;
@@ -870,6 +903,11 @@ wxUint16 wxConfiguration::GetImageQuality() const
 	return m_nImageQuality;
 }
 
+wxUint16 wxConfiguration::GetPngCompressionLevel() const
+{ // from image quality ( in PNG not used )
+	return 1 + ceil( m_nImageQuality  / 12.0f );
+}
+
 int wxConfiguration::GetImageColorDepth() const
 {
 	wxFileName fn( GetOutputFile() );
@@ -985,7 +1023,7 @@ bool wxConfiguration::CreateAnimation() const
 	return m_bAnimation;
 }
 
-const wxFileName& wxConfiguration::GetProgressStretchedBitmap() const
+const AnimationSettings& wxConfiguration::GetAnimationSettings() const
 {
-	return m_progressStretchedBitmap;
+	return m_animationSettings;
 }

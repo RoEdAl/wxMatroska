@@ -13,6 +13,7 @@ class NinePatchBitmap
 
 		bool Init( const wxString&, bool = true );
 		bool Init( const wxImage& );
+		bool Init( const wxColour&, const wxColour&, int = 1 );
 
 		wxImage GetStretched( const wxSize& ) const;
 		wxImage GetStretchedEx( wxSize = wxSize() ) const;

@@ -91,6 +91,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AnimationSettings.h" />
     <ClInclude Include="ArrayWaveDrawer.h" />
     <ClInclude Include="AudioRenderer.h" />
     <ClInclude Include="ChannelMixer.h" />
@@ -102,6 +103,7 @@
     <ClInclude Include="LogarithmicScale.h" />
     <ClInclude Include="MCChainWaveDrawer.h" />
     <ClInclude Include="MCGraphicsContextWaveDrawer.h" />
+    <ClInclude Include="MemoryGraphicsContext.h" />
     <ClInclude Include="MultiChannelWaveDrawer.h" />
     <ClInclude Include="NinePatchBitmap.h" />
     <ClInclude Include="SampleChunker.h" />
@@ -120,6 +122,7 @@
     <ClInclude Include="wxConfiguration.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AnimationSettings.cpp" />
     <ClCompile Include="ArrayWaveDrawer.cpp" />
     <ClCompile Include="AudioRenderer.cpp" />
     <ClCompile Include="ChannelMixer.cpp" />
@@ -130,6 +133,7 @@
     <ClCompile Include="Interval.cpp" />
     <ClCompile Include="MCChainWaveDrawer.cpp" />
     <ClCompile Include="MCGraphicsContextWaveDrawer.cpp" />
+    <ClCompile Include="MemoryGraphicsContext.cpp" />
     <ClCompile Include="MultiChannelWaveDrawer.cpp" />
     <ClCompile Include="NinePatchBitmap.cpp" />
     <ClCompile Include="SampleChunker.cpp" />

@@ -11,7 +11,9 @@ class McGraphicalContextWaveDrawer:
 	protected:
 
 		wxScopedPtr< wxGraphicsContext > m_gc;
+		wxBitmap m_bmp;
 		wxImage m_img;
+		wxScopedPtr<wxMemoryDC> m_memDc;
 
 #ifdef __WXMSW__
 #if wxUSE_ENH_METAFILE

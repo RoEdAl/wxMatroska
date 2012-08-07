@@ -111,6 +111,14 @@ void McGraphicalContextWaveDrawer::ProcessFinalizer()
 	m_gc->ResetClip();
 	m_gc.reset();
 
+	if ( m_memDc )
+	{
+		m_memDc->SelectObject( wxNullBitmap );
+		m_memDc.reset();
+		m_img = m_bmp.ConvertToImage();
+		m_bmp = wxNullBitmap;
+	}
+
 #ifdef __WXMSW__
 #if wxUSE_ENH_METAFILE
 	if ( m_emfDc )
@@ -125,15 +133,13 @@ void McGraphicalContextWaveDrawer::ProcessFinalizer()
 bool McGraphicalContextWaveDrawer::create_context_on_bitmap( const wxSize& imageSize, int nImageColourDepth )
 {
 	wxLogInfo( _( "Creating bitmap" ) );
-	wxImage img( imageSize, true );
-	if ( nImageColourDepth == 32 )
-	{
-		img.InitAlpha();
-	}
+	m_bmp = wxBitmap( imageSize, nImageColourDepth );
 
-	m_img = img;
+	wxLogInfo( _( "Creating memory context" ) );
+	m_memDc.reset( new wxMemoryDC( m_bmp ) );
+
 	wxLogInfo( _( "Creating graphics context" ) );
-	m_gc.reset( wxGraphicsContext::Create( m_img ) );
+	m_gc.reset( wxGraphicsContext::Create( *m_memDc ) );
 
 	return true;
 }

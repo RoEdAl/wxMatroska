@@ -39,7 +39,7 @@ class wxConfiguration:
 		Interval		  m_interval;
 		bool			  m_bUseMLang;
 		bool m_bAnimation;
-		wxFileName m_progressStretchedBitmap;
+		AnimationSettings m_animationSettings;
 
 	protected:
 
@@ -88,6 +88,7 @@ class wxConfiguration:
 		wxImageResolution GetImageResolutionUnits() const;
 		const wxSize& GetImageResolution() const;
 		wxUint16 GetImageQuality() const;
+		wxUint16 GetPngCompressionLevel() const;
 		int GetImageColorDepth() const;
 		bool MultiChannel() const;
 		wxUint16 GetNumberOfColumns() const;
@@ -104,9 +105,8 @@ class wxConfiguration:
 		bool GenerateCuePoints( const wxTimeSpan&, wxTimeSpanArray& ) const;
 		bool UseMLang() const;
 		wxString GetCompositionModeAsText() const;
-
 		bool CreateAnimation() const;
-		const wxFileName& GetProgressStretchedBitmap() const;
+		const AnimationSettings& GetAnimationSettings() const;
 
 	public:
 

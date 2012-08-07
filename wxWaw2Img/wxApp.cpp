@@ -7,6 +7,7 @@
 #include "LogarithmicScale.h"
 #include "Interval.h"
 #include "DrawerSettings.h"
+#include "AnimationSettings.h"
 #include "wxConfiguration.h"
 #include "wxApp.h"
 
@@ -29,6 +30,7 @@
 
 #include "SoundFile.h"
 #include "NinePatchBitmap.h"
+#include "MemoryGraphicsContext.h"
 
 // ===============================================================================
 
@@ -332,6 +334,16 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 	}
 }
 
+static void set_image_options( wxImage& img, const wxConfiguration& cfg, const wxFileName& fn )
+{
+	img.SetOption( wxIMAGE_OPTION_RESOLUTIONX, cfg.GetImageResolution().GetWidth() );
+	img.SetOption( wxIMAGE_OPTION_RESOLUTIONY, cfg.GetImageResolution().GetHeight() );
+	img.SetOption( wxIMAGE_OPTION_RESOLUTIONUNIT, cfg.GetImageResolutionUnits() );
+	img.SetOption( wxIMAGE_OPTION_QUALITY, cfg.GetImageQuality() );
+	img.SetOption( wxIMAGE_OPTION_PNG_COMPRESSION_LEVEL, cfg.GetPngCompressionLevel() );
+	img.SetOption( wxIMAGE_OPTION_FILENAME, fn.GetName() );
+}
+
 static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, wxEnhMetaFile* pEmf )
 {
 	wxASSERT( pEmf != NULL );
@@ -362,26 +374,23 @@ static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, wxEnhM
 	}
 }
 
-static bool create_animation( const wxFileName& workDir, const wxConfiguration& cfg, const wxImage& img, const NinePatchBitmap& npb, const wxRect2DIntArray& rects )
+static wxImage draw_progress( const wxImage& simg, const NinePatchBitmap& npb, const wxRect2DIntArray& rects, wxUint32 nWidth )
 {
-	wxASSERT( rects.GetCount() > 0 );
+	MemoryGraphicsContext mgc( simg.GetSize(), simg.HasAlpha()? 32 : 24 );
 
-	wxUint32 nWidth = rects[0].GetSize().GetWidth();
-	for( wxUint32 i=0; i < nWidth; i++ )
 	{
-		wxImage aimg( img );
-		wxScopedPtr<wxGraphicsContext> pGc( wxGraphicsContext::Create( aimg ) );
+		wxScopedPtr<wxGraphicsContext> pGc( mgc.CreateGraphicsContext() );
 		pGc->SetAntialiasMode( wxANTIALIAS_NONE );
 		pGc->SetInterpolationQuality( wxINTERPOLATION_NONE );
 
 		pGc->SetCompositionMode( wxCOMPOSITION_SOURCE );
-		pGc->DrawBitmap( pGc->CreateBitmapFromImage( aimg ), 0,0, aimg.GetWidth(), aimg.GetHeight() );
+		pGc->DrawBitmap( pGc->CreateBitmapFromImage( simg ), 0,0, simg.GetWidth(), simg.GetHeight() );
 		pGc->SetCompositionMode( wxCOMPOSITION_OVER );
 
-		for( size_t j=0, nCount = rects.GetCount(); j < nCount; j++ )
+		for( wxRect2DIntArray::const_iterator i= rects.begin(), end = rects.end(); i != end; ++i )
 		{
-			wxRect2DInt r( rects[j] );
-			r.m_width = i;
+			wxRect2DInt r( *i );
+			r.m_width = nWidth;
 
 			wxImage ri = npb.GetStretchedEx( r );
 			if ( ri.IsOk() )
@@ -390,19 +399,24 @@ static bool create_animation( const wxFileName& workDir, const wxConfiguration& 
 				pGc->DrawBitmap( bm, r.m_x, r.m_y, r.m_width, r.m_height );
 			}
 		}
+	}
 
-		pGc.reset();
+	return mgc.GetImage();
+}
+
+static bool create_animation( const wxFileName& workDir, const wxConfiguration& cfg, const wxImage& img, const NinePatchBitmap& npb, const wxRect2DIntArray& rects )
+{
+	wxASSERT( rects.GetCount() > 0 );
+
+	wxUint32 nWidth = rects[0].GetSize().GetWidth();
+	for( wxUint32 i=0; i < nWidth; i++ )
+	{
+		wxImage aimg( draw_progress( img, npb, rects, i ) );
 
 		wxFileName fn( workDir );
-		fn.SetFullName( wxString::Format( "seq%04d.png", i ) );
-
-		aimg.SetOption( wxIMAGE_OPTION_RESOLUTIONX, cfg.GetImageResolution().GetWidth() );
-		aimg.SetOption( wxIMAGE_OPTION_RESOLUTIONY, cfg.GetImageResolution().GetHeight() );
-		aimg.SetOption( wxIMAGE_OPTION_RESOLUTIONUNIT, cfg.GetImageResolutionUnits() );
-		aimg.SetOption( wxIMAGE_OPTION_QUALITY, cfg.GetImageQuality() );
-		aimg.SetOption( wxIMAGE_OPTION_FILENAME, fn.GetName() );
-		aimg.SetOption( wxIMAGE_OPTION_PNG_FORMAT, wxPNG_TYPE_PALETTE );
-
+		fn.SetExt( "png" );
+		fn.SetName( wxString::Format( "seq%04d", i ) );
+		set_image_options( aimg, cfg, fn );
 		if ( !aimg.SaveFile( fn.GetFullPath() ) )
 		{
 			wxLogError( _( "Fail to save sequence %d to file \u201C%s\u201D" ), i, fn.GetFullName() );
@@ -417,25 +431,53 @@ static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, const 
 {
 	if ( cfg.CreateAnimation() )
 	{
-		wxLogInfo( _( "Loading stretched bitmap \u201C%s\u201D" ), cfg.GetProgressStretchedBitmap().GetFullName() );
+		const AnimationSettings& as = cfg.GetAnimationSettings();
+
 		NinePatchBitmap npb;
-		if ( !npb.Init( cfg.GetProgressStretchedBitmap().GetFullPath() ) )
+		if ( as.HasBitmap() )
 		{
-			wxLogInfo( _( "Fail to load stretched bitmap \u201C%s\u201D" ), cfg.GetProgressStretchedBitmap().GetFullName() );
-			return false;
+			wxLogInfo( _( "Loading stretched bitmap \u201C%s\u201D" ), as.GetBitmapFilename().GetFullName() );
+			if ( !npb.Init( as.GetBitmapFilename().GetFullPath() ) )
+			{
+				wxLogInfo( _( "Fail to load stretched bitmap \u201C%s\u201D" ), as.GetBitmapFilename().GetFullName() );
+				return false;
+			}
+		}
+		else
+		{
+			if ( !npb.Init( as.GetBorderColour(), as.GetFillColour(), as.GetBorderWidth() ) )
+			{
+				wxLogInfo( _( "Fail to create fill pattern" ) );
+				return false;
+			}
 		}
 
 		wxImage img( mcWaveDrawer.GetBitmap() );
 
 		wxFileName workDir;
 		workDir.AssignDir( cfg.GetOutputFile().GetPath() );
-		workDir.AppendDir( "~wav2img" );
-		wxLogInfo( _( "Working directory: \u201C%s\u201D" ), workDir.GetFullPath() );
+		workDir.AppendDir( wxString::Format( wxT("%s.animation"), cfg.GetOutputFile().GetName() ) );
+		wxLogInfo( _( "Setting working directory to \u201C%s\u201D" ), workDir.GetPath() );
+
 		if ( !workDir.DirExists() )
 		{
 			if ( !workDir.Mkdir() )
 			{
-				wxLogError( _( "Fail to create working directory \u201C%s\u201D" ), workDir.GetFullPath() );
+				wxLogError( _( "Fail to create working directory \u201C%s\u201D" ), workDir.GetPath() );
+				return false;
+			}
+		}
+		else
+		{
+			if ( !workDir.Rmdir( wxPATH_RMDIR_RECURSIVE ) )
+			{
+				wxLogError( _( "Fail to remove directory \u201C%s\u201D" ), workDir.GetPath() );
+				return false;
+			}
+
+			if ( !workDir.Mkdir() )
+			{
+				wxLogError( _( "Fail to re-create working directory \u201C%s\u201D" ), workDir.GetPath() );
 				return false;
 			}
 		}
@@ -445,12 +487,7 @@ static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, const 
 	else
 	{
 		wxImage img( mcWaveDrawer.GetBitmap() );
-
-		img.SetOption( wxIMAGE_OPTION_RESOLUTIONX, cfg.GetImageResolution().GetWidth() );
-		img.SetOption( wxIMAGE_OPTION_RESOLUTIONY, cfg.GetImageResolution().GetHeight() );
-		img.SetOption( wxIMAGE_OPTION_RESOLUTIONUNIT, cfg.GetImageResolutionUnits() );
-		img.SetOption( wxIMAGE_OPTION_QUALITY, cfg.GetImageQuality() );
-		img.SetOption( wxIMAGE_OPTION_FILENAME, fn.GetName() );
+		set_image_options( img, cfg, fn );
 
 		wxLogInfo( _( "Saving image to file \u201C%s\u201D" ), fn.GetFullName() );
 		bool res = img.SaveFile( fn.GetFullPath() );
@@ -516,6 +553,11 @@ static bool save_rendered_wave( McChainWaveDrawer& waveDrawer, const wxConfigura
 
 int wxMyApp::OnRun()
 {
+	/*
+	NinePatchBitmap npb;
+	npb.Init( wxColour(0,38.255,64), wxColour(255,216,0,64), 0 );
+	*/
+
 	wxTimeSpanArray cuePoints;
 	bool			bUseCuePoints = false;
 

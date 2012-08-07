@@ -1,0 +1,1 @@
+ffmpeg -f image2 -r 640/3455 -i "_poly.animation/seq%%04d.png" -q:v 3 -c:v mpeg4 -flags +loop -g 600 -qcomp 0.6 -bf 1 -b_strategy 1 -i_qfactor 0.71 -cmp +chroma -subq 1 -me_range 16 -sc_threshold 10 -keyint_min 100 -refs 3 -trellis 1 -threads 1 -y -r 1 output_x264.mkv
