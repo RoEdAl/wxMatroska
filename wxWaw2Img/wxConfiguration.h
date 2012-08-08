@@ -40,6 +40,7 @@ class wxConfiguration:
 		bool			  m_bUseMLang;
 		bool m_bAnimation;
 		AnimationSettings m_animationSettings;
+		wxImageResizeQuality m_eResizeQuality;
 
 	protected:
 
@@ -51,6 +52,10 @@ class wxConfiguration:
 
 		static wxString GetDrawingModeAsText( DRAWING_MODE );
 		static bool ConvertStringToCompositionMode( const wxString&, wxCompositionMode& );
+
+		static bool ConvertStringToResizeQuality( const wxString&, wxImageResizeQuality& );
+		static wxString GetResizeQualityAsText( wxImageResizeQuality );
+		static wxString GetResizeQualityTexts();
 
 		static wxString GetCompositionModeAsText( wxCompositionMode );
 		static wxString GetDrawingModeTexts();
@@ -74,6 +79,15 @@ class wxConfiguration:
 
 		static const COMPOSITION_MODE_DESC CompositionModeDesc[];
 		static const size_t				   CompositionModeDescSize;
+
+		struct RESIZE_QUALITY_DESC
+		{
+			wxImageResizeQuality resizeQuality;
+			const wxChar* description;
+		};
+
+		static const RESIZE_QUALITY_DESC ResizeQualityDesc[];
+		static const size_t			   ResizeQualityDescSize;
 
 	private:
 
@@ -107,6 +121,7 @@ class wxConfiguration:
 		wxString GetCompositionModeAsText() const;
 		bool CreateAnimation() const;
 		const AnimationSettings& GetAnimationSettings() const;
+		wxImageResizeQuality GetResizeQuality() const;
 
 	public:
 

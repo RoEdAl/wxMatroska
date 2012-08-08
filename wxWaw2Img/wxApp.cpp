@@ -374,7 +374,7 @@ static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, wxEnhM
 	}
 }
 
-static wxImage draw_progress( const wxImage& simg, const NinePatchBitmap& npb, const wxRect2DIntArray& rects, wxUint32 nWidth )
+static wxImage draw_progress( const wxImage& simg, const NinePatchBitmap& npb, const wxRect2DIntArray& rects, wxUint32 nWidth, wxImageResizeQuality eResizeQuality )
 {
 	MemoryGraphicsContext mgc( simg.GetSize(), simg.HasAlpha()? 32 : 24 );
 
@@ -392,7 +392,7 @@ static wxImage draw_progress( const wxImage& simg, const NinePatchBitmap& npb, c
 			wxRect2DInt r( *i );
 			r.m_width = nWidth;
 
-			wxImage ri = npb.GetStretchedEx( r );
+			wxImage ri = npb.GetStretchedEx( r, eResizeQuality );
 			if ( ri.IsOk() )
 			{
 				wxGraphicsBitmap bm = pGc->CreateBitmapFromImage( ri );
@@ -411,7 +411,7 @@ static bool create_animation( const wxFileName& workDir, const wxConfiguration& 
 	wxUint32 nWidth = rects[0].GetSize().GetWidth();
 	for( wxUint32 i=0; i < nWidth; i++ )
 	{
-		wxImage aimg( draw_progress( img, npb, rects, i ) );
+		wxImage aimg( draw_progress( img, npb, rects, i, cfg.GetResizeQuality() ) );
 
 		wxFileName fn( workDir );
 		fn.SetExt( "png" );

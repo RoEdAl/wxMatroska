@@ -56,6 +56,18 @@ const size_t wxConfiguration::CompositionModeDescSize = sizeof ( wxConfiguration
 
 // ===============================================================================
 
+const wxConfiguration::RESIZE_QUALITY_DESC wxConfiguration::ResizeQualityDesc[] =
+{
+	{ wxIMAGE_QUALITY_NEAREST, wxT("nearest") },
+	{ wxIMAGE_QUALITY_BILINEAR, wxT("bilinear") },
+	{ wxIMAGE_QUALITY_BICUBIC, wxT("bicubic") },
+	{ wxIMAGE_QUALITY_BOX_AVERAGE, wxT("box_average") }
+};
+
+const size_t wxConfiguration::ResizeQualityDescSize = sizeof( wxConfiguration::ResizeQualityDesc ) / sizeof ( wxConfiguration::RESIZE_QUALITY_DESC );
+
+// ===============================================================================
+
 wxConfiguration::wxConfiguration( void ):
 	m_eDrawingMode( DRAWING_MODE_POLY ),
 	m_imageSize( 800, 300 ),
@@ -70,7 +82,8 @@ wxConfiguration::wxConfiguration( void ):
 	m_bGenerateCuePoints( false ),
 	m_interval( INTERVAL_UNIT_PERCENT, 10 ),
 	m_bUseMLang( true ),
-	m_bAnimation( false )
+	m_bAnimation( false ),
+	m_eResizeQuality( wxIMAGE_QUALITY_NEAREST )
 {}
 
 wxString wxConfiguration::GetSwitchAsText( bool b )
@@ -105,7 +118,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 	cmdLine.AddOption( "bb", "bottom-background", wxString::Format( _( "Background color at bottom (default: %s)" ), m_drawerSettings.GetBottomColourSettings().GetBackgroundColour().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "bt2", "secondary-top-background", wxString::Format( _( "Secondary background color at top (default: %s)" ), m_drawerSettings.GetTopColourSettings().GetBackgroundColour2().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "bb2", "secondary-bottom-background", wxString::Format( _( "Secondary background color at bottom (default: %s)" ), m_drawerSettings.GetBottomColourSettings().GetBackgroundColour2().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddOption( "bp", "picture-background", _( "Picture background color (default: transparent or white)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( "B", "picture-background", _( "Picture background color (default: transparent or white)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( "bs", "background-from-system", _( "Take background colors from system settings (default: off)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 
 	cmdLine.AddOption( "r", "resolution", wxString::Format( _( "Image horizontal and vertical resolution (default: %d)" ), m_imageResolution.x ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
@@ -113,6 +126,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 	cmdLine.AddOption( "ry", "y-resolution", wxString::Format( _( "Image vertical resolution (default: %d)" ), m_imageResolution.y ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxEmptyString, "resolution-units", _( "Image resolution units [inches|cm] (default: inches)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "q", "image-quality", wxString::Format( _( "Image quality [0-100] (default: %d)" ), m_nImageQuality ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( "R", "resize-quality", wxString::Format( _( "Resize quality [%s] (default: %s)" ), GetResizeQualityTexts(), GetResizeQualityAsText( m_eResizeQuality) ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "d", "color-depth", _( "Image color depth [8,16,24,32] (default: display's color depth)" ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 
 	cmdLine.AddSwitch( "l", "logaritmic-scale", wxString::Format( _( "Draw using logarithmic scale (default: %s)" ), GetSwitchAsText( m_drawerSettings.UseLogarithmicScale() ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
@@ -269,6 +283,20 @@ bool wxConfiguration::ConvertStringToDrawingMode( const wxString& s, DRAWING_MOD
 	return false;
 }
 
+bool wxConfiguration::ConvertStringToResizeQuality( const wxString& s, wxImageResizeQuality& e )
+{
+	for ( size_t i = 0; i < ResizeQualityDescSize; i++ )
+	{
+		if ( s.CmpNoCase( ResizeQualityDesc[ i ].description ) == 0 )
+		{
+			e = ResizeQualityDesc[ i ].resizeQuality;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool wxConfiguration::ConvertStringToCompositionMode( const wxString& s, wxCompositionMode& e )
 {
 	for ( size_t i = 0; i < CompositionModeDescSize; i++ )
@@ -309,6 +337,19 @@ wxString wxConfiguration::GetCompositionModeAsText( wxCompositionMode e )
 	return wxString::Format( "<%d>", static_cast< int >( e ) );
 }
 
+wxString wxConfiguration::GetResizeQualityAsText( wxImageResizeQuality e )
+{
+	for ( size_t i = 0; i < ResizeQualityDescSize; i++ )
+	{
+		if ( ResizeQualityDesc[ i ].resizeQuality == e )
+		{
+			return ResizeQualityDesc[ i ].description;
+		}
+	}
+
+	return wxString::Format( "<%d>", static_cast< int >( e ) );
+}
+
 wxString wxConfiguration::GetDrawingModeTexts()
 {
 	wxString s;
@@ -332,6 +373,19 @@ wxString wxConfiguration::GetCompositionModeTexts()
 
 	return s.RemoveLast();
 }
+
+wxString wxConfiguration::GetResizeQualityTexts()
+{
+	wxString s;
+
+	for ( size_t i = 0; i < ResizeQualityDescSize; i++ )
+	{
+		s << ResizeQualityDesc[ i ].description << "|";
+	}
+
+	return s.RemoveLast();
+}
+
 
 bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 {
@@ -571,7 +625,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		}
 	}
 
-	if ( cmdLine.Found( "bp", &s ) )
+	if ( cmdLine.Found( "B", &s ) )
 	{
 		if ( !ParseColourString( s, m_drawerSettings.GetBackgroundColour() ) )
 		{
@@ -640,6 +694,20 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 		m_nImageQuality = v;
 	}
+
+	if ( cmdLine.Found( "R", &s ) )
+	{
+		wxImageResizeQuality e;
+
+		if ( !ConvertStringToResizeQuality( s, e ) )
+		{
+			wxLogWarning( _( "Invalid image resize quality - %s" ), s );
+			return false;
+		}
+
+		m_eResizeQuality = e;
+	}
+
 
 	if ( cmdLine.Found( "lb", &vd ) )
 	{
@@ -905,7 +973,7 @@ wxUint16 wxConfiguration::GetImageQuality() const
 
 wxUint16 wxConfiguration::GetPngCompressionLevel() const
 { // from image quality ( in PNG not used )
-	return 1 + ceil( m_nImageQuality  / 12.0f );
+	return 1 + ceil( m_nImageQuality  / 12.5f );
 }
 
 int wxConfiguration::GetImageColorDepth() const
@@ -1026,4 +1094,9 @@ bool wxConfiguration::CreateAnimation() const
 const AnimationSettings& wxConfiguration::GetAnimationSettings() const
 {
 	return m_animationSettings;
+}
+
+wxImageResizeQuality wxConfiguration::GetResizeQuality() const
+{
+	return m_eResizeQuality;
 }
