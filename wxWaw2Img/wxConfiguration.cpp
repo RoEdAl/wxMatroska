@@ -18,6 +18,10 @@ const wxSystemColour wxConfiguration::COLOR_BACKGROUND2 = wxSYS_COLOUR_MENUBAR;
 
 // ===============================================================================
 
+const wxChar wxConfiguration::CMD_TEMPLATE[] = wxT( "ffmpeg.txt" );
+
+// ===============================================================================
+
 wxIMPLEMENT_DYNAMIC_CLASS( wxConfiguration, wxObject );
 
 // ===============================================================================
@@ -83,7 +87,8 @@ wxConfiguration::wxConfiguration( void ):
 	m_interval( INTERVAL_UNIT_PERCENT, 10 ),
 	m_bUseMLang( true ),
 	m_bAnimation( false ),
-	m_eResizeQuality( wxIMAGE_QUALITY_NEAREST )
+	m_eResizeQuality( wxIMAGE_QUALITY_NEAREST ),
+	m_bDeleteTemporaryFiles( false )
 {}
 
 wxString wxConfiguration::GetSwitchAsText( bool b )
@@ -157,6 +162,9 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 	cmdLine.AddOption( "ac", "progress-color", wxString::Format( _( "Progress background color (default: %s)" ), m_animationSettings.GetFillColour().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxEmptyString, "progress-border-color", wxString::Format( _( "Progress border color (default: %s)" ), m_animationSettings.GetBorderColour().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxEmptyString, "progress-border-width", wxString::Format( _( "Progress border width (default: %d)" ), m_animationSettings.GetBorderWidth() ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( wxEmptyString, "ffmpeg-dir", _( "ffmpeg binary directory (default: none)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( wxEmptyString, "ffmpeg-template", wxString::Format( _( "ffmpeg command line template (default: %s in current directory)" ), CMD_TEMPLATE ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( "z", "delete-temp-files", wxString::Format( _( "Delete temporary files (default: %s)" ),GetSwitchAsText( m_bDeleteTemporaryFiles ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 }
 
 bool wxConfiguration::ReadNegatableSwitchValue( const wxCmdLineParser& cmdLine, const wxString& name, bool& switchVal )
@@ -846,6 +854,28 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 		m_animationSettings.GetBorderWidth() = (wxUint16)v;
 	}
+	
+	if ( cmdLine.Found( "ffmpeg-dir", &s ) )
+	{
+		m_ffmpegDir.AssignDir( s );
+		if ( !m_ffmpegDir.DirExists() )
+		{
+			wxLogWarning( _( "Invalid ffmpeg directory - %s" ), s );
+			return false;
+		}
+	}
+	
+	if ( cmdLine.Found( "ffmpeg-template", &s ) )
+	{
+		m_cmdTemplate.Assign( s );
+		if ( !m_ffmpegDir.FileExists() )
+		{
+			wxLogWarning( _( "Invalid ffmpeg command line template path - %s" ), s );
+			return false;
+		}
+	}
+
+	ReadNegatableSwitchValue( cmdLine, "z", m_bDeleteTemporaryFiles );
 
 	return true;
 }
@@ -930,6 +960,20 @@ wxFileName wxConfiguration::GetOutputFile() const
 			return wxFileName();
 		}
 	}
+}
+
+wxString wxConfiguration::GetOutputFileExt() const
+{
+	return GetOutputFile().GetExt();
+}
+
+wxFileName wxConfiguration::GetAnimationOutputFile() const
+{
+	wxASSERT( m_bAnimation );
+	wxFileName fn( GetOutputFile() );
+	fn.SetExt( "mkv" );
+
+	return fn;
 }
 
 const wxSize& wxConfiguration::GetImageSize() const
@@ -1099,4 +1143,39 @@ const AnimationSettings& wxConfiguration::GetAnimationSettings() const
 wxImageResizeQuality wxConfiguration::GetResizeQuality() const
 {
 	return m_eResizeQuality;
+}
+
+const wxFileName& wxConfiguration::GetFfmpegDir() const
+{
+	return m_ffmpegDir;
+}
+
+wxFileName wxConfiguration::GetGetCommandTemplateFile() const
+{
+	if ( m_cmdTemplate.IsOk() )
+	{
+		return m_cmdTemplate;
+	}
+	else
+	{
+		wxFileName fn;
+		fn.AssignCwd();
+		fn.SetFullName( CMD_TEMPLATE );
+
+		if ( fn.IsOk() && fn.IsFileReadable() )
+		{
+			return fn;
+		}
+
+		wxLogInfo( _("Trying to find command template in the same directory where binary exists") );
+		fn.Assign( wxStandardPaths::Get().GetExecutablePath() );
+		fn.SetFullName( CMD_TEMPLATE );
+
+		return fn;
+	}
+}
+
+bool wxConfiguration::DeleteTemporaryFiles() const
+{
+	return m_bDeleteTemporaryFiles;
 }

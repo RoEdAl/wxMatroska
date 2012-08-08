@@ -41,6 +41,9 @@ class wxConfiguration:
 		bool m_bAnimation;
 		AnimationSettings m_animationSettings;
 		wxImageResizeQuality m_eResizeQuality;
+		wxFileName m_ffmpegDir;
+		wxFileName m_cmdTemplate;
+		bool m_bDeleteTemporaryFiles;
 
 	protected:
 
@@ -89,6 +92,8 @@ class wxConfiguration:
 		static const RESIZE_QUALITY_DESC ResizeQualityDesc[];
 		static const size_t			   ResizeQualityDescSize;
 
+		static const wxChar CMD_TEMPLATE[];
+
 	private:
 
 		void add_margin( wxRect2DInt&, bool, bool, bool, bool ) const;
@@ -97,6 +102,7 @@ class wxConfiguration:
 
 		const wxFileName& GetInputFile() const;
 		wxFileName GetOutputFile() const;
+		wxString GetOutputFileExt() const;
 		const DrawerSettings& GetDrawerSettings() const;
 		const wxSize&		  GetImageSize() const;
 		wxImageResolution GetImageResolutionUnits() const;
@@ -122,6 +128,10 @@ class wxConfiguration:
 		bool CreateAnimation() const;
 		const AnimationSettings& GetAnimationSettings() const;
 		wxImageResizeQuality GetResizeQuality() const;
+		const wxFileName& GetFfmpegDir() const;
+		wxFileName GetGetCommandTemplateFile() const;
+		wxFileName GetAnimationOutputFile() const;
+		bool DeleteTemporaryFiles() const;
 
 	public:
 

@@ -1,1 +1,0 @@
-ffmpeg -f image2 -r 10 -i "seq%%04d.png" -b:v 15k -c:v libx264 -flags +loop -me_method umh -g 600 -qcomp 0.6 -qmin 5 -qmax 51 -qdiff 4 -bf 1 -b_strategy 1 -i_qfactor 0.71 -cmp +chroma -subq 1 -me_range 16 -coder 0 -sc_threshold 10 -keyint_min 100 -refs 3 -trellis 1 -level 30 -partitions "+parti8x8+parti4x4+partp8x8+partp4x4+partb8x8" -threads 1 -y output1.mkv

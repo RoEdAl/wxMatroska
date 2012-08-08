@@ -11,8 +11,13 @@
 #include "MCGraphicsContextWaveDrawer.h"
 
 McGraphicalContextWaveDrawer::McGraphicalContextWaveDrawer( wxUint16 nChannels ):
-	ArrayWaveDrawer( nChannels )
+	ArrayWaveDrawer( nChannels ),m_nTrackDuration(0)
 {}
+
+wxUint32 McGraphicalContextWaveDrawer::GetTrackDuration() const
+{
+	return m_nTrackDuration;
+}
 
 const wxRect2DIntArray& McGraphicalContextWaveDrawer::GetRects() const
 {
@@ -58,9 +63,12 @@ wxGraphicsContext* McGraphicalContextWaveDrawer::Initialize(
 		const wxSize& imageSize,
 		int nImageColourDepth,
 		const wxColour& clrBg,
-		const wxRect2DIntArray& rects
+		const wxRect2DIntArray& rects,
+		wxUint32 nTrackDuration
 		)
 {
+	m_nTrackDuration = nTrackDuration;
+
 #ifdef __WXMSW__
 #if wxUSE_ENH_METAFILE
 	if ( nImageColourDepth > 0 )

@@ -41,6 +41,13 @@ const wxChar wxMyApp::APP_AUTHOR[]		= wxT( "Edmunt Pienkowsky - roed@onet.eu" );
 
 // ===============================================================================
 
+const wxChar wxMyApp::CMD_FFMPEG[] = wxT("$FFMPEG$");
+const wxChar wxMyApp::CMD_INPUT[] = wxT("$INPUT$");
+const wxChar wxMyApp::CMD_INPUT_RATE[] = wxT("$INPUT_RATE$");
+const wxChar wxMyApp::CMD_OUTPUT[] = wxT("$OUTPUT$");
+
+// ===============================================================================
+
 wxIMPLEMENT_APP( wxMyApp );
 
 wxMyApp::wxMyApp( void ):
@@ -97,6 +104,17 @@ void wxMyApp::AddCuePointsFileDescription( wxCmdLineParser& cmdline )
 	cmdline.AddUsageText( _( "\t10345.67 # 10345 seconds and 670 miliseconds" ) );
 }
 
+void wxMyApp::AddCommandTemplateDescription( wxCmdLineParser& cmdline )
+{
+	cmdline.AddUsageText( _( "Command line template replacements:" ) );
+	cmdline.AddUsageText( wxString::Format( _("\t%s: path to ffmpeg executable"), CMD_FFMPEG ) );
+	cmdline.AddUsageText( wxString::Format( _("\t%s: input file or sequence of files"), CMD_INPUT ) );
+	cmdline.AddUsageText( wxString::Format( _("\t%s: input file(s) framerate"), CMD_INPUT_RATE ) );
+	cmdline.AddUsageText( wxString::Format( _("\t%s: path to output file"), CMD_OUTPUT ) );
+	cmdline.AddUsageText( _("Empty lines and lines beginning with # character are ignored.") );
+	cmdline.AddUsageText( _("All other lines are concatenated to one-liner command.") );
+}
+
 void wxMyApp::AddDisplayDescription( wxCmdLineParser& cmdline )
 {
 	cmdline.AddUsageText( _( "System settings:" ) );
@@ -124,10 +142,11 @@ void wxMyApp::OnInitCmdLine( wxCmdLineParser& cmdline )
 	AddSeparator( cmdline );
 	AddCuePointsFileDescription( cmdline );
 	AddSeparator( cmdline );
+	AddCommandTemplateDescription( cmdline );
+	AddSeparator( cmdline );
 	AddDisplayDescription( cmdline );
 	AddSeparator( cmdline );
 	AddVersionInfos( cmdline );
-	AddSeparator( cmdline );
 }
 
 bool wxMyApp::OnCmdLineParsed( wxCmdLineParser& cmdline )
@@ -249,6 +268,11 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 	wxUint64 nSamples	 = sfInfo.frames;
 	wxUint16 nChannels	 = sfInfo.channels;
 	wxUint32 nSamplerate = sfInfo.samplerate;
+	wxUint32 nTrackDuration = nSamples / nSamplerate;
+	if ( ( nSamples % nSamplerate ) != wxULL(0) )
+	{ // round up
+		nTrackDuration += 1u;
+	}
 
 	MultiChannelWaveDrawer* pMcwd = NULL;
 
@@ -281,7 +305,8 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 						cfg.GetImageSize(),
 						cfg.GetImageColorDepth(),
 						drawerSettings.GetBackgroundColour(),
-						drawerRects );
+						drawerRects,
+						nTrackDuration );
 
 				if ( gc == NULL )
 				{
@@ -306,7 +331,8 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 						cfg.GetImageSize(),
 						cfg.GetImageColorDepth(),
 						drawerSettings.GetBackgroundColour(),
-						drawerRects );
+						drawerRects,
+						nTrackDuration );
 
 				if ( gc == NULL )
 				{
@@ -404,9 +430,111 @@ static wxImage draw_progress( const wxImage& simg, const NinePatchBitmap& npb, c
 	return mgc.GetImage();
 }
 
-static bool create_animation( const wxFileName& workDir, const wxConfiguration& cfg, const wxImage& img, const NinePatchBitmap& npb, const wxRect2DIntArray& rects )
+static wxString read_cmd_file( const wxFileName& cmdFile )
+{
+	wxFileInputStream fis( cmdFile.GetFullPath() );
+
+	if ( !fis.IsOk() )
+	{
+		wxLogError( _( "Cannot open commad file \u201C%s\u201D" ), cmdFile.GetFullName() );
+		return wxEmptyString;
+	}
+
+	wxTextInputStream tis( fis );
+	wxString sCmdLine;
+	while ( !fis.Eof() )
+	{
+		wxString s( tis.ReadLine() );
+		s.Trim( false ).Trim( true );
+		if ( s.IsEmpty() ) continue;
+		if ( s.StartsWith( "#" ) ) continue;
+
+		sCmdLine += s;
+		sCmdLine += " ";
+	}
+
+	if ( !sCmdLine.IsEmpty() )
+	{
+		sCmdLine.RemoveLast(1);
+	}
+	return sCmdLine;
+}
+
+static inline wxString quote_str( const wxString& s )
+{
+	if ( s.Contains( " " ) )
+	{
+		return wxString::Format( "\"%s\"", s );
+	}
+	else
+	{
+		return s;
+	}
+}
+
+static bool run_ffmpeg( const wxString& sWorkDir, const wxConfiguration& cfg, wxUint32 nNumberOfPictures, wxUint32 nTrackDurationSec )
+{
+	wxFileName fn( cfg.GetGetCommandTemplateFile() );
+
+	if ( !fn.IsFileReadable() )
+	{
+		wxLogError( _( "Template file \u201C%s\u201D is not readable" ), fn.GetFullName() );
+		return false;
+	}
+
+	wxString sCmdLine( read_cmd_file( fn ) );
+	if ( sCmdLine.IsEmpty() )
+	{
+		return false;
+	}
+
+	wxString sFfmpeg( "ffmpeg" );
+
+	if ( cfg.GetFfmpegDir().IsOk() )
+	{
+		wxFileName ffmpeg( cfg.GetFfmpegDir().GetFullPath(), "ffmpeg" );
+		sFfmpeg = ffmpeg.GetFullPath();
+	}
+
+	sCmdLine.Replace( wxMyApp::CMD_FFMPEG, quote_str( sFfmpeg ) );
+	sCmdLine.Replace( wxMyApp::CMD_INPUT, quote_str( wxString::Format( "seq%%04d.%s", cfg.GetOutputFileExt() ) ) );
+	sCmdLine.Replace( wxMyApp::CMD_INPUT_RATE, wxString::Format( "%u/%u", nNumberOfPictures, nTrackDurationSec ) );
+	sCmdLine.Replace( wxMyApp::CMD_OUTPUT, quote_str( cfg.GetAnimationOutputFile().GetFullPath() ) );
+
+	wxLogMessage( _( "Running commad: %s" ), sCmdLine );
+
+	long nRes = 0;
+
+	wxExecuteEnv env;
+	env.cwd = sWorkDir;
+
+	nRes = wxExecute( sCmdLine, wxEXEC_SYNC | wxEXEC_NOEVENTS, (wxProcess*)NULL, &env );
+
+	if ( nRes == -1 )
+	{
+		wxLogError( _( "Fail to execute ffmpeg tool" ) );
+		return false;
+	}
+	else
+	{
+		if ( nRes <= 1 )
+		{
+			wxLogInfo( _( "ffmpeg exit code: %d" ), nRes );
+			return true;
+		}
+		else
+		{
+			wxLogError( _( "ffmpeg exit code: %d" ), nRes );
+			return false;
+		}
+	}
+}
+
+static bool create_animation( const wxFileName& workDir, const wxConfiguration& cfg, const wxImage& img, const NinePatchBitmap& npb, const wxRect2DIntArray& rects, wxUint32 nTrackDuration )
 {
 	wxASSERT( rects.GetCount() > 0 );
+
+	wxString sExt( cfg.GetOutputFileExt() );
 
 	wxUint32 nWidth = rects[0].GetSize().GetWidth();
 	for( wxUint32 i=0; i < nWidth; i++ )
@@ -414,7 +542,7 @@ static bool create_animation( const wxFileName& workDir, const wxConfiguration& 
 		wxImage aimg( draw_progress( img, npb, rects, i, cfg.GetResizeQuality() ) );
 
 		wxFileName fn( workDir );
-		fn.SetExt( "png" );
+		fn.SetExt( sExt );
 		fn.SetName( wxString::Format( "seq%04d", i ) );
 		set_image_options( aimg, cfg, fn );
 		if ( !aimg.SaveFile( fn.GetFullPath() ) )
@@ -424,7 +552,9 @@ static bool create_animation( const wxFileName& workDir, const wxConfiguration& 
 		}
 	}
 
-	return true;
+	bool bRes = run_ffmpeg( workDir.GetFullPath(), cfg, nWidth, nTrackDuration );
+
+	return bRes;
 }
 
 static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, const McGraphicalContextWaveDrawer& mcWaveDrawer )
@@ -454,10 +584,12 @@ static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, const 
 
 		wxImage img( mcWaveDrawer.GetBitmap() );
 
+		const wxStandardPaths& paths = wxStandardPaths::Get();
+
 		wxFileName workDir;
-		workDir.AssignDir( cfg.GetOutputFile().GetPath() );
-		workDir.AppendDir( wxString::Format( wxT("%s.animation"), cfg.GetOutputFile().GetName() ) );
-		wxLogInfo( _( "Setting working directory to \u201C%s\u201D" ), workDir.GetPath() );
+		workDir.AssignDir( paths.GetTempDir() );
+		workDir.AppendDir( wxString::Format( "~%s", cfg.GetOutputFile().GetName() ) );
+		wxLogInfo( _( "Working directory is \u201C%s\u201D" ), workDir.GetPath() );
 
 		if ( !workDir.DirExists() )
 		{
@@ -482,7 +614,14 @@ static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, const 
 			}
 		}
 
-		return create_animation( workDir, cfg, mcWaveDrawer.GetBitmap(), npb, mcWaveDrawer.GetRects() );
+		bool bRes = create_animation( workDir, cfg, mcWaveDrawer.GetBitmap(), npb, mcWaveDrawer.GetRects(), mcWaveDrawer.GetTrackDuration() );
+
+		if ( cfg.DeleteTemporaryFiles() && !workDir.Rmdir( wxPATH_RMDIR_RECURSIVE ) )
+		{
+			wxLogError( _( "Fail to remove directory \u201C%s\u201D" ), workDir.GetPath() );
+		}
+
+		return bRes;
 	}
 	else
 	{
@@ -553,11 +692,6 @@ static bool save_rendered_wave( McChainWaveDrawer& waveDrawer, const wxConfigura
 
 int wxMyApp::OnRun()
 {
-	/*
-	NinePatchBitmap npb;
-	npb.Init( wxColour(0,38.255,64), wxColour(255,216,0,64), 0 );
-	*/
-
 	wxTimeSpanArray cuePoints;
 	bool			bUseCuePoints = false;
 

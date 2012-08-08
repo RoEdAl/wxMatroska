@@ -23,12 +23,14 @@ class McGraphicalContextWaveDrawer:
 #endif
 
 		wxRect2DIntArray m_rects;
+		wxUint32 m_nTrackDuration;
 
 	public:
 
 		McGraphicalContextWaveDrawer( wxUint16 );
-		wxGraphicsContext* Initialize( const wxSize&, int, const wxColour&, const wxRect2DIntArray& );
+		wxGraphicsContext* Initialize( const wxSize&, int, const wxColour&, const wxRect2DIntArray&, wxUint32 );
 
+		wxUint32 GetTrackDuration() const;
 		const wxRect2DIntArray& GetRects() const;
 		wxImage GetBitmap() const;
 

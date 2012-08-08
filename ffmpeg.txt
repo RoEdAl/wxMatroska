@@ -1,0 +1,37 @@
+#
+# ffmpeg command template
+#
+# Replacements:
+# $FFMPEG$ - path to ffmpeg
+# $INPUT$ - path to input file(s)
+# $INPUT_RATE$ - input file(s) rate
+# $OUTPUT$ - path to output file
+#
+# remember that all lines are concatenated to ONE long command line
+#
+
+%FFMPEG$
+-loglevel quiet
+-v 0
+-f image2
+-r $INPUT_RATE$
+-i $INPUT$
+-q:v 3
+-c:v mpeg4
+-flags +loop
+-g 600
+-qcomp 0.6
+-bf 1
+-b_strategy 1
+-i_qfactor 0.71
+-cmp +chroma
+-subq 1
+-me_range 16
+-sc_threshold 10
+-keyint_min 100
+-refs 3
+-trellis 1
+-threads 1
+-y
+-r 1
+$OUTPUT$

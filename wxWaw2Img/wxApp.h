@@ -25,6 +25,7 @@ class wxMyApp:
 		static void AddColourFormatDescription( wxCmdLineParser& );
 		static void AddDisplayDescription( wxCmdLineParser& );
 		static void AddCuePointsFileDescription( wxCmdLineParser& );
+		static void AddCommandTemplateDescription( wxCmdLineParser& );
 		static void InitImageHandlers();
 
 	protected:
@@ -41,6 +42,11 @@ class wxMyApp:
 		static const wxChar APP_VENDOR_NAME[];
 		static const wxChar APP_VERSION[];
 		static const wxChar APP_AUTHOR[];
+
+		static const wxChar CMD_FFMPEG[];
+		static const wxChar CMD_INPUT[];
+		static const wxChar CMD_INPUT_RATE[];
+		static const wxChar CMD_OUTPUT[];
 
 	public:
 
