@@ -62,13 +62,13 @@ const size_t wxConfiguration::CompositionModeDescSize = sizeof ( wxConfiguration
 
 const wxConfiguration::RESIZE_QUALITY_DESC wxConfiguration::ResizeQualityDesc[] =
 {
-	{ wxIMAGE_QUALITY_NEAREST, wxT("nearest") },
-	{ wxIMAGE_QUALITY_BILINEAR, wxT("bilinear") },
-	{ wxIMAGE_QUALITY_BICUBIC, wxT("bicubic") },
-	{ wxIMAGE_QUALITY_BOX_AVERAGE, wxT("box_average") }
+	{ wxIMAGE_QUALITY_NEAREST, wxT( "nearest" ) },
+	{ wxIMAGE_QUALITY_BILINEAR, wxT( "bilinear" ) },
+	{ wxIMAGE_QUALITY_BICUBIC, wxT( "bicubic" ) },
+	{ wxIMAGE_QUALITY_BOX_AVERAGE, wxT( "box_average" ) }
 };
 
-const size_t wxConfiguration::ResizeQualityDescSize = sizeof( wxConfiguration::ResizeQualityDesc ) / sizeof ( wxConfiguration::RESIZE_QUALITY_DESC );
+const size_t wxConfiguration::ResizeQualityDescSize = sizeof ( wxConfiguration::ResizeQualityDesc ) / sizeof ( wxConfiguration::RESIZE_QUALITY_DESC );
 
 // ===============================================================================
 
@@ -133,7 +133,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 	cmdLine.AddOption( "ry", "y-resolution", wxString::Format( _( "Image vertical resolution (default: %d)" ), m_imageResolution.y ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxEmptyString, "resolution-units", _( "Image resolution units [inches|cm] (default: inches)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "q", "image-quality", wxString::Format( _( "Image quality [0-100] (default: %d)" ), m_nImageQuality ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddOption( "R", "resize-quality", wxString::Format( _( "Resize quality [%s] (default: %s)" ), GetResizeQualityTexts(), GetResizeQualityAsText( m_eResizeQuality) ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( "R", "resize-quality", wxString::Format( _( "Resize quality [%s] (default: %s)" ), GetResizeQualityTexts(), GetResizeQualityAsText( m_eResizeQuality ) ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "d", "color-depth", _( "Image color depth [8,16,24,32] (default: display's color depth)" ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 
 	cmdLine.AddSwitch( "l", "logaritmic-scale", wxString::Format( _( "Draw using logarithmic scale (default: %s)" ), GetSwitchAsText( m_drawerSettings.UseLogarithmicScale() ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
@@ -166,7 +166,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 	cmdLine.AddOption( wxEmptyString, "progress-border-width", wxString::Format( _( "Progress border width (default: %d)" ), m_animationSettings.GetBorderWidth() ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxEmptyString, "ffmpeg-dir", _( "ffmpeg binary directory (default: none)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxEmptyString, "ffmpeg-template", wxString::Format( _( "ffmpeg command line template (default: %s in current directory)" ), CMD_TEMPLATE ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( "z", "delete-temp-files", wxString::Format( _( "Delete temporary files (default: %s)" ),GetSwitchAsText( m_bDeleteTemporaryFiles ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( "z", "delete-temp-files", wxString::Format( _( "Delete temporary files (default: %s)" ), GetSwitchAsText( m_bDeleteTemporaryFiles ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 }
 
 bool wxConfiguration::ReadNegatableSwitchValue( const wxCmdLineParser& cmdLine, const wxString& name, bool& switchVal )
@@ -395,7 +395,6 @@ wxString wxConfiguration::GetResizeQualityTexts()
 
 	return s.RemoveLast();
 }
-
 
 bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 {
@@ -728,7 +727,6 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		m_eResizeQuality = e;
 	}
 
-
 	if ( cmdLine.Found( "lb", &vd ) )
 	{
 		if ( vd <= 1.0 || vd > 100000.0f )
@@ -866,17 +864,18 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 		m_animationSettings.GetBorderWidth() = (wxUint16)v;
 	}
-	
+
 	if ( cmdLine.Found( "ffmpeg-dir", &s ) )
 	{
 		m_ffmpegDir.AssignDir( s );
+
 		if ( !m_ffmpegDir.DirExists() )
 		{
 			wxLogWarning( _( "Invalid ffmpeg directory - %s" ), s );
 			return false;
 		}
 	}
-	
+
 	if ( cmdLine.Found( "ffmpeg-template", &s ) )
 	{
 		m_cmdTemplate.Assign( s );
@@ -945,6 +944,7 @@ wxFileName wxConfiguration::GetOutputFile() const
 		if ( m_inputFile.IsOk() )
 		{
 			wxFileName fn( m_inputFile );
+
 			if ( m_bAnimation )
 			{
 				fn.SetExt( "mkv" );
@@ -1020,9 +1020,9 @@ wxUint16 wxConfiguration::GetImageQuality() const
 	return m_nImageQuality;
 }
 
-wxUint16 wxConfiguration::GetPngCompressionLevel() const
-{ // from image quality ( in PNG not used )
-	return 1 + ceil( m_nImageQuality  / 12.5f );
+wxUint16 wxConfiguration::GetPngCompressionLevel() const// from image quality ( in PNG not used )
+{
+	return 1 + ceil( m_nImageQuality / 12.5f );
 }
 
 int wxConfiguration::GetImageColorDepth() const
@@ -1172,7 +1172,7 @@ wxFileName wxConfiguration::GetGetCommandTemplateFile() const
 			return fn;
 		}
 
-		wxLogInfo( _("Trying to find command template in the same directory where binary exists") );
+		wxLogInfo( _( "Trying to find command template in the same directory where binary exists" ) );
 		fn.Assign( wxStandardPaths::Get().GetExecutablePath() );
 		fn.SetFullName( CMD_TEMPLATE );
 
@@ -1184,3 +1184,4 @@ bool wxConfiguration::DeleteTemporaryFiles() const
 {
 	return m_bDeleteTemporaryFiles;
 }
+

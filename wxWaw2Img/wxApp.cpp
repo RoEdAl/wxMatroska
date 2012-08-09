@@ -42,10 +42,10 @@ const wxChar wxMyApp::APP_AUTHOR[]		= wxT( "Edmunt Pienkowsky - roed@onet.eu" );
 
 // ===============================================================================
 
-const wxChar wxMyApp::CMD_FFMPEG[] = wxT("$FFMPEG$");
-const wxChar wxMyApp::CMD_INPUT[] = wxT("$INPUT$");
-const wxChar wxMyApp::CMD_INPUT_RATE[] = wxT("$INPUT_RATE$");
-const wxChar wxMyApp::CMD_OUTPUT[] = wxT("$OUTPUT$");
+const wxChar wxMyApp::CMD_FFMPEG[]	   = wxT( "$FFMPEG$" );
+const wxChar wxMyApp::CMD_INPUT[]	   = wxT( "$INPUT$" );
+const wxChar wxMyApp::CMD_INPUT_RATE[] = wxT( "$INPUT_RATE$" );
+const wxChar wxMyApp::CMD_OUTPUT[]	   = wxT( "$OUTPUT$" );
 
 // ===============================================================================
 
@@ -108,12 +108,12 @@ void wxMyApp::AddCuePointsFileDescription( wxCmdLineParser& cmdline )
 void wxMyApp::AddCommandTemplateDescription( wxCmdLineParser& cmdline )
 {
 	cmdline.AddUsageText( _( "Command line template replacements:" ) );
-	cmdline.AddUsageText( wxString::Format( _("\t%s: path to ffmpeg executable"), CMD_FFMPEG ) );
-	cmdline.AddUsageText( wxString::Format( _("\t%s: input file or sequence of files"), CMD_INPUT ) );
-	cmdline.AddUsageText( wxString::Format( _("\t%s: input file(s) framerate"), CMD_INPUT_RATE ) );
-	cmdline.AddUsageText( wxString::Format( _("\t%s: path to output file"), CMD_OUTPUT ) );
-	cmdline.AddUsageText( _("Empty lines and lines beginning with # character are ignored.") );
-	cmdline.AddUsageText( _("All other lines are concatenated to one-liner command.") );
+	cmdline.AddUsageText( wxString::Format( _( "\t%s: path to ffmpeg executable" ), CMD_FFMPEG ) );
+	cmdline.AddUsageText( wxString::Format( _( "\t%s: input file or sequence of files" ), CMD_INPUT ) );
+	cmdline.AddUsageText( wxString::Format( _( "\t%s: input file(s) framerate" ), CMD_INPUT_RATE ) );
+	cmdline.AddUsageText( wxString::Format( _( "\t%s: path to output file" ), CMD_OUTPUT ) );
+	cmdline.AddUsageText( _( "Empty lines and lines beginning with # character are ignored." ) );
+	cmdline.AddUsageText( _( "All other lines are concatenated to one-liner command." ) );
 }
 
 void wxMyApp::AddDisplayDescription( wxCmdLineParser& cmdline )
@@ -266,12 +266,13 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 
 	const DrawerSettings& drawerSettings = cfg.GetDrawerSettings();
 
-	wxUint64 nSamples	 = sfInfo.frames;
-	wxUint16 nChannels	 = sfInfo.channels;
-	wxUint32 nSamplerate = sfInfo.samplerate;
+	wxUint64 nSamples		= sfInfo.frames;
+	wxUint16 nChannels		= sfInfo.channels;
+	wxUint32 nSamplerate	= sfInfo.samplerate;
 	wxUint32 nTrackDuration = nSamples / nSamplerate;
-	if ( ( nSamples % nSamplerate ) != wxULL(0) )
-	{ // round up
+
+	if ( ( nSamples % nSamplerate ) != wxULL( 0 ) )	// round up
+	{
 		nTrackDuration += 1u;
 	}
 
@@ -294,7 +295,7 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 		case DRAWING_MODE_POLY:
 		{
 			const DrawerSettings& drawerSettings = cfg.GetDrawerSettings();
-			wxRect2DIntArray drawerRects;
+			wxRect2DIntArray	  drawerRects;
 
 			if ( cfg.MultiChannel() )
 			{
@@ -341,7 +342,7 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 					return NULL;
 				}
 
-				pGc->AddDrawer( create_wave_drawer( cfg.GetDrawingMode(), cfg, nSamples, gc, drawerRects[0], bUseCuePoints, cuePoints ) );
+				pGc->AddDrawer( create_wave_drawer( cfg.GetDrawingMode(), cfg, nSamples, gc, drawerRects[ 0 ], bUseCuePoints, cuePoints ) );
 				pMcwd = pGc;
 			}
 
@@ -403,23 +404,24 @@ static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, wxEnhM
 
 static wxImage draw_progress( const wxImage& simg, const NinePatchBitmap& npb, const wxRect2DIntArray& rects, wxUint32 nWidth, wxImageResizeQuality eResizeQuality )
 {
-	MemoryGraphicsContext mgc( simg.GetSize(), simg.HasAlpha()? 32 : 24 );
+	MemoryGraphicsContext mgc( simg.GetSize(), simg.HasAlpha() ? 32 : 24 );
 
 	{
-		wxScopedPtr<wxGraphicsContext> pGc( mgc.CreateGraphicsContext() );
+		wxScopedPtr< wxGraphicsContext > pGc( mgc.CreateGraphicsContext() );
 		pGc->SetAntialiasMode( wxANTIALIAS_NONE );
 		pGc->SetInterpolationQuality( wxINTERPOLATION_NONE );
 
 		pGc->SetCompositionMode( wxCOMPOSITION_SOURCE );
-		pGc->DrawBitmap( pGc->CreateBitmapFromImage( simg ), 0,0, simg.GetWidth(), simg.GetHeight() );
+		pGc->DrawBitmap( pGc->CreateBitmapFromImage( simg ), 0, 0, simg.GetWidth(), simg.GetHeight() );
 		pGc->SetCompositionMode( wxCOMPOSITION_OVER );
 
-		for( wxRect2DIntArray::const_iterator i= rects.begin(), end = rects.end(); i != end; ++i )
+		for ( wxRect2DIntArray::const_iterator i = rects.begin(), end = rects.end(); i != end; ++i )
 		{
 			wxRect2DInt r( *i );
 			r.m_width = nWidth;
 
 			wxImage ri = npb.GetStretchedEx( r, eResizeQuality );
+
 			if ( ri.IsOk() )
 			{
 				wxGraphicsBitmap bm = pGc->CreateBitmapFromImage( ri );
@@ -457,13 +459,15 @@ static wxString read_cmd_file( const wxFileName& cmdFile, bool bUseMLang )
 	}
 
 	wxTextInputStream tis( fis, wxT( '\t' ), *pConv );
-	wxString sCmdLine;
+	wxString		  sCmdLine;
 	while ( !tis.GetInputStream().Eof() )
 	{
 		wxString s( tis.ReadLine() );
 		s.Trim( false ).Trim( true );
-		if ( s.IsEmpty() ) continue;
-		if ( s.StartsWith( "#" ) ) continue;
+
+		if ( s.IsEmpty() ) { continue; }
+
+		if ( s.StartsWith( "#" ) ) { continue; }
 
 		sCmdLine += s;
 		sCmdLine += " ";
@@ -471,7 +475,7 @@ static wxString read_cmd_file( const wxFileName& cmdFile, bool bUseMLang )
 
 	if ( !sCmdLine.IsEmpty() )
 	{
-		sCmdLine.RemoveLast(1);
+		sCmdLine.RemoveLast( 1 );
 	}
 
 	return sCmdLine;
@@ -500,6 +504,7 @@ static bool run_ffmpeg( const wxString& sWorkDir, const wxConfiguration& cfg, wx
 	}
 
 	wxString sCmdLine( read_cmd_file( fn, cfg.UseMLang() ) );
+
 	if ( sCmdLine.IsEmpty() )
 	{
 		return false;
@@ -553,17 +558,18 @@ static bool create_animation( const wxFileName& workDir, const wxConfiguration& 
 
 	wxString sExt( cfg.GetDefaultImageExt() );
 
-	wxUint32 nWidth = rects[0].GetSize().GetWidth();
-	for( wxUint32 i=0; i < nWidth; i++ )
+	wxUint32 nWidth = rects[ 0 ].GetSize().GetWidth();
+	for ( wxUint32 i = 0; i < nWidth; i++ )
 	{
 		wxFileName fn( workDir );
 		fn.SetExt( sExt );
 		fn.SetName( wxString::Format( "seq%04d", i ) );
 
-		wxLogInfo( _("Creating sequence file \u201C%s\u201D"), fn.GetFullName() );
+		wxLogInfo( _( "Creating sequence file \u201C%s\u201D" ), fn.GetFullName() );
 		wxImage aimg( draw_progress( img, npb, rects, i, cfg.GetResizeQuality() ) );
 
 		set_image_options( aimg, cfg, fn );
+
 		if ( !aimg.SaveFile( fn.GetFullPath() ) )
 		{
 			wxLogError( _( "Fail to save sequence %d to file \u201C%s\u201D" ), i, fn.GetFullName() );
@@ -583,9 +589,11 @@ static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, const 
 		const AnimationSettings& as = cfg.GetAnimationSettings();
 
 		NinePatchBitmap npb;
+
 		if ( as.HasBitmap() )
 		{
 			wxLogInfo( _( "Loading stretched bitmap \u201C%s\u201D" ), as.GetBitmapFilename().GetFullName() );
+
 			if ( !npb.Init( as.GetBitmapFilename().GetFullPath() ) )
 			{
 				wxLogError( _( "Fail to load stretched bitmap \u201C%s\u201D" ), as.GetBitmapFilename().GetFullName() );
@@ -739,11 +747,11 @@ int wxMyApp::OnRun()
 	}
 
 	wxLogMessage( _( "Processing \u201C%s\u201D, mode: %s, image size:%dx%d, color depth: %d" ),
-		inputFile.GetFullName(),
-		m_cfg.GetDrawingModeAsText(),
-		m_cfg.GetImageSize().GetWidth(),
-		m_cfg.GetImageSize().GetHeight(),
-		m_cfg.GetImageColorDepth() );
+			inputFile.GetFullName(),
+			m_cfg.GetDrawingModeAsText(),
+			m_cfg.GetImageSize().GetWidth(),
+			m_cfg.GetImageSize().GetHeight(),
+			m_cfg.GetImageColorDepth() );
 
 	wxLogInfo( _( "Opening audio file" ) );
 	SoundFile sfReader;

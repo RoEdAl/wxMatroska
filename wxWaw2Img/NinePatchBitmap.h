@@ -15,9 +15,9 @@ class NinePatchBitmap
 		bool Init( const wxImage& );
 		bool Init( const wxColour&, const wxColour&, int = 1 );
 
-		wxImage GetStretched( const wxSize&, wxImageResizeQuality = wxIMAGE_QUALITY_NORMAL ) const;
+		wxImage GetStretched( const wxSize &, wxImageResizeQuality = wxIMAGE_QUALITY_NORMAL ) const;
 		wxImage GetStretchedEx( wxSize = wxSize(), wxImageResizeQuality = wxIMAGE_QUALITY_NORMAL ) const;
-		wxImage GetStretchedEx( wxRect2DInt&, wxImageResizeQuality = wxIMAGE_QUALITY_NORMAL ) const;
+		wxImage GetStretchedEx( wxRect2DInt &, wxImageResizeQuality = wxIMAGE_QUALITY_NORMAL ) const;
 
 		bool IsOk() const;
 		wxSize GetMinimumImageSize() const;
@@ -25,7 +25,8 @@ class NinePatchBitmap
 	protected:
 
 		static bool analyze_image( const wxImage&, wxRect2DInt& );
-		void draw_bmp( wxImage&, const wxRect2DInt&, const wxRect2DInt&, wxImageResizeQuality ) const;
+
+		void draw_bmp( wxImage &, const wxRect2DInt &, const wxRect2DInt &, wxImageResizeQuality ) const;
 
 	protected:
 

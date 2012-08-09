@@ -16,15 +16,16 @@ bool NinePatchBitmap::IsOk() const
 	return m_img.IsOk() && !m_stretchedArea.IsEmpty();
 }
 
-bool NinePatchBitmap::Init( const wxColour& clrBorder, const wxColour& crlInside, int nBorderWidth  )
+bool NinePatchBitmap::Init( const wxColour& clrBorder, const wxColour& crlInside, int nBorderWidth )
 {
-	wxSize s( 8,8 );
+	wxSize s( 8, 8 );
+
 	s.IncBy( 2 * nBorderWidth );
 
 	MemoryGraphicsContext mgc( s, 32 );
 
 	{
-		wxScopedPtr<wxGraphicsContext> pGc( mgc.CreateGraphicsContext() );
+		wxScopedPtr< wxGraphicsContext > pGc( mgc.CreateGraphicsContext() );
 		pGc->SetAntialiasMode( wxANTIALIAS_NONE );
 		pGc->SetInterpolationQuality( wxINTERPOLATION_NONE );
 		pGc->SetCompositionMode( wxCOMPOSITION_SOURCE );
@@ -37,20 +38,21 @@ bool NinePatchBitmap::Init( const wxColour& clrBorder, const wxColour& crlInside
 		}
 
 		wxGraphicsPath p = pGc->CreatePath();
-		p.AddRectangle(  0,0, s.GetWidth(), s.GetHeight() );
+		p.AddRectangle( 0, 0, s.GetWidth(), s.GetHeight() );
 
 		wxBrush brush( crlInside );
 		pGc->SetBrush( brush );
 		pGc->DrawPath( p );
 	}
 
-	m_stretchedArea.m_x = nBorderWidth;
-	m_stretchedArea.m_y = nBorderWidth;
-	m_stretchedArea.m_width = 8;
+	m_stretchedArea.m_x		 = nBorderWidth;
+	m_stretchedArea.m_y		 = nBorderWidth;
+	m_stretchedArea.m_width	 = 8;
 	m_stretchedArea.m_height = 8;
 
 	wxImage img( mgc.GetImage() );
-	//img.SaveFile( "C:/Users/Normal/Documents/Visual Studio 2010/Projects/wxMatroska/test.png" );
+
+	// img.SaveFile( "C:/Users/Normal/Documents/Visual Studio 2010/Projects/wxMatroska/test.png" );
 	m_img = img;
 
 	return true;
@@ -60,152 +62,154 @@ class PixelIterator
 {
 	public:
 
-	enum PixelColor
-	{
-		PixelOtherColour,
-		PixelBlack,
-		PixelWhiteOrTransparent
-	};
-
-	PixelIterator( const wxImage& img, wxUint32 nRow, wxUint32 nColumn )
-		:m_img( img ), m_nRow( nRow ), m_nColumn( nColumn )
-	{
-		wxASSERT( img.IsOk() );
-	}
-
-	PixelIterator( const PixelIterator& pi )
-		:m_img( pi.m_img), m_nRow( pi.m_nRow ), m_nColumn( pi.m_nColumn )
-	{}
-
-	bool operator==( const PixelIterator& pi ) const
-	{
-		return m_nRow == pi.m_nRow && m_nColumn == pi.m_nColumn;
-	}
-
-	bool operator!=( const PixelIterator& pi ) const
-	{
-		return m_nRow != pi.m_nRow || m_nColumn != pi.m_nColumn;
-	}
-
-	PixelColor GetPixelColor() const
-	{
-		unsigned char r = m_img.GetRed( m_nColumn, m_nRow );
-		unsigned char g = m_img.GetGreen( m_nColumn, m_nRow );
-		unsigned char b = m_img.GetBlue( m_nColumn, m_nRow );
-		unsigned char a = m_img.HasAlpha() ? m_img.GetAlpha( m_nColumn, m_nRow ) : 255;
-
-		if ( r == 0u && g == 0u && b == 0u && a == 255u )
+		enum PixelColor
 		{
-			return PixelBlack;
-		}
-		else if ( a == 0u )	// transparent
+			PixelOtherColour,
+			PixelBlack,
+			PixelWhiteOrTransparent
+		};
+
+		PixelIterator( const wxImage& img, wxUint32 nRow, wxUint32 nColumn ):
+			m_img( img ), m_nRow( nRow ), m_nColumn( nColumn )
 		{
-			return PixelWhiteOrTransparent;
+			wxASSERT( img.IsOk() );
 		}
-		else if ( r == 255u && g == 255u && b == 255u && a == 255u )// white
+
+		PixelIterator( const PixelIterator& pi ):
+			m_img( pi.m_img ), m_nRow( pi.m_nRow ), m_nColumn( pi.m_nColumn )
+		{}
+
+		bool operator ==( const PixelIterator& pi ) const
 		{
-			return PixelWhiteOrTransparent;
+			return m_nRow == pi.m_nRow && m_nColumn == pi.m_nColumn;
 		}
-		else
+
+		bool operator !=( const PixelIterator& pi ) const
 		{
-			return PixelOtherColour;
+			return m_nRow != pi.m_nRow || m_nColumn != pi.m_nColumn;
 		}
-	}
+
+		PixelColor GetPixelColor() const
+		{
+			unsigned char r = m_img.GetRed( m_nColumn, m_nRow );
+			unsigned char g = m_img.GetGreen( m_nColumn, m_nRow );
+			unsigned char b = m_img.GetBlue( m_nColumn, m_nRow );
+			unsigned char a = m_img.HasAlpha() ? m_img.GetAlpha( m_nColumn, m_nRow ) : 255;
+
+			if ( r == 0u && g == 0u && b == 0u && a == 255u )
+			{
+				return PixelBlack;
+			}
+			else if ( a == 0u )	// transparent
+			{
+				return PixelWhiteOrTransparent;
+			}
+			else if ( r == 255u && g == 255u && b == 255u && a == 255u )// white
+			{
+				return PixelWhiteOrTransparent;
+			}
+			else
+			{
+				return PixelOtherColour;
+			}
+		}
 
 	protected:
 
-	const wxImage& m_img;
-	wxUint32 m_nRow;
-	wxUint32 m_nColumn;
+		const wxImage& m_img;
+		wxUint32	   m_nRow;
+		wxUint32	   m_nColumn;
 };
 
-class HorizontalPixelIterator :public PixelIterator
+class HorizontalPixelIterator:
+	public PixelIterator
 {
 	public:
 
-	static HorizontalPixelIterator GetStartPixelIterator( const wxImage& img, wxUint32 nRow )
-	{
-		return HorizontalPixelIterator( img, nRow );
-	}
+		static HorizontalPixelIterator GetStartPixelIterator( const wxImage& img, wxUint32 nRow )
+		{
+			return HorizontalPixelIterator( img, nRow );
+		}
 
-	static HorizontalPixelIterator GetEndPixelIterator( const wxImage& img, wxUint32 nRow )
-	{
-		return HorizontalPixelIterator( img, nRow, img.GetWidth() );
-	}
+		static HorizontalPixelIterator GetEndPixelIterator( const wxImage& img, wxUint32 nRow )
+		{
+			return HorizontalPixelIterator( img, nRow, img.GetWidth() );
+		}
 
-	HorizontalPixelIterator( const wxImage& img, wxUint32 nRow )
-		:PixelIterator( img, nRow, 0u )
-	{}
+		HorizontalPixelIterator( const wxImage& img, wxUint32 nRow ):
+			PixelIterator( img, nRow, 0u )
+		{}
 
-	HorizontalPixelIterator( const HorizontalPixelIterator& hpi )
-		:PixelIterator( hpi )
-	{}
+		HorizontalPixelIterator( const HorizontalPixelIterator& hpi ):
+			PixelIterator( hpi )
+		{}
 
-	HorizontalPixelIterator& operator++()
-	{
-		m_nColumn += 1u;
-		return *this;
-	}
+		HorizontalPixelIterator& operator ++()
+		{
+			m_nColumn += 1u;
+			return *this;
+		}
 
-	wxUint32 GetPosition() const
-	{
-		return m_nColumn;
-	}
+		wxUint32 GetPosition() const
+		{
+			return m_nColumn;
+		}
 
 	protected:
 
-	HorizontalPixelIterator( const wxImage& img, wxUint32 nRow, wxUint32 nColumn )
-		:PixelIterator( img, nRow, nColumn )
-	{}
+		HorizontalPixelIterator( const wxImage& img, wxUint32 nRow, wxUint32 nColumn ):
+			PixelIterator( img, nRow, nColumn )
+		{}
 };
 
-class VerticalPixelIterator :public PixelIterator
+class VerticalPixelIterator:
+	public PixelIterator
 {
 	public:
 
-	static VerticalPixelIterator GetStartPixelIterator( const wxImage& img, wxUint32 nColumn )
-	{
-		return VerticalPixelIterator( img, nColumn );
-	}
+		static VerticalPixelIterator GetStartPixelIterator( const wxImage& img, wxUint32 nColumn )
+		{
+			return VerticalPixelIterator( img, nColumn );
+		}
 
-	static VerticalPixelIterator GetEndPixelIterator( const wxImage& img, wxUint32 nColumn )
-	{
-		return VerticalPixelIterator( img, img.GetHeight(), nColumn );
-	}
+		static VerticalPixelIterator GetEndPixelIterator( const wxImage& img, wxUint32 nColumn )
+		{
+			return VerticalPixelIterator( img, img.GetHeight(), nColumn );
+		}
 
-	VerticalPixelIterator( const wxImage& img, wxUint32 nColumn )
-		:PixelIterator( img, 0u, nColumn )
-	{}
+		VerticalPixelIterator( const wxImage& img, wxUint32 nColumn ):
+			PixelIterator( img, 0u, nColumn )
+		{}
 
-	VerticalPixelIterator( const VerticalPixelIterator& vpi )
-		:PixelIterator( vpi )
-	{}
+		VerticalPixelIterator( const VerticalPixelIterator& vpi ):
+			PixelIterator( vpi )
+		{}
 
-	VerticalPixelIterator& operator++()
-	{
-		m_nRow += 1u;
-		return *this;
-	}
+		VerticalPixelIterator& operator ++()
+		{
+			m_nRow += 1u;
+			return *this;
+		}
 
-	wxUint32 GetPosition() const
-	{
-		return m_nRow;
-	}
+		wxUint32 GetPosition() const
+		{
+			return m_nRow;
+		}
 
 	protected:
 
-	VerticalPixelIterator( const wxImage& img, wxUint32 nRow, wxUint32 nColumn )
-		:PixelIterator( img, nRow, nColumn )
-	{}
+		VerticalPixelIterator( const wxImage& img, wxUint32 nRow, wxUint32 nColumn ):
+			PixelIterator( img, nRow, nColumn )
+		{}
 };
 
 template< class I >
 bool get_black_position_and_range( const I& startIt, const I& stopIt, wxUint32& nPos, wxUint32& nLen )
 {
-	int		phase	   = 0;
+	int		 phase = 0;
 	wxUint32 nStart, nStop;
 
-	for( I i( startIt ); i != stopIt && phase >= 0; ++i )
+	for ( I i( startIt ); i != stopIt && phase >= 0; ++i )
 	{
 		PixelIterator::PixelColor pc = i.GetPixelColor();
 
@@ -224,7 +228,7 @@ bool get_black_position_and_range( const I& startIt, const I& stopIt, wxUint32& 
 					if ( i != startIt )
 					{
 						nStart = i.GetPosition();
-						phase   = 1;
+						phase  = 1;
 					}
 					else
 					{
@@ -239,7 +243,7 @@ bool get_black_position_and_range( const I& startIt, const I& stopIt, wxUint32& 
 				if ( pc == PixelIterator::PixelWhiteOrTransparent )
 				{
 					nStop = i.GetPosition();
-					phase  = 2;
+					phase = 2;
 				}
 				break;
 			}
@@ -286,6 +290,7 @@ bool NinePatchBitmap::analyze_image( const wxImage& img, wxRect2DInt& stretchedA
 bool NinePatchBitmap::Init( const wxString& sImg, bool initAlpha )
 {
 	wxImage img( sImg );
+
 	if ( initAlpha && img.IsOk() && !img.HasAlpha() )
 	{
 		img.InitAlpha();
@@ -325,7 +330,7 @@ wxImage NinePatchBitmap::GetStretchedEx( wxRect2DInt& rcStretchedArea, wxImageRe
 	rcStretchedArea.m_y -= m_stretchedArea.m_y;
 
 	wxSize minSize( GetMinimumImageSize() );
-	rcStretchedArea.m_width += minSize.GetWidth();
+	rcStretchedArea.m_width	 += minSize.GetWidth();
 	rcStretchedArea.m_height += minSize.GetHeight();
 
 	return GetStretched( rcStretchedArea.GetSize(), resizeQuality );
@@ -363,6 +368,7 @@ wxImage NinePatchBitmap::GetStretched( const wxSize& rcSize, wxImageResizeQualit
 	}
 
 	wxImage si( rcSize, true );
+
 	if ( m_img.HasAlpha() )
 	{
 		si.InitAlpha();

@@ -1,6 +1,6 @@
 /*
-	MemoryGraphicsContext.cpp
-*/
+ *      MemoryGraphicsContext.cpp
+ */
 #include "StdWx.h"
 #include "MemoryGraphicsContext.h"
 
@@ -32,3 +32,4 @@ wxImage MemoryGraphicsContext::GetImage()
 		return wxNullImage;
 	}
 }
+

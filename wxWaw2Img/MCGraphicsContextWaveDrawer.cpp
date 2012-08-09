@@ -11,7 +11,7 @@
 #include "MCGraphicsContextWaveDrawer.h"
 
 McGraphicalContextWaveDrawer::McGraphicalContextWaveDrawer( wxUint16 nChannels ):
-	ArrayWaveDrawer( nChannels ),m_nTrackDuration(0)
+	ArrayWaveDrawer( nChannels ), m_nTrackDuration( 0 )
 {}
 
 wxUint32 McGraphicalContextWaveDrawer::GetTrackDuration() const
@@ -50,7 +50,8 @@ wxEnhMetaFile* McGraphicalContextWaveDrawer::GetMetafile() const
 static wxRegion GetDrawersRegion( const wxRect2DIntArray& drawerRects )
 {
 	wxRegion rgn;
-	for( wxRect2DIntArray::const_iterator i = drawerRects.begin(), end = drawerRects.end(); i != end; ++i )
+
+	for ( wxRect2DIntArray::const_iterator i = drawerRects.begin(), end = drawerRects.end(); i != end; ++i )
 	{
 		const wxRect2DInt& rc = *i;
 		rgn.Union( rc.m_x, rc.m_y, rc.m_width, rc.m_height );
@@ -93,7 +94,7 @@ wxGraphicsContext* McGraphicalContextWaveDrawer::Initialize(
 	// wxCompositionMode mode = m_gc->GetCompositionMode();
 
 	m_rects.Empty();
-	for( wxRect2DIntArray::const_iterator i = rects.begin(), end = rects.end(); i != end; ++i )
+	for ( wxRect2DIntArray::const_iterator i = rects.begin(), end = rects.end(); i != end; ++i )
 	{
 		m_rects.Add( *i );
 	}

@@ -21,30 +21,30 @@ class wxConfiguration:
 
 	protected:
 
-		DRAWING_MODE	  m_eDrawingMode;
-		wxFileName		  m_inputFile;
-		wxFileName		  m_outputFile;
-		wxString		  m_sDefImageExt;
-		DrawerSettings	  m_drawerSettings;
-		wxImageResolution m_imageResolutionUnits;
-		wxSize			  m_imageSize;
-		wxSize			  m_imageResolution;
-		wxUint16		  m_nImageQuality;
-		int				  m_nImageColorDepth;
-		bool			  m_bMultiChannel;
-		wxUint16		  m_nColumnNumber;
-		wxSize			  m_margins;
-		bool			  m_bPowerMix;
-		wxFileName		  m_cuePointsFile;
-		bool			  m_bGenerateCuePoints;
-		Interval		  m_interval;
-		bool			  m_bUseMLang;
-		bool m_bAnimation;
-		AnimationSettings m_animationSettings;
+		DRAWING_MODE		 m_eDrawingMode;
+		wxFileName			 m_inputFile;
+		wxFileName			 m_outputFile;
+		wxString			 m_sDefImageExt;
+		DrawerSettings		 m_drawerSettings;
+		wxImageResolution	 m_imageResolutionUnits;
+		wxSize				 m_imageSize;
+		wxSize				 m_imageResolution;
+		wxUint16			 m_nImageQuality;
+		int					 m_nImageColorDepth;
+		bool				 m_bMultiChannel;
+		wxUint16			 m_nColumnNumber;
+		wxSize				 m_margins;
+		bool				 m_bPowerMix;
+		wxFileName			 m_cuePointsFile;
+		bool				 m_bGenerateCuePoints;
+		Interval			 m_interval;
+		bool				 m_bUseMLang;
+		bool				 m_bAnimation;
+		AnimationSettings	 m_animationSettings;
 		wxImageResizeQuality m_eResizeQuality;
-		wxFileName m_ffmpegDir;
-		wxFileName m_cmdTemplate;
-		bool m_bDeleteTemporaryFiles;
+		wxFileName			 m_ffmpegDir;
+		wxFileName			 m_cmdTemplate;
+		bool				 m_bDeleteTemporaryFiles;
 
 	protected:
 
@@ -58,6 +58,7 @@ class wxConfiguration:
 		static bool ConvertStringToCompositionMode( const wxString&, wxCompositionMode& );
 
 		static bool ConvertStringToResizeQuality( const wxString&, wxImageResizeQuality& );
+
 		static wxString GetResizeQualityAsText( wxImageResizeQuality );
 		static wxString GetResizeQualityTexts();
 
@@ -91,7 +92,7 @@ class wxConfiguration:
 		};
 
 		static const RESIZE_QUALITY_DESC ResizeQualityDesc[];
-		static const size_t			   ResizeQualityDescSize;
+		static const size_t				 ResizeQualityDescSize;
 
 		static const wxChar CMD_TEMPLATE[];
 
@@ -115,7 +116,8 @@ class wxConfiguration:
 		wxUint16 GetNumberOfColumns() const;
 		wxSize GetMargins() const;
 		wxRect2DInt GetDrawerRect() const;
-		void	 GetDrawerRects( wxUint16, wxRect2DIntArray & ) const;
+
+		void GetDrawerRects( wxUint16, wxRect2DIntArray & ) const;
 		bool PowerMix() const;
 		DRAWING_MODE GetDrawingMode() const;
 		wxString GetDrawingModeAsText() const;
