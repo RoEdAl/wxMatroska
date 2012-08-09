@@ -18,7 +18,7 @@
 // ===============================================================================
 
 const wxChar wxMyApp::APP_NAME[]		  = wxT( "cue2mkc" );
-const wxChar wxMyApp::APP_VERSION[]		  = wxT( "0.91" );
+const wxChar wxMyApp::APP_VERSION[]		  = wxT( "0.92" );
 const wxChar wxMyApp::APP_VENDOR_NAME[]	  = wxT( "Edmunt Pienkowsky" );
 const wxChar wxMyApp::APP_AUTHOR[]		  = wxT( "Edmunt Pienkowsky - roed@onet.eu" );
 const wxChar wxMyApp::LICENSE_FILE_NAME[] = wxT( "license.txt" );
@@ -96,7 +96,7 @@ void wxMyApp::OnInitCmdLine( wxCmdLineParser& cmdline )
 {
 	wxAppConsole::OnInitCmdLine( cmdline );
 	cmdline.AddSwitch( wxEmptyString, wxT( "license" ), _( "Show license" ), wxCMD_LINE_PARAM_OPTIONAL );
-	wxConfiguration::AddCmdLineParams( cmdline );
+	m_cfg.AddCmdLineParams( cmdline );
 	cmdline.SetLogo( _( "This application converts cue sheet files to Matroska XML chapter files in a more advanced way than standard Matroska tools." ) );
 	AddSeparator( cmdline );
 	AddInputFileFormatDescription( cmdline );

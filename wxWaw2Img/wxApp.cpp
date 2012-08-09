@@ -73,6 +73,16 @@ static wxString get_libsndfile_version()
 	return v;
 }
 
+static wxString get_format_name( int nFormat )
+{
+	SF_FORMAT_INFO fm_info;
+	fm_info.format = nFormat;
+
+	int nRes = sf_command( NULL, SFC_GET_FORMAT_INFO, &fm_info, sizeof(SF_FORMAT_INFO) );
+
+	return wxString( fm_info.name );
+}
+
 void wxMyApp::AddVersionInfos( wxCmdLineParser& cmdline )
 {
 	cmdline.AddUsageText( wxString::Format( _( "Application version: %s" ), APP_VERSION ) );
@@ -382,7 +392,7 @@ static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, wxEnhM
 
 	if ( !emfDc.IsOk() )
 	{
-		wxLogError( _( "Fail to create enhanced metafile \u201C%s\u201D" ), fn.GetFullName() );
+		wxLogError( _( "Fail to create metafile \u201C%s\u201D" ), fn.GetFullName() );
 		return false;
 	}
 
@@ -493,7 +503,7 @@ static inline wxString quote_str( const wxString& s )
 	}
 }
 
-static bool run_ffmpeg( const wxString& sWorkDir, const wxConfiguration& cfg, wxUint32 nNumberOfPictures, wxUint32 nTrackDurationSec )
+static bool run_ffmpeg( const wxFileName& workDir, const wxConfiguration& cfg, wxUint32 nNumberOfPictures, wxUint32 nTrackDurationSec )
 {
 	wxFileName fn( cfg.GetGetCommandTemplateFile() );
 
@@ -528,7 +538,7 @@ static bool run_ffmpeg( const wxString& sWorkDir, const wxConfiguration& cfg, wx
 	long nRes = 0;
 
 	wxExecuteEnv env;
-	env.cwd = sWorkDir;
+	env.cwd = workDir.GetFullPath();
 
 	nRes = wxExecute( sCmdLine, wxEXEC_SYNC | wxEXEC_NOEVENTS, (wxProcess*)NULL, &env );
 
@@ -577,9 +587,14 @@ static bool create_animation( const wxFileName& workDir, const wxConfiguration& 
 		}
 	}
 
-	bool bRes = run_ffmpeg( workDir.GetFullPath(), cfg, nWidth, nTrackDuration );
-
-	return bRes;
+	if ( cfg.RunFfmpeg() )
+	{
+		return run_ffmpeg( workDir, cfg, nWidth, nTrackDuration );
+	}
+	else
+	{
+		return true;
+	}
 }
 
 static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, const McGraphicalContextWaveDrawer& mcWaveDrawer )
@@ -611,11 +626,19 @@ static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, const 
 
 		wxImage img( mcWaveDrawer.GetBitmap() );
 
-		const wxStandardPaths& paths = wxStandardPaths::Get();
+		wxFileName outFn( cfg.GetOutputFile() );
 
 		wxFileName workDir;
-		workDir.AssignDir( paths.GetTempDir() );
-		workDir.AppendDir( wxString::Format( "~%s", cfg.GetOutputFile().GetName() ) );
+		if ( cfg.RunFfmpeg() )
+		{ // creating sequence in temporary directory
+			workDir.AssignDir( wxStandardPaths::Get().GetTempDir() );
+		}
+		else
+		{ // creating nontemporary image squence
+			workDir.AssignDir( outFn.GetPath() );
+		}
+		workDir.AppendDir( wxString::Format( "%s.wav2img", outFn.GetName() ) );
+
 		wxLogInfo( _( "Working directory is \u201C%s\u201D" ), workDir.GetPath() );
 
 		if ( !workDir.DirExists() )
@@ -643,7 +666,7 @@ static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, const 
 
 		bool bRes = create_animation( workDir, cfg, mcWaveDrawer.GetBitmap(), npb, mcWaveDrawer.GetRects(), mcWaveDrawer.GetTrackDuration() );
 
-		if ( cfg.DeleteTemporaryFiles() && !workDir.Rmdir( wxPATH_RMDIR_RECURSIVE ) )
+		if ( cfg.RunFfmpeg() && cfg.DeleteTemporaryFiles() && !workDir.Rmdir( wxPATH_RMDIR_RECURSIVE ) )
 		{
 			wxLogError( _( "Fail to remove directory \u201C%s\u201D" ), workDir.GetPath() );
 		}
@@ -762,13 +785,16 @@ int wxMyApp::OnRun()
 		return false;
 	}
 
+	const SF_INFO& sfInfo	= sfReader.GetInfo();
+	wxTimeSpan	   duration = wxTimeSpan::Milliseconds( sfInfo.frames * 1000 / sfInfo.samplerate );
+	wxLogMessage( _("Format: %s, samplerate: %uHz, channels: %u, duration: %s"),
+		get_format_name( sfInfo.format ),
+		sfInfo.samplerate,
+		sfInfo.channels,
+		duration.Format() );
+
 	if ( m_cfg.HasCuePointsFile() || m_cfg.GenerateCuePoints() )
 	{
-		const SF_INFO& sfInfo	= sfReader.GetInfo();
-		wxTimeSpan	   duration = wxTimeSpan::Milliseconds( sfInfo.frames * 1000 / sfInfo.samplerate );
-
-		wxLogMessage( _( "Input file duration: %s" ), duration.Format() );
-
 		if ( m_cfg.GenerateCuePoints() )
 		{
 			bool bGenerated = m_cfg.GenerateCuePoints( duration, cuePoints );

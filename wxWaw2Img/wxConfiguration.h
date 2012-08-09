@@ -42,6 +42,7 @@ class wxConfiguration:
 		bool				 m_bAnimation;
 		AnimationSettings	 m_animationSettings;
 		wxImageResizeQuality m_eResizeQuality;
+		bool m_bRunFfmpeg;
 		wxFileName			 m_ffmpegDir;
 		wxFileName			 m_cmdTemplate;
 		bool				 m_bDeleteTemporaryFiles;
@@ -131,6 +132,7 @@ class wxConfiguration:
 		bool CreateAnimation() const;
 		const AnimationSettings& GetAnimationSettings() const;
 		wxImageResizeQuality GetResizeQuality() const;
+		bool RunFfmpeg() const;
 		const wxFileName& GetFfmpegDir() const;
 		wxFileName GetGetCommandTemplateFile() const;
 		bool DeleteTemporaryFiles() const;

@@ -112,6 +112,10 @@ class wxConfiguration:
 		static wxString GetReadFlagsDesc( wxCueSheetReader::ReadFlags );
 		static void AddFlag( wxArrayString&, wxCueSheetReader::ReadFlags, wxCueSheetReader::ReadFlags, const wxString& );
 
+		wxString ReadFlagTestStr( wxCueSheetReader::ReadFlags ) const;
+		wxString ReadFlagFlacTestStr( wxCueSheetReader::ReadFlags ) const;
+		wxString TagSourcesTestStr( wxCueTag::TagSources ) const;
+
 		bool CheckLang( const wxString& ) const;
 		void FillArray( wxArrayString& as ) const;
 		static bool ReadNegatableSwitchValue( const wxCmdLineParser&, const wxString&, bool& );
@@ -184,7 +188,7 @@ class wxConfiguration:
 
 		wxConfiguration( void );
 
-		static void AddCmdLineParams( wxCmdLineParser& );
+		void AddCmdLineParams( wxCmdLineParser& ) const;
 		bool Read( const wxCmdLineParser& );
 
 		void Dump() const;

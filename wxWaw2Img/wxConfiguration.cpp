@@ -89,6 +89,7 @@ wxConfiguration::wxConfiguration( void ):
 	m_bUseMLang( true ),
 	m_bAnimation( false ),
 	m_eResizeQuality( wxIMAGE_QUALITY_NEAREST ),
+	m_bRunFfmpeg( true ),
 	m_bDeleteTemporaryFiles( true )
 {}
 
@@ -164,6 +165,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 	cmdLine.AddOption( "ac", "progress-color", wxString::Format( _( "Progress background color (default: %s)" ), m_animationSettings.GetFillColour().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxEmptyString, "progress-border-color", wxString::Format( _( "Progress border color (default: %s)" ), m_animationSettings.GetBorderColour().GetAsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxEmptyString, "progress-border-width", wxString::Format( _( "Progress border width (default: %d)" ), m_animationSettings.GetBorderWidth() ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, "run-ffmpeg", wxString::Format( _( "Animation: run ffmpeg tool (default: %s)" ), GetSwitchAsText( m_bRunFfmpeg ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddOption( wxEmptyString, "ffmpeg-dir", _( "ffmpeg binary directory (default: none)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxEmptyString, "ffmpeg-template", wxString::Format( _( "ffmpeg command line template (default: %s in current directory)" ), CMD_TEMPLATE ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( "z", "delete-temp-files", wxString::Format( _( "Delete temporary files (default: %s)" ), GetSwitchAsText( m_bDeleteTemporaryFiles ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
@@ -423,18 +425,21 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		if ( s.IsEmpty() )
 		{
+			bRes = false;
 			wxLogWarning( _( "Empty image file extension not allowed" ) );
-			return false;
 		}
-		m_sDefImageExt = s;
+		else
+		{
+			m_sDefImageExt = s;
+		}
 	}
 
 	if ( cmdLine.Found( "m", &s ) )
 	{
 		if ( !ConvertStringToDrawingMode( s, m_eDrawingMode ) )
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid drawing mode - %s" ), s );
-			return false;
 		}
 	}
 
@@ -442,22 +447,26 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		if ( v <= 0 || v > 10000 )
 		{
+			bRes = false;
 			wxLogWarning( _( "Wrong width - %d" ), v );
-			return false;
 		}
-
-		m_imageSize.SetWidth( v );
+		else
+		{
+			m_imageSize.SetWidth( v );
+		}
 	}
 
 	if ( cmdLine.Found( "y", &v ) )
 	{
 		if ( v <= 0 || v > 10000 )
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid height - %d" ), v );
-			return false;
 		}
-
-		m_imageSize.SetHeight( v );
+		else
+		{
+			m_imageSize.SetHeight( v );
+		}
 	}
 
 	if ( cmdLine.Found( "c", &s ) )
@@ -470,8 +479,8 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		}
 		else
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid color - %s" ), s );
-			return false;
 		}
 	}
 
@@ -485,8 +494,8 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		}
 		else
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid middle-top and middle-bottom color - %s" ), s );
-			return false;
 		}
 	}
 
@@ -494,8 +503,8 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		if ( !ParseColourString( s, m_drawerSettings.GetTopColourSettings().GetMiddleColour() ) )
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid top-middle color - %s" ), s );
-			return false;
 		}
 	}
 
@@ -503,8 +512,8 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		if ( !ParseColourString( s, m_drawerSettings.GetBottomColourSettings().GetMiddleColour() ) )
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid bottom-middle color - %s" ), s );
-			return false;
 		}
 	}
 
@@ -512,8 +521,8 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		if ( !ParseColourString( s, m_drawerSettings.GetTopColourSettings().GetEdgeColour() ) )
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid top-edge color - %s" ), s );
-			return false;
 		}
 	}
 
@@ -521,8 +530,8 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		if ( !ParseColourString( s, m_drawerSettings.GetBottomColourSettings().GetEdgeColour() ) )
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid bottom-edge color - %s" ), s );
-			return false;
 		}
 	}
 
@@ -530,11 +539,13 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		if ( v <= 0 || v > 100 )
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid baseline position - %d" ), v );
-			return false;
 		}
-
-		m_drawerSettings.SetBaselinePositionPercent( v );
+		else
+		{
+			m_drawerSettings.SetBaselinePositionPercent( v );
+		}
 	}
 
 	if ( ReadNegatableSwitchValue( cmdLine, "cm", bRes ) && bRes )
@@ -559,8 +570,9 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 			}
 
 			default:
+			bRes = false;
 			wxLogWarning( _( "Invalid image color depth - %d" ), v );
-			return false;
+			break;
 		}
 	}
 
@@ -568,6 +580,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		m_nImageColorDepth = wxGetDisplayDepth();
 	}
+
 	m_drawerSettings.SetBackgroundColour( get_default_bg_color( m_nImageColorDepth ) );
 
 	if ( ReadNegatableSwitchValue( cmdLine, "bs", bRes ) && bRes )
@@ -588,8 +601,8 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		}
 		else
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid background color - %s" ), s );
-			return false;
 		}
 	}
 
@@ -597,8 +610,8 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		if ( !ParseColourString( s, m_drawerSettings.GetTopColourSettings().GetBackgroundColour() ) )
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid top background color - %s" ), s );
-			return false;
 		}
 	}
 
@@ -606,8 +619,8 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		if ( !ParseColourString( s, m_drawerSettings.GetBottomColourSettings().GetBackgroundColour() ) )
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid bottom background color - %s" ), s );
-			return false;
 		}
 	}
 
@@ -621,8 +634,8 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		}
 		else
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid second background color - %s" ), s );
-			return false;
 		}
 	}
 
@@ -630,8 +643,8 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		if ( !ParseColourString( s, m_drawerSettings.GetTopColourSettings().GetBackgroundColour2() ) )
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid second top background color - %s" ), s );
-			return false;
 		}
 	}
 
@@ -639,8 +652,8 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		if ( !ParseColourString( s, m_drawerSettings.GetBottomColourSettings().GetBackgroundColour2() ) )
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid second bottom background color - %s" ), s );
-			return false;
 		}
 	}
 
@@ -648,8 +661,8 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		if ( !ParseColourString( s, m_drawerSettings.GetBackgroundColour() ) )
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid picture background color - %s" ), s );
-			return false;
 		}
 	}
 
@@ -657,33 +670,39 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		if ( v <= 0 || v > 10000 )
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid resolution - %d" ), v );
-			return false;
 		}
-
-		m_imageResolution = wxSize( v, v );
+		else
+		{
+			m_imageResolution = wxSize( v, v );
+		}
 	}
 
 	if ( cmdLine.Found( "rx", &v ) )
 	{
 		if ( v <= 0 || v > 10000 )
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid X resolution - %d" ), v );
-			return false;
 		}
-
-		m_imageResolution.SetWidth( v );
+		else
+		{
+			m_imageResolution.SetWidth( v );
+		}
 	}
 
 	if ( cmdLine.Found( "ry", &v ) )
 	{
 		if ( v <= 0 || v > 10000 )
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid Y resolution - %d" ), v );
-			return false;
 		}
-
-		m_imageResolution.SetHeight( v );
+		else
+		{
+			m_imageResolution.SetHeight( v );
+		}
 	}
 
 	if ( cmdLine.Found( "resolution-units", &s ) )
@@ -698,8 +717,8 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		}
 		else
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid image resolution units - %s" ), s );
-			return false;
 		}
 	}
 
@@ -707,11 +726,13 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		if ( v < 0 || v > 100 )
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid image quality - %d" ), v );
-			return false;
 		}
-
-		m_nImageQuality = v;
+		else
+		{
+			m_nImageQuality = v;
+		}
 	}
 
 	if ( cmdLine.Found( "R", &s ) )
@@ -720,22 +741,26 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 		if ( !ConvertStringToResizeQuality( s, e ) )
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid image resize quality - %s" ), s );
-			return false;
 		}
-
-		m_eResizeQuality = e;
+		else
+		{
+			m_eResizeQuality = e;
+		}
 	}
 
 	if ( cmdLine.Found( "lb", &vd ) )
 	{
 		if ( vd <= 1.0 || vd > 100000.0f )
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid logarithm base - %f" ), vd );
-			return false;
 		}
-
-		m_drawerSettings.SetLogarithmBase( vd );
+		else
+		{
+			m_drawerSettings.SetLogarithmBase( vd );
+		}
 	}
 
 	ReadNegatableSwitchValue( cmdLine, "l", m_drawerSettings.GetDrawWithGradient() );
@@ -747,44 +772,52 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		if ( v < 1 || v > 10 )
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid number of columns - %d" ), v );
-			return false;
 		}
-
-		m_nColumnNumber = v;
+		else
+		{
+			m_nColumnNumber = v;
+		}
 	}
 
 	if ( cmdLine.Found( "ma", &v ) )
 	{
 		if ( v < 0 || v > 10000 )
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid margin - %d" ), v );
-			return false;
 		}
-
-		m_margins.Set( v, v );
+		else
+		{
+			m_margins.Set( v, v );
+		}
 	}
 
 	if ( cmdLine.Found( "mx", &v ) )
 	{
 		if ( v < 0 || v > 10000 )
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid horizontal margin - %d" ), v );
-			return false;
 		}
-
-		m_margins.SetWidth( v );
+		else
+		{
+			m_margins.SetWidth( v );
+		}
 	}
 
 	if ( cmdLine.Found( "my", &v ) )
 	{
 		if ( v < 0 || v > 10000 )
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid vertical margin - %d" ), v );
-			return false;
 		}
-
-		m_margins.SetHeight( v );
+		else
+		{
+			m_margins.SetHeight( v );
+		}
 	}
 
 	ReadNegatableSwitchValue( cmdLine, "mp", m_bPowerMix );
@@ -793,11 +826,13 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		if ( v < 10 || v > 20000 )
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid audio frequency - %d" ), v );
-			return false;
 		}
-
-		m_drawerSettings.SetFrequency( v );
+		else
+		{
+			m_drawerSettings.SetFrequency( v );
+		}
 	}
 
 	if ( cmdLine.Found( "cp", &s ) )
@@ -811,8 +846,8 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		if ( !Interval::Parse( s, m_interval ) )
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid interval - %s" ), s );
-			return false;
 		}
 	}
 
@@ -824,8 +859,8 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		if ( !ConvertStringToCompositionMode( s, m_drawerSettings.GetCompositionMode() ) )
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid composition mode - %s" ), s );
-			return false;
 		}
 	}
 
@@ -840,8 +875,8 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		if ( !ParseColourString( s, m_animationSettings.GetFillColour() ) )
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid animation background color - %s" ), s );
-			return false;
 		}
 	}
 
@@ -849,8 +884,8 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		if ( !ParseColourString( s, m_animationSettings.GetBorderColour() ) )
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid animation border color - %s" ), s );
-			return false;
 		}
 	}
 
@@ -858,12 +893,16 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		if ( v < 0 || v > 50 )
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid animation border witdth - %d" ), v );
-			return false;
 		}
-
-		m_animationSettings.GetBorderWidth() = (wxUint16)v;
+		else
+		{
+			m_animationSettings.GetBorderWidth() = (wxUint16)v;
+		}
 	}
+
+	ReadNegatableSwitchValue( cmdLine, "run-ffmpeg", m_bRunFfmpeg );
 
 	if ( cmdLine.Found( "ffmpeg-dir", &s ) )
 	{
@@ -871,8 +910,8 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 		if ( !m_ffmpegDir.DirExists() )
 		{
+			bRes = false;
 			wxLogWarning( _( "Invalid ffmpeg directory - %s" ), s );
-			return false;
 		}
 	}
 
@@ -883,7 +922,8 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	ReadNegatableSwitchValue( cmdLine, "z", m_bDeleteTemporaryFiles );
 
-	return true;
+
+	return bRes;
 }
 
 const wxFileName& wxConfiguration::GetInputFile() const
@@ -1148,6 +1188,11 @@ const AnimationSettings& wxConfiguration::GetAnimationSettings() const
 wxImageResizeQuality wxConfiguration::GetResizeQuality() const
 {
 	return m_eResizeQuality;
+}
+
+bool wxConfiguration::RunFfmpeg() const
+{
+	return m_bRunFfmpeg;
 }
 
 const wxFileName& wxConfiguration::GetFfmpegDir() const
