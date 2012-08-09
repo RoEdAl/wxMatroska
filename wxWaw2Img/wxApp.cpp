@@ -741,8 +741,8 @@ int wxMyApp::OnRun()
 	wxLogMessage( _( "Processing \u201C%s\u201D, mode: %s, image size:%dx%d, color depth: %d" ),
 		inputFile.GetFullName(),
 		m_cfg.GetDrawingModeAsText(),
-		m_cfg.GetImageResolution().GetWidth(),
-		m_cfg.GetImageResolution().GetHeight(),
+		m_cfg.GetImageSize().GetWidth(),
+		m_cfg.GetImageSize().GetHeight(),
 		m_cfg.GetImageColorDepth() );
 
 	wxLogInfo( _( "Opening audio file" ) );

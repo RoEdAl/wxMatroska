@@ -1,4 +1,4 @@
-#
+﻿#
 # ffmpeg command template
 #
 # Replacements:
@@ -15,11 +15,7 @@ $FFMPEG$
 -f image2
 -r $INPUT_RATE$
 -i $INPUT$
--q:v 3
--c:v mpeg4
--g 400
+-target ntsc-dvd
 -threads 1
--aspect 16:9
 -y
--r 1
 $OUTPUT$

@@ -89,7 +89,7 @@ wxConfiguration::wxConfiguration( void ):
 	m_bUseMLang( true ),
 	m_bAnimation( false ),
 	m_eResizeQuality( wxIMAGE_QUALITY_NEAREST ),
-	m_bDeleteTemporaryFiles( false )
+	m_bDeleteTemporaryFiles( true )
 {}
 
 wxString wxConfiguration::GetSwitchAsText( bool b )
@@ -880,11 +880,6 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	if ( cmdLine.Found( "ffmpeg-template", &s ) )
 	{
 		m_cmdTemplate.Assign( s );
-		if ( !m_ffmpegDir.FileExists() )
-		{
-			wxLogWarning( _( "Invalid ffmpeg command line template path - %s" ), s );
-			return false;
-		}
 	}
 
 	ReadNegatableSwitchValue( cmdLine, "z", m_bDeleteTemporaryFiles );
