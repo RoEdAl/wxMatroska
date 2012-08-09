@@ -24,6 +24,7 @@ class wxConfiguration:
 		DRAWING_MODE	  m_eDrawingMode;
 		wxFileName		  m_inputFile;
 		wxFileName		  m_outputFile;
+		wxString		  m_sDefImageExt;
 		DrawerSettings	  m_drawerSettings;
 		wxImageResolution m_imageResolutionUnits;
 		wxSize			  m_imageSize;
@@ -102,7 +103,7 @@ class wxConfiguration:
 
 		const wxFileName& GetInputFile() const;
 		wxFileName GetOutputFile() const;
-		wxString GetOutputFileExt() const;
+		wxString GetDefaultImageExt() const;
 		const DrawerSettings& GetDrawerSettings() const;
 		const wxSize&		  GetImageSize() const;
 		wxImageResolution GetImageResolutionUnits() const;
@@ -130,7 +131,6 @@ class wxConfiguration:
 		wxImageResizeQuality GetResizeQuality() const;
 		const wxFileName& GetFfmpegDir() const;
 		wxFileName GetGetCommandTemplateFile() const;
-		wxFileName GetAnimationOutputFile() const;
 		bool DeleteTemporaryFiles() const;
 
 	public:

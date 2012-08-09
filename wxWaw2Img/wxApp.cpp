@@ -3,6 +3,7 @@
  */
 #include "StdWx.h"
 #include <sndfile.h>
+#include <wxEncodingDetection/wxEncodingDetection.h>
 #include "FloatArray.h"
 #include "LogarithmicScale.h"
 #include "Interval.h"
@@ -380,7 +381,7 @@ static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, wxEnhM
 
 	if ( !emfDc.IsOk() )
 	{
-		wxLogError( _( "Fail to enhanced metafile \u201C%s\u201D" ), fn.GetFullName() );
+		wxLogError( _( "Fail to create enhanced metafile \u201C%s\u201D" ), fn.GetFullName() );
 		return false;
 	}
 
@@ -390,7 +391,7 @@ static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, wxEnhM
 	{
 		wxScopedPtr< wxEnhMetaFile > pClonedEmf( emfDc.Close() );
 		wxASSERT( pClonedEmf );
-		wxLogInfo( _( "Image sucessfully saved to file \u201C%s\u201D" ), fn.GetFullName() );
+		wxLogInfo( _( "Imag saved to file \u201C%s\u201D" ), fn.GetFullName() );
 		return true;
 	}
 	else
@@ -430,19 +431,34 @@ static wxImage draw_progress( const wxImage& simg, const NinePatchBitmap& npb, c
 	return mgc.GetImage();
 }
 
-static wxString read_cmd_file( const wxFileName& cmdFile )
+static wxString read_cmd_file( const wxFileName& cmdFile, bool bUseMLang )
 {
+	wxLogInfo( _( "Opening command template file \u201C%s\u201D" ), cmdFile.GetFullName() );
+
+	wxString							   sCPDescription;
+	wxEncodingDetection::wxMBConvSharedPtr pConv( wxEncodingDetection::GetFileEncoding( cmdFile.GetFullPath(), bUseMLang, sCPDescription ) );
+
+	if ( pConv )
+	{
+		wxLogInfo( _( "Detected encoding of file \u201C%s\u201D file is \u201C%s\u201D" ), cmdFile.GetFullName(), sCPDescription );
+	}
+	else
+	{
+		pConv = wxEncodingDetection::GetDefaultEncoding( bUseMLang, sCPDescription );
+		wxLogInfo( _( "Using default file encoding \u201C%s\u201D" ), sCPDescription );
+	}
+
 	wxFileInputStream fis( cmdFile.GetFullPath() );
 
 	if ( !fis.IsOk() )
 	{
-		wxLogError( _( "Cannot open commad file \u201C%s\u201D" ), cmdFile.GetFullName() );
+		wxLogError( _( "Cannot open commad template file \u201C%s\u201D" ), cmdFile.GetFullName() );
 		return wxEmptyString;
 	}
 
-	wxTextInputStream tis( fis );
+	wxTextInputStream tis( fis, wxT( '\t' ), *pConv );
 	wxString sCmdLine;
-	while ( !fis.Eof() )
+	while ( !tis.GetInputStream().Eof() )
 	{
 		wxString s( tis.ReadLine() );
 		s.Trim( false ).Trim( true );
@@ -457,6 +473,7 @@ static wxString read_cmd_file( const wxFileName& cmdFile )
 	{
 		sCmdLine.RemoveLast(1);
 	}
+
 	return sCmdLine;
 }
 
@@ -482,7 +499,7 @@ static bool run_ffmpeg( const wxString& sWorkDir, const wxConfiguration& cfg, wx
 		return false;
 	}
 
-	wxString sCmdLine( read_cmd_file( fn ) );
+	wxString sCmdLine( read_cmd_file( fn, cfg.UseMLang() ) );
 	if ( sCmdLine.IsEmpty() )
 	{
 		return false;
@@ -497,9 +514,9 @@ static bool run_ffmpeg( const wxString& sWorkDir, const wxConfiguration& cfg, wx
 	}
 
 	sCmdLine.Replace( wxMyApp::CMD_FFMPEG, quote_str( sFfmpeg ) );
-	sCmdLine.Replace( wxMyApp::CMD_INPUT, quote_str( wxString::Format( "seq%%04d.%s", cfg.GetOutputFileExt() ) ) );
+	sCmdLine.Replace( wxMyApp::CMD_INPUT, quote_str( wxString::Format( "seq%%04d.%s", cfg.GetDefaultImageExt() ) ) );
 	sCmdLine.Replace( wxMyApp::CMD_INPUT_RATE, wxString::Format( "%u/%u", nNumberOfPictures, nTrackDurationSec ) );
-	sCmdLine.Replace( wxMyApp::CMD_OUTPUT, quote_str( cfg.GetAnimationOutputFile().GetFullPath() ) );
+	sCmdLine.Replace( wxMyApp::CMD_OUTPUT, quote_str( cfg.GetOutputFile().GetFullPath() ) );
 
 	wxLogMessage( _( "Running commad: %s" ), sCmdLine );
 
@@ -534,16 +551,18 @@ static bool create_animation( const wxFileName& workDir, const wxConfiguration& 
 {
 	wxASSERT( rects.GetCount() > 0 );
 
-	wxString sExt( cfg.GetOutputFileExt() );
+	wxString sExt( cfg.GetDefaultImageExt() );
 
 	wxUint32 nWidth = rects[0].GetSize().GetWidth();
 	for( wxUint32 i=0; i < nWidth; i++ )
 	{
-		wxImage aimg( draw_progress( img, npb, rects, i, cfg.GetResizeQuality() ) );
-
 		wxFileName fn( workDir );
 		fn.SetExt( sExt );
 		fn.SetName( wxString::Format( "seq%04d", i ) );
+
+		wxLogInfo( _("Creating sequence file \u201C%s\u201D"), fn.GetFullName() );
+		wxImage aimg( draw_progress( img, npb, rects, i, cfg.GetResizeQuality() ) );
+
 		set_image_options( aimg, cfg, fn );
 		if ( !aimg.SaveFile( fn.GetFullPath() ) )
 		{
@@ -569,7 +588,7 @@ static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, const 
 			wxLogInfo( _( "Loading stretched bitmap \u201C%s\u201D" ), as.GetBitmapFilename().GetFullName() );
 			if ( !npb.Init( as.GetBitmapFilename().GetFullPath() ) )
 			{
-				wxLogInfo( _( "Fail to load stretched bitmap \u201C%s\u201D" ), as.GetBitmapFilename().GetFullName() );
+				wxLogError( _( "Fail to load stretched bitmap \u201C%s\u201D" ), as.GetBitmapFilename().GetFullName() );
 				return false;
 			}
 		}
@@ -577,7 +596,7 @@ static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, const 
 		{
 			if ( !npb.Init( as.GetBorderColour(), as.GetFillColour(), as.GetBorderWidth() ) )
 			{
-				wxLogInfo( _( "Fail to create fill pattern" ) );
+				wxLogError( _( "Fail to create fill pattern" ) );
 				return false;
 			}
 		}
@@ -633,7 +652,7 @@ static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, const 
 
 		if ( res )
 		{
-			wxLogInfo( _( "Image sucessfully saved to file \u201C%s\u201D" ), fn.GetFullName() );
+			wxLogInfo( _( "Image saved to file \u201C%s\u201D" ), fn.GetFullName() );
 			return true;
 		}
 		else
@@ -719,7 +738,12 @@ int wxMyApp::OnRun()
 		return 100;
 	}
 
-	wxLogMessage( _( "Processing \u201C%s\u201D, mode %s" ), inputFile.GetFullName(), m_cfg.GetDrawingModeAsText() );
+	wxLogMessage( _( "Processing \u201C%s\u201D, mode: %s, image size:%dx%d, color depth: %d" ),
+		inputFile.GetFullName(),
+		m_cfg.GetDrawingModeAsText(),
+		m_cfg.GetImageResolution().GetWidth(),
+		m_cfg.GetImageResolution().GetHeight(),
+		m_cfg.GetImageColorDepth() );
 
 	wxLogInfo( _( "Opening audio file" ) );
 	SoundFile sfReader;
@@ -735,7 +759,7 @@ int wxMyApp::OnRun()
 		const SF_INFO& sfInfo	= sfReader.GetInfo();
 		wxTimeSpan	   duration = wxTimeSpan::Milliseconds( sfInfo.frames * 1000 / sfInfo.samplerate );
 
-		wxLogInfo( _( "Input file duration: %s" ), duration.Format() );
+		wxLogMessage( _( "Input file duration: %s" ), duration.Format() );
 
 		if ( m_cfg.GenerateCuePoints() )
 		{

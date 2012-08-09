@@ -74,6 +74,7 @@ const size_t wxConfiguration::ResizeQualityDescSize = sizeof( wxConfiguration::R
 
 wxConfiguration::wxConfiguration( void ):
 	m_eDrawingMode( DRAWING_MODE_POLY ),
+	m_sDefImageExt( "png" ),
 	m_imageSize( 800, 300 ),
 	m_imageResolutionUnits( wxIMAGE_RESOLUTION_INCHES ),
 	m_imageResolution( 150, 150 ),
@@ -100,6 +101,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 {
 	cmdLine.AddParam( _( "Input audio file" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "o", "output", _( "Output file" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( "e", "image-extension", wxString::Format( _( "Default image file extension (default: %s)" ), m_sDefImageExt ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "m", "drawing-mode", wxString::Format( _( "Drawing mode [%s] (default: %s)" ), GetDrawingModeTexts(), GetDrawingModeAsText() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 
 	cmdLine.AddSwitch( "s", "take-display-properties", _( "Get image size and color depth from display properties (default: on)" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
@@ -416,6 +418,16 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	if ( cmdLine.Found( "o", &s ) )
 	{
 		m_outputFile = s;
+	}
+
+	if ( cmdLine.Found( "e", &s ) )
+	{
+		if ( s.IsEmpty() )
+		{
+			wxLogWarning( _( "Empty image file extension not allowed" ) );
+			return false;
+		}
+		m_sDefImageExt = s;
 	}
 
 	if ( cmdLine.Found( "m", &s ) )
@@ -938,18 +950,25 @@ wxFileName wxConfiguration::GetOutputFile() const
 		if ( m_inputFile.IsOk() )
 		{
 			wxFileName fn( m_inputFile );
-			switch ( m_eDrawingMode )
+			if ( m_bAnimation )
 			{
-				case DRAWING_MODE_AUDIO:
+				fn.SetExt( "mkv" );
+			}
+			else
+			{
+				switch ( m_eDrawingMode )
 				{
-					fn.SetExt( "wav" );
-					break;
-				}
+					case DRAWING_MODE_AUDIO:
+					{
+						fn.SetExt( "wav" );
+						break;
+					}
 
-				default:
-				{
-					fn.SetExt( "png" );
-					break;
+					default:
+					{
+						fn.SetExt( m_sDefImageExt );
+						break;
+					}
 				}
 			}
 
@@ -962,18 +981,9 @@ wxFileName wxConfiguration::GetOutputFile() const
 	}
 }
 
-wxString wxConfiguration::GetOutputFileExt() const
+wxString wxConfiguration::GetDefaultImageExt() const
 {
-	return GetOutputFile().GetExt();
-}
-
-wxFileName wxConfiguration::GetAnimationOutputFile() const
-{
-	wxASSERT( m_bAnimation );
-	wxFileName fn( GetOutputFile() );
-	fn.SetExt( "mkv" );
-
-	return fn;
+	return m_sDefImageExt;
 }
 
 const wxSize& wxConfiguration::GetImageSize() const
