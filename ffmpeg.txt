@@ -32,9 +32,9 @@ $FFMPEG$
 "
 
 # output options
--q:v:0 4
+-q:v:0 3
 -c:v:0 mpeg4
--g:v:0 10
+# -g:v:0 5
 -aspect:v:0 16:9
 -t:v:0 $INPUT_DURATION$
 # 0.5 fps
