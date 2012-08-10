@@ -1,14 +1,15 @@
 #NoTrayIcon
-#Region ;**** Directives created by AutoIt3Wrapper_GUI ****
+#region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=icons/cd_mka.ico
 #AutoIt3Wrapper_Outfile=../bin/Release/cue2mkcgui.exe
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.79
-#AutoIt3Wrapper_Res_FileVersion_AutoIncrement=y
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.80
+#AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html
 #AutoIt3Wrapper_Res_SaveSource=y
+#AutoIt3Wrapper_Res_requestedExecutionLevel=asInvoker
 #AutoIt3Wrapper_Res_Field=Company|Edmunt Pienkowsky - roed@onet.eu
 #AutoIt3Wrapper_Res_Icon_Add=icons/cue_file.ico
 #AutoIt3Wrapper_Res_Icon_Add=icons/cue_file_add.ico
@@ -17,7 +18,7 @@
 #AutoIt3Wrapper_Res_Icon_Add=icons/media_file_add.ico
 #AutoIt3Wrapper_Res_Icon_Add=icons/file_mask.ico
 #AutoIt3Wrapper_Run_Tidy=y
-#EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
+#endregion ;**** Directives created by AutoIt3Wrapper_GUI ****
 ;
 ; cue2mkcgui - simple frontend cue2mkc utility.
 ;
@@ -103,7 +104,7 @@ Func get_mkvmerge_dir()
 	EndIf
 EndFunc   ;==>get_mkvmerge_dir
 
-#Region ### START Koda GUI section ### Form=c:\Documents and Settings\VBox\My Documents\Visual Studio 2010\Projects\wxMatroska\gui\cue2mkcgui.kxf
+#region ### START Koda GUI section ### Form=c:\Documents and Settings\VBox\My Documents\Visual Studio 2010\Projects\wxMatroska\gui\cue2mkcgui.kxf
 $FormMain = GUICreate("cue2mkc GUI", 545, 409, -1, -1, BitOR($WS_MAXIMIZEBOX, $WS_MINIMIZEBOX, $WS_SIZEBOX, $WS_THICKFRAME, $WS_SYSMENU, $WS_CAPTION, $WS_OVERLAPPEDWINDOW, $WS_TILEDWINDOW, $WS_POPUP, $WS_POPUPWINDOW, $WS_GROUP, $WS_TABSTOP, $WS_BORDER, $WS_CLIPSIBLINGS), BitOR($WS_EX_ACCEPTFILES, $WS_EX_WINDOWEDGE))
 GUISetFont(8, 400, 0, "Microsoft Sans Serif")
 $DummyOutput = GUICtrlCreateDummy()
@@ -387,7 +388,7 @@ $ButtonGo = GUICtrlCreateButton("&Run", 452, 376, 85, 29, 0)
 GUICtrlSetFont(-1, 8, 800, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Run cue2mkc tool")
-#EndRegion ### END Koda GUI section ###
+#endregion ### END Koda GUI section ###
 
 Func set_output_mode($nMode)
 	Switch $nMode
@@ -697,11 +698,11 @@ Func read_options()
 	$w = _GUICtrlComboBox_GetCurSel($ComboOutputFormat)
 	Switch $w
 		Case 0
-			$s &= "-m- -oce "
+			$s &= "-m cuesheet -oce "
 			$s &= get_encoding_str(_GUICtrlComboBox_GetCurSel($ComboCueSheetEncoding))
 
 		Case 1
-			$s &= "-m "
+			$s &= "-m matroska "
 			negatable_switch($s, $CheckBoxT, "t")
 			negatable_switch($s, $CheckBoxK, "k")
 			negatable_switch($s, $CheckBoxEu, "eu")

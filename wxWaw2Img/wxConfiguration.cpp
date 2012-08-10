@@ -35,7 +35,7 @@ const wxConfiguration::DRAWING_MODE_DESC wxConfiguration::DrawingModeDesc[] =
 	{ DRAWING_MODE_AUDIO, wxT( "audio" ) },
 };
 
-const size_t wxConfiguration::DrawingModeDescSize = sizeof ( wxConfiguration::DrawingModeDesc ) / sizeof ( wxConfiguration::DRAWING_MODE_DESC );
+const size_t wxConfiguration::DrawingModeDescSize = WXSIZEOF( wxConfiguration::DrawingModeDesc );
 
 // ===============================================================================
 
@@ -56,7 +56,7 @@ const wxConfiguration::COMPOSITION_MODE_DESC wxConfiguration::CompositionModeDes
 	{ wxCOMPOSITION_ADD, wxT( "and" ) }
 };
 
-const size_t wxConfiguration::CompositionModeDescSize = sizeof ( wxConfiguration::CompositionModeDesc ) / sizeof ( wxConfiguration::COMPOSITION_MODE_DESC );
+const size_t wxConfiguration::CompositionModeDescSize = WXSIZEOF ( wxConfiguration::CompositionModeDesc );
 
 // ===============================================================================
 
@@ -68,7 +68,7 @@ const wxConfiguration::RESIZE_QUALITY_DESC wxConfiguration::ResizeQualityDesc[] 
 	{ wxIMAGE_QUALITY_BOX_AVERAGE, wxT( "box_average" ) }
 };
 
-const size_t wxConfiguration::ResizeQualityDescSize = sizeof ( wxConfiguration::ResizeQualityDesc ) / sizeof ( wxConfiguration::RESIZE_QUALITY_DESC );
+const size_t wxConfiguration::ResizeQualityDescSize = WXSIZEOF ( wxConfiguration::ResizeQualityDesc );
 
 // ===============================================================================
 

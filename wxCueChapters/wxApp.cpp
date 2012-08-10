@@ -269,68 +269,78 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, wxCueSheet& cueSheet
 		}
 	}
 
-	if ( m_cfg.SaveCueSheet() )
+	switch( m_cfg.GetRenderMode() )
 	{
-		wxString sOutputFile( m_cfg.GetOutputFile( inputFile ) );
-		wxLogInfo( _( "Saving cue scheet to \u201C%s\u201D" ), sOutputFile );
-		wxFileOutputStream fos( sOutputFile );
-
-		if ( !fos.IsOk() )
+		case wxConfiguration::RENDER_CUE_SHEET:
 		{
-			wxLogError( _( "Fail to open \u201C%s\u201D" ), sOutputFile );
-			return 1;
-		}
+			wxString sOutputFile( m_cfg.GetOutputFile( inputFile ) );
+			wxLogInfo( _( "Saving cue scheet to \u201C%s\u201D" ), sOutputFile );
+			wxFileOutputStream fos( sOutputFile );
 
-		wxSharedPtr< wxTextOutputStream > pTos( m_cfg.GetOutputTextStream( fos ) );
-		wxTextCueSheetRenderer			  renderer( pTos.get() );
-
-		if ( !renderer.Render( cueSheet ) )
-		{
-			return 1;
-		}
-	}
-	else
-	{
-		wxLogInfo( _( "Converting cue scheet to XML format" ) );
-		wxSharedPtr< wxXmlCueSheetRenderer > pXmlRenderer = GetXmlRenderer(
-				inputFile );
-
-		if ( pXmlRenderer->Render( cueSheet ) )
-		{
-			if ( m_cfg.GenerateMkvmergeOpts() )
+			if ( !fos.IsOk() )
 			{
-				wxMkvmergeOptsRenderer& optsRenderer = GetMkvmergeOptsRenderer();
-				optsRenderer.RenderDisc( inputFile, cueSheet );
-			}
-
-			if ( !pXmlRenderer->SaveXmlDoc() )
-			{
+				wxLogError( _( "Fail to open \u201C%s\u201D" ), sOutputFile );
 				return 1;
 			}
 
-			if ( m_cfg.GenerateMkvmergeOpts() )
-			{
-				wxMkvmergeOptsRenderer& optsRenderer = GetMkvmergeOptsRenderer( false );
+			wxSharedPtr< wxTextOutputStream > pTos( m_cfg.GetOutputTextStream( fos ) );
+			wxTextCueSheetRenderer			  renderer( pTos.get() );
 
-				if ( !optsRenderer.Save() )
+			if ( !renderer.Render( cueSheet ) )
+			{
+				return 1;
+			}
+		}
+		break;
+
+		case wxConfiguration::RENDER_MATROSKA_CHAPTERS:
+		{
+			wxLogInfo( _( "Converting cue scheet to XML format" ) );
+			wxSharedPtr< wxXmlCueSheetRenderer > pXmlRenderer = GetXmlRenderer(
+					inputFile );
+
+			if ( pXmlRenderer->Render( cueSheet ) )
+			{
+				if ( m_cfg.GenerateMkvmergeOpts() )
+				{
+					wxMkvmergeOptsRenderer& optsRenderer = GetMkvmergeOptsRenderer();
+					optsRenderer.RenderDisc( inputFile, cueSheet );
+				}
+
+				if ( !pXmlRenderer->SaveXmlDoc() )
 				{
 					return 1;
 				}
 
-				if ( m_cfg.RunMkvmerge() )
+				if ( m_cfg.GenerateMkvmergeOpts() )
 				{
-					if ( !RunMkvmerge( optsRenderer.GetMkvmergeOptsFile() ) )
+					wxMkvmergeOptsRenderer& optsRenderer = GetMkvmergeOptsRenderer( false );
+
+					if ( !optsRenderer.Save() )
 					{
 						return 1;
 					}
+
+					if ( m_cfg.RunMkvmerge() )
+					{
+						if ( !RunMkvmerge( optsRenderer.GetMkvmergeOptsFile() ) )
+						{
+							return 1;
+						}
+					}
 				}
 			}
+			else
+			{
+				wxLogError( _( "Fail to export cue sheet to Matroska chapters" ) );
+				return 1;
+			}
 		}
-		else
-		{
-			wxLogError( _( "Fail to export cue sheet to Matroska chapters" ) );
-			return 1;
-		}
+		break;
+
+		case wxConfiguration::RENDER_WAV2IMG_CUE_POINTS:
+		wxLogError( _("Currentrly this rendering mode is not implemented") );
+		return 1;
 	}
 
 	return 0;

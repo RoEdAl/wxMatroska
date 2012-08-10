@@ -26,39 +26,59 @@ class wxConfiguration:
 
 	public:
 
-		typedef enum
+		enum RENDER_MODE
+		{
+			RENDER_CUE_SHEET,
+			RENDER_MATROSKA_CHAPTERS,
+			RENDER_WAV2IMG_CUE_POINTS
+		};
+
+		static wxString GetRenderingModes();
+		static wxString GetRenderModeStr( RENDER_MODE );
+		static bool GetRenderModeFromStr( const wxString&, RENDER_MODE& );
+
+		enum FILE_ENCODING
 		{
 			ENCODING_LOCAL,
 			ENCODING_UTF8,
 			ENCODING_UTF8_WITH_BOM,
 			ENCODING_UTF16,
 			ENCODING_UTF16_WITH_BOM
-		} FILE_ENCODING;
+		} ;
 
 		static wxString GetFileEncodingStr( FILE_ENCODING );
 		static bool GetFileEncodingFromStr( const wxString&, FILE_ENCODING& );
 
-		typedef enum
+		enum CUESHEET_ATTACH_MODE
 		{
 			CUESHEET_ATTACH_NONE,
 			CUESHEET_ATTACH_SOURCE,
 			CUESHEET_ATTACH_DECODED,
 			CUESHEET_ATTACH_RENDERED
-		} CUESHEET_ATTACH_MODE;
+		};
 
 		static wxString GetCueSheetAttachModeStr( CUESHEET_ATTACH_MODE );
 		static bool GetCueSheetAttachModeFromStr( const wxString&, CUESHEET_ATTACH_MODE&, bool& );
 
 	protected:
 
-		typedef struct _CuesheetAttachModeName
+		struct CuesheetAttachModeName
 		{
 			CUESHEET_ATTACH_MODE eMode;
 			const wxChar* pszName;
-		} CuesheetAttachModeName;
+		};
 
 		static const CuesheetAttachModeName AttachModeNames[];
 		static const size_t					AttachModeNamesSize;
+
+		struct RenderModeName
+		{
+			RENDER_MODE eMode;
+			const wxChar* pszName;
+		};
+
+		static const RenderModeName			RenderModeNames[];
+		static const size_t					RenderModeNamesSize;
 
 	protected:
 
@@ -68,7 +88,7 @@ class wxConfiguration:
 		bool						m_bUseDataFiles;// default=true
 		bool						m_bEmbedded;
 		bool						m_bCorrectQuotationMarks;
-		bool						m_bSaveCueSheet;
+		RENDER_MODE					m_eRenderMode;
 		bool						m_bGenerateTags;
 		bool						m_bGenerateMkvmergeOpts;
 		bool						m_bRunMkvmerge;
@@ -137,7 +157,7 @@ class wxConfiguration:
 		const wxArrayInputFile& GetInputFiles() const;
 		bool IsEmbedded() const;
 		bool CorrectQuotationMarks() const;
-		bool SaveCueSheet() const;
+		RENDER_MODE GetRenderMode() const;
 		bool TrackOneIndexOne() const;
 		bool AbortOnError() const;
 		bool HiddenIndexes() const;
@@ -165,6 +185,7 @@ class wxConfiguration:
 		CUESHEET_ATTACH_MODE GetCueSheetAttachMode() const;
 		bool AttachCover() const;
 		bool RemoveExtraSpaces() const;
+		wxString GetExt() const;
 		wxString GetOutputFile( const wxInputFile& ) const;
 		void GetOutputFile( const wxInputFile&, wxFileName&, wxFileName& ) const;
 		void GetOutputMatroskaFile( const wxInputFile&, wxFileName&, wxFileName& ) const;
