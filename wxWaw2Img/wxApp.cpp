@@ -42,10 +42,15 @@ const wxChar wxMyApp::APP_AUTHOR[]		= wxT( "Edmunt Pienkowsky - roed@onet.eu" );
 
 // ===============================================================================
 
-const wxChar wxMyApp::CMD_FFMPEG[]	   = wxT( "$FFMPEG$" );
-const wxChar wxMyApp::CMD_INPUT[]	   = wxT( "$INPUT$" );
-const wxChar wxMyApp::CMD_INPUT_RATE[] = wxT( "$INPUT_RATE$" );
-const wxChar wxMyApp::CMD_OUTPUT[]	   = wxT( "$OUTPUT$" );
+const wxChar wxMyApp::CMD_FFMPEG[]				= wxT( "FFMPEG" );
+const wxChar wxMyApp::CMD_INPUT[]				= wxT( "INPUT" );
+const wxChar wxMyApp::CMD_INPUT_OVERLAY[]		= wxT( "INPUT_OVERLAY" );
+const wxChar wxMyApp::CMD_INPUT_DURATION[]		= wxT( "INPUT_DURATION" );
+const wxChar wxMyApp::CMD_INPUT_FRAMES[]		= wxT( "INPUT_FRAMES" );
+const wxChar wxMyApp::CMD_INPUT_RATE[]			= wxT( "INPUT_RATE" );
+const wxChar wxMyApp::CMD_OUTPUT[]				= wxT( "OUTPUT" );
+
+const wxChar wxMyApp::BACKGROUND_IMG[]		= wxT( "background.png" );
 
 // ===============================================================================
 
@@ -118,10 +123,13 @@ void wxMyApp::AddCuePointsFileDescription( wxCmdLineParser& cmdline )
 void wxMyApp::AddCommandTemplateDescription( wxCmdLineParser& cmdline )
 {
 	cmdline.AddUsageText( _( "Command line template replacements:" ) );
-	cmdline.AddUsageText( wxString::Format( _( "\t%s: path to ffmpeg executable" ), CMD_FFMPEG ) );
-	cmdline.AddUsageText( wxString::Format( _( "\t%s: input file or sequence of files" ), CMD_INPUT ) );
-	cmdline.AddUsageText( wxString::Format( _( "\t%s: input file(s) framerate" ), CMD_INPUT_RATE ) );
-	cmdline.AddUsageText( wxString::Format( _( "\t%s: path to output file" ), CMD_OUTPUT ) );
+	cmdline.AddUsageText( wxString::Format( _( "\t$%s$: path to ffmpeg executable" ), CMD_FFMPEG ) );
+	cmdline.AddUsageText( wxString::Format( _( "\t$%s$: path to background image file or sequence of images" ), CMD_INPUT ) );
+	cmdline.AddUsageText( wxString::Format( _( "\t$%s$: path to overlay image file or sequence of images" ), CMD_INPUT_OVERLAY ) );
+	cmdline.AddUsageText( wxString::Format( _( "\t$%s$: input duration in seconds" ), CMD_INPUT_DURATION ) );
+	cmdline.AddUsageText( wxString::Format( _( "\t$%s$: number of input frames" ), CMD_INPUT_FRAMES ) );
+	cmdline.AddUsageText( wxString::Format( _( "\t$%s$: input stream framerate" ), CMD_INPUT_RATE ) );
+	cmdline.AddUsageText( wxString::Format( _( "\t$%s$: path to output file" ), CMD_OUTPUT ) );
 	cmdline.AddUsageText( _( "Empty lines and lines beginning with # character are ignored." ) );
 	cmdline.AddUsageText( _( "All other lines are concatenated to one-liner command." ) );
 }
@@ -414,16 +422,25 @@ static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, wxEnhM
 
 static wxImage draw_progress( const wxImage& simg, const NinePatchBitmap& npb, const wxRect2DIntArray& rects, wxUint32 nWidth, wxImageResizeQuality eResizeQuality )
 {
-	MemoryGraphicsContext mgc( simg.GetSize(), simg.HasAlpha() ? 32 : 24 );
+	MemoryGraphicsContext mgc( simg.GetSize(), 32 );
 
 	{
 		wxScopedPtr< wxGraphicsContext > pGc( mgc.CreateGraphicsContext() );
 		pGc->SetAntialiasMode( wxANTIALIAS_NONE );
 		pGc->SetInterpolationQuality( wxINTERPOLATION_NONE );
-
 		pGc->SetCompositionMode( wxCOMPOSITION_SOURCE );
-		pGc->DrawBitmap( pGc->CreateBitmapFromImage( simg ), 0, 0, simg.GetWidth(), simg.GetHeight() );
+		pGc->SetPen( wxNullPen );
+
+		{
+			wxGraphicsPath path = pGc->CreatePath();
+			path.AddRectangle( 0, 0, simg.GetWidth(), simg.GetHeight() );
+
+			pGc->SetBrush( wxColour( 0,0,0, wxALPHA_TRANSPARENT ) );
+			pGc->FillPath( path );
+		}
+
 		pGc->SetCompositionMode( wxCOMPOSITION_OVER );
+		pGc->SetBrush( wxNullBrush );
 
 		for ( wxRect2DIntArray::const_iterator i = rects.begin(), end = rects.end(); i != end; ++i )
 		{
@@ -437,6 +454,14 @@ static wxImage draw_progress( const wxImage& simg, const NinePatchBitmap& npb, c
 				wxGraphicsBitmap bm = pGc->CreateBitmapFromImage( ri );
 				pGc->DrawBitmap( bm, r.m_x, r.m_y, r.m_width, r.m_height );
 			}
+		}
+
+		if ( nWidth == 0 )
+		{ // fully transparent bitmap looses transparency during conversion to wxImage
+			pGc->SetBrush( wxColour( 255,255,255,1 ) );
+			wxGraphicsPath path = pGc->CreatePath();
+			path.AddRectangle( 0, 0, 3, 3 );
+			pGc->FillPath( path );
 		}
 	}
 
@@ -503,6 +528,13 @@ static inline wxString quote_str( const wxString& s )
 	}
 }
 
+static inline size_t replace_str( wxString& s, const wxChar* pszReplacement, const wxString& sValue )
+{
+	return s.Replace( 
+		wxString::Format( "$%s$", pszReplacement ),
+		quote_str( sValue ) );
+}
+
 static bool run_ffmpeg( const wxFileName& workDir, const wxConfiguration& cfg, wxUint32 nNumberOfPictures, wxUint32 nTrackDurationSec )
 {
 	wxFileName fn( cfg.GetGetCommandTemplateFile() );
@@ -528,19 +560,27 @@ static bool run_ffmpeg( const wxFileName& workDir, const wxConfiguration& cfg, w
 		sFfmpeg = ffmpeg.GetFullPath();
 	}
 
-	sCmdLine.Replace( wxMyApp::CMD_FFMPEG, quote_str( sFfmpeg ) );
-	sCmdLine.Replace( wxMyApp::CMD_INPUT, quote_str( wxString::Format( "seq%%04d.%s", cfg.GetDefaultImageExt() ) ) );
-	sCmdLine.Replace( wxMyApp::CMD_INPUT_RATE, wxString::Format( "%u/%u", nNumberOfPictures, nTrackDurationSec ) );
-	sCmdLine.Replace( wxMyApp::CMD_OUTPUT, quote_str( cfg.GetOutputFile().GetFullPath() ) );
+	wxFileName fnOut( cfg.GetOutputFile() );
+	if ( fn.IsRelative() )
+	{
+		fnOut.MakeAbsolute();
+	}
 
-	wxLogMessage( _( "Running commad: %s" ), sCmdLine );
+	replace_str( sCmdLine, wxMyApp::CMD_FFMPEG, sFfmpeg );
+	replace_str( sCmdLine, wxMyApp::CMD_INPUT, wxMyApp::BACKGROUND_IMG );
+	replace_str( sCmdLine, wxMyApp::CMD_INPUT_OVERLAY, wxString::Format( "seq%%05d.%s", cfg.GetDefaultImageExt() ) );
+	replace_str( sCmdLine, wxMyApp::CMD_INPUT_DURATION, wxString::Format( "%u", nTrackDurationSec ) );
+	replace_str( sCmdLine, wxMyApp::CMD_INPUT_FRAMES, wxString::Format( "%u", nNumberOfPictures ) );
+	replace_str( sCmdLine, wxMyApp::CMD_INPUT_RATE, wxString::Format( "%u/%u", nNumberOfPictures, nTrackDurationSec ) );
+	replace_str( sCmdLine, wxMyApp::CMD_OUTPUT, fnOut.GetFullPath() );
 
-	long nRes = 0;
+	wxLogMessage( _( "Executing: %s" ), sCmdLine );
 
 	wxExecuteEnv env;
 	env.cwd = workDir.GetFullPath();
+	env.env[ "AV_LOG_FORCE_NOCOLOR" ] = "1";
 
-	nRes = wxExecute( sCmdLine, wxEXEC_SYNC | wxEXEC_NOEVENTS, (wxProcess*)NULL, &env );
+	long nRes = wxExecute( sCmdLine, wxEXEC_SYNC | wxEXEC_NOEVENTS, (wxProcess*)NULL, &env );
 
 	if ( nRes == -1 )
 	{
@@ -568,12 +608,25 @@ static bool create_animation( const wxFileName& workDir, const wxConfiguration& 
 
 	wxString sExt( cfg.GetDefaultImageExt() );
 
+	wxFileName fn( workDir );
+	fn.SetFullName( wxMyApp::BACKGROUND_IMG );
+
+	{
+		wxImage bimg( img );
+		set_image_options( bimg, cfg, fn );
+
+		if ( !bimg.SaveFile( fn.GetFullPath() ) )
+		{
+			wxLogError( _( "Fail to save background to file \u201C%s\u201D" ), fn.GetFullName() );
+			return false;
+		}
+	}
+
 	wxUint32 nWidth = rects[ 0 ].GetSize().GetWidth();
 	for ( wxUint32 i = 0; i < nWidth; i++ )
 	{
-		wxFileName fn( workDir );
 		fn.SetExt( sExt );
-		fn.SetName( wxString::Format( "seq%04d", i ) );
+		fn.SetName( wxString::Format( "seq%05d", i ) );
 
 		wxLogInfo( _( "Creating sequence file \u201C%s\u201D" ), fn.GetFullName() );
 		wxImage aimg( draw_progress( img, npb, rects, i, cfg.GetResizeQuality() ) );
