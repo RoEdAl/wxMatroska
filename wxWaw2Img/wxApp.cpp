@@ -565,13 +565,13 @@ static bool run_ffmpeg( const wxFileName& workDir, const wxConfiguration& cfg, w
 	{
 		if ( !fnOut.MakeAbsolute() )
 		{
-			wxLogError( _( "Fail to make path \u201C%s\u201D absolute" ), fn.GetFullPath() );
+			wxLogWarning( _( "Fail to make path \u201C%s\u201D absolute" ), fn.GetFullPath() );
 		}
 	}
 
 	replace_str( sCmdLine, wxMyApp::CMD_FFMPEG, sFfmpeg );
-	replace_str( sCmdLine, wxMyApp::CMD_INPUT, wxMyApp::BACKGROUND_IMG );
-	replace_str( sCmdLine, wxMyApp::CMD_INPUT_OVERLAY, wxString::Format( "seq%%05d.%s", cfg.GetDefaultImageExt() ) );
+	replace_str( sCmdLine, wxMyApp::CMD_INPUT, wxString::Format( "%s%s", workDir.GetFullPath(), wxMyApp::BACKGROUND_IMG ) );
+	replace_str( sCmdLine, wxMyApp::CMD_INPUT_OVERLAY, wxString::Format( "%sseq%%05d.%s", workDir.GetFullPath(), cfg.GetDefaultImageExt() ) );
 	replace_str( sCmdLine, wxMyApp::CMD_INPUT_DURATION, wxString::Format( "%u", nTrackDurationSec ) );
 	replace_str( sCmdLine, wxMyApp::CMD_INPUT_FRAMES, wxString::Format( "%u", nNumberOfPictures ) );
 	replace_str( sCmdLine, wxMyApp::CMD_INPUT_RATE, wxString::Format( "%u/%u", nNumberOfPictures, nTrackDurationSec ) );
@@ -580,7 +580,6 @@ static bool run_ffmpeg( const wxFileName& workDir, const wxConfiguration& cfg, w
 	wxLogMessage( _( "Executing: %s" ), sCmdLine );
 
 	wxExecuteEnv env;
-	env.cwd = workDir.GetFullPath();
 	env.env[ "AV_LOG_FORCE_NOCOLOR" ] = "1";
 
 	long nRes = wxExecute( sCmdLine, wxEXEC_SYNC | wxEXEC_NOEVENTS, (wxProcess*)NULL, &env );
@@ -625,10 +624,10 @@ static bool create_animation( const wxFileName& workDir, const wxConfiguration& 
 		}
 	}
 
+	fn.SetExt( sExt );
 	wxUint32 nWidth = rects[ 0 ].GetSize().GetWidth();
 	for ( wxUint32 i = 0; i < nWidth; i++ )
 	{
-		fn.SetExt( sExt );
 		fn.SetName( wxString::Format( "seq%05d", i ) );
 
 		wxLogInfo( _( "Creating sequence file \u201C%s\u201D" ), fn.GetFullName() );
@@ -692,6 +691,13 @@ static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, const 
 		else
 		{ // creating nontemporary image squence
 			workDir.AssignDir( outFn.GetPath() );
+			if ( workDir.IsRelative() )
+			{
+				if ( !workDir.MakeAbsolute() )
+				{
+					wxLogWarning( _( "Fail to make path \u201C%s\u201D absolute" ), workDir.GetFullPath() );
+				}
+			}
 		}
 		workDir.AppendDir( wxString::Format( "%s.wav2img", outFn.GetName() ) );
 

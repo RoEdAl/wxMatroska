@@ -82,7 +82,7 @@ bool wxConfiguration::GetRenderModeFromStr( const wxString& s, wxConfiguration::
 {
 	for ( size_t i = 0; i < RenderModeNamesSize; i++ )
 	{
-		if ( s.CmpNoCase( RenderModeNames[ i ].pszName ) )
+		if ( s.CmpNoCase( RenderModeNames[ i ].pszName ) == 0 )
 		{
 			e = RenderModeNames[ i ].eMode;
 			return true;
@@ -225,7 +225,7 @@ bool wxConfiguration::GetCueSheetAttachModeFromStr( const wxString& sCsAttachMod
 		bDefault = false;
 		for ( size_t i = 0; i < AttachModeNamesSize; i++ )
 		{
-			if ( sCsAttachMode.CmpNoCase( AttachModeNames[ i ].pszName ) )
+			if ( sCsAttachMode.CmpNoCase( AttachModeNames[ i ].pszName ) == 0 )
 			{
 				eCsAttachMode = AttachModeNames[ i ].eMode;
 				return true;
@@ -381,7 +381,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 	// tags usage
 	cmdLine.AddSwitch( wxEmptyString, wxT( "use-cdtext-tags" ), wxString::Format( _( "Use CD-TEXT tags (default: %s)" ), TagSourcesTestStr( wxCueTag::TAG_CD_TEXT ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxEmptyString, wxT( "use-cue-comments-tags" ), wxString::Format( _( "Use tags from cuesheet comments (default: %s)" ), TagSourcesTestStr( wxCueTag::TAG_CUE_COMMENT ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
-	cmdLine.AddSwitch( wxEmptyString, wxT( "use-media-tags" ), wxString::Format( _( "Use tags from media file (default)" ), TagSourcesTestStr( wxCueTag::TAG_MEDIA_METADATA ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( wxEmptyString, wxT( "use-media-tags" ), wxString::Format( _( "Use tags from media file (default: %s)" ), TagSourcesTestStr( wxCueTag::TAG_MEDIA_METADATA ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 
 	// extensions
 	cmdLine.AddOption( wxEmptyString, wxT( "cue-sheet-file-extension" ), wxString::Format( _( "Cue sheet file extension (default: %s)" ), CUE_SHEET_EXT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
