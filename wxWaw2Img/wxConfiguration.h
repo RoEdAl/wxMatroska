@@ -46,6 +46,7 @@ class wxConfiguration:
 		wxFileName			 m_ffmpegDir;
 		wxFileName			 m_cmdTemplate;
 		bool				 m_bDeleteTemporaryFiles;
+		bool				m_bUseWorkerThreads;
 
 	protected:
 
@@ -136,6 +137,7 @@ class wxConfiguration:
 		const wxFileName& GetFfmpegDir() const;
 		wxFileName GetGetCommandTemplateFile() const;
 		bool DeleteTemporaryFiles() const;
+		bool UseWorkerThreads() const;
 
 	public:
 

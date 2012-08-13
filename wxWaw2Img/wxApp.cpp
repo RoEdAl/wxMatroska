@@ -33,6 +33,10 @@
 #include "NinePatchBitmap.h"
 #include "MemoryGraphicsContext.h"
 
+//#include <wx/wxhtml.h>
+#include <wx/html/htmprint.h>
+#include <wx/dcgraph.h>
+
 // ===============================================================================
 
 const wxChar wxMyApp::APP_NAME[]		= wxT( "wav2img" );
@@ -420,9 +424,9 @@ static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, wxEnhM
 	}
 }
 
-static wxImage draw_progress( const wxImage& simg, const NinePatchBitmap& npb, const wxRect2DIntArray& rects, wxUint32 nWidth, wxImageResizeQuality eResizeQuality )
+static wxImage draw_progress( const wxSize& imgSize, const NinePatchBitmap& npb, const wxRect2DIntArray& rects, wxUint32 nWidth, wxImageResizeQuality eResizeQuality )
 {
-	MemoryGraphicsContext mgc( simg.GetSize(), 32 );
+	MemoryGraphicsContext mgc( imgSize, 32 );
 
 	{
 		wxScopedPtr< wxGraphicsContext > pGc( mgc.CreateGraphicsContext() );
@@ -433,7 +437,7 @@ static wxImage draw_progress( const wxImage& simg, const NinePatchBitmap& npb, c
 
 		{
 			wxGraphicsPath path = pGc->CreatePath();
-			path.AddRectangle( 0, 0, simg.GetWidth(), simg.GetHeight() );
+			path.AddRectangle( 0, 0, imgSize.GetWidth(), imgSize.GetHeight() );
 
 			pGc->SetBrush( wxColour( 0,0,0, wxALPHA_TRANSPARENT ) );
 			pGc->FillPath( path );
@@ -602,6 +606,110 @@ static bool run_ffmpeg( const wxFileName& workDir, const wxConfiguration& cfg, w
 	}
 }
 
+class AnimationThread :public wxThread
+{
+	public:
+
+	AnimationThread(
+		int nThreadNumber,
+		volatile wxUint32& nWidth,
+		wxUint32 nMaxWidth,
+		wxAtomicInt& nErrorCounter,
+		wxCriticalSection& critSect,
+		const wxSize& imgSize,
+		const NinePatchBitmap& npb,
+		const wxRect2DIntArray& rects,
+		wxImageResizeQuality eResizeQuality,
+		const wxFileName& workDir,
+		const wxConfiguration& cfg
+	)
+		:wxThread( wxTHREAD_JOINABLE ),
+		m_nThreadNumber( nThreadNumber ),
+		m_nWidth( nWidth ),
+		m_nMaxWidth( nMaxWidth ),
+		m_nErrorCounter( nErrorCounter ),
+		m_critSect( critSect ),
+		m_imgSize( imgSize ),
+		m_npb( npb ),
+		m_rects( rects ),
+		m_eResizeQuality( eResizeQuality ),
+		m_workDir( workDir ),
+		m_cfg( cfg )
+	{}
+
+	protected:
+
+    virtual ExitCode Entry()
+	{
+		wxLogStderr log;
+		wxLog::SetThreadActiveTarget( &log );
+
+		wxString sExt( m_cfg.GetDefaultImageExt() );
+
+		wxFileName fn( m_workDir );
+		fn.SetExt( sExt );
+
+		wxUint32 nWidth;
+		int nSeqCounter = 0;
+		while( GetNextWidth( nWidth ) )
+		{
+			if ( TestDestroy() )
+			{
+				return 0;
+			}
+
+
+			fn.SetName( wxString::Format( "seq%05u", nWidth ) );
+
+			wxLogInfo( _( "[thread%d] Creating sequence file \u201C%s\u201D" ), m_nThreadNumber, fn.GetFullName() );
+			wxImage img( DrawProgress( nWidth ) );
+
+			set_image_options( img, m_cfg, fn );
+
+			if ( !img.SaveFile( fn.GetFullPath() ) )
+			{
+				wxLogError( _( "[thread%d] Fail to save sequence %u to file \u201C%s\u201D" ), m_nThreadNumber, nWidth, fn.GetFullName() );
+				wxAtomicInc( m_nErrorCounter );
+				break;
+			}
+
+			nSeqCounter++;
+		}
+
+		wxLogInfo( _("[thread%d] %d sequences created"), m_nThreadNumber, nSeqCounter );
+		return (ExitCode)nSeqCounter;
+	}
+
+	protected:
+
+	bool GetNextWidth( wxUint32& nWidth )
+	{
+		wxCriticalSectionLocker locker(m_critSect);
+		nWidth = m_nWidth++;
+		return (nWidth < m_nMaxWidth);
+	}
+
+	inline wxImage DrawProgress( wxUint32 nWidth ) const
+	{
+		return draw_progress( m_imgSize, m_npb, m_rects, nWidth, m_eResizeQuality );
+	}
+
+	protected:
+
+	int m_nThreadNumber;
+	volatile wxUint32& m_nWidth;
+	wxUint32 m_nMaxWidth;
+	wxAtomicInt& m_nErrorCounter;
+	wxCriticalSection& m_critSect;
+
+	wxSize m_imgSize;
+	NinePatchBitmap m_npb;
+	wxRect2DIntArray m_rects;
+	wxImageResizeQuality m_eResizeQuality;
+	wxFileName m_workDir;
+	const wxConfiguration& m_cfg;
+};
+
 static bool create_animation( const wxFileName& workDir, const wxConfiguration& cfg, const wxImage& img, const NinePatchBitmap& npb, const wxRect2DIntArray& rects, wxUint32 nTrackDuration )
 {
 	wxASSERT( rects.GetCount() > 0 );
@@ -622,27 +730,101 @@ static bool create_animation( const wxFileName& workDir, const wxConfiguration& 
 		}
 	}
 
-	wxUint32 nWidth = rects[ 0 ].GetSize().GetWidth();
-	for ( wxUint32 i = 0; i < nWidth; i++ )
+	wxUint32 nMaxWidth = rects[ 0 ].GetSize().GetWidth();
+
+	int nCpuCount = -1;
+	if ( cfg.UseWorkerThreads() )
 	{
-		fn.SetExt( sExt );
-		fn.SetName( wxString::Format( "seq%05d", i ) );
+		nCpuCount = wxThread::GetCPUCount();
+	}
 
-		wxLogInfo( _( "Creating sequence file \u201C%s\u201D" ), fn.GetFullName() );
-		wxImage aimg( draw_progress( img, npb, rects, i, cfg.GetResizeQuality() ) );
+	if ( nCpuCount > 1 )
+	{ // many threads
+		volatile wxUint32 nWidth = 0u;
+		wxAtomicInt nErrorCounter = 0;
+		wxCriticalSection critSect;
 
-		set_image_options( aimg, cfg, fn );
-
-		if ( !aimg.SaveFile( fn.GetFullPath() ) )
+		wxThread** ta = new wxThread*[ nCpuCount ];
+		for( int i = 0; i < nCpuCount; i++ )
 		{
-			wxLogError( _( "Fail to save sequence %d to file \u201C%s\u201D" ), i, fn.GetFullName() );
+			ta[i] = NULL;
+		}
+
+		for( int i = 0; i < nCpuCount; i++ )
+		{
+			wxLogInfo( _("Creating working thread %i"), i );
+			ta[i] = new AnimationThread( 
+				i,
+				nWidth, nMaxWidth,
+				nErrorCounter, critSect,
+				img.GetSize(), npb, rects,
+				cfg.GetResizeQuality(),
+				workDir,
+				cfg );
+
+			wxThreadError e = ta[i]->Create();
+			if ( e != wxTHREAD_NO_ERROR )
+			{
+				wxLogError( _("Fail to create thread %i - error %i"), i, (int)e );
+				nErrorCounter++;
+				break;
+			}
+		}
+
+		if ( nErrorCounter == 0 )
+		{
+			wxLogInfo( _("Starting working threads") );
+
+			for( int i = 0; i < nCpuCount; i++ )
+			{
+				ta[i]->Resume();
+			}
+
+			for( int i=0; i < nCpuCount; i++ )
+			{
+				ta[i]->Wait();
+			}
+
+			wxLogInfo( _("All working threads finished") );
+		}
+
+		for( int i = 0; i < nCpuCount; i++ )
+		{
+			wxDELETE( ta[i] );
+		}
+
+		wxDELETEA( ta );
+
+		if ( nErrorCounter > 0 )
+		{
 			return false;
+		}
+	}
+	else
+	{ // single thread, this thread
+		fn.SetExt( sExt );
+		wxSize imgSize( img.GetSize() );
+
+		for ( wxUint32 i = 0; i < nMaxWidth; i++ )
+		{
+			fn.SetName( wxString::Format( "seq%05u", i ) );
+
+			wxLogInfo( _( "Creating sequence file \u201C%s\u201D" ), fn.GetFullName() );
+			wxImage aimg( draw_progress( imgSize, npb, rects, i, cfg.GetResizeQuality() ) );
+
+			set_image_options( aimg, cfg, fn );
+
+			if ( !aimg.SaveFile( fn.GetFullPath() ) )
+			{
+				wxLogError( _( "Fail to save sequence %u to file \u201C%s\u201D" ), i, fn.GetFullName() );
+				return false;
+			}
 		}
 	}
 
 	if ( cfg.RunFfmpeg() )
 	{
-		return run_ffmpeg( workDir, cfg, nWidth, nTrackDuration );
+		return run_ffmpeg( workDir, cfg, nMaxWidth, nTrackDuration );
 	}
 	else
 	{
@@ -793,8 +975,32 @@ static bool save_rendered_wave( McChainWaveDrawer& waveDrawer, const wxConfigura
 	return true;
 }
 
+static void html_renderer()
+{
+	wxArrayInt ai;
+	int n;
+	MemoryGraphicsContext mgc( wxSize(800,600), 32 );
+
+	{
+		wxScopedPtr< wxGraphicsContext > pGc( mgc.CreateGraphicsContext() );
+		wxGCDC dc( pGc.get() );
+		wxHtmlDCRenderer wdc;
+		wdc.SetDC( &dc );
+		wdc.SetSize( 800, 600 );
+		wdc.SetHtmlText( "<h1 ALIGN=\"RIGHT\">Hello world!</h1>" );
+		n = wdc.Render( 0, 0, ai );
+		pGc.release();
+	}
+
+	wxImage img( mgc.GetImage() );
+	img.SaveFile( "C:/Users/Normal/Documents/Visual Studio 2010/Projects/wxMatroska/html_render.png" );
+}
+
 int wxMyApp::OnRun()
 {
+	//html_renderer();
+	//return 0;
+
 	wxTimeSpanArray cuePoints;
 	bool			bUseCuePoints = false;
 
@@ -884,3 +1090,4 @@ int wxMyApp::OnExit()
 	return res;
 }
 
+wxIMPLEMENT_WXWIN_MAIN_CONSOLE

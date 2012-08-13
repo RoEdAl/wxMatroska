@@ -9,7 +9,7 @@ class NinePatchBitmap
 	public:
 
 		NinePatchBitmap( void );
-		~NinePatchBitmap( void );
+		NinePatchBitmap( const NinePatchBitmap& );
 
 		bool Init( const wxString&, bool = true );
 		bool Init( const wxImage& );

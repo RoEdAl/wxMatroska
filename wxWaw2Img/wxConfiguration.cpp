@@ -90,7 +90,8 @@ wxConfiguration::wxConfiguration( void ):
 	m_bAnimation( false ),
 	m_eResizeQuality( wxIMAGE_QUALITY_NEAREST ),
 	m_bRunFfmpeg( true ),
-	m_bDeleteTemporaryFiles( true )
+	m_bDeleteTemporaryFiles( true ),
+	m_bUseWorkerThreads( true )
 {}
 
 wxString wxConfiguration::GetSwitchAsText( bool b )
@@ -169,6 +170,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 	cmdLine.AddOption( wxEmptyString, "ffmpeg-dir", _( "ffmpeg binary directory (default: none)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxEmptyString, "ffmpeg-template", wxString::Format( _( "ffmpeg command line template (default: %s in current directory)" ), CMD_TEMPLATE ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( "z", "delete-temp-files", wxString::Format( _( "Delete temporary files (default: %s)" ), GetSwitchAsText( m_bDeleteTemporaryFiles ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( "t", "use-worker-threads", wxString::Format( _( "Use worker threads when possible (default: %s)" ), GetSwitchAsText( m_bUseWorkerThreads ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 }
 
 bool wxConfiguration::ReadNegatableSwitchValue( const wxCmdLineParser& cmdLine, const wxString& name, bool& switchVal )
@@ -921,7 +923,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	}
 
 	ReadNegatableSwitchValue( cmdLine, "z", m_bDeleteTemporaryFiles );
-
+	ReadNegatableSwitchValue( cmdLine, "t", m_bUseWorkerThreads );
 
 	return bRes;
 }
@@ -1230,3 +1232,7 @@ bool wxConfiguration::DeleteTemporaryFiles() const
 	return m_bDeleteTemporaryFiles;
 }
 
+bool wxConfiguration::UseWorkerThreads() const
+{
+	return m_bUseWorkerThreads;
+}
