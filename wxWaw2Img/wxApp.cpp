@@ -481,7 +481,7 @@ static wxString read_cmd_file( const wxFileName& cmdFile, bool bUseMLang )
 
 	if ( pConv )
 	{
-		wxLogInfo( _( "Detected encoding of file \u201C%s\u201D file is \u201C%s\u201D" ), cmdFile.GetFullName(), sCPDescription );
+		wxLogInfo( _( "Detected encoding of \u201C%s\u201D file is \u201C%s\u201D" ), cmdFile.GetFullName(), sCPDescription );
 	}
 	else
 	{
@@ -565,9 +565,12 @@ static bool run_ffmpeg( const wxFileName& workDir, const wxConfiguration& cfg, w
 	}
 
 	wxFileName fnOut( cfg.GetOutputFile() );
-	if ( fn.IsRelative() )
+	if ( fnOut.IsRelative() )
 	{
-		fnOut.MakeAbsolute();
+		if ( !fnOut.MakeAbsolute() )
+		{
+			wxLogError( _( "Fail to make path \u201C%s\u201D absolute" ), fn.GetFullPath() );
+		}
 	}
 
 	replace_str( sCmdLine, wxMyApp::CMD_FFMPEG, sFfmpeg );

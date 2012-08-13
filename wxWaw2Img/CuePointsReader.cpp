@@ -134,7 +134,7 @@ bool CuePointsReader::Read( wxTimeSpanArray& cuePoints, const wxFileName& inputF
 
 	if ( pConv )
 	{
-		wxLogInfo( _( "Detected encoding of file \u201C%s\u201D file is \u201C%s\u201D" ), inputFile.GetFullName(), sCPDescription );
+		wxLogInfo( _( "Detected encoding of \u201C%s\u201D file is \u201C%s\u201D" ), inputFile.GetFullName(), sCPDescription );
 	}
 	else
 	{
