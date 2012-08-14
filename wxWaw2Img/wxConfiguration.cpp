@@ -35,8 +35,6 @@ const wxConfiguration::DRAWING_MODE_DESC wxConfiguration::DrawingModeDesc[] =
 	{ DRAWING_MODE_AUDIO, wxT( "audio" ) },
 };
 
-const size_t wxConfiguration::DrawingModeDescSize = WXSIZEOF( wxConfiguration::DrawingModeDesc );
-
 // ===============================================================================
 
 const wxConfiguration::COMPOSITION_MODE_DESC wxConfiguration::CompositionModeDesc[] =
@@ -56,8 +54,6 @@ const wxConfiguration::COMPOSITION_MODE_DESC wxConfiguration::CompositionModeDes
 	{ wxCOMPOSITION_ADD, wxT( "and" ) }
 };
 
-const size_t wxConfiguration::CompositionModeDescSize = WXSIZEOF ( wxConfiguration::CompositionModeDesc );
-
 // ===============================================================================
 
 const wxConfiguration::RESIZE_QUALITY_DESC wxConfiguration::ResizeQualityDesc[] =
@@ -68,11 +64,21 @@ const wxConfiguration::RESIZE_QUALITY_DESC wxConfiguration::ResizeQualityDesc[] 
 	{ wxIMAGE_QUALITY_BOX_AVERAGE, wxT( "box_average" ) }
 };
 
-const size_t wxConfiguration::ResizeQualityDescSize = WXSIZEOF ( wxConfiguration::ResizeQualityDesc );
+// ===============================================================================
+
+const wxConfiguration::INFO_SUBJECT_DESC wxConfiguration::InfoSubjectDesc[] =
+{
+	{ INFO_VERSION, wxT( "version" ) },
+	{ INFO_COLOUR_FORMAT, wxT( "color_format" ) },
+	{ INFO_CUE_POINT_FORMAT, wxT( "cue_point" ) },
+	{ INFO_CMD_LINE_TEMPLATE, wxT( "cmd_template" ) },
+	{ INFO_SYSTEM_SETTINGS, wxT( "system_settings" ) }
+};
 
 // ===============================================================================
 
 wxConfiguration::wxConfiguration( void ):
+	m_infoSubject( INFO_NONE ),
 	m_eDrawingMode( DRAWING_MODE_POLY ),
 	m_sDefImageExt( "png" ),
 	m_imageSize( 800, 300 ),
@@ -101,6 +107,8 @@ wxString wxConfiguration::GetSwitchAsText( bool b )
 
 void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 {
+	cmdLine.AddOption( "i", "info", wxString::Format( _( "Display additional information about [%s]" ), GetInfoSubjectTexts() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+
 	cmdLine.AddParam( _( "Input audio file" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "o", "output", _( "Output file" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "e", "image-extension", wxString::Format( _( "Default image file extension (default: %s)" ), m_sDefImageExt ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
@@ -135,7 +143,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 	cmdLine.AddOption( "ry", "y-resolution", wxString::Format( _( "Image vertical resolution (default: %d)" ), m_imageResolution.y ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxEmptyString, "resolution-units", _( "Image resolution units [inches|cm] (default: inches)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "q", "image-quality", wxString::Format( _( "Image quality [0-100] (default: %d)" ), m_nImageQuality ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddOption( "R", "resize-quality", wxString::Format( _( "Resize quality [%s] (default: %s)" ), GetResizeQualityTexts(), GetResizeQualityAsText( m_eResizeQuality ) ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( "R", "resize-quality", wxString::Format( _( "Resize quality [%s] (default: %s)" ), GetResizeQualityTexts(), ToString( m_eResizeQuality ) ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "d", "color-depth", _( "Image color depth [8,16,24,32] (default: display's color depth)" ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 
 	cmdLine.AddSwitch( "l", "logaritmic-scale", wxString::Format( _( "Draw using logarithmic scale (default: %s)" ), GetSwitchAsText( m_drawerSettings.UseLogarithmicScale() ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
@@ -283,13 +291,14 @@ static wxColour get_default_bg_color( int nDepth )
 	}
 }
 
-bool wxConfiguration::ConvertStringToDrawingMode( const wxString& s, DRAWING_MODE& e )
+template<typename T, typename D, size_t SIZE>
+static bool from_string( const wxString& s, T& e, const D (&desc)[SIZE] )
 {
-	for ( size_t i = 0; i < DrawingModeDescSize; i++ )
+	for ( size_t i = 0; i < SIZE; i++ )
 	{
-		if ( s.CmpNoCase( DrawingModeDesc[ i ].description ) == 0 )
+		if ( s.CmpNoCase( desc[ i ].description ) == 0 )
 		{
-			e = DrawingModeDesc[ i ].drawingMode;
+			e = desc[ i ].value;
 			return true;
 		}
 	}
@@ -297,107 +306,91 @@ bool wxConfiguration::ConvertStringToDrawingMode( const wxString& s, DRAWING_MOD
 	return false;
 }
 
-bool wxConfiguration::ConvertStringToResizeQuality( const wxString& s, wxImageResizeQuality& e )
+bool wxConfiguration::FromString( const wxString& s, DRAWING_MODE& e )
 {
-	for ( size_t i = 0; i < ResizeQualityDescSize; i++ )
-	{
-		if ( s.CmpNoCase( ResizeQualityDesc[ i ].description ) == 0 )
-		{
-			e = ResizeQualityDesc[ i ].resizeQuality;
-			return true;
-		}
-	}
-
-	return false;
+	return from_string( s, e, DrawingModeDesc );
 }
 
-bool wxConfiguration::ConvertStringToCompositionMode( const wxString& s, wxCompositionMode& e )
+bool wxConfiguration::FromString( const wxString& s, wxImageResizeQuality& e )
 {
-	for ( size_t i = 0; i < CompositionModeDescSize; i++ )
-	{
-		if ( s.CmpNoCase( CompositionModeDesc[ i ].description ) == 0 )
-		{
-			e = CompositionModeDesc[ i ].compositionMode;
-			return true;
-		}
-	}
-
-	return false;
+	return from_string( s, e, ResizeQualityDesc );
 }
 
-wxString wxConfiguration::GetDrawingModeAsText( DRAWING_MODE e )
+bool wxConfiguration::FromString( const wxString& s, wxCompositionMode& e )
 {
-	for ( size_t i = 0; i < DrawingModeDescSize; i++ )
+	return from_string( s, e, CompositionModeDesc );
+}
+
+bool wxConfiguration::FromString( const wxString& s, wxConfiguration::INFO_SUBJECT& e )
+{
+	return from_string( s, e, InfoSubjectDesc );
+}
+
+template<typename T, typename D, size_t SIZE>
+static wxString to_string( T e, const D (&desc)[SIZE] )
+{
+	for ( size_t i = 0; i < SIZE; i++ )
 	{
-		if ( DrawingModeDesc[ i ].drawingMode == e )
+		if ( desc[ i ].value == e )
 		{
-			return DrawingModeDesc[ i ].description;
+			return desc[ i ].description;
 		}
 	}
 
 	return wxString::Format( "<%d>", static_cast< int >( e ) );
 }
 
-wxString wxConfiguration::GetCompositionModeAsText( wxCompositionMode e )
+wxString wxConfiguration::ToString( DRAWING_MODE e )
 {
-	for ( size_t i = 0; i < CompositionModeDescSize; i++ )
-	{
-		if ( CompositionModeDesc[ i ].compositionMode == e )
-		{
-			return CompositionModeDesc[ i ].description;
-		}
-	}
-
-	return wxString::Format( "<%d>", static_cast< int >( e ) );
+	return to_string( e, DrawingModeDesc );
 }
 
-wxString wxConfiguration::GetResizeQualityAsText( wxImageResizeQuality e )
+wxString wxConfiguration::ToString( wxCompositionMode e )
 {
-	for ( size_t i = 0; i < ResizeQualityDescSize; i++ )
+	return to_string( e, CompositionModeDesc );
+}
+
+wxString wxConfiguration::ToString( wxImageResizeQuality e )
+{
+	return to_string( e, ResizeQualityDesc );
+}
+
+wxString wxConfiguration::ToString( wxConfiguration::INFO_SUBJECT e )
+{
+	return to_string( e, InfoSubjectDesc );
+}
+
+template<typename D, size_t SIZE>
+static wxString get_texts( const D (&desc)[SIZE] )
+{
+	wxString s;
+
+	for ( size_t i = 0; i < SIZE; i++ )
 	{
-		if ( ResizeQualityDesc[ i ].resizeQuality == e )
-		{
-			return ResizeQualityDesc[ i ].description;
-		}
+		s << desc[ i ].description << "|";
 	}
 
-	return wxString::Format( "<%d>", static_cast< int >( e ) );
+	return s.RemoveLast();
 }
 
 wxString wxConfiguration::GetDrawingModeTexts()
 {
-	wxString s;
-
-	for ( size_t i = 0; i < DrawingModeDescSize; i++ )
-	{
-		s << DrawingModeDesc[ i ].description << "|";
-	}
-
-	return s.RemoveLast();
+	return get_texts( DrawingModeDesc );
 }
 
 wxString wxConfiguration::GetCompositionModeTexts()
 {
-	wxString s;
-
-	for ( size_t i = 0; i < CompositionModeDescSize; i++ )
-	{
-		s << CompositionModeDesc[ i ].description << "|";
-	}
-
-	return s.RemoveLast();
+	return get_texts( CompositionModeDesc );
 }
 
 wxString wxConfiguration::GetResizeQualityTexts()
 {
-	wxString s;
+	return get_texts( ResizeQualityDesc );
+}
 
-	for ( size_t i = 0; i < ResizeQualityDescSize; i++ )
-	{
-		s << ResizeQualityDesc[ i ].description << "|";
-	}
-
-	return s.RemoveLast();
+wxString wxConfiguration::GetInfoSubjectTexts()
+{
+	return get_texts( InfoSubjectDesc );
 }
 
 bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
@@ -407,6 +400,15 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	long	 v;
 	wxDouble vd;
 	wxColour clr;
+
+	if ( cmdLine.Found( "i", &s ) )
+	{
+		if ( !FromString( s, m_infoSubject ) )
+		{
+			bRes = false;
+			wxLogWarning( _( "Invalid info subject - %s" ), s );
+		}
+	}
 
 	if ( ReadNegatableSwitchValue( cmdLine, "s", bRes ) && bRes )
 	{
@@ -438,7 +440,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	if ( cmdLine.Found( "m", &s ) )
 	{
-		if ( !ConvertStringToDrawingMode( s, m_eDrawingMode ) )
+		if ( !FromString( s, m_eDrawingMode ) )
 		{
 			bRes = false;
 			wxLogWarning( _( "Invalid drawing mode - %s" ), s );
@@ -741,7 +743,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		wxImageResizeQuality e;
 
-		if ( !ConvertStringToResizeQuality( s, e ) )
+		if ( !FromString( s, e ) )
 		{
 			bRes = false;
 			wxLogWarning( _( "Invalid image resize quality - %s" ), s );
@@ -859,7 +861,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	if ( cmdLine.Found( "dm", &s ) )
 	{
-		if ( !ConvertStringToCompositionMode( s, m_drawerSettings.GetCompositionMode() ) )
+		if ( !FromString( s, m_drawerSettings.GetCompositionMode() ) )
 		{
 			bRes = false;
 			wxLogWarning( _( "Invalid composition mode - %s" ), s );
@@ -926,6 +928,11 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	ReadNegatableSwitchValue( cmdLine, "t", m_bUseWorkerThreads );
 
 	return bRes;
+}
+
+wxConfiguration::INFO_SUBJECT wxConfiguration::GetInfoSubject() const
+{
+	return m_infoSubject;
 }
 
 const wxFileName& wxConfiguration::GetInputFile() const
@@ -1164,7 +1171,7 @@ DRAWING_MODE wxConfiguration::GetDrawingMode() const
 
 wxString wxConfiguration::GetDrawingModeAsText() const
 {
-	return GetDrawingModeAsText( m_eDrawingMode );
+	return ToString( m_eDrawingMode );
 }
 
 bool wxConfiguration::UseMLang() const
@@ -1174,7 +1181,7 @@ bool wxConfiguration::UseMLang() const
 
 wxString wxConfiguration::GetCompositionModeAsText() const
 {
-	return GetCompositionModeAsText( m_drawerSettings.GetCompositionMode() );
+	return ToString( m_drawerSettings.GetCompositionMode() );
 }
 
 bool wxConfiguration::CreateAnimation() const

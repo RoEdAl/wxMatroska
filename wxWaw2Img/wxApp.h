@@ -21,12 +21,13 @@ class wxMyApp:
 	protected:
 
 		void AddSeparator( wxCmdLineParser& );
-		static void AddVersionInfos( wxCmdLineParser& );
-		static void AddColourFormatDescription( wxCmdLineParser& );
-		static void AddDisplayDescription( wxCmdLineParser& );
-		static void AddCuePointsFileDescription( wxCmdLineParser& );
-		static void AddCommandTemplateDescription( wxCmdLineParser& );
 		static void InitImageHandlers();
+
+		static void InfoVersion( wxMessageOutput& );
+		static void InfoColourFormat( wxMessageOutput& );
+		static void InfoSystemSettings( wxMessageOutput& );
+		static void InfoCuePointFormat( wxMessageOutput& );
+		static void InfoCmdLineTemplate( wxMessageOutput& );
 
 	protected:
 
@@ -35,6 +36,7 @@ class wxMyApp:
 		virtual bool OnCmdLineParsed( wxCmdLineParser& );
 		virtual int OnRun();
 		virtual int OnExit();
+		virtual wxAppTraits* CreateTraits(); 
 
 	public:
 

@@ -105,6 +105,7 @@
     <ClInclude Include="MCGraphicsContextWaveDrawer.h" />
     <ClInclude Include="MemoryGraphicsContext.h" />
     <ClInclude Include="MultiChannelWaveDrawer.h" />
+    <ClInclude Include="MyAppTraits.h" />
     <ClInclude Include="NinePatchBitmap.h" />
     <ClInclude Include="SampleChunker.h" />
     <ClInclude Include="SampleProcessor.h" />
@@ -135,6 +136,7 @@
     <ClCompile Include="MCGraphicsContextWaveDrawer.cpp" />
     <ClCompile Include="MemoryGraphicsContext.cpp" />
     <ClCompile Include="MultiChannelWaveDrawer.cpp" />
+    <ClCompile Include="MyAppTraits.cpp" />
     <ClCompile Include="NinePatchBitmap.cpp" />
     <ClCompile Include="SampleChunker.cpp" />
     <ClCompile Include="SampleProcessor.cpp" />

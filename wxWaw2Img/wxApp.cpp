@@ -11,6 +11,7 @@
 #include "AnimationSettings.h"
 #include "wxConfiguration.h"
 #include "wxApp.h"
+#include "MyAppTraits.h"
 
 #include "SampleProcessor.h"
 #include "WaveDrawer.h"
@@ -90,69 +91,67 @@ static wxString get_format_name( int nFormat )
 	return wxString( fm_info.name );
 }
 
-void wxMyApp::AddVersionInfos( wxCmdLineParser& cmdline )
+void wxMyApp::InfoVersion( wxMessageOutput& out )
 {
-	cmdline.AddUsageText( wxString::Format( _( "Application version: %s" ), APP_VERSION ) );
-	cmdline.AddUsageText( wxString::Format( _( "Author: %s" ), APP_AUTHOR ) );
-	cmdline.AddUsageText( _( "License: Simplified BSD License - http://www.opensource.org/licenses/bsd-license.php" ) );
-	cmdline.AddUsageText( wxString::Format( _( "wxWidgets version: %d.%d.%d. Copyright \u00A9 1992-2008 Julian Smart, Robert Roebling, Vadim Zeitlin and other members of the wxWidgets team" ), wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER ) );
-	cmdline.AddUsageText( wxString::Format( _( "libsndfile version: %s. Copyright \u00A9 1999-2011 Erik de Castro Lopo" ), get_libsndfile_version() ) );
-	cmdline.AddUsageText( wxString::Format( _( "Operating system: %s" ), wxPlatformInfo::Get().GetOperatingSystemDescription() ) );
+	out.Printf( _( "Application version: %s" ), APP_VERSION );
+	wxString::Format( _( "Author: %s" ), APP_AUTHOR );
+	out.Output( _( "License: Simplified BSD License - http://www.opensource.org/licenses/bsd-license.php" ) );
+	out.Printf( _( "wxWidgets version: %d.%d.%d. Copyright \u00A9 1992-2008 Julian Smart, Robert Roebling, Vadim Zeitlin and other members of the wxWidgets team" ), wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER );
+	out.Printf( _( "libsndfile version: %s. Copyright \u00A9 1999-2011 Erik de Castro Lopo" ), get_libsndfile_version() );
+	out.Printf( _( "Operating system: %s" ), wxPlatformInfo::Get().GetOperatingSystemDescription() );
 }
 
-void wxMyApp::AddColourFormatDescription( wxCmdLineParser& cmdline )
+void wxMyApp::InfoColourFormat( wxMessageOutput& out )
 {
-	cmdline.AddUsageText( _( "Color format specification:" ) );
-	cmdline.AddUsageText( _( "\tCSS sytntax: RGB(176,45,235)" ) );
-	cmdline.AddUsageText( _( "\tCSS syntax with alpha: RGBA(176,45,235,0.7)" ) );
-	cmdline.AddUsageText( _( "\tHTML syntax (no alpha): #AABBFF" ) );
-	cmdline.AddUsageText( _( "\tcolor name: yellow, transparent etc." ) );
+	out.Output( _( "Color format specification:" ) );
+	out.Output( _( "\tCSS sytntax: RGB(176,45,235)" ) );
+	out.Output( _( "\tCSS syntax with alpha: RGBA(176,45,235,0.7)" ) );
+	out.Output( _( "\tHTML syntax (no alpha): #AABBFF" ) );
+	out.Output( _( "\tcolor name: yellow, transparent etc." ) );
 }
 
-void wxMyApp::AddCuePointsFileDescription( wxCmdLineParser& cmdline )
+void wxMyApp::InfoCuePointFormat( wxMessageOutput& out )
 {
-	cmdline.AddUsageText( _( "Cue points format:" ) );
-	cmdline.AddUsageText( _( "\tMM::SS:FF - minutes, seconds and CD frames (1/75 s)" ) );
-	cmdline.AddUsageText( _( "\tMM::SS.YYY - minutes, seconds and miliseconds" ) );
-	cmdline.AddUsageText( _( "\ts[.www] - seconds [with optional partial part]" ) );
-	cmdline.AddUsageText( _( "Examples:" ) );
-	cmdline.AddUsageText( _( "\t05:01:65 # 5 minutes, one second and 65 CD frames" ) );
-	cmdline.AddUsageText( _( "\t15:23.456 # 15 minutes, 23 seconds and 456 miliseconds" ) );
-	cmdline.AddUsageText( _( "\t545 # 545 seconds" ) );
-	cmdline.AddUsageText( _( "\t10345.67 # 10345 seconds and 670 miliseconds" ) );
+	out.Output( _( "Cue points format:" ) );
+	out.Output( _( "\tMM::SS:FF - minutes, seconds and CD frames (1/75 s)" ) );
+	out.Output( _( "\tMM::SS.YYY - minutes, seconds and miliseconds" ) );
+	out.Output( _( "\ts[.www] - seconds [with optional partial part]" ) );
+	out.Output( _( "Examples:" ) );
+	out.Output( _( "\t05:01:65 # 5 minutes, one second and 65 CD frames" ) );
+	out.Output( _( "\t15:23.456 # 15 minutes, 23 seconds and 456 miliseconds" ) );
+	out.Output( _( "\t545 # 545 seconds" ) );
+	out.Output( _( "\t10345.67 # 10345 seconds and 670 miliseconds" ) );
 }
 
-void wxMyApp::AddCommandTemplateDescription( wxCmdLineParser& cmdline )
+void wxMyApp::InfoCmdLineTemplate( wxMessageOutput& out )
 {
-	cmdline.AddUsageText( _( "Command line template replacements:" ) );
-	cmdline.AddUsageText( wxString::Format( _( "\t$%s$: path to ffmpeg executable" ), CMD_FFMPEG ) );
-	cmdline.AddUsageText( wxString::Format( _( "\t$%s$: path to audio file" ), CMD_AUDIO ) );
-	cmdline.AddUsageText( wxString::Format( _( "\t$%s$: path to background image file or sequence of images" ), CMD_INPUT ) );
-	cmdline.AddUsageText( wxString::Format( _( "\t$%s$: path to overlay image file or sequence of images" ), CMD_INPUT_OVERLAY ) );
-	cmdline.AddUsageText( wxString::Format( _( "\t$%s$: input duration in seconds" ), CMD_INPUT_DURATION ) );
-	cmdline.AddUsageText( wxString::Format( _( "\t$%s$: number of input frames" ), CMD_INPUT_FRAMES ) );
-	cmdline.AddUsageText( wxString::Format( _( "\t$%s$: input stream framerate" ), CMD_INPUT_RATE ) );
-	cmdline.AddUsageText( wxString::Format( _( "\t$%s$: path to output file" ), CMD_OUTPUT ) );
-	cmdline.AddUsageText( wxString::Format( _( "\t$%s$: cue points list" ), CMD_KEY_FRAMES ) );
-	cmdline.AddUsageText( _( "Empty lines and lines beginning with # character are ignored." ) );
-	cmdline.AddUsageText( _( "All other lines are concatenated to one-liner command." ) );
+	out.Output( _( "Command line template replacements:" ) );
+	out.Printf( _( "\t$%s$: path to ffmpeg executable" ), CMD_FFMPEG );
+	out.Printf( _( "\t$%s$: path to audio file" ), CMD_AUDIO );
+	out.Printf( _( "\t$%s$: path to background image file or sequence of images" ), CMD_INPUT );
+	out.Printf( _( "\t$%s$: path to overlay image file or sequence of images" ), CMD_INPUT_OVERLAY );
+	out.Printf( _( "\t$%s$: input duration in seconds" ), CMD_INPUT_DURATION );
+	out.Printf( _( "\t$%s$: number of input frames" ), CMD_INPUT_FRAMES );
+	out.Printf( _( "\t$%s$: input stream framerate" ), CMD_INPUT_RATE );
+	out.Printf( _( "\t$%s$: path to output file" ), CMD_OUTPUT );
+	out.Printf( _( "\t$%s$: cue points list" ), CMD_KEY_FRAMES );
+	out.Output( _( "Empty lines and lines beginning with # character are ignored." ) );
+	out.Output( _( "All other lines are concatenated to one-liner command." ) );
 }
 
-void wxMyApp::AddDisplayDescription( wxCmdLineParser& cmdline )
+void wxMyApp::InfoSystemSettings( wxMessageOutput& out )
 {
-	cmdline.AddUsageText( _( "System settings:" ) );
-
 	wxRect dplRect	 = wxGetClientDisplayRect();
 	int	   nDepth	 = wxDisplayDepth();
 	wxSize res		 = wxGetDisplayPPI();
 	wxSize dplSizeMm = wxGetDisplaySizeMM();
 
-	cmdline.AddUsageText( wxString::Format( _( "Display size (pixels): %dx%d (%dx%d)" ), dplRect.width, dplRect.height, dplRect.x, dplRect.y ) );
-	cmdline.AddUsageText( wxString::Format( _( "Display color depth (bits): %d" ), nDepth ) );
-	cmdline.AddUsageText( wxString::Format( _( "Display resolution (pixels/inch): %dx%d" ), res.x, res.y ) );
-	cmdline.AddUsageText( wxString::Format( _( "Display size (milimeters): %dx%d" ), dplSizeMm.GetWidth(), dplSizeMm.GetHeight() ) );
-	cmdline.AddUsageText( wxString::Format( _( "Background color: %s" ), wxSystemSettings::GetColour( wxConfiguration::COLOR_BACKGROUND ).GetAsString() ) );
-	cmdline.AddUsageText( wxString::Format( _( "Second background color: %s" ), wxSystemSettings::GetColour( wxConfiguration::COLOR_BACKGROUND2 ).GetAsString() ) );
+	out.Printf( _( "Display size (pixels): %dx%d (%dx%d)" ), dplRect.width, dplRect.height, dplRect.x, dplRect.y );
+	out.Printf( _( "Display color depth (bits): %d" ), nDepth );
+	out.Printf( _( "Display resolution (pixels/inch): %dx%d" ), res.x, res.y );
+	out.Printf( _( "Display size (milimeters): %dx%d" ), dplSizeMm.GetWidth(), dplSizeMm.GetHeight() );
+	out.Printf( _( "Background color: %s" ), wxSystemSettings::GetColour( wxConfiguration::COLOR_BACKGROUND ).GetAsString() );
+	out.Printf( _( "Second background color: %s" ), wxSystemSettings::GetColour( wxConfiguration::COLOR_BACKGROUND2 ).GetAsString() );
 }
 
 void wxMyApp::OnInitCmdLine( wxCmdLineParser& cmdline )
@@ -160,16 +159,7 @@ void wxMyApp::OnInitCmdLine( wxCmdLineParser& cmdline )
 	wxAppConsole::OnInitCmdLine( cmdline );
 	cmdline.SetLogo( _( "This application draws a waveform from audio file." ) );
 	m_cfg.AddCmdLineParams( cmdline );
-	AddSeparator( cmdline );
-	AddColourFormatDescription( cmdline );
-	AddSeparator( cmdline );
-	AddCuePointsFileDescription( cmdline );
-	AddSeparator( cmdline );
-	AddCommandTemplateDescription( cmdline );
-	AddSeparator( cmdline );
-	AddDisplayDescription( cmdline );
-	AddSeparator( cmdline );
-	AddVersionInfos( cmdline );
+	//AddSeparator( cmdline );
 }
 
 bool wxMyApp::OnCmdLineParsed( wxCmdLineParser& cmdline )
@@ -698,7 +688,7 @@ class AnimationThread :public wxThread
 			set_image_options( img, m_cfg, fn );
 			wxMemoryOutputStream mos;
 
-			if ( img.SaveFile( mos, wxBITMAP_TYPE_PNG  ) )
+			if ( img.SaveFile( mos, wxBITMAP_TYPE_PNG ) )
 			{
 				wxStreamBuffer* sb = mos.GetOutputStreamBuffer();
 				wxFileOutputStream fos( fn.GetFullPath() );
@@ -1079,6 +1069,29 @@ static void html_renderer()
 
 int wxMyApp::OnRun()
 {
+	switch( m_cfg.GetInfoSubject() )
+	{
+		case wxConfiguration::INFO_VERSION:
+		InfoVersion( *wxMessageOutput::Get() );
+		return 0;
+
+		case wxConfiguration::INFO_COLOUR_FORMAT:
+		InfoColourFormat( *wxMessageOutput::Get() );
+		return 0;
+
+		case wxConfiguration::INFO_CUE_POINT_FORMAT:
+		InfoCuePointFormat( *wxMessageOutput::Get() );
+		return 0;
+
+		case wxConfiguration::INFO_CMD_LINE_TEMPLATE:
+		InfoCmdLineTemplate( *wxMessageOutput::Get() );
+		return 0;
+
+		case wxConfiguration::INFO_SYSTEM_SETTINGS:
+		InfoSystemSettings( *wxMessageOutput::Get() );
+		return 0;
+	}
+
 	//html_renderer();
 	//return 0;
 
@@ -1169,4 +1182,11 @@ int wxMyApp::OnExit()
 	CoUninitialize();
 	wxLogInfo( _( "Exiting application" ) );
 	return res;
+}
+
+wxAppTraits* wxMyApp::CreateTraits()
+{
+	wxAppTraits* pAppTraits = wxAppConsole::CreateTraits();
+
+	return new MyAppTraits( pAppTraits );
 }

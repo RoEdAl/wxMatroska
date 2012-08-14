@@ -69,6 +69,9 @@ bool AudioRenderer::GenerateAudio( const wxFileName& filename, wxUint32 nFrequen
 	return GenerateAudio( filename, m_ac, m_nSourceSamplerate, nFrequency, fBaseline );
 }
 
+namespace
+{
+
 class QGen
 {
 	public:
@@ -146,6 +149,8 @@ class QGen
 		wxUint32	 m_nPos;
 		wxUint64	 m_nSamplesCounter;
 };
+
+}
 
 bool AudioRenderer::GenerateAudio( const wxFileName& filename, const AudioColumnArray& ac, wxUint32 nSamplerate, wxUint32 nFrequency, wxFloat32 fBaseline )
 {

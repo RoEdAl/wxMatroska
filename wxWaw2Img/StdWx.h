@@ -49,6 +49,7 @@ typedef struct tagMSG
 #include <wx/arrstr.h>
 #include <wx/file.h>
 #include <wx/app.h>
+#include <wx/apptrait.h>
 #include <wx/log.h>
 #include <wx/platinfo.h>
 #include <wx/settings.h>
