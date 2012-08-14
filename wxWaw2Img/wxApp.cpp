@@ -565,7 +565,7 @@ static bool run_ffmpeg( const wxFileName& workDir, const wxConfiguration& cfg, w
 	{
 		if ( !fnOut.MakeAbsolute() )
 		{
-			wxLogWarning( _( "Fail to make path \u201C%s\u201D absolute" ), fn.GetFullPath() );
+			wxLogWarning( _( "Cannot make path \u201C%s\u201D absolute" ), fn.GetFullPath() );
 		}
 	}
 
@@ -656,17 +656,19 @@ static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, const 
 {
 	if ( cfg.CreateAnimation() )
 	{
+		wxLogMessage( _( "Creating animation sequence" ) );
+
 		const AnimationSettings& as = cfg.GetAnimationSettings();
 
 		NinePatchBitmap npb;
 
 		if ( as.HasBitmap() )
 		{
-			wxLogInfo( _( "Loading stretched bitmap \u201C%s\u201D" ), as.GetBitmapFilename().GetFullName() );
+			wxLogInfo( _( "Loading stretching bitmap \u201C%s\u201D" ), as.GetBitmapFilename().GetFullName() );
 
 			if ( !npb.Init( as.GetBitmapFilename().GetFullPath() ) )
 			{
-				wxLogError( _( "Fail to load stretched bitmap \u201C%s\u201D" ), as.GetBitmapFilename().GetFullName() );
+				wxLogError( _( "Fail to load stretching bitmap \u201C%s\u201D" ), as.GetBitmapFilename().GetFullName() );
 				return false;
 			}
 		}
@@ -695,7 +697,7 @@ static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, const 
 			{
 				if ( !workDir.MakeAbsolute() )
 				{
-					wxLogWarning( _( "Fail to make path \u201C%s\u201D absolute" ), workDir.GetFullPath() );
+					wxLogWarning( _( "Cannot make path \u201C%s\u201D absolute" ), workDir.GetFullPath() );
 				}
 			}
 		}
