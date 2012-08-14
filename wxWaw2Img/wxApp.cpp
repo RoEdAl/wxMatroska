@@ -424,10 +424,8 @@ static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, wxEnhM
 	}
 }
 
-static wxImage draw_progress( const wxSize& imgSize, const NinePatchBitmap& npb, const wxRect2DIntArray& rects, wxUint32 nWidth, wxImageResizeQuality eResizeQuality )
+static wxImage draw_progress( MemoryGraphicsContext& mgc, const NinePatchBitmap& npb, const wxRect2DIntArray& rects, wxUint32 nWidth, wxImageResizeQuality eResizeQuality )
 {
-	MemoryGraphicsContext mgc( imgSize, 32 );
-
 	{
 		wxScopedPtr< wxGraphicsContext > pGc( mgc.CreateGraphicsContext() );
 		pGc->SetAntialiasMode( wxANTIALIAS_NONE );
@@ -436,6 +434,7 @@ static wxImage draw_progress( const wxSize& imgSize, const NinePatchBitmap& npb,
 		pGc->SetPen( wxNullPen );
 
 		{
+			const wxSize& imgSize = mgc.GetSize();
 			wxGraphicsPath path = pGc->CreatePath();
 			path.AddRectangle( 0, 0, imgSize.GetWidth(), imgSize.GetHeight() );
 
@@ -632,6 +631,7 @@ class AnimationThread :public wxThread
 		m_nErrorCounter( nErrorCounter ),
 		m_critSect( critSect ),
 		m_imgSize( imgSize ),
+		m_mgc( imgSize, 32, true ),
 		m_npb( npb ),
 		m_rects( rects ),
 		m_eResizeQuality( eResizeQuality ),
@@ -691,9 +691,9 @@ class AnimationThread :public wxThread
 		return (nWidth < m_nMaxWidth);
 	}
 
-	inline wxImage DrawProgress( wxUint32 nWidth ) const
+	inline wxImage DrawProgress( wxUint32 nWidth )
 	{
-		return draw_progress( m_imgSize, m_npb, m_rects, nWidth, m_eResizeQuality );
+		return draw_progress( m_mgc, m_npb, m_rects, nWidth, m_eResizeQuality );
 	}
 
 	protected:
@@ -705,6 +705,7 @@ class AnimationThread :public wxThread
 	wxCriticalSection& m_critSect;
 
 	wxSize m_imgSize;
+	MemoryGraphicsContext m_mgc;
 	NinePatchBitmap m_npb;
 	wxRect2DIntArray m_rects;
 	wxImageResizeQuality m_eResizeQuality;
@@ -806,12 +807,14 @@ static bool create_animation( const wxFileName& workDir, const wxConfiguration& 
 	{ // single thread, this thread
 		wxSize imgSize( img.GetSize() );
 
+		MemoryGraphicsContext mgc( imgSize, 32, true );
+
 		for ( wxUint32 i = 0; i < nMaxWidth; i++ )
 		{
 			fn.SetName( wxString::Format( "seq%05u", i ) );
 
 			wxLogInfo( _( "Creating sequence file \u201C%s\u201D" ), fn.GetFullName() );
-			wxImage aimg( draw_progress( imgSize, npb, rects, i, cfg.GetResizeQuality() ) );
+			wxImage aimg( draw_progress( mgc, npb, rects, i, cfg.GetResizeQuality() ) );
 
 			set_image_options( aimg, cfg, fn );
 
@@ -989,7 +992,7 @@ static void html_renderer()
 {
 	wxArrayInt ai;
 	int n;
-	MemoryGraphicsContext mgc( wxSize(800,600), 32 );
+	MemoryGraphicsContext mgc( wxSize(800,600), 32, false );
 
 	{
 		wxScopedPtr< wxGraphicsContext > pGc( mgc.CreateGraphicsContext() );

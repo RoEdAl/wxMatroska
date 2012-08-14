@@ -23,7 +23,7 @@ bool NinePatchBitmap::Init( const wxColour& clrBorder, const wxColour& crlInside
 
 	s.IncBy( 2 * nBorderWidth );
 
-	MemoryGraphicsContext mgc( s, 32 );
+	MemoryGraphicsContext mgc( s, 32, false );
 
 	{
 		wxScopedPtr< wxGraphicsContext > pGc( mgc.CreateGraphicsContext() );

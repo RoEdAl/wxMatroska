@@ -8,13 +8,15 @@ class MemoryGraphicsContext
 {
 	public:
 
-		MemoryGraphicsContext( const wxSize&, int );
+		MemoryGraphicsContext( const wxSize&, int, bool );
 
 		wxGraphicsContext* CreateGraphicsContext();
 		wxImage GetImage();
+		const wxSize& GetSize() const;
 
 	protected:
 
+		wxSize m_imgSize;
 		wxBitmap				  m_bmp;
 		wxScopedPtr< wxMemoryDC > m_pMemDc;
 };
