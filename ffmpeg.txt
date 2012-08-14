@@ -3,12 +3,14 @@
 #
 # Replacements:
 # $FFMPEG$ - path to ffmpeg
+# $AUDIO$ - path to audio file
 # $INPUT$ - path to background image file or sequence of images
 # $INPUT_OVERLAY$ - path to overlay image file or sequence of images
 # $INPUT_DURATION$ - input duration in seconds
 # $INPUT_FRAMES$ - number of input frames
 # $INPUT_RATE$ - input stream framerate
 # $OUTPUT$ - path to output file
+# $KEY_FRAMES$ - cue points list
 #
 # remember that all lines are concatenated to ONE long command line
 #
@@ -39,6 +41,7 @@ $FFMPEG$
 -t:v:0 $INPUT_DURATION$
 # 0.5 fps
 -r:v:0 1/2
+-force_key_frames:v:0 $KEY_FRAMES$
 
 # one thread please
 -threads:v:0 1

@@ -22,7 +22,7 @@
  *    GetClassInfoW.
  * That's why we define NOUSER.
  */
-#define WIN32_LEAN_AND_MEAN																// Exclude rarely-used stuff from Windows headers
+#define WIN32_LEAN_AND_MEAN	
 #define NOUSER
 
 // #define NOGDI
@@ -56,6 +56,7 @@ typedef struct tagMSG
 #include <wx/regex.h>
 #include <wx/wfstream.h>
 #include <wx/txtstrm.h>
+#include <wx/mstream.h>
 #include <wx/datetime.h>
 #include <wx/filename.h>
 #include <wx/sstream.h>
@@ -76,6 +77,8 @@ typedef struct tagMSG
 #include <wx/msw/enhmeta.h>
 #endif
 #endif
+#include <wx/html/htmprint.h>
+#include <wx/dcgraph.h>
 
 #include <math.h>
 

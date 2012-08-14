@@ -29,7 +29,7 @@ static const size_t MAX_LICENSE_FILE_SIZE = 4 * 1024;
 
 // ===============================================================================
 
-wxIMPLEMENT_APP( wxMyApp );
+wxIMPLEMENT_APP_CONSOLE( wxMyApp );
 
 wxMyApp::wxMyApp( void ):
 	m_sSeparator( wxT( '=' ), 75 )

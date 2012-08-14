@@ -44,12 +44,14 @@ class wxMyApp:
 		static const wxChar APP_AUTHOR[];
 
 		static const wxChar CMD_FFMPEG[];
+		static const wxChar CMD_AUDIO[];
 		static const wxChar CMD_INPUT[];
 		static const wxChar CMD_INPUT_OVERLAY[];
 		static const wxChar CMD_INPUT_DURATION[];
 		static const wxChar CMD_INPUT_FRAMES[];
 		static const wxChar CMD_INPUT_RATE[];
 		static const wxChar CMD_OUTPUT[];
+		static const wxChar CMD_KEY_FRAMES[];
 
 		static const wxChar BACKGROUND_IMG[];
 
