@@ -54,7 +54,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;wxUSE_GUI=0;__WXDEBUG__;WXDEBUG=1;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;wxUSE_GUI=1;__WXDEBUG__;WXDEBUG=1;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>StdWx.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>..\inc;..\..\include;$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswud;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -63,7 +63,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib;$(WXWIN)\lib\vc_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>shlwapi.lib;Comctl32.lib;Rpcrt4.lib;wxbase29ud.lib;wxbase29ud_net.lib;wxbase29ud_xml.lib;wxmsw29ud_core.lib;wxexpatd.lib;wxregexud.lib;wxzlibd.lib;wxpngd.lib;wxjpegd.lib;wxtiffd.lib;libsndfile-1.lib;wxEncodingDetectionud.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>shlwapi.lib;Comctl32.lib;Rpcrt4.lib;wxbase29ud.lib;wxbase29ud_net.lib;wxbase29ud_xml.lib;wxmsw29ud_core.lib;wxmsw29ud_html.lib;wxexpatd.lib;wxregexud.lib;wxzlibd.lib;wxpngd.lib;wxjpegd.lib;wxtiffd.lib;libsndfile-1.lib;wxEncodingDetectionud.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

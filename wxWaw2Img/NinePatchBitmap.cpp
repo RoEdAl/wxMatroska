@@ -8,7 +8,8 @@
 NinePatchBitmap::NinePatchBitmap( void )
 {}
 
-NinePatchBitmap::~NinePatchBitmap( void )
+NinePatchBitmap::NinePatchBitmap( const NinePatchBitmap& npb ):
+	m_img( npb.m_img ), m_stretchedArea( npb.m_stretchedArea )
 {}
 
 bool NinePatchBitmap::IsOk() const
