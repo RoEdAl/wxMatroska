@@ -11,7 +11,6 @@
 #include "AnimationSettings.h"
 #include "wxConfiguration.h"
 #include "wxApp.h"
-#include "MyAppTraits.h"
 
 #include "SampleProcessor.h"
 #include "WaveDrawer.h"
@@ -38,8 +37,6 @@
 
 const wxChar wxMyApp::APP_NAME[]		= wxT( "wav2img" );
 const wxChar wxMyApp::APP_VERSION[]		= wxT( "1.0" );
-const wxChar wxMyApp::APP_VENDOR_NAME[] = wxT( "Edmunt Pienkowsky" );
-const wxChar wxMyApp::APP_AUTHOR[]		= wxT( "Edmunt Pienkowsky - roed@onet.eu" );
 
 // ===============================================================================
 
@@ -59,14 +56,8 @@ const wxChar wxMyApp::BACKGROUND_IMG[]		= wxT( "background.png" );
 
 wxIMPLEMENT_APP_CONSOLE( wxMyApp );
 
-wxMyApp::wxMyApp( void ):
-	m_sSeparator( wxT( '=' ), 75 )
+wxMyApp::wxMyApp( void )
 {}
-
-void wxMyApp::AddSeparator( wxCmdLineParser& cmdline )
-{
-	cmdline.AddUsageText( m_sSeparator );
-}
 
 static wxString get_libsndfile_version()
 {
@@ -156,15 +147,14 @@ void wxMyApp::InfoSystemSettings( wxMessageOutput& out )
 
 void wxMyApp::OnInitCmdLine( wxCmdLineParser& cmdline )
 {
-	wxAppConsole::OnInitCmdLine( cmdline );
+	MyAppConsole::OnInitCmdLine( cmdline );
 	cmdline.SetLogo( _( "This application draws a waveform from audio file." ) );
 	m_cfg.AddCmdLineParams( cmdline );
-	//AddSeparator( cmdline );
 }
 
 bool wxMyApp::OnCmdLineParsed( wxCmdLineParser& cmdline )
 {
-	if ( !wxAppConsole::OnCmdLineParsed( cmdline ) )
+	if ( !MyAppConsole::OnCmdLineParsed( cmdline ) )
 	{
 		return false;
 	}
@@ -181,16 +171,13 @@ bool wxMyApp::OnCmdLineParsed( wxCmdLineParser& cmdline )
 bool wxMyApp::OnInit()
 {
 	SetAppName( APP_NAME );
-	SetVendorName( APP_VENDOR_NAME );
-	SetVendorDisplayName( APP_AUTHOR );
 
 	m_pColourDatabase.reset( new wxColourDatabase() );
 	wxTheColourDatabase = m_pColourDatabase.get();
 	InitImageHandlers();
 
-	CoInitializeEx( NULL, COINIT_MULTITHREADED | COINIT_DISABLE_OLE1DDE );
 
-	if ( !wxAppConsole::OnInit() )
+	if ( !MyAppConsole::OnInit() )
 	{
 		return false;
 	}
@@ -1173,20 +1160,4 @@ int wxMyApp::OnRun()
 
 	wxLogInfo( _( "Waveform drawed" ) );
 	return save_rendered_wave( *pWaveDrawer, m_cfg, bUseCuePoints, cuePoints ) ? 0 : 1;
-}
-
-int wxMyApp::OnExit()
-{
-	int res = wxAppConsole::OnExit();
-
-	CoUninitialize();
-	wxLogInfo( _( "Exiting application" ) );
-	return res;
-}
-
-wxAppTraits* wxMyApp::CreateTraits()
-{
-	wxAppTraits* pAppTraits = wxAppConsole::CreateTraits();
-
-	return new MyAppTraits( pAppTraits );
 }

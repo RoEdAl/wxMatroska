@@ -3,6 +3,7 @@
  */
 
 #include "StdWx.h"
+#include <enum2str.h>
 #include <wxCueFile/wxDataFile.h>
 #include <wxCueFile/wxSamplingInfo.h>
 #include <wxCueFile/wxCueSheetReader.h>
@@ -34,8 +35,6 @@ const wxConfiguration::CuesheetAttachModeName wxConfiguration::AttachModeNames[]
 	{ CUESHEET_ATTACH_RENDERED, wxT( "rendered" ) }
 };
 
-const size_t wxConfiguration::AttachModeNamesSize = WXSIZEOF( wxConfiguration::AttachModeNames );
-
 // ===============================================================================
 
 const wxConfiguration::RenderModeName wxConfiguration::RenderModeNames[] =
@@ -45,54 +44,25 @@ const wxConfiguration::RenderModeName wxConfiguration::RenderModeNames[] =
 	{ RENDER_WAV2IMG_CUE_POINTS, wxT("wav2img") }
 };
 
-const size_t wxConfiguration::RenderModeNamesSize = WXSIZEOF( wxConfiguration::RenderModeNames );
 
 wxString wxConfiguration::GetRenderingModes()
 {
-	wxString s;
-
-	for ( size_t i = 0; i < RenderModeNamesSize; i++ )
-	{
-		s << RenderModeNames[ i ].pszName << "|";
-	}
-
-	return s.RemoveLast();
+	return get_texts( RenderModeNames );
 }
 
 // ===============================================================================
 
-wxIMPLEMENT_DYNAMIC_CLASS( wxConfiguration, wxObject );
-
-// ===============================================================================
-
-wxString wxConfiguration::GetRenderModeStr( wxConfiguration::RENDER_MODE e )
+wxString wxConfiguration::ToString( wxConfiguration::RENDER_MODE e )
 {
-	for ( size_t i = 0; i < RenderModeNamesSize; i++ )
-	{
-		if ( RenderModeNames[ i ].eMode == e )
-		{
-			return RenderModeNames[ i ].pszName;
-		}
-	}
-
-	return wxString::Format( wxT("<%d>"), e );
+	return to_string( e, RenderModeNames );
 }
 
-bool wxConfiguration::GetRenderModeFromStr( const wxString& s, wxConfiguration::RENDER_MODE& e )
+bool wxConfiguration::FromString( const wxString& s, wxConfiguration::RENDER_MODE& e )
 {
-	for ( size_t i = 0; i < RenderModeNamesSize; i++ )
-	{
-		if ( s.CmpNoCase( RenderModeNames[ i ].pszName ) == 0 )
-		{
-			e = RenderModeNames[ i ].eMode;
-			return true;
-		}
-	}
-
-	return false;
+	return from_string( s, e, RenderModeNames );
 }
 
-wxString wxConfiguration::GetFileEncodingStr( wxConfiguration::FILE_ENCODING eFileEncoding )
+wxString wxConfiguration::ToString( wxConfiguration::FILE_ENCODING eFileEncoding )
 {
 	wxString s;
 
@@ -138,7 +108,7 @@ wxString wxConfiguration::GetFileEncodingStr( wxConfiguration::FILE_ENCODING eFi
 	return s;
 }
 
-bool wxConfiguration::GetFileEncodingFromStr( const wxString& sFileEncoding, wxConfiguration::FILE_ENCODING& eFileEncoding )
+bool wxConfiguration::FromString( const wxString& sFileEncoding, wxConfiguration::FILE_ENCODING& eFileEncoding )
 {
 	if (
 		sFileEncoding.CmpNoCase( wxT( "local" ) ) == 0 ||
@@ -190,30 +160,12 @@ bool wxConfiguration::GetFileEncodingFromStr( const wxString& sFileEncoding, wxC
 	}
 }
 
-wxString wxConfiguration::GetCueSheetAttachModeStr( wxConfiguration::CUESHEET_ATTACH_MODE eCsAttachMode )
+wxString wxConfiguration::ToString( wxConfiguration::CUESHEET_ATTACH_MODE e )
 {
-	wxString s;
-	bool	 bRes = false;
-
-	for ( size_t i = 0; i < AttachModeNamesSize && !bRes; i++ )
-	{
-		if ( AttachModeNames[ i ].eMode == eCsAttachMode )
-		{
-			s = AttachModeNames[ i ].pszName;
-			s.UpperCase();
-			bRes = true;
-		}
-	}
-
-	if ( !bRes )
-	{
-		s.Printf( wxT( "UNKNOWN <%d>" ), eCsAttachMode );
-	}
-
-	return s;
+	return to_string( e, AttachModeNames );
 }
 
-bool wxConfiguration::GetCueSheetAttachModeFromStr( const wxString& sCsAttachMode, wxConfiguration::CUESHEET_ATTACH_MODE& eCsAttachMode, bool& bDefault )
+bool wxConfiguration::FromString( const wxString& sCsAttachMode, wxConfiguration::CUESHEET_ATTACH_MODE& eCsAttachMode, bool& bDefault )
 {
 	if ( sCsAttachMode.CmpNoCase( wxT( "default" ) ) == 0 )
 	{
@@ -223,16 +175,7 @@ bool wxConfiguration::GetCueSheetAttachModeFromStr( const wxString& sCsAttachMod
 	else
 	{
 		bDefault = false;
-		for ( size_t i = 0; i < AttachModeNamesSize; i++ )
-		{
-			if ( sCsAttachMode.CmpNoCase( AttachModeNames[ i ].pszName ) == 0 )
-			{
-				eCsAttachMode = AttachModeNames[ i ].eMode;
-				return true;
-			}
-		}
-
-		return false;
+		return from_string( sCsAttachMode, eCsAttachMode, AttachModeNames );
 	}
 }
 
@@ -345,7 +288,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 	cmdLine.AddOption( wxT( "f" ), wxT( "track-title-format" ), wxString::Format( _( "Track title format (default: %s)" ), TRACK_NAME_FORMAT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxT( "l" ), wxT( "language" ), wxString::Format( _( "Set language of chapter's tilte (default: %s)" ), m_sLang ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT( "ec" ), wxT( "embedded-cue" ), wxString::Format( _( "Try to read embedded cue sheet (requires MediaInfo library) (default: %s)" ), BoolToStr( m_bEmbedded ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
-	cmdLine.AddOption( wxT( "m" ), wxT( "rendering-method" ), wxString::Format( _( "Rendering method [%s] (default: %s)" ), GetRenderingModes(), GetRenderModeStr( m_eRenderMode ) ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( wxT( "m" ), wxT( "rendering-method" ), wxString::Format( _( "Rendering method [%s] (default: %s)" ), GetRenderingModes(), ToString( m_eRenderMode ) ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxT( "t" ), wxT( "generate-tags" ), wxString::Format( _( "Generate tags file (default: %s)" ), BoolToStr( m_bGenerateTags ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxT( "k" ), wxT( "generate-mkvmerge-options" ), wxString::Format( _( "Generate file with mkvmerge options (default: %s)" ), BoolToStr( m_bGenerateMkvmergeOpts ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxEmptyString, wxT( "run-mkvmerge" ), wxString::Format( _( "Run mkvmerge tool after generation of options file (default: %s)" ), BoolToStr( m_bRunMkvmerge ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
@@ -408,48 +351,6 @@ bool wxConfiguration::CheckLang( const wxString& sLang ) const
 	{
 		int idx = m_asLang.Index( sLang.Lower() );
 		return ( idx != wxNOT_FOUND );
-	}
-}
-
-bool wxConfiguration::ReadNegatableSwitchValue( const wxCmdLineParser& cmdLine, const wxString& name, bool& switchVal )
-{
-	wxCmdLineSwitchState state = cmdLine.FoundSwitch( name );
-	bool				 res   = true;
-
-	switch ( state )
-	{
-		case wxCMD_SWITCH_ON:
-		{
-			switchVal = true;
-			break;
-		}
-
-		case wxCMD_SWITCH_OFF:
-		{
-			switchVal = false;
-			break;
-		}
-
-		default:
-		{
-			res = false;
-			break;
-		}
-	}
-
-	return res;
-}
-
-bool wxConfiguration::ReadNegatableSwitchValueAndNegate( const wxCmdLineParser& cmdLine, const wxString& name, bool& switchVal )
-{
-	if ( ReadNegatableSwitchValue( cmdLine, name, switchVal ) )
-	{
-		switchVal = !switchVal;
-		return true;
-	}
-	else
-	{
-		return false;
 	}
 }
 
@@ -516,7 +417,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	if ( cmdLine.Found( wxT( "m" ), &s ) )
 	{
-		if ( !GetRenderModeFromStr( s, m_eRenderMode ) )
+		if ( !FromString( s, m_eRenderMode ) )
 		{
 			wxLogWarning( _( "Wrong rendering method - %s " ), s );
 			bRes = false;
@@ -533,7 +434,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	if ( cmdLine.Found( wxT( "oce" ), &s ) )
 	{
-		if ( !GetFileEncodingFromStr( s, m_eCueSheetFileEncoding ) )
+		if ( !FromString( s, m_eCueSheetFileEncoding ) )
 		{
 			wxLogWarning( _( "Wrong cue sheet file encoding %s" ), s );
 			bRes = false;
@@ -722,7 +623,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	{
 		bool bDefault;
 
-		if ( GetCueSheetAttachModeFromStr( s, m_eCsAttachMode, bDefault ) )
+		if ( FromString( s, m_eCsAttachMode, bDefault ) )
 		{
 			if ( bDefault )
 			{
@@ -737,11 +638,6 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	}
 
 	return bRes;
-}
-
-wxString wxConfiguration::BoolToStr( bool b )
-{
-	return b ? wxT( "yes" ) : wxT( "no" );
 }
 
 wxString wxConfiguration::BoolToIdx( bool b )
@@ -837,7 +733,7 @@ wxString wxConfiguration::GetReadFlagsDesc( wxCueSheetReader::ReadFlags flags )
 
 void wxConfiguration::FillArray( wxArrayString& as ) const
 {
-	as.Add( wxString::Format( wxT( "Rendering method: %s" ), GetRenderModeStr( m_eRenderMode ) ) );
+	as.Add( wxString::Format( wxT( "Rendering method: %s" ), ToString( m_eRenderMode ) ) );
 	as.Add( wxString::Format( wxT( "Generate tags file: %s" ), BoolToStr( m_bGenerateTags ) ) );
 	as.Add( wxString::Format( wxT( "Generate mkvmerge options file: %s" ), BoolToStr( m_bGenerateMkvmergeOpts ) ) );
 
@@ -851,13 +747,13 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
 		}
 
 		as.Add( wxString::Format( wxT( "Generate full paths: %s" ), BoolToStr( m_bUseFullPaths ) ) );
-		as.Add( wxString::Format( wxT( "Cue sheet attach mode: %s" ), GetCueSheetAttachModeStr( m_eCsAttachMode ) ) );
+		as.Add( wxString::Format( wxT( "Cue sheet attach mode: %s" ), ToString( m_eCsAttachMode ) ) );
 	}
 
 	as.Add( wxString::Format( wxT( "Generate edition UID: %s" ), BoolToStr( m_bGenerateEditionUID ) ) );
 	as.Add( wxString::Format( wxT( "Generate tags from comments: %s" ), BoolToStr( m_bGenerateTagsFromComments ) ) );
 	as.Add( wxString::Format( wxT( "Tag sources: %s" ), wxCueTag::SourcesToString( m_nTagSources ) ) );
-	as.Add( wxString::Format( wxT( "Output cue sheet file encoding: %s" ), GetFileEncodingStr( m_eCueSheetFileEncoding ) ) );
+	as.Add( wxString::Format( wxT( "Output cue sheet file encoding: %s" ), ToString( m_eCueSheetFileEncoding ) ) );
 	as.Add( wxString::Format( wxT( "Calculate end time of chapters: %s" ), BoolToStr( m_bChapterTimeEnd ) ) );
 	as.Add( wxString::Format( wxT( "Read embedded cue sheet: %s" ), BoolToStr( m_bEmbedded ) ) );
 	as.Add( wxString::Format( wxT( "Use data files to calculate end time of chapters: %s" ), BoolToStr( m_bUseDataFiles ) ) );

@@ -18,9 +18,7 @@
 // ===============================================================================
 
 const wxChar wxMyApp::APP_NAME[]		  = wxT( "cue2mkc" );
-const wxChar wxMyApp::APP_VERSION[]		  = wxT( "0.92" );
-const wxChar wxMyApp::APP_VENDOR_NAME[]	  = wxT( "Edmunt Pienkowsky" );
-const wxChar wxMyApp::APP_AUTHOR[]		  = wxT( "Edmunt Pienkowsky - roed@onet.eu" );
+const wxChar wxMyApp::APP_VERSION[]		  = wxT( "0.95" );
 const wxChar wxMyApp::LICENSE_FILE_NAME[] = wxT( "license.txt" );
 
 // ===============================================================================
@@ -31,14 +29,8 @@ static const size_t MAX_LICENSE_FILE_SIZE = 4 * 1024;
 
 wxIMPLEMENT_APP_CONSOLE( wxMyApp );
 
-wxMyApp::wxMyApp( void ):
-	m_sSeparator( wxT( '=' ), 75 )
+wxMyApp::wxMyApp( void )
 {}
-
-void wxMyApp::AddSeparator( wxCmdLineParser& cmdline )
-{
-	cmdline.AddUsageText( m_sSeparator );
-}
 
 void wxMyApp::AddVersionInfos( wxCmdLineParser& cmdline )
 {
@@ -94,7 +86,7 @@ void wxMyApp::AddFormatDescription( wxCmdLineParser& cmdline )
 
 void wxMyApp::OnInitCmdLine( wxCmdLineParser& cmdline )
 {
-	wxAppConsole::OnInitCmdLine( cmdline );
+	MyAppConsole::OnInitCmdLine( cmdline );
 	cmdline.AddSwitch( wxEmptyString, wxT( "license" ), _( "Show license" ), wxCMD_LINE_PARAM_OPTIONAL );
 	m_cfg.AddCmdLineParams( cmdline );
 	cmdline.SetLogo( _( "This application converts cue sheet files to Matroska XML chapter files in a more advanced way than standard Matroska tools." ) );
@@ -187,7 +179,7 @@ void wxMyApp::ShowLicense()
 
 bool wxMyApp::OnCmdLineParsed( wxCmdLineParser& cmdline )
 {
-	if ( !wxAppConsole::OnCmdLineParsed( cmdline ) )
+	if ( !MyAppConsole::OnCmdLineParsed( cmdline ) )
 	{
 		return false;
 	}
@@ -211,8 +203,6 @@ bool wxMyApp::OnCmdLineParsed( wxCmdLineParser& cmdline )
 bool wxMyApp::OnInit()
 {
 	SetAppName( APP_NAME );
-	SetVendorName( APP_VENDOR_NAME );
-	SetVendorDisplayName( APP_AUTHOR );
 
 	wxDateTime dt( wxDateTime::Now() );
 	srand( dt.GetTicks() );
@@ -223,9 +213,7 @@ bool wxMyApp::OnInit()
 		return false;
 	}
 
-	CoInitializeEx( NULL, COINIT_MULTITHREADED | COINIT_DISABLE_OLE1DDE );
-
-	if ( !wxAppConsole::OnInit() )
+	if ( !MyAppConsole::OnInit() )
 	{
 		return false;
 	}
@@ -497,12 +485,9 @@ int wxMyApp::OnRun()
 
 int wxMyApp::OnExit()
 {
-	int res = wxAppConsole::OnExit();
-
+	int res = MyAppConsole::OnExit();
 	m_pMkvmergeOptsRenderer.reset();
 	m_pMergedCueSheet.reset();
-	CoUninitialize();
-	wxLogMessage( _( "Done" ) );
 	return res;
 }
 

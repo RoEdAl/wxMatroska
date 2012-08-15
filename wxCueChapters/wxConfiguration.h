@@ -5,6 +5,10 @@
 #ifndef _WX_CONFIGURATION_H_
 #define _WX_CONFIGURATION_H_
 
+#ifndef _MY_CONFIGURATION_H_
+#include <wxConsoleApp/MyConfiguration.h>
+#endif
+
 #ifndef _WX_INPUT_FILE_H_
 #include "wxInputFile.h"
 #endif
@@ -20,10 +24,8 @@
 WX_DECLARE_OBJARRAY( wxInputFile, wxArrayInputFile );
 
 class wxConfiguration:
-	public wxObject
+	public MyConfiguration
 {
-	wxDECLARE_DYNAMIC_CLASS( wxConfiguration );
-
 	public:
 
 		enum RENDER_MODE
@@ -34,8 +36,8 @@ class wxConfiguration:
 		};
 
 		static wxString GetRenderingModes();
-		static wxString GetRenderModeStr( RENDER_MODE );
-		static bool GetRenderModeFromStr( const wxString&, RENDER_MODE& );
+		static wxString ToString( RENDER_MODE );
+		static bool FromString( const wxString&, RENDER_MODE& );
 
 		enum FILE_ENCODING
 		{
@@ -46,8 +48,8 @@ class wxConfiguration:
 			ENCODING_UTF16_WITH_BOM
 		} ;
 
-		static wxString GetFileEncodingStr( FILE_ENCODING );
-		static bool GetFileEncodingFromStr( const wxString&, FILE_ENCODING& );
+		static wxString ToString( FILE_ENCODING );
+		static bool FromString( const wxString&, FILE_ENCODING& );
 
 		enum CUESHEET_ATTACH_MODE
 		{
@@ -57,28 +59,26 @@ class wxConfiguration:
 			CUESHEET_ATTACH_RENDERED
 		};
 
-		static wxString GetCueSheetAttachModeStr( CUESHEET_ATTACH_MODE );
-		static bool GetCueSheetAttachModeFromStr( const wxString&, CUESHEET_ATTACH_MODE&, bool& );
+		static wxString ToString( CUESHEET_ATTACH_MODE );
+		static bool FromString( const wxString&, CUESHEET_ATTACH_MODE&, bool& );
 
 	protected:
 
 		struct CuesheetAttachModeName
 		{
-			CUESHEET_ATTACH_MODE eMode;
-			const wxChar* pszName;
+			CUESHEET_ATTACH_MODE value;
+			const wxChar* description;
 		};
 
 		static const CuesheetAttachModeName AttachModeNames[];
-		static const size_t					AttachModeNamesSize;
 
 		struct RenderModeName
 		{
-			RENDER_MODE eMode;
-			const wxChar* pszName;
+			RENDER_MODE value;
+			const wxChar* description;
 		};
 
 		static const RenderModeName			RenderModeNames[];
-		static const size_t					RenderModeNamesSize;
 
 	protected:
 
@@ -127,7 +127,6 @@ class wxConfiguration:
 
 		static bool ReadLanguagesStrings( wxSortedArrayString& );
 		static bool check_ext( const wxString& );
-		static wxString BoolToStr( bool );
 		static wxString BoolToIdx( bool );
 		static wxString GetReadFlagsDesc( wxCueSheetReader::ReadFlags );
 		static void AddFlag( wxArrayString&, wxCueSheetReader::ReadFlags, wxCueSheetReader::ReadFlags, const wxString& );
@@ -138,8 +137,6 @@ class wxConfiguration:
 
 		bool CheckLang( const wxString& ) const;
 		void FillArray( wxArrayString& as ) const;
-		static bool ReadNegatableSwitchValue( const wxCmdLineParser&, const wxString&, bool& );
-		static bool ReadNegatableSwitchValueAndNegate( const wxCmdLineParser&, const wxString&, bool& );
 		bool ReadReadFlags( const wxCmdLineParser&, const wxString&, wxCueSheetReader::ReadFlags );
 		bool ReadTagSources( const wxCmdLineParser&, const wxString&, wxCueTag::TagSources );
 

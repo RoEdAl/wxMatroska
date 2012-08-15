@@ -63,7 +63,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib;$(WXWIN)\lib\vc_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>shlwapi.lib;Comctl32.lib;Rpcrt4.lib;wxbase29ud.lib;wxbase29ud_net.lib;wxbase29ud_xml.lib;wxmsw29ud_core.lib;wxmsw29ud_html.lib;wxexpatd.lib;wxregexud.lib;wxzlibd.lib;wxpngd.lib;wxjpegd.lib;wxtiffd.lib;libsndfile-1.lib;wxEncodingDetectionud.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>shlwapi.lib;Comctl32.lib;Rpcrt4.lib;wxbase29ud.lib;wxbase29ud_net.lib;wxbase29ud_xml.lib;wxmsw29ud_core.lib;wxmsw29ud_html.lib;wxexpatd.lib;wxregexud.lib;wxzlibd.lib;wxpngd.lib;wxjpegd.lib;wxtiffd.lib;libsndfile-1.lib;wxEncodingDetectionud.lib;wxConsoleAppud.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -86,7 +86,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib;$(WXWIN)\lib\vc_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>shlwapi.lib;Comctl32.lib;Rpcrt4.lib;wxbase29u.lib;wxmsw29u_core.lib;wxregexu.lib;wxzlib.lib;wxpng.lib;wxjpeg.lib;wxtiff.lib;libsndfile-1.lib;wxEncodingDetectionu.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>shlwapi.lib;Comctl32.lib;Rpcrt4.lib;wxbase29u.lib;wxmsw29u_core.lib;wxregexu.lib;wxzlib.lib;wxpng.lib;wxjpeg.lib;wxtiff.lib;libsndfile-1.lib;wxEncodingDetectionu.lib;wxConsoleAppu.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SetChecksum>true</SetChecksum>
     </Link>
   </ItemDefinitionGroup>
@@ -105,7 +105,6 @@
     <ClInclude Include="MCGraphicsContextWaveDrawer.h" />
     <ClInclude Include="MemoryGraphicsContext.h" />
     <ClInclude Include="MultiChannelWaveDrawer.h" />
-    <ClInclude Include="MyAppTraits.h" />
     <ClInclude Include="NinePatchBitmap.h" />
     <ClInclude Include="SampleChunker.h" />
     <ClInclude Include="SampleProcessor.h" />
@@ -136,7 +135,6 @@
     <ClCompile Include="MCGraphicsContextWaveDrawer.cpp" />
     <ClCompile Include="MemoryGraphicsContext.cpp" />
     <ClCompile Include="MultiChannelWaveDrawer.cpp" />
-    <ClCompile Include="MyAppTraits.cpp" />
     <ClCompile Include="NinePatchBitmap.cpp" />
     <ClCompile Include="SampleChunker.cpp" />
     <ClCompile Include="SampleProcessor.cpp" />

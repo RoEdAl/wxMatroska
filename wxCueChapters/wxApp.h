@@ -5,6 +5,10 @@
 #ifndef _WX_MY_APP_H_
 #define _WX_MY_APP_H_
 
+#ifndef _MY_APP_CONSOLE_H
+#include <wxConsoleApp/MyAppConsole.h>
+#endif
+
 #ifndef _WX_INPUT_FILE_H_
 class wxInputFile;
 #endif
@@ -26,12 +30,11 @@ class wxMkvmergeOptsRenderer;
 #endif
 
 class wxMyApp:
-	public wxAppConsole
+	public MyAppConsole
 {
 	protected:
 
 		wxConfiguration						  m_cfg;
-		wxString							  m_sSeparator;
 		wxScopedPtr< wxMkvmergeOptsRenderer > m_pMkvmergeOptsRenderer;
 		wxScopedPtr< wxCueSheet >			  m_pMergedCueSheet;
 
@@ -41,7 +44,6 @@ class wxMyApp:
 		int ConvertCueSheet( const wxInputFile&, wxCueSheet& );
 		int AppendCueSheet( wxCueSheet& );
 
-		void AddSeparator( wxCmdLineParser& );
 		static void AddVersionInfos( wxCmdLineParser& );
 		static void AddFormatDescription( wxCmdLineParser& );
 		static void AddInputFileFormatDescription( wxCmdLineParser& );
@@ -69,9 +71,7 @@ class wxMyApp:
 	public:
 
 		static const wxChar APP_NAME[];
-		static const wxChar APP_VENDOR_NAME[];
 		static const wxChar APP_VERSION[];
-		static const wxChar APP_AUTHOR[];
 		static const wxChar LICENSE_FILE_NAME[];
 
 	public:

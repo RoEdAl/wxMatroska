@@ -2,7 +2,7 @@
 	MyAppTraits.cpp
 */
 #include "StdWx.h"
-#include "MyAppTraits.h"
+#include <wxConsoleApp/MyAppTraits.h>
 
 namespace
 {

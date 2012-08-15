@@ -5,22 +5,25 @@
 #ifndef _WX_MY_APP_H_
 #define _WX_MY_APP_H_
 
+#ifndef _MY_APP_CONSOLE_H
+#include <wxConsoleApp/MyAppConsole.h>
+#endif
+
 #ifndef _WX_CONFIGURATION_H_
 #include "wxConfiguration.h"
 #endif
 
 class wxMyApp:
-	public wxAppConsole
+	public MyAppConsole
 {
 	protected:
 
-		wxString						m_sSeparator;
 		wxConfiguration					m_cfg;
 		wxScopedPtr< wxColourDatabase > m_pColourDatabase;
 
 	protected:
 
-		void AddSeparator( wxCmdLineParser& );
+
 		static void InitImageHandlers();
 
 		static void InfoVersion( wxMessageOutput& );
@@ -35,15 +38,11 @@ class wxMyApp:
 		virtual void OnInitCmdLine( wxCmdLineParser& );
 		virtual bool OnCmdLineParsed( wxCmdLineParser& );
 		virtual int OnRun();
-		virtual int OnExit();
-		virtual wxAppTraits* CreateTraits(); 
 
 	public:
 
 		static const wxChar APP_NAME[];
-		static const wxChar APP_VENDOR_NAME[];
 		static const wxChar APP_VERSION[];
-		static const wxChar APP_AUTHOR[];
 
 		static const wxChar CMD_FFMPEG[];
 		static const wxChar CMD_AUDIO[];

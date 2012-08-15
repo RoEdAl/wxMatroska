@@ -5,6 +5,10 @@
 #ifndef _WX_CONFIGURATION_H_
 #define _WX_CONFIGURATION_H_
 
+#ifndef _MY_CONFIGURATION_H_
+#include <wxConsoleApp/MyConfiguration.h>
+#endif
+
 enum DRAWING_MODE
 {
 	DRAWING_MODE_SIMPLE,
@@ -15,10 +19,8 @@ enum DRAWING_MODE
 };
 
 class wxConfiguration:
-	public wxObject
+	public MyConfiguration
 {
-	wxDECLARE_DYNAMIC_CLASS( wxConfiguration );
-
 	public:
 
 		enum INFO_SUBJECT
@@ -63,8 +65,6 @@ class wxConfiguration:
 
 	protected:
 
-		bool ReadNegatableSwitchValue( const wxCmdLineParser& cmdLine, const wxString& name, bool& switchVal );
-		bool ReadNegatableSwitchValueAndNegate( const wxCmdLineParser& cmdLine, const wxString& name, bool& switchVal );
 		bool ParseColourString( const wxString&, wxColour& );
 		void GetDefaultsFromDisplay();
 
@@ -84,8 +84,6 @@ class wxConfiguration:
 		static wxString GetDrawingModeTexts();
 		static wxString GetCompositionModeTexts();
 		static wxString GetInfoSubjectTexts();
-
-		static wxString GetSwitchAsText( bool );
 
 		struct DRAWING_MODE_DESC
 		{
