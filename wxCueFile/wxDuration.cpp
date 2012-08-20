@@ -129,3 +129,15 @@ void wxDurationHolder::ClearDuration()
 	m_pDuration.reset();
 }
 
+void wxDurationHolder::Copy( const wxAbstractDurationHolder& durationHolder )
+{
+	if ( durationHolder.HasDuration() )
+	{
+		SetDuration( durationHolder.GetDuration() );
+	}
+	else
+	{
+		ClearDuration();
+	}
+}
+

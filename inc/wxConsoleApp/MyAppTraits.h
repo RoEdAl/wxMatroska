@@ -30,10 +30,6 @@ class MyAppTraits :	public wxAppTraits
     virtual bool CanUseStderr();
     virtual bool WriteToStderr(const wxString&);
 
-#if !wxUSE_CONSOLE_EVENTLOOP
-    virtual wxEventLoopBase *CreateEventLoop();
-#endif // !wxUSE_CONSOLE_EVENTLOOP
-
 #if wxUSE_LOG
     virtual wxLog *CreateLogTarget();
 #endif // wxUSE_LOG

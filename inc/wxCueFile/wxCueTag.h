@@ -36,14 +36,14 @@ class wxCueTag:
 
 	public:
 
-		typedef enum _TAG_SOURCE
+		enum TAG_SOURCE
 		{
 			TAG_UNKNOWN		   = 0,
 			TAG_CD_TEXT		   = 1,
 			TAG_CUE_COMMENT	   = 2,
 			TAG_MEDIA_METADATA = 4,
 			TAG_AUTO_GENERATED = 8
-		} TAG_SOURCE;
+		};
 
 		typedef wxUint32 TagSources;
 

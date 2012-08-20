@@ -5,6 +5,10 @@
 #ifndef _WX_CUE_SHEET_CONTENT_H_
 #define _WX_CUE_SHEET_CONTENT_H_
 
+#ifndef _WX_DATA_FILE_H_
+#include "wxDataFile.h"
+#endif
+
 class wxCueSheetContent:
 	public wxObject
 {
@@ -13,20 +17,20 @@ class wxCueSheetContent:
 	protected:
 
 		wxString   m_sValue;
-		wxFileName m_source;
+		wxDataFile m_source;
 		bool	   m_bEmbedded;
 
 	public:
 
 		wxCueSheetContent( void );
 		wxCueSheetContent( const wxString& );
-		wxCueSheetContent( const wxString&, const wxFileName&, bool );
+		wxCueSheetContent( const wxString&, const wxDataFile&, bool );
 		wxCueSheetContent( const wxCueSheetContent& );
 
 		wxCueSheetContent& operator =( const wxCueSheetContent& );
 
 		bool HasSource() const;
-		const wxFileName& GetSource() const;
+		const wxDataFile& GetSource() const;
 		bool IsEmbedded() const;
 		const wxString& GetValue() const;
 

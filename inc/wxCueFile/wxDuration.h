@@ -79,6 +79,7 @@ class wxDurationHolder:
 
 		void SetDuration( const wxDuration& );
 		void ClearDuration();
+		void Copy( const wxAbstractDurationHolder& );
 };
 
 #endif

@@ -35,22 +35,22 @@
 
 // ===============================================================================
 
-const wxChar wxMyApp::APP_NAME[]		= wxT( "wav2img" );
-const wxChar wxMyApp::APP_VERSION[]		= wxT( "1.0" );
+const wxChar wxMyApp::APP_NAME[]		= wxS( "wav2img" );
+const wxChar wxMyApp::APP_VERSION[]		= wxS( "1.0" );
 
 // ===============================================================================
 
-const wxChar wxMyApp::CMD_FFMPEG[]				= wxT( "FFMPEG" );
-const wxChar wxMyApp::CMD_AUDIO[]				= wxT( "AUDIO" );
-const wxChar wxMyApp::CMD_INPUT[]				= wxT( "INPUT" );
-const wxChar wxMyApp::CMD_INPUT_OVERLAY[]		= wxT( "INPUT_OVERLAY" );
-const wxChar wxMyApp::CMD_INPUT_DURATION[]		= wxT( "INPUT_DURATION" );
-const wxChar wxMyApp::CMD_INPUT_FRAMES[]		= wxT( "INPUT_FRAMES" );
-const wxChar wxMyApp::CMD_INPUT_RATE[]			= wxT( "INPUT_RATE" );
-const wxChar wxMyApp::CMD_OUTPUT[]				= wxT( "OUTPUT" );
-const wxChar wxMyApp::CMD_KEY_FRAMES[]			= wxT( "KEY_FRAMES" );
+const wxChar wxMyApp::CMD_FFMPEG[]				= wxS( "FFMPEG" );
+const wxChar wxMyApp::CMD_AUDIO[]				= wxS( "AUDIO" );
+const wxChar wxMyApp::CMD_INPUT[]				= wxS( "INPUT" );
+const wxChar wxMyApp::CMD_INPUT_OVERLAY[]		= wxS( "INPUT_OVERLAY" );
+const wxChar wxMyApp::CMD_INPUT_DURATION[]		= wxS( "INPUT_DURATION" );
+const wxChar wxMyApp::CMD_INPUT_FRAMES[]		= wxS( "INPUT_FRAMES" );
+const wxChar wxMyApp::CMD_INPUT_RATE[]			= wxS( "INPUT_RATE" );
+const wxChar wxMyApp::CMD_OUTPUT[]				= wxS( "OUTPUT" );
+const wxChar wxMyApp::CMD_KEY_FRAMES[]			= wxS( "KEY_FRAMES" );
 
-const wxChar wxMyApp::BACKGROUND_IMG[]		= wxT( "background.png" );
+const wxChar wxMyApp::BACKGROUND_IMG[]		= wxS( "background.png" );
 
 // ===============================================================================
 

@@ -3,6 +3,7 @@
  */
 
 #include "StdWx.h"
+#include <wxCueFile/wxDataFile.h>
 #include <wxCueFile/wxCueSheetContent.h>
 
 // ===============================================================================
@@ -20,7 +21,7 @@ wxCueSheetContent::wxCueSheetContent( const wxString& sValue ):
 	wxASSERT( !sValue.IsEmpty() );
 }
 
-wxCueSheetContent::wxCueSheetContent( const wxString& sValue, const wxFileName& source, bool bEmbedded ):
+wxCueSheetContent::wxCueSheetContent( const wxString& sValue, const wxDataFile& source, bool bEmbedded ):
 	m_sValue( sValue ), m_source( source ), m_bEmbedded( bEmbedded )
 {
 	wxASSERT( !sValue.IsEmpty() );
@@ -50,7 +51,7 @@ bool wxCueSheetContent::HasSource() const
 	return m_source.IsOk();
 }
 
-const wxFileName& wxCueSheetContent::GetSource() const
+const wxDataFile& wxCueSheetContent::GetSource() const
 {
 	wxASSERT( HasSource() );
 	return m_source;

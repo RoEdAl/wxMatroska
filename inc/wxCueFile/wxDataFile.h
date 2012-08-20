@@ -9,6 +9,10 @@
 #include "wxDuration.h"
 #endif
 
+#ifndef _WX_CUE_TAG_H_
+#include <wxCueFile/wxCueTag.h>
+#endif
+
 class wxDataFile;
 
 WX_DECLARE_OBJARRAY( wxFileName, wxArrayFileName );
@@ -51,6 +55,7 @@ class wxDataFile:
 		wxFileName m_realFileName;
 		FileType   m_ftype;
 		MediaType  m_mediaType;
+		wxArrayCueTag m_tags;
 		wxString   m_sCueSheet;
 
 	protected:
@@ -59,10 +64,8 @@ class wxDataFile:
 
 		static wxULongLong GetNumberOfFramesFromBinary( const wxFileName&,
 														const wxSamplingInfo& si );
-		static bool GetFromMediaInfo( const wxFileName&, wxULongLong&,
-									  wxSamplingInfo&, wxString&, wxString& );
 		static bool GetMediaInfo( const wxFileName&, wxULongLong&,
-									  wxSamplingInfo&, MediaType&, wxString& );
+									  wxSamplingInfo&, MediaType&, wxArrayCueTag&, wxString& );
 
 	public:
 
@@ -74,6 +77,8 @@ class wxDataFile:
 		const wxString& GetMIFormat() const;
 		static MediaType GetMediaType( const wxString& );
 		MediaType GetMediaType() const;
+		bool HasTags() const;
+		const wxArrayCueTag& GetTags() const;
 		bool HasCueSheet() const;
 		const wxString& GetCueSheet() const;
 		bool IsBinary() const;

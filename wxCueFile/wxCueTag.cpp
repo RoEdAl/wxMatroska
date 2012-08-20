@@ -13,28 +13,28 @@
 
 // ===============================================================================
 
-const wxChar wxCueTag::Name::CUESHEET[]		= wxT( "CUESHEET" );
-const wxChar wxCueTag::Name::TOTALTRACKS[]	= wxT( "TOTALTRACKS" );
-const wxChar wxCueTag::Name::ARRANGER[]		= wxT( "ARRANGER" );
-const wxChar wxCueTag::Name::COMPOSER[]		= wxT( "COMPOSER" );
-const wxChar wxCueTag::Name::ISRC[]			= wxT( "ISRC" );
-const wxChar wxCueTag::Name::TITLE[]		= wxT( "TITLE" );
-const wxChar wxCueTag::Name::ALBUM[]		= wxT( "ALBUM" );
-const wxChar wxCueTag::Name::PERFORMER[]	= wxT( "PERFORMER" );
-const wxChar wxCueTag::Name::ARTIST[]		= wxT( "ARTIST" );
-const wxChar wxCueTag::Name::ALBUM_ARTIST[] = wxT( "ALBUM ARTIST" );
-const wxChar wxCueTag::Name::CATALOG[]		= wxT( "CATALOG" );
-const wxChar wxCueTag::Name::CDTEXTFILE[]	= wxT( "CDTEXTFILE" );
-const wxChar wxCueTag::Name::DISC_ID[]		= wxT( "DISC_ID" );
-const wxChar wxCueTag::Name::GENRE[]		= wxT( "GENRE" );
-const wxChar wxCueTag::Name::MESSAGE[]		= wxT( "MESSAGE" );
-const wxChar wxCueTag::Name::SONGWRITER[]	= wxT( "SONGWRITER" );
-const wxChar wxCueTag::Name::UPC_EAN[]		= wxT( "UPC_EAN" );
-const wxChar wxCueTag::Name::SIZE_INFO[]	= wxT( "SIZE_INFO" );
-const wxChar wxCueTag::Name::TOC_INFO[]		= wxT( "TOC_INFO" );
-const wxChar wxCueTag::Name::TOC_INFO2[]	= wxT( "TOC_INFO2" );
-const wxChar wxCueTag::Name::DISCNUMBER[]	= wxT( "DISCNUMBER" );
-const wxChar wxCueTag::Name::TOTALDISCS[]	= wxT( "TOTALDISCS" );
+const wxChar wxCueTag::Name::CUESHEET[]		= wxS( "CUESHEET" );
+const wxChar wxCueTag::Name::TOTALTRACKS[]	= wxS( "TOTALTRACKS" );
+const wxChar wxCueTag::Name::ARRANGER[]		= wxS( "ARRANGER" );
+const wxChar wxCueTag::Name::COMPOSER[]		= wxS( "COMPOSER" );
+const wxChar wxCueTag::Name::ISRC[]			= wxS( "ISRC" );
+const wxChar wxCueTag::Name::TITLE[]		= wxS( "TITLE" );
+const wxChar wxCueTag::Name::ALBUM[]		= wxS( "ALBUM" );
+const wxChar wxCueTag::Name::PERFORMER[]	= wxS( "PERFORMER" );
+const wxChar wxCueTag::Name::ARTIST[]		= wxS( "ARTIST" );
+const wxChar wxCueTag::Name::ALBUM_ARTIST[] = wxS( "ALBUM ARTIST" );
+const wxChar wxCueTag::Name::CATALOG[]		= wxS( "CATALOG" );
+const wxChar wxCueTag::Name::CDTEXTFILE[]	= wxS( "CDTEXTFILE" );
+const wxChar wxCueTag::Name::DISC_ID[]		= wxS( "DISC_ID" );
+const wxChar wxCueTag::Name::GENRE[]		= wxS( "GENRE" );
+const wxChar wxCueTag::Name::MESSAGE[]		= wxS( "MESSAGE" );
+const wxChar wxCueTag::Name::SONGWRITER[]	= wxS( "SONGWRITER" );
+const wxChar wxCueTag::Name::UPC_EAN[]		= wxS( "UPC_EAN" );
+const wxChar wxCueTag::Name::SIZE_INFO[]	= wxS( "SIZE_INFO" );
+const wxChar wxCueTag::Name::TOC_INFO[]		= wxS( "TOC_INFO" );
+const wxChar wxCueTag::Name::TOC_INFO2[]	= wxS( "TOC_INFO2" );
+const wxChar wxCueTag::Name::DISCNUMBER[]	= wxS( "DISCNUMBER" );
+const wxChar wxCueTag::Name::TOTALDISCS[]	= wxS( "TOTALDISCS" );
 
 // ===============================================================================
 

@@ -7,8 +7,8 @@
 
 // ================================================================================
 
-const wxChar MyAppConsole::APP_VENDOR_NAME[] = wxT( "Edmunt Pienkowsky" );
-const wxChar MyAppConsole::APP_AUTHOR[]		= wxT( "Edmunt Pienkowsky - roed@onet.eu" );
+const wxChar MyAppConsole::APP_VENDOR_NAME[] = wxS( "Edmunt Pienkowsky" );
+const wxChar MyAppConsole::APP_AUTHOR[]		= wxS( "Edmunt Pienkowsky - roed@onet.eu" );
 
 // ================================================================================
 

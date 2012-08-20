@@ -8,8 +8,6 @@
 #include <wxCueFile/wxDuration.h>
 #include <wxCueFile/wxIndex.h>
 #include <wxCueFile/wxDataFile.h>
-#include <wxCueFile/wxMediaInfo.h>
-#include <wxCueFile/wxCueTag.h>
 
 // ===============================================================================
 
@@ -29,7 +27,7 @@ const wxDataFile::FILE_TYPE_STR wxDataFile::FileTypeString[] =
 // ===============================================================================
 
 wxDataFile::wxDataFile( void ):
-	m_ftype( BINARY ), m_mediaType( MEDIA_TYPE_UNKOWN )
+	m_ftype( wxDataFile::BINARY ), m_mediaType( wxDataFile::MEDIA_TYPE_UNKNOWN )
 {}
 
 wxDataFile::wxDataFile( const wxDataFile& df )
@@ -58,17 +56,10 @@ void wxDataFile::copy( const wxDataFile& df )
 	m_fileName	   = df.m_fileName;
 	m_realFileName = df.m_realFileName;
 	m_ftype		   = df.m_ftype;
-	m_sMIFormat	   = df.m_sMIFormat;
+	m_mediaType = df.m_mediaType;
+	m_tags = df.m_tags;
 	m_sCueSheet	   = df.m_sCueSheet;
-
-	if ( df.HasDuration() )
-	{
-		SetDuration( df.GetDuration() );
-	}
-	else
-	{
-		ClearDuration();
-	}
+	wxDurationHolder::Copy( *this );
 }
 
 wxString wxDataFile::GetFileTypeRegExp()
@@ -127,9 +118,14 @@ wxDataFile::MediaType wxDataFile::GetMediaType( const wxString& sMIFormat )
 	}
 }
 
-wxDataFile::MediaType wxDataFile::GetMediaType() const
+bool wxDataFile::HasTags() const
 {
-	return GetMediaType( m_sMIFormat );
+	return !m_tags.IsEmpty();
+}
+
+const wxArrayCueTag& wxDataFile::GetTags() const
+{
+	return m_tags;
 }
 
 bool wxDataFile::HasCueSheet() const
@@ -162,7 +158,8 @@ void wxDataFile::Clear()
 	m_fileName.Clear();
 	m_realFileName.Clear();
 	m_ftype = BINARY;
-	m_sMIFormat.Empty();
+	m_mediaType = MEDIA_TYPE_UNKNOWN;
+	m_tags.Clear();
 	m_sCueSheet.Empty();
 }
 
@@ -171,7 +168,8 @@ wxDataFile& wxDataFile::Assign( const wxString& sFilePath, wxDataFile::FileType 
 	m_fileName = sFilePath;
 	m_realFileName.Clear();
 	m_ftype = ftype;
-	m_sMIFormat.Empty();
+	m_mediaType = MEDIA_TYPE_UNKNOWN;
+	m_tags.Clear();
 	m_sCueSheet.Empty();
 
 	return *this;
@@ -182,7 +180,8 @@ wxDataFile& wxDataFile::Assign( const wxFileName& fileName, wxDataFile::FileType
 	m_fileName = fileName;
 	m_realFileName.Clear();
 	m_ftype = ftype;
-	m_sMIFormat.Empty();
+	m_mediaType = MEDIA_TYPE_UNKNOWN;
+	m_tags.Clear();
 	m_sCueSheet.Empty();
 
 	return *this;
@@ -249,6 +248,7 @@ bool wxDataFile::GetMediaInfo(
 	wxULongLong& frames,
 	wxSamplingInfo& si,
 	wxDataFile::MediaType& eMediaType,
+	wxArrayCueTag& tags,
 	wxString& sCueSheet )
 {
 	TagLib::FileRef fileRef( fileName.GetFullPath().t_str(), true, TagLib::AudioProperties::Fast );
@@ -295,7 +295,13 @@ bool wxDataFile::GetMediaInfo(
 		si.SetBitsPerSample( pProps->bitsPerSample() );
 	}
 
+	if (eMediaType == MEDIA_TYPE_UNKNOWN)
+	{
+		return false;
+	}
+
 	sCueSheet.Empty();
+	tags.Empty();
 	TagLib::PropertyMap props( pFile->properties() );
 	for( TagLib::PropertyMap::ConstIterator i = props.begin(), pend = props.end(); i != pend; ++i )
 	{
@@ -303,243 +309,17 @@ bool wxDataFile::GetMediaInfo(
 		if ( propName.CmpNoCase( wxCueTag::Name::CUESHEET ) == 0 )
 		{
 			sCueSheet = i->second[0].toWString();
-			break;
 		}
-	}
-
-	return (eMediaType != MEDIA_TYPE_UNKNOWN);
-}
-
-bool wxDataFile::GetFromMediaInfo( const wxFileName& fileName, wxULongLong& frames, wxSamplingInfo& si, wxString& sMIFormat, wxString& sCueSheet )
-{
-	MediaType eMedia = MEDIA_TYPE_UNKNOWN;
-	GetMediaInfo( fileName, frames, si, eMedia, sCueSheet );
-
-	// using MediaInfo to get basic information about media
-	wxMediaInfo dll;
-
-	if ( !dll.Load() )
-	{
-		wxLogError( _( "Fail to load MediaInfo library" ) );
-		return false;
-	}
-
-	wxArrayString as1;
-	wxArrayString as2;
-
-	void*  handle = dll.MediaInfoNew();
-	size_t res	  = dll.MediaInfoOpen( handle, fileName.GetFullPath() );
-
-	if ( res == 0 )
-	{
-		wxLogError( _( "MediaInfo - fail to open file" ) );
-		dll.MediaInfoDelete( handle );
-		dll.Unload();
-		return false;
-	}
-
-	for ( size_t i = 0; i < INFOS_SIZE; i++ )
-	{
-		wxString s1(
-			dll.MediaInfoGet(
-					handle,
-					wxMediaInfo::MediaInfo_Stream_General,
-					0,
-					INFOS[ i ]
-					)
-			);
-
-		wxString s2(
-			dll.MediaInfoGet(
-					handle,
-					wxMediaInfo::MediaInfo_Stream_General,
-					0,
-					INFOS[ i ],
-					wxMediaInfo::MediaInfo_Info_Measure
-					)
-			);
-
-		as1.Add( s1 );
-		as2.Add( s2 );
-	}
-
-	for ( size_t i = 0; i < AUDIO_INFOS_SIZE; i++ )
-	{
-		wxString s1(
-			dll.MediaInfoGet(
-					handle,
-					wxMediaInfo::MediaInfo_Stream_Audio,
-					0,
-					AUDIO_INFOS[ i ]
-					)
-			);
-
-		wxString s2(
-			dll.MediaInfoGet(
-					handle,
-					wxMediaInfo::MediaInfo_Stream_Audio,
-					0,
-					AUDIO_INFOS[ i ],
-					wxMediaInfo::MediaInfo_Info_Measure
-					)
-			);
-
-		as1.Add( s1 );
-		as2.Add( s2 );
-	}
-
-	dll.MediaInfoClose( handle );
-	dll.MediaInfoDelete( handle );
-
-	bool		  bCheck	= true;
-	bool		  bCueSheet = false;
-	unsigned long u;
-
-	for ( size_t i = 0; i < ( INFOS_SIZE + AUDIO_INFOS_SIZE ); i++ )
-	{
-		switch ( i )
+		else
 		{
-			case 0:	// count of audio streams
+			for( TagLib::StringList::ConstIterator j = i->second.begin(), jend = i->second.end(); j != jend; ++j )
 			{
-				if ( !as1[ i ].ToULong( &u ) || !( u > 0 ) )
-				{
-					wxLogWarning( _( "MediaInfo - cannot find audio stream" ) );
-					bCheck = false;
-				}
-
-				break;
-			}
-
-			case 1:	// cue sheet #1
-			{
-				if ( !bCueSheet )
-				{
-					if ( !as1[ i ].IsEmpty() )
-					{
-						sCueSheet = as1[ i ];
-						bCueSheet = true;
-					}
-				}
-
-				break;
-			}
-
-			case 2:	// cue sheet #2
-			{
-				if ( !bCueSheet )
-				{
-					if ( !as1[ i ].IsEmpty() )
-					{
-						sCueSheet = as1[ i ];
-						bCueSheet = true;
-					}
-				}
-
-				break;
-			}
-
-			case 3:	// stream size
-			{
-				break;
-			}
-
-			case 4:	// duration
-			{
-				if ( !as1[ i ].ToULong( &u ) )
-				{
-					wxLogWarning( _( "MediaInfo - Invalid duration - %s" ), as1[ i ] );
-					bCheck = false;
-				}
-
-				break;
-			}
-
-			case 5:	// format
-			{
-				sMIFormat = as1[ i ];
-				break;
-			}
-
-			case 6:	// sampling rate
-			{
-				if ( !as1[ i ].ToULong( &u ) || ( u == 0u ) )
-				{
-					wxLogWarning( _( "MediaInfo - Invalid sample rate - %s" ), as1[ i ] );
-					bCheck = false;
-				}
-				else
-				{
-					si.SetSamplingRate( u );
-				}
-
-				break;
-			}
-
-			case 7:	// bit depth
-			{
-				if ( !as1[ i ].IsEmpty() )
-				{
-					if ( !as1[ i ].ToULong( &u ) || ( u == 0u ) || ( u > 10000u ) )
-					{
-						wxLogWarning( _( "MediaInfo - Invalid bit depth - %s" ), as1[ i ] );
-						bCheck = false;
-					}
-					else
-					{
-						si.SetBitsPerSample( (unsigned short)u );
-					}
-				}
-				else
-				{
-					si.SetBitsPerSample( 0 );	// unknown MP3
-				}
-
-				break;
-			}
-
-			case 8:	// channels
-			{
-				if ( !as1[ i ].ToULong( &u ) || ( u == 0u ) || ( u > 128u ) )
-				{
-					wxLogWarning( _( "MediaInfo - Invalid number of channels - %s" ), as1[ i ] );
-					bCheck = false;
-				}
-				else
-				{
-					si.SetNumberOfChannels( (unsigned short)u );
-				}
-
-				break;
-			}
-
-			case 9:	// SamplingCount
-			{
-				if ( !as1[ i ].IsEmpty() )
-				{
-					wxUint64 ul;
-
-					if ( as1[ i ].ToULongLong( &ul ) )	// calculate duration
-					{	// according to duration
-						frames = ul;
-					}
-					else
-					{
-						wxLogWarning( _( "MediaInfo - Invalid samples count - %s" ), as1[ i ] );
-						bCheck = false;
-					}
-				}
-
-				break;
+				tags.Add( wxCueTag( wxCueTag::TAG_MEDIA_METADATA, propName, j->toWString() ) );
 			}
 		}
 	}
 
-	if ( !bCueSheet )
-	{
-		sCueSheet.Empty();
-	}
-
-	return bCheck;
+	return true;
 }
 
 bool wxDataFile::GetInfo( const wxString& sAlternateExt )
@@ -559,14 +339,15 @@ bool wxDataFile::GetInfo( const wxString& sAlternateExt )
 	if ( IsBinary() )
 	{
 		si.SetDefault();
-		m_sMIFormat = _T( "BINARY" );
+		m_mediaType = MEDIA_TYPE_UNKNOWN;
+		m_tags.Clear();
 		m_sCueSheet.Empty();
 		frames = GetNumberOfFramesFromBinary( m_realFileName, si );
 		res	   = ( frames != wxSamplingInfo::wxInvalidNumberOfFrames );
 	}
 	else
 	{
-		res = GetFromMediaInfo( m_realFileName, frames, si, m_sMIFormat, m_sCueSheet );
+		res = GetMediaInfo( m_realFileName, frames, si, m_mediaType, m_tags, m_sCueSheet );
 	}
 
 	if ( res )
