@@ -25,7 +25,7 @@ wxCueSheetContent::wxCueSheetContent( const wxString& sValue, const wxDataFile& 
 	m_sValue( sValue ), m_source( source ), m_bEmbedded( bEmbedded )
 {
 	wxASSERT( !sValue.IsEmpty() );
-	wxASSERT( source.IsOk() && !source.IsDir() );
+	wxASSERT( source.GetFileName().IsOk() && !source.GetFileName().IsDir() );
 }
 
 wxCueSheetContent::wxCueSheetContent( const wxCueSheetContent& csContent )
@@ -48,7 +48,7 @@ void wxCueSheetContent::copy( const wxCueSheetContent& csContent )
 
 bool wxCueSheetContent::HasSource() const
 {
-	return m_source.IsOk();
+	return m_source.GetFileName().IsOk();
 }
 
 const wxDataFile& wxCueSheetContent::GetSource() const

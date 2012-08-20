@@ -63,9 +63,6 @@ typedef struct tagMSG
 #include <wx/tokenzr.h>
 #include <wx/sharedptr.h>
 
-#include <FLAC++/all.h>
-#include <wavpack.h>
-
 extern wxXmlNode* const wxNullXmlNode;
 
 #ifdef WIN32

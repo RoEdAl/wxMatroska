@@ -31,26 +31,11 @@ wxSamplingInfo::wxSamplingInfo( unsigned long nSamplingRate, unsigned short nNum
 	m_nBitsPerSample( nBitsPerSample )
 {}
 
-wxSamplingInfo::wxSamplingInfo( const FLAC::Metadata::StreamInfo& si )
-{
-	m_nSamplingRate	 = si.get_sample_rate();
-	m_nNumChannels	 = si.get_channels();
-	m_nBitsPerSample = si.get_bits_per_sample();
-}
-
 wxSamplingInfo& wxSamplingInfo::Assign( unsigned long nSamplingRate, unsigned short nNumChannels, unsigned short nBitsPerSample )
 {
 	m_nSamplingRate	 = nSamplingRate;
 	m_nNumChannels	 = nNumChannels;
 	m_nBitsPerSample = nBitsPerSample;
-	return *this;
-}
-
-wxSamplingInfo& wxSamplingInfo::Assign( const FLAC::Metadata::StreamInfo& si )
-{
-	m_nSamplingRate	 = si.get_sample_rate();
-	m_nNumChannels	 = si.get_channels();
-	m_nBitsPerSample = si.get_bits_per_sample();
 	return *this;
 }
 

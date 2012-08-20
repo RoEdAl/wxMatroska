@@ -49,7 +49,6 @@ Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:Ad
 [Files]
 Source: ..\bin\Release\cue2mkc.exe; DestDir: {app}; Flags: comparetimestamp; Components: cli; 
 Source: ..\bin\Release\cue2mkcgui.exe; DestDir: {app}; Flags: comparetimestamp; Components: gui; 
-Source: ..\bin\MediaInfo\MediaInfo.dll; DestDir: {app}; Flags: comparetimestamp; Components: cli; 
 Source: ..\wxCueChapters\license.txt; DestDir: {app}; Flags: comparetimestamp; 
 Source: ..\cue\ISO-639-2_utf-8.txt; DestDir: {app}; Flags: comparetimestamp; 
 

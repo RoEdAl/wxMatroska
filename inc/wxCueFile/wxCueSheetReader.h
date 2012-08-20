@@ -140,7 +140,6 @@ class wxCueSheetReader:
 		bool ParseCue( const wxCueSheetContent &, ReadFlags = 0 );
 
 		bool ParseCueLine( const wxString &, size_t );
-		void ProcessMediaInfoCueSheet( wxString& );
 
 		typedef void ( wxCueSheetReader::* PARSE_METHOD )( const wxString&, const wxString& );
 		typedef struct _PARSE_STRUCT
@@ -177,25 +176,9 @@ class wxCueSheetReader:
 
 	protected:
 
-		// FLAC
-		bool ReadEmbeddedInFlacCueSheet( const wxDataFile &, ReadFlags );
-		bool ReadCueSheetFromVorbisComment( const wxDataFile &, const wxFlacMetaDataReader &, ReadFlags );
-		bool ReadCueSheetFromCueSheetTag( const wxDataFile &, const wxFlacMetaDataReader &, ReadFlags );
-		bool AppendFlacTags( const wxFlacMetaDataReader&, bool );
-
-		bool AppendFlacTags( const wxFlacMetaDataReader &, size_t, size_t );
-
-		// WavPack
-		bool ReadEmbeddedInWavpackCueSheet( const wxDataFile &, ReadFlags );
-		bool ReadWavpackTags( const wxString&, bool );
-
-		bool ReadWavpackTags( const wxString &, size_t, size_t );
-
-		bool BuildFromSingleMediaFile( const wxString &, ReadFlags = 0 );
+		bool BuildFromSingleMediaFile( const wxDataFile &, ReadFlags = 0 );
 		bool ReadTagsFromRelatedFiles();
-
-		bool ReadTagsFromMediaFile( const wxDataFile &, size_t, size_t );
-
+		bool ReadTagsFromMediaFile( const wxDataFile&, size_t, size_t );
 		bool FindLog( const wxCueSheetContent &, ReadFlags );
 		bool FindCover( const wxCueSheetContent &, ReadFlags );
 

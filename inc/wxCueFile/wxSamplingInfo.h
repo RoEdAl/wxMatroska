@@ -22,7 +22,6 @@ class wxSamplingInfo:
 		wxSamplingInfo( void );
 		wxSamplingInfo( const wxSamplingInfo& );
 		wxSamplingInfo( unsigned long, unsigned short, unsigned short );
-		wxSamplingInfo( const FLAC::Metadata::StreamInfo& );
 
 		bool IsOK( bool = false ) const;
 		bool Equals( const wxSamplingInfo&, bool = false ) const;
@@ -38,7 +37,6 @@ class wxSamplingInfo:
 		wxSamplingInfo& SetBitsPerSample( unsigned short );
 
 		wxSamplingInfo& Assign( unsigned long, unsigned short, unsigned short );
-		wxSamplingInfo& Assign( const FLAC::Metadata::StreamInfo& );
 		wxSamplingInfo& SetDefault();
 
 		wxULongLong GetNumberOfFramesFromBytes( const wxULongLong& ) const;

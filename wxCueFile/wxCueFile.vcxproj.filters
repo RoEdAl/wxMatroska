@@ -32,12 +32,6 @@
     <ClCompile Include="wxDataFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="wxFlacDecoder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="wxFlacMetaDataReader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="wxIndex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -57,12 +51,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="wxUnquoter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="wxWavpackStream.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="wxWavpackTagReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="wxTrailingSpacesRemover.cpp">
@@ -95,15 +83,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="wxAbstractMetaDataReader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="wxFlacMetaDataReader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="wxWavpackStream.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="wxWavpackTagReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\inc\wxCueFile\wxCueComponent.h">

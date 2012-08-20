@@ -32,9 +32,7 @@
 #include <wx/sharedptr.h>
 #include <wx/dir.h>
 
-#include <FLAC++/all.h>
-#include <wavpack.h>
-
+// TagLib
 #include <tpropertymap.h>
 #include <fileref.h>
 #include <wavproperties.h>

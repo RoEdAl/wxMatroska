@@ -74,8 +74,6 @@ class wxDataFile:
 		const wxFileName& GetRealFileName() const;
 		FileType GetFileType() const;
 		wxString GetFileTypeAsString() const;
-		const wxString& GetMIFormat() const;
-		static MediaType GetMediaType( const wxString& );
 		MediaType GetMediaType() const;
 		bool HasTags() const;
 		const wxArrayCueTag& GetTags() const;

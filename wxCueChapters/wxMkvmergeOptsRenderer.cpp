@@ -281,7 +281,7 @@ void wxMkvmergeOptsRenderer::write_source_eac_attachments(
 				wxT( "--attachment-name" ) << endl <<
 				wxT( "cuesheet.cue" ) << endl <<
 				wxT( "--attachment-description" ) << endl <<
-				contents[ i ].GetSource().GetFullName() << endl <<
+				contents[ i ].GetSource().GetFileName().GetFullName() << endl <<
 				wxT( "--attach-file" ) << endl <<
 				mkvmerge_escape( contents[ i ].GetSource() ) << endl;
 			}
@@ -310,7 +310,7 @@ void wxMkvmergeOptsRenderer::write_source_eac_attachments(
 				wxT( "--attachment-name" ) << endl <<
 				wxString::Format( wxT( "cuesheet%d.cue" ), nCounter ) << endl <<
 				wxT( "--attachment-description" ) << endl <<
-				contents[ i ].GetSource().GetFullName() << endl <<
+				contents[ i ].GetSource().GetFileName().GetFullName() << endl <<
 				wxT( "--attach-file" ) << endl <<
 				mkvmerge_escape( contents[ i ].GetSource() ) << endl;
 
@@ -334,7 +334,7 @@ void wxMkvmergeOptsRenderer::write_source_eac_attachments(
 				wxT( "--attachment-name" ) << endl <<
 				wxString::Format( wxT( "cuesheet%02d.cue" ), nCounter ) << endl <<
 				wxT( "--attachment-description" ) << endl <<
-				contents[ i ].GetSource().GetFullName() << endl <<
+				contents[ i ].GetSource().GetFileName().GetFullName() << endl <<
 				wxT( "--attach-file" ) << endl <<
 				mkvmerge_escape( contents[ i ].GetSource() ) << endl;
 

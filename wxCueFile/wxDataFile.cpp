@@ -97,25 +97,9 @@ wxDataFile::FileType wxDataFile::GetFileType() const
 	return m_ftype;
 }
 
-const wxString& wxDataFile::GetMIFormat() const
+wxDataFile::MediaType wxDataFile::GetMediaType() const
 {
-	return m_sMIFormat;
-}
-
-wxDataFile::MediaType wxDataFile::GetMediaType( const wxString& sMIFormat )
-{
-	if ( sMIFormat.CmpNoCase( wxT( "FLAC" ) ) == 0 )
-	{
-		return MEDIA_TYPE_FLAC;
-	}
-	else if ( sMIFormat.CmpNoCase( wxT( "WAVPACK" ) ) == 0 )
-	{
-		return MEDIA_TYPE_WAVPACK;
-	}
-	else
-	{
-		return MEDIA_TYPE_UNKNOWN;
-	}
+	return m_mediaType;
 }
 
 bool wxDataFile::HasTags() const

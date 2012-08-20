@@ -37,10 +37,6 @@ void wxMyApp::AddVersionInfos( wxCmdLineParser& cmdline )
 	cmdline.AddUsageText( wxString::Format( _( "Application version: %s" ), APP_VERSION ) );
 	cmdline.AddUsageText( wxString::Format( _( "Author: %s" ), APP_AUTHOR ) );
 	cmdline.AddUsageText( _( "License: Simplified BSD License - http://www.opensource.org/licenses/bsd-license.php" ) );
-	wxString sFlacVersion( FLAC__VERSION_STRING );
-	wxString sWavpackVersion( wxString::FromUTF8( WavpackGetLibraryVersionString() ) );
-	cmdline.AddUsageText( wxString::Format( _( "FLAC library version: %s. Copyright \u00A9 2000,2001,2002,2003,2004,2005,2006,2007,2008,2009  Josh Coalson" ), sFlacVersion ) );
-	cmdline.AddUsageText( wxString::Format( _( "WAVPACK library version: %s. Copyright \u00A9 1998 - 2006 Conifer Software" ), sWavpackVersion ) );
 	cmdline.AddUsageText( wxString::Format( _( "wxWidgets version: %d.%d.%d. Copyright \u00A9 1992-2008 Julian Smart, Robert Roebling, Vadim Zeitlin and other members of the wxWidgets team" ), wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER ) );
 	cmdline.AddUsageText( wxString::Format( _( "Operating system: %s" ), wxPlatformInfo::Get().GetOperatingSystemDescription() ) );
 }
@@ -52,9 +48,8 @@ void wxMyApp::AddInputFileFormatDescription( wxCmdLineParser& cmdline )
 	cmdline.AddUsageText( _( "Input file may be a wildcard:" ) );
 	cmdline.AddUsageText( _( "\t*.cue" ) );
 	cmdline.AddUsageText( _( "When -ec is used input file may be a path to media file with embedded cue sheet:" ) );
-	cmdline.AddUsageText( _( "\t*.flac test.ape" ) );
+	cmdline.AddUsageText( _( "\t*.flac test.wv" ) );
 	cmdline.AddUsageText( _( "To read embedded cue sheet MediaInfo library is used." ) );
-	cmdline.AddUsageText( _( "For FLAC and Wavpack files the native libraries are used to read cuesheet and metadata." ) );
 	cmdline.AddUsageText( wxString::Format( _( "You may also specify data files after cue file using %c as separator." ), wxInputFile::SEPARATOR ) );
 	cmdline.AddUsageText( wxString::Format( _( "\t\"test.cue%ctest.flac\"" ), wxInputFile::SEPARATOR ) );
 	cmdline.AddUsageText( _( "This allow you to override data file specification in cue sheet file." ) );
