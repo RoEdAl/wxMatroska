@@ -35,5 +35,13 @@
 #include <FLAC++/all.h>
 #include <wavpack.h>
 
+#include <tpropertymap.h>
+#include <fileref.h>
+#include <wavproperties.h>
+#include <aiffproperties.h>
+#include <wavpackproperties.h>
+#include <flacproperties.h>
+//#include <mpegproperties.h>
+
 #endif	// _STD_WX_H
 

@@ -50,8 +50,8 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>..\inc;..\..\include;$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswud;$(FLACDIR)\include;$(WAVPACKDIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;wxUSE_GUI=0;__WXMSW__;FLAC__NO_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\inc;..\..\include;$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswud;$(FLACDIR)\include;$(WAVPACKDIR)\include;$(TAGLIB_DIR)\taglib;$(TAGLIB_DIR)\taglib\toolkit;$(TAGLIB_DIR)\taglib\riff\wav;$(TAGLIB_DIR)\taglib\riff\aiff;$(TAGLIB_DIR)\taglib\flac;$(TAGLIB_DIR)\taglib\wavpack;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;__WXMSW__;FLAC__NO_DLL;TAGLIB_STATIC;TAGLIB_NO_CONFIG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -66,8 +66,8 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\inc;..\..\include;$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswud;$(FLACDIR)\include;$(WAVPACKDIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;wxUSE_GUI=0;__WXDEBUG__;WXDEBUG=1;__WXMSW__;FLAC__NO_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\inc;..\..\include;$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswud;$(FLACDIR)\include;$(WAVPACKDIR)\include;$(TAGLIB_DIR)\taglib;$(TAGLIB_DIR)\taglib\toolkit;$(TAGLIB_DIR)\taglib\riff\wav;$(TAGLIB_DIR)\taglib\riff\aiff;$(TAGLIB_DIR)\taglib\flac;$(TAGLIB_DIR)\taglib\wavpack;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;__WXDEBUG__;WXDEBUG=1;__WXMSW__;FLAC__NO_DLL;TAGLIB_STATIC;TAGLIB_NO_CONFIG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>

@@ -1054,9 +1054,6 @@ static void html_renderer()
 	img.SaveFile( "C:/Users/Normal/Documents/Visual Studio 2010/Projects/wxMatroska/html_render.png" );
 }
 
-#include <tpropertymap.h>
-#include <fileref.h>
-
 int wxMyApp::OnRun()
 {
 	switch( m_cfg.GetInfoSubject() )
@@ -1081,24 +1078,6 @@ int wxMyApp::OnRun()
 		InfoSystemSettings( *wxMessageOutput::Get() );
 		return 0;
 	}
-
-	{
-		TagLib::FileRef f( m_cfg.GetInputFile().GetFullPath().t_str() );
-		const TagLib::PropertyMap& props = f.file()->properties();
-		for( TagLib::PropertyMap::ConstIterator i = props.begin(), end = props.end(); i != end; ++i )
-		{
-			for( TagLib::StringList::ConstIterator j = i->second.begin(), jend = i->second.end(); j != jend; ++j )
-			{
-				wxLogDebug( wxT("TAG(%s): %s"), i->first.toWString(), j->toWString() );
-			}
-		}
-
-		TagLib::AudioProperties const *aprops = f.audioProperties();
-		aprops->
-	}
-
-	//html_renderer();
-	//return 0;
 
 	wxTimeSpanArray cuePoints;
 	bool			bUseCuePoints = false;

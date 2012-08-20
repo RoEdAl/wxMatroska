@@ -3,41 +3,17 @@
  */
 
 #include "StdWx.h"
+#include <enum2str.h>
 #include <wxCueFile/wxSamplingInfo.h>
 #include <wxCueFile/wxDuration.h>
 #include <wxCueFile/wxIndex.h>
 #include <wxCueFile/wxDataFile.h>
 #include <wxCueFile/wxMediaInfo.h>
+#include <wxCueFile/wxCueTag.h>
 
 // ===============================================================================
 
 wxIMPLEMENT_DYNAMIC_CLASS( wxDataFile, wxObject );
-
-// ===============================================================================
-
-const wxChar* const wxDataFile::INFOS[] =
-{
-	wxT( "AudioCount" ),
-	wxT( "CUESHEET" ),
-	wxT( "cuesheet" )
-};
-
-const size_t wxDataFile::INFOS_SIZE = WXSIZEOF( wxDataFile::INFOS );
-
-// ===============================================================================
-
-const wxChar* const wxDataFile::AUDIO_INFOS[] =
-{
-	wxT( "StreamSize" ),
-	wxT( "Duration" ),
-	wxT( "Format" ),
-	wxT( "SamplingRate" ),
-	wxT( "BitDepth" ),
-	wxT( "Channel(s)" ),
-	wxT( "SamplingCount" )
-};
-
-const size_t wxDataFile::AUDIO_INFOS_SIZE = WXSIZEOF( wxDataFile::AUDIO_INFOS );
 
 // ===============================================================================
 
@@ -50,12 +26,10 @@ const wxDataFile::FILE_TYPE_STR wxDataFile::FileTypeString[] =
 	{ MP3, wxT( "MP3" ) }
 };
 
-const size_t wxDataFile::FileTypeStringSize = WXSIZEOF( wxDataFile::FileTypeString );
-
 // ===============================================================================
 
 wxDataFile::wxDataFile( void ):
-	m_ftype( BINARY )
+	m_ftype( BINARY ), m_mediaType( MEDIA_TYPE_UNKOWN )
 {}
 
 wxDataFile::wxDataFile( const wxDataFile& df )
@@ -99,46 +73,17 @@ void wxDataFile::copy( const wxDataFile& df )
 
 wxString wxDataFile::GetFileTypeRegExp()
 {
-	wxString s;
-
-	for ( size_t i = 0; i < FileTypeStringSize; i++ )
-	{
-		s += FileTypeString[ i ].szName;
-		s += wxT( '|' );
-	}
-
-	s = s.RemoveLast().Prepend( wxT( '(' ) ).Append( wxT( ')' ) );
-	return s;
+	return get_texts( FileTypeString ).Prepend( wxT( '(' ) ).Append( wxT( ')' ) );
 }
 
-wxString wxDataFile::FileTypeToString( wxDataFile::FileType ftype )
+wxString wxDataFile::ToString( wxDataFile::FileType ftype )
 {
-	wxString s;
-
-	for ( size_t i = 0; i < FileTypeStringSize; i++ )
-	{
-		if ( FileTypeString[ i ].ftype == ftype )
-		{
-			s = FileTypeString[ i ].szName;
-			break;
-		}
-	}
-
-	return s;
+	return to_string( ftype, FileTypeString );
 }
 
-bool wxDataFile::StringToFileType( const wxString& s, wxDataFile::FileType& ftype )
+bool wxDataFile::FromString( const wxString& s, wxDataFile::FileType& ftype )
 {
-	for ( size_t i = 0; i < FileTypeStringSize; i++ )
-	{
-		if ( s.CmpNoCase( FileTypeString[ i ].szName ) == 0 )
-		{
-			ftype = FileTypeString[ i ].ftype;
-			return true;
-		}
-	}
-
-	return false;
+	return from_string( s, ftype, FileTypeString );
 }
 
 const wxFileName& wxDataFile::GetFileName() const
@@ -199,7 +144,7 @@ const wxString& wxDataFile::GetCueSheet() const
 
 wxString wxDataFile::GetFileTypeAsString() const
 {
-	return FileTypeToString( m_ftype );
+	return ToString( m_ftype );
 }
 
 bool wxDataFile::IsEmpty() const
@@ -299,8 +244,77 @@ wxULongLong wxDataFile::GetNumberOfFramesFromBinary( const wxFileName& fileName,
 	return si.GetNumberOfFramesFromBytes( size );
 }
 
+bool wxDataFile::GetMediaInfo(
+	const wxFileName& fileName,
+	wxULongLong& frames,
+	wxSamplingInfo& si,
+	wxDataFile::MediaType& eMediaType,
+	wxString& sCueSheet )
+{
+	TagLib::FileRef fileRef( fileName.GetFullPath().t_str(), true, TagLib::AudioProperties::Fast );
+	if ( fileRef.isNull() )
+	{
+		wxLogError( _("Fail to initialize TagLib library.") );
+		return false;
+	}
+
+	TagLib::File const* pFile = fileRef.file();
+	TagLib::AudioProperties const* pAprops = pFile->audioProperties();
+
+	si.SetSamplingRate( pAprops->sampleRate() );
+	si.SetNumberOfChannels( pAprops->channels() );
+
+	eMediaType = MEDIA_TYPE_UNKNOWN;
+
+	if ( dynamic_cast<TagLib::RIFF::WAV::Properties const*>( pAprops ) )
+	{
+		eMediaType = MEDIA_TYPE_WAV;
+		TagLib::RIFF::WAV::Properties const* pProps = dynamic_cast<TagLib::RIFF::WAV::Properties const*>( pAprops );
+		frames = pProps->sampleFrames();
+		si.SetBitsPerSample( pProps->sampleWidth() );
+	}
+	else if ( dynamic_cast<TagLib::RIFF::AIFF::Properties const*>( pAprops ) )
+	{
+		eMediaType = MEDIA_TYPE_AIFF;
+		TagLib::RIFF::AIFF::Properties const* pProps = dynamic_cast<TagLib::RIFF::AIFF::Properties const*>( pAprops );
+		frames = pProps->sampleFrames();
+		si.SetBitsPerSample( pProps->sampleWidth() );
+	}
+	else if ( dynamic_cast<TagLib::FLAC::Properties const*>( pAprops ) )
+	{
+		eMediaType = MEDIA_TYPE_FLAC;
+		TagLib::FLAC::Properties const* pProps = dynamic_cast<TagLib::FLAC::Properties const*>( pAprops );
+		frames = pProps->sampleFrames();
+		si.SetBitsPerSample( pProps->sampleWidth() );
+	}
+	else if ( dynamic_cast<TagLib::WavPack::Properties const*>( pAprops ) )
+	{
+		eMediaType = MEDIA_TYPE_WAVPACK;
+		TagLib::WavPack::Properties const* pProps = dynamic_cast<TagLib::WavPack::Properties const*>( pAprops );
+		frames = pProps->sampleFrames();
+		si.SetBitsPerSample( pProps->bitsPerSample() );
+	}
+
+	sCueSheet.Empty();
+	TagLib::PropertyMap props( pFile->properties() );
+	for( TagLib::PropertyMap::ConstIterator i = props.begin(), pend = props.end(); i != pend; ++i )
+	{
+		wxString propName( i->first.toWString() );
+		if ( propName.CmpNoCase( wxCueTag::Name::CUESHEET ) == 0 )
+		{
+			sCueSheet = i->second[0].toWString();
+			break;
+		}
+	}
+
+	return (eMediaType != MEDIA_TYPE_UNKNOWN);
+}
+
 bool wxDataFile::GetFromMediaInfo( const wxFileName& fileName, wxULongLong& frames, wxSamplingInfo& si, wxString& sMIFormat, wxString& sCueSheet )
 {
+	MediaType eMedia = MEDIA_TYPE_UNKNOWN;
+	GetMediaInfo( fileName, frames, si, eMedia, sCueSheet );
+
 	// using MediaInfo to get basic information about media
 	wxMediaInfo dll;
 

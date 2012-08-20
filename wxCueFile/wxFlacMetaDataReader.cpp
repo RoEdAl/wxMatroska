@@ -16,20 +16,9 @@ wxFlacMetaDataReader::wxFlacMetaDataReader( void ):
 
 wxFlacMetaDataReader::~wxFlacMetaDataReader( void )
 {
-	if ( HasVorbisComment() )
-	{
-		delete m_pVorbisComment;
-	}
-
-	if ( HasCueSheet() )
-	{
-		delete m_pCueSheet;
-	}
-
-	if ( HasStreamInfo() )
-	{
-		delete m_pStreamInfo;
-	}
+	wxDELETE( m_pVorbisComment );
+	wxDELETE( m_pCueSheet );
+	wxDELETE( m_pStreamInfo );
 }
 
 bool wxFlacMetaDataReader::HasVorbisComment() const

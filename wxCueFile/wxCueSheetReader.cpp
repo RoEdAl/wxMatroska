@@ -1303,7 +1303,7 @@ void wxCueSheetReader::ParseFile( const wxString& WXUNUSED( sToken ), const wxSt
 
 		if ( !sType.IsEmpty() )
 		{
-			wxDataFile::StringToFileType( sType, ftype );
+			wxDataFile::FromString( sType, ftype );
 		}
 
 		wxFileName fn( Unquote( sFile ) );

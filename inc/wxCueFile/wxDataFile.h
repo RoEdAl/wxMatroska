@@ -21,42 +21,36 @@ class wxDataFile:
 
 	public:
 
-		typedef enum _FileType
+		enum FileType
 		{
 			BINARY, MOTOROLA, AIFF, WAVE, MP3
-		} FileType;
+		};
 
-		typedef enum _MediaType
+		enum MediaType
 		{
 			MEDIA_TYPE_UNKNOWN,
+			MEDIA_TYPE_WAV,
+			MEDIA_TYPE_AIFF,
 			MEDIA_TYPE_FLAC,
 			MEDIA_TYPE_WAVPACK
-		} MediaType;
+		};
 
 	protected:
 
-		typedef struct _FILE_TYPE_STR
+		struct FILE_TYPE_STR
 		{
-			FileType ftype;
-			const wxChar* szName;
-		} FILE_TYPE_STR;
+			FileType value;
+			const wxChar* description;
+		};
 
 		static const FILE_TYPE_STR FileTypeString[];
-		static const size_t		   FileTypeStringSize;
-
-	protected:
-
-		static const wxChar* const INFOS[];
-		static const size_t		   INFOS_SIZE;
-		static const wxChar* const AUDIO_INFOS[];
-		static const size_t		   AUDIO_INFOS_SIZE;
 
 	protected:
 
 		wxFileName m_fileName;
 		wxFileName m_realFileName;
 		FileType   m_ftype;
-		wxString   m_sMIFormat;
+		MediaType  m_mediaType;
 		wxString   m_sCueSheet;
 
 	protected:
@@ -67,6 +61,8 @@ class wxDataFile:
 														const wxSamplingInfo& si );
 		static bool GetFromMediaInfo( const wxFileName&, wxULongLong&,
 									  wxSamplingInfo&, wxString&, wxString& );
+		static bool GetMediaInfo( const wxFileName&, wxULongLong&,
+									  wxSamplingInfo&, MediaType&, wxString& );
 
 	public:
 
@@ -101,8 +97,8 @@ class wxDataFile:
 
 		bool GetInfo( const wxString& = wxEmptyString );
 
-		static wxString FileTypeToString( FileType );
-		static bool StringToFileType( const wxString&, FileType& );
+		static wxString ToString( FileType );
+		static bool FromString( const wxString&, FileType& );
 		static wxString GetFileTypeRegExp();
 };
 
