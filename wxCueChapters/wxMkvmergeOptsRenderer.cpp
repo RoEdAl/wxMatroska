@@ -549,16 +549,10 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile,
 	}
 
 	// cover - must be a first attachment
-	if ( m_cfg.AttachCover() )
-	{
-		write_cover_attachments( cueSheet.GetCovers() );
-	}
+	write_cover_attachments( cueSheet.GetCovers() );
 
 	// log
-	if ( m_cfg.AttachEacLog() )
-	{
-		write_log_attachments( cueSheet.GetLogs() );
-	}
+	write_log_attachments( cueSheet.GetLogs() );
 
 	write_eac_attachments( inputFile, cueSheet );
 

@@ -19,11 +19,6 @@
 
 const wxChar wxMyApp::APP_NAME[]		  = wxT( "cue2mkc" );
 const wxChar wxMyApp::APP_VERSION[]		  = wxT( "0.95" );
-const wxChar wxMyApp::LICENSE_FILE_NAME[] = wxT( "license.txt" );
-
-// ===============================================================================
-
-static const size_t MAX_LICENSE_FILE_SIZE = 4 * 1024;
 
 // ===============================================================================
 
@@ -32,156 +27,64 @@ wxIMPLEMENT_APP_CONSOLE( wxMyApp );
 wxMyApp::wxMyApp( void )
 {}
 
-void wxMyApp::AddVersionInfos( wxCmdLineParser& cmdline )
+void wxMyApp::InfoVersion( wxMessageOutput& out )
 {
-	cmdline.AddUsageText( wxString::Format( _( "Application version: %s" ), APP_VERSION ) );
-	cmdline.AddUsageText( wxString::Format( _( "Author: %s" ), APP_AUTHOR ) );
-	cmdline.AddUsageText( _( "License: Simplified BSD License - http://www.opensource.org/licenses/bsd-license.php" ) );
-	cmdline.AddUsageText( wxString::Format( _( "wxWidgets version: %d.%d.%d. Copyright \u00A9 1992-2008 Julian Smart, Robert Roebling, Vadim Zeitlin and other members of the wxWidgets team" ), wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER ) );
-	cmdline.AddUsageText( wxString::Format( _( "Operating system: %s" ), wxPlatformInfo::Get().GetOperatingSystemDescription() ) );
+	out.Printf( _( "Application version: %s" ), APP_VERSION );
+	out.Printf( _( "Author: %s" ), APP_AUTHOR );
+	out.Output( _( "License: Simplified BSD License - http://www.opensource.org/licenses/bsd-license.php" ) );
+	out.Printf( _( "wxWidgets version: %d.%d.%d. Copyright \u00A9 1992-2008 Julian Smart, Robert Roebling, Vadim Zeitlin and other members of the wxWidgets team" ), wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER );
+	out.Output( wxCueSheetReader::GetTagLibVersion() );
+	out.Printf( _( "Operating system: %s" ), wxPlatformInfo::Get().GetOperatingSystemDescription() );
 }
 
-void wxMyApp::AddInputFileFormatDescription( wxCmdLineParser& cmdline )
+void wxMyApp::InfoUsage( wxMessageOutput& out )
 {
-	cmdline.AddUsageText( _( "Input file format specification:" ) );
-
-	cmdline.AddUsageText( _( "Input file may be a wildcard:" ) );
-	cmdline.AddUsageText( _( "\t*.cue" ) );
-	cmdline.AddUsageText( _( "When -ec is used input file may be a path to media file with embedded cue sheet:" ) );
-	cmdline.AddUsageText( _( "\t*.flac test.wv" ) );
-	cmdline.AddUsageText( _( "To read embedded cue sheet MediaInfo library is used." ) );
-	cmdline.AddUsageText( wxString::Format( _( "You may also specify data files after cue file using %c as separator." ), wxInputFile::SEPARATOR ) );
-	cmdline.AddUsageText( wxString::Format( _( "\t\"test.cue%ctest.flac\"" ), wxInputFile::SEPARATOR ) );
-	cmdline.AddUsageText( _( "This allow you to override data file specification in cue sheet file." ) );
+	out.Output( _( "Input file format specification:" ) );
+	out.Output( _( "Input file may be a wildcard:" ) );
+	out.Output( _( "\t*.cue" ) );
+	out.Output( _( "When -ec is used input file may be a path to media file with embedded cue sheet:" ) );
+	out.Output( _( "\t*.flac test.wv" ) );
+	out.Output( _( "To read embedded cue sheet MediaInfo library is used." ) );
+	out.Printf( _( "You may also specify data files after cue file using %c as separator." ), wxInputFile::SEPARATOR );
+	out.Printf( _( "\t\"test.cue%ctest.flac\"" ), wxInputFile::SEPARATOR );
+	out.Output( _( "This allow you to override data file specification in cue sheet file." ) );
 }
 
-void wxMyApp::AddFormatDescription( wxCmdLineParser& cmdline )
+void wxMyApp::InfoFormatDescription( wxMessageOutput& out )
 {
-	cmdline.AddUsageText( _( "Formating directives:" ) );
+	out.Output( _( "Formating directives:" ) );
 
-	cmdline.AddUsageText( _( "\t%da% - disc arranger" ) );
-	cmdline.AddUsageText( _( "\t%dc% - disc composer" ) );
-	cmdline.AddUsageText( _( "\t%dp% - disc performer" ) );
-	cmdline.AddUsageText( _( "\t%ds% - disc songwriter" ) );
-	cmdline.AddUsageText( _( "\t%dt% - disc title" ) );
+	out.Output( _( "\t%da% - disc arranger" ) );
+	out.Output( _( "\t%dc% - disc composer" ) );
+	out.Output( _( "\t%dp% - disc performer" ) );
+	out.Output( _( "\t%ds% - disc songwriter" ) );
+	out.Output( _( "\t%dt% - disc title" ) );
 
-	cmdline.AddUsageText( _( "\t%n% - track number" ) );
-	cmdline.AddUsageText( _( "\t%ta% - track arranger" ) );
-	cmdline.AddUsageText( _( "\t%tc% - track composer" ) );
-	cmdline.AddUsageText( _( "\t%tp% - track performer" ) );
-	cmdline.AddUsageText( _( "\t%ts% - track songwriter" ) );
-	cmdline.AddUsageText( _( "\t%tt% - track title" ) );
+	out.Output( _( "\t%n% - track number" ) );
+	out.Output( _( "\t%ta% - track arranger" ) );
+	out.Output( _( "\t%tc% - track composer" ) );
+	out.Output( _( "\t%tp% - track performer" ) );
+	out.Output( _( "\t%ts% - track songwriter" ) );
+	out.Output( _( "\t%tt% - track title" ) );
 
-	cmdline.AddUsageText( _( "\t%aa% - track or disc arranger" ) );
-	cmdline.AddUsageText( _( "\t%ac% - track or disc composer" ) );
-	cmdline.AddUsageText( _( "\t%ap% - track or disc performer" ) );
-	cmdline.AddUsageText( _( "\t%as% - track or disc songwriter" ) );
-	cmdline.AddUsageText( _( "\t%at% - track or disc title" ) );
+	out.Output( _( "\t%aa% - track or disc arranger" ) );
+	out.Output( _( "\t%ac% - track or disc composer" ) );
+	out.Output( _( "\t%ap% - track or disc performer" ) );
+	out.Output( _( "\t%as% - track or disc songwriter" ) );
+	out.Output( _( "\t%at% - track or disc title" ) );
 }
 
 void wxMyApp::OnInitCmdLine( wxCmdLineParser& cmdline )
 {
 	MyAppConsole::OnInitCmdLine( cmdline );
-	cmdline.AddSwitch( wxEmptyString, wxT( "license" ), _( "Show license" ), wxCMD_LINE_PARAM_OPTIONAL );
 	m_cfg.AddCmdLineParams( cmdline );
 	cmdline.SetLogo( _( "This application converts cue sheet files to Matroska XML chapter files in a more advanced way than standard Matroska tools." ) );
-	AddSeparator( cmdline );
-	AddInputFileFormatDescription( cmdline );
-	AddSeparator( cmdline );
-	AddFormatDescription( cmdline );
-	AddSeparator( cmdline );
-	AddVersionInfos( cmdline );
-	AddSeparator( cmdline );
-}
-
-bool wxMyApp::CheckLicense()
-{
-#ifdef _DEBUG
-	return true;
-
-#else
-	const wxStandardPaths& paths = wxStandardPaths::Get();
-	wxFileName			   fn( paths.GetExecutablePath() );
-	fn.SetFullName( LICENSE_FILE_NAME );
-
-	if ( !fn.IsFileReadable() )
-	{
-		return false;
-	}
-
-	wxULongLong fs( fn.GetSize() );
-
-	if ( fs == wxInvalidSize )
-	{
-		wxLogInfo( _( "Unable to read license \u201C%s\u201D" ), fn.GetFullPath() );
-		return false;
-	}
-
-	wxULongLong maxSize( 0, MAX_LICENSE_FILE_SIZE );
-
-	if ( fs > maxSize )
-	{
-		wxLogInfo( _( "License file \u201C%s\u201D is too big" ), fn.GetFullPath() );
-		return false;
-	}
-	return true;
-#endif
-}
-
-void wxMyApp::ShowLicense()
-{
-	const wxStandardPaths& paths = wxStandardPaths::Get();
-	wxFileName			   fn( paths.GetExecutablePath() );
-
-	fn.SetFullName( LICENSE_FILE_NAME );
-
-	if ( !fn.IsFileReadable() )
-	{
-		wxLogError( _( "Cannot find license file \u201C%s\u201D" ), fn.GetFullPath() );
-		return;
-	}
-
-	wxULongLong fs( fn.GetSize() );
-
-	if ( fs == wxInvalidSize )
-	{
-		wxLogError( _( "Unable to read license \u201C%s\u201D" ), fn.GetFullPath() );
-		return;
-	}
-
-	wxULongLong maxSize( 0, MAX_LICENSE_FILE_SIZE );
-
-	if ( fs > maxSize )
-	{
-		wxLogError( _( "License file \u201C%s\u201D is too big" ), fn.GetFullPath() );
-		return;
-	}
-
-	wxFileInputStream fis( fn.GetFullPath() );
-
-	if ( !fis.IsOk() )
-	{
-		wxLogError( _( "Cannot open license file \u201C%s\u201D" ), fn.GetFullPath() );
-		return;
-	}
-
-	wxTextInputStream tis( fis, wxEmptyString, wxConvISO8859_1 );
-	while ( !fis.Eof() )
-	{
-		wxPrintf( wxT( "%s\n" ), tis.ReadLine() );
-	}
 }
 
 bool wxMyApp::OnCmdLineParsed( wxCmdLineParser& cmdline )
 {
 	if ( !MyAppConsole::OnCmdLineParsed( cmdline ) )
 	{
-		return false;
-	}
-
-	if ( cmdline.Found( wxT( "license" ) ) )
-	{
-		ShowLicense();
 		return false;
 	}
 
@@ -335,10 +238,8 @@ int wxMyApp::ProcessCueFile( const wxInputFile& inputFile, const wxTagSynonimsCo
 
 	reader
 	.CorrectQuotationMarks( m_cfg.CorrectQuotationMarks(), m_cfg.GetLang() )
-	.SetParseComments( m_cfg.GenerateTagsFromComments() )
-	.SetEllipsizeTags( m_cfg.EllipsizeTags() )
-	.SetRemoveExtraSpaces( m_cfg.RemoveExtraSpaces() )
-	.SetAlternateExt( m_cfg.GetAlternateExtensions() );
+	.SetAlternateExt( m_cfg.GetAlternateExtensions() )
+	.SetReadFlags( m_cfg.GetReadFlags() );
 
 	wxString sInputFile( inputFile.GetInputFile().GetFullPath() );
 
@@ -348,7 +249,7 @@ int wxMyApp::ProcessCueFile( const wxInputFile& inputFile, const wxTagSynonimsCo
 	{
 		wxLogInfo( _( "Reading cue sheet from media file" ) );
 
-		if ( !reader.ReadEmbeddedCueSheet( sInputFile, m_cfg.GetReadFlags() ) )
+		if ( !reader.ReadEmbeddedCueSheet( sInputFile ) )
 		{
 			wxLogError( _( "Fail to read embedded sue sheet from \u201C%s\u201D or parse error" ), sInputFile );
 			return 1;
@@ -358,7 +259,7 @@ int wxMyApp::ProcessCueFile( const wxInputFile& inputFile, const wxTagSynonimsCo
 	{
 		wxLogInfo( _( "Reading cue sheet from text file" ) );
 
-		if ( !reader.ReadCueSheet( sInputFile, m_cfg.GetReadFlags(), m_cfg.UseMLang() ) )
+		if ( !reader.ReadCueSheet( sInputFile, m_cfg.UseMLang() ) )
 		{
 			wxLogError( _( "Fail to read or parse input cue file \u201C%s\u201D" ), sInputFile );
 			return 1;
@@ -388,6 +289,26 @@ int wxMyApp::ProcessCueFile( const wxInputFile& inputFile, const wxTagSynonimsCo
 
 int wxMyApp::OnRun()
 {
+	switch( m_cfg.GetInfoSubject() )
+	{
+		case wxConfiguration::INFO_VERSION:
+		InfoVersion( *wxMessageOutput::Get() );
+		return 0;
+
+		case wxConfiguration::INFO_USAGE:
+		InfoUsage( *wxMessageOutput::Get() );
+		return 0;
+
+		case wxConfiguration::INFO_FORMATTING_DIRECTIVES:
+		InfoFormatDescription( *wxMessageOutput::Get() );
+		return 0;
+
+		case wxConfiguration::INFO_LICENSE:
+		ShowLicense( *wxMessageOutput::Get() );
+		return 0;
+	}
+
+
 	wxInputFile firstInputFile;
 	bool		bFirst = true;
 

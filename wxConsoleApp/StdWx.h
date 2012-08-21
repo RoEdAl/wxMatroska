@@ -15,6 +15,10 @@
 #include <wx/apptrait.h>
 #include <wx/log.h>
 #include <wx/cmdline.h>
+#include <wx/filename.h>
+#include <wx/stdpaths.h>
+#include <wx/wfstream.h>
+#include <wx/txtstrm.h>
 
 #endif	// _STD_WX_H
 

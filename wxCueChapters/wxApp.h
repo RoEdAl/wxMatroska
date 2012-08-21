@@ -44,12 +44,9 @@ class wxMyApp:
 		int ConvertCueSheet( const wxInputFile&, wxCueSheet& );
 		int AppendCueSheet( wxCueSheet& );
 
-		static void AddVersionInfos( wxCmdLineParser& );
-		static void AddFormatDescription( wxCmdLineParser& );
-		static void AddInputFileFormatDescription( wxCmdLineParser& );
-
-		static bool CheckLicense();
-		static void ShowLicense();
+		static void InfoVersion( wxMessageOutput& );
+		static void InfoUsage( wxMessageOutput& );
+		static void InfoFormatDescription( wxMessageOutput& );
 
 		wxSharedPtr< wxXmlCueSheetRenderer > GetXmlRenderer( const wxInputFile& );
 		wxMkvmergeOptsRenderer& GetMkvmergeOptsRenderer( bool = true );
@@ -72,7 +69,6 @@ class wxMyApp:
 
 		static const wxChar APP_NAME[];
 		static const wxChar APP_VERSION[];
-		static const wxChar LICENSE_FILE_NAME[];
 
 	public:
 

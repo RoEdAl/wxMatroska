@@ -18,20 +18,18 @@ class wxCueSheetContent:
 
 		wxString   m_sValue;
 		wxDataFile m_source;
-		bool	   m_bEmbedded;
 
 	public:
 
 		wxCueSheetContent( void );
 		wxCueSheetContent( const wxString& );
-		wxCueSheetContent( const wxString&, const wxDataFile&, bool );
+		wxCueSheetContent( const wxString&, const wxDataFile& );
 		wxCueSheetContent( const wxCueSheetContent& );
 
 		wxCueSheetContent& operator =( const wxCueSheetContent& );
 
 		bool HasSource() const;
 		const wxDataFile& GetSource() const;
-		bool IsEmbedded() const;
 		const wxString& GetValue() const;
 
 	protected:

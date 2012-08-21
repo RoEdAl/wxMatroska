@@ -13,6 +13,12 @@ class MyAppConsole :public wxAppConsole
 
 	static const wxChar APP_VENDOR_NAME[];
 	static const wxChar APP_AUTHOR[];
+	static const wxChar LICENSE_FILE_NAME[];
+
+	protected:
+
+	static bool CheckLicense();
+	static void ShowLicense( wxMessageOutput& );
 
 	protected:
 

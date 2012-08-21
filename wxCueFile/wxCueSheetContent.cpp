@@ -16,13 +16,13 @@ wxCueSheetContent::wxCueSheetContent( void )
 {}
 
 wxCueSheetContent::wxCueSheetContent( const wxString& sValue ):
-	m_sValue( sValue ), m_bEmbedded( false )
+	m_sValue( sValue )
 {
 	wxASSERT( !sValue.IsEmpty() );
 }
 
-wxCueSheetContent::wxCueSheetContent( const wxString& sValue, const wxDataFile& source, bool bEmbedded ):
-	m_sValue( sValue ), m_source( source ), m_bEmbedded( bEmbedded )
+wxCueSheetContent::wxCueSheetContent( const wxString& sValue, const wxDataFile& source ):
+	m_sValue( sValue ), m_source( source )
 {
 	wxASSERT( !sValue.IsEmpty() );
 	wxASSERT( source.GetFileName().IsOk() && !source.GetFileName().IsDir() );
@@ -42,7 +42,6 @@ wxCueSheetContent& wxCueSheetContent::operator =( const wxCueSheetContent& csCon
 void wxCueSheetContent::copy( const wxCueSheetContent& csContent )
 {
 	m_source	= csContent.m_source;
-	m_bEmbedded = csContent.m_bEmbedded;
 	m_sValue	= csContent.m_sValue;
 }
 
@@ -55,11 +54,6 @@ const wxDataFile& wxCueSheetContent::GetSource() const
 {
 	wxASSERT( HasSource() );
 	return m_source;
-}
-
-bool wxCueSheetContent::IsEmbedded() const
-{
-	return m_bEmbedded;
 }
 
 const wxString& wxCueSheetContent::GetValue() const

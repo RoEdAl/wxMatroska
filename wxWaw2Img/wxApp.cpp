@@ -1077,6 +1077,10 @@ int wxMyApp::OnRun()
 		case wxConfiguration::INFO_SYSTEM_SETTINGS:
 		InfoSystemSettings( *wxMessageOutput::Get() );
 		return 0;
+
+		case wxConfiguration::INFO_LICENSE:
+		ShowLicense( *wxMessageOutput::Get() );
+		return 0;
 	}
 
 	wxTimeSpanArray cuePoints;

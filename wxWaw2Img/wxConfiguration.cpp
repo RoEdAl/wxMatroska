@@ -69,7 +69,8 @@ const wxConfiguration::INFO_SUBJECT_DESC wxConfiguration::InfoSubjectDesc[] =
 	{ INFO_COLOUR_FORMAT, wxT( "color_format" ) },
 	{ INFO_CUE_POINT_FORMAT, wxT( "cue_point" ) },
 	{ INFO_CMD_LINE_TEMPLATE, wxT( "cmd_template" ) },
-	{ INFO_SYSTEM_SETTINGS, wxT( "system_settings" ) }
+	{ INFO_SYSTEM_SETTINGS, wxT( "system_settings" ) },
+	{ INFO_LICENSE, wxT( "license" ) }
 };
 
 // ===============================================================================

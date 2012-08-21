@@ -35,6 +35,15 @@ class wxConfiguration:
 			RENDER_WAV2IMG_CUE_POINTS
 		};
 
+		enum INFO_SUBJECT
+		{
+			INFO_NONE,
+			INFO_VERSION,
+			INFO_USAGE,
+			INFO_FORMATTING_DIRECTIVES,
+			INFO_LICENSE
+		};
+
 		static wxString GetRenderingModes();
 		static wxString ToString( RENDER_MODE );
 		static bool FromString( const wxString&, RENDER_MODE& );
@@ -80,8 +89,17 @@ class wxConfiguration:
 
 		static const RenderModeName			RenderModeNames[];
 
+		struct INFO_SUBJECT_DESC
+		{
+			INFO_SUBJECT value;
+			const wxChar* description;
+		};
+
+		static const INFO_SUBJECT_DESC InfoSubjectDesc[];
+
 	protected:
 
+		INFO_SUBJECT		 m_infoSubject;
 		bool						m_bChapterTimeEnd;																// default=true
 		bool						m_bUnknownChapterTimeEndToNextChapter;	// default=false
 		unsigned long				m_nChapterOffset;																// in frames
@@ -93,7 +111,6 @@ class wxConfiguration:
 		bool						m_bGenerateMkvmergeOpts;
 		bool						m_bRunMkvmerge;
 		bool						m_bGenerateEditionUID;
-		bool						m_bGenerateTagsFromComments;
 		FILE_ENCODING				m_eCueSheetFileEncoding;
 		bool						m_bTrackOneIndexOne;// or zero
 		bool						m_bAbortOnError;
@@ -103,9 +120,7 @@ class wxConfiguration:
 		wxCueTag::TagSources		m_nTagSources;
 		bool						m_bUseMLang;
 		bool						m_bUseFullPaths;
-		bool						m_bEllipsizeTags;
 		CUESHEET_ATTACH_MODE		m_eCsAttachMode;
-		bool						m_bRemoveExtraSpaces;
 
 		wxString m_sAlternateExtensions;
 		wxString m_sLang;
@@ -131,8 +146,11 @@ class wxConfiguration:
 		static wxString GetReadFlagsDesc( wxCueSheetReader::ReadFlags );
 		static void AddFlag( wxArrayString&, wxCueSheetReader::ReadFlags, wxCueSheetReader::ReadFlags, const wxString& );
 
+		static bool FromString( const wxString&, INFO_SUBJECT& );
+		static wxString ToString( INFO_SUBJECT );
+		static wxString GetInfoSubjectTexts();
+
 		wxString ReadFlagTestStr( wxCueSheetReader::ReadFlags ) const;
-		wxString ReadFlagFlacTestStr( wxCueSheetReader::ReadFlags ) const;
 		wxString TagSourcesTestStr( wxCueTag::TagSources ) const;
 
 		bool CheckLang( const wxString& ) const;
@@ -142,6 +160,7 @@ class wxConfiguration:
 
 	public:
 
+		INFO_SUBJECT GetInfoSubject() const;
 		bool GetChapterTimeEnd() const;
 		bool GetUnknownChapterTimeEndToNextChapter() const;
 		unsigned long GetChapterOffset() const;
@@ -167,7 +186,6 @@ class wxConfiguration:
 		bool RunMkvmerge() const;
 		const wxFileName& GetMkvmergeDir() const;
 		bool GenerateEditionUID() const;
-		bool GenerateTagsFromComments() const;
 		FILE_ENCODING GetCueSheetFileEncoding() const;
 
 		wxSharedPtr< wxTextOutputStream > GetOutputTextStream( wxOutputStream& )
@@ -177,11 +195,9 @@ class wxConfiguration:
 		wxCueTag::TagSources GetTagSources() const;
 		bool UseMLang() const;
 		bool UseFullPaths() const;
-		bool EllipsizeTags() const;
 		bool AttachEacLog() const;
 		CUESHEET_ATTACH_MODE GetCueSheetAttachMode() const;
 		bool AttachCover() const;
-		bool RemoveExtraSpaces() const;
 		wxString GetExt() const;
 		wxString GetOutputFile( const wxInputFile& ) const;
 		void GetOutputFile( const wxInputFile&, wxFileName&, wxFileName& ) const;

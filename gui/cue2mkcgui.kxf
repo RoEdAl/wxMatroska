@@ -18,7 +18,15 @@
 		<property name="Style" vt="Int32">-1798373376</property>
 		<property name="ExStyle" vt="Int16">272</property>
 		<property name="Version" vt="String">1.04</property>
+		<property name="FormOptOnEvent" vt="False">False</property>
+		<property name="FormOptExpVars" vt="False">False</property>
+		<property name="FormOptPopulate" vt="False">False</property>
+		<property name="FormOptVarsForSet" vt="False">False</property>
+		<property name="FormOptIndentChar" vt="Int8">0</property>
 		<property name="FormOptIndentCount" vt="Int8">0</property>
+		<property name="FormOptIndentInit" vt="Int8">0</property>
+		<property name="FormOptVarScope" vt="Int8">0</property>
+		<property name="Resizing" vt="Set"/>
 		<property name="PixelsPerInch" vt="Int8">96</property>
 		<property name="TextHeight" vt="Int8">13</property>
 	</properties>
@@ -38,7 +46,7 @@
 				<property name="Top" vt="Int8">0</property>
 				<property name="Width" vt="Int16">541</property>
 				<property name="Height" vt="Int16">369</property>
-				<property name="ActivePage" vt="Ident">OptionsPane</property>
+				<property name="ActivePage" vt="Ident">PaneInputOutput</property>
 				<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
 				<property name="Font.Color" vt="Ident">clWindowText</property>
 				<property name="Font.Height" vt="Int8">-11</property>
@@ -192,11 +200,10 @@
 								<property name="Top" vt="Int8">25</property>
 								<property name="Width" vt="Int16">529</property>
 								<property name="Height" vt="Int16">234</property>
-								<property name="Indent" vt="Int8">19</property>
-								<property name="TabOrder" vt="Int8">1</property>
 								<property name="CtrlStyle" vt="Int32">1342378035</property>
 								<property name="CtrlExStyle" vt="Int32">131072</property>
 								<property name="Resizing" vt="Set">DockLeft, DockRight, DockTop, DockBottom</property>
+								<property name="TabOrder" vt="Int8">1</property>
 							</properties>
 							<components/>
 						</object>
@@ -1220,7 +1227,7 @@
 								<property name="Left" vt="Int8">0</property>
 								<property name="Top" vt="Int8">116</property>
 								<property name="Width" vt="Int16">225</property>
-								<property name="Height" vt="Int8">61</property>
+								<property name="Height" vt="Int8">37</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
 								<property name="Caption" vt="String">&amp;Metadata reading options</property>
@@ -1233,48 +1240,6 @@
 								<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
 							</properties>
 							<components>
-								<object type="TALabel" name="LabelFlacCueSheetReadMode">
-									<properties>
-										<property name="Left" vt="Int8">4</property>
-										<property name="Top" vt="Int8">34</property>
-										<property name="Width" vt="Int8">35</property>
-										<property name="Height" vt="Int8">21</property>
-										<property name="Hint" vt="String">Method of reading cue sheet from FLAC container</property>
-										<property name="AutoSize" vt="False">False</property>
-										<property name="Caption" vt="String">FLAC:</property>
-										<property name="TabOrder" vt="Int8">0</property>
-										<property name="HaveVariable" vt="False">False</property>
-										<property name="CtrlStyle" vt="Int32">1342178048</property>
-										<property name="CtrlExStyle" vt="Int8">0</property>
-										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
-									</properties>
-									<components/>
-								</object>
-								<object type="TACombo" name="ComboFlacMode">
-									<properties>
-										<property name="Left" vt="Int8">41</property>
-										<property name="Top" vt="Int8">34</property>
-										<property name="Width" vt="Int16">165</property>
-										<property name="Height" vt="Int8">25</property>
-										<property name="ItemHeight" vt="Int8">13</property>
-										<property name="TabOrder" vt="Int8">1</property>
-										<property name="Items.Strings" vt="List">
-											<list>
-												<li vt="String">use MediaInfo only</li>
-												<li vt="String">tag first</li>
-												<li vt="String">comment first</li>
-												<li vt="String">tag only</li>
-												<li vt="String">comment only</li>
-												<li vt="String"/>
-												<li vt="String"/>
-											</list>
-										</property>
-										<property name="CtrlStyle" vt="Int32">1342243395</property>
-										<property name="CtrlExStyle" vt="Int16">512</property>
-										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
-									</properties>
-									<components/>
-								</object>
 								<object type="TACheckbox" name="CheckBoxReadMetadata">
 									<properties>
 										<property name="Left" vt="Int8">4</property>
@@ -1283,7 +1248,7 @@
 										<property name="Height" vt="Int8">17</property>
 										<property name="Hint" vt="String">Read metadata from media file</property>
 										<property name="Caption" vt="String">Read metadata</property>
-										<property name="TabOrder" vt="Int8">2</property>
+										<property name="TabOrder" vt="Int8">0</property>
 										<property name="CtrlStyle" vt="Int32">1342242819</property>
 										<property name="CtrlExStyle" vt="Int8">0</property>
 										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
@@ -1295,7 +1260,7 @@
 						<object type="TAGroup" name="GroupMLang">
 							<properties>
 								<property name="Left" vt="Int8">0</property>
-								<property name="Top" vt="Int16">179</property>
+								<property name="Top" vt="Int16">155</property>
 								<property name="Width" vt="Int16">225</property>
 								<property name="Height" vt="Int8">37</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>

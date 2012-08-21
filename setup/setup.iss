@@ -47,7 +47,7 @@ Name: gui; Description: {cm:desc_component_gui}; Types: full custom;
 Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:AdditionalIcons}
 
 [Files]
-Source: ..\bin\Release\cue2mkc.exe; DestDir: {app}; Flags: comparetimestamp; Components: cli; 
+Source: ..\bin\x86\Release\cue2mkc.exe; DestDir: {app}; Flags: comparetimestamp; Components: cli; 
 Source: ..\bin\Release\cue2mkcgui.exe; DestDir: {app}; Flags: comparetimestamp; Components: gui; 
 Source: ..\wxCueChapters\license.txt; DestDir: {app}; Flags: comparetimestamp; 
 Source: ..\cue\ISO-639-2_utf-8.txt; DestDir: {app}; Flags: comparetimestamp; 
