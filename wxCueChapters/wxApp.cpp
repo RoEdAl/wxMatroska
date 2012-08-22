@@ -93,7 +93,7 @@ bool wxMyApp::OnCmdLineParsed( wxCmdLineParser& cmdline )
 		return false;
 	}
 
-	wxLogMessage( _( "%s ver. %s" ), GetAppDisplayName(), APP_VERSION );
+	wxLogInfo( _( "%s ver. %s" ), GetAppDisplayName(), APP_VERSION );
 	m_cfg.Dump();
 	return true;
 }
