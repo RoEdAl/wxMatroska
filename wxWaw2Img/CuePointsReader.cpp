@@ -8,7 +8,8 @@
 
 CuePointsReader::CuePointsReader():
 	m_reMsf( wxT( "\\A(\\d{1,4}):(\\d{1,2}):(\\d{1,2})\\Z" ), wxRE_ADVANCED ),
-	m_reMsms( wxT( "\\A(\\d{1,4}):(\\d{1,2}).(\\d{1,3})\\Z" ), wxRE_ADVANCED )
+	m_reMsms( wxT( "\\A(\\d{1,4}):(\\d{1,2}).(\\d{1,3})\\Z" ), wxRE_ADVANCED ),
+	m_reHmsms( wxT( "\\A(\\d{1,4}):(\\d{1,4}):(\\d{1,2}).(\\d{1,3})\\Z" ), wxRE_ADVANCED )
 {
 	wxASSERT( m_reMsf.IsValid() );
 	wxASSERT( m_reMsms.IsValid() );
@@ -89,12 +90,52 @@ static bool parse_msms( const wxRegEx& reMsms, const wxString& s, wxTimeSpan& ts
 	return res;
 }
 
+static bool parse_hmsms( const wxRegEx& reHmsms, const wxString& s, wxTimeSpan& ts )
+{
+	bool		  res = true;
+	unsigned long hr, min, sec, msec;
+
+	if ( reHmsms.Matches( s ) )
+	{
+		if ( !reHmsms.GetMatch( s, 1 ).ToULong( &hr ) )
+		{
+			res = false;
+		}
+
+		if ( !reHmsms.GetMatch( s, 2 ).ToULong( &min ) )
+		{
+			res = false;
+		}
+
+		if ( !reHmsms.GetMatch( s, 3 ).ToULong( &sec ) )
+		{
+			res = false;
+		}
+
+		if ( !reHmsms.GetMatch( s, 4 ).ToULong( &msec ) )
+		{
+			res = false;
+		}
+	}
+	else
+	{
+		res = false;
+	}
+
+	if ( res )
+	{
+		ts = wxTimeSpan( hr, min, sec, msec );
+	}
+
+	return res;
+}
+
 bool CuePointsReader::ParseCuePointPosition( const wxString& s, wxTimeSpan& ts )
 {
 	unsigned long sec;
 	double		  dsec;
 
-	if ( parse_msf( m_reMsf, s, ts ) || parse_msms( m_reMsms, s, ts ) )
+	if ( parse_msf( m_reMsf, s, ts ) || parse_msms( m_reMsms, s, ts ) || parse_hmsms( m_reHmsms, s, ts ) )
 	{
 		return true;
 	}
@@ -152,7 +193,7 @@ bool CuePointsReader::Read( wxTimeSpanArray& cuePoints, const wxFileName& inputF
 	wxString   s;
 	wxTimeSpan ts;
 
-	wxTextInputStream tis( fis, wxT( '\t' ), *pConv );
+	wxTextInputStream tis( fis, '\t', *pConv );
 	while ( !tis.GetInputStream().Eof() )
 	{
 		s = tis.ReadLine();

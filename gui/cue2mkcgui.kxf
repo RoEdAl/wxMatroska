@@ -500,11 +500,11 @@
 									<properties>
 										<property name="Left" vt="Int8">4</property>
 										<property name="Top" vt="Int8">93</property>
-										<property name="Width" vt="Int8">103</property>
+										<property name="Width" vt="Int8">55</property>
 										<property name="Height" vt="Int8">21</property>
-										<property name="Hint" vt="String">Cue sheet file encoding</property>
+										<property name="Hint" vt="String">Encoding of generated text files.</property>
 										<property name="AutoSize" vt="False">False</property>
-										<property name="Caption" vt="String">Cue sheet encoding:</property>
+										<property name="Caption" vt="String">&amp;Encoding:</property>
 										<property name="TabOrder" vt="Int8">6</property>
 										<property name="HaveVariable" vt="False">False</property>
 										<property name="CtrlStyle" vt="Int32">1342178048</property>
@@ -515,7 +515,7 @@
 								</object>
 								<object type="TACombo" name="ComboCueSheetEncoding">
 									<properties>
-										<property name="Left" vt="Int8">109</property>
+										<property name="Left" vt="Int8">69</property>
 										<property name="Top" vt="Int8">93</property>
 										<property name="Width" vt="Int16">141</property>
 										<property name="Height" vt="Int8">25</property>

@@ -17,6 +17,7 @@ class CuePointsReader
 
 		wxRegEx m_reMsf;
 		wxRegEx m_reMsms;
+		wxRegEx m_reHmsms;
 
 	protected:
 

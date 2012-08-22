@@ -37,7 +37,7 @@ class wxDuration:
 		const wxULongLong&	  GetNumberOfSamples() const;
 		wxString GetSamplesStr() const;
 
-		wxString GetCdFramesStr( wxULongLong ) const;
+		wxString GetCdFramesStr() const;
 
 		bool IsValid() const;
 		void Clear();

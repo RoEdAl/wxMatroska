@@ -277,7 +277,7 @@ wxConfiguration::wxConfiguration( void ):
 	m_bEmbedded( false ),
 	m_bCorrectQuotationMarks( true ),
 	m_eRenderMode( RENDER_MATROSKA_CHAPTERS ),
-	m_eCueSheetFileEncoding( ENCODING_LOCAL ),
+	m_eCueSheetFileEncoding( ENCODING_UTF8_WITH_BOM ),
 	m_bGenerateTags( false ),
 	m_bGenerateMkvmergeOpts( false ),
 	m_bGenerateEditionUID( false ),
@@ -308,16 +308,16 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 	cmdLine.AddSwitch( wxS( "cn" ), wxS( "unknown-chapter-end-to-next-track" ), wxString::Format( _( "If track's end time is unknown set it to next track position using frame offset (default: %s)" ), BoolToStr( m_bUnknownChapterTimeEndToNextChapter ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddOption( wxS( "fo" ), wxS( "frame-offset" ), wxString::Format( _( "Offset in frames to use with -uc option (default: %u)" ), m_nChapterOffset ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxS( "df" ), wxS( "use-data-files" ), wxString::Format( _( "Use data file(s) to calculate end time of chapters (default: %s)" ), BoolToStr( m_bUseDataFiles ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
-	cmdLine.AddOption( wxS( "e" ), wxS( "alternate-extensions" ), _( "Comma-separated list of alternate extensions of data files (default: none)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( wxS( "x" ), wxS( "alternate-extensions" ), _( "Comma-separated list of alternate extensions of data files (default: none)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxS( "f" ), wxS( "track-title-format" ), wxString::Format( _( "Track title format (default: %s)" ), TRACK_NAME_FORMAT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxS( "l" ), wxS( "language" ), wxString::Format( _( "Set language of chapter's tilte (default: %s)" ), m_sLang ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxS( "ec" ), wxS( "embedded-cue" ), wxString::Format( _( "Try to read embedded cue sheet (requires MediaInfo library) (default: %s)" ), BoolToStr( m_bEmbedded ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( wxS( "ec" ), wxS( "embedded-cue" ), wxString::Format( _( "Read embedded cue sheet (default: %s)" ), BoolToStr( m_bEmbedded ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddOption( wxS( "m" ), wxS( "rendering-method" ), wxString::Format( _( "Rendering method [%s] (default: %s)" ), GetRenderingModes(), ToString( m_eRenderMode ) ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxS( "t" ), wxS( "generate-tags" ), wxString::Format( _( "Generate tags file (default: %s)" ), BoolToStr( m_bGenerateTags ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxS( "k" ), wxS( "generate-mkvmerge-options" ), wxString::Format( _( "Generate file with mkvmerge options (default: %s)" ), BoolToStr( m_bGenerateMkvmergeOpts ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxEmptyString, wxS( "run-mkvmerge" ), wxString::Format( _( "Run mkvmerge tool after generation of options file (default: %s)" ), BoolToStr( m_bRunMkvmerge ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxS( "eu" ), wxS( "generate-edition-uid" ), wxString::Format( _( "Generate edition UID (default: %s)" ), BoolToStr( m_bGenerateEditionUID ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
-	cmdLine.AddOption( wxS( "oce" ), wxS( "cue-sheet-encoding" ), _( "Output cue sheet file encoding - possible values are local (default), utf8, utf8_bom, utf16, utf16_bom" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( wxS( "e" ), wxS( "output-encoding" ), _( "Output cue sheet file encoding [local|utf8|utf8_bom|utf16|utf16_bom] (default: utf8_bom)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxS( "a" ), wxS( "abort-on-error" ), wxString::Format( _( "Abort when conversion errors occurs (default: %s)" ), BoolToStr( m_bAbortOnError ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxS( "j" ), wxS( "merge" ), wxString::Format( _( "Merge cue sheets (default: %s)" ), BoolToStr( m_bMerge ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddOption( wxS( "mf" ), wxS( "matroska-title-format" ), wxString::Format( _( "Mtroska container's title format (default: %s)" ), MATROSKA_NAME_FORMAT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
@@ -459,11 +459,11 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	ReadNegatableSwitchValue( cmdLine, wxS( "run-mkvmerge" ), m_bRunMkvmerge );
 	ReadNegatableSwitchValue( cmdLine, wxS( "use-full-paths" ), m_bUseFullPaths );
 
-	if ( cmdLine.Found( wxS( "oce" ), &s ) )
+	if ( cmdLine.Found( wxS( "e" ), &s ) )
 	{
 		if ( !FromString( s, m_eCueSheetFileEncoding ) )
 		{
-			wxLogWarning( _( "Wrong cue sheet file encoding %s" ), s );
+			wxLogWarning( _( "Wrong output encoding %s" ), s );
 			bRes = false;
 		}
 	}
@@ -523,7 +523,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		}
 	}
 
-	if ( cmdLine.Found( wxS( "e" ), &s ) )
+	if ( cmdLine.Found( wxS( "x" ), &s ) )
 	{
 		m_sAlternateExtensions = s;
 	}

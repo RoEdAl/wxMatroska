@@ -100,7 +100,7 @@ wxString wxDuration::GetSamplesStr() const
 	return m_si.GetSamplesStr( m_numberOfSamples );
 }
 
-wxString wxDuration::GetCdFramesStr( wxULongLong frames ) const
+wxString wxDuration::GetCdFramesStr() const
 {
 	return m_si.GetCdFramesStr( m_numberOfSamples );
 }

@@ -211,7 +211,7 @@ wxString wxSamplingInfo::GetCdFramesStr( wxULongLong frames ) const
 	unsigned long r_seconds = ns.GetLo();
 	unsigned long r_frames	= nf.GetLo();
 
-	return wxString::Format( wxT( "%d:%02d:%02d" ), r_minutes, r_seconds, r_frames );
+	return wxString::Format( wxS( "%d:%02d:%02d" ), r_minutes, r_seconds, r_frames );
 }
 
 wxULongLong wxSamplingInfo::GetFramesFromCdFrames( wxULongLong cdFrames ) const

@@ -104,7 +104,7 @@ Func get_mkvmerge_dir()
 	EndIf
 EndFunc   ;==>get_mkvmerge_dir
 
-#region ### START Koda GUI section ### Form=C:\Users\Normal\Documents\Visual Studio 2010\Projects\wxMatroska\gui\cue2mkcgui.kxf
+#region ### START Koda GUI section ### Form=C:\Users\Roman\Documents\Visual Studio 2010\Projects\wxMatroska\gui\cue2mkcgui.kxf
 $FormMain = GUICreate("cue2mkc GUI", 545, 410, -1, -1, BitOR($GUI_SS_DEFAULT_GUI, $WS_MAXIMIZEBOX, $WS_SIZEBOX, $WS_THICKFRAME, $WS_TABSTOP), BitOR($WS_EX_ACCEPTFILES, $WS_EX_WINDOWEDGE))
 GUISetFont(8, 400, 0, "Microsoft Sans Serif")
 $MainTab = GUICtrlCreateTab(0, 0, 541, 369, $TCS_MULTILINE)
@@ -214,10 +214,10 @@ $InputLang = GUICtrlCreateInput("eng", 84, 243, 41, 21, $GUI_SS_DEFAULT_INPUT)
 GUICtrlSetLimit(-1, 3)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "This option also affects tags file generation")
-$LabelCueSheetEncoding = GUICtrlCreateLabel("Cue sheet encoding:", 8, 266, 103, 21, $SS_CENTERIMAGE)
+$LabelCueSheetEncoding = GUICtrlCreateLabel("&Encoding:", 8, 266, 55, 21, $SS_CENTERIMAGE)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-GUICtrlSetTip(-1, "Cue sheet file encoding")
-$ComboCueSheetEncoding = GUICtrlCreateCombo("", 113, 266, 141, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL), $WS_EX_CLIENTEDGE)
+GUICtrlSetTip(-1, "Encoding of generated text files.")
+$ComboCueSheetEncoding = GUICtrlCreateCombo("", 73, 266, 141, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL), $WS_EX_CLIENTEDGE)
 GUICtrlSetData(-1, "default|UTF-8|UTF-8 with BOM|UTF-16|UTF-16 with BOM")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
@@ -525,7 +525,7 @@ Func set_default_options()
 	GUICtrlSetState($CheckBoxT, $GUI_UNCHECKED)
 	GUICtrlSetState($CheckBoxK, $GUI_UNCHECKED)
 	GUICtrlSetState($CheckBoxRunMkvmerge, $GUI_CHECKED)
-	_GUICtrlComboBox_SetCurSel($ComboCueSheetEncoding, 0)
+	_GUICtrlComboBox_SetCurSel($ComboCueSheetEncoding, 2)
 	generate_tags_enable(1)
 	_GUICtrlComboBox_SetCurSel($ComboTrack01, 1)
 	GUICtrlSetState($CheckBoxCq, $GUI_CHECKED)
@@ -620,7 +620,7 @@ Func read_options()
 
 	$w = GUICtrlRead($InputAlternateExt)
 	If StringLen($w) > 0 Then
-		$s &= "-e """
+		$s &= "-x """
 		$s &= $w
 		$s &= """ "
 	EndIf
@@ -686,7 +686,7 @@ Func read_options()
 	$w = _GUICtrlComboBox_GetCurSel($ComboOutputFormat)
 	Switch $w
 		Case 0
-			$s &= "-m cuesheet -oce "
+			$s &= "-m cuesheet -e "
 			$s &= get_encoding_str(_GUICtrlComboBox_GetCurSel($ComboCueSheetEncoding))
 
 		Case 1
@@ -700,7 +700,7 @@ Func read_options()
 			negatable_switch_long($s, $CheckBoxTagUseFromMedia, "use-media-tags")
 
 		Case 2
-			$s &= "-m wav2img -oce "
+			$s &= "-m wav2img -e "
 			$s &= get_encoding_str(_GUICtrlComboBox_GetCurSel($ComboCueSheetEncoding))
 
 	EndSwitch
