@@ -25,14 +25,16 @@ class wxArrayFileName;
 #include <wxCueFile/wxTextOutputStreamOnString.h>
 #endif
 
+#ifndef _WX_PRIMITIVE_RENDERER_H_
+#include "wxPrimitiveRenderer.h"
+#endif
+
 class wxMkvmergeOptsRenderer:
-	public wxObject
+	public wxPrimitiveRenderer
 {
 	protected:
 
-		const wxConfiguration&	   m_cfg;
-		wxTextOutputStreamOnString m_os;
-		wxFileName				   m_matroskaOptsFile;
+		wxFileName  m_matroskaOptsFile;
 
 	protected:
 
@@ -50,7 +52,6 @@ class wxMkvmergeOptsRenderer:
 		void write_rendered_eac_attachments( const wxInputFile&, const wxCueSheet& );
 		bool save_cuesheet( const wxInputFile&, const wxString&, const wxString&, wxFileName& );
 		bool render_cuesheet( const wxInputFile&, const wxString&, const wxCueSheet&, wxFileName& );
-		static void save_string_to_stream( wxTextOutputStream&, const wxString& );
 
 		static wxString get_mapping_str( const wxCueSheet& );
 

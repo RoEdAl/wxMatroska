@@ -134,8 +134,10 @@
     </ClCompile>
     <ClCompile Include="wxApp.cpp" />
     <ClCompile Include="wxConfiguration.cpp" />
+    <ClCompile Include="wxCuePointsRenderer.cpp" />
     <ClCompile Include="wxInputFile.cpp" />
     <ClCompile Include="wxMkvmergeOptsRenderer.cpp" />
+    <ClCompile Include="wxPrimitiveRenderer.cpp" />
     <ClCompile Include="wxXmlCueSheetRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -143,8 +145,10 @@
     <ClInclude Include="StdWx.h" />
     <ClInclude Include="wxApp.h" />
     <ClInclude Include="wxConfiguration.h" />
+    <ClInclude Include="wxCuePointsRenderer.h" />
     <ClInclude Include="wxInputFile.h" />
     <ClInclude Include="wxMkvmergeOptsRenderer.h" />
+    <ClInclude Include="wxPrimitiveRenderer.h" />
     <ClInclude Include="wxXmlCueSheetRenderer.h" />
   </ItemGroup>
   <ItemGroup>

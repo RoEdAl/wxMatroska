@@ -46,7 +46,7 @@
 				<property name="Top" vt="Int8">0</property>
 				<property name="Width" vt="Int16">541</property>
 				<property name="Height" vt="Int16">369</property>
-				<property name="ActivePage" vt="Ident">PaneInputOutput</property>
+				<property name="ActivePage" vt="Ident">OptionsPane</property>
 				<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
 				<property name="Font.Color" vt="Ident">clWindowText</property>
 				<property name="Font.Height" vt="Int8">-11</property>
@@ -458,7 +458,8 @@
 										<property name="Items.Strings" vt="List">
 											<list>
 												<li vt="String">cue sheet</li>
-												<li vt="String">Matroska chapters XML file</li>
+												<li vt="String">Matroska chapters</li>
+												<li vt="String">cue points</li>
 											</list>
 										</property>
 										<property name="CtrlStyle" vt="Int32">1342243395</property>

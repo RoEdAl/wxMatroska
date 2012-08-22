@@ -166,6 +166,7 @@ GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Clear log")
 $OptionsPane = GUICtrlCreateTabItem("&General options")
+GUICtrlSetState(-1, $GUI_SHOW)
 $GroupGeneral = GUICtrlCreateGroup("&General", 4, 27, 265, 53, -1, $WS_EX_TRANSPARENT)
 GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
@@ -201,7 +202,7 @@ GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCK
 $LabelOutputFormat = GUICtrlCreateLabel("Format:", 8, 188, 43, 21, $SS_CENTERIMAGE)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $ComboOutputFormat = GUICtrlCreateCombo("", 56, 188, 177, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
-GUICtrlSetData(-1, "cue sheet|Matroska chapters XML file")
+GUICtrlSetData(-1, "cue sheet|Matroska chapters|cue points")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $CheckBoxT = GUICtrlCreateCheckbox("Generate tags XML file", 26, 211, 157, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
@@ -697,6 +698,10 @@ Func read_options()
 			negatable_switch_long($s, $CheckBoxTagUseCdText, "use-cdtext-tags")
 			negatable_switch_long($s, $CheckBoxTagUseCueComments, "use-cue-comments-tags")
 			negatable_switch_long($s, $CheckBoxTagUseFromMedia, "use-media-tags")
+
+		Case 2
+			$s &= "-m wav2img -oce "
+			$s &= get_encoding_str(_GUICtrlComboBox_GetCurSel($ComboCueSheetEncoding))
 
 	EndSwitch
 

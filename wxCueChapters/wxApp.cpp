@@ -11,14 +11,16 @@
 #include <wxCueFile/wxCueSheetRenderer.h>
 #include <wxCueFile/wxTextCueSheetRenderer.h>
 #include "wxConfiguration.h"
+#include "wxPrimitiveRenderer.h"
 #include "wxMkvmergeOptsRenderer.h"
+#include "wxCuePointsRenderer.h"
 #include "wxXmlCueSheetRenderer.h"
 #include "wxApp.h"
 
 // ===============================================================================
 
 const wxChar wxMyApp::APP_NAME[]	= wxT( "cue2mkc" );
-const wxChar wxMyApp::APP_VERSION[] = wxT( "0.95" );
+const wxChar wxMyApp::APP_VERSION[] = wxT( "0.96" );
 
 // ===============================================================================
 
@@ -182,8 +184,7 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, wxCueSheet& cueSheet
 		case wxConfiguration::RENDER_MATROSKA_CHAPTERS:
 		{
 			wxLogInfo( _( "Converting cue scheet to XML format" ) );
-			wxSharedPtr< wxXmlCueSheetRenderer > pXmlRenderer = GetXmlRenderer(
-					inputFile );
+			wxSharedPtr< wxXmlCueSheetRenderer > pXmlRenderer = GetXmlRenderer(	inputFile );
 
 			if ( pXmlRenderer->Render( cueSheet ) )
 			{
@@ -225,8 +226,20 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, wxCueSheet& cueSheet
 		}
 
 		case wxConfiguration::RENDER_WAV2IMG_CUE_POINTS:
-		wxLogError( _( "Currentrly this rendering mode is not implemented" ) );
-		return 1;
+		{
+			wxFileName outputFile( m_cfg.GetOutputFile( inputFile ) );
+
+			wxCuePointsRenderer renderer( m_cfg );
+			renderer.RenderDisc( cueSheet );
+
+			wxLogInfo( _( "Saving cue points to \u201C%s\u201D" ), outputFile.GetFullName() );
+			if ( !renderer.Save( outputFile ) )
+			{
+				return 1;
+			}
+
+			break;
+		}
 	}
 
 	return 0;

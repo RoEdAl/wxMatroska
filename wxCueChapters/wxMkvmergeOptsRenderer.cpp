@@ -13,13 +13,14 @@
 #include <wxCueFile/wxTextCueSheetRenderer.h>
 #include "wxConfiguration.h"
 #include "wxInputFile.h"
+#include "wxPrimitiveRenderer.h"
 #include "wxMkvmergeOptsRenderer.h"
 #include "wxApp.h"
 
 // ===============================================================================
 
 wxMkvmergeOptsRenderer::wxMkvmergeOptsRenderer( const wxConfiguration& cfg ):
-	m_cfg( cfg )
+	wxPrimitiveRenderer( cfg )
 {}
 
 const wxFileName& wxMkvmergeOptsRenderer::GetMkvmergeOptsFile() const
@@ -598,26 +599,3 @@ bool wxMkvmergeOptsRenderer::Save()
 		return false;
 	}
 }
-
-void wxMkvmergeOptsRenderer::save_string_to_stream( wxTextOutputStream& stream, const wxString& s )
-{
-	wxTextInputStreamOnString tis( s );
-	wxString				  sLine;
-
-	while ( !tis.Eof() )
-	{
-		sLine = ( *tis ).ReadLine();
-
-		if ( sLine.IsEmpty() )
-		{
-			stream << endl;
-		}
-		else
-		{
-			stream << sLine << endl;
-		}
-	}
-
-	stream.Flush();
-}
-
