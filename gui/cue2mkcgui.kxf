@@ -1111,7 +1111,7 @@
 							<properties>
 								<property name="Left" vt="Int16">280</property>
 								<property name="Top" vt="Int8">0</property>
-								<property name="Width" vt="Int16">225</property>
+								<property name="Width" vt="Int16">169</property>
 								<property name="Height" vt="Int8">113</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">32</property>
@@ -1122,7 +1122,7 @@
 								<property name="Font.Name" vt="String">Microsoft Sans Serif</property>
 								<property name="Font.Style" vt="Set"/>
 								<property name="TabOrder" vt="Int8">0</property>
-								<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+								<property name="Resizing" vt="Set">DockRight, DockTop, DockWidth, DockHeight</property>
 							</properties>
 							<components>
 								<object type="TALabel" name="LabelDce">
@@ -1137,7 +1137,7 @@
 										<property name="HaveVariable" vt="False">False</property>
 										<property name="CtrlStyle" vt="Int32">1342178048</property>
 										<property name="CtrlExStyle" vt="Int8">0</property>
-										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+										<property name="Resizing" vt="Set">DockRight, DockTop, DockWidth, DockHeight</property>
 									</properties>
 									<components/>
 								</object>
@@ -1152,7 +1152,7 @@
 										<property name="Text" vt="String">cue</property>
 										<property name="CtrlStyle" vt="Int32">1342242944</property>
 										<property name="CtrlExStyle" vt="Int16">512</property>
-										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+										<property name="Resizing" vt="Set">DockRight, DockTop, DockWidth, DockHeight</property>
 									</properties>
 									<components/>
 								</object>
@@ -1168,7 +1168,7 @@
 										<property name="HaveVariable" vt="False">False</property>
 										<property name="CtrlStyle" vt="Int32">1342178048</property>
 										<property name="CtrlExStyle" vt="Int8">0</property>
-										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+										<property name="Resizing" vt="Set">DockRight, DockTop, DockWidth, DockHeight</property>
 									</properties>
 									<components/>
 								</object>
@@ -1183,7 +1183,7 @@
 										<property name="Text" vt="String">mkc.xml</property>
 										<property name="CtrlStyle" vt="Int32">1342242944</property>
 										<property name="CtrlExStyle" vt="Int16">512</property>
-										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+										<property name="Resizing" vt="Set">DockRight, DockTop, DockWidth, DockHeight</property>
 									</properties>
 									<components/>
 								</object>
@@ -1199,7 +1199,7 @@
 										<property name="HaveVariable" vt="False">False</property>
 										<property name="CtrlStyle" vt="Int32">1342178048</property>
 										<property name="CtrlExStyle" vt="Int8">0</property>
-										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+										<property name="Resizing" vt="Set">DockRight, DockTop, DockWidth, DockHeight</property>
 									</properties>
 									<components/>
 								</object>
@@ -1214,7 +1214,7 @@
 										<property name="Text" vt="String">mkt.xml</property>
 										<property name="CtrlStyle" vt="Int32">1342242944</property>
 										<property name="CtrlExStyle" vt="Int16">512</property>
-										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+										<property name="Resizing" vt="Set">DockRight, DockTop, DockWidth, DockHeight</property>
 									</properties>
 									<components/>
 								</object>
@@ -1230,7 +1230,7 @@
 										<property name="HaveVariable" vt="False">False</property>
 										<property name="CtrlStyle" vt="Int32">1342178048</property>
 										<property name="CtrlExStyle" vt="Int8">0</property>
-										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+										<property name="Resizing" vt="Set">DockRight, DockTop, DockWidth, DockHeight</property>
 									</properties>
 									<components/>
 								</object>
@@ -1245,7 +1245,7 @@
 										<property name="Text" vt="String">opt.txt</property>
 										<property name="CtrlStyle" vt="Int32">1342242944</property>
 										<property name="CtrlExStyle" vt="Int16">512</property>
-										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+										<property name="Resizing" vt="Set">DockRight, DockTop, DockWidth, DockHeight</property>
 									</properties>
 									<components/>
 								</object>
