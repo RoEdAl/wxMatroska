@@ -3,6 +3,7 @@
  */
 #include "StdWx.h"
 #include <sndfile.h>
+#include <wxConsoleApp/MyLogStderr.h>
 #include <wxEncodingDetection/wxEncodingDetection.h>
 #include "FloatArray.h"
 #include "LogarithmicScale.h"
@@ -35,22 +36,22 @@
 
 // ===============================================================================
 
-const wxChar wxMyApp::APP_NAME[]		= wxS( "wav2img" );
-const wxChar wxMyApp::APP_VERSION[]		= wxS( "1.0" );
+const wxChar wxMyApp::APP_NAME[]	= wxS( "wav2img" );
+const wxChar wxMyApp::APP_VERSION[] = wxS( "1.0" );
 
 // ===============================================================================
 
-const wxChar wxMyApp::CMD_FFMPEG[]				= wxS( "FFMPEG" );
-const wxChar wxMyApp::CMD_AUDIO[]				= wxS( "AUDIO" );
-const wxChar wxMyApp::CMD_INPUT[]				= wxS( "INPUT" );
-const wxChar wxMyApp::CMD_INPUT_OVERLAY[]		= wxS( "INPUT_OVERLAY" );
-const wxChar wxMyApp::CMD_INPUT_DURATION[]		= wxS( "INPUT_DURATION" );
-const wxChar wxMyApp::CMD_INPUT_FRAMES[]		= wxS( "INPUT_FRAMES" );
-const wxChar wxMyApp::CMD_INPUT_RATE[]			= wxS( "INPUT_RATE" );
-const wxChar wxMyApp::CMD_OUTPUT[]				= wxS( "OUTPUT" );
-const wxChar wxMyApp::CMD_KEY_FRAMES[]			= wxS( "KEY_FRAMES" );
+const wxChar wxMyApp::CMD_FFMPEG[]		   = wxS( "FFMPEG" );
+const wxChar wxMyApp::CMD_AUDIO[]		   = wxS( "AUDIO" );
+const wxChar wxMyApp::CMD_INPUT[]		   = wxS( "INPUT" );
+const wxChar wxMyApp::CMD_INPUT_OVERLAY[]  = wxS( "INPUT_OVERLAY" );
+const wxChar wxMyApp::CMD_INPUT_DURATION[] = wxS( "INPUT_DURATION" );
+const wxChar wxMyApp::CMD_INPUT_FRAMES[]   = wxS( "INPUT_FRAMES" );
+const wxChar wxMyApp::CMD_INPUT_RATE[]	   = wxS( "INPUT_RATE" );
+const wxChar wxMyApp::CMD_OUTPUT[]		   = wxS( "OUTPUT" );
+const wxChar wxMyApp::CMD_KEY_FRAMES[]	   = wxS( "KEY_FRAMES" );
 
-const wxChar wxMyApp::BACKGROUND_IMG[]		= wxS( "background.png" );
+const wxChar wxMyApp::BACKGROUND_IMG[] = wxS( "background.png" );
 
 // ===============================================================================
 
@@ -75,9 +76,10 @@ static wxString get_libsndfile_version()
 static wxString get_format_name( int nFormat )
 {
 	SF_FORMAT_INFO fm_info;
+
 	fm_info.format = nFormat;
 
-	int nRes = sf_command( NULL, SFC_GET_FORMAT_INFO, &fm_info, sizeof(SF_FORMAT_INFO) );
+	int nRes = sf_command( NULL, SFC_GET_FORMAT_INFO, &fm_info, sizeof ( SF_FORMAT_INFO ) );
 
 	return wxString( fm_info.name );
 }
@@ -175,7 +177,6 @@ bool wxMyApp::OnInit()
 	m_pColourDatabase.reset( new wxColourDatabase() );
 	wxTheColourDatabase = m_pColourDatabase.get();
 	InitImageHandlers();
-
 
 	if ( !MyAppConsole::OnInit() )
 	{
@@ -411,11 +412,11 @@ static wxImage draw_progress( MemoryGraphicsContext& mgc, const NinePatchBitmap&
 		pGc->SetPen( wxNullPen );
 
 		{
-			const wxSize& imgSize = mgc.GetSize();
-			wxGraphicsPath path = pGc->CreatePath();
+			const wxSize&  imgSize = mgc.GetSize();
+			wxGraphicsPath path	   = pGc->CreatePath();
 			path.AddRectangle( 0, 0, imgSize.GetWidth(), imgSize.GetHeight() );
 
-			pGc->SetBrush( wxColour( 0,0,0, wxALPHA_TRANSPARENT ) );
+			pGc->SetBrush( wxColour( 0, 0, 0, wxALPHA_TRANSPARENT ) );
 			pGc->FillPath( path );
 		}
 
@@ -436,9 +437,9 @@ static wxImage draw_progress( MemoryGraphicsContext& mgc, const NinePatchBitmap&
 			}
 		}
 
-		if ( nWidth == 0 )
-		{ // fully transparent bitmap looses transparency during conversion to wxImage
-			pGc->SetBrush( wxColour( 255,255,255,1 ) );
+		if ( nWidth == 0 )	// fully transparent bitmap looses transparency during conversion to wxImage
+		{
+			pGc->SetBrush( wxColour( 255, 255, 255, 1 ) );
 			wxGraphicsPath path = pGc->CreatePath();
 			path.AddRectangle( 0, 0, 3, 3 );
 			pGc->FillPath( path );
@@ -510,9 +511,9 @@ static inline wxString quote_str( const wxString& s )
 
 static inline size_t replace_str( wxString& s, const wxChar* pszReplacement, const wxString& sValue )
 {
-	return s.Replace( 
-		wxString::Format( "$%s$", pszReplacement ),
-		quote_str( sValue ) );
+	return s.Replace(
+			wxString::Format( "$%s$", pszReplacement ),
+			quote_str( sValue ) );
 }
 
 static wxString get_key_frames( const wxTimeSpanArray& cuePoints )
@@ -520,7 +521,7 @@ static wxString get_key_frames( const wxTimeSpanArray& cuePoints )
 	wxASSERT( cuePoints.Count() > 1u );
 
 	wxString s;
-	for( wxTimeSpanArray::const_iterator i = cuePoints.begin(), end = --cuePoints.end(); i != end; i++ )
+	for ( wxTimeSpanArray::const_iterator i = cuePoints.begin(), end = --cuePoints.end(); i != end; i++ )
 	{
 		s += i->Format( "%S.%l" );
 		s += ',';
@@ -530,12 +531,12 @@ static wxString get_key_frames( const wxTimeSpanArray& cuePoints )
 }
 
 static bool run_ffmpeg(
-	const wxFileName& workDir,
-	const wxConfiguration& cfg,
-	wxUint32 nNumberOfPictures,
-	wxUint32 nTrackDurationSec,
-	bool bUseCuePoints, const wxTimeSpanArray& cuePoints
-)
+		const wxFileName& workDir,
+		const wxConfiguration& cfg,
+		wxUint32 nNumberOfPictures,
+		wxUint32 nTrackDurationSec,
+		bool bUseCuePoints, const wxTimeSpanArray& cuePoints
+		)
 {
 	wxFileName fn( cfg.GetGetCommandTemplateFile() );
 
@@ -561,6 +562,7 @@ static bool run_ffmpeg(
 	}
 
 	wxFileName fnOut( cfg.GetOutputFile() );
+
 	if ( fnOut.IsRelative() )
 	{
 		if ( !fnOut.MakeAbsolute() )
@@ -577,6 +579,7 @@ static bool run_ffmpeg(
 	replace_str( sCmdLine, wxMyApp::CMD_INPUT_FRAMES, wxString::Format( "%u", nNumberOfPictures ) );
 	replace_str( sCmdLine, wxMyApp::CMD_INPUT_RATE, wxString::Format( "%u/%u", nNumberOfPictures, nTrackDurationSec ) );
 	replace_str( sCmdLine, wxMyApp::CMD_OUTPUT, fnOut.GetFullPath() );
+
 	if ( bUseCuePoints )
 	{
 		replace_str( sCmdLine, wxMyApp::CMD_KEY_FRAMES, get_key_frames( cuePoints ) );
@@ -613,139 +616,139 @@ static bool run_ffmpeg(
 	}
 }
 
-class AnimationThread :public wxThread
+class AnimationThread:
+	public wxThread
 {
 	public:
 
-	AnimationThread(
-		int nThreadNumber,
-		volatile wxUint32& nWidth,
-		wxUint32 nMaxWidth,
-		wxAtomicInt& nErrorCounter,
-		wxCriticalSection& critSect,
-		const wxSize& imgSize,
-		const NinePatchBitmap& npb,
-		const wxRect2DIntArray& rects,
-		wxImageResizeQuality eResizeQuality,
-		const wxFileName& workDir,
-		const wxConfiguration& cfg
-	)
-		:wxThread( wxTHREAD_JOINABLE ),
-		m_nThreadNumber( nThreadNumber ),
-		m_nWidth( nWidth ),
-		m_nMaxWidth( nMaxWidth ),
-		m_nErrorCounter( nErrorCounter ),
-		m_critSect( critSect ),
-		m_imgSize( imgSize ),
-		m_mgc( imgSize, 32, true ),
-		m_npb( npb ),
-		m_rects( rects ),
-		m_eResizeQuality( eResizeQuality ),
-		m_workDir( workDir ),
-		m_cfg( cfg )
-	{}
+		AnimationThread( int nThreadNumber,
+						 volatile wxUint32& nWidth,
+						 wxUint32 nMaxWidth,
+						 wxAtomicInt& nErrorCounter,
+						 wxCriticalSection& critSect,
+						 const wxSize& imgSize,
+						 const NinePatchBitmap& npb,
+						 const wxRect2DIntArray& rects,
+						 wxImageResizeQuality eResizeQuality,
+						 const wxFileName& workDir,
+						 const wxConfiguration& cfg ):
+			wxThread( wxTHREAD_JOINABLE ),
+			m_nThreadNumber( nThreadNumber ),
+			m_nWidth( nWidth ),
+			m_nMaxWidth( nMaxWidth ),
+			m_nErrorCounter( nErrorCounter ),
+			m_critSect( critSect ),
+			m_imgSize( imgSize ),
+			m_mgc( imgSize, 32, true ),
+			m_npb( npb ),
+			m_rects( rects ),
+			m_eResizeQuality( eResizeQuality ),
+			m_workDir( workDir ),
+			m_cfg( cfg )
+		{}
 
 	protected:
 
-    virtual ExitCode Entry()
-	{
-		wxLogStderr log;
-		wxLog::SetThreadActiveTarget( &log );
-
-		wxString sExt( m_cfg.GetDefaultImageExt() );
-
-		wxFileName fn( m_workDir );
-		fn.SetExt( sExt );
-
-		wxUint32 nWidth;
-		int nSeqCounter = 0;
-		while( GetNextWidth( nWidth ) )
+		virtual ExitCode Entry()
 		{
-			if ( TestDestroy() )
+			MyLogStderr log;
+
+			wxLog::SetThreadActiveTarget( &log );
+
+			wxString sExt( m_cfg.GetDefaultImageExt() );
+
+			wxFileName fn( m_workDir );
+			fn.SetExt( sExt );
+
+			wxUint32 nWidth;
+			int		 nSeqCounter = 0;
+			while ( GetNextWidth( nWidth ) )
 			{
-				return 0;
-			}
-
-
-			fn.SetName( wxString::Format( "seq%05u", nWidth ) );
-
-			wxLogInfo( _( "[thread%d] Creating sequence file \u201C%s\u201D" ), m_nThreadNumber, fn.GetFullName() );
-			wxImage img( DrawProgress( nWidth ) );
-
-			set_image_options( img, m_cfg, fn );
-			wxMemoryOutputStream mos;
-
-			if ( img.SaveFile( mos, wxBITMAP_TYPE_PNG ) )
-			{
-				wxStreamBuffer* sb = mos.GetOutputStreamBuffer();
-				wxFileOutputStream fos( fn.GetFullPath() );
-
-				if ( fos.IsOk() )
+				if ( TestDestroy() )
 				{
-					fos.Write( sb->GetBufferStart(), sb->GetBufferSize() - sb->GetBytesLeft() );
-					fos.Close();
+					return 0;
+				}
+
+				fn.SetName( wxString::Format( "seq%05u", nWidth ) );
+
+				wxLogInfo( _( "[thread%d] Creating sequence file \u201C%s\u201D" ), m_nThreadNumber, fn.GetFullName() );
+				wxImage img( DrawProgress( nWidth ) );
+
+				set_image_options( img, m_cfg, fn );
+				wxMemoryOutputStream mos;
+
+				if ( img.SaveFile( mos, wxBITMAP_TYPE_PNG ) )
+				{
+					wxStreamBuffer*	   sb = mos.GetOutputStreamBuffer();
+					wxFileOutputStream fos( fn.GetFullPath() );
+
+					if ( fos.IsOk() )
+					{
+						fos.Write( sb->GetBufferStart(), sb->GetBufferSize() - sb->GetBytesLeft() );
+						fos.Close();
+					}
+					else
+					{
+						wxLogError( _( "[thread%d] Fail to save sequence %u to file \u201C%s\u201D" ), m_nThreadNumber, nWidth, fn.GetFullName() );
+						wxAtomicInc( m_nErrorCounter );
+						break;
+					}
 				}
 				else
 				{
-					wxLogError( _( "[thread%d] Fail to save sequence %u to file \u201C%s\u201D" ), m_nThreadNumber, nWidth, fn.GetFullName() );
+					wxLogError( _( "[thread%d] Fail to create sequence %u - cannot convert to PNG format" ), m_nThreadNumber, nWidth );
 					wxAtomicInc( m_nErrorCounter );
 					break;
 				}
-			}
-			else
-			{
-				wxLogError( _( "[thread%d] Fail to create sequence %u - cannot convert to PNG format" ), m_nThreadNumber, nWidth );
-				wxAtomicInc( m_nErrorCounter );
-				break;
+
+				nSeqCounter++;
 			}
 
-			nSeqCounter++;
+			wxLogInfo( _( "[thread%d] %d sequences created" ), m_nThreadNumber, nSeqCounter );
+			return (ExitCode)nSeqCounter;
 		}
 
-		wxLogInfo( _("[thread%d] %d sequences created"), m_nThreadNumber, nSeqCounter );
-		return (ExitCode)nSeqCounter;
-	}
+	protected:
+
+		bool GetNextWidth( wxUint32& nWidth )
+		{
+			wxCriticalSectionLocker locker( m_critSect );
+
+			nWidth = m_nWidth++;
+			return ( nWidth < m_nMaxWidth );
+		}
+
+		inline wxImage DrawProgress( wxUint32 nWidth )
+		{
+			return draw_progress( m_mgc, m_npb, m_rects, nWidth, m_eResizeQuality );
+		}
 
 	protected:
 
-	bool GetNextWidth( wxUint32& nWidth )
-	{
-		wxCriticalSectionLocker locker(m_critSect);
-		nWidth = m_nWidth++;
-		return (nWidth < m_nMaxWidth);
-	}
+		int				   m_nThreadNumber;
+		volatile wxUint32& m_nWidth;
+		wxUint32		   m_nMaxWidth;
+		wxAtomicInt&	   m_nErrorCounter;
+		wxCriticalSection& m_critSect;
 
-	inline wxImage DrawProgress( wxUint32 nWidth )
-	{
-		return draw_progress( m_mgc, m_npb, m_rects, nWidth, m_eResizeQuality );
-	}
-
-	protected:
-
-	int m_nThreadNumber;
-	volatile wxUint32& m_nWidth;
-	wxUint32 m_nMaxWidth;
-	wxAtomicInt& m_nErrorCounter;
-	wxCriticalSection& m_critSect;
-
-	wxSize m_imgSize;
-	MemoryGraphicsContext m_mgc;
-	NinePatchBitmap m_npb;
-	wxRect2DIntArray m_rects;
-	wxImageResizeQuality m_eResizeQuality;
-	wxFileName m_workDir;
-	const wxConfiguration& m_cfg;
+		wxSize				   m_imgSize;
+		MemoryGraphicsContext  m_mgc;
+		NinePatchBitmap		   m_npb;
+		wxRect2DIntArray	   m_rects;
+		wxImageResizeQuality   m_eResizeQuality;
+		wxFileName			   m_workDir;
+		const wxConfiguration& m_cfg;
 };
 
 static bool create_animation(
-	const wxFileName& workDir,
-	const wxConfiguration& cfg,
-	const wxImage& img,
-	const NinePatchBitmap& npb,
-	const wxRect2DIntArray& rects,
-	wxUint32 nTrackDuration,
-	bool bUseCuePoints, const wxTimeSpanArray& cuePoints
-)
+		const wxFileName& workDir,
+		const wxConfiguration& cfg,
+		const wxImage& img,
+		const NinePatchBitmap& npb,
+		const wxRect2DIntArray& rects,
+		wxUint32 nTrackDuration,
+		bool bUseCuePoints, const wxTimeSpanArray& cuePoints
+		)
 {
 	wxASSERT( rects.GetCount() > 0 );
 
@@ -768,39 +771,41 @@ static bool create_animation(
 	wxUint32 nMaxWidth = rects[ 0 ].GetSize().GetWidth();
 
 	int nCpuCount = -1;
+
 	if ( cfg.UseWorkerThreads() )
 	{
 		nCpuCount = wxThread::GetCPUCount();
 	}
 
-	if ( nCpuCount > 1 )
-	{ // many threads
-		volatile wxUint32 nWidth = 0u;
-		wxAtomicInt nErrorCounter = 0;
+	if ( nCpuCount > 1 )// many threads
+	{
+		volatile wxUint32 nWidth		= 0u;
+		wxAtomicInt		  nErrorCounter = 0;
 		wxCriticalSection critSect;
 
 		wxThread** ta = new wxThread*[ nCpuCount ];
-		for( int i = 0; i < nCpuCount; i++ )
+		for ( int i = 0; i < nCpuCount; i++ )
 		{
-			ta[i] = NULL;
+			ta[ i ] = NULL;
 		}
 
-		for( int i = 0; i < nCpuCount; i++ )
+		for ( int i = 0; i < nCpuCount; i++ )
 		{
-			wxLogInfo( _("Creating working thread %i"), i );
-			ta[i] = new AnimationThread( 
-				i,
-				nWidth, nMaxWidth,
-				nErrorCounter, critSect,
-				img.GetSize(), npb, rects,
-				cfg.GetResizeQuality(),
-				workDir,
-				cfg );
+			wxLogInfo( _( "Creating working thread %i" ), i );
+			ta[ i ] = new AnimationThread(
+					i,
+					nWidth, nMaxWidth,
+					nErrorCounter, critSect,
+					img.GetSize(), npb, rects,
+					cfg.GetResizeQuality(),
+					workDir,
+					cfg );
 
-			wxThreadError e = ta[i]->Create();
+			wxThreadError e = ta[ i ]->Create();
+
 			if ( e != wxTHREAD_NO_ERROR )
 			{
-				wxLogError( _("Fail to create thread %i - error %i"), i, (int)e );
+				wxLogError( _( "Fail to create thread %i - error %i" ), i, (int)e );
 				nErrorCounter++;
 				break;
 			}
@@ -808,24 +813,24 @@ static bool create_animation(
 
 		if ( nErrorCounter == 0 )
 		{
-			wxLogInfo( _("Starting working threads") );
+			wxLogInfo( _( "Starting working threads" ) );
 
-			for( int i = 0; i < nCpuCount; i++ )
+			for ( int i = 0; i < nCpuCount; i++ )
 			{
-				ta[i]->Resume();
+				ta[ i ]->Resume();
 			}
 
-			for( int i=0; i < nCpuCount; i++ )
+			for ( int i = 0; i < nCpuCount; i++ )
 			{
-				ta[i]->Wait();
+				ta[ i ]->Wait();
 			}
 
-			wxLogInfo( _("All working threads finished") );
+			wxLogInfo( _( "All working threads finished" ) );
 		}
 
-		for( int i = 0; i < nCpuCount; i++ )
+		for ( int i = 0; i < nCpuCount; i++ )
 		{
-			wxDELETE( ta[i] );
+			wxDELETE( ta[ i ] );
 		}
 
 		wxDELETEA( ta );
@@ -835,8 +840,8 @@ static bool create_animation(
 			return false;
 		}
 	}
-	else
-	{ // single thread, this thread
+	else// single thread, this thread
+	{
 		wxSize imgSize( img.GetSize() );
 
 		MemoryGraphicsContext mgc( imgSize, 32, true );
@@ -869,11 +874,11 @@ static bool create_animation(
 }
 
 static bool save_image(
-	const wxFileName& fn,
-	const wxConfiguration& cfg,
-	const McGraphicalContextWaveDrawer& mcWaveDrawer,
-	bool bUseCuePoints, const wxTimeSpanArray& cuePoints
-)
+		const wxFileName& fn,
+		const wxConfiguration& cfg,
+		const McGraphicalContextWaveDrawer& mcWaveDrawer,
+		bool bUseCuePoints, const wxTimeSpanArray& cuePoints
+		)
 {
 	if ( cfg.CreateAnimation() )
 	{
@@ -907,13 +912,15 @@ static bool save_image(
 		wxFileName outFn( cfg.GetOutputFile() );
 
 		wxFileName workDir;
-		if ( cfg.RunFfmpeg() )
-		{ // creating sequence in temporary directory
+
+		if ( cfg.RunFfmpeg() )	// creating sequence in temporary directory
+		{
 			workDir.AssignDir( wxStandardPaths::Get().GetTempDir() );
 		}
-		else
-		{ // creating nontemporary image squence
+		else// creating nontemporary image squence
+		{
 			workDir.AssignDir( outFn.GetPath() );
+
 			if ( workDir.IsRelative() )
 			{
 				if ( !workDir.MakeAbsolute() )
@@ -949,15 +956,15 @@ static bool save_image(
 			}
 		}
 
-		bool bRes = create_animation( 
-			workDir,
-			cfg,
-			mcWaveDrawer.GetBitmap(),
-			npb,
-			mcWaveDrawer.GetRects(),
-			mcWaveDrawer.GetTrackDuration(),
-			bUseCuePoints, cuePoints
-		);
+		bool bRes = create_animation(
+				workDir,
+				cfg,
+				mcWaveDrawer.GetBitmap(),
+				npb,
+				mcWaveDrawer.GetRects(),
+				mcWaveDrawer.GetTrackDuration(),
+				bUseCuePoints, cuePoints
+				);
 
 		if ( cfg.RunFfmpeg() && cfg.DeleteTemporaryFiles() && !workDir.Rmdir( wxPATH_RMDIR_RECURSIVE ) )
 		{
@@ -1035,14 +1042,14 @@ static bool save_rendered_wave( McChainWaveDrawer& waveDrawer, const wxConfigura
 
 static void html_renderer()
 {
-	wxArrayInt ai;
-	int n;
-	MemoryGraphicsContext mgc( wxSize(800,600), 32, false );
+	wxArrayInt			  ai;
+	int					  n;
+	MemoryGraphicsContext mgc( wxSize( 800, 600 ), 32, false );
 
 	{
 		wxScopedPtr< wxGraphicsContext > pGc( mgc.CreateGraphicsContext() );
-		wxGCDC dc( pGc.get() );
-		wxHtmlDCRenderer wdc;
+		wxGCDC							 dc( pGc.get() );
+		wxHtmlDCRenderer				 wdc;
 		wdc.SetDC( &dc );
 		wdc.SetSize( 800, 600 );
 		wdc.SetHtmlText( "<h1 ALIGN=\"RIGHT\">Hello world!</h1>" );
@@ -1056,27 +1063,37 @@ static void html_renderer()
 
 int wxMyApp::OnRun()
 {
-	switch( m_cfg.GetInfoSubject() )
+	switch ( m_cfg.GetInfoSubject() )
 	{
 		case wxConfiguration::INFO_VERSION:
-		InfoVersion( *wxMessageOutput::Get() );
-		return 0;
+		{
+			InfoVersion( *wxMessageOutput::Get() );
+			return 0;
+		}
 
 		case wxConfiguration::INFO_COLOUR_FORMAT:
-		InfoColourFormat( *wxMessageOutput::Get() );
-		return 0;
+		{
+			InfoColourFormat( *wxMessageOutput::Get() );
+			return 0;
+		}
 
 		case wxConfiguration::INFO_CUE_POINT_FORMAT:
-		InfoCuePointFormat( *wxMessageOutput::Get() );
-		return 0;
+		{
+			InfoCuePointFormat( *wxMessageOutput::Get() );
+			return 0;
+		}
 
 		case wxConfiguration::INFO_CMD_LINE_TEMPLATE:
-		InfoCmdLineTemplate( *wxMessageOutput::Get() );
-		return 0;
+		{
+			InfoCmdLineTemplate( *wxMessageOutput::Get() );
+			return 0;
+		}
 
 		case wxConfiguration::INFO_SYSTEM_SETTINGS:
-		InfoSystemSettings( *wxMessageOutput::Get() );
-		return 0;
+		{
+			InfoSystemSettings( *wxMessageOutput::Get() );
+			return 0;
+		}
 
 		case wxConfiguration::INFO_LICENSE:
 		ShowLicense( *wxMessageOutput::Get() );
@@ -1128,11 +1145,11 @@ int wxMyApp::OnRun()
 
 	const SF_INFO& sfInfo	= sfReader.GetInfo();
 	wxTimeSpan	   duration = wxTimeSpan::Milliseconds( sfInfo.frames * 1000 / sfInfo.samplerate );
-	wxLogMessage( _("Format: %s, samplerate: %uHz, channels: %u, duration: %s"),
-		get_format_name( sfInfo.format ),
-		sfInfo.samplerate,
-		sfInfo.channels,
-		duration.Format() );
+	wxLogMessage( _( "Format: %s, samplerate: %uHz, channels: %u, duration: %s" ),
+			get_format_name( sfInfo.format ),
+			sfInfo.samplerate,
+			sfInfo.channels,
+			duration.Format() );
 
 	if ( m_cfg.HasCuePointsFile() || m_cfg.GenerateCuePoints() )
 	{
@@ -1162,3 +1179,4 @@ int wxMyApp::OnRun()
 	wxLogInfo( _( "Waveform drawed" ) );
 	return save_rendered_wave( *pWaveDrawer, m_cfg, bUseCuePoints, cuePoints ) ? 0 : 1;
 }
+

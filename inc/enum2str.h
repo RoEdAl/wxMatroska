@@ -1,12 +1,12 @@
 /*
-	enum2str.h
-*/
+ *      enum2str.h
+ */
 
 #ifndef _ENUM_2_STR_H_
 #define _ENUM_2_STR_H_
 
-template<typename T, typename D, size_t SIZE>
-static bool from_string( const wxString& s, T& e, const D (&desc)[SIZE] )
+template< typename T, typename D, size_t SIZE >
+static bool from_string( const wxString& s, T& e, const D( &desc )[ SIZE ] )
 {
 	for ( size_t i = 0; i < SIZE; i++ )
 	{
@@ -20,8 +20,8 @@ static bool from_string( const wxString& s, T& e, const D (&desc)[SIZE] )
 	return false;
 }
 
-template<typename T, typename D, size_t SIZE>
-static wxString to_string( T e, const D (&desc)[SIZE] )
+template< typename T, typename D, size_t SIZE >
+static wxString to_string( T e, const D( &desc )[ SIZE ] )
 {
 	for ( size_t i = 0; i < SIZE; i++ )
 	{
@@ -34,8 +34,8 @@ static wxString to_string( T e, const D (&desc)[SIZE] )
 	return wxString::Format( "<%d>", static_cast< int >( e ) );
 }
 
-template<typename D, size_t SIZE>
-static wxString get_texts( const D (&desc)[SIZE] )
+template< typename D, size_t SIZE >
+static wxString get_texts( const D( &desc )[ SIZE ] )
 {
 	wxString s;
 
@@ -48,3 +48,4 @@ static wxString get_texts( const D (&desc)[SIZE] )
 }
 
 #endif
+

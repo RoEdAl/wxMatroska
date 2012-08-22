@@ -4,10 +4,11 @@
 #include "StdWx.h"
 #include "MemoryGraphicsContext.h"
 
-MemoryGraphicsContext::MemoryGraphicsContext( const wxSize& imgSize, int nImgColourDepth, bool bCreateMemContext )
-	:m_imgSize( imgSize )
+MemoryGraphicsContext::MemoryGraphicsContext( const wxSize& imgSize, int nImgColourDepth, bool bCreateMemContext ):
+	m_imgSize( imgSize )
 {
 	m_bmp = wxBitmap( imgSize, nImgColourDepth );
+
 	if ( bCreateMemContext )
 	{
 		m_pMemDc.reset( new wxMemoryDC( m_bmp ) );

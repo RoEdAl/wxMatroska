@@ -1,85 +1,82 @@
 /*
-	MyAppTraits.cpp
-*/
+ *      MyAppTraits.cpp
+ */
 #include "StdWx.h"
+#include <wxConsoleApp/MyMessageOutputStderr.h>
+#include <wxConsoleApp/MyLogStderr.h>
 #include <wxConsoleApp/MyAppTraits.h>
 
-namespace
+// =======================================================================
+
+MyMessageOutputStderr::MyMessageOutputStderr( FILE* fp )
 {
-
-class MyMessageOutputStderr : public wxMessageOutput
-{
-public:
-
-    MyMessageOutputStderr(FILE *fp = stderr) : m_fp(fp) { }
-
-    virtual void Output(const wxString& str)
+	if ( fp == NULL )
 	{
-		if ( AppendLineFeedIfNeeded(str) )
-		{
-			wxFputs(str + '\n', m_fp);
-		}
-		else
-		{
-			wxFputs(str, m_fp);
-		}
-		fflush(m_fp);
+		m_fp = stderr;
 	}
-
-protected:
-
-    // return the string with "\n" appended if it doesn't already terminate
-    // with it (in which case it's returned unchanged)
-    static bool AppendLineFeedIfNeeded(const wxString& str)
+	else
 	{
-		return ( str.empty() || *str.rbegin() != '\n' );
+		m_fp = fp;
 	}
-
-    FILE *m_fp;
-};
-
-class MyLogStderr :public wxLog
-{
-	public:
-
-	MyLogStderr(FILE *fp = stderr) :m_fp( fp )
-	{
-		// under GUI systems such as Windows or Mac, programs usually don't have
-		// stderr at all, so show the messages also somewhere else, typically in
-		// the debugger window so that they go at least somewhere instead of being
-		// simply lost
-		if ( m_fp == stderr )
-		{
-			wxAppTraits *traits = wxTheApp ? wxTheApp->GetTraits() : NULL;
-			if ( traits && !traits->HasStderr() )
-			{
-				m_pAdditionalMessageOutput.reset( new wxMessageOutputDebug() );
-			}
-		}
-	}
-
-	void DoLogText(const wxString& msg)
-	{
-		wxFputs(msg + '\n', m_fp);
-		fflush(m_fp);
-
-		if ( m_pAdditionalMessageOutput )
-		{
-			m_pAdditionalMessageOutput->Output(msg + wxS('\n'));
-		}
-	}
-
-    FILE *m_fp;
-	wxScopedPtr<wxMessageOutput> m_pAdditionalMessageOutput;
-};
-
 }
 
-
-MyAppTraits::MyAppTraits(wxAppTraits* pAppTraits)
-	:m_pAppTraits( pAppTraits )
+void MyMessageOutputStderr::Output( const wxString& str )
 {
+	if ( AppendLineFeedIfNeeded( str ) )
+	{
+		wxFputs( str + '\n', m_fp );
+	}
+	else
+	{
+		wxFputs( str, m_fp );
+	}
+	fflush( m_fp );
 }
+
+// =======================================================================
+
+MyLogStderr::MyLogStderr( FILE* fp )
+{
+	if ( fp == NULL )
+	{
+		m_fp = stderr;
+	}
+	else
+	{
+		m_fp = fp;
+	}
+
+	// under GUI systems such as Windows or Mac, programs usually don't have
+	// stderr at all, so show the messages also somewhere else, typically in
+	// the debugger window so that they go at least somewhere instead of being
+	// simply lost
+	if ( m_fp == stderr )
+	{
+		wxAppTraits* traits = wxTheApp ? wxTheApp->GetTraits() : NULL;
+
+		if ( traits && !traits->HasStderr() )
+		{
+			m_pAdditionalMessageOutput.reset( new wxMessageOutputDebug() );
+		}
+	}
+}
+
+void MyLogStderr::DoLogText( const wxString& msg )
+{
+	wxFputs( msg + '\n', m_fp );
+	fflush( m_fp );
+
+	if ( m_pAdditionalMessageOutput )
+	{
+		m_pAdditionalMessageOutput->Output( msg + wxS( '\n' ) );
+	}
+}
+
+// =======================================================================
+
+MyAppTraits::MyAppTraits( wxAppTraits* pAppTraits ):
+	m_pAppTraits( pAppTraits )
+{}
 
 wxEventLoopBase* MyAppTraits::CreateEventLoop()
 {
@@ -89,7 +86,7 @@ wxEventLoopBase* MyAppTraits::CreateEventLoop()
 }
 
 #if wxUSE_TIMER
-wxTimerImpl* MyAppTraits::CreateTimerImpl(wxTimer *timer)
+wxTimerImpl* MyAppTraits::CreateTimerImpl( wxTimer* timer )
 {
 	wxASSERT( m_pAppTraits );
 
@@ -105,13 +102,12 @@ void* MyAppTraits::BeforeChildWaitLoop()
 	return m_pAppTraits->BeforeChildWaitLoop();
 }
 
-void MyAppTraits::AfterChildWaitLoop(void* p)
+void MyAppTraits::AfterChildWaitLoop( void* p )
 {
 	wxASSERT( m_pAppTraits );
 
 	m_pAppTraits->AfterChildWaitLoop( p );
 }
-
 
 #if wxUSE_THREADS
 bool MyAppTraits::DoMessageFromThreadWait()
@@ -121,14 +117,14 @@ bool MyAppTraits::DoMessageFromThreadWait()
 	return m_pAppTraits->DoMessageFromThreadWait();
 }
 
-WXDWORD MyAppTraits::WaitForThread(WXHANDLE handle, int flags)
+WXDWORD MyAppTraits::WaitForThread( WXHANDLE handle, int flags )
 {
 	wxASSERT( m_pAppTraits );
 
 	return m_pAppTraits->WaitForThread( handle, flags );
 }
 
-#endif // wxUSE_THREADS
+#endif	// wxUSE_THREADS
 
 bool MyAppTraits::CanUseStderr()
 {
@@ -137,7 +133,7 @@ bool MyAppTraits::CanUseStderr()
 	return m_pAppTraits->CanUseStderr();
 }
 
-bool MyAppTraits::WriteToStderr(const wxString& s)
+bool MyAppTraits::WriteToStderr( const wxString& s )
 {
 	wxASSERT( m_pAppTraits );
 
@@ -151,24 +147,28 @@ wxEventLoopBase* MyAppTraits::CreateEventLoop()
 
 	return m_pAppTraits->CreateEventLoop();
 }
-#endif // !wxUSE_CONSOLE_EVENTLOOP
+
+#endif	// !wxUSE_CONSOLE_EVENTLOOP
 
 #if wxUSE_LOG
 wxLog* MyAppTraits::CreateLogTarget()
 {
 	wxASSERT( m_pAppTraits );
 
-	return new MyLogStderr();                 
-	//return m_pAppTraits->CreateLogTarget();
+	return new MyLogStderr();
+
+	// return m_pAppTraits->CreateLogTarget();
 }
-#endif // wxUSE_LOG
+
+#endif	// wxUSE_LOG
 
 wxMessageOutput* MyAppTraits::CreateMessageOutput()
 {
 	wxASSERT( m_pAppTraits );
 
 	return new MyMessageOutputStderr();
-	//return m_pAppTraits->CreateMessageOutput();
+
+	// return m_pAppTraits->CreateMessageOutput();
 }
 
 #if wxUSE_FONTMAP
@@ -178,7 +178,8 @@ wxFontMapper* MyAppTraits::CreateFontMapper()
 
 	return m_pAppTraits->CreateFontMapper();
 }
-#endif // wxUSE_FONTMAP
+
+#endif	// wxUSE_FONTMAP
 
 wxRendererNative* MyAppTraits::CreateRenderer()
 {
@@ -187,7 +188,7 @@ wxRendererNative* MyAppTraits::CreateRenderer()
 	return m_pAppTraits->CreateRenderer();
 }
 
-bool MyAppTraits::ShowAssertDialog(const wxString& msg )
+bool MyAppTraits::ShowAssertDialog( const wxString& msg )
 {
 	wxASSERT( m_pAppTraits );
 
@@ -201,7 +202,7 @@ bool MyAppTraits::HasStderr()
 	return m_pAppTraits->HasStderr();
 }
 
-wxPortId MyAppTraits::GetToolkitVersion(int *verMaj, int *verMin) const
+wxPortId MyAppTraits::GetToolkitVersion( int* verMaj, int* verMin ) const
 {
 	wxASSERT( m_pAppTraits );
 

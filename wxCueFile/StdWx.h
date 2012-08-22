@@ -7,8 +7,8 @@
 
 #ifdef WIN32
 #include <targetver.h>
-#define WIN32_LEAN_AND_MEAN																																																																//
-																																																																						//Exclude
+#define WIN32_LEAN_AND_MEAN																																																																																																																																//
+// Exclude
 // rarely-used
 // stuff
 // from
@@ -39,7 +39,8 @@
 #include <aiffproperties.h>
 #include <wavpackproperties.h>
 #include <flacproperties.h>
-//#include <mpegproperties.h>
+
+// #include <mpegproperties.h>
 
 #endif	// _STD_WX_H
 

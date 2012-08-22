@@ -61,13 +61,13 @@ class wxCueSheetReader:
 
 		enum
 		{
-			EC_PARSE_COMMENTS					= 1,
-			EC_ELLIPSIZE_TAGS					= 2,
-			EC_REMOVE_EXTRA_SPACES				= 4,
-			EC_MEDIA_READ_TAGS					= 8,
-			EC_SINGLE_MEDIA_FILE				= 16,
-			EC_FIND_COVER						= 32,
-			EC_FIND_LOG							= 64
+			EC_PARSE_COMMENTS	   = 1,
+			EC_ELLIPSIZE_TAGS	   = 2,
+			EC_REMOVE_EXTRA_SPACES = 4,
+			EC_MEDIA_READ_TAGS	   = 8,
+			EC_SINGLE_MEDIA_FILE   = 16,
+			EC_FIND_COVER		   = 32,
+			EC_FIND_LOG			   = 64
 		};
 
 		bool TestReadFlags( ReadFlags );
@@ -96,9 +96,9 @@ class wxCueSheetReader:
 		wxString				 m_sOneTrackCue;
 
 		// settings
-		bool	 m_bErrorsAsWarnings;
-		wxString m_sLang;
-		wxString m_sAlternateExt;
+		bool	  m_bErrorsAsWarnings;
+		wxString  m_sLang;
+		wxString  m_sAlternateExt;
 		ReadFlags m_nReadFlags;
 
 		// work
@@ -142,11 +142,12 @@ class wxCueSheetReader:
 
 		wxString internalReadCueSheet( wxInputStream& stream, wxMBConv& conv );
 
-		bool ParseCue( const wxCueSheetContent & );
+		bool ParseCue( const wxCueSheetContent& );
+
 		bool ParseCueLine( const wxString &, size_t );
 
-		template<size_t SIZE>
-		bool ParseLine( const wxString &, const wxString &, const PARSE_STRUCT (&)[SIZE] );
+		template< size_t SIZE >
+		bool ParseLine( const wxString&, const wxString&, const PARSE_STRUCT( & )[ SIZE ] );
 
 		void ParseLine( size_t, const wxString &, const wxString & );
 		void ParseCdTextInfo( size_t, const wxString &, const wxString & );
@@ -173,11 +174,12 @@ class wxCueSheetReader:
 
 	protected:
 
-		bool BuildFromSingleMediaFile( const wxDataFile & );
+		bool BuildFromSingleMediaFile( const wxDataFile& );
 		bool ReadTagsFromRelatedFiles();
-		bool ReadTagsFromMediaFile( const wxDataFile&, size_t, size_t );
-		bool FindLog( const wxCueSheetContent & );
-		bool FindCover( const wxCueSheetContent & );
+
+		bool ReadTagsFromMediaFile( const wxDataFile &, size_t, size_t );
+		bool FindLog( const wxCueSheetContent& );
+		bool FindCover( const wxCueSheetContent& );
 
 	public:
 
@@ -192,14 +194,15 @@ class wxCueSheetReader:
 		const wxString&	  GetAlternateExt() const;
 		wxCueSheetReader& SetAlternateExt( const wxString& );
 		ReadFlags GetReadFlags() const;
+
 		wxCueSheetReader& SetReadFlags( ReadFlags );
 
 		// parsing
-		bool ReadCueSheet( const wxString &, bool = true );
-		bool ReadCueSheet( const wxString &, wxMBConv & );
-		bool ReadCueSheet( wxInputStream & );
-		bool ReadCueSheet( wxInputStream &, wxMBConv & );
-		bool ReadEmbeddedCueSheet( const wxString & );
+		bool ReadCueSheet( const wxString&, bool = true );
+		bool ReadCueSheet( const wxString&, wxMBConv& );
+		bool ReadCueSheet( wxInputStream& );
+		bool ReadCueSheet( wxInputStream&, wxMBConv& );
+		bool ReadEmbeddedCueSheet( const wxString& );
 
 		// reading
 		const wxCueSheet& GetCueSheet() const;

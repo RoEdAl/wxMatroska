@@ -58,11 +58,11 @@ class wxConfiguration:
 		bool				 m_bAnimation;
 		AnimationSettings	 m_animationSettings;
 		wxImageResizeQuality m_eResizeQuality;
-		bool m_bRunFfmpeg;
+		bool				 m_bRunFfmpeg;
 		wxFileName			 m_ffmpegDir;
 		wxFileName			 m_cmdTemplate;
 		bool				 m_bDeleteTemporaryFiles;
-		bool				m_bUseWorkerThreads;
+		bool				 m_bUseWorkerThreads;
 
 	protected:
 
@@ -70,15 +70,19 @@ class wxConfiguration:
 		void GetDefaultsFromDisplay();
 
 		static bool FromString( const wxString&, DRAWING_MODE& );
+
 		static wxString ToString( DRAWING_MODE );
 
 		static bool FromString( const wxString&, wxCompositionMode& );
+
 		static wxString ToString( wxCompositionMode );
 
 		static bool FromString( const wxString&, wxImageResizeQuality& );
+
 		static wxString ToString( wxImageResizeQuality );
 
 		static bool FromString( const wxString&, INFO_SUBJECT& );
+
 		static wxString ToString( INFO_SUBJECT );
 
 		static wxString GetResizeQualityTexts();

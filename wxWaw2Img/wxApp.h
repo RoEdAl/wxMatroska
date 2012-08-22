@@ -23,7 +23,6 @@ class wxMyApp:
 
 	protected:
 
-
 		static void InitImageHandlers();
 
 		static void InfoVersion( wxMessageOutput& );

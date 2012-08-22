@@ -231,7 +231,7 @@ bool wxCueSheetReader::TestReadFlags( ReadFlags nMask )
 
 wxString wxCueSheetReader::GetTagLibVersion()
 {
-	return wxString::Format( wxS("TagLib version: %d.%d.%d. Copyright \u00A9 2002 - 2008 by Scott Wheeler"), TAGLIB_MAJOR_VERSION, TAGLIB_MINOR_VERSION, TAGLIB_PATCH_VERSION );
+	return wxString::Format( wxS( "TagLib version: %d.%d.%d. Copyright \u00A9 2002 - 2008 by Scott Wheeler" ), TAGLIB_MAJOR_VERSION, TAGLIB_MINOR_VERSION, TAGLIB_PATCH_VERSION );
 }
 
 wxCueSheetReader::wxCueSheetReader( void ):
@@ -249,7 +249,7 @@ wxCueSheetReader::wxCueSheetReader( void ):
 	m_reTrackComment( wxS( "cue[[.hyphen.][.underscore.][.low-line.]]track([[:digit:]]{1,2})[[.underscore.][.low-line.]]([[:alpha:][.hyphen.][.underscore.][.low-line.][.space.]]+)" ), wxRE_ADVANCED | wxRE_ICASE ),
 	m_reCommentMeta( wxS( "\\A([[.quotation-mark.]]{0,1})([[:upper:][.hyphen.][.underscore.][:space:][.low-line.]]+)\\1[[:space:]]+([^[:space:]].+)\\Z" ), wxRE_ADVANCED ),
 	m_bErrorsAsWarnings( true ),
-	m_nReadFlags( EC_PARSE_COMMENTS | EC_ELLIPSIZE_TAGS | EC_REMOVE_EXTRA_SPACES |EC_MEDIA_READ_TAGS | EC_FIND_COVER | EC_FIND_LOG ),
+	m_nReadFlags( EC_PARSE_COMMENTS | EC_ELLIPSIZE_TAGS | EC_REMOVE_EXTRA_SPACES | EC_MEDIA_READ_TAGS | EC_FIND_COVER | EC_FIND_LOG ),
 	m_sOneTrackCue( GetOneTrackCue() )
 {
 	wxASSERT( m_reKeywords.IsValid() );
@@ -641,8 +641,8 @@ wxString wxCueSheetReader::Unquote( const wxString& qs )
 	return wxCueTag::UnEscape( m_unquoter.UnquoteAndCorrect( qs ) );
 }
 
-template<size_t SIZE>
-bool wxCueSheetReader::ParseLine( const wxString & sToken, const wxString & sRest, const PARSE_STRUCT (&pa)[SIZE] )
+template< size_t SIZE >
+bool wxCueSheetReader::ParseLine( const wxString& sToken, const wxString& sRest, const PARSE_STRUCT( &pa )[ SIZE ] )
 {
 	for ( size_t i = 0; i < SIZE; i++ )
 	{
@@ -1126,7 +1126,7 @@ bool wxCueSheetReader::ReadTagsFromRelatedFiles()
 	return bRes;
 }
 
- bool wxCueSheetReader::ReadTagsFromMediaFile( const wxDataFile& _dataFile, size_t nTrackFrom, size_t nTrackTo )
+bool wxCueSheetReader::ReadTagsFromMediaFile( const wxDataFile& _dataFile, size_t nTrackFrom, size_t nTrackTo )
 {
 	if ( _dataFile.HasRealFileName() )
 	{
@@ -1136,6 +1136,7 @@ bool wxCueSheetReader::ReadTagsFromRelatedFiles()
 	else
 	{
 		wxDataFile dataFile( _dataFile );
+
 		if ( dataFile.GetInfo() )
 		{
 			AppendTags( dataFile.GetTags(), nTrackFrom, nTrackTo );
@@ -1143,7 +1144,7 @@ bool wxCueSheetReader::ReadTagsFromRelatedFiles()
 		}
 		else
 		{
-			wxLogError( _("Cannot read metadata from \u201C%s\u201D"), dataFile.GetFileName().GetFullName() );
+			wxLogError( _( "Cannot read metadata from \u201C%s\u201D" ), dataFile.GetFileName().GetFullName() );
 			return false;
 		}
 	}

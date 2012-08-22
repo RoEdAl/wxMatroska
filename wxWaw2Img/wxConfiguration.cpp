@@ -483,9 +483,11 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 			}
 
 			default:
-			bRes = false;
-			wxLogWarning( _( "Invalid image color depth - %d" ), v );
-			break;
+			{
+				bRes = false;
+				wxLogWarning( _( "Invalid image color depth - %d" ), v );
+				break;
+			}
 		}
 	}
 
@@ -1152,3 +1154,4 @@ bool wxConfiguration::UseWorkerThreads() const
 {
 	return m_bUseWorkerThreads;
 }
+

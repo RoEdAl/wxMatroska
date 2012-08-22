@@ -71,85 +71,83 @@ bool AudioRenderer::GenerateAudio( const wxFileName& filename, wxUint32 nFrequen
 
 namespace
 {
+	class QGen
+	{
+		public:
 
-class QGen
-{
-	public:
-
-		QGen( wxUint32 nLen, wxFloat32 fBaseline ):
-			m_nLen( nLen ),
-			m_sign( true ), m_nPos( 0 ), m_nSamplesCounter( wxULL( 0 ) ),
-			m_ar1( new wxFloat32[ nLen ] ), m_ar2( new wxFloat32[ nLen ] )
-		{
-			wxASSERT( fBaseline >= 0.0f && fBaseline <= 1.0f );
-
-			if ( fBaseline <= 0.5f )
+			QGen( wxUint32 nLen, wxFloat32 fBaseline ):
+				m_nLen( nLen ),
+				m_sign( true ), m_nPos( 0 ), m_nSamplesCounter( wxULL( 0 ) ),
+				m_ar1( new wxFloat32[ nLen ] ), m_ar2( new wxFloat32[ nLen ] )
 			{
-				m_fDownFactor = fBaseline / ( 1.0f - fBaseline );
-				m_fUpFactor	  = 1.0f;
-			}
-			else
-			{
-				m_fUpFactor	  = ( 1.0f - fBaseline ) / fBaseline;
-				m_fDownFactor = 1.0f;
-			}
-		}
+				wxASSERT( fBaseline >= 0.0f && fBaseline <= 1.0f );
 
-		void SetAmplitude( wxFloat32 fAmplitude )
-		{
-			wxFloat32 fUpAmp   = fAmplitude * m_fUpFactor;
-			wxFloat32 fDownAmp = -fAmplitude * m_fDownFactor;
-
-			for ( wxUint32 i = 0; i < m_nLen; i++ )
-			{
-				m_ar1[ i ] = fUpAmp;
-				m_ar2[ i ] = fDownAmp;
-			}
-		}
-
-		void Generate( SNDFILE* sf, wxUint32 nNumberOfSamples )
-		{
-			while ( nNumberOfSamples > 0 )
-			{
-				wxUint32 n			 = m_nLen - m_nPos;
-				bool	 sign_change = true;
-
-				if ( n > nNumberOfSamples )
+				if ( fBaseline <= 0.5f )
 				{
-					n			= nNumberOfSamples;
-					sign_change = false;
+					m_fDownFactor = fBaseline / ( 1.0f - fBaseline );
+					m_fUpFactor	  = 1.0f;
 				}
-
-				sf_writef_float( sf, ( m_sign ? m_ar1 : m_ar2 ).get(), n );
-
-				if ( sign_change )
+				else
 				{
-					m_sign = !m_sign;
+					m_fUpFactor	  = ( 1.0f - fBaseline ) / fBaseline;
+					m_fDownFactor = 1.0f;
 				}
-
-				nNumberOfSamples  -= n;
-				m_nPos			   = ( m_nPos + n ) % m_nLen;
-				m_nSamplesCounter += n;
 			}
-		}
 
-		wxUint64 GetNumberOfSavedSamples() const
-		{
-			return m_nSamplesCounter;
-		}
+			void SetAmplitude( wxFloat32 fAmplitude )
+			{
+				wxFloat32 fUpAmp   = fAmplitude * m_fUpFactor;
+				wxFloat32 fDownAmp = -fAmplitude * m_fDownFactor;
 
-	protected:
+				for ( wxUint32 i = 0; i < m_nLen; i++ )
+				{
+					m_ar1[ i ] = fUpAmp;
+					m_ar2[ i ] = fDownAmp;
+				}
+			}
 
-		wxUint32	 m_nLen;
-		wxFloat32	 m_fUpFactor;
-		wxFloat32	 m_fDownFactor;
-		wxFloatArray m_ar1;
-		wxFloatArray m_ar2;
-		bool		 m_sign;
-		wxUint32	 m_nPos;
-		wxUint64	 m_nSamplesCounter;
-};
+			void Generate( SNDFILE* sf, wxUint32 nNumberOfSamples )
+			{
+				while ( nNumberOfSamples > 0 )
+				{
+					wxUint32 n			 = m_nLen - m_nPos;
+					bool	 sign_change = true;
 
+					if ( n > nNumberOfSamples )
+					{
+						n			= nNumberOfSamples;
+						sign_change = false;
+					}
+
+					sf_writef_float( sf, ( m_sign ? m_ar1 : m_ar2 ).get(), n );
+
+					if ( sign_change )
+					{
+						m_sign = !m_sign;
+					}
+
+					nNumberOfSamples  -= n;
+					m_nPos			   = ( m_nPos + n ) % m_nLen;
+					m_nSamplesCounter += n;
+				}
+			}
+
+			wxUint64 GetNumberOfSavedSamples() const
+			{
+				return m_nSamplesCounter;
+			}
+
+		protected:
+
+			wxUint32	 m_nLen;
+			wxFloat32	 m_fUpFactor;
+			wxFloat32	 m_fDownFactor;
+			wxFloatArray m_ar1;
+			wxFloatArray m_ar2;
+			bool		 m_sign;
+			wxUint32	 m_nPos;
+			wxUint64	 m_nSamplesCounter;
+	};
 }
 
 bool AudioRenderer::GenerateAudio( const wxFileName& filename, const AudioColumnArray& ac, wxUint32 nSamplerate, wxUint32 nFrequency, wxFloat32 fBaseline )

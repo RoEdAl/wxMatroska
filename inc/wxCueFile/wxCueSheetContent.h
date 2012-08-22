@@ -30,7 +30,7 @@ class wxCueSheetContent:
 
 		bool HasSource() const;
 		const wxDataFile& GetSource() const;
-		const wxString& GetValue() const;
+		const wxString&	  GetValue() const;
 
 	protected:
 

@@ -17,8 +17,8 @@
 
 // ===============================================================================
 
-const wxChar wxMyApp::APP_NAME[]		  = wxT( "cue2mkc" );
-const wxChar wxMyApp::APP_VERSION[]		  = wxT( "0.95" );
+const wxChar wxMyApp::APP_NAME[]	= wxT( "cue2mkc" );
+const wxChar wxMyApp::APP_VERSION[] = wxT( "0.95" );
 
 // ===============================================================================
 
@@ -155,7 +155,7 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, wxCueSheet& cueSheet
 		}
 	}
 
-	switch( m_cfg.GetRenderMode() )
+	switch ( m_cfg.GetRenderMode() )
 	{
 		case wxConfiguration::RENDER_CUE_SHEET:
 		{
@@ -176,8 +176,8 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, wxCueSheet& cueSheet
 			{
 				return 1;
 			}
+			break;
 		}
-		break;
 
 		case wxConfiguration::RENDER_MATROSKA_CHAPTERS:
 		{
@@ -221,11 +221,11 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, wxCueSheet& cueSheet
 				wxLogError( _( "Fail to export cue sheet to Matroska chapters" ) );
 				return 1;
 			}
+			break;
 		}
-		break;
 
 		case wxConfiguration::RENDER_WAV2IMG_CUE_POINTS:
-		wxLogError( _("Currentrly this rendering mode is not implemented") );
+		wxLogError( _( "Currentrly this rendering mode is not implemented" ) );
 		return 1;
 	}
 
@@ -289,25 +289,30 @@ int wxMyApp::ProcessCueFile( const wxInputFile& inputFile, const wxTagSynonimsCo
 
 int wxMyApp::OnRun()
 {
-	switch( m_cfg.GetInfoSubject() )
+	switch ( m_cfg.GetInfoSubject() )
 	{
 		case wxConfiguration::INFO_VERSION:
-		InfoVersion( *wxMessageOutput::Get() );
-		return 0;
+		{
+			InfoVersion( *wxMessageOutput::Get() );
+			return 0;
+		}
 
 		case wxConfiguration::INFO_USAGE:
-		InfoUsage( *wxMessageOutput::Get() );
-		return 0;
+		{
+			InfoUsage( *wxMessageOutput::Get() );
+			return 0;
+		}
 
 		case wxConfiguration::INFO_FORMATTING_DIRECTIVES:
-		InfoFormatDescription( *wxMessageOutput::Get() );
-		return 0;
+		{
+			InfoFormatDescription( *wxMessageOutput::Get() );
+			return 0;
+		}
 
 		case wxConfiguration::INFO_LICENSE:
 		ShowLicense( *wxMessageOutput::Get() );
 		return 0;
 	}
-
 
 	wxInputFile firstInputFile;
 	bool		bFirst = true;
@@ -402,6 +407,7 @@ int wxMyApp::OnRun()
 int wxMyApp::OnExit()
 {
 	int res = MyAppConsole::OnExit();
+
 	m_pMkvmergeOptsRenderer.reset();
 	m_pMergedCueSheet.reset();
 	return res;

@@ -51,12 +51,12 @@ class wxDataFile:
 
 	protected:
 
-		wxFileName m_fileName;
-		wxFileName m_realFileName;
-		FileType   m_ftype;
-		MediaType  m_mediaType;
+		wxFileName	  m_fileName;
+		wxFileName	  m_realFileName;
+		FileType	  m_ftype;
+		MediaType	  m_mediaType;
 		wxArrayCueTag m_tags;
-		wxString   m_sCueSheet;
+		wxString	  m_sCueSheet;
 
 	protected:
 
@@ -65,7 +65,7 @@ class wxDataFile:
 		static wxULongLong GetNumberOfFramesFromBinary( const wxFileName&,
 														const wxSamplingInfo& si );
 		static bool GetMediaInfo( const wxFileName&, wxULongLong&,
-									  wxSamplingInfo&, MediaType&, wxArrayCueTag&, wxString& );
+								  wxSamplingInfo&, MediaType&, wxArrayCueTag&, wxString& );
 
 	public:
 

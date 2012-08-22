@@ -16,7 +16,7 @@ class MemoryGraphicsContext
 
 	protected:
 
-		wxSize m_imgSize;
+		wxSize					  m_imgSize;
 		wxBitmap				  m_bmp;
 		wxScopedPtr< wxMemoryDC > m_pMemDc;
 };

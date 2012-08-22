@@ -39,11 +39,10 @@ const wxConfiguration::CuesheetAttachModeName wxConfiguration::AttachModeNames[]
 
 const wxConfiguration::RenderModeName wxConfiguration::RenderModeNames[] =
 {
-	{ RENDER_CUE_SHEET, wxS("cuesheet") },
-	{ RENDER_MATROSKA_CHAPTERS, wxS("matroska") },
-	{ RENDER_WAV2IMG_CUE_POINTS, wxS("wav2img") }
+	{ RENDER_CUE_SHEET, wxS( "cuesheet" ) },
+	{ RENDER_MATROSKA_CHAPTERS, wxS( "matroska" ) },
+	{ RENDER_WAV2IMG_CUE_POINTS, wxS( "wav2img" ) }
 };
-
 
 wxString wxConfiguration::GetRenderingModes()
 {
@@ -305,7 +304,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 
 	cmdLine.AddOption( wxS( "o" ), wxS( "output" ), _( "Output Matroska chapter file or cue sheet file (see -c option)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxS( "od" ), wxS( "output-directory" ), _( "Output directory (default: input directory)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( wxS( "ce" ), wxS( "chapter-time-end" ), wxString::Format( _( "Calculate end time of chapters if possible (default: %s)" ), BoolToStr(m_bChapterTimeEnd) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( wxS( "ce" ), wxS( "chapter-time-end" ), wxString::Format( _( "Calculate end time of chapters if possible (default: %s)" ), BoolToStr( m_bChapterTimeEnd ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxS( "cn" ), wxS( "unknown-chapter-end-to-next-track" ), wxString::Format( _( "If track's end time is unknown set it to next track position using frame offset (default: %s)" ), BoolToStr( m_bUnknownChapterTimeEndToNextChapter ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddOption( wxS( "fo" ), wxS( "frame-offset" ), wxString::Format( _( "Offset in frames to use with -uc option (default: %u)" ), m_nChapterOffset ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxS( "df" ), wxS( "use-data-files" ), wxString::Format( _( "Use data file(s) to calculate end time of chapters (default: %s)" ), BoolToStr( m_bUseDataFiles ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
@@ -646,12 +645,12 @@ wxString wxConfiguration::BoolToIdx( bool b )
 
 wxString wxConfiguration::ReadFlagTestStr( wxCueSheetReader::ReadFlags n ) const
 {
-	return BoolToStr( (m_nReadFlags & n) == n );
+	return BoolToStr( ( m_nReadFlags & n ) == n );
 }
 
 wxString wxConfiguration::TagSourcesTestStr( wxCueTag::TagSources n ) const
 {
-	return BoolToStr( (m_nTagSources & n) == n );
+	return BoolToStr( ( m_nTagSources & n ) == n );
 }
 
 void wxConfiguration::AddFlag( wxArrayString& as, wxCueSheetReader::ReadFlags flags, wxCueSheetReader::ReadFlags mask, const wxString& sText )
@@ -834,24 +833,32 @@ wxString wxConfiguration::GetExt() const
 {
 	wxString sExt;
 
-	switch( m_eRenderMode )
+	switch ( m_eRenderMode )
 	{
 		case RENDER_CUE_SHEET:
-		sExt = m_sCueSheetExt;
-		break;
+		{
+			sExt = m_sCueSheetExt;
+			break;
+		}
 
 		case RENDER_MATROSKA_CHAPTERS:
-		sExt = m_sMatroskaChaptersXmlExt;
-		break;
+		{
+			sExt = m_sMatroskaChaptersXmlExt;
+			break;
+		}
 
 		case RENDER_WAV2IMG_CUE_POINTS:
-		sExt = wxS( "txt" );
-		break;
+		{
+			sExt = wxS( "txt" );
+			break;
+		}
 
 		default:
-		wxASSERT( false );
-		sExt = wxS( "???" );
-		break;
+		{
+			wxASSERT( false );
+			sExt = wxS( "???" );
+			break;
+		}
 	}
 
 	return sExt;
@@ -903,7 +910,7 @@ void wxConfiguration::GetOutputFile( const wxInputFile& _inputFile, wxFileName& 
 		inputFile.SetExt( GetExt() );
 		outputFile = inputFile;
 
-		if ( (m_eRenderMode == RENDER_MATROSKA_CHAPTERS) && m_bGenerateTags )
+		if ( ( m_eRenderMode == RENDER_MATROSKA_CHAPTERS ) && m_bGenerateTags )
 		{
 			inputFile.SetExt( m_sMatroskaTagsXmlExt );
 			tagsFile = inputFile;
@@ -923,7 +930,7 @@ void wxConfiguration::GetOutputFile( const wxInputFile& _inputFile, wxFileName& 
 
 		outputFile = inputFile;
 
-		if ( (m_eRenderMode == RENDER_MATROSKA_CHAPTERS) && m_bGenerateTags )
+		if ( ( m_eRenderMode == RENDER_MATROSKA_CHAPTERS ) && m_bGenerateTags )
 		{
 			inputFile.SetExt( m_sMatroskaTagsXmlExt );
 			tagsFile = inputFile;

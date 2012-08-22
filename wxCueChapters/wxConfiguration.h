@@ -45,6 +45,7 @@ class wxConfiguration:
 		};
 
 		static wxString GetRenderingModes();
+
 		static wxString ToString( RENDER_MODE );
 		static bool FromString( const wxString&, RENDER_MODE& );
 
@@ -55,7 +56,7 @@ class wxConfiguration:
 			ENCODING_UTF8_WITH_BOM,
 			ENCODING_UTF16,
 			ENCODING_UTF16_WITH_BOM
-		} ;
+		};
 
 		static wxString ToString( FILE_ENCODING );
 		static bool FromString( const wxString&, FILE_ENCODING& );
@@ -87,7 +88,7 @@ class wxConfiguration:
 			const wxChar* description;
 		};
 
-		static const RenderModeName			RenderModeNames[];
+		static const RenderModeName RenderModeNames[];
 
 		struct INFO_SUBJECT_DESC
 		{
@@ -99,10 +100,13 @@ class wxConfiguration:
 
 	protected:
 
-		INFO_SUBJECT		 m_infoSubject;
-		bool						m_bChapterTimeEnd;																// default=true
+		INFO_SUBJECT				m_infoSubject;
+		bool						m_bChapterTimeEnd;																																//
+																																													//default=true
 		bool						m_bUnknownChapterTimeEndToNextChapter;	// default=false
-		unsigned long				m_nChapterOffset;																// in frames
+		unsigned long				m_nChapterOffset;																																//
+																																													//in
+																																													//frames
 		bool						m_bUseDataFiles;// default=true
 		bool						m_bEmbedded;
 		bool						m_bCorrectQuotationMarks;
@@ -147,6 +151,7 @@ class wxConfiguration:
 		static void AddFlag( wxArrayString&, wxCueSheetReader::ReadFlags, wxCueSheetReader::ReadFlags, const wxString& );
 
 		static bool FromString( const wxString&, INFO_SUBJECT& );
+
 		static wxString ToString( INFO_SUBJECT );
 		static wxString GetInfoSubjectTexts();
 

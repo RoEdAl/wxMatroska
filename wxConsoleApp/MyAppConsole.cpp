@@ -1,24 +1,23 @@
 /*
-	MyAppConsole.cpp
-*/
+ *      MyAppConsole.cpp
+ */
 #include "StdWx.h"
 #include <wxConsoleApp/MyAppTraits.h>
 #include <wxConsoleApp/MyAppConsole.h>
 
 // ================================================================================
 
-const wxChar MyAppConsole::APP_VENDOR_NAME[] = wxS( "Edmunt Pienkowsky" );
-const wxChar MyAppConsole::APP_AUTHOR[]		= wxS( "Edmunt Pienkowsky - roed@onet.eu" );
+const wxChar MyAppConsole::APP_VENDOR_NAME[]   = wxS( "Edmunt Pienkowsky" );
+const wxChar MyAppConsole::APP_AUTHOR[]		   = wxS( "Edmunt Pienkowsky - roed@onet.eu" );
 const wxChar MyAppConsole::LICENSE_FILE_NAME[] = wxS( "license.txt" );
 
 static const size_t MAX_LICENSE_FILE_SIZE = 4 * 1024;
 
 // ================================================================================
 
-MyAppConsole::MyAppConsole(void) :
+MyAppConsole::MyAppConsole( void ):
 	m_sSeparator( wxT( '=' ), 75 )
-{
-}
+{}
 
 bool MyAppConsole::OnInit()
 {
@@ -41,7 +40,6 @@ bool MyAppConsole::OnInit()
 	return true;
 }
 
-
 wxAppTraits* MyAppConsole::CreateTraits()
 {
 	wxAppTraits* pAppTraits = wxAppConsole::CreateTraits();
@@ -51,6 +49,7 @@ wxAppTraits* MyAppConsole::CreateTraits()
 
 int MyAppConsole::OnExit()
 {
+	wxLog::FlushActive();
 	int res = wxAppConsole::OnExit();
 
 	CoUninitialize();

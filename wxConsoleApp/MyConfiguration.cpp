@@ -1,12 +1,11 @@
 /*
-	MyConfiguration.cpp
-*/
+ *      MyConfiguration.cpp
+ */
 #include "StdWx.h"
 #include <wxConsoleApp/MyConfiguration.h>
 
-MyConfiguration::MyConfiguration(void)
-{
-}
+MyConfiguration::MyConfiguration( void )
+{}
 
 wxString MyConfiguration::BoolToStr( bool b )
 {
@@ -59,3 +58,4 @@ bool MyConfiguration::ReadNegatableSwitchValueAndNegate( const wxCmdLineParser& 
 		return false;
 	}
 }
+
