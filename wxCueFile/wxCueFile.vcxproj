@@ -95,7 +95,6 @@
     <ClCompile Include="wxDuration.cpp" />
     <ClCompile Include="wxEllipsizer.cpp" />
     <ClCompile Include="wxIndex.cpp" />
-    <ClCompile Include="wxMediaInfo.cpp" />
     <ClCompile Include="wxReduntantSpacesRemover.cpp" />
     <ClCompile Include="wxSamplingInfo.cpp" />
     <ClCompile Include="wxTagSynonims.cpp" />

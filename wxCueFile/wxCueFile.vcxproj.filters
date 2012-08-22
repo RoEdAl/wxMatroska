@@ -35,9 +35,6 @@
     <ClCompile Include="wxIndex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="wxMediaInfo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="wxSamplingInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

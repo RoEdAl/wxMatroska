@@ -59,7 +59,7 @@ void wxDataFile::copy( const wxDataFile& df )
 	m_mediaType	   = df.m_mediaType;
 	m_tags		   = df.m_tags;
 	m_sCueSheet	   = df.m_sCueSheet;
-	wxDurationHolder::Copy( *this );
+	wxDurationHolder::Copy( df );
 }
 
 wxString wxDataFile::GetFileTypeRegExp()
@@ -84,7 +84,7 @@ const wxFileName& wxDataFile::GetFileName() const
 
 bool wxDataFile::HasRealFileName() const
 {
-	return m_realFileName.IsOk();
+	return m_realFileName.HasName();
 }
 
 const wxFileName& wxDataFile::GetRealFileName() const
@@ -145,6 +145,7 @@ void wxDataFile::Clear()
 	m_mediaType = MEDIA_TYPE_UNKNOWN;
 	m_tags.Clear();
 	m_sCueSheet.Empty();
+	ClearDuration();
 }
 
 wxDataFile& wxDataFile::Assign( const wxString& sFilePath, wxDataFile::FileType ftype )
@@ -155,6 +156,7 @@ wxDataFile& wxDataFile::Assign( const wxString& sFilePath, wxDataFile::FileType 
 	m_mediaType = MEDIA_TYPE_UNKNOWN;
 	m_tags.Clear();
 	m_sCueSheet.Empty();
+	ClearDuration();
 
 	return *this;
 }
@@ -167,6 +169,7 @@ wxDataFile& wxDataFile::Assign( const wxFileName& fileName, wxDataFile::FileType
 	m_mediaType = MEDIA_TYPE_UNKNOWN;
 	m_tags.Clear();
 	m_sCueSheet.Empty();
+	ClearDuration();
 
 	return *this;
 }

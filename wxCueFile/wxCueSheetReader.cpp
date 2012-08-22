@@ -362,7 +362,6 @@ bool wxCueSheetReader::ReadCueSheet( const wxString& sCueFile, bool bUseMLang )
 bool wxCueSheetReader::ReadCueSheet( const wxString& sCueFile, wxMBConv& conv )
 {
 	wxFileName cueFileName( sCueFile );
-
 	cueFileName.MakeAbsolute();
 
 	if ( !cueFileName.IsFileReadable() || cueFileName.IsDir() )
@@ -379,7 +378,10 @@ bool wxCueSheetReader::ReadCueSheet( const wxString& sCueFile, wxMBConv& conv )
 		return false;
 	}
 
-	return ParseCue( wxCueSheetContent( internalReadCueSheet( fis, conv ), cueFileName ) );
+	wxDataFile dataFile( cueFileName );
+	dataFile.FindFile();
+
+	return ParseCue( wxCueSheetContent( internalReadCueSheet( fis, conv ), dataFile, false ) );
 }
 
 bool wxCueSheetReader::ReadCueSheet( wxInputStream& stream )
@@ -550,7 +552,7 @@ bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile )
 	}
 	else
 	{
-		return ParseCue( wxCueSheetContent( dataFile.GetCueSheet(), dataFile ) );
+		return ParseCue( wxCueSheetContent( dataFile ) );
 	}
 }
 
@@ -562,7 +564,7 @@ bool wxCueSheetReader::BuildFromSingleMediaFile( const wxDataFile& mediaFile )
 	size_t	 nRepl = sOneTrackCue.Replace( wxS( "%source%" ), mediaFile.GetRealFileName().GetFullPath() );
 	wxASSERT( nRepl > 0 );
 
-	if ( ParseCue( wxCueSheetContent( sOneTrackCue, mediaFile ) ) )
+	if ( ParseCue( wxCueSheetContent( sOneTrackCue, mediaFile, true ) ) )
 	{
 		wxASSERT( m_cueSheet.GetTracksCount() == 1u );
 		wxASSERT( m_cueSheet.HasSingleDataFile() );
@@ -759,7 +761,6 @@ void wxCueSheetReader::ParseComment( const wxString& WXUNUSED( sToken ), const w
 bool wxCueSheetReader::ParseCue( const wxCueSheetContent& content )
 {
 	m_cueSheetContent = content;
-
 	size_t	 nLine = 1;
 	wxString sLine;
 
@@ -1017,13 +1018,20 @@ void wxCueSheetReader::ParseFile( const wxString& WXUNUSED( sToken ), const wxSt
 
 		wxFileName fn( Unquote( sFile ) );
 
-		if ( m_cueSheetContent.HasSource() )
+		if (  m_cueSheetContent.HasSource() )
 		{
-			m_cueSheet.AddDataFile( m_cueSheetContent.GetSource() );
+			if ( m_cueSheetContent.IsEmbedded() )
+			{ // the only source
+				m_cueSheet.AddDataFile( m_cueSheetContent.GetSource() );
+			}
+			else
+			{
+				fn.SetPath( m_cueSheetContent.GetSource().GetFileName().GetPath() );
+				m_cueSheet.AddDataFile( wxDataFile( fn, ftype ) );
+			}
 		}
 		else
 		{
-			fn.SetPath( m_cueSheetContent.GetSource().GetFileName().GetPath() );
 			m_cueSheet.AddDataFile( wxDataFile( fn, ftype ) );
 		}
 	}
