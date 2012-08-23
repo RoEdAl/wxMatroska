@@ -92,6 +92,12 @@ void wxCuePointsRenderer::RenderDisc( const wxCueSheet& cueSheet )
 		}
 
 		wxULongLong indexOffset( duration.GetSamplingInfo().GetIndexOffset( idx ) );
+
+		if ( track.GetNumber() == 1u && idx.GetDataFileIdx() == 0u && indexOffset == wxULL(0) )
+		{
+			continue;
+		}
+
 		duration.Add( indexOffset );
 		sIdx = duration.GetCdFramesStr();
 
