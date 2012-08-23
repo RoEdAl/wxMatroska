@@ -4,6 +4,7 @@
 
 #include "StdWx.h"
 #include "wxMultiLanguage.h"
+#include "wxMLangConvertCharset.h"
 #include <wxEncodingDetection/wxEncodingDetection.h>
 
 // ===========================================================
@@ -33,54 +34,61 @@ class wxMBConv_MLang:
 		{
 			wxMBConv_MLang* pConvMLang = new wxMBConv_MLang( ml, nCodePage );
 
-			sDescription = pConvMLang->GetDescription();
-			return pConvMLang;
+			if ( pConvMLang->GetDescription( sDescription ) )
+			{
+				return pConvMLang;
+			}
+			else
+			{
+				wxLogError( _("Unable to get encoding description: %s"), sDescription );
+				wxDELETE( pConvMLang );
+				return NULL;
+			}
 		}
 
 		static wxMBConv_MLang* Create( wxUint32 nCodePage, wxString& sDescription )
 		{
 			wxMBConv_MLang* pConvMLang = new wxMBConv_MLang( nCodePage );
 
-			sDescription = pConvMLang->GetDescription();
-			return pConvMLang;
+			if ( pConvMLang->GetDescription( sDescription ) )
+			{
+				return pConvMLang;
+			}
+			else
+			{
+				wxLogError( _("Unable to get encoding description: %s"), sDescription );
+				wxDELETE( pConvMLang );
+				return NULL;
+			}
 		}
 
 	protected:
 
 		wxMBConv_MLang():
-			m_minMBCharWidth( 0 ), m_dwMode( 0 )
+			m_minMBCharWidth( 0 )
 		{
-			wxASSERT( m_mlang.IsValid() );
-			m_nCodePage = GetACP();
 		}
 
 		wxMBConv_MLang( wxUint32 nCodePage ):
-			m_nCodePage( nCodePage ), m_minMBCharWidth( 0 ), m_dwMode( 0 )
+			m_mlangFromUnicode( wxEncodingDetection::CP::UTF16_LE, nCodePage ),
+			m_mlangToUnicode( nCodePage,wxEncodingDetection::CP::UTF16_LE ),
+			m_minMBCharWidth( 0 )
 		{
-			if ( !m_mlang.IsValid() )
+			if ( !m_mlangFromUnicode.IsValid() || !m_mlangToUnicode.IsValid()  )
 			{
 				wxLogError( _( "Cannot create MultiLanguage COM object" ) );
-			}
-
-			if ( nCodePage == CP_ACP )
-			{
-				m_nCodePage = GetACP();
 			}
 		}
 
 		wxMBConv_MLang( const wxMultiLanguage& ml, wxUint32 nCodePage = CP_ACP ):
-			m_mlang( ml ), m_nCodePage( nCodePage ), m_minMBCharWidth( 0 ),
-			m_dwMode( 0 )
-		{
-			if ( nCodePage == CP_ACP )
-			{
-				m_nCodePage = GetACP();
-			}
-		}
+			m_mlangFromUnicode( ml, wxEncodingDetection::CP::UTF16_LE, nCodePage ),
+			m_mlangToUnicode( ml, nCodePage, wxEncodingDetection::CP::UTF16_LE ),
+			m_minMBCharWidth( 0 )
+		{}
 
 		wxMBConv_MLang( const wxMBConv_MLang& conv ):
-			m_mlang( conv.m_mlang ),
-			m_nCodePage( conv.m_nCodePage ), m_dwMode( 0 ),
+			m_mlangFromUnicode( conv.m_mlangFromUnicode ),
+			m_mlangToUnicode( conv.m_mlangToUnicode ),
 			m_minMBCharWidth( conv.m_minMBCharWidth )
 		{}
 
@@ -89,20 +97,16 @@ class wxMBConv_MLang:
 		virtual size_t ToWChar( wchar_t* dst, size_t dstLen, const char* src,
 			size_t srcLen = wxNO_LEN ) const
 		{
-			wxASSERT( m_mlang.IsValid() );
+			wxASSERT( m_mlangToUnicode.IsValid() );
 
 			UINT nSrcSize = srcLen;
 			UINT nDstSize = dstLen;
 
 			wxMBConv_MLang* self = const_cast< wxMBConv_MLang* >( this );
 
-			HRESULT hRes = m_mlang->ConvertStringToUnicodeEx(
-					&self->m_dwMode,
-					m_nCodePage,
+			HRESULT hRes = m_mlangToUnicode->DoConversionToUnicode( 
 					const_cast< CHAR* >( src ), &nSrcSize,
-					dst, &nDstSize,
-					0, NULL );
-
+					dst, &nDstSize );
 			if ( hRes == S_OK )
 			{
 				if ( nDstSize > 0 )
@@ -131,22 +135,18 @@ class wxMBConv_MLang:
 		virtual size_t FromWChar( char* dst, size_t dstLen, const wchar_t* src,
 			size_t srcLen = wxNO_LEN ) const
 		{
-			wxASSERT( m_mlang.IsValid() );
+			wxASSERT( m_mlangFromUnicode.IsValid() );
 
 			UINT nSrcSize = srcLen;
 			UINT nDstSize = dstLen;
 
 			wxMBConv_MLang* self = const_cast< wxMBConv_MLang* >( this );
 
-			HRESULT hRes = m_mlang->ConvertStringFromUnicodeEx(
-					&self->m_dwMode,
-					m_nCodePage,
+			HRESULT hRes = m_mlangFromUnicode->DoConversionFromUnicode(
 					const_cast< WCHAR* >( src ),
 					&nSrcSize,
 					dst,
-					&nDstSize,
-					0,
-					NULL );
+					&nDstSize );
 
 			if ( hRes == S_OK )
 			{
@@ -167,7 +167,7 @@ class wxMBConv_MLang:
 
 		virtual size_t GetMBNulLen() const
 		{
-			wxASSERT( m_mlang.IsValid() );
+			wxASSERT( m_mlangFromUnicode.IsValid() );
 
 			if ( m_minMBCharWidth == 0 )
 			{
@@ -175,13 +175,9 @@ class wxMBConv_MLang:
 				UINT  nSrcSize = 1;
 				UINT  nDstSize = 0;
 
-				HRESULT hRes = m_mlang->ConvertStringFromUnicodeEx(
-						&dwMode,
-						m_nCodePage,
+				HRESULT hRes = m_mlangFromUnicode->DoConversionFromUnicode( 
 						L"", &nSrcSize,
-						NULL, &nDstSize,
-						0,
-						NULL );
+						NULL, &nDstSize );
 
 				wxMBConv_MLang* const self = wxConstCast( this, wxMBConv_MLang );
 
@@ -222,38 +218,44 @@ class wxMBConv_MLang:
 
 		virtual wxMBConv* Clone() const { return new wxMBConv_MLang( *this ); }
 
-		bool IsOk() const { return m_mlang.IsValid() && ( m_nCodePage != CP_ACP ); }
+		bool IsOk() const { return m_mlangFromUnicode.IsValid() && m_mlangToUnicode.IsValid(); }
 
-		wxString GetDescription() const
+		bool GetDescription( wxString& sDescription ) const
 		{
-			wxString sDescription;
 			wxString sCPDescription;
-			HRESULT	 hRes = m_mlang.GetCodePageDescription( m_nCodePage,
-					sCPDescription );
+			wxMultiLanguage mlang;
+
+			if ( !mlang.IsValid() )
+			{
+				return false;
+			}
+
+			UINT nCodePage;
+			HRESULT hRes = m_mlangToUnicode->GetSourceCodePage( &nCodePage );
+			wxASSERT( hRes == S_OK );
+
+			hRes = mlang.GetCodePageDescription( nCodePage, sCPDescription );
 
 			if ( hRes == S_OK )
 			{
-				sDescription.Printf( wxT( "%s [CP:%d]" ), sCPDescription, m_nCodePage );
+				sDescription.Printf( wxT( "%s [CP:%d]" ), sCPDescription, nCodePage );
+				return true;
 			}
 			else
 			{
-				sDescription.Printf( wxT( "<ERR:%08x> [CP:%d]" ), hRes, m_nCodePage );
+				sDescription.Printf( wxT( "<ERR:%08x> [CP:%d]" ), hRes, nCodePage );
+				return false;
 			}
-
-			return sDescription;
 		}
 
 	protected:
 
-		wxMultiLanguage m_mlang;
-
-		// the code page we're working with
-		wxUint32 m_nCodePage;
+		wxMLangConvertCharset m_mlangToUnicode;
+		wxMLangConvertCharset m_mlangFromUnicode;
 
 		// cached result of GetMBNulLen(), set to 0 initially meaning
 		// "unknown"
 		size_t m_minMBCharWidth;
-		DWORD  m_dwMode;
 };
 
 class wxMBConv_BOM:

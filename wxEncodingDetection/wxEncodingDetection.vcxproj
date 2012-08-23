@@ -83,10 +83,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="wxEncodingDetection.cpp" />
+    <ClCompile Include="wxMLangConvertCharset.cpp" />
     <ClCompile Include="wxMultiLanguage.cpp" />
     <ClCompile Include="wxTextOutputStreamWithBOM.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="wxMLangConvertCharset.h" />
     <ClInclude Include="StdWx.h" />
     <ClInclude Include="wxMultiLanguage.h" />
     <ClInclude Include="..\inc\wxEncodingDetection\wxEncodingDetection.h" />
