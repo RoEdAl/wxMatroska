@@ -323,8 +323,10 @@ int wxMyApp::OnRun()
 		}
 
 		case wxConfiguration::INFO_LICENSE:
-		ShowLicense( *wxMessageOutput::Get() );
-		return 0;
+		{
+			ShowLicense( *wxMessageOutput::Get() );
+			return 0;
+		}
 	}
 
 	wxInputFile firstInputFile;

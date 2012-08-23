@@ -454,7 +454,7 @@ static wxString read_cmd_file( const wxFileName& cmdFile, bool bUseMLang )
 	wxLogInfo( _( "Opening command template file \u201C%s\u201D" ), cmdFile.GetFullName() );
 
 	wxString							   sCPDescription;
-	wxEncodingDetection::wxMBConvSharedPtr pConv( wxEncodingDetection::GetFileEncoding( cmdFile.GetFullPath(), bUseMLang, sCPDescription ) );
+	wxEncodingDetection::wxMBConvSharedPtr pConv( wxEncodingDetection::GetFileEncoding( cmdFile, bUseMLang, sCPDescription ) );
 
 	if ( pConv )
 	{

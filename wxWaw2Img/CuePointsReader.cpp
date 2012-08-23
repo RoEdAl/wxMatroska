@@ -171,7 +171,7 @@ bool CuePointsReader::Read( wxTimeSpanArray& cuePoints, const wxFileName& inputF
 	wxLogInfo( _( "Opening cuesheet file \u201C%s\u201D" ), inputFile.GetFullName() );
 
 	wxString							   sCPDescription;
-	wxEncodingDetection::wxMBConvSharedPtr pConv( wxEncodingDetection::GetFileEncoding( inputFile.GetFullPath(), bUseMLang, sCPDescription ) );
+	wxEncodingDetection::wxMBConvSharedPtr pConv( wxEncodingDetection::GetFileEncoding( inputFile, bUseMLang, sCPDescription ) );
 
 	if ( pConv )
 	{

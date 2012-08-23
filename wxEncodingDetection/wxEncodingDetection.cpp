@@ -525,7 +525,7 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncodingFromB
 			}
 			else if ( test_bom( buffer, BOM::UTF16_LE, 2 ) )
 			{
-				pRes = wxMBConvSharedPtr( wxMBConv_BOM::Create( BOM::UTF16_LE, 2, CP::UTF32_LE, bUseMLang, sDescription ) );
+				pRes = wxMBConvSharedPtr( wxMBConv_BOM::Create( BOM::UTF16_LE, 2, CP::UTF16_LE, bUseMLang, sDescription ) );
 			}
 
 			break;
