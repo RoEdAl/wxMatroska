@@ -511,7 +511,7 @@ wxXmlDocument* wxXmlCueSheetRenderer::create_xml_document( const wxString& sRoot
 	wxXmlDocument* pXmlDoc = new wxXmlDocument();
 
 	pXmlDoc->SetVersion( wxT( "1.0" ) );
-	pXmlDoc->SetFileEncoding( wxT( "utf-8" ) );
+	pXmlDoc->SetFileEncoding( GetConfig().GetXmlFileEncoding() );
 	wxXmlNode* pRoot = new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, sRootNode );
 	pXmlDoc->SetRoot( pRoot );
 	return pXmlDoc;

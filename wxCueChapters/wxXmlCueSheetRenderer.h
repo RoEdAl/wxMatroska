@@ -150,7 +150,7 @@ class wxXmlCueSheetRenderer:
 
 		static wxXmlNode* add_idx_chapter_atom( wxXmlNode *, const wxDuration &, size_t, const wxString &, const wxString &, bool );
 		static wxXmlNode* create_simple_tag( const wxCueTag&, const wxString& );
-		static wxXmlDocument* create_xml_document( const wxString& );
+		wxXmlDocument* create_xml_document( const wxString& );
 		static bool is_simple( wxXmlNode*, const wxCueTag& );
 		static wxXmlNode* find_simple_tag( wxXmlNode*, const wxCueTag& );
 		static wxXmlNode* add_simple_tag( wxXmlNode*, const wxString&, const wxString&, const wxString& );

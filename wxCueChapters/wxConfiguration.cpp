@@ -271,13 +271,13 @@ wxConfiguration::wxConfiguration( void ):
 	m_nChapterOffset( 150 ),
 	m_bUseDataFiles( false ),
 	m_sAlternateExtensions( wxEmptyString ),
-	m_sLang( wxS( "unk" ) ),
+	m_sLang( wxS( "und" ) ),
 	m_sTrackNameFormat( TRACK_NAME_FORMAT ),
 	m_sMatroskaNameFormat( MATROSKA_NAME_FORMAT ),
 	m_bEmbedded( false ),
 	m_bCorrectQuotationMarks( true ),
 	m_eRenderMode( RENDER_MATROSKA_CHAPTERS ),
-	m_eCueSheetFileEncoding( ENCODING_UTF8_WITH_BOM ),
+	m_eFileEncoding( ENCODING_UTF8_WITH_BOM ),
 	m_bGenerateTags( false ),
 	m_bGenerateMkvmergeOpts( false ),
 	m_bGenerateEditionUID( false ),
@@ -461,7 +461,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	if ( cmdLine.Found( wxS( "e" ), &s ) )
 	{
-		if ( !FromString( s, m_eCueSheetFileEncoding ) )
+		if ( !FromString( s, m_eFileEncoding ) )
 		{
 			wxLogWarning( _( "Wrong output encoding %s" ), s );
 			bRes = false;
@@ -704,7 +704,7 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
 
 	as.Add( wxString::Format( wxS( "Generate edition UID: %s" ), BoolToStr( m_bGenerateEditionUID ) ) );
 	as.Add( wxString::Format( wxS( "Tag sources: %s" ), wxCueTag::SourcesToString( m_nTagSources ) ) );
-	as.Add( wxString::Format( wxS( "Output cue sheet file encoding: %s" ), ToString( m_eCueSheetFileEncoding ) ) );
+	as.Add( wxString::Format( wxS( "Output file encoding: %s" ), ToString( m_eFileEncoding ) ) );
 	as.Add( wxString::Format( wxS( "Calculate end time of chapters: %s" ), BoolToStr( m_bChapterTimeEnd ) ) );
 	as.Add( wxString::Format( wxS( "Read embedded cue sheet: %s" ), BoolToStr( m_bEmbedded ) ) );
 	as.Add( wxString::Format( wxS( "Use data files to calculate end time of chapters: %s" ), BoolToStr( m_bUseDataFiles ) ) );
@@ -991,11 +991,6 @@ bool wxConfiguration::GetOutputCueSheetFile( const wxInputFile& _inputFile, cons
 		return false;
 	}
 
-	if ( m_eRenderMode != RENDER_CUE_SHEET )
-	{
-		return false;
-	}
-
 	if ( !m_outputFile.IsOk() )
 	{
 		inputFile.SetName( wxString::Format( wxS( "%s.%s" ), inputFile.GetName(), sPostFix ) );
@@ -1078,15 +1073,35 @@ bool wxConfiguration::GenerateEditionUID() const
 	return m_bGenerateEditionUID;
 }
 
-wxConfiguration::FILE_ENCODING wxConfiguration::GetCueSheetFileEncoding() const
+wxConfiguration::FILE_ENCODING wxConfiguration::GetFileEncoding() const
 {
-	return m_eCueSheetFileEncoding;
+	return m_eFileEncoding;
+}
+
+wxString wxConfiguration::GetXmlFileEncoding() const
+{
+	switch ( m_eFileEncoding )
+	{
+		case ENCODING_UTF8:
+		case ENCODING_UTF8_WITH_BOM:
+		return wxS("UTF-8");
+		break;
+
+		// mkvmerge do not accept UTF-16 encoded files
+		case ENCODING_UTF16:
+		case ENCODING_UTF16_WITH_BOM:
+		return wxS("UTF-8");
+		break;
+
+		default:
+		return wxS("UTF-8");
+	}
 }
 
 wxSharedPtr< wxTextOutputStream > wxConfiguration::GetOutputTextStream( wxOutputStream& os ) const
 {
 	wxSharedPtr< wxTextOutputStream > pRes;
-	switch ( m_eCueSheetFileEncoding )
+	switch ( m_eFileEncoding )
 	{
 		case ENCODING_UTF8:
 		{

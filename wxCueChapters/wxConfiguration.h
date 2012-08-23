@@ -115,7 +115,7 @@ class wxConfiguration:
 		bool						m_bGenerateMkvmergeOpts;
 		bool						m_bRunMkvmerge;
 		bool						m_bGenerateEditionUID;
-		FILE_ENCODING				m_eCueSheetFileEncoding;
+		FILE_ENCODING				m_eFileEncoding;
 		bool						m_bTrackOneIndexOne;// or zero
 		bool						m_bAbortOnError;
 		bool						m_bHiddenIndexes;
@@ -191,7 +191,8 @@ class wxConfiguration:
 		bool RunMkvmerge() const;
 		const wxFileName& GetMkvmergeDir() const;
 		bool GenerateEditionUID() const;
-		FILE_ENCODING GetCueSheetFileEncoding() const;
+		FILE_ENCODING GetFileEncoding() const;
+		wxString GetXmlFileEncoding() const;
 
 		wxSharedPtr< wxTextOutputStream > GetOutputTextStream( wxOutputStream& )
 		const;
