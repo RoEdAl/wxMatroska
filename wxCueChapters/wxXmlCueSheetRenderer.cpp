@@ -402,12 +402,45 @@ const wxFileName& wxXmlCueSheetRenderer::GetTagsFile() const
 	return m_tagsFile;
 }
 
+bool wxXmlCueSheetRenderer::SaveXmlDoc( const wxScopedPtr< wxXmlDocument >& pXmlDoc, const wxFileName& fileName ) const
+{
+	wxSharedPtr< wxMBConv > pConv = GetConfig().GetXmlEncoding();
+	wxStringOutputStream outputStream( NULL, *pConv );
+
+	{
+		// back from memory to string and again to file
+		wxMemoryOutputStream mos;
+		if ( !pXmlDoc->Save( mos ) )
+		{
+			wxLogError( _( "Fail to stringify XML document" ) );
+			return false;
+		}
+
+		wxStreamBuffer* sb = mos.GetOutputStreamBuffer();
+		outputStream.Write( sb->GetBufferStart(), sb->GetBufferSize() - sb->GetBytesLeft() );
+	}
+
+	wxFileOutputStream fos( fileName.GetFullPath() );
+
+	if ( fos.IsOk() )
+	{
+		wxSharedPtr< wxTextOutputStream > pStream( GetConfig().GetOutputTextStream( fos ) );
+		pStream->WriteString( outputStream.GetString() );
+		return true;
+	}
+	else
+	{
+		wxLogDebug( wxT( "Fail to save XML document to file \u201C%s\u201D" ), fileName.GetFullName() );
+		return false;
+	}
+}
+
 bool wxXmlCueSheetRenderer::SaveXmlDoc()
 {
 	wxASSERT( HasXmlDoc() );
 	wxASSERT( HasXmlTags() );
 
-	if ( !m_pXmlDoc->Save( m_outputFile.GetFullPath() ) )
+	if ( !SaveXmlDoc( m_pXmlDoc, m_outputFile ) )
 	{
 		wxLogError( _( "Fail to save chapters to \u201C%s\u201D" ), m_outputFile.GetFullName() );
 		return false;
@@ -417,7 +450,7 @@ bool wxXmlCueSheetRenderer::SaveXmlDoc()
 	{
 		wxASSERT( m_tagsFile.IsOk() );
 
-		if ( !m_pXmlTags->Save( m_tagsFile.GetFullPath() ) )
+		if ( !SaveXmlDoc( m_pXmlTags, m_tagsFile ) )
 		{
 			wxLogError( _( "Fail to save tags to \u201C%s\u201D" ), m_tagsFile.GetFullName() );
 			return false;

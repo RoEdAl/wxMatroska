@@ -594,7 +594,7 @@ bool wxMkvmergeOptsRenderer::Save()
 	if ( os.IsOk() )
 	{
 		wxLogInfo( _( "Creating mkvmerge options file \u201C%s\u201D" ), m_matroskaOptsFile.GetFullName() );
-		wxSharedPtr< wxTextOutputStream > pStream( wxTextOutputStreamWithBOMFactory::CreateUTF8( os, wxEOL_NATIVE, true, m_cfg.UseMLang() ) );
+		wxSharedPtr< wxTextOutputStream > pStream( m_cfg.GetOutputTextStream( os ) );
 		save_string_to_stream( *pStream, m_os.GetString() );
 		return true;
 	}

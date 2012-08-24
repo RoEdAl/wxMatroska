@@ -58,6 +58,8 @@ typedef struct tagMSG
 #include <wx/regex.h>
 #include <wx/wfstream.h>
 #include <wx/txtstrm.h>
+#include <wx/sstream.h>
+#include <wx/mstream.h>
 #include <wx/datetime.h>
 #include <wx/dynlib.h>
 #include <wx/filename.h>

@@ -104,7 +104,7 @@ Func get_mkvmerge_dir()
 	EndIf
 EndFunc   ;==>get_mkvmerge_dir
 
-#region ### START Koda GUI section ### Form=C:\Users\Roman\Documents\Visual Studio 2010\Projects\wxMatroska\gui\cue2mkcgui.kxf
+#region ### START Koda GUI section ### Form=C:\Users\Normal\Documents\Visual Studio 2010\Projects\wxMatroska\gui\cue2mkcgui.kxf
 $FormMain = GUICreate("cue2mkc GUI", 545, 410, -1, -1, BitOR($GUI_SS_DEFAULT_GUI, $WS_MAXIMIZEBOX, $WS_SIZEBOX, $WS_THICKFRAME, $WS_TABSTOP), BitOR($WS_EX_ACCEPTFILES, $WS_EX_WINDOWEDGE))
 GUISetFont(8, 400, 0, "Microsoft Sans Serif")
 $MainTab = GUICtrlCreateTab(0, 0, 541, 369, $TCS_MULTILINE)
@@ -218,7 +218,7 @@ $LabelCueSheetEncoding = GUICtrlCreateLabel("&Encoding:", 8, 266, 55, 21, $SS_CE
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Encoding of generated text files.")
 $ComboCueSheetEncoding = GUICtrlCreateCombo("", 73, 266, 141, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL), $WS_EX_CLIENTEDGE)
-GUICtrlSetData(-1, "default|UTF-8|UTF-8 with BOM|UTF-16|UTF-16 with BOM")
+GUICtrlSetData(-1, "default|UTF-8|UTF-8 with BOM|UTF-16|UTF-16 with BOM|UTF-16BE|UTF-16BE with BOM")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 $GroupTags = GUICtrlCreateGroup("&Tags parsing", 276, 27, 233, 85)
@@ -561,10 +561,16 @@ Func get_encoding_str($nSel)
 			$sRet = "utf8_bom"
 
 		Case 3
-			$sRet = "utf16"
+			$sRet = "utf16le"
 
 		Case 4
-			$sRet = "utf16_bom"
+			$sRet = "utf16le_bom"
+
+		Case 5
+			$sRet = "utf16be"
+
+		Case 6
+			$sRet = "utf16be_bom"
 	EndSwitch
 	Return SetError(0, 0, $sRet)
 EndFunc   ;==>get_encoding_str

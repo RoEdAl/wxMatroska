@@ -54,8 +54,10 @@ class wxConfiguration:
 			ENCODING_LOCAL,
 			ENCODING_UTF8,
 			ENCODING_UTF8_WITH_BOM,
-			ENCODING_UTF16,
-			ENCODING_UTF16_WITH_BOM
+			ENCODING_UTF16_LE,
+			ENCODING_UTF16_LE_WITH_BOM,
+			ENCODING_UTF16_BE,
+			ENCODING_UTF16_BE_WITH_BOM,
 		};
 
 		static wxString ToString( FILE_ENCODING );
@@ -193,6 +195,7 @@ class wxConfiguration:
 		bool GenerateEditionUID() const;
 		FILE_ENCODING GetFileEncoding() const;
 		wxString GetXmlFileEncoding() const;
+		wxSharedPtr< wxMBConv > GetXmlEncoding() const;
 
 		wxSharedPtr< wxTextOutputStream > GetOutputTextStream( wxOutputStream& )
 		const;

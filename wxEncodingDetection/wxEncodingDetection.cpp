@@ -45,9 +45,9 @@ class wxNoConv:
 				nLen = wxStrlen( wsrc ) * sizeof(wchar_t);
 			}
 
-			if ( dst != NULL && dstLen < nLen )
+			if ( dst != NULL && (dstLen * sizeof(wchar_t)) < nLen )
 			{
-				nLen = dstLen;
+				nLen = dstLen * sizeof(wchar_t);
 			}
 
 			if ( dst != NULL && nLen >= sizeof(wchar_t) )
@@ -177,7 +177,7 @@ class wxMBConv_MLang:
 			{
 				if ( nDstSize > 0 )
 				{
-					if ( *dst == wxT( '\uFFFD' ) && srcLen <= 3 )
+					if ( dst != NULL && *dst == wxT( '\uFFFD' ) && srcLen <= 3 )
 					{
 						wxLogDebug( wxT( "Unicode replacement character - FFFE" ) );
 						return wxCONV_FAILED;
@@ -489,6 +489,11 @@ class wxMBConv_BOM:
 		wxByteBuffer	  m_bom;
 		bool			  m_bBOMConsumed;
 };
+
+wxUint32 wxEncodingDetection::GetDefaultEncoding()
+{
+	return wxMLangConvertCharset::GetRealCodePage( CP_THREAD_ACP );
+}
 
 wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetDefaultEncoding( bool bUseMLang, wxString& sDescription )
 {

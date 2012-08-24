@@ -7,6 +7,7 @@
 #include <wxCueFile/wxDataFile.h>
 #include <wxCueFile/wxSamplingInfo.h>
 #include <wxCueFile/wxCueSheetReader.h>
+#include <wxEncodingDetection/wxEncodingDetection.h>
 #include <wxEncodingDetection/wxTextOutputStreamWithBOM.h>
 #include "wxConfiguration.h"
 #include "wxApp.h"
@@ -110,15 +111,27 @@ wxString wxConfiguration::ToString( wxConfiguration::FILE_ENCODING eFileEncoding
 			break;
 		}
 
-		case ENCODING_UTF16:
+		case ENCODING_UTF16_LE:
 		{
-			s = wxS( "UTF-16" );
+			s = wxS( "UTF-16LE" );
 			break;
 		}
 
-		case ENCODING_UTF16_WITH_BOM:
+		case ENCODING_UTF16_LE_WITH_BOM:
 		{
-			s = wxS( "UTF-16 (BOM)" );
+			s = wxS( "UTF-16LE (BOM)" );
+			break;
+		}
+
+		case ENCODING_UTF16_BE:
+		{
+			s = wxS( "UTF-16BE" );
+			break;
+		}
+
+		case ENCODING_UTF16_BE_WITH_BOM:
+		{
+			s = wxS( "UTF-16BE (BOM)" );
 			break;
 		}
 
@@ -132,8 +145,12 @@ wxString wxConfiguration::ToString( wxConfiguration::FILE_ENCODING eFileEncoding
 	return s;
 }
 
-bool wxConfiguration::FromString( const wxString& sFileEncoding, wxConfiguration::FILE_ENCODING& eFileEncoding )
+bool wxConfiguration::FromString( const wxString& sFileEncoding_, wxConfiguration::FILE_ENCODING& eFileEncoding )
 {
+	wxString sFileEncoding( sFileEncoding_ );
+	sFileEncoding.Replace( wxS('-'), wxS("") );
+	sFileEncoding.Replace( wxS('_'), wxS("") );
+
 	if (
 		sFileEncoding.CmpNoCase( wxS( "local" ) ) == 0 ||
 		sFileEncoding.CmpNoCase( wxS( "default" ) ) == 0
@@ -142,40 +159,40 @@ bool wxConfiguration::FromString( const wxString& sFileEncoding, wxConfiguration
 		eFileEncoding = ENCODING_LOCAL;
 		return true;
 	}
-	else if (
-		sFileEncoding.CmpNoCase( wxS( "utf8" ) ) == 0 ||
-		sFileEncoding.CmpNoCase( wxS( "utf-8" ) ) == 0
-		)
+	else if (sFileEncoding.CmpNoCase( wxS( "utf8" ) ) == 0 	)
 	{
 		eFileEncoding = ENCODING_UTF8;
 		return true;
 	}
-	else if (
-		sFileEncoding.CmpNoCase( wxS( "utf8_bom" ) ) == 0 ||
-		sFileEncoding.CmpNoCase( wxS( "utf8bom" ) ) == 0 ||
-		sFileEncoding.CmpNoCase( wxS( "utf-8_bom" ) ) == 0 ||
-		sFileEncoding.CmpNoCase( wxS( "utf-8-bom" ) ) == 0
-		)
+	else if ( sFileEncoding.CmpNoCase( wxS( "utf8bom" ) ) == 0  )
 	{
 		eFileEncoding = ENCODING_UTF8_WITH_BOM;
 		return true;
 	}
 	else if (
 		sFileEncoding.CmpNoCase( wxS( "utf16" ) ) == 0 ||
-		sFileEncoding.CmpNoCase( wxS( "utf-16" ) ) == 0
+		sFileEncoding.CmpNoCase( wxS( "utf16le" ) ) == 0 
 		)
 	{
-		eFileEncoding = ENCODING_UTF16;
+		eFileEncoding = ENCODING_UTF16_LE;
 		return true;
 	}
 	else if (
-		sFileEncoding.CmpNoCase( wxS( "utf16_bom" ) ) == 0 ||
 		sFileEncoding.CmpNoCase( wxS( "utf16bom" ) ) == 0 ||
-		sFileEncoding.CmpNoCase( wxS( "utf-16_bom" ) ) == 0 ||
-		sFileEncoding.CmpNoCase( wxS( "utf-16-bom" ) ) == 0
+		sFileEncoding.CmpNoCase( wxS( "utf16lebom" ) ) == 0 
 		)
 	{
-		eFileEncoding = ENCODING_UTF16_WITH_BOM;
+		eFileEncoding = ENCODING_UTF16_LE_WITH_BOM;
+		return true;
+	}
+	else if ( sFileEncoding.CmpNoCase( wxS( "utf16be" ) ) == 0 )
+	{
+		eFileEncoding = ENCODING_UTF16_BE;
+		return true;
+	}
+	else if ( sFileEncoding.CmpNoCase( wxS( "utf16bebom" ) ) == 0 )
+	{
+		eFileEncoding = ENCODING_UTF16_BE_WITH_BOM;
 		return true;
 	}
 	else
@@ -317,7 +334,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 	cmdLine.AddSwitch( wxS( "k" ), wxS( "generate-mkvmerge-options" ), wxString::Format( _( "Generate file with mkvmerge options (default: %s)" ), BoolToStr( m_bGenerateMkvmergeOpts ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxEmptyString, wxS( "run-mkvmerge" ), wxString::Format( _( "Run mkvmerge tool after generation of options file (default: %s)" ), BoolToStr( m_bRunMkvmerge ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxS( "eu" ), wxS( "generate-edition-uid" ), wxString::Format( _( "Generate edition UID (default: %s)" ), BoolToStr( m_bGenerateEditionUID ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
-	cmdLine.AddOption( wxS( "e" ), wxS( "output-encoding" ), _( "Output cue sheet file encoding [local|utf8|utf8_bom|utf16|utf16_bom] (default: utf8_bom)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddOption( wxS( "e" ), wxS( "output-encoding" ), _( "Output cue sheet file encoding [local|utf8|utf8_bom|utf16le|utf16le_bom|utf16be|utf16be_bom] (default: utf8_bom)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxS( "a" ), wxS( "abort-on-error" ), wxString::Format( _( "Abort when conversion errors occurs (default: %s)" ), BoolToStr( m_bAbortOnError ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxS( "j" ), wxS( "merge" ), wxString::Format( _( "Merge cue sheets (default: %s)" ), BoolToStr( m_bMerge ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddOption( wxS( "mf" ), wxS( "matroska-title-format" ), wxString::Format( _( "Mtroska container's title format (default: %s)" ), MATROSKA_NAME_FORMAT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
@@ -1087,10 +1104,14 @@ wxString wxConfiguration::GetXmlFileEncoding() const
 		return wxS("UTF-8");
 		break;
 
-		// mkvmerge do not accept UTF-16 encoded files
-		case ENCODING_UTF16:
-		case ENCODING_UTF16_WITH_BOM:
-		return wxS("UTF-8");
+		case ENCODING_UTF16_LE:
+		case ENCODING_UTF16_LE_WITH_BOM:
+		return wxS("UTF-16LE");
+		break;
+
+		case ENCODING_UTF16_BE:
+		case ENCODING_UTF16_BE_WITH_BOM:
+		return wxS("UTF-16BE");
 		break;
 
 		default:
@@ -1098,44 +1119,66 @@ wxString wxConfiguration::GetXmlFileEncoding() const
 	}
 }
 
+static void enc_2_cp( wxConfiguration::FILE_ENCODING enc, wxUint32& nCodePage, bool& bBom )
+{
+	bBom = false;
+
+	switch( enc )
+	{
+		case wxConfiguration::ENCODING_UTF8_WITH_BOM:
+		bBom = true;
+
+		case wxConfiguration::ENCODING_UTF8:
+		nCodePage = wxEncodingDetection::CP::UTF8;
+		break;
+
+		case wxConfiguration::ENCODING_UTF16_LE_WITH_BOM:
+		bBom = true;
+
+		case wxConfiguration::ENCODING_UTF16_LE:
+		nCodePage = wxEncodingDetection::CP::UTF16_LE;
+		break;
+
+		case wxConfiguration::ENCODING_UTF16_BE_WITH_BOM:
+		bBom = true;
+
+		case wxConfiguration::ENCODING_UTF16_BE:
+		nCodePage = wxEncodingDetection::CP::UTF16_BE;
+		break;
+
+		default:
+		nCodePage =  wxEncodingDetection::GetDefaultEncoding();
+		break;
+	}
+}
+
 wxSharedPtr< wxTextOutputStream > wxConfiguration::GetOutputTextStream( wxOutputStream& os ) const
 {
 	wxSharedPtr< wxTextOutputStream > pRes;
-	switch ( m_eFileEncoding )
+	wxUint32 nCodePage;
+	bool bBom;
+	enc_2_cp( m_eFileEncoding, nCodePage, bBom );
+
+	return wxTextOutputStreamWithBOMFactory::Create( os, wxEOL_NATIVE, bBom, nCodePage, m_bUseMLang );
+}
+
+wxSharedPtr< wxMBConv > wxConfiguration::GetXmlEncoding() const
+{
+	wxString sDescription;
+	wxSharedPtr< wxMBConv > pRes;
+	wxUint32 nCodePage;
+	bool bBom;
+	enc_2_cp( m_eFileEncoding, nCodePage, bBom );
+
+	pRes = wxEncodingDetection::GetStandardMBConv( nCodePage, m_bUseMLang, sDescription );
+	if ( !pRes )
 	{
-		case ENCODING_UTF8:
-		{
-			pRes = wxTextOutputStreamWithBOMFactory::CreateUTF8( os, wxEOL_NATIVE, false, m_bUseMLang );
-			break;
-		}
-
-		case ENCODING_UTF8_WITH_BOM:
-		{
-			pRes = wxTextOutputStreamWithBOMFactory::CreateUTF8( os, wxEOL_NATIVE, true, m_bUseMLang );
-			break;
-		}
-
-		case ENCODING_UTF16:
-		{
-			pRes = wxTextOutputStreamWithBOMFactory::CreateUTF16( os, wxEOL_NATIVE, false, m_bUseMLang );
-			break;
-		}
-
-		case ENCODING_UTF16_WITH_BOM:
-		{
-			pRes = wxTextOutputStreamWithBOMFactory::CreateUTF16( os, wxEOL_NATIVE, true, m_bUseMLang );
-			break;
-		}
-
-		default:
-		{
-			pRes = new wxTextOutputStream( os, wxEOL_NATIVE, wxConvLocal );
-			break;
-		}
+		pRes = wxEncodingDetection::GetDefaultEncoding( m_bUseMLang, sDescription );
 	}
 
 	return pRes;
 }
+
 
 bool wxConfiguration::GetMerge() const
 {

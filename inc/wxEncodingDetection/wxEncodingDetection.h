@@ -33,6 +33,7 @@ class wxEncodingDetection:
 
 		static bool GetBOM( wxUint32, wxByteBuffer & );
 		static wxMBConvSharedPtr GetDefaultEncoding( bool, wxString& );
+		static wxUint32 GetDefaultEncoding();
 
 		static wxMBConvSharedPtr GetStandardMBConv( wxUint32, bool, wxString & );
 		static wxMBConvSharedPtr GetFileEncodingFromBOM( const wxFileName&, bool, wxString& );

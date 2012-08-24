@@ -131,6 +131,8 @@ class wxXmlCueSheetRenderer:
 		void SetConfiguration( const wxConfiguration& );
 		const wxConfiguration& GetConfig() const;
 
+		bool SaveXmlDoc( const wxScopedPtr< wxXmlDocument >&, const wxFileName& ) const;
+
 	protected:
 
 		static wxXmlNode* get_last_child( wxXmlNode* );
