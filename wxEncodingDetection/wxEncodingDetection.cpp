@@ -23,6 +23,75 @@ const wxUint32 wxEncodingDetection::CP::UTF8	 = 65001;
 
 // ===========================================================
 
+// From Unicode to Unicode, just copying
+class wxNoConv:
+	public wxMBConv
+{
+	public:
+
+		wxNoConv()
+		{}
+
+	public:
+
+		virtual size_t ToWChar( 
+			wchar_t* dst, size_t dstLen,
+			const char* src, size_t srcLen = wxNO_LEN ) const
+		{
+			size_t nLen = srcLen;
+			if ( srcLen == wxNO_LEN )
+			{
+				const wchar_t* wsrc = (const wchar_t*)src;
+				nLen = wxStrlen( wsrc ) * sizeof(wchar_t);
+			}
+
+			if ( dst != NULL && dstLen < nLen )
+			{
+				nLen = dstLen;
+			}
+
+			if ( dst != NULL && nLen >= sizeof(wchar_t) )
+			{
+				memcpy( dst, src, nLen );
+			}
+
+			return (nLen >= sizeof(wchar_t))? nLen / sizeof(wchar_t) : wxCONV_FAILED;
+		}
+
+		virtual size_t FromWChar( 
+			char* dst, size_t dstLen,
+			const wchar_t* src, size_t srcLen = wxNO_LEN ) const
+		{
+			size_t nLen = srcLen * sizeof(wchar_t);
+			if ( srcLen == wxNO_LEN )
+			{
+				nLen = wxStrlen( src ) * sizeof(wchar_t);
+			}
+
+			if ( dst != NULL && dstLen < nLen )
+			{
+				nLen = srcLen;
+			}
+
+			if ( dst != NULL && nLen > 0u )
+			{
+				memcpy( dst, src, nLen );
+			}
+
+			return (nLen == 0)? wxCONV_FAILED : nLen;
+		}
+
+		virtual size_t GetMBNulLen() const
+		{
+			return sizeof(wchar_t);
+		}
+
+		virtual wxMBConv* Clone() const
+		{
+			return new wxNoConv();
+		}
+};
+
 class wxMBConv_MLang:
 	public wxMBConv
 {
@@ -34,19 +103,34 @@ class wxMBConv_MLang:
 		static const wxUint32 UNICODE_CP = wxEncodingDetection::CP::UTF16_LE;
 #endif
 
-		static wxMBConv_MLang* Create( wxUint32 nCodePage, wxString& sDescription )
+		static wxMBConv* Create( wxUint32 nCodePage, wxString& sDescription )
 		{
-			wxMBConv_MLang* pConvMLang = new wxMBConv_MLang( nCodePage );
-
-			if ( pConvMLang->GetDescription( sDescription ) )
+			if ( nCodePage == UNICODE_CP )
 			{
-				return pConvMLang;
+				if ( GetDescription( UNICODE_CP, sDescription ) )
+				{
+					wxNoConv* pConv = new wxNoConv();
+					return pConv;
+				}
+				else
+				{
+					return NULL;
+				}
 			}
 			else
 			{
-				wxLogError( _("Unable to get encoding description: %s"), sDescription );
-				wxDELETE( pConvMLang );
-				return NULL;
+				wxMBConv_MLang* pConvMLang = new wxMBConv_MLang( nCodePage );
+
+				if ( pConvMLang->GetDescription( sDescription ) )
+				{
+					return pConvMLang;
+				}
+				else
+				{
+					wxLogError( _("Unable to get encoding description: %s"), sDescription );
+					wxDELETE( pConvMLang );
+					return NULL;
+				}
 			}
 		}
 
@@ -71,19 +155,24 @@ class wxMBConv_MLang:
 
 	public:
 
-		virtual size_t ToWChar( wchar_t* dst, size_t dstLen, const char* src,
-			size_t srcLen = wxNO_LEN ) const
+		virtual size_t ToWChar(
+			wchar_t* dst, size_t dstLen,
+			const char* src, size_t srcLen = wxNO_LEN ) const
 		{
+			wxASSERT( !NoConversion() );
+
 			wxMBConv_MLang* self = const_cast< wxMBConv_MLang* >( this );
 			const wxMLangConvertCharset& toUnicode = self->GetToUnicode();
 			wxASSERT( toUnicode.IsValid() );
 
 			UINT nSrcSize = srcLen;
-			UINT nDstSize = dstLen;
+			UINT nDstSize = dstLen * sizeof(wchar_t);
 
-			HRESULT hRes = toUnicode->DoConversionToUnicode( 
-					const_cast< CHAR* >( src ), &nSrcSize,
-					dst, &nDstSize );
+			HRESULT hRes = toUnicode->DoConversion( 
+					(BYTE*)src,
+					&nSrcSize,
+					(BYTE*)dst,
+					&nDstSize );
 			if ( hRes == S_OK )
 			{
 				if ( nDstSize > 0 )
@@ -93,9 +182,13 @@ class wxMBConv_MLang:
 						wxLogDebug( wxT( "Unicode replacement character - FFFE" ) );
 						return wxCONV_FAILED;
 					}
+					else if ( nDstSize < sizeof(wchar_t) )
+					{
+						return wxCONV_FAILED;
+					}
 					else
 					{
-						return nDstSize;
+						return nDstSize / sizeof(wchar_t);
 					}
 				}
 				else
@@ -105,6 +198,7 @@ class wxMBConv_MLang:
 			}
 			else
 			{
+				wxLogDebug( wxT( "wxMBConv_MLang::ToWChar: DoConvert error: 0x%08x" ), hRes );
 				return wxCONV_FAILED;
 			}
 		}
@@ -112,18 +206,20 @@ class wxMBConv_MLang:
 		virtual size_t FromWChar( char* dst, size_t dstLen, const wchar_t* src,
 			size_t srcLen = wxNO_LEN ) const
 		{
+			wxASSERT( !NoConversion() );
+
 			wxMBConv_MLang* self = const_cast< wxMBConv_MLang* >( this );
 			const wxMLangConvertCharset& fromUnicode = self->GetFromUnicode();
 
 			wxASSERT( fromUnicode.IsValid() );
 
-			UINT nSrcSize = srcLen;
+			UINT nSrcSize = srcLen * sizeof(wchar_t);
 			UINT nDstSize = dstLen;
 
-			HRESULT hRes = fromUnicode->DoConversionFromUnicode(
-					const_cast< WCHAR* >( src ),
+			HRESULT hRes = fromUnicode->DoConversion(
+					(BYTE*)src,
 					&nSrcSize,
-					dst,
+					(BYTE*)dst,
 					&nDstSize );
 
 			if ( hRes == S_OK )
@@ -139,6 +235,7 @@ class wxMBConv_MLang:
 			}
 			else
 			{
+				wxLogDebug( wxT( "wxMBConv_MLang::FromWChar: DoConvert error: 0x%08x" ), hRes );
 				return wxCONV_FAILED;
 			}
 		}
@@ -153,11 +250,12 @@ class wxMBConv_MLang:
 			if ( m_minMBCharWidth == 0 )
 			{
 				DWORD dwMode   = 0;
-				UINT  nSrcSize = 1;
+				UINT  nSrcSize = sizeof(wchar_t);
 				UINT  nDstSize = 0;
+				wchar_t wNull = L'\0';
 
-				HRESULT hRes = fromUnicode->DoConversionFromUnicode( 
-						L"", &nSrcSize,
+				HRESULT hRes = fromUnicode->DoConversion( 
+						(BYTE*)&wNull, &nSrcSize,
 						NULL, &nDstSize );
 
 				if ( hRes == S_OK )
@@ -166,7 +264,7 @@ class wxMBConv_MLang:
 					{
 						default:
 						{
-							wxLogDebug( wxT( "Unexpected NUL length %d" ), nDstSize );
+							wxLogDebug( wxT( "Unexpected NUL length %u" ), nDstSize );
 							self->m_minMBCharWidth = (size_t)-1;
 							break;
 						}
@@ -195,9 +293,12 @@ class wxMBConv_MLang:
 			return m_minMBCharWidth;
 		}
 
-		virtual wxMBConv* Clone() const { return new wxMBConv_MLang( *this ); }
+		virtual wxMBConv* Clone() const
+		{
+			return new wxMBConv_MLang( *this );
+		}
 
-		bool GetDescription( wxString& sDescription ) const
+		static bool GetDescription( wxUint32 nCodePage, wxString& sDescription )
 		{
 			wxString sCPDescription;
 			wxMultiLanguage mlang;
@@ -207,25 +308,35 @@ class wxMBConv_MLang:
 				return false;
 			}
 
-			HRESULT hRes = mlang.GetCodePageDescription( m_nCodePage, sCPDescription );
+			HRESULT hRes = mlang.GetCodePageDescription( nCodePage, sCPDescription );
 
 			if ( hRes == S_OK )
 			{
-				sDescription.Printf( _( "%s [CP:%d]" ), sCPDescription, m_nCodePage );
+				sDescription.Printf( _( "%s [CP:%u]" ), sCPDescription, nCodePage );
 				return true;
 			}
 			else
 			{
-				sDescription.Printf( _( "<ERR:%08x> [CP:%d]" ), hRes, m_nCodePage );
+				sDescription.Printf( _( "<ERR:%08x> [CP:%u]" ), hRes, nCodePage );
 				return false;
 			}
 		}
 
+		bool GetDescription( wxString& sDescription ) const
+		{
+			return GetDescription( m_nCodePage, sDescription );
+		}
+
 	protected:
+
+		bool NoConversion() const
+		{
+			return m_nCodePage == UNICODE_CP;
+		}
 
 		const wxMLangConvertCharset& GetFromUnicode()
 		{
-			if ( m_mlangFromUnicode.IsValid() )
+			if ( !m_mlangFromUnicode.IsValid() )
 			{
 				m_mlangFromUnicode.Initialize( UNICODE_CP, m_nCodePage );
 			}
@@ -234,7 +345,7 @@ class wxMBConv_MLang:
 
 		const wxMLangConvertCharset& GetToUnicode()
 		{
-			if ( m_mlangToUnicode.IsValid() )
+			if ( !m_mlangToUnicode.IsValid() )
 			{
 				m_mlangToUnicode.Initialize( m_nCodePage, UNICODE_CP );
 			}
