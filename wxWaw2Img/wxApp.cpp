@@ -679,11 +679,11 @@ class AnimationThread:
 
 				if ( img.SaveFile( mos, wxBITMAP_TYPE_PNG ) )
 				{
-					wxStreamBuffer*	   sb = mos.GetOutputStreamBuffer();
 					wxFileOutputStream fos( fn.GetFullPath() );
 
 					if ( fos.IsOk() )
 					{
+						const wxStreamBuffer* const sb = mos.GetOutputStreamBuffer();
 						fos.Write( sb->GetBufferStart(), sb->GetBufferSize() - sb->GetBytesLeft() );
 						fos.Close();
 					}

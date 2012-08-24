@@ -161,7 +161,7 @@ class wxMBConv_MLang:
 		{
 			wxASSERT( !NoConversion() );
 
-			wxMBConv_MLang* self = const_cast< wxMBConv_MLang* >( this );
+			wxMBConv_MLang* const self = wxConstCast( this, wxMBConv_MLang );
 			const wxMLangConvertCharset& toUnicode = self->GetToUnicode();
 			wxASSERT( toUnicode.IsValid() );
 
@@ -208,7 +208,7 @@ class wxMBConv_MLang:
 		{
 			wxASSERT( !NoConversion() );
 
-			wxMBConv_MLang* self = const_cast< wxMBConv_MLang* >( this );
+			wxMBConv_MLang* const self = wxConstCast( this, wxMBConv_MLang );
 			const wxMLangConvertCharset& fromUnicode = self->GetFromUnicode();
 
 			wxASSERT( fromUnicode.IsValid() );

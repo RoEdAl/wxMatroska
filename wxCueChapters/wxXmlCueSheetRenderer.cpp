@@ -404,7 +404,7 @@ const wxFileName& wxXmlCueSheetRenderer::GetTagsFile() const
 
 bool wxXmlCueSheetRenderer::SaveXmlDoc( const wxScopedPtr< wxXmlDocument >& pXmlDoc, const wxFileName& fileName ) const
 {
-	wxSharedPtr< wxMBConv > pConv = GetConfig().GetXmlEncoding();
+	wxSharedPtr< wxMBConv > pConv( GetConfig().GetXmlEncoding() );
 	wxStringOutputStream outputStream( NULL, *pConv );
 
 	{
@@ -416,7 +416,7 @@ bool wxXmlCueSheetRenderer::SaveXmlDoc( const wxScopedPtr< wxXmlDocument >& pXml
 			return false;
 		}
 
-		wxStreamBuffer* sb = mos.GetOutputStreamBuffer();
+		const wxStreamBuffer* const sb = mos.GetOutputStreamBuffer();
 		outputStream.Write( sb->GetBufferStart(), sb->GetBufferSize() - sb->GetBytesLeft() );
 	}
 
