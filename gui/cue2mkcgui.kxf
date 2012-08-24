@@ -46,7 +46,7 @@
 				<property name="Top" vt="Int8">0</property>
 				<property name="Width" vt="Int16">541</property>
 				<property name="Height" vt="Int16">369</property>
-				<property name="ActivePage" vt="Ident">OptionsPane</property>
+				<property name="ActivePage" vt="Ident">PaneInputOutput</property>
 				<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
 				<property name="Font.Color" vt="Ident">clWindowText</property>
 				<property name="Font.Height" vt="Int8">-11</property>
@@ -73,7 +73,7 @@
 						<object type="TAInput" name="InputOuputDir">
 							<properties>
 								<property name="Left" vt="Int16">140</property>
-								<property name="Top" vt="Int16">307</property>
+								<property name="Top" vt="Int16">315</property>
 								<property name="Width" vt="Int16">353</property>
 								<property name="Height" vt="Int8">21</property>
 								<property name="Hint" vt="String">Destination directory</property>
@@ -87,7 +87,7 @@
 						<object type="TAButton" name="ButtonOutputDirectory">
 							<properties>
 								<property name="Left" vt="Int16">497</property>
-								<property name="Top" vt="Int16">307</property>
+								<property name="Top" vt="Int16">315</property>
 								<property name="Width" vt="Int8">29</property>
 								<property name="Height" vt="Int8">21</property>
 								<property name="Hint" vt="String">Specify output directory or file</property>
@@ -109,9 +109,9 @@
 						<object type="TAButton" name="ButtonInputAdd">
 							<properties>
 								<property name="Left" vt="Int8">1</property>
-								<property name="Top" vt="Int16">262</property>
-								<property name="Width" vt="Int8">29</property>
-								<property name="Height" vt="Int8">21</property>
+								<property name="Top" vt="Int16">238</property>
+								<property name="Width" vt="Int8">52</property>
+								<property name="Height" vt="Int8">52</property>
 								<property name="Hint" vt="String">Add specified file or file mask to list</property>
 								<property name="Caption" vt="String">+</property>
 								<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
@@ -152,10 +152,10 @@
 						</object>
 						<object type="TAButton" name="ButtonInputDelete">
 							<properties>
-								<property name="Left" vt="Int8">36</property>
-								<property name="Top" vt="Int16">262</property>
-								<property name="Width" vt="Int8">29</property>
-								<property name="Height" vt="Int8">21</property>
+								<property name="Left" vt="Int8">57</property>
+								<property name="Top" vt="Int16">238</property>
+								<property name="Width" vt="Int8">52</property>
+								<property name="Height" vt="Int8">52</property>
 								<property name="Hint" vt="String">Delete selected items from list</property>
 								<property name="Caption" vt="String">-</property>
 								<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
@@ -174,10 +174,10 @@
 						</object>
 						<object type="TAButton" name="ButtonMakeMask">
 							<properties>
-								<property name="Left" vt="Int8">72</property>
-								<property name="Top" vt="Int16">262</property>
-								<property name="Width" vt="Int8">29</property>
-								<property name="Height" vt="Int8">21</property>
+								<property name="Left" vt="Int8">114</property>
+								<property name="Top" vt="Int16">238</property>
+								<property name="Width" vt="Int8">52</property>
+								<property name="Height" vt="Int8">52</property>
 								<property name="Hint" vt="String">Make file mask with selected items</property>
 								<property name="Caption" vt="WString">•</property>
 								<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
@@ -199,7 +199,7 @@
 								<property name="Left" vt="Int8">0</property>
 								<property name="Top" vt="Int8">25</property>
 								<property name="Width" vt="Int16">529</property>
-								<property name="Height" vt="Int16">234</property>
+								<property name="Height" vt="Int16">210</property>
 								<property name="CtrlStyle" vt="Int32">1342378035</property>
 								<property name="CtrlExStyle" vt="Int32">131072</property>
 								<property name="Resizing" vt="Set">DockLeft, DockRight, DockTop, DockBottom</property>
@@ -209,10 +209,10 @@
 						</object>
 						<object type="TAButton" name="ButtonDataFile">
 							<properties>
-								<property name="Left" vt="Int8">106</property>
-								<property name="Top" vt="Int16">262</property>
-								<property name="Width" vt="Int8">29</property>
-								<property name="Height" vt="Int8">21</property>
+								<property name="Left" vt="Int16">170</property>
+								<property name="Top" vt="Int16">238</property>
+								<property name="Width" vt="Int8">52</property>
+								<property name="Height" vt="Int8">52</property>
 								<property name="Hint" vt="String">Add media file to selected cue sheet</property>
 								<property name="Caption" vt="String">+</property>
 								<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
@@ -232,7 +232,7 @@
 						<object type="TACombo" name="ComboOutput">
 							<properties>
 								<property name="Left" vt="Int8">0</property>
-								<property name="Top" vt="Int16">307</property>
+								<property name="Top" vt="Int16">315</property>
 								<property name="Width" vt="Int16">137</property>
 								<property name="Height" vt="Int8">25</property>
 								<property name="ItemHeight" vt="Int8">13</property>
@@ -253,7 +253,7 @@
 						<object type="TALabel" name="LabelOutput">
 							<properties>
 								<property name="Left" vt="Int8">0</property>
-								<property name="Top" vt="Int16">287</property>
+								<property name="Top" vt="Int16">295</property>
 								<property name="Width" vt="Int8">80</property>
 								<property name="Height" vt="Int8">17</property>
 								<property name="AutoSize" vt="False">False</property>
