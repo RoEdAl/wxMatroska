@@ -18,11 +18,13 @@ class wxMLangConvertCharset:
 
 	public:
 
-		wxMLangConvertCharset( wxUint32 = CP_ACP, wxUint32 = CP_WINUNICODE );
+		wxMLangConvertCharset( void );
+		wxMLangConvertCharset( wxUint32, wxUint32 );
 		wxMLangConvertCharset( const wxMultiLanguage&, wxUint32, wxUint32 );
 		wxMLangConvertCharset( const wxMLangConvertCharset& );
 		~wxMLangConvertCharset( void );
 
+		bool Initialize( wxUint32, wxUint32 );
 		bool IsValid() const;
 		void Close();
 

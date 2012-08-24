@@ -28,23 +28,11 @@ class wxMBConv_MLang:
 {
 	public:
 
-		static wxMBConv_MLang* Create( const wxMultiLanguage& ml,
-			wxUint32 nCodePage,
-			wxString& sDescription )
-		{
-			wxMBConv_MLang* pConvMLang = new wxMBConv_MLang( ml, nCodePage );
-
-			if ( pConvMLang->GetDescription( sDescription ) )
-			{
-				return pConvMLang;
-			}
-			else
-			{
-				wxLogError( _("Unable to get encoding description: %s"), sDescription );
-				wxDELETE( pConvMLang );
-				return NULL;
-			}
-		}
+#if WORDS_BIGENDIAN
+		static const wxUint32 UNICODE_CP = wxEncodingDetection::CP::UTF16_BE;
+#else
+		static const wxUint32 UNICODE_CP = wxEncodingDetection::CP::UTF16_LE;
+#endif
 
 		static wxMBConv_MLang* Create( wxUint32 nCodePage, wxString& sDescription )
 		{
@@ -65,28 +53,17 @@ class wxMBConv_MLang:
 	protected:
 
 		wxMBConv_MLang():
+			m_nCodePage(0),
 			m_minMBCharWidth( 0 )
-		{
-		}
+		{}
 
 		wxMBConv_MLang( wxUint32 nCodePage ):
-			m_mlangFromUnicode( wxEncodingDetection::CP::UTF16_LE, nCodePage ),
-			m_mlangToUnicode( nCodePage,wxEncodingDetection::CP::UTF16_LE ),
-			m_minMBCharWidth( 0 )
-		{
-			if ( !m_mlangFromUnicode.IsValid() || !m_mlangToUnicode.IsValid()  )
-			{
-				wxLogError( _( "Cannot create MultiLanguage COM object" ) );
-			}
-		}
-
-		wxMBConv_MLang( const wxMultiLanguage& ml, wxUint32 nCodePage = CP_ACP ):
-			m_mlangFromUnicode( ml, wxEncodingDetection::CP::UTF16_LE, nCodePage ),
-			m_mlangToUnicode( ml, nCodePage, wxEncodingDetection::CP::UTF16_LE ),
+			m_nCodePage( nCodePage ),
 			m_minMBCharWidth( 0 )
 		{}
 
 		wxMBConv_MLang( const wxMBConv_MLang& conv ):
+			m_nCodePage( conv.m_nCodePage ),
 			m_mlangFromUnicode( conv.m_mlangFromUnicode ),
 			m_mlangToUnicode( conv.m_mlangToUnicode ),
 			m_minMBCharWidth( conv.m_minMBCharWidth )
@@ -97,14 +74,14 @@ class wxMBConv_MLang:
 		virtual size_t ToWChar( wchar_t* dst, size_t dstLen, const char* src,
 			size_t srcLen = wxNO_LEN ) const
 		{
-			wxASSERT( m_mlangToUnicode.IsValid() );
+			wxMBConv_MLang* self = const_cast< wxMBConv_MLang* >( this );
+			const wxMLangConvertCharset& toUnicode = self->GetToUnicode();
+			wxASSERT( toUnicode.IsValid() );
 
 			UINT nSrcSize = srcLen;
 			UINT nDstSize = dstLen;
 
-			wxMBConv_MLang* self = const_cast< wxMBConv_MLang* >( this );
-
-			HRESULT hRes = m_mlangToUnicode->DoConversionToUnicode( 
+			HRESULT hRes = toUnicode->DoConversionToUnicode( 
 					const_cast< CHAR* >( src ), &nSrcSize,
 					dst, &nDstSize );
 			if ( hRes == S_OK )
@@ -135,14 +112,15 @@ class wxMBConv_MLang:
 		virtual size_t FromWChar( char* dst, size_t dstLen, const wchar_t* src,
 			size_t srcLen = wxNO_LEN ) const
 		{
-			wxASSERT( m_mlangFromUnicode.IsValid() );
+			wxMBConv_MLang* self = const_cast< wxMBConv_MLang* >( this );
+			const wxMLangConvertCharset& fromUnicode = self->GetFromUnicode();
+
+			wxASSERT( fromUnicode.IsValid() );
 
 			UINT nSrcSize = srcLen;
 			UINT nDstSize = dstLen;
 
-			wxMBConv_MLang* self = const_cast< wxMBConv_MLang* >( this );
-
-			HRESULT hRes = m_mlangFromUnicode->DoConversionFromUnicode(
+			HRESULT hRes = fromUnicode->DoConversionFromUnicode(
 					const_cast< WCHAR* >( src ),
 					&nSrcSize,
 					dst,
@@ -167,7 +145,10 @@ class wxMBConv_MLang:
 
 		virtual size_t GetMBNulLen() const
 		{
-			wxASSERT( m_mlangFromUnicode.IsValid() );
+			wxMBConv_MLang* const self = wxConstCast( this, wxMBConv_MLang );
+			const wxMLangConvertCharset& fromUnicode = self->GetFromUnicode();
+
+			wxASSERT( fromUnicode.IsValid() );
 
 			if ( m_minMBCharWidth == 0 )
 			{
@@ -175,11 +156,9 @@ class wxMBConv_MLang:
 				UINT  nSrcSize = 1;
 				UINT  nDstSize = 0;
 
-				HRESULT hRes = m_mlangFromUnicode->DoConversionFromUnicode( 
+				HRESULT hRes = fromUnicode->DoConversionFromUnicode( 
 						L"", &nSrcSize,
 						NULL, &nDstSize );
-
-				wxMBConv_MLang* const self = wxConstCast( this, wxMBConv_MLang );
 
 				if ( hRes == S_OK )
 				{
@@ -218,8 +197,6 @@ class wxMBConv_MLang:
 
 		virtual wxMBConv* Clone() const { return new wxMBConv_MLang( *this ); }
 
-		bool IsOk() const { return m_mlangFromUnicode.IsValid() && m_mlangToUnicode.IsValid(); }
-
 		bool GetDescription( wxString& sDescription ) const
 		{
 			wxString sCPDescription;
@@ -230,31 +207,47 @@ class wxMBConv_MLang:
 				return false;
 			}
 
-			UINT nCodePage;
-			HRESULT hRes = m_mlangToUnicode->GetSourceCodePage( &nCodePage );
-			wxASSERT( hRes == S_OK );
-
-			hRes = mlang.GetCodePageDescription( nCodePage, sCPDescription );
+			HRESULT hRes = mlang.GetCodePageDescription( m_nCodePage, sCPDescription );
 
 			if ( hRes == S_OK )
 			{
-				sDescription.Printf( wxT( "%s [CP:%d]" ), sCPDescription, nCodePage );
+				sDescription.Printf( _( "%s [CP:%d]" ), sCPDescription, m_nCodePage );
 				return true;
 			}
 			else
 			{
-				sDescription.Printf( wxT( "<ERR:%08x> [CP:%d]" ), hRes, nCodePage );
+				sDescription.Printf( _( "<ERR:%08x> [CP:%d]" ), hRes, m_nCodePage );
 				return false;
 			}
 		}
 
 	protected:
 
+		const wxMLangConvertCharset& GetFromUnicode()
+		{
+			if ( m_mlangFromUnicode.IsValid() )
+			{
+				m_mlangFromUnicode.Initialize( UNICODE_CP, m_nCodePage );
+			}
+			return m_mlangFromUnicode;
+		}
+
+		const wxMLangConvertCharset& GetToUnicode()
+		{
+			if ( m_mlangToUnicode.IsValid() )
+			{
+				m_mlangToUnicode.Initialize( m_nCodePage, UNICODE_CP );
+			}
+			return m_mlangToUnicode;
+		}
+
+	protected:
+
+		wxUint32 m_nCodePage;
 		wxMLangConvertCharset m_mlangToUnicode;
 		wxMLangConvertCharset m_mlangFromUnicode;
 
-		// cached result of GetMBNulLen(), set to 0 initially meaning
-		// "unknown"
+		// cached result of GetMBNulLen(), set to 0 initially meaning "unknown"
 		size_t m_minMBCharWidth;
 };
 
@@ -557,8 +550,7 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 
 	if ( nFileSize == wxULL( 0 ) )
 	{
-		wxLogError( _( "Cannot determine encoding of empty file \u201C%s\u201D" ),
-				fn.GetName() );
+		wxLogError( _( "Cannot determine encoding of empty file \u201C%s\u201D" ), fn.GetName() );
 		return pRes;
 	}
 
@@ -577,7 +569,6 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 
 		if ( !multiLanguage.IsValid() )
 		{
-			wxLogError( _( "Cannot create MultiLanguage COM object" ) );
 			pRes.reset();
 			return pRes;
 		}
@@ -682,12 +673,12 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 				wxLogDebug( wxT( "Detected encoding of file \u201C%s\u201D is %d (%d%%)" ), fn.GetName(), dei[ i ].nCodePage, dei[ i ].nDocPercent );
 			}
 
-			pRes = wxMBConv_MLang::Create( multiLanguage, dei[ 0 ].nCodePage, sDescription );
+			pRes = wxMBConv_MLang::Create( dei[ 0 ].nCodePage, sDescription );
 		}
 		else
 		{
 			wxLogDebug( wxT( "Cannot detect code page - using default encoding" ) );
-			pRes = wxMBConv_MLang::Create( multiLanguage, nDefCodePage, sDescription );
+			pRes = wxMBConv_MLang::Create( nDefCodePage, sDescription );
 		}
 	}
 	else

@@ -21,6 +21,7 @@ wxMultiLanguage::wxMultiLanguage( void )
 
 	if ( hRes != S_OK )
 	{
+		wxLogError( _("Fail to get CMultiLanguage object; error 0x%08x"), hRes );
 		m_pMLang = (IMultiLanguage2*)NULL;
 	}
 }
