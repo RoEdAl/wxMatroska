@@ -26,14 +26,15 @@ wxCuePointsRenderer::wxCuePointsRenderer( const wxConfiguration& cfg ):
 static wxString get_track_title( const wxTrack& track )
 {
 	wxArrayCueTag tags;
-	size_t nTags = wxCueTag::GetTags( track.GetCdTextTags(), wxCueTag::Name::TITLE, tags );
+	size_t		  nTags = wxCueTag::GetTags( track.GetCdTextTags(), wxCueTag::Name::TITLE, tags );
+
 	if ( nTags > 0u )
 	{
 		wxString s;
-		for( size_t i = 0, nCount = tags.GetCount(); i < nCount; i++ )
+		for ( size_t i = 0, nCount = tags.GetCount(); i < nCount; i++ )
 		{
-			s += tags[i].GetFlattenValue();
-			s += wxS(';');
+			s += tags[ i ].GetFlattenValue();
+			s += wxS( ';' );
 		}
 
 		return s.RemoveLast();
@@ -46,8 +47,8 @@ static wxString get_track_title( const wxTrack& track )
 
 void wxCuePointsRenderer::RenderDisc( const wxCueSheet& cueSheet )
 {
-	wxSamplingInfo	si;
-	wxDateTime dtNow( wxDateTime::Now() );
+	wxSamplingInfo si;
+	wxDateTime	   dtNow( wxDateTime::Now() );
 
 	*m_os <<
 	wxS( "# This file was created by " ) << wxGetApp().GetAppDisplayName() << wxS( " tool" ) << endl <<
@@ -57,21 +58,22 @@ void wxCuePointsRenderer::RenderDisc( const wxCueSheet& cueSheet )
 
 	if ( cueSheet.GetContentsCount() > 0u )
 	{
-		const wxCueSheetContent& cnt = cueSheet.GetContents()[0];
+		const wxCueSheetContent& cnt = cueSheet.GetContents()[ 0 ];
+
 		if ( cnt.HasSource() )
 		{
 			const wxDataFile& df = cnt.GetSource();
-			*m_os << wxS( "# Source file \u201C" ) << df.GetFileName().GetFullName() << wxS("\u201D") << endl;
+			*m_os << wxS( "# Source file \u201C" ) << df.GetFileName().GetFullName() << wxS( "\u201D" ) << endl;
 		}
 	}
 
 	const wxArrayTrack& tracks = cueSheet.GetTracks();
-	for( size_t i=0, nCount = tracks.GetCount(); i < nCount; i++ )
+	for ( size_t i = 0, nCount = tracks.GetCount(); i < nCount; i++ )
 	{
-		const wxTrack& track = tracks[i];
-		wxString sTitle( get_track_title( track ) );
-		wxIndex idx;
-		wxString sIdx;
+		const wxTrack& track = tracks[ i ];
+		wxString	   sTitle( get_track_title( track ) );
+		wxIndex		   idx;
+		wxString	   sIdx;
 
 		if ( track.GetNumber() == 1u && !m_cfg.TrackOneIndexOne() && track.HasZeroIndex() )
 		{
@@ -84,16 +86,17 @@ void wxCuePointsRenderer::RenderDisc( const wxCueSheet& cueSheet )
 
 		wxASSERT( idx.HasDataFileIdx() );
 		wxDuration duration( cueSheet.GetDuration( idx.GetDataFileIdx() ) );
+
 		if ( !duration.IsValid() )
 		{
-			wxLogWarning( _("Cannot render cue point for track %u"), i );
-			*m_os << _("# Cannot render cue point for track ") << i << endl;
+			wxLogWarning( _( "Cannot render cue point for track %u" ), i );
+			*m_os << _( "# Cannot render cue point for track " ) << i << endl;
 			continue;
 		}
 
 		wxULongLong indexOffset( duration.GetSamplingInfo().GetIndexOffset( idx ) );
 
-		if ( track.GetNumber() == 1u && idx.GetDataFileIdx() == 0u && indexOffset == wxULL(0) )
+		if ( track.GetNumber() == 1u && idx.GetDataFileIdx() == 0u && indexOffset == wxULL( 0 ) )
 		{
 			continue;
 		}
@@ -107,7 +110,7 @@ void wxCuePointsRenderer::RenderDisc( const wxCueSheet& cueSheet )
 		}
 		else
 		{
-			*m_os << sIdx << wxS("\t# ") << sTitle << endl;
+			*m_os << sIdx << wxS( "\t# " ) << sTitle << endl;
 		}
 	}
 }
@@ -129,3 +132,4 @@ bool wxCuePointsRenderer::Save( const wxFileName& outputFile )
 		return false;
 	}
 }
+

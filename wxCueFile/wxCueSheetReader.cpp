@@ -362,6 +362,7 @@ bool wxCueSheetReader::ReadCueSheet( const wxString& sCueFile, bool bUseMLang )
 bool wxCueSheetReader::ReadCueSheet( const wxString& sCueFile, wxMBConv& conv )
 {
 	wxFileName cueFileName( sCueFile );
+
 	cueFileName.MakeAbsolute();
 
 	if ( !cueFileName.IsFileReadable() || cueFileName.IsDir() )
@@ -1018,10 +1019,10 @@ void wxCueSheetReader::ParseFile( const wxString& WXUNUSED( sToken ), const wxSt
 
 		wxFileName fn( Unquote( sFile ) );
 
-		if (  m_cueSheetContent.HasSource() )
+		if ( m_cueSheetContent.HasSource() )
 		{
-			if ( m_cueSheetContent.IsEmbedded() )
-			{ // the only source
+			if ( m_cueSheetContent.IsEmbedded() )	// the only source
+			{
 				m_cueSheet.AddDataFile( m_cueSheetContent.GetSource() );
 			}
 			else

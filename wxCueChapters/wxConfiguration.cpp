@@ -148,8 +148,9 @@ wxString wxConfiguration::ToString( wxConfiguration::FILE_ENCODING eFileEncoding
 bool wxConfiguration::FromString( const wxString& sFileEncoding_, wxConfiguration::FILE_ENCODING& eFileEncoding )
 {
 	wxString sFileEncoding( sFileEncoding_ );
-	sFileEncoding.Replace( wxS('-'), wxS("") );
-	sFileEncoding.Replace( wxS('_'), wxS("") );
+
+	sFileEncoding.Replace( wxS( '-' ), wxS( "" ) );
+	sFileEncoding.Replace( wxS( '_' ), wxS( "" ) );
 
 	if (
 		sFileEncoding.CmpNoCase( wxS( "local" ) ) == 0 ||
@@ -159,19 +160,19 @@ bool wxConfiguration::FromString( const wxString& sFileEncoding_, wxConfiguratio
 		eFileEncoding = ENCODING_LOCAL;
 		return true;
 	}
-	else if (sFileEncoding.CmpNoCase( wxS( "utf8" ) ) == 0 	)
+	else if ( sFileEncoding.CmpNoCase( wxS( "utf8" ) ) == 0 )
 	{
 		eFileEncoding = ENCODING_UTF8;
 		return true;
 	}
-	else if ( sFileEncoding.CmpNoCase( wxS( "utf8bom" ) ) == 0  )
+	else if ( sFileEncoding.CmpNoCase( wxS( "utf8bom" ) ) == 0 )
 	{
 		eFileEncoding = ENCODING_UTF8_WITH_BOM;
 		return true;
 	}
 	else if (
 		sFileEncoding.CmpNoCase( wxS( "utf16" ) ) == 0 ||
-		sFileEncoding.CmpNoCase( wxS( "utf16le" ) ) == 0 
+		sFileEncoding.CmpNoCase( wxS( "utf16le" ) ) == 0
 		)
 	{
 		eFileEncoding = ENCODING_UTF16_LE;
@@ -179,7 +180,7 @@ bool wxConfiguration::FromString( const wxString& sFileEncoding_, wxConfiguratio
 	}
 	else if (
 		sFileEncoding.CmpNoCase( wxS( "utf16bom" ) ) == 0 ||
-		sFileEncoding.CmpNoCase( wxS( "utf16lebom" ) ) == 0 
+		sFileEncoding.CmpNoCase( wxS( "utf16lebom" ) ) == 0
 		)
 	{
 		eFileEncoding = ENCODING_UTF16_LE_WITH_BOM;
@@ -1101,21 +1102,30 @@ wxString wxConfiguration::GetXmlFileEncoding() const
 	{
 		case ENCODING_UTF8:
 		case ENCODING_UTF8_WITH_BOM:
-		return wxS("UTF-8");
-		break;
+		{
+			return wxS( "UTF-8" );
+
+			break;
+		}
 
 		case ENCODING_UTF16_LE:
 		case ENCODING_UTF16_LE_WITH_BOM:
-		return wxS("UTF-16LE");
-		break;
+		{
+			return wxS( "UTF-16LE" );
+
+			break;
+		}
 
 		case ENCODING_UTF16_BE:
 		case ENCODING_UTF16_BE_WITH_BOM:
-		return wxS("UTF-16BE");
-		break;
+		{
+			return wxS( "UTF-16BE" );
+
+			break;
+		}
 
 		default:
-		return wxS("UTF-8");
+		return wxS( "UTF-8" );
 	}
 }
 
@@ -1123,40 +1133,54 @@ static void enc_2_cp( wxConfiguration::FILE_ENCODING enc, wxUint32& nCodePage, b
 {
 	bBom = false;
 
-	switch( enc )
+	switch ( enc )
 	{
 		case wxConfiguration::ENCODING_UTF8_WITH_BOM:
-		bBom = true;
+		{
+			bBom = true;
+		}
 
 		case wxConfiguration::ENCODING_UTF8:
-		nCodePage = wxEncodingDetection::CP::UTF8;
-		break;
+		{
+			nCodePage = wxEncodingDetection::CP::UTF8;
+			break;
+		}
 
 		case wxConfiguration::ENCODING_UTF16_LE_WITH_BOM:
-		bBom = true;
+		{
+			bBom = true;
+		}
 
 		case wxConfiguration::ENCODING_UTF16_LE:
-		nCodePage = wxEncodingDetection::CP::UTF16_LE;
-		break;
+		{
+			nCodePage = wxEncodingDetection::CP::UTF16_LE;
+			break;
+		}
 
 		case wxConfiguration::ENCODING_UTF16_BE_WITH_BOM:
-		bBom = true;
+		{
+			bBom = true;
+		}
 
 		case wxConfiguration::ENCODING_UTF16_BE:
-		nCodePage = wxEncodingDetection::CP::UTF16_BE;
-		break;
+		{
+			nCodePage = wxEncodingDetection::CP::UTF16_BE;
+			break;
+		}
 
 		default:
-		nCodePage =  wxEncodingDetection::GetDefaultEncoding();
-		break;
+		{
+			nCodePage = wxEncodingDetection::GetDefaultEncoding();
+			break;
+		}
 	}
 }
 
 wxSharedPtr< wxTextOutputStream > wxConfiguration::GetOutputTextStream( wxOutputStream& os ) const
 {
 	wxSharedPtr< wxTextOutputStream > pRes;
-	wxUint32 nCodePage;
-	bool bBom;
+	wxUint32						  nCodePage;
+	bool							  bBom;
 	enc_2_cp( m_eFileEncoding, nCodePage, bBom );
 
 	return wxTextOutputStreamWithBOMFactory::Create( os, wxEOL_NATIVE, bBom, nCodePage, m_bUseMLang );
@@ -1165,12 +1189,14 @@ wxSharedPtr< wxTextOutputStream > wxConfiguration::GetOutputTextStream( wxOutput
 wxSharedPtr< wxMBConv > wxConfiguration::GetXmlEncoding() const
 {
 	wxString sDescription;
+
 	wxSharedPtr< wxMBConv > pRes;
-	wxUint32 nCodePage;
-	bool bBom;
+	wxUint32				nCodePage;
+	bool					bBom;
 	enc_2_cp( m_eFileEncoding, nCodePage, bBom );
 
 	pRes = wxEncodingDetection::GetStandardMBConv( nCodePage, m_bUseMLang, sDescription );
+
 	if ( !pRes )
 	{
 		pRes = wxEncodingDetection::GetDefaultEncoding( m_bUseMLang, sDescription );
@@ -1178,7 +1204,6 @@ wxSharedPtr< wxMBConv > wxConfiguration::GetXmlEncoding() const
 
 	return pRes;
 }
-
 
 bool wxConfiguration::GetMerge() const
 {

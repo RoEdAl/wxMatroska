@@ -47,8 +47,8 @@ wxCueSheetContent& wxCueSheetContent::operator =( const wxCueSheetContent& csCon
 
 void wxCueSheetContent::copy( const wxCueSheetContent& csContent )
 {
-	m_source = csContent.m_source;
-	m_sValue = csContent.m_sValue;
+	m_source	= csContent.m_source;
+	m_sValue	= csContent.m_sValue;
 	m_bEmbedded = csContent.m_bEmbedded;
 }
 

@@ -102,13 +102,13 @@ class wxConfiguration:
 
 	protected:
 
-		INFO_SUBJECT				m_infoSubject;
-		bool						m_bChapterTimeEnd;																																//
-																																													//default=true
-		bool						m_bUnknownChapterTimeEndToNextChapter;	// default=false
-		unsigned long				m_nChapterOffset;																																//
-																																													//in
-																																													//frames
+		INFO_SUBJECT m_infoSubject;
+		bool		 m_bChapterTimeEnd;																																																																//
+		// default=true
+		bool		  m_bUnknownChapterTimeEndToNextChapter;	// default=false
+		unsigned long m_nChapterOffset;	//
+		// in
+		// frames
 		bool						m_bUseDataFiles;// default=true
 		bool						m_bEmbedded;
 		bool						m_bCorrectQuotationMarks;
@@ -195,6 +195,7 @@ class wxConfiguration:
 		bool GenerateEditionUID() const;
 		FILE_ENCODING GetFileEncoding() const;
 		wxString GetXmlFileEncoding() const;
+
 		wxSharedPtr< wxMBConv > GetXmlEncoding() const;
 
 		wxSharedPtr< wxTextOutputStream > GetOutputTextStream( wxOutputStream& )

@@ -18,7 +18,7 @@ class wxCueSheetContent:
 
 		wxString   m_sValue;
 		wxDataFile m_source;
-		bool m_bEmbedded;
+		bool	   m_bEmbedded;
 
 	public:
 

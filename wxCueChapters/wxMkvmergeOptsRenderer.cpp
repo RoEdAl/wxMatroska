@@ -255,6 +255,7 @@ void wxMkvmergeOptsRenderer::write_source_eac_attachments(
 	for ( size_t i = 0; i < nContents; i++ )
 	{
 		const wxCueSheetContent cnt = contents[ i ];
+
 		if ( cnt.HasSource() && !cnt.IsEmbedded() )
 		{
 			nSourceContents += 1;
@@ -274,6 +275,7 @@ void wxMkvmergeOptsRenderer::write_source_eac_attachments(
 			for ( size_t i = 0; i < nContents; i++ )
 			{
 				const wxCueSheetContent cnt = contents[ i ];
+
 				if ( !( cnt.HasSource() && !cnt.IsEmbedded() ) )
 				{
 					continue;
@@ -305,6 +307,7 @@ void wxMkvmergeOptsRenderer::write_source_eac_attachments(
 			for ( size_t i = 0, nCounter = 1; i < nContents; i++ )
 			{
 				const wxCueSheetContent cnt = contents[ i ];
+
 				if ( !( cnt.HasSource() && !cnt.IsEmbedded() ) )
 				{
 					continue;
@@ -330,6 +333,7 @@ void wxMkvmergeOptsRenderer::write_source_eac_attachments(
 			for ( size_t i = 0, nCounter = 1; i < nContents; i++ )
 			{
 				const wxCueSheetContent cnt = contents[ i ];
+
 				if ( !( cnt.HasSource() && !cnt.IsEmbedded() ) )
 				{
 					continue;
@@ -508,7 +512,6 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile,
 	// pre
 	wxDateTime dtNow( wxDateTime::Now() );
 
-
 	*m_os <<
 	wxS( "# This file was created by " ) << wxGetApp().GetAppDisplayName() << wxS( " tool" ) << endl <<
 	wxS( "# Application version: " ) << wxGetApp().APP_VERSION << endl <<
@@ -604,3 +607,4 @@ bool wxMkvmergeOptsRenderer::Save()
 		return false;
 	}
 }
+

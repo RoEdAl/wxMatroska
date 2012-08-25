@@ -405,11 +405,12 @@ const wxFileName& wxXmlCueSheetRenderer::GetTagsFile() const
 bool wxXmlCueSheetRenderer::SaveXmlDoc( const wxScopedPtr< wxXmlDocument >& pXmlDoc, const wxFileName& fileName ) const
 {
 	wxSharedPtr< wxMBConv > pConv( GetConfig().GetXmlEncoding() );
-	wxStringOutputStream outputStream( NULL, *pConv );
+	wxStringOutputStream	outputStream( NULL, *pConv );
 
 	{
 		// back from memory to string and again to file
 		wxMemoryOutputStream mos;
+
 		if ( !pXmlDoc->Save( mos ) )
 		{
 			wxLogError( _( "Fail to stringify XML document" ) );

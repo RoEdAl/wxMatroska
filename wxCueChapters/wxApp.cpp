@@ -184,7 +184,7 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, wxCueSheet& cueSheet
 		case wxConfiguration::RENDER_MATROSKA_CHAPTERS:
 		{
 			wxLogInfo( _( "Converting cue scheet to XML format" ) );
-			wxSharedPtr< wxXmlCueSheetRenderer > pXmlRenderer = GetXmlRenderer(	inputFile );
+			wxSharedPtr< wxXmlCueSheetRenderer > pXmlRenderer = GetXmlRenderer( inputFile );
 
 			if ( pXmlRenderer->Render( cueSheet ) )
 			{
@@ -233,6 +233,7 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, wxCueSheet& cueSheet
 			renderer.RenderDisc( cueSheet );
 
 			wxLogInfo( _( "Saving cue points to \u201C%s\u201D" ), outputFile.GetFullName() );
+
 			if ( !renderer.Save( outputFile ) )
 			{
 				return 1;

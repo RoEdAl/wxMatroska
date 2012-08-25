@@ -34,7 +34,7 @@ class wxMkvmergeOptsRenderer:
 {
 	protected:
 
-		wxFileName  m_matroskaOptsFile;
+		wxFileName m_matroskaOptsFile;
 
 	protected:
 
