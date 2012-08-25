@@ -18,7 +18,9 @@ class wxTextOutputStreamOnString:
 		wxTextOutputStream&			operator *();
 
 		const wxString& GetString() const;
-		bool SaveTo( const wxString&, bool ) const;
+
+		static void SaveTo( wxTextOutputStream&, const wxString& );
+		void SaveTo( wxTextOutputStream& ) const;
 
 	protected:
 

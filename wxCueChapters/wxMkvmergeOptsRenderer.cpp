@@ -370,7 +370,7 @@ bool wxMkvmergeOptsRenderer::save_cuesheet( const wxInputFile& inputFile,
 	{
 		wxLogInfo( _( "Creating cue sheet file \u201C%s\u201D" ), cueSheet.GetFullName() );
 		wxSharedPtr< wxTextOutputStream > pStream( m_cfg.GetOutputTextStream( os ) );
-		save_string_to_stream( *pStream, sContent );
+		wxTextOutputStreamOnString::SaveTo( *pStream, sContent );
 		return true;
 	}
 	else
@@ -384,17 +384,13 @@ bool wxMkvmergeOptsRenderer::render_cuesheet( const wxInputFile& inputFile,
 		const wxString& sPostfix, const wxCueSheet& cueSheet,
 		wxFileName& fn )
 {
-	wxString sValue( wxTextCueSheetRenderer::ToString( cueSheet ) );
-
-	if ( !sValue.IsEmpty() )
+	wxTextOutputStreamOnString tos;
+	if ( !wxTextCueSheetRenderer::ToString( *tos, cueSheet ) )
 	{
-		return save_cuesheet( inputFile, sPostfix, sValue, fn );
-	}
-	else
-	{
-		wxLogError( _( "Fail to render cue sheet \u201C%s\u201D" ), sPostfix );
 		return false;
 	}
+
+	return save_cuesheet( inputFile, sPostfix, tos.GetString(), fn );
 }
 
 void wxMkvmergeOptsRenderer::write_decoded_eac_attachments( const wxInputFile& inputFile,
@@ -598,7 +594,7 @@ bool wxMkvmergeOptsRenderer::Save()
 	{
 		wxLogInfo( _( "Creating mkvmerge options file \u201C%s\u201D" ), m_matroskaOptsFile.GetFullName() );
 		wxSharedPtr< wxTextOutputStream > pStream( m_cfg.GetOutputTextStream( os ) );
-		save_string_to_stream( *pStream, m_os.GetString() );
+		m_os.SaveTo( *pStream );
 		return true;
 	}
 	else

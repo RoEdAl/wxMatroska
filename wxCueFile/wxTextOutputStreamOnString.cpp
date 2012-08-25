@@ -4,7 +4,6 @@
 
 #include "StdWx.h"
 #include <wxCueFile/wxTextOutputStreamOnString.h>
-#include <wxEncodingDetection/wxTextOutputStreamWithBOM.h>
 #include <wxCueFile/wxTextInputStreamOnString.h>
 
 // ===============================================================================
@@ -39,20 +38,29 @@ wxTextOutputStream& wxTextOutputStreamOnString::operator *()
 	return m_textOutputStream;
 }
 
-bool wxTextOutputStreamOnString::SaveTo( const wxString& sOutputFile, bool bUseMLang ) const
+void wxTextOutputStreamOnString::SaveTo( wxTextOutputStream& tos, const wxString& s )
 {
-	wxFileOutputStream os( sOutputFile );
+	wxTextInputStreamOnString tis( s );
+	wxString sLine;
 
-	if ( os.IsOk() )
+	while ( !tis.Eof() )
 	{
-		wxSharedPtr< wxTextOutputStream > pStream( wxTextOutputStreamWithBOMFactory::CreateUTF8( os, wxEOL_NATIVE, true, bUseMLang ) );
-		pStream->WriteString( GetString() );
-		pStream->Flush();
-		return true;
+		sLine = ( *tis ).ReadLine();
+
+		if ( sLine.IsEmpty() )
+		{
+			tos << endl;
+		}
+		else
+		{
+			tos << sLine << endl;
+		}
 	}
-	else
-	{
-		return false;
-	}
+
+	tos.Flush();
 }
 
+void wxTextOutputStreamOnString::SaveTo( wxTextOutputStream& tos ) const
+{
+	SaveTo( tos, GetString() );
+}

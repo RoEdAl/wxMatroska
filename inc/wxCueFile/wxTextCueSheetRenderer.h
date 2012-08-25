@@ -66,6 +66,7 @@ class wxTextCueSheetRenderer:
 		wxTextOutputStream* GetOutputStream() const;
 		int GetDumpFlags() const;
 
+		static bool ToString( wxTextOutputStream&, const wxCueSheet&, int = DUMP_COMMENTS | DUMP_TAGS );
 		static wxString ToString( const wxCueSheet&, int = DUMP_COMMENTS | DUMP_TAGS );
 };
 

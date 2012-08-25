@@ -14,33 +14,9 @@
 #include "wxConfiguration.h"
 #include "wxInputFile.h"
 #include "wxPrimitiveRenderer.h"
-#include "wxApp.h"
 
 // ===============================================================================
 
 wxPrimitiveRenderer::wxPrimitiveRenderer( const wxConfiguration& cfg ):
 	m_cfg( cfg )
 {}
-
-void wxPrimitiveRenderer::save_string_to_stream( wxTextOutputStream& stream, const wxString& s )
-{
-	wxTextInputStreamOnString tis( s );
-	wxString				  sLine;
-
-	while ( !tis.Eof() )
-	{
-		sLine = ( *tis ).ReadLine();
-
-		if ( sLine.IsEmpty() )
-		{
-			stream << endl;
-		}
-		else
-		{
-			stream << sLine << endl;
-		}
-	}
-
-	stream.Flush();
-}
-

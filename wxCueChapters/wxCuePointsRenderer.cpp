@@ -123,7 +123,7 @@ bool wxCuePointsRenderer::Save( const wxFileName& outputFile )
 	{
 		wxLogInfo( _( "Creating cue points file \u201C%s\u201D" ), outputFile.GetFullName() );
 		wxSharedPtr< wxTextOutputStream > pStream( m_cfg.GetOutputTextStream( os ) );
-		save_string_to_stream( *pStream, m_os.GetString() );
+		m_os.SaveTo( *pStream );
 		return true;
 	}
 	else

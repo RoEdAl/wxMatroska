@@ -252,3 +252,8 @@ wxString wxTextCueSheetRenderer::ToString( const wxCueSheet& cueSheet, int nDump
 	}
 }
 
+bool wxTextCueSheetRenderer::ToString( wxTextOutputStream& tos, const wxCueSheet& cueSheet, int nDumpFlags )
+{
+	wxTextCueSheetRenderer renderer( &tos, nDumpFlags );
+	return renderer.Render( cueSheet );
+}

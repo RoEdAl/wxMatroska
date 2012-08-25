@@ -35,10 +35,6 @@ class wxPrimitiveRenderer:
 
 	protected:
 
-		static void save_string_to_stream( wxTextOutputStream&, const wxString& );
-
-	protected:
-
 		wxPrimitiveRenderer( const wxConfiguration& );
 };
 

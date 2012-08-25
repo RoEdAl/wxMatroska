@@ -212,7 +212,7 @@ bool wxXmlCueSheetRenderer::set_total_parts( wxXmlNode* pSimple, size_t nTotalPa
 		{
 			wxXmlNode* pText = pChild->GetChildren();
 			wxASSERT( pText != wxNullXmlNode );
-			pText->SetContent( wxString::Format( wxT( "%d" ), nTotalParts ) );
+			pText->SetContent( wxString::Format( wxT( "%u" ), nTotalParts ) );
 			return true;
 		}
 
@@ -407,18 +407,10 @@ bool wxXmlCueSheetRenderer::SaveXmlDoc( const wxScopedPtr< wxXmlDocument >& pXml
 	wxSharedPtr< wxMBConv > pConv( GetConfig().GetXmlEncoding() );
 	wxStringOutputStream	outputStream( NULL, *pConv );
 
+	if ( !pXmlDoc->Save( outputStream ) )
 	{
-		// back from memory to string and again to file
-		wxMemoryOutputStream mos;
-
-		if ( !pXmlDoc->Save( mos ) )
-		{
-			wxLogError( _( "Fail to stringify XML document" ) );
-			return false;
-		}
-
-		const wxStreamBuffer* const sb = mos.GetOutputStreamBuffer();
-		outputStream.Write( sb->GetBufferStart(), sb->GetBufferSize() - sb->GetBytesLeft() );
+		wxLogError( _( "Fail to stringify XML document" ) );
+		return false;
 	}
 
 	wxFileOutputStream fos( fileName.GetFullPath() );
