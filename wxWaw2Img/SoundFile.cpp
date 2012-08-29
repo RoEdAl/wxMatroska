@@ -14,6 +14,30 @@ const SF_VIRTUAL_IO SoundFile::sf_virtual_io =
 	vio_tell
 };
 
+wxString SoundFile::GetVersion()
+{
+	wxString v;
+
+	{
+		wxStringTypeBufferLength< char > vl( v, 128 );
+		int								 nRes = sf_command( NULL, SFC_GET_LIB_VERSION, vl, 128 );
+		vl.SetLength( nRes );
+	}
+
+	return v;
+}
+
+wxString SoundFile::GetFormatName( int nFormat )
+{
+	SF_FORMAT_INFO fm_info;
+
+	fm_info.format = nFormat;
+
+	int nRes = sf_command( NULL, SFC_GET_FORMAT_INFO, &fm_info, sizeof ( SF_FORMAT_INFO ) );
+
+	return wxString( fm_info.name );
+}
+
 SoundFile::SoundFile():
 	m_sndfile( NULL )
 {}

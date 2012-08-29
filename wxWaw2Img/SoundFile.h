@@ -30,6 +30,9 @@ class SoundFile
 
 	public:
 
+		static wxString GetVersion();
+		static wxString GetFormatName( int );
+
 		SNDFILE* GetHandle() const;
 		const SF_INFO& GetInfo() const;
 		wxFile&		   GetFile() const;

@@ -2,7 +2,6 @@
  * wxApp.cpp
  */
 #include "StdWx.h"
-#include <sndfile.h>
 #include <wxConsoleApp/MyLogStderr.h>
 #include <wxEncodingDetection/wxEncodingDetection.h>
 #include "Arrays.h"
@@ -60,37 +59,13 @@ wxIMPLEMENT_APP_CONSOLE( wxMyApp );
 wxMyApp::wxMyApp( void )
 {}
 
-static wxString get_libsndfile_version()
-{
-	wxString v;
-
-	{
-		wxStringTypeBufferLength< char > vl( v, 128 );
-		int								 nRes = sf_command( NULL, SFC_GET_LIB_VERSION, vl, 128 );
-		vl.SetLength( nRes );
-	}
-
-	return v;
-}
-
-static wxString get_format_name( int nFormat )
-{
-	SF_FORMAT_INFO fm_info;
-
-	fm_info.format = nFormat;
-
-	int nRes = sf_command( NULL, SFC_GET_FORMAT_INFO, &fm_info, sizeof ( SF_FORMAT_INFO ) );
-
-	return wxString( fm_info.name );
-}
-
 void wxMyApp::InfoVersion( wxMessageOutput& out )
 {
 	out.Printf( _( "Application version: %s" ), APP_VERSION );
 	wxString::Format( _( "Author: %s" ), APP_AUTHOR );
 	out.Output( _( "License: Simplified BSD License - http://www.opensource.org/licenses/bsd-license.php" ) );
 	out.Printf( _( "wxWidgets version: %d.%d.%d. Copyright \u00A9 1992-2008 Julian Smart, Robert Roebling, Vadim Zeitlin and other members of the wxWidgets team" ), wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER );
-	out.Printf( _( "libsndfile version: %s. Copyright \u00A9 1999-2011 Erik de Castro Lopo" ), get_libsndfile_version() );
+	out.Printf( _( "libsndfile version: %s. Copyright \u00A9 1999-2011 Erik de Castro Lopo" ), SoundFile::GetVersion() );
 	out.Printf( _( "Operating system: %s" ), wxPlatformInfo::Get().GetOperatingSystemDescription() );
 }
 
@@ -145,6 +120,53 @@ void wxMyApp::InfoSystemSettings( wxMessageOutput& out )
 	out.Printf( _( "Display size (milimeters): %dx%d" ), dplSizeMm.GetWidth(), dplSizeMm.GetHeight() );
 	out.Printf( _( "Background color: %s" ), wxSystemSettings::GetColour( wxConfiguration::COLOR_BACKGROUND ).GetAsString() );
 	out.Printf( _( "Second background color: %s" ), wxSystemSettings::GetColour( wxConfiguration::COLOR_BACKGROUND2 ).GetAsString() );
+}
+
+bool wxMyApp::ShowInfo() const
+{
+	switch ( m_cfg.GetInfoSubject() )
+	{
+		case wxConfiguration::INFO_VERSION:
+		{
+			InfoVersion( *wxMessageOutput::Get() );
+			return true;
+		}
+
+		case wxConfiguration::INFO_COLOUR_FORMAT:
+		{
+			InfoColourFormat( *wxMessageOutput::Get() );
+			return true;
+		}
+
+		case wxConfiguration::INFO_CUE_POINT_FORMAT:
+		{
+			InfoCuePointFormat( *wxMessageOutput::Get() );
+			return true;
+		}
+
+		case wxConfiguration::INFO_CMD_LINE_TEMPLATE:
+		{
+			InfoCmdLineTemplate( *wxMessageOutput::Get() );
+			return true;
+		}
+
+		case wxConfiguration::INFO_SYSTEM_SETTINGS:
+		{
+			InfoSystemSettings( *wxMessageOutput::Get() );
+			return true;
+		}
+
+		case wxConfiguration::INFO_LICENSE:
+		{
+			ShowLicense( *wxMessageOutput::Get() );
+			return true;
+		}
+
+		default:
+		{
+			return false;
+		}
+	}
 }
 
 void wxMyApp::OnInitCmdLine( wxCmdLineParser& cmdline )
@@ -372,6 +394,9 @@ static void set_image_options( wxImage& img, const wxConfiguration& cfg, const w
 	img.SetOption( wxIMAGE_OPTION_FILENAME, fn.GetName() );
 }
 
+#ifdef __WXMSW__
+#if wxUSE_ENH_METAFILE
+
 static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, wxEnhMetaFile* pEmf )
 {
 	wxASSERT( pEmf != NULL );
@@ -401,6 +426,9 @@ static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, wxEnhM
 		return false;
 	}
 }
+
+#endif
+#endif
 
 static wxImage draw_progress( MemoryGraphicsContext& mgc, const NinePatchBitmap& npb, const wxRect2DIntArray& rects, wxUint32 nWidth, wxImageResizeQuality eResizeQuality )
 {
@@ -675,29 +703,9 @@ class AnimationThread:
 				wxImage img( DrawProgress( nWidth ) );
 
 				set_image_options( img, m_cfg, fn );
-				wxMemoryOutputStream mos;
 
-				if ( img.SaveFile( mos, wxBITMAP_TYPE_PNG ) )
+				if ( !save_image( img, fn, nWidth ) )
 				{
-					wxFileOutputStream fos( fn.GetFullPath() );
-
-					if ( fos.IsOk() )
-					{
-						const wxStreamBuffer* const sb = mos.GetOutputStreamBuffer();
-						fos.Write( sb->GetBufferStart(), sb->GetBufferSize() - sb->GetBytesLeft() );
-						fos.Close();
-					}
-					else
-					{
-						wxLogError( _( "[thread%d] Fail to save sequence %u to file \u201C%s\u201D" ), m_nThreadNumber, nWidth, fn.GetFullName() );
-						wxAtomicInc( m_nErrorCounter );
-						break;
-					}
-				}
-				else
-				{
-					wxLogError( _( "[thread%d] Fail to create sequence %u - cannot convert to PNG format" ), m_nThreadNumber, nWidth );
-					wxAtomicInc( m_nErrorCounter );
 					break;
 				}
 
@@ -721,6 +729,36 @@ class AnimationThread:
 		inline wxImage DrawProgress( wxUint32 nWidth )
 		{
 			return draw_progress( m_mgc, m_npb, m_rects, nWidth, m_eResizeQuality );
+		}
+
+		bool save_image( const wxImage& img, const wxFileName& fn, wxUint32 nSeq )
+		{
+			wxMemoryOutputStream mos;
+
+			if ( img.SaveFile( mos, wxBITMAP_TYPE_PNG ) )
+			{
+				wxFileOutputStream fos( fn.GetFullPath() );
+
+				if ( fos.IsOk() )
+				{
+					const wxStreamBuffer* const sb = mos.GetOutputStreamBuffer();
+					fos.Write( sb->GetBufferStart(), sb->GetBufferSize() - sb->GetBytesLeft() );
+					fos.Close();
+					return true;
+				}
+				else
+				{
+					wxLogError( _( "[thread%d] Fail to save sequence %u to file \u201C%s\u201D" ), m_nThreadNumber, nSeq, fn.GetFullName() );
+					wxAtomicInc( m_nErrorCounter );
+				}
+			}
+			else
+			{
+				wxLogError( _( "[thread%d] Fail to create sequence %u - cannot convert to PNG format" ), m_nThreadNumber, nSeq );
+				wxAtomicInc( m_nErrorCounter );
+			}
+
+			return false;
 		}
 
 	protected:
@@ -1061,53 +1099,6 @@ static void html_renderer()
 	img.SaveFile( "C:/Users/Normal/Documents/Visual Studio 2010/Projects/wxMatroska/html_render.png" );
 }
 
-bool wxMyApp::ShowInfo() const
-{
-	switch ( m_cfg.GetInfoSubject() )
-	{
-		case wxConfiguration::INFO_VERSION:
-		{
-			InfoVersion( *wxMessageOutput::Get() );
-			return true;
-		}
-
-		case wxConfiguration::INFO_COLOUR_FORMAT:
-		{
-			InfoColourFormat( *wxMessageOutput::Get() );
-			return true;
-		}
-
-		case wxConfiguration::INFO_CUE_POINT_FORMAT:
-		{
-			InfoCuePointFormat( *wxMessageOutput::Get() );
-			return true;
-		}
-
-		case wxConfiguration::INFO_CMD_LINE_TEMPLATE:
-		{
-			InfoCmdLineTemplate( *wxMessageOutput::Get() );
-			return true;
-		}
-
-		case wxConfiguration::INFO_SYSTEM_SETTINGS:
-		{
-			InfoSystemSettings( *wxMessageOutput::Get() );
-			return true;
-		}
-
-		case wxConfiguration::INFO_LICENSE:
-		{
-			ShowLicense( *wxMessageOutput::Get() );
-			return true;
-		}
-
-		default:
-		{
-			return false;
-		}
-	}
-}
-
 int wxMyApp::OnRun()
 {
 	if ( ShowInfo() )
@@ -1161,7 +1152,7 @@ int wxMyApp::OnRun()
 	const SF_INFO& sfInfo	= sfReader.GetInfo();
 	wxTimeSpan	   duration = wxTimeSpan::Milliseconds( sfInfo.frames * 1000 / sfInfo.samplerate );
 	wxLogMessage( _( "Format: %s, samplerate: %uHz, channels: %u, duration: %s" ),
-			get_format_name( sfInfo.format ),
+			SoundFile::GetFormatName( sfInfo.format ),
 			sfInfo.samplerate,
 			sfInfo.channels,
 			duration.Format() );
