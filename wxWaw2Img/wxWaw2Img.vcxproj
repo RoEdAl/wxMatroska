@@ -110,7 +110,6 @@
     <ClInclude Include="SampleProcessor.h" />
     <ClInclude Include="SoundFile.h" />
     <ClInclude Include="StdWx.h" />
-    <ClInclude Include="targetver.h" />
     <ClInclude Include="WaveDrawer.h" />
     <ClInclude Include="WaveDrawerColumnPainter.h" />
     <ClInclude Include="WaveDrawerGraphicsContext.h" />
