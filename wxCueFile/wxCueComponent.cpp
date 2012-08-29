@@ -7,7 +7,7 @@
 #include <wxCueFile/wxCueTag.h>
 #include <wxCueFile/wxCueComponent.h>
 #include <wxCueFile/wxUnquoter.h>
-#include <wxCueFile/wxTextOutputStreamOnString.h>
+#include <wxEncodingDetection/wxTextOutputStreamOnString.h>
 
 // ===============================================================================
 

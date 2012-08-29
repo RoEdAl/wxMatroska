@@ -8,8 +8,8 @@
 #include <wxCueFile/wxCueSheet.h>
 #include <wxCueFile/wxCueSheetReader.h>
 #include <wxEncodingDetection/wxTextOutputStreamWithBOM.h>
-#include <wxCueFile/wxTextOutputStreamOnString.h>
-#include <wxCueFile/wxTextInputStreamOnString.h>
+#include <wxEncodingDetection/wxTextOutputStreamOnString.h>
+#include <wxEncodingDetection/wxTextInputStreamOnString.h>
 #include <wxCueFile/wxTextCueSheetRenderer.h>
 #include "wxConfiguration.h"
 #include "wxInputFile.h"

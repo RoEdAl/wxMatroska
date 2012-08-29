@@ -8,8 +8,8 @@
 #include <wxCueFile/wxTrailingSpacesRemover.h>
 #include <wxCueFile/wxReduntantSpacesRemover.h>
 #include <wxCueFile/wxEllipsizer.h>
-#include <wxCueFile/wxTextOutputStreamOnString.h>
-#include <wxCueFile/wxTextInputStreamOnString.h>
+#include <wxEncodingDetection/wxTextOutputStreamOnString.h>
+#include <wxEncodingDetection/wxTextInputStreamOnString.h>
 
 // ===============================================================================
 

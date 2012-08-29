@@ -3,14 +3,14 @@
  */
 
 #include "StdWx.h"
-#include <wxCueFile/wxTextOutputStreamOnString.h>
+#include <wxEncodingDetection/wxTextOutputStreamOnString.h>
 #include <wxCueFile/wxSamplingInfo.h>
 #include <wxCueFile/wxIndex.h>
 #include <wxCueFile/wxTrack.h>
 #include <wxCueFile/wxCueSheetContent.h>
 #include <wxCueFile/wxCueSheetReader.h>
 #include <wxEncodingDetection/wxEncodingDetection.h>
-#include <wxCueFile/wxTextInputStreamOnString.h>
+#include <wxEncodingDetection/wxTextInputStreamOnString.h>
 #include <wxCueFile/wxTextCueSheetRenderer.h>
 
 // ===============================================================================

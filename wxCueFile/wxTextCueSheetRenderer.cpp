@@ -8,7 +8,7 @@
 #include <wxCueFile/wxTrack.h>
 #include <wxCueFile/wxCueSheet.h>
 #include <wxCueFile/wxTextCueSheetRenderer.h>
-#include <wxCueFile/wxTextOutputStreamOnString.h>
+#include <wxEncodingDetection/wxTextOutputStreamOnString.h>
 
 // ===============================================================================
 

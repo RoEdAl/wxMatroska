@@ -53,12 +53,6 @@
     <ClCompile Include="wxTrailingSpacesRemover.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="wxTextInputStreamOnString.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="wxTextOutputStreamOnString.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="wxEllipsizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -121,9 +115,6 @@
     <ClInclude Include="..\inc\wxCueFile\wxTrailingSpacesRemover.h">
       <Filter>External Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\inc\wxCueFile\wxTextOutputStreamOnString.h">
-      <Filter>External Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\inc\wxCueFile\wxEllipsizer.h">
       <Filter>External Header Files</Filter>
     </ClInclude>
@@ -134,9 +125,6 @@
       <Filter>External Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\inc\wxCueFile\wxCueSheetContent.h">
-      <Filter>External Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\wxCueFile\wxTextInputStreamOnString.h">
       <Filter>External Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\inc\wxCueFile\wxReduntantSpacesRemover.h">

@@ -22,7 +22,7 @@ class wxArrayFileName;
 #endif
 
 #ifndef _WX_TEXT_OUTPUT_STREAM_ON_STRING_H_
-#include <wxCueFile/wxTextOutputStreamOnString.h>
+#include <wxEncodingDetection/wxTextOutputStreamOnString.h>
 #endif
 
 class wxPrimitiveRenderer:

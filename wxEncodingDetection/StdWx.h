@@ -14,6 +14,7 @@
 #include <wx/log.h>
 #include <wx/wfstream.h>
 #include <wx/txtstrm.h>
+#include <wx/sstream.h>
 #include <wx/filename.h>
 #include <wx/sharedptr.h>
 

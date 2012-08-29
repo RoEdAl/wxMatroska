@@ -3,7 +3,7 @@
  */
 
 #include "StdWx.h"
-#include <wxCueFile/wxTextInputStreamOnString.h>
+#include <wxEncodingDetection/wxTextInputStreamOnString.h>
 
 // ===============================================================================
 

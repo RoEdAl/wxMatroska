@@ -4,7 +4,7 @@
 
 #include "StdWx.h"
 #include <wxCueFile/wxSamplingInfo.h>
-#include <wxCueFile/wxTextOutputStreamOnString.h>
+#include <wxEncodingDetection/wxTextOutputStreamOnString.h>
 #include <wxCueFile/wxDuration.h>
 #include <wxCueFile/wxDataFile.h>
 #include <wxCueFile/wxTrack.h>

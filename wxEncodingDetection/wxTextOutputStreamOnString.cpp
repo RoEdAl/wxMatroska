@@ -3,8 +3,8 @@
  */
 
 #include "StdWx.h"
-#include <wxCueFile/wxTextOutputStreamOnString.h>
-#include <wxCueFile/wxTextInputStreamOnString.h>
+#include <wxEncodingDetection/wxTextOutputStreamOnString.h>
+#include <wxEncodingDetection/wxTextInputStreamOnString.h>
 
 // ===============================================================================
 

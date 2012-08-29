@@ -85,9 +85,13 @@
     <ClCompile Include="wxEncodingDetection.cpp" />
     <ClCompile Include="wxMLangConvertCharset.cpp" />
     <ClCompile Include="wxMultiLanguage.cpp" />
+    <ClCompile Include="wxTextInputStreamOnString.cpp" />
+    <ClCompile Include="wxTextOutputStreamOnString.cpp" />
     <ClCompile Include="wxTextOutputStreamWithBOM.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\inc\wxEncodingDetection\wxTextInputStreamOnString.h" />
+    <ClInclude Include="..\inc\wxEncodingDetection\wxTextOutputStreamOnString.h" />
     <ClInclude Include="wxMLangConvertCharset.h" />
     <ClInclude Include="StdWx.h" />
     <ClInclude Include="wxMultiLanguage.h" />
