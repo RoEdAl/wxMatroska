@@ -1155,3 +1155,12 @@ bool wxConfiguration::UseWorkerThreads() const
 	return m_bUseWorkerThreads;
 }
 
+void wxConfiguration::SetImageOptions( wxImage& img, const wxFileName& fn ) const
+{
+	img.SetOption( wxIMAGE_OPTION_RESOLUTIONX, m_imageResolution.GetWidth() );
+	img.SetOption( wxIMAGE_OPTION_RESOLUTIONY, m_imageResolution.GetHeight() );
+	img.SetOption( wxIMAGE_OPTION_RESOLUTIONUNIT, m_imageResolutionUnits );
+	img.SetOption( wxIMAGE_OPTION_QUALITY, m_nImageQuality );
+	img.SetOption( wxIMAGE_OPTION_PNG_COMPRESSION_LEVEL, GetPngCompressionLevel() );
+	img.SetOption( wxIMAGE_OPTION_FILENAME, fn.GetName() );
+}

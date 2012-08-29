@@ -384,16 +384,6 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 	}
 }
 
-static void set_image_options( wxImage& img, const wxConfiguration& cfg, const wxFileName& fn )
-{
-	img.SetOption( wxIMAGE_OPTION_RESOLUTIONX, cfg.GetImageResolution().GetWidth() );
-	img.SetOption( wxIMAGE_OPTION_RESOLUTIONY, cfg.GetImageResolution().GetHeight() );
-	img.SetOption( wxIMAGE_OPTION_RESOLUTIONUNIT, cfg.GetImageResolutionUnits() );
-	img.SetOption( wxIMAGE_OPTION_QUALITY, cfg.GetImageQuality() );
-	img.SetOption( wxIMAGE_OPTION_PNG_COMPRESSION_LEVEL, cfg.GetPngCompressionLevel() );
-	img.SetOption( wxIMAGE_OPTION_FILENAME, fn.GetName() );
-}
-
 #ifdef __WXMSW__
 #if wxUSE_ENH_METAFILE
 
@@ -702,7 +692,7 @@ class AnimationThread:
 				wxLogInfo( _( "[thread%d] Creating sequence file \u201C%s\u201D" ), m_nThreadNumber, fn.GetFullName() );
 				wxImage img( DrawProgress( nWidth ) );
 
-				set_image_options( img, m_cfg, fn );
+				m_cfg.SetImageOptions( img, fn );
 
 				if ( !save_image( img, fn, nWidth ) )
 				{
@@ -797,7 +787,7 @@ static bool create_animation(
 
 	{
 		wxImage bimg( img );
-		set_image_options( bimg, cfg, fn );
+		cfg.SetImageOptions( bimg, fn );
 
 		if ( !bimg.SaveFile( fn.GetFullPath() ) )
 		{
@@ -891,7 +881,7 @@ static bool create_animation(
 			wxLogInfo( _( "Creating sequence file \u201C%s\u201D" ), fn.GetFullName() );
 			wxImage aimg( draw_progress( mgc, npb, rects, i, cfg.GetResizeQuality() ) );
 
-			set_image_options( aimg, cfg, fn );
+			cfg.SetImageOptions( aimg, fn );
 
 			if ( !aimg.SaveFile( fn.GetFullPath() ) )
 			{
@@ -1014,7 +1004,7 @@ static bool save_image(
 	else
 	{
 		wxImage img( mcWaveDrawer.GetBitmap() );
-		set_image_options( img, cfg, fn );
+		cfg.SetImageOptions( img, fn );
 
 		wxLogInfo( _( "Saving image to file \u201C%s\u201D" ), fn.GetFullName() );
 		bool res = img.SaveFile( fn.GetFullPath() );

@@ -166,6 +166,8 @@ class wxConfiguration:
 		bool DeleteTemporaryFiles() const;
 		bool UseWorkerThreads() const;
 
+		void SetImageOptions( wxImage&, const wxFileName& ) const;
+
 	public:
 
 		wxConfiguration( void );
