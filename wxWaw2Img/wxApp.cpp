@@ -1061,42 +1061,57 @@ static void html_renderer()
 	img.SaveFile( "C:/Users/Normal/Documents/Visual Studio 2010/Projects/wxMatroska/html_render.png" );
 }
 
-int wxMyApp::OnRun()
+bool wxMyApp::ShowInfo() const
 {
 	switch ( m_cfg.GetInfoSubject() )
 	{
 		case wxConfiguration::INFO_VERSION:
 		{
 			InfoVersion( *wxMessageOutput::Get() );
-			return 0;
+			return true;
 		}
 
 		case wxConfiguration::INFO_COLOUR_FORMAT:
 		{
 			InfoColourFormat( *wxMessageOutput::Get() );
-			return 0;
+			return true;
 		}
 
 		case wxConfiguration::INFO_CUE_POINT_FORMAT:
 		{
 			InfoCuePointFormat( *wxMessageOutput::Get() );
-			return 0;
+			return true;
 		}
 
 		case wxConfiguration::INFO_CMD_LINE_TEMPLATE:
 		{
 			InfoCmdLineTemplate( *wxMessageOutput::Get() );
-			return 0;
+			return true;
 		}
 
 		case wxConfiguration::INFO_SYSTEM_SETTINGS:
 		{
 			InfoSystemSettings( *wxMessageOutput::Get() );
-			return 0;
+			return true;
 		}
 
 		case wxConfiguration::INFO_LICENSE:
-		ShowLicense( *wxMessageOutput::Get() );
+		{
+			ShowLicense( *wxMessageOutput::Get() );
+			return true;
+		}
+
+		default:
+		{
+			return false;
+		}
+	}
+}
+
+int wxMyApp::OnRun()
+{
+	if ( ShowInfo() )
+	{
 		return 0;
 	}
 

@@ -40,6 +40,8 @@ class wxMyApp:
 
 	protected:
 
+		bool ShowInfo() const;
+
 		int ProcessCueFile( const wxInputFile&, const wxTagSynonimsCollection&, const wxTagSynonimsCollection& );
 		int ConvertCueSheet( const wxInputFile&, wxCueSheet& );
 		int AppendCueSheet( wxCueSheet& );

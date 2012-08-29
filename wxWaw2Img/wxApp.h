@@ -25,6 +25,7 @@ class wxMyApp:
 
 		static void InitImageHandlers();
 
+		bool ShowInfo() const;
 		static void InfoVersion( wxMessageOutput& );
 		static void InfoColourFormat( wxMessageOutput& );
 		static void InfoSystemSettings( wxMessageOutput& );

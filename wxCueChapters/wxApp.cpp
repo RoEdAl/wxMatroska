@@ -301,33 +301,46 @@ int wxMyApp::ProcessCueFile( const wxInputFile& inputFile, const wxTagSynonimsCo
 	}
 }
 
-int wxMyApp::OnRun()
+bool wxMyApp::ShowInfo() const
 {
 	switch ( m_cfg.GetInfoSubject() )
 	{
 		case wxConfiguration::INFO_VERSION:
 		{
 			InfoVersion( *wxMessageOutput::Get() );
-			return 0;
+			return true;
 		}
 
 		case wxConfiguration::INFO_USAGE:
 		{
 			InfoUsage( *wxMessageOutput::Get() );
-			return 0;
+			return true;
 		}
 
 		case wxConfiguration::INFO_FORMATTING_DIRECTIVES:
 		{
 			InfoFormatDescription( *wxMessageOutput::Get() );
-			return 0;
+			return true;
 		}
 
 		case wxConfiguration::INFO_LICENSE:
 		{
 			ShowLicense( *wxMessageOutput::Get() );
-			return 0;
+			return true;
 		}
+
+		default:
+		{
+			return false;
+		}
+	}
+}
+
+int wxMyApp::OnRun()
+{
+	if ( ShowInfo() )
+	{
+		return 0;
 	}
 
 	wxInputFile firstInputFile;
