@@ -5,7 +5,7 @@
 #include <sndfile.h>
 #include <wxConsoleApp/MyLogStderr.h>
 #include <wxEncodingDetection/wxEncodingDetection.h>
-#include "FloatArray.h"
+#include "Arrays.h"
 #include "LogarithmicScale.h"
 #include "Interval.h"
 #include "DrawerSettings.h"

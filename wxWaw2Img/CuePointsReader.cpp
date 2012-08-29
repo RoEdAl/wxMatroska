@@ -3,7 +3,7 @@
  */
 #include "StdWx.h"
 #include <wxEncodingDetection/wxEncodingDetection.h>
-#include "FloatArray.h"
+#include "Arrays.h"
 #include "CuePointsReader.h"
 
 CuePointsReader::CuePointsReader():

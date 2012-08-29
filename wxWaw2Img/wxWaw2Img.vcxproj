@@ -98,7 +98,7 @@
     <ClInclude Include="ColourInterpolation.h" />
     <ClInclude Include="CuePointsReader.h" />
     <ClInclude Include="DrawerSettings.h" />
-    <ClInclude Include="FloatArray.h" />
+    <ClInclude Include="Arrays.h" />
     <ClInclude Include="Interval.h" />
     <ClInclude Include="LogarithmicScale.h" />
     <ClInclude Include="MCChainWaveDrawer.h" />
@@ -128,7 +128,7 @@
     <ClCompile Include="ColourInterpolation.cpp" />
     <ClCompile Include="CuePointsReader.cpp" />
     <ClCompile Include="DrawerSettings.cpp" />
-    <ClCompile Include="FloatArray.cpp" />
+    <ClCompile Include="Arrays.cpp" />
     <ClCompile Include="Interval.cpp" />
     <ClCompile Include="MCChainWaveDrawer.cpp" />
     <ClCompile Include="MCGraphicsContextWaveDrawer.cpp" />

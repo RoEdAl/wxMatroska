@@ -2,7 +2,7 @@
  *      WaveDrawerRaster1.cpp
  */
 #include "StdWx.h"
-#include "FloatArray.h"
+#include "Arrays.h"
 #include "ColourInterpolation.h"
 #include "LogarithmicScale.h"
 #include "SampleProcessor.h"

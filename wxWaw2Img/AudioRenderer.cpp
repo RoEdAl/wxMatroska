@@ -2,7 +2,7 @@
  *      AudioRenderer.cpp
  */
 #include "StdWx.h"
-#include "FloatArray.h"
+#include "Arrays.h"
 #include "LogarithmicScale.h"
 #include "SoundFile.h"
 #include "SampleProcessor.h"

@@ -3,7 +3,7 @@
  */
 
 #include "StdWx.h"
-#include "FloatArray.h"
+#include "Arrays.h"
 
 wxDEFINE_SCOPED_ARRAY( float, wxFloatArray )
 

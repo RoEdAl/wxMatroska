@@ -2,7 +2,7 @@
  *      WaveDrawerColumnPainter.cpp
  */
 #include "StdWx.h"
-#include "FloatArray.h"
+#include "Arrays.h"
 #include "LogarithmicScale.h"
 #include "ColourInterpolation.h"
 #include "SampleProcessor.h"

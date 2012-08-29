@@ -4,7 +4,7 @@
 
 #include "StdWx.h"
 #include <enum2str.h>
-#include "FloatArray.h"
+#include "Arrays.h"
 #include "CuePointsReader.h"
 #include "Interval.h"
 #include "DrawerSettings.h"
