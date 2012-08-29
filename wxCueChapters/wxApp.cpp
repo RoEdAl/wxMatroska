@@ -76,6 +76,41 @@ void wxMyApp::InfoFormatDescription( wxMessageOutput& out )
 	out.Output( _( "\t%at% - track or disc title" ) );
 }
 
+bool wxMyApp::ShowInfo() const
+{
+	switch ( m_cfg.GetInfoSubject() )
+	{
+		case wxConfiguration::INFO_VERSION:
+		{
+			InfoVersion( *wxMessageOutput::Get() );
+			return true;
+		}
+
+		case wxConfiguration::INFO_USAGE:
+		{
+			InfoUsage( *wxMessageOutput::Get() );
+			return true;
+		}
+
+		case wxConfiguration::INFO_FORMATTING_DIRECTIVES:
+		{
+			InfoFormatDescription( *wxMessageOutput::Get() );
+			return true;
+		}
+
+		case wxConfiguration::INFO_LICENSE:
+		{
+			ShowLicense( *wxMessageOutput::Get() );
+			return true;
+		}
+
+		default:
+		{
+			return false;
+		}
+	}
+}
+
 void wxMyApp::OnInitCmdLine( wxCmdLineParser& cmdline )
 {
 	MyAppConsole::OnInitCmdLine( cmdline );
@@ -298,41 +333,6 @@ int wxMyApp::ProcessCueFile( const wxInputFile& inputFile, const wxTagSynonimsCo
 	{
 		cueSheet.FindCommonTags( discSynonims, trackSynonims, false );
 		return ConvertCueSheet( inputFile, cueSheet );
-	}
-}
-
-bool wxMyApp::ShowInfo() const
-{
-	switch ( m_cfg.GetInfoSubject() )
-	{
-		case wxConfiguration::INFO_VERSION:
-		{
-			InfoVersion( *wxMessageOutput::Get() );
-			return true;
-		}
-
-		case wxConfiguration::INFO_USAGE:
-		{
-			InfoUsage( *wxMessageOutput::Get() );
-			return true;
-		}
-
-		case wxConfiguration::INFO_FORMATTING_DIRECTIVES:
-		{
-			InfoFormatDescription( *wxMessageOutput::Get() );
-			return true;
-		}
-
-		case wxConfiguration::INFO_LICENSE:
-		{
-			ShowLicense( *wxMessageOutput::Get() );
-			return true;
-		}
-
-		default:
-		{
-			return false;
-		}
 	}
 }
 

@@ -62,7 +62,7 @@ wxMyApp::wxMyApp( void )
 void wxMyApp::InfoVersion( wxMessageOutput& out )
 {
 	out.Printf( _( "Application version: %s" ), APP_VERSION );
-	wxString::Format( _( "Author: %s" ), APP_AUTHOR );
+	out.Printf( _( "Author: %s" ), APP_AUTHOR );
 	out.Output( _( "License: Simplified BSD License - http://www.opensource.org/licenses/bsd-license.php" ) );
 	out.Printf( _( "wxWidgets version: %d.%d.%d. Copyright \u00A9 1992-2008 Julian Smart, Robert Roebling, Vadim Zeitlin and other members of the wxWidgets team" ), wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER );
 	out.Printf( _( "libsndfile version: %s. Copyright \u00A9 1999-2011 Erik de Castro Lopo" ), SoundFile::GetVersion() );
