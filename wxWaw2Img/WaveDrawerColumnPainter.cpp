@@ -93,7 +93,7 @@ void ColumnPainterWaveDrawer::NextColumn( wxFloat32 fValue, wxFloat32 fLogValue 
 			if ( m_drawerSettings.UseLogarithmicColorGradient() )
 			{
 				wxASSERT( UseLogarithmicScale() );
-				create_log_stops( stops, clrFrom, clrTo, m_rc.m_height, GetLogarithmicScale().GetInverted() );
+				create_log_stops( stops, clrFrom, clrTo, m_rc.m_height, !GetLogarithmicScale() );
 			}
 
 			brush = create_brush( stops, topLeft, bottomRight );

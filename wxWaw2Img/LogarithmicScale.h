@@ -45,7 +45,7 @@ class LogarithmicScale
 			return *this;
 		}
 
-		LogarithmicScale GetInverted() const
+		LogarithmicScale operator!() const
 		{
 			return LogarithmicScale( m_fLogBase, m_fLogBase1, m_fLogLogBase, IsInverted() ? &LogarithmicScale::calc_fn : &LogarithmicScale::calc_fn_inv );
 		}
@@ -92,6 +92,8 @@ class LogarithmicScale
 		{
 			wxASSERT( fLogBase > 1.0f );
 		}
+
+	protected:
 
 		wxFloat32 calc_fn( wxFloat32 fValue ) const
 		{

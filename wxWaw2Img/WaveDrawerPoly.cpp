@@ -241,7 +241,7 @@ wxGraphicsBrush PolyWaveDrawer::ceate_logarithmic_brush(
 
 	if ( bInverted )
 	{
-		create_log_stops( stops, clrFrom, clrTo, m_rc.m_height, GetLogarithmicScale().GetInverted() );
+		create_log_stops( stops, clrFrom, clrTo, m_rc.m_height, !GetLogarithmicScale() );
 	}
 	else
 	{
