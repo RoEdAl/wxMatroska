@@ -5,20 +5,31 @@
 #ifndef _WX_TEXT_INPUT_STREAM_ON_STRING_H_
 #define _WX_TEXT_INPUT_STREAM_ON_STRING_H_
 
+#ifndef _NO_CONV_H_
+#include "wxNoConv.h"
+#endif
+
 class wxTextInputStreamOnString:
 	public wxObject
 {
 	public:
 
+		typedef wxCharTypeBuffer< wxChar > CharBufferType;
+
 		wxTextInputStreamOnString( const wxString& );
-		const wxStringInputStream& GetStringStream() const;
+		wxTextInputStreamOnString( const CharBufferType& );
+
+		const wxMemoryInputStream& GetMemoryStream() const;
 		wxTextInputStream&		   GetStream();
+		const CharBufferType&	GetBuffer() const;
 		wxTextInputStream&		   operator *();
 		bool Eof() const;
 
 	protected:
 
-		wxStringInputStream m_inputStream;
+		wxNoConv m_conv;
+		CharBufferType m_charBuffer;
+		wxMemoryInputStream m_inputStream;
 		wxTextInputStream	m_textInputStream;
 };
 

@@ -8,11 +8,18 @@
 // ===============================================================================
 
 wxTextInputStreamOnString::wxTextInputStreamOnString( const wxString& s ):
-	m_inputStream( s ),
-	m_textInputStream( m_inputStream, wxT( " \t" ), wxConvUTF8 )
+	m_charBuffer( s.tchar_str<wxChar>() ),
+	m_inputStream( m_charBuffer.data(), m_charBuffer.length() * sizeof(wxChar) ),
+	m_textInputStream( m_inputStream, wxS( " \t" ), m_conv )
 {}
 
-const wxStringInputStream& wxTextInputStreamOnString::GetStringStream() const
+wxTextInputStreamOnString::wxTextInputStreamOnString( const wxTextInputStreamOnString::CharBufferType& charBuffer ):
+	m_charBuffer( charBuffer ),
+	m_inputStream( m_charBuffer.data(), m_charBuffer.length() * sizeof(wxChar) ),
+	m_textInputStream( m_inputStream, wxS( " \t" ), m_conv )
+{}
+
+const wxMemoryInputStream& wxTextInputStreamOnString::GetMemoryStream() const
 {
 	return m_inputStream;
 }
@@ -20,6 +27,11 @@ const wxStringInputStream& wxTextInputStreamOnString::GetStringStream() const
 wxTextInputStream& wxTextInputStreamOnString::GetStream()
 {
 	return m_textInputStream;
+}
+
+const wxTextInputStreamOnString::CharBufferType& wxTextInputStreamOnString::GetBuffer() const
+{
+	return m_charBuffer;
 }
 
 wxTextInputStream& wxTextInputStreamOnString::operator *()

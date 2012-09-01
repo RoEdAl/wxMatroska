@@ -23,11 +23,6 @@
  * That's why we define NOUSER.
  */
 #define WIN32_LEAN_AND_MEAN																																// Exclude
-																																						//rarely-used
-																																						//stuff
-																																						//from
-																																						//Windows
-																																						//headers
 #define NOUSER
 #define NOGDI
 #define NOMB
@@ -58,7 +53,6 @@ typedef struct tagMSG
 #include <wx/regex.h>
 #include <wx/wfstream.h>
 #include <wx/txtstrm.h>
-#include <wx/sstream.h>
 #include <wx/mstream.h>
 #include <wx/datetime.h>
 #include <wx/dynlib.h>

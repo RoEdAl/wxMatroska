@@ -60,7 +60,6 @@ typedef struct tagMSG
 #include <wx/mstream.h>
 #include <wx/datetime.h>
 #include <wx/filename.h>
-#include <wx/sstream.h>
 #include <wx/dir.h>
 #include <wx/stdpaths.h>
 #include <wx/scopedptr.h>

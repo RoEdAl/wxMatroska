@@ -9,21 +9,19 @@
 // ===============================================================================
 
 wxTextOutputStreamOnString::wxTextOutputStreamOnString():
-	m_outputStream( ( wxString* )NULL, m_conv ),
 	m_textOutputStream( m_outputStream, wxEOL_UNIX, m_conv )
 {}
 
-wxTextOutputStreamOnString::wxTextOutputStreamOnString( wxString& s ):
-	m_outputStream( &s, m_conv ),
-	m_textOutputStream( m_outputStream, wxEOL_UNIX, m_conv )
-{}
-
-const wxString& wxTextOutputStreamOnString::GetString() const
+wxString wxTextOutputStreamOnString::GetString() const
 {
-	return m_outputStream.GetString();
+	const wxStreamBuffer* const sb = m_outputStream.GetOutputStreamBuffer();
+	return wxString( 
+		static_cast<const char*>( sb->GetBufferStart() ),
+		m_conv,
+		sb->GetBufferSize() - sb->GetBytesLeft() );
 }
 
-const wxStringOutputStream& wxTextOutputStreamOnString::GetStringStream() const
+const wxMemoryOutputStream& wxTextOutputStreamOnString::GetMemoryStream() const
 {
 	return m_outputStream;
 }

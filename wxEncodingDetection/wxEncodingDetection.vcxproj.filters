@@ -58,5 +58,8 @@
     <ClInclude Include="..\inc\wxEncodingDetection\wxTextOutputStreamOnString.h">
       <Filter>External Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\inc\wxEncodingDetection\wxNoConv.h">
+      <Filter>External Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

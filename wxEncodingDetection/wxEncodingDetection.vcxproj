@@ -90,6 +90,7 @@
     <ClCompile Include="wxTextOutputStreamWithBOM.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\inc\wxEncodingDetection\wxNoConv.h" />
     <ClInclude Include="..\inc\wxEncodingDetection\wxTextInputStreamOnString.h" />
     <ClInclude Include="..\inc\wxEncodingDetection\wxTextOutputStreamOnString.h" />
     <ClInclude Include="wxMLangConvertCharset.h" />

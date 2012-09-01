@@ -8,11 +8,6 @@
 #ifdef WIN32
 #include <targetver.h>
 #define WIN32_LEAN_AND_MEAN																																																																																																																																//
-// Exclude
-// rarely-used
-// stuff
-// from
-// Windows headers
 #endif
 
 #include <wx/wx.h>
@@ -22,7 +17,7 @@
 #include <wx/arrstr.h>
 #include <wx/wfstream.h>
 #include <wx/txtstrm.h>
-#include <wx/sstream.h>
+#include <wx/mstream.h>
 #include <wx/regex.h>
 #include <wx/hashmap.h>
 #include <wx/tokenzr.h>
