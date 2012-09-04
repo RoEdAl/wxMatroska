@@ -76,7 +76,6 @@ Dim Const $XML_FILTER = "XML files (*.xml)|Matroska chapters XML files (*.mkc.xm
 Dim Const $MEDIA_FILTER = "Audio files (*.flac;*.ape;*.wv;*.wav;*.aiff;*.tta)|All files (*)"
 Dim Const $STILL_ACTIVE = 259
 Dim Const $APP_EXIT_CODE = "Exit code: %d."
-Dim Const $MEDIA_INFO = "MediaInfo"
 
 Func is_directory($s)
 	If Not FileExists($s) Then
@@ -104,7 +103,7 @@ Func get_mkvmerge_dir()
 	EndIf
 EndFunc   ;==>get_mkvmerge_dir
 
-#region ### START Koda GUI section ### Form=C:\Users\Normal\Documents\Visual Studio 2010\Projects\wxMatroska\gui\cue2mkcgui.kxf
+#region ### START Koda GUI section ### Form=C:\Users\Roman\Documents\Visual Studio 2010\Projects\wxMatroska\gui\cue2mkcgui.kxf
 $FormMain = GUICreate("cue2mkc GUI", 545, 410, -1, -1, BitOR($GUI_SS_DEFAULT_GUI, $WS_MAXIMIZEBOX, $WS_SIZEBOX, $WS_THICKFRAME, $WS_TABSTOP), BitOR($WS_EX_ACCEPTFILES, $WS_EX_WINDOWEDGE))
 GUISetFont(8, 400, 0, "Microsoft Sans Serif")
 $MainTab = GUICtrlCreateTab(0, 0, 541, 369, $TCS_MULTILINE)
@@ -149,11 +148,12 @@ GUICtrlSetFont(-1, 10, 400, 0, "Wingdings")
 GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Specify output directory or file")
 $OutputPane = GUICtrlCreateTabItem("&Messages")
+GUICtrlSetState(-1, $GUI_SHOW)
 $LabelLog = GUICtrlCreateLabel("&Messages:", 4, 24, 71, 21, $SS_CENTERIMAGE)
 GUICtrlSetFont(-1, 8, 800, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $ListLog = GUICtrlCreateList("", 4, 46, 529, 276, BitOR($LBS_NOTIFY, $LBS_USETABSTOPS, $LBS_NOINTEGRALHEIGHT, $LBS_NOSEL, $WS_HSCROLL, $WS_VSCROLL), $WS_EX_STATICEDGE)
-GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
+GUICtrlSetFont(-1, 8, 400, 0, "Lucida Console")
 GUICtrlSetBkColor(-1, 0xF0F0F0)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKBOTTOM)
 GUICtrlSetTip(-1, "Application messages")
@@ -171,7 +171,7 @@ GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $CheckBoxMerge = GUICtrlCreateCheckbox("Merge mode", 8, 43, 85, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-GUICtrlSetTip(-1, "Merge all input files into one cue sheet (requires MediaInfo lubrary)")
+GUICtrlSetTip(-1, "Merge all input files into one cue sheet")
 $CheckBoxA = GUICtrlCreateCheckbox("Abort when conversion errors occurs", 8, 58, 201, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
@@ -180,7 +180,7 @@ GUICtrlSetFont(-1, 8, 400, 0, "Microsoft Sans Serif")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $CheckBoxEc = GUICtrlCreateCheckbox("Embedded cue sheet", 9, 96, 129, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-GUICtrlSetTip(-1, "Try to read embedded cue sheet (requires MediaInfo library)")
+GUICtrlSetTip(-1, "Try to read embedded cue sheet")
 $CheckBoxSingleMediaFile = GUICtrlCreateCheckbox("Media file(s) without cuesheet", 9, 112, 169, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 GUICtrlSetTip(-1, "Assume input file as media file without cue sheet")
@@ -201,7 +201,7 @@ GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCK
 $LabelOutputFormat = GUICtrlCreateLabel("Format:", 8, 188, 43, 21, $SS_CENTERIMAGE)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $ComboOutputFormat = GUICtrlCreateCombo("", 56, 188, 177, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
-GUICtrlSetData(-1, "cue sheet|Matroska chapters|cue points")
+GUICtrlSetData(-1, "cue sheet|Matroska chapters|chapters (wav2img)")
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $CheckBoxT = GUICtrlCreateCheckbox("Generate tags XML file", 26, 211, 157, 17)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
@@ -688,11 +688,18 @@ Func read_options()
 		$s &= " "
 	EndIf
 
+	negatable_switch_long($s, $CheckBoxTagUseCdText, "use-cdtext-tags")
+	negatable_switch_long($s, $CheckBoxTagUseCueComments, "use-cue-comments-tags")
+	negatable_switch_long($s, $CheckBoxTagUseFromMedia, "use-media-tags")
+
+	$s &= "-e "
+	$s &= get_encoding_str(_GUICtrlComboBox_GetCurSel($ComboCueSheetEncoding))
+	$s &= " "
+
 	$w = _GUICtrlComboBox_GetCurSel($ComboOutputFormat)
 	Switch $w
 		Case 0
-			$s &= "-m cuesheet -e "
-			$s &= get_encoding_str(_GUICtrlComboBox_GetCurSel($ComboCueSheetEncoding))
+			$s &= "-m cuesheet "
 
 		Case 1
 			$s &= "-m matroska "
@@ -700,13 +707,9 @@ Func read_options()
 			negatable_switch($s, $CheckBoxK, "k")
 			negatable_switch($s, $CheckBoxEu, "eu")
 			negatable_switch($s, $CheckBoxTc, "tc")
-			negatable_switch_long($s, $CheckBoxTagUseCdText, "use-cdtext-tags")
-			negatable_switch_long($s, $CheckBoxTagUseCueComments, "use-cue-comments-tags")
-			negatable_switch_long($s, $CheckBoxTagUseFromMedia, "use-media-tags")
 
 		Case 2
-			$s &= "-m wav2img -e "
-			$s &= get_encoding_str(_GUICtrlComboBox_GetCurSel($ComboCueSheetEncoding))
+			$s &= "-m wav2img "
 
 	EndSwitch
 

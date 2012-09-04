@@ -46,7 +46,7 @@
 				<property name="Top" vt="Int8">0</property>
 				<property name="Width" vt="Int16">541</property>
 				<property name="Height" vt="Int16">369</property>
-				<property name="ActivePage" vt="Ident">PaneInputOutput</property>
+				<property name="ActivePage" vt="Ident">OutputPane</property>
 				<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
 				<property name="Font.Color" vt="Ident">clWindowText</property>
 				<property name="Font.Height" vt="Int8">-11</property>
@@ -315,12 +315,12 @@
 								<property name="Height" vt="Int16">276</property>
 								<property name="Hint" vt="String">Application messages</property>
 								<property name="Color" vt="Ident">clBtnFace</property>
-								<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
-								<property name="Font.Color" vt="Ident">clWindowText</property>
+								<property name="Font.Charset" vt="Ident">EASTEUROPE_CHARSET</property>
+								<property name="Font.Color" vt="Ident">clBlack</property>
 								<property name="Font.Height" vt="Int8">-11</property>
-								<property name="Font.Name" vt="String">Microsoft Sans Serif</property>
+								<property name="Font.Name" vt="String">Lucida Console</property>
 								<property name="Font.Style" vt="Set"/>
-								<property name="ItemHeight" vt="Int8">13</property>
+								<property name="ItemHeight" vt="Int8">11</property>
 								<property name="ParentFont" vt="False">False</property>
 								<property name="TabOrder" vt="Int8">1</property>
 								<property name="CtrlStyle" vt="Int32">1345405313</property>
@@ -407,7 +407,7 @@
 										<property name="Top" vt="Int8">16</property>
 										<property name="Width" vt="Int8">85</property>
 										<property name="Height" vt="Int8">17</property>
-										<property name="Hint" vt="String">Merge all input files into one cue sheet (requires MediaInfo lubrary)</property>
+										<property name="Hint" vt="String">Merge all input files into one cue sheet</property>
 										<property name="Caption" vt="String">Merge mode</property>
 										<property name="TabOrder" vt="Int8">0</property>
 										<property name="CtrlStyle" vt="Int32">1342242819</property>
@@ -459,7 +459,7 @@
 											<list>
 												<li vt="String">cue sheet</li>
 												<li vt="String">Matroska chapters</li>
-												<li vt="String">cue points</li>
+												<li vt="String">chapters (wav2img)</li>
 											</list>
 										</property>
 										<property name="CtrlStyle" vt="Int32">1342243395</property>
@@ -591,7 +591,7 @@
 										<property name="Top" vt="Int8">16</property>
 										<property name="Width" vt="Int16">129</property>
 										<property name="Height" vt="Int8">17</property>
-										<property name="Hint" vt="String">Try to read embedded cue sheet (requires MediaInfo library)</property>
+										<property name="Hint" vt="String">Try to read embedded cue sheet</property>
 										<property name="Caption" vt="String">Embedded cue sheet</property>
 										<property name="TabOrder" vt="Int8">0</property>
 										<property name="CtrlStyle" vt="Int32">1342242819</property>
