@@ -15,7 +15,7 @@ class GraphicsContextWaveDrawer:
 								   bool, wxFloat32,
 								   const wxRect2DInt&,
 								   const DrawerSettings&,
-								   bool, const wxTimeSpanArray& );
+								   const ChaptersArrayScopedPtr& );
 
 	protected:
 
@@ -24,23 +24,23 @@ class GraphicsContextWaveDrawer:
 
 	private:
 
-		static void create_cue_segments_paths(
+		static void create_chapter_segments_paths(
 			const wxRect2DInt &,
 			wxFloat32,
-			const wxTimeSpanArray &,
+			const ChaptersArray &,
 			wxGraphicsPath &, wxGraphicsPath & );
 
-		static void create_cue_lines_paths(
+		static void create_chapter_lines_paths(
 			const wxRect2DInt &, wxFloat32,
-			const wxTimeSpanArray &,
+			const ChaptersArray &,
 			wxGraphicsPath &, wxGraphicsPath & );
 
-		static void create_cue_segments_path( const wxRect2DInt&,
-											  const wxTimeSpanArray&,
+		static void create_chapter_segments_path( const wxRect2DInt&,
+											  const ChaptersArray&,
 											  wxGraphicsPath& );
 
-		static void create_cue_lines_path( const wxRect2DInt&,
-										   const wxTimeSpanArray&,
+		static void create_chapter_lines_path( const wxRect2DInt&,
+										   const ChaptersArray&,
 										   wxGraphicsPath& );
 
 	protected:
@@ -51,8 +51,7 @@ class GraphicsContextWaveDrawer:
 		wxFloat32			   m_heightDown;
 		wxFloat32			   m_yoffset;
 		const DrawerSettings&  m_drawerSettings;
-		bool				   m_bUseCuePoints;
-		const wxTimeSpanArray& m_cuePoints;
+		const ChaptersArrayScopedPtr& m_pChapters;
 };
 
 #endif

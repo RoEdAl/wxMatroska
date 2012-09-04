@@ -15,12 +15,12 @@ GraphicsContextWaveDrawer::GraphicsContextWaveDrawer( wxUint64 nNumberOfSamples,
 													  bool bCalcLogarithmic, wxFloat32 fLogBase,
 													  const wxRect2DInt& rc,
 													  const DrawerSettings& drawerSettings,
-													  bool bUseCuePoints, const wxTimeSpanArray& cuePoints ):
+													  const ChaptersArrayScopedPtr& pChapters ):
 	SampleChunker( nNumberOfSamples, rc.m_width, bCalcLogarithmic, fLogBase ),
 	m_gc( gc ),
 	m_rc( rc ),
 	m_drawerSettings( drawerSettings ),
-	m_bUseCuePoints( bUseCuePoints ), m_cuePoints( cuePoints )
+	m_pChapters( pChapters )
 {}
 
 void GraphicsContextWaveDrawer::ProcessInitializer()
@@ -50,11 +50,11 @@ void GraphicsContextWaveDrawer::ProcessInitializer()
 
 	// Secondary background colour
 
-	if ( m_bUseCuePoints )
+	if ( m_pChapters )
 	{
 		m_gc->SetCompositionMode( wxCOMPOSITION_OVER );
 
-		bool bDrawCueBlocks = m_drawerSettings.GetDrawCueBlocks();
+		bool bDrawCueBlocks = m_drawerSettings.GetDrawChapters();
 
 		if ( m_drawerSettings.OneBackgroundColour2() )
 		{
@@ -62,13 +62,13 @@ void GraphicsContextWaveDrawer::ProcessInitializer()
 
 			if ( bDrawCueBlocks )
 			{
-				create_cue_segments_path( m_rc, m_cuePoints, path );
+				create_chapter_segments_path( m_rc, *m_pChapters, path );
 				m_gc->SetBrush( m_drawerSettings.GetTopColourSettings().GetBackgroundColour2() );
 				m_gc->FillPath( path );
 			}
 			else
 			{
-				create_cue_lines_path( m_rc, m_cuePoints, path );
+				create_chapter_lines_path( m_rc, *m_pChapters, path );
 				m_gc->SetPen( m_drawerSettings.GetTopColourSettings().GetBackgroundColour2() );
 				m_gc->StrokePath( path );
 			}
@@ -80,7 +80,7 @@ void GraphicsContextWaveDrawer::ProcessInitializer()
 
 			if ( bDrawCueBlocks )
 			{
-				create_cue_segments_paths( m_rc, m_drawerSettings.GetBaselinePosition(), m_cuePoints, pathTop, pathBottom );
+				create_chapter_segments_paths( m_rc, m_drawerSettings.GetBaselinePosition(), *m_pChapters, pathTop, pathBottom );
 
 				m_gc->SetBrush( m_drawerSettings.GetTopColourSettings().GetBackgroundColour2() );
 				m_gc->FillPath( pathTop );
@@ -90,7 +90,7 @@ void GraphicsContextWaveDrawer::ProcessInitializer()
 			}
 			else
 			{
-				create_cue_lines_paths( m_rc, m_drawerSettings.GetBaselinePosition(), m_cuePoints, pathTop, pathBottom );
+				create_chapter_lines_paths( m_rc, m_drawerSettings.GetBaselinePosition(), *m_pChapters, pathTop, pathBottom );
 
 				m_gc->SetPen( m_drawerSettings.GetTopColourSettings().GetBackgroundColour2() );
 				m_gc->StrokePath( pathTop );
@@ -108,23 +108,23 @@ void GraphicsContextWaveDrawer::ProcessInitializer()
 void GraphicsContextWaveDrawer::ProcessFinalizer()
 {}
 
-void GraphicsContextWaveDrawer::create_cue_segments_paths(
+void GraphicsContextWaveDrawer::create_chapter_segments_paths(
 		const wxRect2DInt& rect,
 		wxFloat32 fBaseline,
-		const wxTimeSpanArray& cuePoints,
+		const ChaptersArray& chapters,
 		wxGraphicsPath& pathTop, wxGraphicsPath& pathBottom )
 {
-	wxASSERT( cuePoints.GetCount() > 1 );
+	wxASSERT( chapters.GetCount() > 1 );
 
-	wxFloat64 endPos = cuePoints.Last().GetMilliseconds().ToDouble();
+	wxFloat64 endPos = chapters.Last().GetMilliseconds().ToDouble();
 
 	wxDouble fHeightTop	   = rect.m_height * ( 1.0f - fBaseline );
 	wxDouble fHeightBottom = rect.m_height * fBaseline;
 
-	for ( size_t i = 0, nCount1 = cuePoints.GetCount() - 1; i < nCount1; i += 2 )
+	for ( size_t i = 0, nCount1 = chapters.GetCount() - 1; i < nCount1; i += 2 )
 	{
-		wxFloat64 tsFrom = cuePoints[ i ].GetMilliseconds().ToDouble();
-		wxFloat64 tsTo	 = cuePoints[ i + 1 ].GetMilliseconds().ToDouble();
+		wxFloat64 tsFrom = chapters[ i ].GetMilliseconds().ToDouble();
+		wxFloat64 tsTo	 = chapters[ i + 1 ].GetMilliseconds().ToDouble();
 
 		wxRect2DDouble rc( tsFrom * rect.m_width / endPos, 0, ( tsTo - tsFrom ) * rect.m_width / endPos, fHeightTop );
 		rc.m_x += rect.m_x;
@@ -139,22 +139,22 @@ void GraphicsContextWaveDrawer::create_cue_segments_paths(
 	}
 }
 
-void GraphicsContextWaveDrawer::create_cue_lines_paths(
+void GraphicsContextWaveDrawer::create_chapter_lines_paths(
 		const wxRect2DInt& rect,
 		wxFloat32 fBaseline,
-		const wxTimeSpanArray& cuePoints,
+		const ChaptersArray& chapters,
 		wxGraphicsPath& pathTop, wxGraphicsPath& pathBottom )
 {
-	wxASSERT( cuePoints.GetCount() > 1 );
+	wxASSERT( chapters.GetCount() > 1 );
 
-	wxFloat64 endPos = cuePoints.Last().GetMilliseconds().ToDouble();
+	wxFloat64 endPos = chapters.Last().GetMilliseconds().ToDouble();
 
 	wxDouble fHeightTop	   = rect.m_height * ( 1.0f - fBaseline );
 	wxDouble fHeightBottom = rect.m_height * fBaseline;
 
-	for ( size_t i = 0, nCount1 = cuePoints.GetCount() - 1; i < nCount1; i += 1 )
+	for ( size_t i = 0, nCount1 = chapters.GetCount() - 1; i < nCount1; i += 1 )
 	{
-		wxFloat64 ts = cuePoints[ i ].GetMilliseconds().ToDouble();
+		wxFloat64 ts = chapters[ i ].GetMilliseconds().ToDouble();
 
 		wxPoint2DDouble pt( ts * rect.m_width / endPos, 0.0 );
 		pt.m_x += rect.m_x;
@@ -169,19 +169,19 @@ void GraphicsContextWaveDrawer::create_cue_lines_paths(
 	}
 }
 
-void GraphicsContextWaveDrawer::create_cue_segments_path(
+void GraphicsContextWaveDrawer::create_chapter_segments_path(
 		const wxRect2DInt& rect,
-		const wxTimeSpanArray& cuePoints,
+		const ChaptersArray& chapters,
 		wxGraphicsPath& path )
 {
-	wxASSERT( cuePoints.GetCount() > 1 );
+	wxASSERT( chapters.GetCount() > 1 );
 
-	wxFloat64 endPos = cuePoints.Last().GetMilliseconds().ToDouble();
+	wxFloat64 endPos = chapters.Last().GetMilliseconds().ToDouble();
 
-	for ( size_t i = 0, nCount1 = cuePoints.GetCount() - 1; i < nCount1; i += 2 )
+	for ( size_t i = 0, nCount1 = chapters.GetCount() - 1; i < nCount1; i += 2 )
 	{
-		wxFloat64 tsFrom = cuePoints[ i ].GetMilliseconds().ToDouble();
-		wxFloat64 tsTo	 = cuePoints[ i + 1 ].GetMilliseconds().ToDouble();
+		wxFloat64 tsFrom = chapters[ i ].GetMilliseconds().ToDouble();
+		wxFloat64 tsTo	 = chapters[ i + 1 ].GetMilliseconds().ToDouble();
 
 		wxRect2DDouble rc( tsFrom * rect.m_width / endPos, 0, ( tsTo - tsFrom ) * rect.m_width / endPos, rect.m_height );
 		rc.m_x += rect.m_x;
@@ -191,18 +191,18 @@ void GraphicsContextWaveDrawer::create_cue_segments_path(
 	}
 }
 
-void GraphicsContextWaveDrawer::create_cue_lines_path(
+void GraphicsContextWaveDrawer::create_chapter_lines_path(
 		const wxRect2DInt& rect,
-		const wxTimeSpanArray& cuePoints,
+		const ChaptersArray& chapters,
 		wxGraphicsPath& path )
 {
-	wxASSERT( cuePoints.GetCount() > 1 );
+	wxASSERT( chapters.GetCount() > 1 );
 
-	wxFloat64 endPos = cuePoints.Last().GetMilliseconds().ToDouble();
+	wxFloat64 endPos = chapters.Last().GetMilliseconds().ToDouble();
 
-	for ( size_t i = 0, nCount1 = cuePoints.GetCount() - 1; i < nCount1; i += 1 )
+	for ( size_t i = 0, nCount1 = chapters.GetCount() - 1; i < nCount1; i += 1 )
 	{
-		wxFloat64 ts = cuePoints[ i ].GetMilliseconds().ToDouble();
+		wxFloat64 ts = chapters[ i ].GetMilliseconds().ToDouble();
 
 		wxPoint2DDouble pt( ts * rect.m_width / endPos, 0 );
 		pt.m_x += rect.m_x;

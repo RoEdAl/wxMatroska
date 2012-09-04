@@ -16,7 +16,7 @@ ColumnPainterWaveDrawer::ColumnPainterWaveDrawer( wxUint64 nNumberOfSamples,
 												  wxGraphicsContext* gc,
 												  const wxRect2DInt& rc,
 												  const DrawerSettings& drawerSettings,
-												  bool bUseCuePoints, const wxTimeSpanArray& cuePoints ):
+												  const ChaptersArrayScopedPtr& pChapters ):
 	GraphicsContextWaveDrawer(
 		nNumberOfSamples,
 		gc,
@@ -24,7 +24,7 @@ ColumnPainterWaveDrawer::ColumnPainterWaveDrawer( wxUint64 nNumberOfSamples,
 		drawerSettings.GetLogarithmBase(),
 		rc,
 		drawerSettings,
-		bUseCuePoints, cuePoints )
+		pChapters )
 {}
 
 void ColumnPainterWaveDrawer::NextColumn( wxFloat32 fValue, wxFloat32 fLogValue )

@@ -15,7 +15,7 @@ PolyWaveDrawer::PolyWaveDrawer( wxUint64 nNumberOfSamples,
 								wxGraphicsContext* gc,
 								const wxRect2DInt& rc,
 								const DrawerSettings& drawerSettings,
-								bool bUseCuePoints, const wxTimeSpanArray& cuePoints ):
+								const ChaptersArrayScopedPtr& pChapters ):
 	GraphicsContextWaveDrawer(
 		nNumberOfSamples,
 		gc,
@@ -23,7 +23,7 @@ PolyWaveDrawer::PolyWaveDrawer( wxUint64 nNumberOfSamples,
 		drawerSettings.GetLogarithmBase(),
 		rc,
 		drawerSettings,
-		bUseCuePoints, cuePoints )
+		pChapters )
 {}
 
 void PolyWaveDrawer::ProcessInitializer()

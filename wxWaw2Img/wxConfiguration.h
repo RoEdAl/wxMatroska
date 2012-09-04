@@ -28,7 +28,7 @@ class wxConfiguration:
 			INFO_NONE,
 			INFO_VERSION,
 			INFO_COLOUR_FORMAT,
-			INFO_CUE_POINT_FORMAT,
+			INFO_CHAPTERS_FORMAT,
 			INFO_CMD_LINE_TEMPLATE,
 			INFO_SYSTEM_SETTINGS,
 			INFO_LICENSE
@@ -51,8 +51,8 @@ class wxConfiguration:
 		wxUint16			 m_nColumnNumber;
 		wxSize				 m_margins;
 		bool				 m_bPowerMix;
-		wxFileName			 m_cuePointsFile;
-		bool				 m_bGenerateCuePoints;
+		wxFileName			 m_chaptersFile;
+		bool				 m_bGenerateChapters;
 		Interval			 m_interval;
 		bool				 m_bUseMLang;
 		bool				 m_bAnimation;
@@ -150,11 +150,11 @@ class wxConfiguration:
 		bool PowerMix() const;
 		DRAWING_MODE GetDrawingMode() const;
 		wxString GetDrawingModeAsText() const;
-		bool HasCuePointsFile() const;
-		const wxFileName& GetCuePointsFile() const;
-		bool ReadCuePoints( wxTimeSpanArray& ) const;
-		bool GenerateCuePoints() const;
-		bool GenerateCuePoints( const wxTimeSpan&, wxTimeSpanArray& ) const;
+		bool HasChaptersFile() const;
+		const wxFileName& GetChaptersFile() const;
+		bool ReadChapters( ChaptersArray& ) const;
+		bool GenerateChapters() const;
+		bool GenerateChapters( const wxTimeSpan&, ChaptersArray& ) const;
 		bool UseMLang() const;
 		wxString GetCompositionModeAsText() const;
 		bool CreateAnimation() const;

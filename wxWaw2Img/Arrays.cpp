@@ -1,5 +1,5 @@
 /*
- *      FloatArray.cpp
+ *      Arrays.cpp
  */
 
 #include "StdWx.h"

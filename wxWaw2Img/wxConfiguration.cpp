@@ -5,7 +5,7 @@
 #include "StdWx.h"
 #include <enum2str.h>
 #include "Arrays.h"
-#include "CuePointsReader.h"
+#include "ChaptersReader.h"
 #include "Interval.h"
 #include "DrawerSettings.h"
 #include "AnimationSettings.h"
@@ -67,7 +67,7 @@ const wxConfiguration::INFO_SUBJECT_DESC wxConfiguration::InfoSubjectDesc[] =
 {
 	{ INFO_VERSION, wxT( "version" ) },
 	{ INFO_COLOUR_FORMAT, wxT( "color_format" ) },
-	{ INFO_CUE_POINT_FORMAT, wxT( "cue_point" ) },
+	{ INFO_CHAPTERS_FORMAT, wxT( "chapters_format" ) },
 	{ INFO_CMD_LINE_TEMPLATE, wxT( "cmd_template" ) },
 	{ INFO_SYSTEM_SETTINGS, wxT( "system_settings" ) },
 	{ INFO_LICENSE, wxT( "license" ) }
@@ -88,7 +88,7 @@ wxConfiguration::wxConfiguration( void ):
 	m_nColumnNumber( 1 ),
 	m_margins( 4, 4 ),
 	m_bPowerMix( true ),
-	m_bGenerateCuePoints( false ),
+	m_bGenerateChapters( false ),
 	m_interval( INTERVAL_UNIT_PERCENT, 10 ),
 	m_bUseMLang( true ),
 	m_bAnimation( false ),
@@ -153,10 +153,10 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 
 	cmdLine.AddOption( "f", "frequency", wxString::Format( _( "Frequency (in Hz) of rendered audio file (default %u)" ), m_drawerSettings.GetFrequency() ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 
-	cmdLine.AddOption( "cp", "cue-point-file", _( "Cue point file" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( "cg", "generate-cue-points", wxString::Format( _( "Generate cue points (default: %s)" ), MyConfiguration::ToString( m_bGenerateCuePoints ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
-	cmdLine.AddOption( "ci", "cue-points-interval", wxString::Format( _( "Cue points interval (default: %s)" ), m_interval.AsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddSwitch( "db", "draw-cue-blocks", wxString::Format( _( "Draw blocks selected by cue points or lines (default: %s)" ), MyConfiguration::ToString( m_drawerSettings.GetDrawCueBlocks() ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddOption( "cp", "chapters-file", _( "Chapters file" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( "cg", "generate-chapters", wxString::Format( _( "Generate chapters (default: %s)" ), MyConfiguration::ToString( m_bGenerateChapters ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddOption( "ci", "chapters-interval", wxString::Format( _( "Chapters interval (default: %s)" ), m_interval.AsString() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( "db", "draw-chapter-blocks", wxString::Format( _( "Draw blocks or lines selected by chapters (default: %s)" ), MyConfiguration::ToString( m_drawerSettings.GetDrawChapters() ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 
 	cmdLine.AddSwitch( wxEmptyString, "use-mlang", wxString::Format( _( "Use MLang library (default: %s)" ), MyConfiguration::ToString( m_bUseMLang ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 
@@ -205,13 +205,13 @@ static int time_span_compare_fn( wxTimeSpan* ts1, wxTimeSpan* ts2 )
 	}
 }
 
-bool wxConfiguration::ReadCuePoints( wxTimeSpanArray& cuePoints ) const
+bool wxConfiguration::ReadChapters( ChaptersArray& chapters ) const
 {
-	CuePointsReader reader;
+	ChaptersReader reader;
 
-	if ( reader.Read( cuePoints, m_cuePointsFile, m_bUseMLang ) )
+	if ( reader.Read( chapters, m_chaptersFile, m_bUseMLang ) )
 	{
-		cuePoints.Sort( time_span_compare_fn );
+		chapters.Sort( time_span_compare_fn );
 		return true;
 	}
 	else
@@ -752,10 +752,10 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	if ( cmdLine.Found( "cp", &s ) )
 	{
-		m_cuePointsFile = s;
+		m_chaptersFile = s;
 	}
 
-	ReadNegatableSwitchValue( cmdLine, "cg", m_bGenerateCuePoints );
+	ReadNegatableSwitchValue( cmdLine, "cg", m_bGenerateChapters );
 
 	if ( cmdLine.Found( "ci", &s ) )
 	{
@@ -766,7 +766,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		}
 	}
 
-	ReadNegatableSwitchValue( cmdLine, "db", m_drawerSettings.GetDrawCueBlocks() );
+	ReadNegatableSwitchValue( cmdLine, "db", m_drawerSettings.GetDrawChapters() );
 
 	ReadNegatableSwitchValue( cmdLine, "use-mlang", m_bUseMLang );
 
@@ -851,25 +851,25 @@ const wxFileName& wxConfiguration::GetInputFile() const
 	return m_inputFile;
 }
 
-bool wxConfiguration::HasCuePointsFile() const
+bool wxConfiguration::HasChaptersFile() const
 {
-	return m_cuePointsFile.IsOk();
+	return m_chaptersFile.IsOk();
 }
 
-const wxFileName& wxConfiguration::GetCuePointsFile() const
+const wxFileName& wxConfiguration::GetChaptersFile() const
 {
-	wxASSERT( HasCuePointsFile() );
-	return m_cuePointsFile;
+	wxASSERT( HasChaptersFile() );
+	return m_chaptersFile;
 }
 
-bool wxConfiguration::GenerateCuePoints() const
+bool wxConfiguration::GenerateChapters() const
 {
-	return m_bGenerateCuePoints;
+	return m_bGenerateChapters;
 }
 
-bool wxConfiguration::GenerateCuePoints( const wxTimeSpan& duration, wxTimeSpanArray& cuePoints ) const
+bool wxConfiguration::GenerateChapters( const wxTimeSpan& duration, ChaptersArray& chapters ) const
 {
-	wxASSERT( GenerateCuePoints() );
+	wxASSERT( GenerateChapters() );
 
 	wxTimeSpan step;
 	m_interval.Get( duration, step );
@@ -878,17 +878,17 @@ bool wxConfiguration::GenerateCuePoints( const wxTimeSpan& duration, wxTimeSpanA
 
 	while ( pos < duration )
 	{
-		cuePoints.Add( pos );
+		chapters.Add( pos );
 		pos		 += step;
 		nCounter += 1U;
 	}
 
 	if ( nCounter == 0 )
 	{
-		wxLogWarning( _( "No cue points generated. Propably too big interval." ) );
+		wxLogWarning( _( "No chapters generated. Propably too big interval." ) );
 	}
 
-	cuePoints.Sort( time_span_compare_fn );
+	chapters.Sort( time_span_compare_fn );
 
 	return ( nCounter > 0 );
 }

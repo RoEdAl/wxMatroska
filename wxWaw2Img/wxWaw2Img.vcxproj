@@ -96,7 +96,7 @@
     <ClInclude Include="AudioRenderer.h" />
     <ClInclude Include="ChannelMixer.h" />
     <ClInclude Include="ColourInterpolation.h" />
-    <ClInclude Include="CuePointsReader.h" />
+    <ClInclude Include="ChaptersReader.h" />
     <ClInclude Include="DrawerSettings.h" />
     <ClInclude Include="Arrays.h" />
     <ClInclude Include="Interval.h" />
@@ -126,7 +126,7 @@
     <ClCompile Include="AudioRenderer.cpp" />
     <ClCompile Include="ChannelMixer.cpp" />
     <ClCompile Include="ColourInterpolation.cpp" />
-    <ClCompile Include="CuePointsReader.cpp" />
+    <ClCompile Include="ChaptersReader.cpp" />
     <ClCompile Include="DrawerSettings.cpp" />
     <ClCompile Include="Arrays.cpp" />
     <ClCompile Include="Interval.cpp" />

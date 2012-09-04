@@ -17,8 +17,8 @@ Raster2WaveDrawer::Raster2WaveDrawer( wxUint64 nNumberOfSamples,
 									  wxGraphicsContext* gc,
 									  const wxRect2DInt& rc,
 									  const DrawerSettings& drawerSettings,
-									  bool bUseCuePoints, const wxTimeSpanArray& cuePoints ):
-	ColumnPainterWaveDrawer( nNumberOfSamples, gc, rc, drawerSettings, bUseCuePoints, cuePoints )
+									  const ChaptersArrayScopedPtr& pChapters ):
+	ColumnPainterWaveDrawer( nNumberOfSamples, gc, rc, drawerSettings, pChapters )
 {}
 
 void Raster2WaveDrawer::GetThreeColours( wxFloat32 v, wxColour& clrTop, wxColour& clrMiddle, wxColour& clrBottom )

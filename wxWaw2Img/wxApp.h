@@ -29,7 +29,7 @@ class wxMyApp:
 		static void InfoVersion( wxMessageOutput& );
 		static void InfoColourFormat( wxMessageOutput& );
 		static void InfoSystemSettings( wxMessageOutput& );
-		static void InfoCuePointFormat( wxMessageOutput& );
+		static void InfoChapterFormat( wxMessageOutput& );
 		static void InfoCmdLineTemplate( wxMessageOutput& );
 
 	protected:

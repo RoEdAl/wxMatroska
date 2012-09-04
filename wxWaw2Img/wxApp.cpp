@@ -78,9 +78,9 @@ void wxMyApp::InfoColourFormat( wxMessageOutput& out )
 	out.Output( _( "\tcolor name: yellow, transparent etc." ) );
 }
 
-void wxMyApp::InfoCuePointFormat( wxMessageOutput& out )
+void wxMyApp::InfoChapterFormat( wxMessageOutput& out )
 {
-	out.Output( _( "Cue points format:" ) );
+	out.Output( _( "Chapters format:" ) );
 	out.Output( _( "\tMM::SS:FF - minutes, seconds and CD frames (1/75 s)" ) );
 	out.Output( _( "\tMM::SS.YYY - minutes, seconds and miliseconds" ) );
 	out.Output( _( "\ts[.www] - seconds [with optional partial part]" ) );
@@ -93,7 +93,7 @@ void wxMyApp::InfoCuePointFormat( wxMessageOutput& out )
 
 void wxMyApp::InfoCmdLineTemplate( wxMessageOutput& out )
 {
-	out.Output( _( "Command line template replacements:" ) );
+	out.Output( _( "Command line template placeholders:" ) );
 	out.Printf( _( "\t$%s$: path to ffmpeg executable" ), CMD_FFMPEG );
 	out.Printf( _( "\t$%s$: path to audio file" ), CMD_AUDIO );
 	out.Printf( _( "\t$%s$: path to background image file or sequence of images" ), CMD_INPUT );
@@ -138,9 +138,9 @@ bool wxMyApp::ShowInfo() const
 			return true;
 		}
 
-		case wxConfiguration::INFO_CUE_POINT_FORMAT:
+		case wxConfiguration::INFO_CHAPTERS_FORMAT:
 		{
-			InfoCuePointFormat( *wxMessageOutput::Get() );
+			InfoChapterFormat( *wxMessageOutput::Get() );
 			return true;
 		}
 
@@ -249,28 +249,28 @@ static void read_audio_samples( SoundFile& soundFile, MultiChannelWaveDrawer& wa
 	soundFile.Close();
 }
 
-static WaveDrawer* create_wave_drawer( DRAWING_MODE eMode, const wxConfiguration& cfg, wxUint64 nNumberOfSamples, wxGraphicsContext* gc, const wxRect2DInt& rc, bool bUseCuePoints, const wxTimeSpanArray& cuePoints )
+static WaveDrawer* create_wave_drawer( DRAWING_MODE eMode, const wxConfiguration& cfg, wxUint64 nNumberOfSamples, wxGraphicsContext* gc, const wxRect2DInt& rc, const ChaptersArrayScopedPtr& pChapters )
 {
 	switch ( eMode )
 	{
 		case DRAWING_MODE_SIMPLE:
 		{
-			return new SimpleWaveDrawer( nNumberOfSamples, gc, rc, cfg.GetDrawerSettings(), bUseCuePoints, cuePoints );
+			return new SimpleWaveDrawer( nNumberOfSamples, gc, rc, cfg.GetDrawerSettings(), pChapters );
 		}
 
 		case DRAWING_MODE_RASTER1:
 		{
-			return new Raster1WaveDrawer( nNumberOfSamples, gc, rc, cfg.GetDrawerSettings(), bUseCuePoints, cuePoints );
+			return new Raster1WaveDrawer( nNumberOfSamples, gc, rc, cfg.GetDrawerSettings(), pChapters );
 		}
 
 		case DRAWING_MODE_RASTER2:
 		{
-			return new Raster2WaveDrawer( nNumberOfSamples, gc, rc, cfg.GetDrawerSettings(), bUseCuePoints, cuePoints );
+			return new Raster2WaveDrawer( nNumberOfSamples, gc, rc, cfg.GetDrawerSettings(), pChapters );
 		}
 
 		case DRAWING_MODE_POLY:
 		{
-			return new PolyWaveDrawer( nNumberOfSamples, gc, rc, cfg.GetDrawerSettings(), bUseCuePoints, cuePoints );
+			return new PolyWaveDrawer( nNumberOfSamples, gc, rc, cfg.GetDrawerSettings(), pChapters );
 		}
 	}
 
@@ -278,7 +278,7 @@ static WaveDrawer* create_wave_drawer( DRAWING_MODE eMode, const wxConfiguration
 	return NULL;
 }
 
-static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const SF_INFO& sfInfo, bool bUseCuePoints, const wxTimeSpanArray& cuePoints )
+static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const SF_INFO& sfInfo, const ChaptersArrayScopedPtr& pChapters )
 {
 	if ( sfInfo.frames <= 0 )
 	{
@@ -340,7 +340,7 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 
 				for ( wxUint16 nChannel = 0; nChannel < nChannels; nChannel++ )
 				{
-					pGc->AddDrawer( create_wave_drawer( cfg.GetDrawingMode(), cfg, nSamples, gc, drawerRects[ nChannel ], bUseCuePoints, cuePoints ) );
+					pGc->AddDrawer( create_wave_drawer( cfg.GetDrawingMode(), cfg, nSamples, gc, drawerRects[ nChannel ], pChapters ) );
 				}
 
 				pMcwd = pGc;
@@ -364,7 +364,7 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 					return NULL;
 				}
 
-				pGc->AddDrawer( create_wave_drawer( cfg.GetDrawingMode(), cfg, nSamples, gc, drawerRects[ 0 ], bUseCuePoints, cuePoints ) );
+				pGc->AddDrawer( create_wave_drawer( cfg.GetDrawingMode(), cfg, nSamples, gc, drawerRects[ 0 ], pChapters ) );
 				pMcwd = pGc;
 			}
 
@@ -534,12 +534,12 @@ static inline size_t replace_str( wxString& s, const wxChar* pszReplacement, con
 			quote_str( sValue ) );
 }
 
-static wxString get_key_frames( const wxTimeSpanArray& cuePoints )
+static wxString get_key_frames( const ChaptersArray& chapters )
 {
-	wxASSERT( cuePoints.Count() > 1u );
+	wxASSERT( chapters.Count() > 1u );
 
 	wxString s;
-	for ( wxTimeSpanArray::const_iterator i = cuePoints.begin(), end = --cuePoints.end(); i != end; i++ )
+	for ( ChaptersArray::const_iterator i = chapters.begin(), end = --chapters.end(); i != end; i++ )
 	{
 		s += i->Format( "%S.%l" );
 		s += ',';
@@ -553,7 +553,7 @@ static bool run_ffmpeg(
 		const wxConfiguration& cfg,
 		wxUint32 nNumberOfPictures,
 		wxUint32 nTrackDurationSec,
-		bool bUseCuePoints, const wxTimeSpanArray& cuePoints
+		const ChaptersArrayScopedPtr& pChapters
 		)
 {
 	wxFileName fn( cfg.GetGetCommandTemplateFile() );
@@ -598,9 +598,9 @@ static bool run_ffmpeg(
 	replace_str( sCmdLine, wxMyApp::CMD_INPUT_RATE, wxString::Format( "%u/%u", nNumberOfPictures, nTrackDurationSec ) );
 	replace_str( sCmdLine, wxMyApp::CMD_OUTPUT, fnOut.GetFullPath() );
 
-	if ( bUseCuePoints )
+	if ( pChapters )
 	{
-		replace_str( sCmdLine, wxMyApp::CMD_KEY_FRAMES, get_key_frames( cuePoints ) );
+		replace_str( sCmdLine, wxMyApp::CMD_KEY_FRAMES, get_key_frames( *pChapters ) );
 	}
 	else
 	{
@@ -775,7 +775,7 @@ static bool create_animation(
 		const NinePatchBitmap& npb,
 		const wxRect2DIntArray& rects,
 		wxUint32 nTrackDuration,
-		bool bUseCuePoints, const wxTimeSpanArray& cuePoints
+		const ChaptersArrayScopedPtr& pChapters
 		)
 {
 	wxASSERT( rects.GetCount() > 0 );
@@ -893,7 +893,7 @@ static bool create_animation(
 
 	if ( cfg.RunFfmpeg() )
 	{
-		return run_ffmpeg( workDir, cfg, nMaxWidth, nTrackDuration, bUseCuePoints, cuePoints );
+		return run_ffmpeg( workDir, cfg, nMaxWidth, nTrackDuration, pChapters );
 	}
 	else
 	{
@@ -905,7 +905,7 @@ static bool save_image(
 		const wxFileName& fn,
 		const wxConfiguration& cfg,
 		const McGraphicalContextWaveDrawer& mcWaveDrawer,
-		bool bUseCuePoints, const wxTimeSpanArray& cuePoints
+		const ChaptersArrayScopedPtr& pChapters
 		)
 {
 	if ( cfg.CreateAnimation() )
@@ -991,7 +991,7 @@ static bool save_image(
 				npb,
 				mcWaveDrawer.GetRects(),
 				mcWaveDrawer.GetTrackDuration(),
-				bUseCuePoints, cuePoints
+				pChapters
 				);
 
 		if ( cfg.RunFfmpeg() && cfg.DeleteTemporaryFiles() && !workDir.Rmdir( wxPATH_RMDIR_RECURSIVE ) )
@@ -1022,7 +1022,7 @@ static bool save_image(
 	}
 }
 
-static bool save_rendered_wave( McChainWaveDrawer& waveDrawer, const wxConfiguration& cfg, bool bUseCuePoints, const wxTimeSpanArray& cuePoints )
+static bool save_rendered_wave( McChainWaveDrawer& waveDrawer, const wxConfiguration& cfg, const ChaptersArrayScopedPtr& pChapters )
 {
 	wxFileName fn( cfg.GetOutputFile() );
 
@@ -1056,7 +1056,7 @@ static bool save_rendered_wave( McChainWaveDrawer& waveDrawer, const wxConfigura
 			}
 			else
 			{
-				return save_image( fn, cfg, *pGc, bUseCuePoints, cuePoints );
+				return save_image( fn, cfg, *pGc, pChapters );
 			}
 #endif
 #else
@@ -1096,23 +1096,20 @@ int wxMyApp::OnRun()
 		return 0;
 	}
 
-	wxTimeSpanArray cuePoints;
-	bool			bUseCuePoints = false;
+	ChaptersArrayScopedPtr pChapters;
 
-	if ( m_cfg.HasCuePointsFile() )
+	if ( m_cfg.HasChaptersFile() )
 	{
-		if ( !m_cfg.ReadCuePoints( cuePoints ) )
+		pChapters.reset( new ChaptersArray() );
+		if ( !m_cfg.ReadChapters( *pChapters ) )
 		{
 			return 1000;
 		}
 
-		if ( cuePoints.IsEmpty() )
+		if ( pChapters->IsEmpty() )
 		{
-			wxLogWarning( _( "No cue points found" ) );
 			return 1001;
 		}
-
-		bUseCuePoints = true;
 	}
 
 	wxFileName inputFile( m_cfg.GetInputFile() );
@@ -1140,26 +1137,34 @@ int wxMyApp::OnRun()
 	}
 
 	const SF_INFO& sfInfo	= sfReader.GetInfo();
-	wxTimeSpan	   duration = wxTimeSpan::Milliseconds( sfInfo.frames * 1000 / sfInfo.samplerate );
+	wxTimeSpan	   duration( wxTimeSpan::Milliseconds( sfInfo.frames * 1000 / sfInfo.samplerate ) );
 	wxLogMessage( _( "Format: %s, samplerate: %uHz, channels: %u, duration: %s" ),
 			SoundFile::GetFormatName( sfInfo.format ),
 			sfInfo.samplerate,
 			sfInfo.channels,
 			duration.Format() );
 
-	if ( m_cfg.HasCuePointsFile() || m_cfg.GenerateCuePoints() )
+	if ( m_cfg.HasChaptersFile() || m_cfg.GenerateChapters() )
 	{
-		if ( m_cfg.GenerateCuePoints() )
+		if ( m_cfg.GenerateChapters() )
 		{
-			bool bGenerated = m_cfg.GenerateCuePoints( duration, cuePoints );
-			bUseCuePoints = bUseCuePoints || bGenerated;
+			if ( !pChapters )
+			{
+				pChapters.reset( new ChaptersArray() );
+			}
+
+			bool bGenerated = m_cfg.GenerateChapters( duration, *pChapters );
+			if ( !bGenerated )
+			{
+				wxLogWarning( _("Cannot generate chapters") );
+			}
 		}
 
-		cuePoints.Add( duration );
+		pChapters->Add( duration );
 	}
 
 	wxLogInfo( _( "Creating wave drawer" ) );
-	wxScopedPtr< McChainWaveDrawer > pWaveDrawer( create_wave_drawer( m_cfg, sfReader.GetInfo(), bUseCuePoints, cuePoints ) );
+	wxScopedPtr< McChainWaveDrawer > pWaveDrawer( create_wave_drawer( m_cfg, sfReader.GetInfo(), pChapters ) );
 
 	if ( !pWaveDrawer )
 	{
@@ -1173,6 +1178,6 @@ int wxMyApp::OnRun()
 	}
 
 	wxLogInfo( _( "Waveform drawed" ) );
-	return save_rendered_wave( *pWaveDrawer, m_cfg, bUseCuePoints, cuePoints ) ? 0 : 1;
+	return save_rendered_wave( *pWaveDrawer, m_cfg, pChapters ) ? 0 : 1;
 }
 

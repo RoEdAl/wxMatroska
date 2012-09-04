@@ -94,7 +94,7 @@ DrawerSettings::DrawerSettings():
 	m_nFrequency( 50 ),
 	m_fBaselinePosition( 0.5f ),
 	m_clrBg( wxTransparentColour ),
-	m_bDrawCueBlocks( true ),
+	m_bDrawChapters( true ),
 	m_eCompositionMode( wxCOMPOSITION_OVER )
 {}
 
@@ -170,9 +170,9 @@ bool DrawerSettings::OneBackgroundColour2() const
 	return m_topColourSettings.GetBackgroundColour2() == m_bottomColourSettings.GetBackgroundColour2();
 }
 
-bool DrawerSettings::GetDrawCueBlocks() const
+bool DrawerSettings::GetDrawChapters() const
 {
-	return m_bDrawCueBlocks;
+	return m_bDrawChapters;
 }
 
 wxCompositionMode DrawerSettings::GetCompositionMode() const
@@ -227,9 +227,9 @@ ColourSettings& DrawerSettings::GetBottomColourSettings()
 	return m_bottomColourSettings;
 }
 
-bool& DrawerSettings::GetDrawCueBlocks()
+bool& DrawerSettings::GetDrawChapters()
 {
-	return m_bDrawCueBlocks;
+	return m_bDrawChapters;
 }
 
 wxCompositionMode& DrawerSettings::GetCompositionMode()
@@ -319,9 +319,9 @@ DrawerSettings& DrawerSettings::SetBaselinePositionPercent( wxInt32 nBaselinePos
 	return *this;
 }
 
-DrawerSettings& DrawerSettings::SetDrawCueBlocks( bool b )
+DrawerSettings& DrawerSettings::SetDrawChapters( bool b )
 {
-	m_bDrawCueBlocks = b;
+	m_bDrawChapters = b;
 	return *this;
 }
 

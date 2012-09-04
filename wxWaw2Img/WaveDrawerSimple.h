@@ -14,7 +14,7 @@ class SimpleWaveDrawer:
 						  wxGraphicsContext* gc,
 						  const wxRect2DInt&,
 						  const DrawerSettings&,
-						  bool, const wxTimeSpanArray& );
+						  const ChaptersArrayScopedPtr& );
 
 	protected:
 

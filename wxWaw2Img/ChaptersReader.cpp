@@ -1,12 +1,12 @@
 /*
- *      CuePointsReader.cpp
+ *      ChaptersReader.cpp
  */
 #include "StdWx.h"
 #include <wxEncodingDetection/wxEncodingDetection.h>
 #include "Arrays.h"
-#include "CuePointsReader.h"
+#include "ChaptersReader.h"
 
-CuePointsReader::CuePointsReader():
+ChaptersReader::ChaptersReader():
 	m_reMsf( wxT( "\\A(\\d{1,4}):(\\d{1,2}):(\\d{1,2})\\Z" ), wxRE_ADVANCED ),
 	m_reMsms( wxT( "\\A(\\d{1,4}):(\\d{1,2}).(\\d{1,3})\\Z" ), wxRE_ADVANCED ),
 	m_reHmsms( wxT( "\\A(\\d{1,4}):(\\d{1,4}):(\\d{1,2}).(\\d{1,3})\\Z" ), wxRE_ADVANCED )
@@ -130,7 +130,7 @@ static bool parse_hmsms( const wxRegEx& reHmsms, const wxString& s, wxTimeSpan& 
 	return res;
 }
 
-bool CuePointsReader::ParseCuePointPosition( const wxString& s, wxTimeSpan& ts )
+bool ChaptersReader::ParseChapterPosition( const wxString& s, ChapterDesc& ts )
 {
 	unsigned long sec;
 	double		  dsec;
@@ -166,7 +166,7 @@ bool CuePointsReader::ParseCuePointPosition( const wxString& s, wxTimeSpan& ts )
 	}
 }
 
-bool CuePointsReader::Read( wxTimeSpanArray& cuePoints, const wxFileName& inputFile, bool bUseMLang )
+bool ChaptersReader::Read( ChaptersArray& chapters, const wxFileName& inputFile, bool bUseMLang )
 {
 	wxLogInfo( _( "Opening cuesheet file \u201C%s\u201D" ), inputFile.GetFullName() );
 
@@ -213,10 +213,10 @@ bool CuePointsReader::Read( wxTimeSpanArray& cuePoints, const wxFileName& inputF
 		}
 
 		// first only token
-		if ( ParseCuePointPosition( tokenizer.GetNextToken(), ts ) )
+		if ( ParseChapterPosition( tokenizer.GetNextToken(), ts ) )
 		{
 			wxLogInfo( _( "Cue point: %s" ), ts.Format() );
-			cuePoints.Add( ts );
+			chapters.Add( ts );
 		}
 	}
 

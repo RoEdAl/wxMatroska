@@ -13,7 +13,7 @@ class Raster1WaveDrawer:
 						   wxGraphicsContext*,
 						   const wxRect2DInt&,
 						   const DrawerSettings&,
-						   bool, const wxTimeSpanArray& );
+						   const ChaptersArrayScopedPtr& );
 
 	protected:
 

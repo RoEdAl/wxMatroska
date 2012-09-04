@@ -15,14 +15,15 @@ SimpleWaveDrawer::SimpleWaveDrawer( wxUint64 nNumberOfSamples,
 									wxGraphicsContext* gc,
 									const wxRect2DInt& rc,
 									const DrawerSettings& drawerSettings,
-									bool bUseCuePoints, const wxTimeSpanArray& cuePoints ):
+									const ChaptersArrayScopedPtr& pChapters ):
 	GraphicsContextWaveDrawer(
 		nNumberOfSamples,
 		gc,
 		drawerSettings.UseLogarithmicScale(),
 		drawerSettings.GetLogarithmBase(),
 		rc,
-		drawerSettings, bUseCuePoints, cuePoints ),
+		drawerSettings,
+		pChapters ),
 	m_bOneMiddleColour( false )
 {}
 
