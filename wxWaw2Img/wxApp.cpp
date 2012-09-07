@@ -811,11 +811,7 @@ static bool create_animation(
 		wxAtomicInt		  nErrorCounter = 0;
 		wxCriticalSection critSect;
 
-		wxThread** ta = new wxThread*[ nCpuCount ];
-		for ( int i = 0; i < nCpuCount; i++ )
-		{
-			ta[ i ] = NULL;
-		}
+		wxThreadArray ta( nCpuCount );
 
 		for ( int i = 0; i < nCpuCount; i++ )
 		{
@@ -854,14 +850,12 @@ static bool create_animation(
 			}
 
 			wxLogInfo( _( "All working threads finished" ) );
-		}
 
-		for ( int i = 0; i < nCpuCount; i++ )
-		{
-			wxDELETE( ta[ i ] );
+			for ( int i = 0; i < nCpuCount; i++ )
+			{
+				wxDELETE( ta[i] );
+			}
 		}
-
-		wxDELETEA( ta );
 
 		if ( nErrorCounter > 0 )
 		{
@@ -1091,9 +1085,8 @@ static void html_renderer()
 
 static void boost_lcd()
 {
-	boost::math::lcm_evaluator<wxULongLong> lcm1;
-
-	wxULongLong res1( lcm1( wxULL(456), wxULL(234) ) );
+	//boost::math::lcm_evaluator<wxULongLong> lcm1;
+	//wxULongLong res1( lcm1( wxULL(456), wxULL(234) ) );
 
 	boost::math::lcm_evaluator<wxUint64> lcm2;
 	
@@ -1111,33 +1104,6 @@ static void boost_lcd()
 	}
 
 	wxUint64 ct = boost::math::static_lcm<35,15>::value;
-}
-
-static void calculate_positions(const ChaptersArray& chapters, wxUint64 nFrames, const wxTimeSpan& duration )
-{
-	wxFloat64 fDuration = duration.GetMilliseconds().ToDouble();
-	boost::math::lcm_evaluator<wxUint64> lcm;
-	wxUint64 res;
-	wxUint64Array ar( chapters.Count() );
-	for( size_t i=0, nSize = chapters.Count(); i < nSize; ++i )
-	{
-		ar[i] = nFrames * chapters[i].GetMilliseconds().ToDouble() / fDuration;
-		switch( i )
-		{
-			case 0:
-			break;
-
-			case 1:
-			res = lcm( ar[0], ar[1] );
-			break;
-
-			default:
-			res = lcm( res, ar[i] );
-			break;
-		}
-	}
-
-	wxLogDebug( "LCD:", res );
 }
 
 namespace parser
@@ -1379,7 +1345,7 @@ int wxMyApp::OnRun()
 				wxLogWarning( _("Cannot generate chapters") );
 			}
 
-			calculate_positions( *pChapters, sfInfo.frames, duration );
+			//calculate_positions( *pChapters, sfInfo.frames, duration );
 		}
 
 		pChapters->Add( duration );

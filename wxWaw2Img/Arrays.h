@@ -10,6 +10,7 @@ wxDECLARE_SCOPED_ARRAY( float, wxFloatArray )
 WX_DEFINE_ARRAY( ChapterDesc, ChaptersArray );
 WX_DEFINE_ARRAY( wxRect2DInt, wxRect2DIntArray );
 WX_DEFINE_ARRAY( wxUint64, wxUint64Array );
+WX_DEFINE_ARRAY_PTR( wxThread*, wxThreadArray );
 
 typedef wxScopedPtr<ChaptersArray> ChaptersArrayScopedPtr;
 
