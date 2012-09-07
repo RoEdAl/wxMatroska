@@ -1089,12 +1089,232 @@ static void html_renderer()
 	img.SaveFile( "C:/Users/Normal/Documents/Visual Studio 2010/Projects/wxMatroska/html_render.png" );
 }
 
+static void boost_lcd()
+{
+	boost::math::lcm_evaluator<wxULongLong> lcm1;
+
+	wxULongLong res1( lcm1( wxULL(456), wxULL(234) ) );
+
+	boost::math::lcm_evaluator<wxUint64> lcm2;
+	
+	wxUint64Array at;
+	at.Add( 5 );
+	at.Add( 10 );
+	at.Add( 15 );
+	at.Add( 35 );
+	at.Add( 45 );
+
+	wxUint64 res2 = lcm2( at[0], at[1] );
+	for(size_t i=2, nSize = at.Count(); i < nSize; ++i )
+	{
+		res2 = lcm2( res2, at[i] );
+	}
+
+	wxUint64 ct = boost::math::static_lcm<35,15>::value;
+}
+
+static void calculate_positions(const ChaptersArray& chapters, wxUint64 nFrames, const wxTimeSpan& duration )
+{
+	wxFloat64 fDuration = duration.GetMilliseconds().ToDouble();
+	boost::math::lcm_evaluator<wxUint64> lcm;
+	wxUint64 res;
+	wxUint64Array ar( chapters.Count() );
+	for( size_t i=0, nSize = chapters.Count(); i < nSize; ++i )
+	{
+		ar[i] = nFrames * chapters[i].GetMilliseconds().ToDouble() / fDuration;
+		switch( i )
+		{
+			case 0:
+			break;
+
+			case 1:
+			res = lcm( ar[0], ar[1] );
+			break;
+
+			default:
+			res = lcm( res, ar[i] );
+			break;
+		}
+	}
+
+	wxLogDebug( "LCD:", res );
+}
+
+namespace parser
+{
+	template< typename S>
+	struct string_traits
+	{
+		static void empty( S& s )
+		{
+			s = "";
+		}
+
+		typedef typename S::const_iterator const_iterator;
+	};
+
+	template<> struct string_traits<wxString>
+	{
+		static void empty( wxString& s )
+		{
+			s = wxEmptyString;
+		}
+
+		typedef wxString::const_iterator const_iterator;
+	};
+
+	template<typename Context, typename S>
+	class e_element
+	{
+		public:
+
+		e_element() {}
+		virtual ~e_element() {}
+
+		virtual bool evaluate( const Context& ctx, S& value ) = 0;
+
+	};
+
+	template<typename Context, typename S>
+	class e_expression :public e_element<Context,S>
+	{
+		public:
+
+		virtual bool evaluate( const Context& ctx, S& value )
+		{
+			string_traits<S>::empty( value );
+			bool bRes = true;
+			for( size_t i=0, nCount = m_elements.GetCount(); i < nCount; i++ )
+			{
+				S v;
+				if ( !m_elements[i]->evaluate( ctx, v ) )
+				{
+					bRes = false;
+				}
+
+				value &= v;
+			}
+
+			return bRes;
+		}
+
+		protected:
+
+		WX_DECLARE_OBJARRAY( e_element, element_array );
+
+		element_array m_elements;
+	};
+
+	template<typename Context, typename S>
+	class e_literal :public e_element<Context,S>
+	{
+	public:
+
+		e_literal(){}
+
+		e_literal( const S& v )
+			:m_value( v )
+		{}
+
+		e_literal( const e_literal& l )
+			:m_value(l.m_value)
+		{}
+
+		e_literal& operator=( const e_literal& l )
+		{
+			m_value = l.m_value;
+			return *this;
+		}
+
+		const S& value() const { return m_value; }
+
+		virtual bool evaluate( const Context&, S& value )
+		{
+			value = m_value;
+			return true;
+		}
+
+	protected:
+
+		S m_value;
+
+	};
+
+	template<typename Context, typename S>
+	class e_metadata :public e_element< Context, S >
+	{
+	public:
+
+		enum SCOPE
+		{
+			ANY,
+			TRACK,
+			CHAPTER
+		};
+
+		e_metadata()
+			:m_scope( ANY )
+		{}
+
+		e_metadata( const S& name, SCOPE scope )
+			:m_name( name ), m_scope( scope )
+		{}
+
+		e_metadata( const e_metadata& m )
+			:m_name( m.m_name ), m_scope( m.m_scope )
+		{}
+
+		e_metadata& operator=( const e_metadata& m )
+		{
+			m_name = m.m_name;
+			m_scope = m.m_scope;
+			return *this;
+		}
+
+		SCOPE scope() const { return m_scope; }
+		const S& name() const { return m_name; }
+
+		virtual bool evaluate( const Context& ctx, S& value )
+		{
+			bool bRes = false;
+			switch( m_scope )
+			{
+				case ANY:
+				bRes = ctx.find_chapter_tag( value ) || ctx.find_track_tag( value );
+				break;
+
+				case TRACK:
+				bRes = ctx.find_track_tag( value );
+				break;
+
+				case CHAPTER:
+				bRes = ctx.find_chapter_tag( value );
+				break;
+			}
+
+			if ( !bRes )
+			{
+				string_traits< S >::empty( value );
+			}
+
+			return bRes;
+		}
+
+	protected:
+
+		SCOPE m_scope;
+		S m_name;
+	};
+}
+
 int wxMyApp::OnRun()
 {
 	if ( ShowInfo() )
 	{
 		return 0;
 	}
+
+	boost_lcd();
 
 	ChaptersArrayScopedPtr pChapters;
 
@@ -1158,6 +1378,8 @@ int wxMyApp::OnRun()
 			{
 				wxLogWarning( _("Cannot generate chapters") );
 			}
+
+			calculate_positions( *pChapters, sfInfo.frames, duration );
 		}
 
 		pChapters->Add( duration );

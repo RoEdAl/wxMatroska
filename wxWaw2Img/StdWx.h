@@ -86,5 +86,7 @@ typedef struct tagMSG
 #include <objbase.h>
 #endif
 
+#include <boost/math/common_factor.hpp>
+
 #endif	// _STD_WX_H
 
