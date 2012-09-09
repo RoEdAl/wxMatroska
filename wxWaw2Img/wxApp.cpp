@@ -1106,6 +1106,9 @@ static void boost_lcd()
 	wxUint64 ct = boost::math::static_lcm<35,15>::value;
 }
 
+#include <boost/smart_ptr/shared_ptr.hpp>
+#include <boost/container/vector.hpp>
+
 namespace parser
 {
 	template< typename S>
@@ -1134,10 +1137,10 @@ namespace parser
 	{
 		public:
 
-		e_element() {}
 		virtual ~e_element() {}
 
-		virtual bool evaluate( const Context& ctx, S& value ) = 0;
+		virtual bool evaluate( const Context& ctx, S& value ) const = 0;
+		virtual S to_string() const = 0;
 
 	};
 
@@ -1146,14 +1149,27 @@ namespace parser
 	{
 		public:
 
-		virtual bool evaluate( const Context& ctx, S& value )
+		e_expression( const e_expression& e )
+			:m_elements( e.m_elements )
+		{}
+
+		e_expression& operator=( const e_expression& e )
 		{
-			string_traits<S>::empty( value );
-			bool bRes = true;
-			for( size_t i=0, nCount = m_elements.GetCount(); i < nCount; i++ )
+			m_elements = e.m_elements;
+			return *this;
+		}
+
+		virtual bool evaluate( const Context& ctx, S& value ) const
+		{
+			bool bRes = false;
+			string_traits< S >::empty( value );
+			for( e_elements_ptr_array::const_iterator i = m_elements.begin(), end = m_elements.end();
+				i != end; ++i )
 			{
+				value &= i;
+
 				S v;
-				if ( !m_elements[i]->evaluate( ctx, v ) )
+				if ( !i->evaluate( ctx, v ) )
 				{
 					bRes = false;
 				}
@@ -1164,19 +1180,74 @@ namespace parser
 			return bRes;
 		}
 
+		virtual S to_string() const
+		{
+			S v;
+			string_traits< S >::empty( v );
+			for( e_elements_ptr_array::const_iterator i = m_elements.begin(), end = m_elements.end();
+				i != end; ++i )
+			{
+				v &= i->to_string();
+			}
+
+			return v;
+		}
+		
 		protected:
 
-		WX_DECLARE_OBJARRAY( e_element, element_array );
+		typedef boost::shared_ptr< e_element< Context, S > > e_element_ptr;
+		typedef boost::container::vector< e_element_ptr > e_element_ptr_array;
 
-		element_array m_elements;
+		e_element_ptr_array m_elements;
+	};
+
+	template<typename Context, typename S>
+	class e_conditional_expression :public e_expression< Context, S >
+	{
+		protected:
+
+		typedef e_expression< Context, S > _base_class;
+
+		public:
+
+		e_conditional_expression( const e_expression& e )
+			:_base_class( e )
+		{}
+
+		virtual bool evaluate( const Context& ctx, S& value ) const
+		{
+			string_traits< S >::empty( value );
+			for( e_elements_ptr_array::const_iterator i = m_elements.begin(), end = m_elements.end();
+				i != end; ++i )
+			{
+				value &= i;
+
+				S v;
+				if ( !i->evaluate( ctx, v ) )
+				{
+					string_traits< S >::empty( value );
+					return false;
+				}
+
+				value &= v;
+			}
+
+			return true;
+		}
+
+		virtual S to_string() const
+		{
+			S v( '[' );
+			v &= _base_class::to_string();
+			v &= ']';
+			return v;
+		}
 	};
 
 	template<typename Context, typename S>
 	class e_literal :public e_element<Context,S>
 	{
 	public:
-
-		e_literal(){}
 
 		e_literal( const S& v )
 			:m_value( v )
@@ -1194,10 +1265,19 @@ namespace parser
 
 		const S& value() const { return m_value; }
 
-		virtual bool evaluate( const Context&, S& value )
+		virtual bool evaluate( const Context&, S& value ) const
 		{
 			value = m_value;
 			return true;
+		}
+
+		virtual S to_string() const
+		{
+			S v( '\'' );
+			// TODO Escape some characters
+			v &= m_value;
+			v &= '\'';
+			return v;
 		}
 
 	protected:
@@ -1218,10 +1298,6 @@ namespace parser
 			CHAPTER
 		};
 
-		e_metadata()
-			:m_scope( ANY )
-		{}
-
 		e_metadata( const S& name, SCOPE scope )
 			:m_name( name ), m_scope( scope )
 		{}
@@ -1240,7 +1316,7 @@ namespace parser
 		SCOPE scope() const { return m_scope; }
 		const S& name() const { return m_name; }
 
-		virtual bool evaluate( const Context& ctx, S& value )
+		virtual bool evaluate( const Context& ctx, S& value ) const
 		{
 			bool bRes = false;
 			switch( m_scope )
@@ -1266,11 +1342,119 @@ namespace parser
 			return bRes;
 		}
 
+		virtual S to_string() const
+		{
+			S v( '%' );
+			v &= m_value;
+			switch( m_scope )
+			{
+				case TRACK:
+				v &= ':t';
+				break;
+
+				case CHAPTER:
+				v &= ':c';
+				break;
+			}
+			v &= '%';
+		}
+
 	protected:
 
 		SCOPE m_scope;
 		S m_name;
 	};
+
+	template<typename Context, typename S>
+	class e_function :public e_element< Context, S >
+	{
+		public:
+
+		typedef boost::shared_ptr< e_expression< Context, S > > e_expression_ptr;
+		typedef boost::container::vector< e_expression_ptr > e_expression_ptr_array;
+
+		protected:
+
+		typedef boost::container::vector< S > string_array;
+
+		public:
+
+		e_function( const S& name, const e_expression_ptr_array& parameters )
+			:m_name( name ), m_parameters( parameters )
+		{}
+
+		e_function( const e_function& f )
+			:m_name( f.name ), m_parameters( f.m_parameters )
+		{}
+
+		e_function& operator=( const e_function& f )
+		{
+			return *this;
+		}
+
+		virtual bool evaluate( const Context& ctx, S& value ) const
+		{
+			bool bRes = false;
+			string_array params;
+			for( e_expression_ptr_array::const_iterator i = m_parameters.begin(), end = m_parameters.end(),
+				i != end; ++i )
+			{
+				S v;
+				if ( !i->evaluate(ctx, v ) )
+				{
+					bRes = false;
+				}
+				params.push_back( v );
+			}
+
+			if ( !ctx.evaluate_function( m_name, params, value ) )
+			{
+				string_traits< S >::empty( value );
+				bRes =false;
+			}
+
+			return bRes;
+		}
+
+		virtual bool to_string( const Context& ctx, S& value ) const
+		{
+			S v( '$' );
+			v &= name;
+			v &= '(';
+
+			S vv;
+			e_expression_ptr_array::const_iterator iBegin = m_parameters.begin();
+			e_expression_ptr_array::const_iterator iEnd = m_parameters.end();
+
+			if ( iBegin != iEnd )
+			{
+				v &= iBegin->to_string( ctx, vv );
+				++iBegin;
+			}
+
+			for(;iBegin!=iEnd; ++iBegin)
+            {
+				v &= ',';
+				v &= iBegin->to_string();
+            }
+
+			v &= ')';
+
+			return v;
+
+		}
+
+		protected:
+
+		typedef boost::shared_ptr< e_expression< Context, S > > e_expression_ptr;
+		typedef boost::container::vector< e_expression_ptr > e_expression_ptr_array;
+
+
+		S m_name;
+		e_expression_ptr_array m_parameters;
+
+	};
+
 }
 
 int wxMyApp::OnRun()
