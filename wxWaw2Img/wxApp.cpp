@@ -1114,30 +1114,70 @@ namespace parser
 	template< typename S>
 	struct string_traits
 	{
+		typedef typename S::const_iterator const_iterator;
+		typedef typename S::char_type char_type;
+
 		static void empty( S& s )
 		{
 			s = "";
 		}
 
-		typedef typename S::const_iterator const_iterator;
+		static void add_braces( S& s, char_type c1, char_type c2 )
+		{
+			s += c1;
+			s += c2;
+		}
+
+		static bool is_space( char_type c )
+		{
+			return wxIsspace( c );
+		}
+
+		static bool is_empty( const S& s )
+		{
+			return s.empty();
+		}
 	};
 
 	template<> struct string_traits<wxString>
 	{
+		typedef wxString::const_iterator const_iterator;
+		typedef wxString::char_type char_type;
+
 		static void empty( wxString& s )
 		{
 			s = wxEmptyString;
 		}
 
-		typedef wxString::const_iterator const_iterator;
+		static void add_braces( wxString& s, char_type c1, char_type c2 )
+		{
+			s += c1;
+			s += c2;
+		}
+
+		static bool is_space( char_type c )
+		{
+			return wxIsspace( c );
+		}
+
+		static bool is_empty( const wxString& s )
+		{
+			return s.empty();
+		}
+
 	};
 
 	template<typename Context, typename S>
-	class e_element
+	class element
 	{
 		public:
 
-		virtual ~e_element() {}
+		typedef Context context_type;
+		typedef S string_type;
+
+		public:
+
+		virtual ~element() {}
 
 		virtual bool evaluate( const Context& ctx, S& value ) const = 0;
 		virtual S to_string() const = 0;
@@ -1145,15 +1185,24 @@ namespace parser
 	};
 
 	template<typename Context, typename S>
-	class e_expression :public e_element<Context,S>
+	class expression :public element<Context,S>
 	{
 		public:
 
-		e_expression( const e_expression& e )
+		typedef boost::shared_ptr< element< Context, S > > element_ptr;
+		typedef boost::container::vector< element_ptr > element_ptr_array;
+
+		public:
+
+		expression( const element_ptr_array& e )
+			:m_elements( e )
+		{}
+
+		expression( const expression& e )
 			:m_elements( e.m_elements )
 		{}
 
-		e_expression& operator=( const e_expression& e )
+		expression& operator=( const expression& e )
 		{
 			m_elements = e.m_elements;
 			return *this;
@@ -1163,18 +1212,16 @@ namespace parser
 		{
 			bool bRes = false;
 			string_traits< S >::empty( value );
-			for( e_elements_ptr_array::const_iterator i = m_elements.begin(), end = m_elements.end();
+			for( element_ptr_array::const_iterator i = m_elements.begin(), end = m_elements.end();
 				i != end; ++i )
 			{
-				value &= i;
-
 				S v;
-				if ( !i->evaluate( ctx, v ) )
+				if ( !(*i)->evaluate( ctx, v ) )
 				{
 					bRes = false;
 				}
 
-				value &= v;
+				value += v;
 			}
 
 			return bRes;
@@ -1184,10 +1231,10 @@ namespace parser
 		{
 			S v;
 			string_traits< S >::empty( v );
-			for( e_elements_ptr_array::const_iterator i = m_elements.begin(), end = m_elements.end();
+			for( element_ptr_array::const_iterator i = m_elements.begin(), end = m_elements.end();
 				i != end; ++i )
 			{
-				v &= i->to_string();
+				v += (*i)->to_string();
 			}
 
 			return v;
@@ -1195,22 +1242,19 @@ namespace parser
 		
 		protected:
 
-		typedef boost::shared_ptr< e_element< Context, S > > e_element_ptr;
-		typedef boost::container::vector< e_element_ptr > e_element_ptr_array;
-
-		e_element_ptr_array m_elements;
+		element_ptr_array m_elements;
 	};
 
 	template<typename Context, typename S>
-	class e_conditional_expression :public e_expression< Context, S >
+	class conditional_expression :public expression< Context, S >
 	{
 		protected:
 
-		typedef e_expression< Context, S > _base_class;
+		typedef expression< Context, S > _base_class;
 
 		public:
 
-		e_conditional_expression( const e_expression& e )
+		conditional_expression( const expression& e )
 			:_base_class( e )
 		{}
 
@@ -1237,27 +1281,26 @@ namespace parser
 
 		virtual S to_string() const
 		{
-			S v( '[' );
-			v &= _base_class::to_string();
-			v &= ']';
+			S v( _base_class::to_string() );
+			string_traits< S >::add_braces( v, '[', ']' );
 			return v;
 		}
 	};
 
 	template<typename Context, typename S>
-	class e_literal :public e_element<Context,S>
+	class literal :public element<Context,S>
 	{
 	public:
 
-		e_literal( const S& v )
+		literal( const S& v )
 			:m_value( v )
 		{}
 
-		e_literal( const e_literal& l )
+		literal( const literal& l )
 			:m_value(l.m_value)
 		{}
 
-		e_literal& operator=( const e_literal& l )
+		literal& operator=( const literal& l )
 		{
 			m_value = l.m_value;
 			return *this;
@@ -1273,10 +1316,9 @@ namespace parser
 
 		virtual S to_string() const
 		{
-			S v( '\'' );
+			S v( m_value );
 			// TODO Escape some characters
-			v &= m_value;
-			v &= '\'';
+			string_traits< S >::add_braces( v, '\'', '\'' );
 			return v;
 		}
 
@@ -1287,9 +1329,15 @@ namespace parser
 	};
 
 	template<typename Context, typename S>
-	class e_metadata :public e_element< Context, S >
+	class metadata :public element< Context, S >
 	{
 	public:
+
+		static const char discriminator = '%';
+		static const char scope_separator = ':';
+		static const char scope_track = 't';
+		static const char scope_chapter = 'c';
+		static const char scope_any = 'a';
 
 		enum SCOPE
 		{
@@ -1298,15 +1346,15 @@ namespace parser
 			CHAPTER
 		};
 
-		e_metadata( const S& name, SCOPE scope )
+		metadata( const S& name, SCOPE scope )
 			:m_name( name ), m_scope( scope )
 		{}
 
-		e_metadata( const e_metadata& m )
+		metadata( const metadata& m )
 			:m_name( m.m_name ), m_scope( m.m_scope )
 		{}
 
-		e_metadata& operator=( const e_metadata& m )
+		metadata& operator=( const metadata& m )
 		{
 			m_name = m.m_name;
 			m_scope = m.m_scope;
@@ -1322,15 +1370,15 @@ namespace parser
 			switch( m_scope )
 			{
 				case ANY:
-				bRes = ctx.find_chapter_tag( value ) || ctx.find_track_tag( value );
+				bRes = ctx.find_chapter_tag( m_name, value ) || ctx.find_track_tag( m_name, value );
 				break;
 
 				case TRACK:
-				bRes = ctx.find_track_tag( value );
+				bRes = ctx.find_track_tag( m_name, value );
 				break;
 
 				case CHAPTER:
-				bRes = ctx.find_chapter_tag( value );
+				bRes = ctx.find_chapter_tag( m_name, value );
 				break;
 			}
 
@@ -1344,19 +1392,22 @@ namespace parser
 
 		virtual S to_string() const
 		{
-			S v( '%' );
-			v &= m_value;
+			S v( m_name );
 			switch( m_scope )
 			{
 				case TRACK:
-				v &= ':t';
+				v += scope_separator;
+				v += scope_track;
 				break;
 
 				case CHAPTER:
-				v &= ':c';
+				v += scope_separator;
+				v += scope_chapter;
 				break;
 			}
-			v &= '%';
+
+			string_traits< S >::add_braces( v, discriminator, discriminator );
+			return v;
 		}
 
 	protected:
@@ -1366,12 +1417,12 @@ namespace parser
 	};
 
 	template<typename Context, typename S>
-	class e_function :public e_element< Context, S >
+	class function :public element< Context, S >
 	{
 		public:
 
-		typedef boost::shared_ptr< e_expression< Context, S > > e_expression_ptr;
-		typedef boost::container::vector< e_expression_ptr > e_expression_ptr_array;
+		typedef boost::shared_ptr< expression< Context, S > > expression_ptr;
+		typedef boost::container::vector< expression_ptr > expression_ptr_array;
 
 		protected:
 
@@ -1379,16 +1430,18 @@ namespace parser
 
 		public:
 
-		e_function( const S& name, const e_expression_ptr_array& parameters )
+		function( const S& name, const expression_ptr_array& parameters )
 			:m_name( name ), m_parameters( parameters )
 		{}
 
-		e_function( const e_function& f )
+		function( const function& f )
 			:m_name( f.name ), m_parameters( f.m_parameters )
 		{}
 
-		e_function& operator=( const e_function& f )
+		function& operator=( const function& f )
 		{
+			m_name = name;
+			m_parameters = parameters;
 			return *this;
 		}
 
@@ -1420,7 +1473,6 @@ namespace parser
 		{
 			S v( '$' );
 			v &= name;
-			v &= '(';
 
 			S vv;
 			e_expression_ptr_array::const_iterator iBegin = m_parameters.begin();
@@ -1428,32 +1480,261 @@ namespace parser
 
 			if ( iBegin != iEnd )
 			{
-				v &= iBegin->to_string( ctx, vv );
+				vv &= iBegin->to_string( ctx, vv );
 				++iBegin;
 			}
 
 			for(;iBegin!=iEnd; ++iBegin)
             {
-				v &= ',';
-				v &= iBegin->to_string();
+				vv &= ',';
+				vv &= iBegin->to_string();
             }
 
-			v &= ')';
-
+			string_traits< S >::add_braces( vv, '(', ')' );
+			v &= vv;
 			return v;
-
 		}
 
 		protected:
 
-		typedef boost::shared_ptr< e_expression< Context, S > > e_expression_ptr;
-		typedef boost::container::vector< e_expression_ptr > e_expression_ptr_array;
-
-
 		S m_name;
-		e_expression_ptr_array m_parameters;
-
+		expression_ptr_array m_parameters;
 	};
+
+	template<typename S>
+	struct parser_base
+	{
+		typedef typename string_traits< S >::const_iterator string_const_iterator;
+	};
+
+	template<typename Context, typename S, typename P >
+	class parser :protected parser_base< S >
+	{
+		public:
+
+		typedef boost::shared_ptr< P > element_shared_ptr;
+	};
+
+	template< typename S >
+	class context
+	{
+		public:
+
+		bool find_chapter_tag( const S& name, S& value ) const
+		{
+			return false;
+		}
+
+		bool find_track_tag( const S& name, S& value ) const
+		{
+			return false;
+		}
+	};
+
+	template<typename Context, typename S>
+	class parser< Context, S, metadata<Context,S> > :protected parser_base< S >
+	{
+		public:
+
+		typedef metadata< Context, S > parsed_type;
+		typedef boost::shared_ptr< parsed_type > element_shared_ptr;
+
+		public:
+
+		parser()
+			:m_scope( parsed_type::ANY )
+		{
+		}
+
+		static bool is_discriminator( const string_const_iterator& i )
+		{
+			return *i == metadata<Context,S>::discriminator;
+		}
+
+		static bool is_scope_separator( const string_const_iterator& i )
+		{
+			return *i == metadata<Context,S>::scope_separator;
+		}
+
+		void process( string_const_iterator& i, const string_const_iterator& iEnd )
+		{
+			PHASE phase = DISCRIMINATOR;
+			while( i != iEnd )
+			{
+				switch ( phase )
+				{
+					case DISCRIMINATOR:
+					phase = is_discriminator( i ) ? NAME : NOOP;
+					break;
+
+					case NAME:
+					if ( is_discriminator( i ) )
+					{
+						++i;
+						return;
+					}
+					else if ( is_scope_separator( i ) )
+					{
+						phase = SCOPE;
+					}
+					else
+					{
+						m_name += *i;
+					}
+					break;
+
+					case SCOPE:
+					if ( is_discriminator( i ) )
+					{
+						phase = NOOP;
+					}
+					else if ( get_scope( i ) )
+					{
+						phase = AFTER_SCOPE;
+					}
+					else
+					{
+						phase = NOOP;
+					}
+					break;
+
+					case AFTER_SCOPE:
+					if ( is_discriminator( i ) )
+					{
+						++i;
+						return;
+					}
+					else
+					{
+						phase = NOOP;
+					}
+					break;
+
+					case NOOP:
+					if ( is_discriminator( i  ) )
+					{
+						++i;
+						return;
+					}
+					break;
+				}
+
+				++i;
+			}
+		}
+
+		element_shared_ptr get_value() const
+		{
+			if ( string_traits< S >::is_empty( m_name ) )
+			{
+				return element_shared_ptr();
+			}
+			else
+			{
+				return element_shared_ptr( new parsed_type( m_name, m_scope ) ); 
+			}
+		}
+
+		protected:
+
+		bool get_scope( const string_const_iterator& i )
+		{
+			if ( *i == parsed_type::scope_any )
+			{
+				m_scope = parsed_type::ANY;
+				return true;
+			}
+			else if ( *i == parsed_type::scope_track )
+			{
+				m_scope = parsed_type::TRACK;
+				return true;
+			}
+			else if ( *i == parsed_type::scope_chapter )
+			{
+				m_scope = parsed_type::CHAPTER;
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		enum PHASE
+		{
+			DISCRIMINATOR,
+			NAME,
+			SCOPE,
+			AFTER_SCOPE,
+			NOOP
+		};
+
+		typename parsed_type::SCOPE m_scope;
+		S m_name;
+	};
+
+	template<typename Context, typename S>
+	class parser< Context, S, expression<Context,S> > :protected parser_base< S >
+	{
+		public:
+
+		typedef expression<Context,S> parsed_type;
+		typedef boost::shared_ptr< parsed_type > element_shared_ptr;
+
+		protected:
+
+		typedef parser< Context, S, metadata< Context, S > > metadata_parser_type;
+		typedef typename metadata_parser_type::element_shared_ptr metadata_shared_ptr;
+
+		public:
+
+		void process( string_const_iterator& i, const string_const_iterator& iEnd )
+		{
+			while( i != iEnd )
+			{
+				if ( string_traits< S >::is_space( *i ) )
+				{
+					++i;
+					continue;
+				}
+
+				if ( metadata_parser_type::is_discriminator( i ) )
+				{
+					metadata_parser_type metadata_parser;
+					metadata_parser.process( i, iEnd );
+
+					metadata_shared_ptr m(  metadata_parser.get_value() );
+					if ( m )
+					{
+						m_elements.push_back( m );
+					}
+
+					continue;
+				}
+
+				++i;
+			}
+		}
+
+		element_shared_ptr get_value() const
+		{
+			return element_shared_ptr( new expression< Context, S >( m_elements ) );
+		}
+
+		protected:
+
+		typename parsed_type::element_ptr_array m_elements;
+	};
+
+	void edek()
+	{
+		parser< context< wxString >, wxString, expression< context< wxString >, wxString > > my_parser;
+
+		wxString eda( "%edek:a%" );
+		wxString::const_iterator iBegin( eda.begin() );
+		my_parser.process( iBegin, eda.end() );
+		my_parser.get_value();
+	}
 
 }
 
@@ -1465,6 +1746,7 @@ int wxMyApp::OnRun()
 	}
 
 	boost_lcd();
+	parser::edek();
 
 	ChaptersArrayScopedPtr pChapters;
 
