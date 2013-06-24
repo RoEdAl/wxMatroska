@@ -20,7 +20,7 @@
 // ===============================================================================
 
 const wxChar wxMyApp::APP_NAME[]	= wxT( "cue2mkc" );
-const wxChar wxMyApp::APP_VERSION[] = wxT( "0.96" );
+const wxChar wxMyApp::APP_VERSION[] = wxT( "0.97" );
 
 // ===============================================================================
 
