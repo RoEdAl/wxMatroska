@@ -22,11 +22,14 @@
 #include "WaveDrawerPoly.h"
 #include "WaveDrawerSimple.h"
 #include "AudioRenderer.h"
+#include "WaveDrawerPdf.h"
+#include "WaveDrawerPolyPdf.h"
 
 #include "MultiChannelWaveDrawer.h"
 #include "MCChainWaveDrawer.h"
 #include "ArrayWaveDrawer.h"
 #include "MCGraphicsContextWaveDrawer.h"
+#include "MCPdfWaveDrawer.h"
 #include "ChannelMixer.h"
 
 #include "SoundFile.h"
@@ -308,6 +311,41 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 
 			pAwd->AddDrawer( new AudioRenderer( nSamples, cfg.GetImageSize().GetWidth(), drawerSettings.UseLogarithmicScale(), drawerSettings.GetLogarithmBase(), nSamplerate ) );
 			pMcwd = pAwd;
+			break;
+		}
+
+		case DRAWING_MODE_POLY_PDF:
+		{
+			wxRect2DIntArray  drawerRects;
+			const DrawerSettings& drawerSettings = cfg.GetDrawerSettings();
+			wxSize pageSize( cfg.GetImageSizePt() );
+
+			if ( cfg.MultiChannel() )
+			{
+				cfg.GetDrawerRectsPt( nChannels, drawerRects );
+
+				McPdfWaveDrawer* pPc = new McPdfWaveDrawer( nChannels );
+				wxPdfDocument* pPdf = pPc->Initialize( pageSize, drawerSettings.GetBackgroundColour(), drawerRects, cfg.GetInputFile().GetFullName() );
+
+				for ( wxUint16 nChannel = 0; nChannel < nChannels; nChannel++ )
+				{
+					pPc->AddDrawer( new PdfPolyWaveDrawer( nSamples, pPdf, drawerRects[ nChannel ], cfg.GetDrawerSettings(), pChapters  ) );
+				}
+
+				pMcwd = pPc;
+			}
+			else
+			{
+				McPdfWaveDrawer* pPc = new McPdfWaveDrawer( 1 );
+
+				drawerRects.Add( cfg.GetDrawerRectPt() );
+
+				wxPdfDocument* pPdf = pPc->Initialize( pageSize, drawerSettings.GetBackgroundColour(), drawerRects, cfg.GetInputFile().GetFullName() );
+
+				pPc->AddDrawer( new PdfPolyWaveDrawer( nSamples, pPdf, drawerRects[ 0 ], cfg.GetDrawerSettings(), pChapters  ) );
+				pMcwd = pPc;
+			}
+
 			break;
 		}
 
@@ -1033,6 +1071,13 @@ static bool save_rendered_wave( McChainWaveDrawer& waveDrawer, const wxConfigura
 			AudioRenderer*	 pAudioRenderer = static_cast< AudioRenderer* >( pAwd->GetDrawer( 0 ) );
 			return pAudioRenderer->GenerateAudio( fn, cfg.GetDrawerSettings().GetFrequency(), cfg.GetDrawerSettings().GetBaselinePosition() );
 		}
+
+		case DRAWING_MODE_POLY_PDF:
+		{
+			McPdfWaveDrawer* pPd			= static_cast< McPdfWaveDrawer* >( waveDrawer.GetWaveDrawer() );
+			return pPd->Save( fn );
+		}
+		break;
 
 		case DRAWING_MODE_SIMPLE:
 		case DRAWING_MODE_RASTER1:

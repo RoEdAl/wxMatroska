@@ -4,8 +4,6 @@
 #ifndef _WAVE_DRAWER_POLY_H_
 #define _WAVE_DRAWER_POLY_H_
 
-WX_DEFINE_ARRAY( wxPoint2DDouble, Point2DDoubleArray );
-
 class PolyWaveDrawer:
 	public GraphicsContextWaveDrawer
 {

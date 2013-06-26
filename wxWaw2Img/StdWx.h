@@ -77,6 +77,7 @@ typedef struct tagMSG
 #include <wx/msw/enhmeta.h>
 #endif
 #endif
+#include <wx/html/htmprint.h>
 #include <wx/dcgraph.h>
 
 #include <math.h>
@@ -84,6 +85,9 @@ typedef struct tagMSG
 #ifdef WIN32
 #include <objbase.h>
 #endif
+
+#include <wx/pdfdocument.h>
+#include <wx/pdfshape.h>
 
 #endif	// _STD_WX_H
 
