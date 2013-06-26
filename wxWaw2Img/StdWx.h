@@ -86,7 +86,8 @@ typedef struct tagMSG
 #include <objbase.h>
 #endif
 
-#include <boost/math/common_factor.hpp>
+#include <wx/pdfdocument.h>
+#include <wx/pdfshape.h>
 
 #endif	// _STD_WX_H
 

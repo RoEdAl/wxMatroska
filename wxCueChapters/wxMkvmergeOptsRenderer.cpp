@@ -609,6 +609,9 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile,
 	wxS( "# Application version: " ) << wxGetApp().APP_VERSION << endl <<
 	wxS( "# Application vendor: " ) << wxGetApp().GetVendorDisplayName() << endl <<
 	wxS( "# Creation time: " ) << dtNow.FormatISODate() << wxS( ' ' ) << dtNow.FormatISOTime() << endl <<
+	wxS( "# mkvmerge's UI language" ) << endl <<
+	wxS( "--ui-language" ) << endl <<
+	wxS( "en" ) << endl <<
 	wxS( "# Output file" ) << endl <<
 	wxS( "-o" ) << endl << GetEscapedFile( matroskaFile ) << endl <<
 	wxS( "--language" ) << endl << wxS( "0:" ) << m_cfg.GetLang() << endl <<

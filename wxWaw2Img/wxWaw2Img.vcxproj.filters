@@ -99,6 +99,15 @@
     <ClInclude Include="ChaptersReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="WaveDrawerPdf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WaveDrawerPolyPdf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MCPdfWaveDrawer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StdWx.cpp">
@@ -180,6 +189,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ChaptersReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WaveDrawerPdf.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WaveDrawerPolyPdf.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MCPdfWaveDrawer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

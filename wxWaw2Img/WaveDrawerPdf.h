@@ -1,17 +1,17 @@
 /*
- *      WaveDrawerGraphicsContext.h
+ *      WaveDrawerPdf.h
  */
 
-#ifndef _WAVE_DRIVER_GRAPHICS_CONTEXT_H_
-#define _WAVE_DRIVER_GRAPHICS_CONTEXT_H_
+#ifndef _WAVE_DRIVER_PDF_H_
+#define _WAVE_DRIVER_PDF_H_
 
-class GraphicsContextWaveDrawer:
+class PdfWaveDrawer:
 	public SampleChunker
 {
 	public:
 
-		GraphicsContextWaveDrawer( wxUint64,
-								   wxGraphicsContext*,
+		PdfWaveDrawer( wxUint64,
+								   wxPdfDocument*,
 								   bool, wxFloat32,
 								   const wxRect2DInt&,
 								   const DrawerSettings&,
@@ -28,24 +28,24 @@ class GraphicsContextWaveDrawer:
 			const wxRect2DInt &,
 			wxFloat32,
 			const ChaptersArray &,
-			wxGraphicsPath &, wxGraphicsPath & );
+			wxPdfShape &, wxPdfShape & );
 
 		static void create_chapter_lines_paths(
 			const wxRect2DInt &, wxFloat32,
 			const ChaptersArray &,
-			wxGraphicsPath &, wxGraphicsPath & );
+			wxPdfShape &, wxPdfShape & );
 
 		static void create_chapter_segments_path( const wxRect2DInt&,
 											  const ChaptersArray&,
-											  wxGraphicsPath& );
+											  wxPdfShape& );
 
 		static void create_chapter_lines_path( const wxRect2DInt&,
 										   const ChaptersArray&,
-										   wxGraphicsPath& );
+										   wxPdfShape& );
 
 	protected:
 
-		wxGraphicsContext*	   m_gc;
+		wxPdfDocument*		   m_pPdf;
 		wxRect2DInt			   m_rc;
 		wxFloat32			   m_heightUp;
 		wxFloat32			   m_heightDown;

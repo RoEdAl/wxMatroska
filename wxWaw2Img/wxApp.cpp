@@ -22,11 +22,14 @@
 #include "WaveDrawerPoly.h"
 #include "WaveDrawerSimple.h"
 #include "AudioRenderer.h"
+#include "WaveDrawerPdf.h"
+#include "WaveDrawerPolyPdf.h"
 
 #include "MultiChannelWaveDrawer.h"
 #include "MCChainWaveDrawer.h"
 #include "ArrayWaveDrawer.h"
 #include "MCGraphicsContextWaveDrawer.h"
+#include "MCPdfWaveDrawer.h"
 #include "ChannelMixer.h"
 
 #include "SoundFile.h"
@@ -308,6 +311,41 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 
 			pAwd->AddDrawer( new AudioRenderer( nSamples, cfg.GetImageSize().GetWidth(), drawerSettings.UseLogarithmicScale(), drawerSettings.GetLogarithmBase(), nSamplerate ) );
 			pMcwd = pAwd;
+			break;
+		}
+
+		case DRAWING_MODE_POLY_PDF:
+		{
+			wxRect2DIntArray  drawerRects;
+			const DrawerSettings& drawerSettings = cfg.GetDrawerSettings();
+			wxSize pageSize( cfg.GetImageSizePt() );
+
+			if ( cfg.MultiChannel() )
+			{
+				cfg.GetDrawerRectsPt( nChannels, drawerRects );
+
+				McPdfWaveDrawer* pPc = new McPdfWaveDrawer( nChannels );
+				wxPdfDocument* pPdf = pPc->Initialize( pageSize, drawerSettings.GetBackgroundColour(), drawerRects, cfg.GetInputFile().GetFullName() );
+
+				for ( wxUint16 nChannel = 0; nChannel < nChannels; nChannel++ )
+				{
+					pPc->AddDrawer( new PdfPolyWaveDrawer( nSamples, pPdf, drawerRects[ nChannel ], cfg.GetDrawerSettings(), pChapters  ) );
+				}
+
+				pMcwd = pPc;
+			}
+			else
+			{
+				McPdfWaveDrawer* pPc = new McPdfWaveDrawer( 1 );
+
+				drawerRects.Add( cfg.GetDrawerRectPt() );
+
+				wxPdfDocument* pPdf = pPc->Initialize( pageSize, drawerSettings.GetBackgroundColour(), drawerRects, cfg.GetInputFile().GetFullName() );
+
+				pPc->AddDrawer( new PdfPolyWaveDrawer( nSamples, pPdf, drawerRects[ 0 ], cfg.GetDrawerSettings(), pChapters  ) );
+				pMcwd = pPc;
+			}
+
 			break;
 		}
 
@@ -1034,6 +1072,13 @@ static bool save_rendered_wave( McChainWaveDrawer& waveDrawer, const wxConfigura
 			return pAudioRenderer->GenerateAudio( fn, cfg.GetDrawerSettings().GetFrequency(), cfg.GetDrawerSettings().GetBaselinePosition() );
 		}
 
+		case DRAWING_MODE_POLY_PDF:
+		{
+			McPdfWaveDrawer* pPd			= static_cast< McPdfWaveDrawer* >( waveDrawer.GetWaveDrawer() );
+			return pPd->Save( fn );
+		}
+		break;
+
 		case DRAWING_MODE_SIMPLE:
 		case DRAWING_MODE_RASTER1:
 		case DRAWING_MODE_RASTER2:
@@ -1062,691 +1107,12 @@ static bool save_rendered_wave( McChainWaveDrawer& waveDrawer, const wxConfigura
 	return true;
 }
 
-static void html_renderer()
-{
-	wxArrayInt			  ai;
-	int					  n;
-	MemoryGraphicsContext mgc( wxSize( 800, 600 ), 32, false );
-
-	{
-		wxScopedPtr< wxGraphicsContext > pGc( mgc.CreateGraphicsContext() );
-		wxGCDC							 dc( pGc.get() );
-		wxHtmlDCRenderer				 wdc;
-		wdc.SetDC( &dc );
-		wdc.SetSize( 800, 600 );
-		wdc.SetHtmlText( "<h1 ALIGN=\"RIGHT\">Hello world!</h1>" );
-		n = wdc.Render( 0, 0, ai );
-		pGc.release();
-	}
-
-	wxImage img( mgc.GetImage() );
-	img.SaveFile( "C:/Users/Normal/Documents/Visual Studio 2010/Projects/wxMatroska/html_render.png" );
-}
-
-static void boost_lcd()
-{
-	//boost::math::lcm_evaluator<wxULongLong> lcm1;
-	//wxULongLong res1( lcm1( wxULL(456), wxULL(234) ) );
-
-	boost::math::lcm_evaluator<wxUint64> lcm2;
-	
-	wxUint64Array at;
-	at.Add( 5 );
-	at.Add( 10 );
-	at.Add( 15 );
-	at.Add( 35 );
-	at.Add( 45 );
-
-	wxUint64 res2 = lcm2( at[0], at[1] );
-	for(size_t i=2, nSize = at.Count(); i < nSize; ++i )
-	{
-		res2 = lcm2( res2, at[i] );
-	}
-
-	wxUint64 ct = boost::math::static_lcm<35,15>::value;
-}
-
-#include <boost/smart_ptr/shared_ptr.hpp>
-#include <boost/container/vector.hpp>
-
-namespace parser
-{
-	template< typename S>
-	struct string_traits
-	{
-		typedef typename S::const_iterator const_iterator;
-		typedef typename S::char_type char_type;
-
-		static void empty( S& s )
-		{
-			s = "";
-		}
-
-		static void add_braces( S& s, char_type c1, char_type c2 )
-		{
-			s += c1;
-			s += c2;
-		}
-
-		static bool is_space( char_type c )
-		{
-			return wxIsspace( c );
-		}
-
-		static bool is_empty( const S& s )
-		{
-			return s.empty();
-		}
-	};
-
-	template<> struct string_traits<wxString>
-	{
-		typedef wxString::const_iterator const_iterator;
-		typedef wxString::char_type char_type;
-
-		static void empty( wxString& s )
-		{
-			s = wxEmptyString;
-		}
-
-		static void add_braces( wxString& s, char_type c1, char_type c2 )
-		{
-			s += c1;
-			s += c2;
-		}
-
-		static bool is_space( char_type c )
-		{
-			return wxIsspace( c );
-		}
-
-		static bool is_empty( const wxString& s )
-		{
-			return s.empty();
-		}
-
-	};
-
-	template<typename Context, typename S>
-	class element
-	{
-		public:
-
-		typedef Context context_type;
-		typedef S string_type;
-
-		public:
-
-		virtual ~element() {}
-
-		virtual bool evaluate( const Context& ctx, S& value ) const = 0;
-		virtual S to_string() const = 0;
-
-	};
-
-	template<typename Context, typename S>
-	class expression :public element<Context,S>
-	{
-		public:
-
-		typedef boost::shared_ptr< element< Context, S > > element_ptr;
-		typedef boost::container::vector< element_ptr > element_ptr_array;
-
-		public:
-
-		expression( const element_ptr_array& e )
-			:m_elements( e )
-		{}
-
-		expression( const expression& e )
-			:m_elements( e.m_elements )
-		{}
-
-		expression& operator=( const expression& e )
-		{
-			m_elements = e.m_elements;
-			return *this;
-		}
-
-		virtual bool evaluate( const Context& ctx, S& value ) const
-		{
-			bool bRes = false;
-			string_traits< S >::empty( value );
-			for( element_ptr_array::const_iterator i = m_elements.begin(), end = m_elements.end();
-				i != end; ++i )
-			{
-				S v;
-				if ( !(*i)->evaluate( ctx, v ) )
-				{
-					bRes = false;
-				}
-
-				value += v;
-			}
-
-			return bRes;
-		}
-
-		virtual S to_string() const
-		{
-			S v;
-			string_traits< S >::empty( v );
-			for( element_ptr_array::const_iterator i = m_elements.begin(), end = m_elements.end();
-				i != end; ++i )
-			{
-				v += (*i)->to_string();
-			}
-
-			return v;
-		}
-		
-		protected:
-
-		element_ptr_array m_elements;
-	};
-
-	template<typename Context, typename S>
-	class conditional_expression :public expression< Context, S >
-	{
-		protected:
-
-		typedef expression< Context, S > _base_class;
-
-		public:
-
-		conditional_expression( const expression& e )
-			:_base_class( e )
-		{}
-
-		virtual bool evaluate( const Context& ctx, S& value ) const
-		{
-			string_traits< S >::empty( value );
-			for( e_elements_ptr_array::const_iterator i = m_elements.begin(), end = m_elements.end();
-				i != end; ++i )
-			{
-				value &= i;
-
-				S v;
-				if ( !i->evaluate( ctx, v ) )
-				{
-					string_traits< S >::empty( value );
-					return false;
-				}
-
-				value &= v;
-			}
-
-			return true;
-		}
-
-		virtual S to_string() const
-		{
-			S v( _base_class::to_string() );
-			string_traits< S >::add_braces( v, '[', ']' );
-			return v;
-		}
-	};
-
-	template<typename Context, typename S>
-	class literal :public element<Context,S>
-	{
-	public:
-
-		literal( const S& v )
-			:m_value( v )
-		{}
-
-		literal( const literal& l )
-			:m_value(l.m_value)
-		{}
-
-		literal& operator=( const literal& l )
-		{
-			m_value = l.m_value;
-			return *this;
-		}
-
-		const S& value() const { return m_value; }
-
-		virtual bool evaluate( const Context&, S& value ) const
-		{
-			value = m_value;
-			return true;
-		}
-
-		virtual S to_string() const
-		{
-			S v( m_value );
-			// TODO Escape some characters
-			string_traits< S >::add_braces( v, '\'', '\'' );
-			return v;
-		}
-
-	protected:
-
-		S m_value;
-
-	};
-
-	template<typename Context, typename S>
-	class metadata :public element< Context, S >
-	{
-	public:
-
-		static const char discriminator = '%';
-		static const char scope_separator = ':';
-		static const char scope_track = 't';
-		static const char scope_chapter = 'c';
-		static const char scope_any = 'a';
-
-		enum SCOPE
-		{
-			ANY,
-			TRACK,
-			CHAPTER
-		};
-
-		metadata( const S& name, SCOPE scope )
-			:m_name( name ), m_scope( scope )
-		{}
-
-		metadata( const metadata& m )
-			:m_name( m.m_name ), m_scope( m.m_scope )
-		{}
-
-		metadata& operator=( const metadata& m )
-		{
-			m_name = m.m_name;
-			m_scope = m.m_scope;
-			return *this;
-		}
-
-		SCOPE scope() const { return m_scope; }
-		const S& name() const { return m_name; }
-
-		virtual bool evaluate( const Context& ctx, S& value ) const
-		{
-			bool bRes = false;
-			switch( m_scope )
-			{
-				case ANY:
-				bRes = ctx.find_chapter_tag( m_name, value ) || ctx.find_track_tag( m_name, value );
-				break;
-
-				case TRACK:
-				bRes = ctx.find_track_tag( m_name, value );
-				break;
-
-				case CHAPTER:
-				bRes = ctx.find_chapter_tag( m_name, value );
-				break;
-			}
-
-			if ( !bRes )
-			{
-				string_traits< S >::empty( value );
-			}
-
-			return bRes;
-		}
-
-		virtual S to_string() const
-		{
-			S v( m_name );
-			switch( m_scope )
-			{
-				case TRACK:
-				v += scope_separator;
-				v += scope_track;
-				break;
-
-				case CHAPTER:
-				v += scope_separator;
-				v += scope_chapter;
-				break;
-			}
-
-			string_traits< S >::add_braces( v, discriminator, discriminator );
-			return v;
-		}
-
-	protected:
-
-		SCOPE m_scope;
-		S m_name;
-	};
-
-	template<typename Context, typename S>
-	class function :public element< Context, S >
-	{
-		public:
-
-		typedef boost::shared_ptr< expression< Context, S > > expression_ptr;
-		typedef boost::container::vector< expression_ptr > expression_ptr_array;
-
-		protected:
-
-		typedef boost::container::vector< S > string_array;
-
-		public:
-
-		function( const S& name, const expression_ptr_array& parameters )
-			:m_name( name ), m_parameters( parameters )
-		{}
-
-		function( const function& f )
-			:m_name( f.name ), m_parameters( f.m_parameters )
-		{}
-
-		function& operator=( const function& f )
-		{
-			m_name = name;
-			m_parameters = parameters;
-			return *this;
-		}
-
-		virtual bool evaluate( const Context& ctx, S& value ) const
-		{
-			bool bRes = false;
-			string_array params;
-			for( e_expression_ptr_array::const_iterator i = m_parameters.begin(), end = m_parameters.end(),
-				i != end; ++i )
-			{
-				S v;
-				if ( !i->evaluate(ctx, v ) )
-				{
-					bRes = false;
-				}
-				params.push_back( v );
-			}
-
-			if ( !ctx.evaluate_function( m_name, params, value ) )
-			{
-				string_traits< S >::empty( value );
-				bRes =false;
-			}
-
-			return bRes;
-		}
-
-		virtual bool to_string( const Context& ctx, S& value ) const
-		{
-			S v( '$' );
-			v &= name;
-
-			S vv;
-			e_expression_ptr_array::const_iterator iBegin = m_parameters.begin();
-			e_expression_ptr_array::const_iterator iEnd = m_parameters.end();
-
-			if ( iBegin != iEnd )
-			{
-				vv &= iBegin->to_string( ctx, vv );
-				++iBegin;
-			}
-
-			for(;iBegin!=iEnd; ++iBegin)
-            {
-				vv &= ',';
-				vv &= iBegin->to_string();
-            }
-
-			string_traits< S >::add_braces( vv, '(', ')' );
-			v &= vv;
-			return v;
-		}
-
-		protected:
-
-		S m_name;
-		expression_ptr_array m_parameters;
-	};
-
-	template<typename S>
-	struct parser_base
-	{
-		typedef typename string_traits< S >::const_iterator string_const_iterator;
-	};
-
-	template<typename Context, typename S, typename P >
-	class parser :protected parser_base< S >
-	{
-		public:
-
-		typedef boost::shared_ptr< P > element_shared_ptr;
-	};
-
-	template< typename S >
-	class context
-	{
-		public:
-
-		bool find_chapter_tag( const S& name, S& value ) const
-		{
-			return false;
-		}
-
-		bool find_track_tag( const S& name, S& value ) const
-		{
-			return false;
-		}
-	};
-
-	template<typename Context, typename S>
-	class parser< Context, S, metadata<Context,S> > :protected parser_base< S >
-	{
-		public:
-
-		typedef metadata< Context, S > parsed_type;
-		typedef boost::shared_ptr< parsed_type > element_shared_ptr;
-
-		public:
-
-		parser()
-			:m_scope( parsed_type::ANY )
-		{
-		}
-
-		static bool is_discriminator( const string_const_iterator& i )
-		{
-			return *i == metadata<Context,S>::discriminator;
-		}
-
-		static bool is_scope_separator( const string_const_iterator& i )
-		{
-			return *i == metadata<Context,S>::scope_separator;
-		}
-
-		void process( string_const_iterator& i, const string_const_iterator& iEnd )
-		{
-			PHASE phase = DISCRIMINATOR;
-			while( i != iEnd )
-			{
-				switch ( phase )
-				{
-					case DISCRIMINATOR:
-					phase = is_discriminator( i ) ? NAME : NOOP;
-					break;
-
-					case NAME:
-					if ( is_discriminator( i ) )
-					{
-						++i;
-						return;
-					}
-					else if ( is_scope_separator( i ) )
-					{
-						phase = SCOPE;
-					}
-					else
-					{
-						m_name += *i;
-					}
-					break;
-
-					case SCOPE:
-					if ( is_discriminator( i ) )
-					{
-						phase = NOOP;
-					}
-					else if ( get_scope( i ) )
-					{
-						phase = AFTER_SCOPE;
-					}
-					else
-					{
-						phase = NOOP;
-					}
-					break;
-
-					case AFTER_SCOPE:
-					if ( is_discriminator( i ) )
-					{
-						++i;
-						return;
-					}
-					else
-					{
-						phase = NOOP;
-					}
-					break;
-
-					case NOOP:
-					if ( is_discriminator( i  ) )
-					{
-						++i;
-						return;
-					}
-					break;
-				}
-
-				++i;
-			}
-		}
-
-		element_shared_ptr get_value() const
-		{
-			if ( string_traits< S >::is_empty( m_name ) )
-			{
-				return element_shared_ptr();
-			}
-			else
-			{
-				return element_shared_ptr( new parsed_type( m_name, m_scope ) ); 
-			}
-		}
-
-		protected:
-
-		bool get_scope( const string_const_iterator& i )
-		{
-			if ( *i == parsed_type::scope_any )
-			{
-				m_scope = parsed_type::ANY;
-				return true;
-			}
-			else if ( *i == parsed_type::scope_track )
-			{
-				m_scope = parsed_type::TRACK;
-				return true;
-			}
-			else if ( *i == parsed_type::scope_chapter )
-			{
-				m_scope = parsed_type::CHAPTER;
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-
-		enum PHASE
-		{
-			DISCRIMINATOR,
-			NAME,
-			SCOPE,
-			AFTER_SCOPE,
-			NOOP
-		};
-
-		typename parsed_type::SCOPE m_scope;
-		S m_name;
-	};
-
-	template<typename Context, typename S>
-	class parser< Context, S, expression<Context,S> > :protected parser_base< S >
-	{
-		public:
-
-		typedef expression<Context,S> parsed_type;
-		typedef boost::shared_ptr< parsed_type > element_shared_ptr;
-
-		protected:
-
-		typedef parser< Context, S, metadata< Context, S > > metadata_parser_type;
-		typedef typename metadata_parser_type::element_shared_ptr metadata_shared_ptr;
-
-		public:
-
-		void process( string_const_iterator& i, const string_const_iterator& iEnd )
-		{
-			while( i != iEnd )
-			{
-				if ( string_traits< S >::is_space( *i ) )
-				{
-					++i;
-					continue;
-				}
-
-				if ( metadata_parser_type::is_discriminator( i ) )
-				{
-					metadata_parser_type metadata_parser;
-					metadata_parser.process( i, iEnd );
-
-					metadata_shared_ptr m(  metadata_parser.get_value() );
-					if ( m )
-					{
-						m_elements.push_back( m );
-					}
-
-					continue;
-				}
-
-				++i;
-			}
-		}
-
-		element_shared_ptr get_value() const
-		{
-			return element_shared_ptr( new expression< Context, S >( m_elements ) );
-		}
-
-		protected:
-
-		typename parsed_type::element_ptr_array m_elements;
-	};
-
-	void edek()
-	{
-		parser< context< wxString >, wxString, expression< context< wxString >, wxString > > my_parser;
-
-		wxString eda( "%edek:a%" );
-		wxString::const_iterator iBegin( eda.begin() );
-		my_parser.process( iBegin, eda.end() );
-		my_parser.get_value();
-	}
-
-}
-
 int wxMyApp::OnRun()
 {
 	if ( ShowInfo() )
 	{
 		return 0;
 	}
-
-	boost_lcd();
-	parser::edek();
 
 	ChaptersArrayScopedPtr pChapters;
 

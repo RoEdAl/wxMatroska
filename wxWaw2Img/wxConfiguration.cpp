@@ -30,6 +30,7 @@ const wxConfiguration::DRAWING_MODE_DESC wxConfiguration::DrawingModeDesc[] =
 	{ DRAWING_MODE_RASTER2, wxT( "raster2" ) },
 	{ DRAWING_MODE_POLY, wxT( "poly" ) },
 	{ DRAWING_MODE_AUDIO, wxT( "audio" ) },
+	{ DRAWING_MODE_POLY_PDF, wxT( "pdf" ) },
 };
 
 // ===============================================================================
@@ -946,6 +947,31 @@ const wxSize& wxConfiguration::GetImageSize() const
 	return m_imageSize;
 }
 
+wxSize wxConfiguration::GetImageSizePt() const
+{
+	double pageWidth = m_imageSize.GetWidth();
+	pageWidth /= m_imageResolution.GetWidth();
+
+	double pageHeight = m_imageSize.GetHeight();
+	pageHeight /= m_imageResolution.GetHeight();
+
+	switch( m_imageResolutionUnits )
+	{
+		case wxIMAGE_RESOLUTION_INCHES:
+		pageWidth *= 72.0f;
+		pageHeight *= 72.0f;
+		break;
+
+		case wxIMAGE_RESOLUTION_CM:
+		pageWidth *= 28.33f;
+		pageHeight *= 28.33f;
+		break;
+	}
+
+	wxSize s( static_cast<int>( pageWidth + 0.5f ), static_cast< int >( pageHeight + 0.5f ) );
+	return s;
+}
+
 const DrawerSettings& wxConfiguration::GetDrawerSettings() const
 {
 	return m_drawerSettings;
@@ -1045,6 +1071,16 @@ wxRect2DInt wxConfiguration::GetDrawerRect() const
 	return rc;
 }
 
+wxRect2DInt wxConfiguration::GetDrawerRectPt() const
+{
+	wxASSERT( !m_bMultiChannel );
+
+	wxSize imageSize( GetImageSizePt() );
+	wxRect2DInt rc( 0, 0, imageSize.GetWidth(), imageSize.GetHeight() );
+	add_margin( rc, true, true, true, true );
+	return rc;
+}
+
 void wxConfiguration::GetDrawerRects( wxUint16 nChannels, wxRect2DIntArray& drawerRects ) const
 {
 	wxASSERT( m_bMultiChannel );
@@ -1065,6 +1101,33 @@ void wxConfiguration::GetDrawerRects( wxUint16 nChannels, wxRect2DIntArray& draw
 		wxUint16 nColumn = nChannel % m_nColumnNumber;
 
 		wxRect2DInt rc( nColumn * m_imageSize.GetWidth() / m_nColumnNumber, nRow * m_imageSize.GetHeight() / nRowsNumber, nWidth, nHeight );
+		add_margin( rc, ( nRow == 0 ), ( nColumn == nColumnNumber1 ), ( nRow == nRowsNumber1 ), ( nColumn == 0 ) );
+		drawerRects.Add( rc );
+	}
+}
+
+void wxConfiguration::GetDrawerRectsPt( wxUint16 nChannels, wxRect2DIntArray& drawerRects ) const
+{
+	wxASSERT( m_bMultiChannel );
+	drawerRects.Clear();
+
+	wxUint16 nRowsNumber = nChannels / m_nColumnNumber;
+	nRowsNumber += ( ( nChannels % m_nColumnNumber ) == 0 ) ? 0 : 1;
+
+	wxUint16 nRowsNumber1	= nRowsNumber - 1U;
+	wxUint16 nColumnNumber1 = m_nColumnNumber - 1U;
+
+	wxSize imageSize( GetImageSizePt() );
+
+	wxUint32 nWidth	 = imageSize.GetWidth() / m_nColumnNumber;
+	wxUint32 nHeight = imageSize.GetHeight() / nRowsNumber;
+
+	for ( wxUint16 nChannel = 0; nChannel < nChannels; nChannel++ )
+	{
+		wxUint16 nRow	 = nChannel / m_nColumnNumber;
+		wxUint16 nColumn = nChannel % m_nColumnNumber;
+
+		wxRect2DInt rc( nColumn * imageSize.GetWidth() / m_nColumnNumber, nRow * imageSize.GetHeight() / nRowsNumber, nWidth, nHeight );
 		add_margin( rc, ( nRow == 0 ), ( nColumn == nColumnNumber1 ), ( nRow == nRowsNumber1 ), ( nColumn == 0 ) );
 		drawerRects.Add( rc );
 	}

@@ -15,7 +15,8 @@ enum DRAWING_MODE
 	DRAWING_MODE_RASTER1,
 	DRAWING_MODE_RASTER2,
 	DRAWING_MODE_POLY,
-	DRAWING_MODE_AUDIO
+	DRAWING_MODE_AUDIO,
+	DRAWING_MODE_POLY_PDF
 };
 
 class wxConfiguration:
@@ -136,6 +137,7 @@ class wxConfiguration:
 		wxString GetDefaultImageExt() const;
 		const DrawerSettings& GetDrawerSettings() const;
 		const wxSize&		  GetImageSize() const;
+		wxSize GetImageSizePt() const;
 		wxImageResolution GetImageResolutionUnits() const;
 		const wxSize& GetImageResolution() const;
 		wxUint16 GetImageQuality() const;
@@ -145,8 +147,10 @@ class wxConfiguration:
 		wxUint16 GetNumberOfColumns() const;
 		wxSize GetMargins() const;
 		wxRect2DInt GetDrawerRect() const;
+		wxRect2DInt GetDrawerRectPt() const;
 
 		void GetDrawerRects( wxUint16, wxRect2DIntArray & ) const;
+		void GetDrawerRectsPt( wxUint16, wxRect2DIntArray & ) const;
 		bool PowerMix() const;
 		DRAWING_MODE GetDrawingMode() const;
 		wxString GetDrawingModeAsText() const;
