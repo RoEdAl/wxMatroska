@@ -159,10 +159,10 @@ void wxTextCueSheetRenderer::InternalRenderCueSheet( const wxCueSheet& cueSheet 
 		DumpComponentString( cueSheet, catalogs[ i ].GetName(), catalogs[ i ].GetValue() );
 	}
 
-	const wxArrayCueTag& cdtextfiles = cueSheet.GetCdTextFiles();
+	const wxArrayFileName& cdtextfiles = cueSheet.GetCdTextFiles();
 	for ( size_t i = 0, nCount = cdtextfiles.GetCount(); i < nCount; i++ )
 	{
-		DumpComponentString( cueSheet, cdtextfiles[ i ].GetName(), wxCueTag::Quote( cdtextfiles[ i ].GetValue() ) );
+		DumpComponentString( cueSheet, wxCueTag::Name::CDTEXTFILE, wxCueTag::Quote( cdtextfiles[ i ].GetFullName() ) );
 	}
 }
 

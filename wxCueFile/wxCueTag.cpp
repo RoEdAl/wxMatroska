@@ -175,9 +175,19 @@ wxString wxCueTag::GetFlattenValue( const wxString& sSeparator ) const
 		wxTextInputStreamOnString  tis( m_sValue );
 		wxTextOutputStreamOnString tos;
 
+		wxString sLine;
+
 		while ( !tis.Eof() )
 		{
-			*tos << ( *tis ).ReadLine() << sSeparator;
+			sLine = ( *tis ).ReadLine();
+			if ( sLine.IsEmpty() )
+			{
+				*tos << sSeparator;
+			}
+			else
+			{
+				*tos << sLine << sSeparator;
+			}
 		}
 
 		( *tos ).Flush();
@@ -209,9 +219,19 @@ wxCueTag& wxCueTag::SetValue( const wxString& sValue )
 	wxTextInputStreamOnString  tis( sValue );
 	wxTextOutputStreamOnString tos;
 
+	wxString sLine;
+
 	while ( !tis.Eof() )
 	{
-		*tos << ( *tis ).ReadLine() << endl;
+		sLine = ( *tis ).ReadLine();
+		if ( sLine.IsEmpty() )
+		{
+			*tos << endl;
+		}
+		else
+		{
+			*tos << sLine << endl;
+		}
 		nLines += 1;
 	}
 

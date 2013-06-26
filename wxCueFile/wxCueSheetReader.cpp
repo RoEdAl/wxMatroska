@@ -584,9 +584,20 @@ wxString wxCueSheetReader::internalReadCueSheet( wxInputStream& stream, wxMBConv
 
 	m_cueSheet.Clear();
 
+	wxString sLine;
+
 	while ( !stream.Eof() )
 	{
-		*tos << tis.ReadLine() << endl;
+		sLine = tis.ReadLine();
+
+		if ( sLine.IsEmpty() )
+		{
+			*tos << endl;
+		}
+		else
+		{
+			*tos << sLine << endl;
+		}
 	}
 
 	return tos.GetString();
@@ -1101,7 +1112,13 @@ void wxCueSheetReader::ParseCatalog( const wxString& WXUNUSED( sToken ), const w
 
 void wxCueSheetReader::ParseCdTextFile( const wxString& WXUNUSED( sToken ), const wxString& sBody )
 {
-	m_cueSheet.AddCdTextFile( Unquote( sBody ) );
+	wxFileName cdTextFile( Unquote( sBody ) );
+	if ( cdTextFile.GetPath().IsEmpty() && m_cueSheetContent.HasSource() )
+	{
+		cdTextFile.SetPath( m_cueSheetContent.GetSource().GetFileName().GetPath() );
+	}
+
+	m_cueSheet.AddCdTextFile( cdTextFile );
 }
 
 bool wxCueSheetReader::ReadTagsFromRelatedFiles()

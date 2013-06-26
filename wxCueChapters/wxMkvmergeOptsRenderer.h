@@ -45,6 +45,7 @@ class wxMkvmergeOptsRenderer:
 		wxString GetEscapedFile( const wxFileName& );
 
 		void write_cover_attachments( const wxArrayFileName& );
+		void write_cdtextfiles_attachments( const wxArrayFileName& );
 		void write_log_attachments( const wxArrayFileName& );
 		void write_eac_attachments( const wxInputFile&, const wxCueSheet& );
 		void write_source_eac_attachments( const wxInputFile&, const wxArrayCueSheetContent& );

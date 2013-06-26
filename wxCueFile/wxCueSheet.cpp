@@ -91,14 +91,14 @@ size_t wxCueSheet::GetCdTextFilesCount() const
 	return m_cdtextfiles.GetCount();
 }
 
-const wxArrayCueTag& wxCueSheet::GetCdTextFiles() const
+const wxArrayFileName& wxCueSheet::GetCdTextFiles() const
 {
 	return m_cdtextfiles;
 }
 
-wxCueSheet& wxCueSheet::AddCdTextFile( const wxString& sCdTextFile )
+wxCueSheet& wxCueSheet::AddCdTextFile( const wxFileName& cdTextFile )
 {
-	m_cdtextfiles.Add( wxCueTag( wxCueTag::TAG_UNKNOWN, wxCueTag::Name::CDTEXTFILE, sCdTextFile ) );
+	m_cdtextfiles.Add( cdTextFile );
 	return *this;
 }
 

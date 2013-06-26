@@ -47,7 +47,7 @@ class wxCueSheet:
 		wxArrayFileName		   m_covers;
 		wxArrayDataFile		   m_dataFiles;
 		wxArrayCueTag		   m_catalogs;
-		wxArrayCueTag		   m_cdtextfiles;
+		wxArrayFileName		   m_cdtextfiles;
 		wxArrayTrack		   m_tracks;
 
 	protected:
@@ -83,7 +83,7 @@ class wxCueSheet:
 		size_t GetCatalogsCount() const;
 		const wxArrayCueTag& GetCatalogs() const;
 		size_t GetCdTextFilesCount() const;
-		const wxArrayCueTag& GetCdTextFiles() const;
+		const wxArrayFileName& GetCdTextFiles() const;
 		bool HasTracks() const;
 		size_t GetTracksCount() const;
 		const wxArrayTrack& GetTracks() const;
@@ -97,7 +97,7 @@ class wxCueSheet:
 		void FindCommonTags( const wxTagSynonimsCollection&, const wxTagSynonimsCollection&, bool );
 
 		wxCueSheet& AddCatalog( const wxString& );
-		wxCueSheet& AddCdTextFile( const wxString& );
+		wxCueSheet& AddCdTextFile( const wxFileName& );
 		wxCueSheet& AddContent( const wxCueSheetContent& );
 		wxCueSheet& AddContent( const wxString& );
 		wxCueSheet& AddLog( const wxFileName& );
