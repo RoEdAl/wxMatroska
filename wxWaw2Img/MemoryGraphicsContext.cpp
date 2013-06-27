@@ -4,6 +4,28 @@
 #include "StdWx.h"
 #include "MemoryGraphicsContext.h"
 
+#if wxUSE_CAIRO
+
+static wxGraphicsRenderer* get_renderer()
+{
+	wxGraphicsRenderer* pRenderer = wxGraphicsRenderer::GetCairoRenderer();
+	if ( pRenderer == NULL )
+	{
+		pRenderer = wxGraphicsRenderer::GetDefaultRenderer();
+	}
+
+	return pRenderer;
+}
+
+#else
+
+static wxGraphicsRenderer* get_renderer()
+{
+	return wxGraphicsRenderer::GetDefaultRenderer();
+}
+
+#endif
+
 MemoryGraphicsContext::MemoryGraphicsContext( const wxSize& imgSize, int nImgColourDepth, bool bCreateMemContext ):
 	m_imgSize( imgSize )
 {
@@ -21,7 +43,10 @@ wxGraphicsContext* MemoryGraphicsContext::CreateGraphicsContext()
 	{
 		m_pMemDc.reset( new wxMemoryDC( m_bmp ) );
 	}
-	return wxGraphicsContext::Create( *m_pMemDc );
+
+	wxGraphicsRenderer* pRenderer = get_renderer();
+
+	return pRenderer->CreateContext( *m_pMemDc );
 }
 
 wxImage MemoryGraphicsContext::GetImage()
