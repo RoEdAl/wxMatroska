@@ -77,8 +77,8 @@ typedef struct tagMSG
 #include <wx/msw/enhmeta.h>
 #endif
 #endif
-#include <wx/html/htmprint.h>
-#include <wx/dcgraph.h>
+
+#include <wx/dcsvg.h>
 
 #include <math.h>
 
