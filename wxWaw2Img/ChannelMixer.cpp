@@ -42,6 +42,7 @@ void ChannelMixer::ProcessFrame( const wxFloat32* frame )
 		fMix = 1.0f;
 	}
 
-	m_pMcWaveDrawer->ProcessFrame( &fMix );	// one channel
+	__super::ProcessFrame( &fMix );
 }
+
 
