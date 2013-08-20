@@ -23,6 +23,7 @@ const wxChar wxCueTag::Name::ALBUM[]		= wxS( "ALBUM" );
 const wxChar wxCueTag::Name::PERFORMER[]	= wxS( "PERFORMER" );
 const wxChar wxCueTag::Name::ARTIST[]		= wxS( "ARTIST" );
 const wxChar wxCueTag::Name::ALBUM_ARTIST[] = wxS( "ALBUM ARTIST" );
+const wxChar wxCueTag::Name::ALBUMARTIST[]  = wxS( "ALBUMARTIST" );
 const wxChar wxCueTag::Name::CATALOG[]		= wxS( "CATALOG" );
 const wxChar wxCueTag::Name::CDTEXTFILE[]	= wxS( "CDTEXTFILE" );
 const wxChar wxCueTag::Name::DISC_ID[]		= wxS( "DISC_ID" );

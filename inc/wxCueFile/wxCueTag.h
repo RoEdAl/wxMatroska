@@ -59,6 +59,7 @@ class wxCueTag:
 			static const wxChar PERFORMER[];
 			static const wxChar ARTIST[];
 			static const wxChar ALBUM_ARTIST[];
+			static const wxChar ALBUMARTIST[];
 			static const wxChar CATALOG[];
 			static const wxChar CDTEXTFILE[];
 			static const wxChar DISC_ID[];

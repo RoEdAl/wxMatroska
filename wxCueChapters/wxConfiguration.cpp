@@ -25,6 +25,7 @@ const wxChar wxConfiguration::MATROSKA_NAME_FORMAT[]  = wxS( "%dp% - %dt%" );
 const size_t wxConfiguration::MAX_EXT_LEN			  = 20;
 const wxChar wxConfiguration::LANG_FILE_URL[]		  = wxS( "http://www.loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt" );
 const wxChar wxConfiguration::LANG_FILE_NAME[]		  = wxS( "ISO-639-2_utf-8.txt" );
+const wxChar wxConfiguration::LANG_UND[]		      = wxS( "und" );
 
 // ===============================================================================
 
@@ -289,7 +290,7 @@ wxConfiguration::wxConfiguration( void ):
 	m_nChapterOffset( 150 ),
 	m_bUseDataFiles( false ),
 	m_sAlternateExtensions( wxEmptyString ),
-	m_sLang( wxS( "und" ) ),
+	m_sLang( LANG_UND ),
 	m_sTrackNameFormat( TRACK_NAME_FORMAT ),
 	m_sMatroskaNameFormat( MATROSKA_NAME_FORMAT ),
 	m_bEmbedded( false ),

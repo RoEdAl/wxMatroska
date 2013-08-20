@@ -227,6 +227,7 @@ class wxConfiguration:
 		static const size_t MAX_EXT_LEN;
 		static const wxChar LANG_FILE_URL[];
 		static const wxChar LANG_FILE_NAME[];
+		static const wxChar LANG_UND[];
 
 	public:
 

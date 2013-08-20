@@ -345,8 +345,9 @@ void wxXmlCueSheetRenderer::init_synonims()
 
 	as.Clear();
 
-	// DISC: ARTIST = (ARTIST,ALBUM ARTIST)
+	// DISC: ARTIST = (ARTIST,ALBUM ARTIST,ALBUMARTIST)
 	as.Add( wxCueTag::Name::ALBUM_ARTIST );
+	as.Add( wxCueTag::Name::ALBUMARTIST );
 	wxTagSynonims discSynonim3( wxCueTag::Name::ARTIST, as );
 	m_discSynonims.Add( discSynonim3 );
 	m_trackSynonims.Add( discSynonim3 );
@@ -558,7 +559,15 @@ wxXmlNode* wxXmlCueSheetRenderer::create_simple_tag( const wxCueTag& tag, const 
 	pSimple->AddChild( pValue );
 
 	wxXmlNode* pLang	 = new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, Xml::TAG_LANGUAGE );
-	wxXmlNode* pLangText = new wxXmlNode( pLang, wxXML_TEXT_NODE, wxEmptyString, sLanguage );
+	if ( tag.TestSource( wxCueTag::TAG_AUTO_GENERATED ) )
+	{ // automatically generated tags are language agnostic
+		wxXmlNode* pLangText = new wxXmlNode( pLang, wxXML_TEXT_NODE, wxEmptyString, wxConfiguration::LANG_UND );
+	}
+	else
+	{
+		wxXmlNode* pLangText = new wxXmlNode( pLang, wxXML_TEXT_NODE, wxEmptyString, sLanguage );
+	}
+
 
 	pSimple->AddChild( pLang );
 

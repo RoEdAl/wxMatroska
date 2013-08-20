@@ -238,7 +238,7 @@ bool wxDataFile::GetMediaInfo(
 		wxArrayCueTag& tags,
 		wxString& sCueSheet )
 {
-	TagLib::FileRef fileRef( fileName.GetFullPath().t_str(), true, TagLib::AudioProperties::Fast );
+	TagLib::FileRef fileRef( fileName.GetFullPath().t_str(), true, TagLib::AudioProperties::Accurate );
 
 	if ( fileRef.isNull() )
 	{
