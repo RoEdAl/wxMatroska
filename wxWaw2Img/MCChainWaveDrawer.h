@@ -8,15 +8,13 @@
 class McChainWaveDrawer:
 	public MultiChannelWaveDrawer
 {
-	protected:
+	private:
 
-		MultiChannelWaveDrawer* m_pMcWaveDrawer;
+		wxScopedPtr< MultiChannelWaveDrawer > m_pMcWaveDrawer;
 
 	public:
 
 		McChainWaveDrawer( wxUint16 nChannels, MultiChannelWaveDrawer* );
-		~McChainWaveDrawer();
-
 		MultiChannelWaveDrawer* GetWaveDrawer() const;
 
 	public:

@@ -15,14 +15,9 @@ McChainWaveDrawer::McChainWaveDrawer( wxUint16 nChannels, MultiChannelWaveDrawer
 	wxASSERT( pMcWaveDrawer != NULL );
 }
 
-McChainWaveDrawer::~McChainWaveDrawer()
-{
-	delete m_pMcWaveDrawer;
-}
-
 MultiChannelWaveDrawer* McChainWaveDrawer::GetWaveDrawer() const
 {
-	return m_pMcWaveDrawer;
+	return m_pMcWaveDrawer.get();
 }
 
 void McChainWaveDrawer::ProcessInitializer()

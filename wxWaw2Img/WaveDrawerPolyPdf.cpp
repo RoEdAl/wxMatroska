@@ -58,7 +58,7 @@ void PdfPolyWaveDrawer::ProcessFinalizer()
 		{
 			wxPdfColour c1( m_drawerSettings.GetTopColourSettings().GetEdgeColour() );
 			wxPdfColour c2( m_drawerSettings.GetTopColourSettings().GetMiddleColour() );
-			int gr1 = m_pPdf->LinearGradient( c1, c2, wxPDF_LINEAR_GRADIENT_VERTICAL );
+			int gr1 = m_pPdf->LinearGradient( c2, c1, wxPDF_LINEAR_GRADIENT_VERTICAL );
 
 			double alpha =  m_drawerSettings.GetTopColourSettings().GetMiddleColour().Alpha();
 			alpha /= 255;
@@ -73,7 +73,7 @@ void PdfPolyWaveDrawer::ProcessFinalizer()
 			alpha /= 255;
 			m_pPdf->SetAlpha( alpha, alpha, wxPDF_BLENDMODE_OVERLAY );
 
-			int gr2 = m_pPdf->LinearGradient( c1, c2, wxPDF_LINEAR_GRADIENT_VERTICAL );
+			int gr2 = m_pPdf->LinearGradient( c2, c1, wxPDF_LINEAR_GRADIENT_VERTICAL );
 			m_pPdf->SetFillGradient(  m_rc.m_x, m_rc.m_y + m_heightUp, m_rc.m_width, m_heightDown, gr2 );
 		}
 	}

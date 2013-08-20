@@ -10,6 +10,28 @@
 #include "ArrayWaveDrawer.h"
 #include "MCGraphicsContextWaveDrawer.h"
 
+#if wxUSE_CAIRO
+
+static wxGraphicsRenderer* get_renderer()
+{
+	wxGraphicsRenderer* pRenderer = wxGraphicsRenderer::GetCairoRenderer();
+	if ( pRenderer == NULL )
+	{
+		pRenderer = wxGraphicsRenderer::GetDefaultRenderer();
+	}
+
+	return pRenderer;
+}
+
+#else
+
+static wxGraphicsRenderer* get_renderer()
+{
+	return wxGraphicsRenderer::GetDefaultRenderer();
+}
+
+#endif
+
 McGraphicalContextWaveDrawer::McGraphicalContextWaveDrawer( wxUint16 nChannels ):
 	ArrayWaveDrawer( nChannels ), m_nTrackDuration( 0 )
 {}
@@ -147,8 +169,10 @@ bool McGraphicalContextWaveDrawer::create_context_on_bitmap( const wxSize& image
 	wxLogInfo( _( "Creating memory context" ) );
 	m_memDc.reset( new wxMemoryDC( m_bmp ) );
 
+	wxGraphicsRenderer* pRenderer = get_renderer();
+
 	wxLogInfo( _( "Creating graphics context" ) );
-	m_gc.reset( wxGraphicsContext::Create( *m_memDc ) );
+	m_gc.reset( pRenderer->CreateContext( *m_memDc ) );
 
 	return true;
 }
@@ -161,8 +185,10 @@ void McGraphicalContextWaveDrawer::create_context_on_emf( const wxSize& imageSiz
 	wxLogInfo( _( "Creating enhanced metafile" ) );
 	m_emfDc.reset( new wxEnhMetaFileDC( wxEmptyString, imageSize.GetWidth(), imageSize.GetHeight() ) );
 
+	wxGraphicsRenderer* pRenderer = get_renderer();
+
 	wxLogInfo( _( "Creating graphics context" ) );
-	m_gc.reset( wxGraphicsContext::Create( *m_emfDc ) );
+	m_gc.reset( pRenderer->CreateContext( *m_emfDc ) );
 }
 
 #endif
