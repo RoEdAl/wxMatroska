@@ -28,12 +28,12 @@
 #include <wx/dir.h>
 
 // TagLib
-#include <tpropertymap.h>
-#include <fileref.h>
-#include <wavproperties.h>
-#include <aiffproperties.h>
-#include <wavpackproperties.h>
-#include <flacproperties.h>
+#include <taglib/tpropertymap.h>
+#include <taglib/fileref.h>
+#include <taglib/wavproperties.h>
+#include <taglib/aiffproperties.h>
+#include <taglib/wavpackproperties.h>
+#include <taglib/flacproperties.h>
 
 // #include <mpegproperties.h>
 

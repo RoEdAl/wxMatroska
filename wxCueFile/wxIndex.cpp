@@ -83,7 +83,7 @@ bool wxIndex::IsValid( bool bPrePost ) const
 		( m_number < 100u );
 }
 
-wxIndex& wxIndex::SetNumber( unsigned int number )
+wxIndex& wxIndex::SetNumber( size_t number )
 {
 	m_number = number;
 	return *this;
