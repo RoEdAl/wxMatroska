@@ -32,6 +32,12 @@ bool MyAppConsole::OnInit()
 
 	CoInitializeEx( NULL, COINIT_MULTITHREADED | COINIT_DISABLE_OLE1DDE );
 
+    // 
+#if defined(__WXMSW__) && defined(__VISUALC__) && defined(UNICODE)
+    _setmode( _fileno( stderr ), _O_U16TEXT );
+    _setmode( _fileno( stdout ), _O_U16TEXT );
+#endif
+
 	if ( !wxAppConsole::OnInit() )
 	{
 		return false;
