@@ -3,6 +3,7 @@
  */
 
 #include "StdWx.h"
+#include <app_config.h>
 #include <wxCueFile/wxTagSynonims.h>
 #include <wxCueFile/wxSamplingInfo.h>
 #include <wxCueFile/wxIndex.h>
@@ -20,7 +21,7 @@
 // ===============================================================================
 
 const wxChar wxMyApp::APP_NAME[]	= wxT( "cue2mkc" );
-const wxChar wxMyApp::APP_VERSION[] = wxT( "0.98" );
+const wxChar wxMyApp::APP_VERSION[] = wxT( WXMATROSKA_VERSION_STR );
 
 // ===============================================================================
 

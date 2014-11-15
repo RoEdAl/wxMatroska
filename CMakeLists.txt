@@ -18,7 +18,17 @@ MACRO(ADD_MSVC_PRECOMPILED_HEADER PrecompiledHeader PrecompiledSource SourcesVar
   ENDIF(MSVC)
 ENDMACRO(ADD_MSVC_PRECOMPILED_HEADER)
 
-project(wxmatroska)
+project(wxmatroska VERSION 1.0.0.0)
+
+set(PROJECT_VERSION_STR ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
+set(PROJECT_VERSION_STR4 "${PROJECT_VERSION_MAJOR}, ${PROJECT_VERSION_MINOR}, ${PROJECT_VERSION_PATCH}, ${PROJECT_VERSION_TWEAK}")
+
+configure_file(
+	"${PROJECT_SOURCE_DIR}/app_config.h.in"
+	"${PROJECT_BINARY_DIR}/app_config.h"
+)
+
+include_directories( ${PROJECT_BINARY_DIR} )
 
 #source_group("Include files" REGULAR_EXPRESSION "*([.]h|[.]hpp)$" )
 
@@ -51,7 +61,7 @@ ExternalProject_Add (
 add_definitions(-DTAGLIB_STATIC)
 
 add_library(TagLib STATIC IMPORTED)
-set_property(TARGET TagLib PROPERTY IMPORTED_LOCATION ${EXT_INSTALL_PREFIX}/lib/tag.lib)
+set_property(TARGET TagLib PROPERTY IMPORTED_LOCATION ${EXT_INSTALL_PREFIX}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}tag${CMAKE_STATIC_LIBRARY_SUFFIX})
 add_dependencies(TagLib project_taglib) 
 
 #ExternalProject_Add (
@@ -61,7 +71,10 @@ add_dependencies(TagLib project_taglib)
 #	CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${EXT_INSTALL_PREFIX}
 #)
 
+IF(MSVC)
 set(wxWidgets_CONFIGURATION mswu)
+ENDIF()
+
 find_package(wxWidgets COMPONENTS core base zlib png xml REQUIRED)
 include(${wxWidgets_USE_FILE})
 
@@ -73,4 +86,3 @@ add_subdirectory(wxConsoleApp)
 add_subdirectory(wxEncodingDetection)
 add_subdirectory(wxCueFile)
 add_subdirectory(wxCueChapters)
-
