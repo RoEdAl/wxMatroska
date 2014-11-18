@@ -1,5 +1,5 @@
 #NoTrayIcon
-#region ;**** Directives created by AutoIt3Wrapper_GUI ****
+#Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=icons/cd_mka.ico
 #AutoIt3Wrapper_Outfile=../bin/Release/cue2mkcgui.exe
 #AutoIt3Wrapper_Compression=4
@@ -18,7 +18,7 @@
 #AutoIt3Wrapper_Res_Icon_Add=icons/media_file_add.ico
 #AutoIt3Wrapper_Res_Icon_Add=icons/file_mask.ico
 #AutoIt3Wrapper_Run_Tidy=y
-#endregion ;**** Directives created by AutoIt3Wrapper_GUI ****
+#EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 ;
 ; cue2mkcgui - simple frontend cue2mkc utility.
 ;
@@ -103,7 +103,7 @@ Func get_mkvmerge_dir()
 	EndIf
 EndFunc   ;==>get_mkvmerge_dir
 
-#region ### START Koda GUI section ### Form=C:\Users\Roman\Documents\Visual Studio 2010\Projects\wxMatroska\gui\cue2mkcgui.kxf
+#Region ### START Koda GUI section ### Form=C:\Users\Roman\Documents\Visual Studio 2010\Projects\wxMatroska\gui\cue2mkcgui.kxf
 $FormMain = GUICreate("cue2mkc GUI", 545, 410, -1, -1, BitOR($GUI_SS_DEFAULT_GUI, $WS_MAXIMIZEBOX, $WS_SIZEBOX, $WS_THICKFRAME, $WS_TABSTOP), BitOR($WS_EX_ACCEPTFILES, $WS_EX_WINDOWEDGE))
 GUISetFont(8, 400, 0, "Microsoft Sans Serif")
 $MainTab = GUICtrlCreateTab(0, 0, 541, 369, $TCS_MULTILINE)
@@ -376,7 +376,7 @@ $ComboInfoSubject = GUICtrlCreateCombo("", 248, 380, 97, 25, BitOR($CBS_DROPDOWN
 GUICtrlSetData(-1, "version|usage|formatting|license")
 GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 $DummyOutput = GUICtrlCreateDummy()
-#endregion ### END Koda GUI section ###
+#EndRegion ### END Koda GUI section ###
 
 Func set_output_mode($nMode)
 	Switch $nMode
@@ -395,7 +395,7 @@ Func set_output_mode($nMode)
 EndFunc   ;==>set_output_mode
 
 Func frame_offset_enable($bEnable)
-	Local $state = _Iif($bEnable, $GUI_ENABLE, $GUI_DISABLE)
+	Local $state = $bEnable ? $GUI_ENABLE : $GUI_DISABLE
 	GUICtrlSetState($LabelFo, $state)
 	GUICtrlSetState($InputFo, $state)
 
@@ -457,23 +457,35 @@ Func run_wait($sCmd, $nPriority = 1, $sDir = @WorkingDir)
 	Local $hProcess = _WinAPI_OpenProcess(0x400, 0, $pid)
 	Local $exitCode, $as
 	Local $sOut = ""
+	Local $b, $s
 
 	While True
-		$sOut &= StdoutRead($pid)
-
+		$b = StdoutRead($pid, False, True)
 		If @error Then
+			; ConsoleWriteError("StdoutRead failed: " & @error & @CRLF)
 			ExitLoop
 		EndIf
 
-		If StringLen($sOut) > 0 Then
-			$as = StringSplit(StringReplace($sOut, @LF, ""), @CR, 1)
-			If $as[0] > 1 Then
-				For $i = 1 To $as[0] - 1
-					log_msg($as[$i])
-				Next
+		If BinaryLen($b) > 0 Then
+			$s = BinaryToString($b, 2) ; UTF-16LE
+
+			If @error Then
+				; ConsoleWriteError("BinaryToString failed: " & @error & @CRLF)
+				ExitLoop
 			EndIf
-			If $as[0] > 0 Then
-				$sOut = $as[$as[0]]
+
+			$sOut &= $s
+
+			If StringLen($sOut) > 0 Then
+				$as = StringSplit(StringReplace($sOut, @LF, ""), @CR, 1)
+				If $as[0] > 1 Then
+					For $i = 1 To $as[0] - 1
+						log_msg($as[$i])
+					Next
+				EndIf
+				If $as[0] > 0 Then
+					$sOut = $as[$as[0]]
+				EndIf
 			EndIf
 		EndIf
 
@@ -599,12 +611,12 @@ EndFunc   ;==>get_attach_mode_str
 
 
 Func negatable_switch(ByRef $cmdLine, $CheckBoxId, $cmdSwitch)
-	$cmdLine &= "-" & _Iif(GUICtrlRead($CheckBoxId) = $GUI_CHECKED, $cmdSwitch, $cmdSwitch & "-")
+	$cmdLine &= "-" & (GUICtrlRead($CheckBoxId) = $GUI_CHECKED ? $cmdSwitch : $cmdSwitch & "-")
 	$cmdLine &= " "
 EndFunc   ;==>negatable_switch
 
 Func negatable_switch_long(ByRef $cmdLine, $CheckBoxId, $cmdSwitch)
-	$cmdLine &= "--" & _Iif(GUICtrlRead($CheckBoxId) = $GUI_CHECKED, $cmdSwitch, $cmdSwitch & "-")
+	$cmdLine &= "--" & (GUICtrlRead($CheckBoxId) = $GUI_CHECKED ? $cmdSwitch : $cmdSwitch & "-")
 	$cmdLine &= " "
 EndFunc   ;==>negatable_switch_long
 
@@ -887,9 +899,9 @@ EndFunc   ;==>get_full_file_select
 log_msg("Simple frontend to cue2mkc utility.")
 log_msg("cue2mkc version: " & FileGetVersion($CUE2MKC_EXE) & ".")
 If @Compiled Then
-	log_msg("Script version: " & FileGetVersion(@AutoItExe, "CompiledScript") & _Iif(@AutoItX64, " (x64)", "") & ".")
+	log_msg("Script version: " & FileGetVersion(@AutoItExe, "CompiledScript") & (@AutoItX64 ? " (x64)" : "") & ".")
 Else
-	log_msg("AutoIt version: " & @AutoItVersion & _Iif(@AutoItX64, " (x64)", "") & ".")
+	log_msg("AutoIt version: " & @AutoItVersion & (@AutoItX64 ? " (x64)" : "") & ".")
 EndIf
 log_msg("Author: roed@onet.eu.")
 log_msg("Icons taken from Primo Icons Set - http://www.webdesignerdepot.com/2009/07/200-free-exclusive-vector-icons-primo/");
@@ -998,7 +1010,7 @@ While True
 			set_output_mode(_GUICtrlComboBox_GetCurSel($ComboOutput))
 
 		Case $CheckBoxCn
-			frame_offset_enable(_Iif(GUICtrlRead($CheckBoxCn) = $GUI_CHECKED, True, False))
+			frame_offset_enable(GUICtrlRead($CheckBoxCn) = $GUI_CHECKED ? True : False)
 
 		Case $ButtonGo
 			$s = get_cmd_line()
