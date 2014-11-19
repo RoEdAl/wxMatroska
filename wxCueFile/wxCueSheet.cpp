@@ -139,7 +139,7 @@ size_t wxCueSheet::GetCoversCount() const
 	return m_covers.GetCount();
 }
 
-const wxArrayFileName& wxCueSheet::GetCovers() const
+const wxArrayCoverFile& wxCueSheet::GetCovers( ) const
 {
 	return m_covers;
 }
@@ -150,26 +150,20 @@ wxCueSheet& wxCueSheet::AddLog( const wxFileName& logFile )
 	return *this;
 }
 
-bool wxCueSheet::AddCover( const wxFileName& cover )
+void wxCueSheet::AddCover( const wxFileName& coverFn )
 {
-	bool bAdd = true;
+    wxCoverFile cover( coverFn );
+    AddCover( cover );
+}
 
-	for ( size_t i = 0, nCount = m_covers.GetCount(); i < nCount; i++ )
-	{
-		if ( m_covers[ i ] == cover )
-		{
-			wxLogDebug( wxT( "Adding cover %s second time." ), cover.GetFullName() );
-			bAdd = false;
-			break;
-		}
-	}
+void wxCueSheet::AddCover( const wxCoverFile& cover )
+{
+    wxCoverFile::Append( m_covers, cover );
+}
 
-	if ( bAdd )
-	{
-		m_covers.Add( cover );
-	}
-
-	return bAdd;
+void wxCueSheet::AddCovers( const wxArrayCoverFile& covers )
+{
+    wxCoverFile::Append( m_covers, covers );
 }
 
 bool wxCueSheet::HasTracks() const
@@ -463,7 +457,7 @@ wxCueSheet& wxCueSheet::Append( const wxCueSheet& _cs )
 
 	WX_APPEND_ARRAY( m_content, cs.m_content );
 	AppendFileNames( m_logs, cs.m_logs );
-	AppendFileNames( m_covers, cs.m_covers );
+    wxCoverFile::Append( m_covers, cs.m_covers );
 	WX_APPEND_ARRAY( m_catalogs, cs.m_catalogs );
 	WX_APPEND_ARRAY( m_cdtextfiles, cs.m_cdtextfiles );
 

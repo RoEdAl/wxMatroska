@@ -51,12 +51,6 @@ class wxCueSheetReader:
 		static const wxChar LOG_EXT[];
 		static const wxChar LOG_MASK[];
 
-		static const wxChar* const CoverNames[];
-		static const size_t		   CoverNamesSize;
-
-		static const wxChar* const CoverExts[];
-		static const size_t		   CoverExtsSize;
-
 		typedef wxUint32 ReadFlags;
 
 		enum
@@ -116,10 +110,6 @@ class wxCueSheetReader:
 
 		static bool GetLogFile( const wxFileName&, bool, wxFileName& );
 
-		static bool IsCoverFile( const wxFileName& );
-		static bool GetCoverFile( const wxDir&, const wxString&, wxFileName& );
-		static bool GetCoverFile( const wxFileName&, wxFileName& );
-
 		void AddError0( const wxString& );
 		void AddError( const wxChar* pszFormat, ... );
 
@@ -178,8 +168,12 @@ class wxCueSheetReader:
 		bool ReadTagsFromRelatedFiles();
 
 		bool ReadTagsFromMediaFile( const wxDataFile &, size_t, size_t );
+
 		bool FindLog( const wxCueSheetContent& );
+
+        bool FindCoversInRelatedFiles();
 		bool FindCover( const wxCueSheetContent& );
+        size_t ExtractCoversFromDataFile( const wxDataFile& );
 
 	public:
 

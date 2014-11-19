@@ -14,6 +14,7 @@
 #endif
 
 class wxDataFile;
+class wxArrayCoverFile;
 
 WX_DECLARE_OBJARRAY( wxFileName, wxArrayFileName );
 WX_DECLARE_OBJARRAY( wxDataFile, wxArrayDataFile );
@@ -99,6 +100,7 @@ class wxDataFile:
 		bool FindFile( const wxString& = wxEmptyString );
 
 		bool GetInfo( const wxString& = wxEmptyString );
+        bool ExtractCovers( wxArrayCoverFile& ) const;
 
 		static wxString ToString( FileType );
 		static bool FromString( const wxString&, FileType& );

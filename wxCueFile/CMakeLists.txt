@@ -20,13 +20,20 @@ set(CUEFILE_SOURCE_FILES
 	wxTrack.cpp
 	wxTrailingSpacesRemover.cpp
 	wxUnquoter.cpp
+	wxCoverFile.cpp
+	wxMd5.cpp
 )
 
 ADD_MSVC_PRECOMPILED_HEADER("StdWx.h" "StdWx.cpp" CUEFILE_SOURCE_FILES )
+
 add_library(wxCueFile
 	${CUEFILE_SOURCE_FILES}
 	${CUEFILE_HEADER_FILES}
 	${CUEFILE_PUBLIC_HEADER_FILES}
 )
+
+#set_property(TARGET wxCueFile PROPERTY CXX_STANDARD 11)
+#set_property(TARGET wxCueFile PROPERTY CXX_EXTENSIONS TRUE)
+#set_property(TARGET wxCueFile PROPERTY CXX_STANDARD_REQUIRED TRUE)
 
 add_dependencies(wxCueFile TagLib)

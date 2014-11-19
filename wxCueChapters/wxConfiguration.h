@@ -213,6 +213,7 @@ class wxConfiguration:
 		void GetOutputFile( const wxInputFile&, wxFileName&, wxFileName& ) const;
 		void GetOutputMatroskaFile( const wxInputFile&, wxFileName&, wxFileName& ) const;
 		bool GetOutputCueSheetFile( const wxInputFile&, const wxString&, wxFileName& ) const;
+        bool GetOutputFile( const wxInputFile&, const wxString&, const wxString&, wxFileName& ) const;
 
 	public:
 

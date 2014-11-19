@@ -25,6 +25,10 @@
 #include "wxCueSheetContent.h"
 #endif
 
+#ifndef _WX_COVER_FILE_H_
+#include "wxCoverFile.h"
+#endif
+
 class wxCueSheet:
 	public wxCueComponent, public wxAbstractDurationHolder
 {
@@ -44,7 +48,7 @@ class wxCueSheet:
 
 		wxArrayCueSheetContent m_content;
 		wxArrayFileName		   m_logs;
-		wxArrayFileName		   m_covers;
+        wxArrayCoverFile	   m_covers;
 		wxArrayDataFile		   m_dataFiles;
 		wxArrayCueTag		   m_catalogs;
 		wxArrayFileName		   m_cdtextfiles;
@@ -79,7 +83,7 @@ class wxCueSheet:
 		size_t GetLogsCount() const;
 		const wxArrayFileName& GetLogs() const;
 		size_t GetCoversCount() const;
-		const wxArrayFileName& GetCovers() const;
+        const wxArrayCoverFile& GetCovers( ) const;
 		size_t GetCatalogsCount() const;
 		const wxArrayCueTag& GetCatalogs() const;
 		size_t GetCdTextFilesCount() const;
@@ -101,7 +105,9 @@ class wxCueSheet:
 		wxCueSheet& AddContent( const wxCueSheetContent& );
 		wxCueSheet& AddContent( const wxString& );
 		wxCueSheet& AddLog( const wxFileName& );
-		bool AddCover( const wxFileName& );
+		void AddCover( const wxFileName& );
+        void AddCover( const wxCoverFile& );
+        void AddCovers( const wxArrayCoverFile& );
 		wxCueSheet& AddDataFile( const wxDataFile& );
 
 		virtual bool HasDuration() const;

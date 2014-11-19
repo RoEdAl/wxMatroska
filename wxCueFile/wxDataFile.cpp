@@ -8,6 +8,7 @@
 #include <wxCueFile/wxDuration.h>
 #include <wxCueFile/wxIndex.h>
 #include <wxCueFile/wxDataFile.h>
+#include <wxCueFile/wxCoverFile.h>
 
 // ===============================================================================
 
@@ -309,6 +310,37 @@ bool wxDataFile::GetMediaInfo(
 	}
 
 	return true;
+}
+
+bool wxDataFile::ExtractCovers( wxArrayCoverFile& covers ) const
+{
+    TagLib::FileRef fileRef( m_realFileName.GetFullPath( ).t_str( ), true, TagLib::AudioProperties::Accurate );
+
+    if (fileRef.isNull( ))
+    {
+        wxLogError( _( "Fail to initialize TagLib library." ) );
+        return false;
+    }
+
+    TagLib::File*			   pFile = fileRef.file( );
+    if (dynamic_cast<TagLib::FLAC::File*>(pFile) != nullptr)
+    {
+        TagLib::FLAC::File* pFlac = dynamic_cast<TagLib::FLAC::File*>(pFile);
+        const TagLib::List< TagLib::FLAC::Picture*>& pictures = pFlac->pictureList();
+        for (auto i = pictures.begin(); i != pictures.end(); ++i)
+        {
+            const TagLib::FLAC::Picture& picture = **i;
+            const TagLib::ByteVector& pictureData = picture.data();
+
+            wxMemoryBuffer buffer( pictureData.size() );
+            buffer.AppendData( pictureData.data( ), pictureData.size( ) );
+            covers.Add( wxCoverFile( buffer, picture.mimeType().toWString(), picture.description().toWString() ) );
+        }
+
+        return true;
+    }
+
+    return false;
 }
 
 bool wxDataFile::GetInfo( const wxString& sAlternateExt )

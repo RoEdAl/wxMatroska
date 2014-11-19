@@ -957,6 +957,42 @@ void wxConfiguration::GetOutputFile( const wxInputFile& _inputFile, wxFileName& 
 	}
 }
 
+bool wxConfiguration::GetOutputFile( const wxInputFile& _inputFile, const wxString& sPostFix, const wxString& sExt, wxFileName& fn ) const
+{
+    wxFileName inputFile( _inputFile.GetInputFile( ) );
+
+    if (!inputFile.IsOk( ))
+    {
+        return false;
+    }
+
+    if (!m_outputFile.IsOk( ))
+    {
+        inputFile.SetName( wxString::Format( wxS( "%s.%s" ), inputFile.GetName( ), sPostFix ) );
+        inputFile.SetExt( sExt );
+        inputFile.Normalize( );
+        fn = inputFile;
+        return true;
+    }
+    else
+    {
+        if (m_outputFile.IsDir( ))
+        {
+            inputFile.SetPath( m_outputFile.GetPath( ) );
+        }
+        else
+        {
+            inputFile = m_outputFile;
+        }
+
+        inputFile.SetName( wxString::Format( wxS( "%s.%s" ), inputFile.GetName( ), sPostFix ) );
+        inputFile.SetExt( sExt );
+        inputFile.Normalize( );
+        fn = inputFile;
+        return true;
+    }
+}
+
 void wxConfiguration::GetOutputMatroskaFile( const wxInputFile& _inputFile, wxFileName& matroskaFile, wxFileName& optionsFile ) const
 {
 	matroskaFile.Clear();

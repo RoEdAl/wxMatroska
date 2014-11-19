@@ -39,29 +39,6 @@ const wxCueSheetReader::PARSE_STRUCT wxCueSheetReader::parseArray[] =
 
 // ===============================================================================
 
-const wxChar* const wxCueSheetReader::CoverNames[] =
-{
-	wxS( "cover" ),
-	wxS( "front" ),
-	wxS( "folder" ),
-	wxS( "picture" )
-};
-
-const size_t wxCueSheetReader::CoverNamesSize = WXSIZEOF( wxCueSheetReader::CoverNames );
-
-// ===============================================================================
-
-const wxChar* const wxCueSheetReader::CoverExts[] =
-{
-	wxS( "jpg" ),
-	wxS( "jpeg" ),
-	wxS( "png" )
-};
-
-const size_t wxCueSheetReader::CoverExtsSize = WXSIZEOF( wxCueSheetReader::CoverExts );
-
-// ===============================================================================
-
 wxString wxCueSheetReader::GetKeywordsRegExp()
 {
 	wxString sKeywordsRegExp( wxCueComponent::GetKeywordsRegExp() );
@@ -139,76 +116,6 @@ bool wxCueSheetReader::GetLogFile( const wxFileName& inputFile, bool bAnyLog, wx
 		wxASSERT( logFile.IsOk() );
 		return logFile.IsFileReadable();
 	}
-}
-
-bool wxCueSheetReader::IsCoverFile( const wxFileName& fileName )
-{
-	for ( size_t i = 0; i < CoverExtsSize; i++ )
-	{
-		if ( fileName.GetExt().CmpNoCase( CoverExts[ i ] ) == 0 )
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-bool wxCueSheetReader::GetCoverFile( const wxDir& sourceDir, const wxString& sFileNameBase, wxFileName& coverFile )
-{
-	wxASSERT( sourceDir.IsOpened() );
-
-	wxString sFileName;
-	size_t	 nCounter = 0;
-	wxString sFileSpec( wxString::Format( wxS( "%s.*" ), sFileNameBase ) );
-
-	if ( sourceDir.GetFirst( &sFileName, sFileSpec, wxDIR_FILES ) )
-	{
-		while ( true )
-		{
-			wxFileName fileName( sourceDir.GetName(), sFileName );
-
-			if ( IsCoverFile( fileName ) )
-			{
-				coverFile = fileName;
-				return true;
-			}
-
-			if ( !sourceDir.GetNext( &sFileName ) )
-			{
-				break;
-			}
-		}
-	}
-
-	return false;
-}
-
-bool wxCueSheetReader::GetCoverFile( const wxFileName& inputFile, wxFileName& coverFile )
-{
-	wxFileName sourceDirFn( inputFile );
-
-	sourceDirFn.SetName( wxEmptyString );
-	sourceDirFn.ClearExt();
-	wxASSERT( sourceDirFn.IsDirReadable() );
-
-	wxDir sourceDir( sourceDirFn.GetPath() );
-
-	if ( !sourceDir.IsOpened() )
-	{
-		wxLogError( _( "Fail to open directory \u201C%s\u201D" ), sourceDirFn.GetPath() );
-		return false;
-	}
-
-	for ( size_t i = 0; i < CoverNamesSize; i++ )
-	{
-		if ( GetCoverFile( sourceDir, CoverNames[ i ], coverFile ) )
-		{
-			return true;
-		}
-	}
-
-	return false;
 }
 
 wxString wxCueSheetReader::GetOneTrackCue()
@@ -332,7 +239,7 @@ bool wxCueSheetReader::FindCover( const wxCueSheetContent& content )
 	wxASSERT( TestReadFlags( EC_FIND_COVER ) );
 	wxFileName coverFile;
 
-	if ( GetCoverFile( content.GetSource().GetFileName(), coverFile ) )
+	if ( wxCoverFile::GetCoverFile( content.GetSource().GetFileName(), coverFile ) )
 	{
 		m_cueSheet.AddCover( coverFile );
 		return true;
@@ -812,6 +719,10 @@ bool wxCueSheetReader::ParseCue( const wxCueSheetContent& content )
 
 		if ( TestReadFlags( EC_FIND_COVER ) )
 		{
+            if (TestReadFlags( EC_MEDIA_READ_TAGS ))
+            {
+                FindCoversInRelatedFiles( );
+            }
 			FindCover( content );
 		}
 	}
@@ -1152,6 +1063,33 @@ bool wxCueSheetReader::ReadTagsFromRelatedFiles()
 	return bRes;
 }
 
+bool wxCueSheetReader::FindCoversInRelatedFiles()
+{
+    if (!m_cueSheet.CalculateDuration( m_sAlternateExt ))
+    {
+        return false;
+    }
+
+    const wxArrayDataFile& dataFiles = m_cueSheet.GetDataFiles( );
+    bool				   bRes = false;
+    size_t                 nRes;
+
+    for (size_t i = 0, nCount = dataFiles.GetCount( ); i < nCount; i++)
+    {
+        const wxDataFile& dfile = dataFiles[i];
+        if (!dfile.HasRealFileName()) continue;
+
+        nRes = ExtractCoversFromDataFile( dfile );
+
+        if (nRes > 0)
+        {
+            bRes = true;
+        }
+    }
+
+    return bRes;
+}
+
 bool wxCueSheetReader::ReadTagsFromMediaFile( const wxDataFile& _dataFile, size_t nTrackFrom, size_t nTrackTo )
 {
 	if ( _dataFile.HasRealFileName() )
@@ -1174,5 +1112,18 @@ bool wxCueSheetReader::ReadTagsFromMediaFile( const wxDataFile& _dataFile, size_
 			return false;
 		}
 	}
+}
+
+size_t wxCueSheetReader::ExtractCoversFromDataFile( const wxDataFile& dataFile )
+{
+    wxASSERT( dataFile.HasRealFileName() );
+
+    wxArrayCoverFile covers;
+    if (dataFile.ExtractCovers( covers ))
+    {
+        m_cueSheet.AddCovers( covers );
+    }
+
+    return 0;
 }
 

@@ -40,6 +40,26 @@ wxString wxMkvmergeOptsRenderer::mkvmerge_escape( const wxString& s )
 	return sRes;
 }
 
+wxTextOutputStream& wxMkvmergeOptsRenderer::append_cover( wxTextOutputStream& str, const wxCoverFile& coverFile )
+{
+    str <<
+        wxS( "--attachment-description" ) << endl <<
+        (coverFile.HasDescription() ? coverFile.GetDescription() : coverFile.GetFileName().GetFullName()) << endl;
+
+    if (coverFile.HasMimeType())
+    {
+        str <<
+            wxS( "--attachment-mime-type" ) << endl <<
+            coverFile.GetMimeType() << endl;
+    }
+
+    str << 
+        wxS( "--attach-file" ) << endl <<
+        mkvmerge_escape( coverFile.GetFileName( ) ) << endl;
+
+    return str;
+}
+
 wxString wxMkvmergeOptsRenderer::mkvmerge_escape( const wxFileName& fn )
 {
 	return mkvmerge_escape( fn.GetFullPath() );
@@ -63,7 +83,24 @@ wxString wxMkvmergeOptsRenderer::GetEscapedFile( const wxFileName& fn )
 	}
 }
 
-void wxMkvmergeOptsRenderer::write_cover_attachments( const wxArrayFileName& coverFiles )
+bool wxMkvmergeOptsRenderer::save_cover( const wxInputFile& inputFile, wxCoverFile& cover ) const
+{
+    if (cover.HasFileName()) return true;
+
+    wxASSERT( cover.HasData() );
+
+    wxFileName fn;
+    if (m_cfg.GetOutputFile( inputFile, wxS( "img" ), cover.GetExt(), fn ))
+    {
+        return cover.Save( fn );
+    }
+    else
+    {
+        return false;
+    }
+}
+
+void wxMkvmergeOptsRenderer::write_cover_attachments( const wxInputFile& inputFile, const wxArrayCoverFile& coverFiles ) const
 {
 	size_t nAttachments = coverFiles.GetCount();
 
@@ -78,14 +115,15 @@ void wxMkvmergeOptsRenderer::write_cover_attachments( const wxArrayFileName& cov
 
 		case 1:
 		{
-			*m_os <<
-			wxS( "# cover" ) << endl <<
-			wxS( "--attachment-name" ) << endl <<
-			wxS( "cover." ) << coverFiles[ 0 ].GetExt().Lower() << endl <<
-			wxS( "--attachment-description" ) << endl <<
-			coverFiles[ 0 ].GetFullName() << endl <<
-			wxS( "--attach-file" ) << endl <<
-			mkvmerge_escape( coverFiles[ 0 ] ) << endl;
+            *m_os << wxS( "# cover" ) << endl;
+
+            if (save_cover( inputFile, coverFiles[0] ))
+            {
+                *m_os <<
+                    wxS( "--attachment-name" ) << endl <<
+                    wxS( "cover." ) << coverFiles[0].GetFileName( ).GetExt( ).Lower( ) << endl;
+                append_cover( *m_os, coverFiles[0] );
+            }
 			break;
 		}
 
@@ -98,53 +136,59 @@ void wxMkvmergeOptsRenderer::write_cover_attachments( const wxArrayFileName& cov
 		case 8:
 		case 9:
 		{
-			*m_os << wxS( "# covers (" ) << nAttachments << wxS( ')' ) << endl <<
+            *m_os << wxS( "# covers (" ) << nAttachments << wxS( ')' ) << endl;
 
-			// first attachment
-			wxS( "--attachment-name" ) << endl <<
-			wxS( "cover." ) << coverFiles[ 0 ].GetExt().Lower() << endl <<
-			wxS( "--attachment-description" ) << endl <<
-			coverFiles[ 0 ].GetFullName() << endl <<
-			wxS( "--attach-file" ) << endl <<
-			mkvmerge_escape( coverFiles[ 0 ] ) << endl;
+            if (save_cover( inputFile, coverFiles[0] ))
+            {
+                *m_os << 
+                    // first attachment
+                    wxS( "--attachment-name" ) << endl <<
+                    wxS( "cover." ) << coverFiles[0].GetFileName().GetExt().Lower() << endl;
+
+                append_cover( *m_os, coverFiles[0] );
+            }
 
 			// rest
 			for ( size_t i = 1; i < nAttachments; i++ )
 			{
-				*m_os <<
-				wxS( "--attachment-name" ) << endl <<
-				wxString::Format( wxS( "cover%d." ), i + 1 ) << coverFiles[ i ].GetExt().Lower() << endl <<
-				wxS( "--attachment-description" ) << endl <<
-				coverFiles[ i ].GetFullName() << endl <<
-				wxS( "--attach-file" ) << endl <<
-				mkvmerge_escape( coverFiles[ i ] ) << endl;
+                if (save_cover( inputFile, coverFiles[i] ))
+                {
+                    *m_os <<
+                        wxS( "--attachment-name" ) << endl <<
+                        wxString::Format( wxS( "cover%d." ), i + 1 ) << coverFiles[i].GetFileName().GetExt().Lower() << endl;
+
+                    append_cover( *m_os, coverFiles[i] );
+                }
 			}
 
 			break;
 		}
 
 		default:
-		{
-			*m_os << wxS( "# covers (" ) << nAttachments << wxS( ')' ) << endl <<
+        {
+             *m_os << wxS( "# covers (" ) << nAttachments << wxS( ')' ) << endl;
 
-			// first attachment
-			wxS( "--attachment-name" ) << endl <<
-			wxS( "cover." ) << coverFiles[ 0 ].GetExt().Lower() << endl <<
-			wxS( "--attachment-description" ) << endl <<
-			coverFiles[ 0 ].GetFullName() << endl <<
-			wxS( "--attach-file" ) << endl <<
-			mkvmerge_escape( coverFiles[ 0 ] ) << endl;
+            if (save_cover( inputFile, coverFiles[0] ))
+            {
+                *m_os <<
+                    // first attachment
+                    wxS( "--attachment-name" ) << endl <<
+                    wxS( "cover." ) << coverFiles[0].GetFileName().GetExt().Lower() << endl;
+
+                append_cover( *m_os, coverFiles[0] );
+            }
 
 			// rest
 			for ( size_t i = 1; i < nAttachments; i++ )
 			{
-				*m_os <<
-				wxS( "--attachment-name" ) << endl <<
-				wxString::Format( wxS( "cover%02d." ), i + 1 ) << coverFiles[ i ].GetExt().Lower() << endl <<
-				wxS( "--attachment-description" ) << endl <<
-				coverFiles[ i ].GetFullName() << endl <<
-				wxS( "--attach-file" ) << endl <<
-				mkvmerge_escape( coverFiles[ i ] ) << endl;
+                if (save_cover( inputFile, coverFiles[i] ))
+                {
+                    *m_os <<
+                        wxS( "--attachment-name" ) << endl <<
+                        wxString::Format( wxS( "cover%02d." ), i + 1 ) << coverFiles[i].GetFileName().GetExt().Lower() << endl;
+
+                    append_cover( *m_os, coverFiles[i] );
+                }
 			}
 
 			break;
@@ -445,7 +489,7 @@ void wxMkvmergeOptsRenderer::write_source_eac_attachments(
 
 bool wxMkvmergeOptsRenderer::save_cuesheet( const wxInputFile& inputFile,
 		const wxString& sPostfix, const wxString& sContent,
-		wxFileName& cueSheet )
+		wxFileName& cueSheet ) const
 {
 	if ( !m_cfg.GetOutputCueSheetFile( inputFile, sPostfix, cueSheet ) )
 	{
@@ -655,7 +699,7 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile,
 	// cover - must be a first attachment
 	if ( m_cfg.AttachCover() )
 	{
-		write_cover_attachments( cueSheet.GetCovers() );
+		write_cover_attachments( inputFile, cueSheet.GetCovers() );
 	}
 
 	write_cdtextfiles_attachments( cueSheet.GetCdTextFiles() );

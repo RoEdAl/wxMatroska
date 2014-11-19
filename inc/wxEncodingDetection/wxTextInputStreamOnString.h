@@ -22,7 +22,7 @@ class wxTextInputStreamOnString:
 		const wxMemoryInputStream& GetMemoryStream() const;
 		wxTextInputStream&		   GetStream();
 		const CharBufferType&	GetBuffer() const;
-		wxTextInputStream&		   operator *();
+		wxTextInputStream&		   operator *() const;
 		bool Eof() const;
 
 	protected:

@@ -26,6 +26,7 @@
 #include <wx/filename.h>
 #include <wx/sharedptr.h>
 #include <wx/dir.h>
+#include <wx/mimetype.h>
 
 // TagLib
 #include <taglib/tpropertymap.h>
@@ -34,6 +35,8 @@
 #include <taglib/aiffproperties.h>
 #include <taglib/wavpackproperties.h>
 #include <taglib/flacproperties.h>
+#include <taglib/flacpicture.h>
+#include <taglib/flacfile.h>
 
 // #include <mpegproperties.h>
 

@@ -31,9 +31,9 @@ wxTextOutputStream& wxTextOutputStreamOnString::GetStream()
 	return m_textOutputStream;
 }
 
-wxTextOutputStream& wxTextOutputStreamOnString::operator *()
+wxTextOutputStream& wxTextOutputStreamOnString::operator *() const
 {
-	return m_textOutputStream;
+    return const_cast<wxTextOutputStream&>(m_textOutputStream);
 }
 
 void wxTextOutputStreamOnString::SaveTo( wxTextOutputStream& tos, const wxString& s )

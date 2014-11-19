@@ -34,9 +34,9 @@ const wxTextInputStreamOnString::CharBufferType& wxTextInputStreamOnString::GetB
 	return m_charBuffer;
 }
 
-wxTextInputStream& wxTextInputStreamOnString::operator *()
+wxTextInputStream& wxTextInputStreamOnString::operator *() const
 {
-	return m_textInputStream;
+	return const_cast<wxTextInputStream&>(m_textInputStream);
 }
 
 bool wxTextInputStreamOnString::Eof() const

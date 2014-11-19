@@ -18,7 +18,7 @@ class wxTextOutputStreamOnString:
 
 		const wxMemoryOutputStream& GetMemoryStream() const;
 		wxTextOutputStream&			GetStream();
-		wxTextOutputStream&			operator *();
+		wxTextOutputStream&			operator *() const;
 
 		wxString GetString() const;
 
