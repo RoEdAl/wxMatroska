@@ -41,6 +41,17 @@ class wxFlacMetaDataReader;
 class wxCueSheetContent;
 #endif
 
+#ifdef __WXDEBUG__
+
+class TagLibDebugListener: public TagLib::DebugListener
+{
+    public:
+
+    virtual void printMessage( const TagLib::String& );
+};
+
+#endif
+
 class wxCueSheetReader:
 	public wxObject
 {
@@ -99,6 +110,11 @@ class wxCueSheetReader:
 		wxCueSheetContent m_cueSheetContent;
 		wxArrayString	  m_errors;
 		wxCueSheet		  m_cueSheet;
+
+        // TagLib debug listener
+#ifdef __WXDEBUG__
+        TagLibDebugListener m_debugListener;
+#endif
 
 	protected:
 
@@ -178,6 +194,10 @@ class wxCueSheetReader:
 	public:
 
 		wxCueSheetReader( void );
+
+#ifdef __WXDEBUG__
+        virtual ~wxCueSheetReader( void );
+#endif
 
 		static wxString GetTagLibVersion();
 

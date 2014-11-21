@@ -28,11 +28,22 @@
 #include <wx/dir.h>
 #include <wx/mimetype.h>
 
+#if defined(__WIN64__)
+#define wxSizeTFmtSpec wxLongLongFmtSpec
+#else
+#define wxSizeTFmtSpec
+#endif
+
 // TagLib
+#ifdef __WXDEBUG__
+#include <taglib/tdebuglistener.h>
+#endif
 #include <taglib/tpropertymap.h>
 #include <taglib/fileref.h>
 #include <taglib/wavproperties.h>
 #include <taglib/aiffproperties.h>
+#include <taglib/apetag.h>
+#include <taglib/wavpackfile.h>
 #include <taglib/wavpackproperties.h>
 #include <taglib/flacproperties.h>
 #include <taglib/flacpicture.h>

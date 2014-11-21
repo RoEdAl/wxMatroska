@@ -33,6 +33,8 @@ class wxCoverFile
     const wxMemoryBuffer& GetChecksum() const;
     wxString GetExt() const;
 
+    static bool GetMimeFromExt( const wxFileName&, wxString& );
+
     bool HasFileName() const
     {
         return m_fileName.IsOk();

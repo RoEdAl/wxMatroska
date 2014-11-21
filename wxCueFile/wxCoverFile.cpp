@@ -39,19 +39,31 @@ wxCoverFile::wxCoverFile( const wxCoverFile& cf )
 :m_fileName( cf.m_fileName ), m_data( cf.m_data ), m_mimeType( cf.m_mimeType ), m_description( cf.m_description ), m_checksum( cf.m_checksum )
 {}
 
+bool wxCoverFile::GetMimeFromExt( const wxFileName& fn, wxString& mimeType )
+{
+    wxScopedPtr<wxFileType> pFileType( wxTheMimeTypesManager->GetFileTypeFromExtension( fn.GetExt( ) ) );
+    if (pFileType.get( ) != nullptr)
+    {
+        wxString s;
+        if (pFileType->GetMimeType( &s ))
+        {
+            mimeType = s;
+            return true;
+        }
+        else
+        {
+            wxLogWarning( _( "Could not find mime type for extension %s" ), fn.GetExt() );
+            return false;
+        }
+    }
+    return false;
+}
+
 wxCoverFile::wxCoverFile( const wxFileName& fn )
 : m_fileName( fn )
 {
     m_checksum = wxMD5::Get( fn );
-    wxScopedPtr<wxFileType> pFileType( wxTheMimeTypesManager->GetFileTypeFromExtension( fn.GetExt() ) );
-    if (pFileType.get() != nullptr)
-    {
-        wxString mimeType;
-        if (pFileType->GetMimeType( &mimeType ))
-        {
-            m_mimeType = mimeType;
-        }
-    }
+    GetMimeFromExt( fn, m_mimeType );
 }
 
 wxCoverFile::wxCoverFile( const wxMemoryBuffer& data, const wxString& mimeType, const wxString& description )
@@ -97,7 +109,15 @@ wxString wxCoverFile::GetExt() const
             wxArrayString exts;
             if (pFileType->GetExtensions( exts ) && !exts.IsEmpty() )
             {
-                return exts[0];
+                wxString ext;
+                if (exts[0].StartsWith( '.', &ext ))
+                {
+                    return ext;
+                }
+                else
+                {
+                    return exts[0];
+                }
             }
         }
     }

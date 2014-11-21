@@ -64,7 +64,17 @@ typedef struct tagMSG
 #include <wx/tokenzr.h>
 #include <wx/sharedptr.h>
 
+#ifdef __WXDEBUG__
+#include <taglib/tdebuglistener.h>
+#endif
+
 extern wxXmlNode* const wxNullXmlNode;
+
+#if defined(__WIN64__)
+#define wxSizeTFmtSpec wxLongLongFmtSpec
+#else
+#define wxSizeTFmtSpec
+#endif
 
 #ifdef WIN32
 #include <objbase.h>

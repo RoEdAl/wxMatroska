@@ -141,6 +141,15 @@ wxString wxCueSheetReader::GetTagLibVersion()
 	return wxString::Format( wxS( "TagLib version: %d.%d.%d. Copyright \u00A9 2002 - 2008 by Scott Wheeler" ), TAGLIB_MAJOR_VERSION, TAGLIB_MINOR_VERSION, TAGLIB_PATCH_VERSION );
 }
 
+#ifdef __WXDEBUG__
+
+void TagLibDebugListener::printMessage( const TagLib::String& msg )
+{
+    wxLogDebug( msg.toCWString() );
+}
+
+#endif
+
 wxCueSheetReader::wxCueSheetReader( void ):
 	m_reKeywords( GetKeywordsRegExp(), wxRE_ADVANCED ),
 	m_reCdTextInfo( GetCdTextInfoRegExp(), wxRE_ADVANCED ),
@@ -172,7 +181,18 @@ wxCueSheetReader::wxCueSheetReader( void ):
 	wxASSERT( m_reIsrc.IsValid() );
 	wxASSERT( m_reTrackComment.IsValid() );
 	wxASSERT( m_reCommentMeta.IsValid() );
+
+#ifdef __WXDEBUG__
+    TagLib::setDebugListener( &m_debugListener );
+#endif
 }
+
+#ifdef __WXDEBUG__
+wxCueSheetReader::~wxCueSheetReader()
+{
+    TagLib::setDebugListener( (TagLib::DebugListener*)NULL );
+}
+#endif
 
 const wxCueSheet& wxCueSheetReader::GetCueSheet() const
 {
@@ -690,7 +710,7 @@ bool wxCueSheetReader::ParseCue( const wxCueSheetContent& content )
 
 		if ( m_reEmpty.Matches( sLine ) )
 		{
-			wxLogDebug( wxS( "Skipping empty line %d" ), nLine );
+			wxLogDebug( "Skipping empty line %" wxSizeTFmtSpec "u", nLine );
 			continue;
 		}
 

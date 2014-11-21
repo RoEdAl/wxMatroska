@@ -580,7 +580,7 @@ void wxTrack::GetReplacements( wxHashString& replacements ) const
 {
 	wxCueComponent::GetReplacements( replacements );
 	wxString sValue;
-	sValue.Printf( wxT( "%02d" ), m_number );
+    sValue.Printf( "%02" wxSizeTFmtSpec "d", m_number );
 	replacements[ wxT( "tn" ) ] = sValue;
 }
 
