@@ -84,6 +84,7 @@ class wxCueSheet:
 		const wxArrayFileName& GetLogs() const;
 		size_t GetCoversCount() const;
         const wxArrayCoverFile& GetCovers( ) const;
+        void GetSortedCovers( wxArrayCoverFile& ) const;
 		size_t GetCatalogsCount() const;
 		const wxArrayCueTag& GetCatalogs() const;
 		size_t GetCdTextFilesCount() const;

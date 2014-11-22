@@ -144,6 +144,13 @@ const wxArrayCoverFile& wxCueSheet::GetCovers( ) const
 	return m_covers;
 }
 
+void wxCueSheet::GetSortedCovers( wxArrayCoverFile& covers ) const
+{
+    covers.Clear();
+    WX_APPEND_ARRAY( covers, m_covers );
+    wxCoverFile::Sort( covers );
+}
+
 wxCueSheet& wxCueSheet::AddLog( const wxFileName& logFile )
 {
 	m_logs.Add( logFile );
@@ -152,8 +159,7 @@ wxCueSheet& wxCueSheet::AddLog( const wxFileName& logFile )
 
 void wxCueSheet::AddCover( const wxFileName& coverFn )
 {
-    wxCoverFile cover( coverFn );
-    AddCover( cover );
+    AddCover( wxCoverFile( coverFn, wxCoverFile::FrontCover ) );
 }
 
 void wxCueSheet::AddCover( const wxCoverFile& cover )

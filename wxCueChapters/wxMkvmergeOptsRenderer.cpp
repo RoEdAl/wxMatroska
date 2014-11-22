@@ -42,19 +42,31 @@ wxString wxMkvmergeOptsRenderer::mkvmerge_escape( const wxString& s )
 
 wxTextOutputStream& wxMkvmergeOptsRenderer::append_cover( wxTextOutputStream& str, const wxCoverFile& coverFile )
 {
-    str <<
-        wxS( "--attachment-description" ) << endl <<
-        (coverFile.HasDescription() ? coverFile.GetDescription() : coverFile.GetFileName().GetFullName()) << endl;
+    wxString stype;
+    wxCoverFile::GetStrFromType( coverFile.GetType(), stype );
+
+    wxString sDescription;
+    if (coverFile.HasDescription())
+    {
+        sDescription = coverFile.GetDescription();
+        sDescription << " [" << stype << ']';
+    }
+    else 
+    {
+        sDescription = stype;
+    }
+    
+    str << "--attachment-description" << endl << sDescription << endl;
 
     if (coverFile.HasMimeType())
     {
         str <<
-            wxS( "--attachment-mime-type" ) << endl <<
+            "--attachment-mime-type" << endl <<
             coverFile.GetMimeType() << endl;
     }
 
     str << 
-        wxS( "--attach-file" ) << endl <<
+        "--attach-file" << endl <<
         mkvmerge_escape( coverFile.GetFileName( ) ) << endl;
 
     return str;
@@ -699,7 +711,9 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile,
 	// cover - must be a first attachment
 	if ( m_cfg.AttachCover() )
 	{
-		write_cover_attachments( inputFile, cueSheet.GetCovers() );
+        wxArrayCoverFile covers;
+        cueSheet.GetSortedCovers( covers );
+		write_cover_attachments( inputFile, covers );
 	}
 
 	write_cdtextfiles_attachments( cueSheet.GetCdTextFiles() );

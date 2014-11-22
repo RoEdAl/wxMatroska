@@ -187,9 +187,9 @@ class wxCueSheetReader:
 
 		bool FindLog( const wxCueSheetContent& );
 
-        bool FindCoversInRelatedFiles();
+        void FindCoversInRelatedFiles();
 		bool FindCover( const wxCueSheetContent& );
-        size_t ExtractCoversFromDataFile( const wxDataFile& );
+        void ExtractCoversFromDataFile( const wxDataFile& );
 
 	public:
 

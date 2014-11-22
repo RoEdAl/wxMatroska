@@ -45,7 +45,7 @@ class wxDataFile:
 		struct FILE_TYPE_STR
 		{
 			FileType value;
-			const wxChar* description;
+			const char* description;
 		};
 
 		static const FILE_TYPE_STR FileTypeString[];
@@ -100,7 +100,6 @@ class wxDataFile:
 		bool FindFile( const wxString& = wxEmptyString );
 
 		bool GetInfo( const wxString& = wxEmptyString );
-        bool ExtractCovers( wxArrayCoverFile& ) const;
 
 		static wxString ToString( FileType );
 		static bool FromString( const wxString&, FileType& );

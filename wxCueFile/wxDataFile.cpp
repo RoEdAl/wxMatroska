@@ -18,11 +18,11 @@ wxIMPLEMENT_DYNAMIC_CLASS( wxDataFile, wxObject );
 
 const wxDataFile::FILE_TYPE_STR wxDataFile::FileTypeString[] =
 {
-	{ BINARY, wxT( "BINARY" ) },
-	{ MOTOROLA, wxT( "MOTOROLA" ) },
-	{ AIFF, wxT( "AIFF" ) },
-	{ WAVE, wxT( "WAVE" ) },
-	{ MP3, wxT( "MP3" ) }
+	{ BINARY, "BINARY" },
+	{ MOTOROLA, "MOTOROLA" },
+	{ AIFF, "AIFF" },
+	{ WAVE, "WAVE" },
+	{ MP3, "MP3" }
 };
 
 // ===============================================================================
@@ -312,72 +312,6 @@ bool wxDataFile::GetMediaInfo(
 	return true;
 }
 
-bool wxDataFile::ExtractCovers( wxArrayCoverFile& covers ) const
-{
-    TagLib::FileRef fileRef( m_realFileName.GetFullPath( ).t_str( ), true, TagLib::AudioProperties::Accurate );
-
-    if (fileRef.isNull( ))
-    {
-        wxLogError( _( "Fail to initialize TagLib library." ) );
-        return false;
-    }
-
-    TagLib::File*			   pFile = fileRef.file( );
-    if (dynamic_cast<TagLib::FLAC::File*>(pFile) != nullptr)
-    {
-        TagLib::FLAC::File* pFlac = dynamic_cast<TagLib::FLAC::File*>(pFile);
-        const TagLib::List< TagLib::FLAC::Picture*>& pictures = pFlac->pictureList();
-        for (auto i = pictures.begin(); i != pictures.end(); ++i)
-        {
-            const TagLib::FLAC::Picture& picture = **i;
-            const TagLib::ByteVector& pictureData = picture.data();
-
-            wxMemoryBuffer buffer( pictureData.size() );
-            buffer.AppendData( pictureData.data( ), pictureData.size( ) );
-            covers.Add( wxCoverFile( buffer, picture.mimeType().toWString(), picture.description().toWString() ) );
-        }
-
-        return true;
-    }
-    else if (dynamic_cast<TagLib::WavPack::File*>(pFile) != nullptr)
-    {
-        TagLib::WavPack::File* pWv = dynamic_cast<TagLib::WavPack::File*>(pFile);
-        if (pWv->hasAPETag())
-        {
-            const TagLib::APE::Tag* pTags = pWv->APETag();
-            for (auto i = pTags->itemListMap().begin(), end = pTags->itemListMap().end(); i != end; ++i)
-            {
-                if (i->second.type() != TagLib::APE::Item::Binary) continue;
-                if (!i->first.startsWith( "COVER ART" )) continue;
-
-                wxString sName( i->first.toWString() );
-                TagLib::ByteVector binary = i->second.binaryData();
-
-                int p = binary.find( 0 );
-                if (p <= 0) continue;
-
-                wxString s( binary.data(), wxConvUTF8, p );
-                wxString mimeType;
-                if (!wxCoverFile::GetMimeFromExt( s, mimeType )) continue;
-
-                size_t nPicLen = binary.size() - p - 1;
-                wxMemoryBuffer buffer( nPicLen );
-                buffer.AppendData( binary.data() + p + 1, nPicLen );
-
-                wxString sDesc(i->first.substr( 9 ).toCWString());
-                sDesc.Trim(true).Trim(false);
-                if (sDesc.StartsWith( '(' )) sDesc.Remove( 0, 1 );
-                if (sDesc.EndsWith( ')' )) sDesc.RemoveLast();
-                sDesc.Trim(true).Trim(false);
-
-                covers.Add( wxCoverFile( buffer, mimeType, sDesc ) );
-            }
-        }
-        return true;
-    }
-
-    return false;
-}
 
 bool wxDataFile::GetInfo( const wxString& sAlternateExt )
 {
