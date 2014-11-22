@@ -503,47 +503,76 @@ bool wxMyApp::RunMkvmerge( const wxFileName& optionsFile )
 	wxASSERT( m_cfg.RunMkvmerge() );
 
 	wxString sCmdLine;
+    //wxString cmdOutFile( wxFileName::CreateTempFileName( "mkvmerge" ) );
 
-	if ( m_cfg.GetMkvmergeDir().IsOk() )
-	{
-		wxFileName mkvmerge( m_cfg.GetMkvmergeDir().GetFullPath(), wxT( "mkvmerge" ) );
+#if defined(__WXMSW__) && defined(__VISUALC__) && defined(UNICODE)
+    if (m_cfg.GetMkvmergeDir( ).IsOk( ))
+    {
+        wxFileName mkvmerge( m_cfg.GetMkvmergeDir( ).GetFullPath( ), wxT( "mkvmerge" ) );
+        if (wxLog::GetVerbose( ))
+        {
+            sCmdLine.Printf( wxS( "\"%s\" --output-charset utf-16 \"@%s\"" ), mkvmerge.GetFullPath( ), optionsFile.GetFullPath( ) );
+        }
+        else
+        {
+            sCmdLine.Printf( wxS( "\"%s\" --quiet --output-charset utf-16 \"@%s\"" ), mkvmerge.GetFullPath( ), optionsFile.GetFullPath( ) );
+        }
+    }
+    else
+    {
+        if (wxLog::GetVerbose( ))
+        {
+            sCmdLine.Printf( wxS( "mkvmerge --output-charset utf-16 \"@%s\"" ), optionsFile.GetFullPath( ) );
+        }
+        else
+        {
+            sCmdLine.Printf( wxS( "mkvmerge --quiet --output-charset utf-16 \"@%s\"" ), optionsFile.GetFullPath( ) );
+        }
+    }
+#else
+    if ( m_cfg.GetMkvmergeDir().IsOk() )
+    {
+        wxFileName mkvmerge( m_cfg.GetMkvmergeDir( ).GetFullPath( ), wxT( "mkvmerge" ) );
+        if (wxLog::GetVerbose( ))
+        {
+            sCmdLine.Printf( wxS( "\"%s\" \"@%s\"" ), mkvmerge.GetFullPath( ), optionsFile.GetFullPath( ) );
+        }
+        else
+        {
+            sCmdLine.Printf( wxS( "\"%s\" --quiet \"@%s\"" ), mkvmerge.GetFullPath( ), optionsFile.GetFullPath( ) );
+        }
+    }
+    else
+    {
+        if (wxLog::GetVerbose( ))
+        {
+            sCmdLine.Printf( wxS( "mkvmerge \"@%s\"" ), optionsFile.GetFullPath( ) );
+        }
+        else
+        {
+            sCmdLine.Printf( wxS( "mkvmerge --quiet \"@%s\"" ), optionsFile.GetFullPath( ) );
+        }
+    }
 
-		if ( wxLog::GetVerbose() )
-		{
-			sCmdLine.Printf( wxT( "\"%s\" \"@%s\"" ), mkvmerge.GetFullPath(), optionsFile.GetFullPath() );
-		}
-		else
-		{
-			sCmdLine.Printf( wxT( "\"%s\" --quiet \"@%s\"" ), mkvmerge.GetFullPath(), optionsFile.GetFullPath() );
-		}
-	}
-	else
-	{
-		if ( wxLog::GetVerbose() )
-		{
-			sCmdLine.Printf( wxT( "mkvmerge \"@%s\"" ), optionsFile.GetFullPath() );
-		}
-		else
-		{
-			sCmdLine.Printf( wxT( "mkvmerge --quiet \"@%s\"" ), optionsFile.GetFullPath() );
-		}
-	}
+#endif
 
-	wxLogMessage( _( "Running mkvmerge with options file \u201C%s\u201D" ), optionsFile.GetFullName() );
-	wxLogDebug( wxT( "Running commad: %s" ), sCmdLine );
+	wxLogMessage( _( "Running mkvmerge with options from file \u201C%s\u201D" ), optionsFile.GetFullName() );
+	wxLogDebug( "Executing: %s", sCmdLine );
 
 	long nRes = 0;
+    wxArrayString out;
+    wxArrayString err;
 
 	if ( m_cfg.UseFullPaths() )
 	{
-		nRes = wxExecute( sCmdLine, wxEXEC_SYNC | wxEXEC_NOEVENTS );
+		nRes = wxExecute( sCmdLine, out, err, wxEXEC_SYNC | wxEXEC_NOEVENTS );
 	}
 	else
 	{
 		wxExecuteEnv env;
 		env.cwd = optionsFile.GetPath();
 
-		nRes = wxExecute( sCmdLine, wxEXEC_SYNC | wxEXEC_NOEVENTS, (wxProcess*)NULL, &env );
+		nRes = wxExecute( sCmdLine, out, err, wxEXEC_SYNC | wxEXEC_NOEVENTS, &env );
 	}
 
 	if ( nRes == -1 )
@@ -553,6 +582,16 @@ bool wxMyApp::RunMkvmerge( const wxFileName& optionsFile )
 	}
 	else
 	{
+        for (size_t i = 0, size = err.GetCount( ); i < size; ++i)
+        {
+            wxLogError( err[i] );
+        }
+
+        for (size_t i = 0, size = out.GetCount(); i < size; ++i)
+        {
+            wxLogInfo( out[i] );
+        }
+
 		if ( nRes <= 1 )
 		{
 			wxLogInfo( _( "mkvmerge exit code: %d" ), nRes );
