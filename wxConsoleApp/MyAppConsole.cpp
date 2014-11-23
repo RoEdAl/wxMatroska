@@ -34,8 +34,8 @@ bool MyAppConsole::OnInit()
 
     // 
 #if defined(__WXMSW__) && defined(__VISUALC__) && defined(UNICODE)
-    _setmode( _fileno( stderr ), _O_U16TEXT );
-    _setmode( _fileno( stdout ), _O_U16TEXT );
+    _setmode( _fileno( stderr ), _O_U8TEXT );
+    _setmode( _fileno( stdout ), _O_U8TEXT );
 #endif
 
 	if ( !wxAppConsole::OnInit() )

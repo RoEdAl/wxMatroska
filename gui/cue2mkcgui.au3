@@ -467,7 +467,7 @@ Func run_wait($sCmd, $nPriority = 1, $sDir = @WorkingDir)
 		EndIf
 
 		If BinaryLen($b) > 0 Then
-			$s = BinaryToString($b, 2) ; UTF-16LE
+			$s = BinaryToString($b, 4) ; UTF-8
 
 			If @error Then
 				; ConsoleWriteError("BinaryToString failed: " & @error & @CRLF)
