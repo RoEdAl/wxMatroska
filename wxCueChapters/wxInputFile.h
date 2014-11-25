@@ -25,7 +25,7 @@ class wxInputFile:
 
 	public:
 
-		static const wxChar SEPARATOR;
+		static const char SEPARATOR;
 
 		wxInputFile( void );
 		wxInputFile( const wxInputFile& );

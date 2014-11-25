@@ -69,40 +69,40 @@ class wxXmlCueSheetRenderer:
 
 		static struct Tag
 		{
-			static const wxChar ORIGINAL_MEDIA_TYPE[];
-			static const wxChar CATALOG_NUMBER[];
-			static const wxChar TOTAL_PARTS[];
-			static const wxChar PART_NUMBER[];
+			static const char ORIGINAL_MEDIA_TYPE[];
+			static const char CATALOG_NUMBER[];
+			static const char TOTAL_PARTS[];
+			static const char PART_NUMBER[];
 		};
 
 		static struct Xml
 		{
-			static const wxChar CHAPTER_UID[];
-			static const wxChar EDITION_ENTRY[];
-			static const wxChar EDITION_UID[];
-			static const wxChar CHAPTER_TIME_START[];
-			static const wxChar CHAPTER_TIME_END[];
-			static const wxChar CHAPTER_DISPLAY[];
-			static const wxChar CHAPTER_STRING[];
-			static const wxChar CHAPTER_LANGUAGE[];
-			static const wxChar CHAPTER_FLAG_HIDDEN[];
-			static const wxChar CHAPTER_ATOM[];
-			static const wxChar CHAPTERS[];
-			static const wxChar TARGETS[];
-			static const wxChar TAGS[];
-			static const wxChar TARGET_TYPE_VALUE[];
-			static const wxChar TARGET_TYPE[];
-			static const wxChar TAG[];
-			static const wxChar TAG_LANGUAGE[];
-			static const wxChar NAME[];
-			static const wxChar STRING[];
-			static const wxChar SIMPLE[];
+			static const char CHAPTER_UID[];
+			static const char EDITION_ENTRY[];
+			static const char EDITION_UID[];
+			static const char CHAPTER_TIME_START[];
+			static const char CHAPTER_TIME_END[];
+			static const char CHAPTER_DISPLAY[];
+			static const char CHAPTER_STRING[];
+			static const char CHAPTER_LANGUAGE[];
+			static const char CHAPTER_FLAG_HIDDEN[];
+			static const char CHAPTER_ATOM[];
+			static const char CHAPTERS[];
+			static const char TARGETS[];
+			static const char TAGS[];
+			static const char TARGET_TYPE_VALUE[];
+			static const char TARGET_TYPE[];
+			static const char TAG[];
+			static const char TAG_LANGUAGE[];
+			static const char NAME[];
+			static const char STRING[];
+			static const char SIMPLE[];
 		};
 
 		static struct XmlValue
 		{
-			static const wxChar ALBUM[];
-			static const wxChar TRACK[];
+			static const char ALBUM[];
+			static const char TRACK[];
 		};
 
 	protected:

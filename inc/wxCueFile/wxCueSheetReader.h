@@ -59,8 +59,8 @@ class wxCueSheetReader:
 
 	public:
 
-		static const wxChar LOG_EXT[];
-		static const wxChar LOG_MASK[];
+		static const char LOG_EXT[];
+		static const char LOG_MASK[];
 
 		typedef wxUint32 ReadFlags;
 
@@ -138,7 +138,7 @@ class wxCueSheetReader:
 		typedef void ( wxCueSheetReader::* PARSE_METHOD )( const wxString&, const wxString& );
 		struct PARSE_STRUCT
 		{
-			const wxChar* token;
+			const char* token;
 			PARSE_METHOD method;
 		};
 

@@ -18,15 +18,17 @@ MACRO(ADD_MSVC_PRECOMPILED_HEADER PrecompiledHeader PrecompiledSource SourcesVar
   ENDIF(MSVC)
 ENDMACRO(ADD_MSVC_PRECOMPILED_HEADER)
 
-project(wxmatroska VERSION 1.0.0.0)
+project(wxmatroska VERSION 1.0.1.0)
 
 set(PROJECT_VERSION_STR ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
 set(PROJECT_VERSION_STR4 "${PROJECT_VERSION_MAJOR}, ${PROJECT_VERSION_MINOR}, ${PROJECT_VERSION_PATCH}, ${PROJECT_VERSION_TWEAK}")
 
 configure_file(
-	"${PROJECT_SOURCE_DIR}/app_config.h.in"
-	"${PROJECT_BINARY_DIR}/app_config.h"
+	${PROJECT_SOURCE_DIR}/app_config.h.in
+	${PROJECT_BINARY_DIR}/app_config.h
 )
+
+set(PROJECT_CONFIG_FILE ${PROJECT_BINARY_DIR}/app_config.h)
 
 include_directories( ${PROJECT_BINARY_DIR} )
 
@@ -86,3 +88,4 @@ add_subdirectory(wxConsoleApp)
 add_subdirectory(wxEncodingDetection)
 add_subdirectory(wxCueFile)
 add_subdirectory(wxCueChapters)
+add_subdirectory(gui)

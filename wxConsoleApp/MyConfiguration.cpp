@@ -9,7 +9,7 @@ MyConfiguration::MyConfiguration( void )
 
 wxString MyConfiguration::BoolToStr( bool b )
 {
-	return b ? wxT( "yes" ) : wxT( "no" );
+	return b ? "yes" : "no";
 }
 
 wxString MyConfiguration::ToString( bool b )

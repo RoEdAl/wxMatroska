@@ -157,7 +157,7 @@ wxString wxIndex::GetTimeStr( unsigned int hours, unsigned int minutes, double s
 {
 	wxString s;
 
-	s.Printf( wxT( "%02d:%02d:%012.9f" ), hours, minutes, seconds );
+	s.Printf( "%02d:%02d:%012.9f", hours, minutes, seconds );
 	FixDecimalPoint( s );
 	return s;
 }
@@ -176,7 +176,7 @@ void wxIndex::FixDecimalPoint( wxString& s )
 	wxString sep( "," );
 #endif	// wxUSE_INTL/!wxUSE_INTL
 
-	s.Replace( sep, wxT( '.' ) );
+	s.Replace( sep, '.' );
 }
 
 wxIndex& wxIndex::operator -=( wxULongLong frames )

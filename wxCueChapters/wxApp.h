@@ -69,8 +69,8 @@ class wxMyApp:
 
 	public:
 
-		static const wxChar APP_NAME[];
-		static const wxChar APP_VERSION[];
+		static const char APP_NAME[];
+		static const char APP_VERSION[];
 
 	public:
 

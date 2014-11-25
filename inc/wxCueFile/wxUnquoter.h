@@ -23,12 +23,12 @@ class wxUnquoter:
 
 	public:
 
-		static const wxChar RE_SINGLE_QUOTES[];
-		static const wxChar RE_SINGLE_QUOTES_EX[];
-		static const wxChar RE_DOUBLE_QUOTES[];
-		static const wxChar RE_PSEUDO_DOUUBLE_QUOTES[];
-		static const wxChar RE_FULL_SINGLE_QUOTES[];
-		static const wxChar RE_FULL_DOUBLE_QUOTES[];
+		static const char RE_SINGLE_QUOTES[];
+		static const char RE_SINGLE_QUOTES_EX[];
+		static const char RE_DOUBLE_QUOTES[];
+		static const char RE_PSEUDO_DOUUBLE_QUOTES[];
+		static const char RE_FULL_SINGLE_QUOTES[];
+		static const char RE_FULL_DOUBLE_QUOTES[];
 
 		static const wxChar POLISH_DOUBLE_QUOTES[];
 		static const wxChar POLISH_SINGLE_QUOTES[];
@@ -40,9 +40,9 @@ class wxUnquoter:
 
 	protected:
 
-		static const wxChar OPENING_QOUTATION_MARK_REPLACEMENT;
-		static const wxChar CLOSING_QOUTATION_MARK_REPLACEMENT;
-		static const wxChar GENERIC_REPLACEMENT[];
+		static const char OPENING_QOUTATION_MARK_REPLACEMENT;
+		static const char CLOSING_QOUTATION_MARK_REPLACEMENT;
+		static const char GENERIC_REPLACEMENT[];
 
 		typedef struct _QUOTATION_MARKS
 		{

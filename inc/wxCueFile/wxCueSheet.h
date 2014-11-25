@@ -36,13 +36,13 @@ class wxCueSheet:
 
 	public:
 
-		static const wxChar* const CD_ALIASES[];
-		static const size_t		   CD_ALIASES_SIZE;
+		static const char* const CD_ALIASES[];
+		static const size_t		 CD_ALIASES_SIZE;
 
 		static wxString GetCdAliasesRegExp();
 
-		static const wxChar ALBUM_REG_EX1[];
-		static const wxChar ALBUM_REG_EX2[];
+		static const char ALBUM_REG_EX1[];
+		static const char ALBUM_REG_EX2[];
 
 	protected:
 

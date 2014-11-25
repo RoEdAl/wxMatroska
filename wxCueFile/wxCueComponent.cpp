@@ -17,19 +17,19 @@ wxIMPLEMENT_ABSTRACT_CLASS( wxCueComponent, wxObject );
 
 const wxCueComponent::CDTEXT_ENTRY wxCueComponent::CdTextFields[] =
 {
-	{ wxCueTag::Name::ARRANGER, wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( 'a' ) },
-	{ wxCueTag::Name::COMPOSER, wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( 'c' ) },
-	{ wxCueTag::Name::DISC_ID, wxCueComponent::ANY, wxCueComponent::BINARY, wxT( '\000' ) },
-	{ wxCueTag::Name::GENRE, wxCueComponent::ANY, wxCueComponent::BINARY, wxT( '\000' ) },
-	{ wxCueTag::Name::ISRC, wxCueComponent::TRACK, wxCueComponent::BINARY, wxT( '\000' ) },
-	{ wxCueTag::Name::MESSAGE, wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( '\000' ) },
-	{ wxCueTag::Name::PERFORMER, wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( 'p' ) },
-	{ wxCueTag::Name::SONGWRITER, wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( 's' ) },
-	{ wxCueTag::Name::TITLE, wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( 't' ) },
-	{ wxCueTag::Name::UPC_EAN, wxCueComponent::DISC, wxCueComponent::CHARACTER, wxT( '\000' ) },
-	{ wxCueTag::Name::SIZE_INFO, wxCueComponent::ANY, wxCueComponent::CHARACTER, wxT( '\000' ) },
-	{ wxCueTag::Name::TOC_INFO, wxCueComponent::ANY, wxCueComponent::BINARY, wxT( '\000' ) },
-	{ wxCueTag::Name::TOC_INFO2, wxCueComponent::ANY, wxCueComponent::BINARY, wxT( '\000' ) }
+	{ wxCueTag::Name::ARRANGER, wxCueComponent::ANY, wxCueComponent::CHARACTER, 'a' },
+	{ wxCueTag::Name::COMPOSER, wxCueComponent::ANY, wxCueComponent::CHARACTER, 'c' },
+	{ wxCueTag::Name::DISC_ID, wxCueComponent::ANY, wxCueComponent::BINARY, '\000' },
+	{ wxCueTag::Name::GENRE, wxCueComponent::ANY, wxCueComponent::BINARY, '\000' },
+	{ wxCueTag::Name::ISRC, wxCueComponent::TRACK, wxCueComponent::BINARY, '\000' },
+	{ wxCueTag::Name::MESSAGE, wxCueComponent::ANY, wxCueComponent::CHARACTER, '\000' },
+	{ wxCueTag::Name::PERFORMER, wxCueComponent::ANY, wxCueComponent::CHARACTER, 'p' },
+	{ wxCueTag::Name::SONGWRITER, wxCueComponent::ANY, wxCueComponent::CHARACTER, 's' },
+	{ wxCueTag::Name::TITLE, wxCueComponent::ANY, wxCueComponent::CHARACTER, 't' },
+	{ wxCueTag::Name::UPC_EAN, wxCueComponent::DISC, wxCueComponent::CHARACTER, '\000' },
+	{ wxCueTag::Name::SIZE_INFO, wxCueComponent::ANY, wxCueComponent::CHARACTER, '\000' },
+	{ wxCueTag::Name::TOC_INFO, wxCueComponent::ANY, wxCueComponent::BINARY, '\000' },
+	{ wxCueTag::Name::TOC_INFO2, wxCueComponent::ANY, wxCueComponent::BINARY, '\000' }
 };
 
 const size_t wxCueComponent::CdTextFieldsSize = WXSIZEOF( wxCueComponent::CdTextFields );
@@ -38,15 +38,15 @@ const size_t wxCueComponent::CdTextFieldsSize = WXSIZEOF( wxCueComponent::CdText
 
 const wxCueComponent::KEYWORD_ENTRY wxCueComponent::Keywords[] =
 {
-	{ wxT( "REM" ), wxCueComponent::ANY },
-	{ wxT( "INDEX" ), wxCueComponent::TRACK },
-	{ wxT( "PREGAP" ), wxCueComponent::TRACK },
-	{ wxT( "POSTGAP" ), wxCueComponent::TRACK },
-	{ wxT( "FILE" ), wxCueComponent::ANY },
-	{ wxT( "FLAGS" ), wxCueComponent::TRACK },
-	{ wxT( "TRACK" ), wxCueComponent::ANY },
-	{ wxT( "CATALOG" ), wxCueComponent::DISC },
-	{ wxT( "CDTEXTFILE" ), wxCueComponent::DISC }
+	{ "REM", wxCueComponent::ANY },
+	{ "INDEX", wxCueComponent::TRACK },
+	{ "PREGAP", wxCueComponent::TRACK },
+	{ "POSTGAP", wxCueComponent::TRACK },
+	{ "FILE", wxCueComponent::ANY },
+	{ "FLAGS", wxCueComponent::TRACK },
+	{ "TRACK", wxCueComponent::ANY },
+	{ "CATALOG", wxCueComponent::DISC },
+	{ "CDTEXTFILE", wxCueComponent::DISC }
 };
 
 const size_t wxCueComponent::KeywordsSize = WXSIZEOF( wxCueComponent::Keywords );
@@ -59,13 +59,13 @@ wxString wxCueComponent::GetCdTextInfoRegExp()
 
 	for ( size_t i = 0; i < CdTextFieldsSize; i++ )
 	{
-		*tos << CdTextFields[ i ].keyword << wxT( '|' );
+		*tos << CdTextFields[ i ].keyword << '|' ;
 	}
 
 	( *tos ).Flush();
 	wxString s( tos.GetString() );
 	wxASSERT( !s.IsEmpty() );
-	return s.RemoveLast().Prepend( wxT( '(' ) ).Append( wxT( ')' ) );
+	return s.RemoveLast().Prepend( '(' ).Append( ')' );
 }
 
 wxString wxCueComponent::GetKeywordsRegExp()
@@ -74,13 +74,13 @@ wxString wxCueComponent::GetKeywordsRegExp()
 
 	for ( size_t i = 0; i < KeywordsSize; i++ )
 	{
-		*tos << Keywords[ i ].keyword << wxT( '|' );
+		*tos << Keywords[ i ].keyword << '|';
 	}
 
 	( *tos ).Flush();
 	const wxString& s = tos.GetString();
 	wxASSERT( !s.IsEmpty() );
-	return wxString::Format( wxT( "(%s)" ), s.Left( s.Length() - 1 ) );
+	return wxString::Format( "(%s)", s.Left( s.Length() - 1 ) );
 }
 
 bool wxCueComponent::GetCdTextInfoFormat( const wxString& sKeyword, wxCueComponent::ENTRY_FORMAT& fmt )
@@ -273,7 +273,7 @@ void wxCueComponent::GetTags(
 		}
 	}
 
-	wxRegEx reEmptyValue( wxT( "\\A[[:space:][:punct:]]*\\Z" ), wxRE_ADVANCED | wxRE_ICASE );
+	wxRegEx reEmptyValue( "\\A[[:space:][:punct:]]*\\Z", wxRE_ADVANCED | wxRE_ICASE );
 	wxASSERT( reEmptyValue.IsValid() );
 
 	remove_duplicates( reEmptyValue, tagsHash );
@@ -483,7 +483,7 @@ wxString wxCueComponent::FormatCdTextData( const wxString& sKeyword, const wxStr
 {
 	ENTRY_FORMAT fmt;
 
-	wxCHECK( GetCdTextInfoFormat( sKeyword, fmt ), wxT( "" ) );
+	wxCHECK( GetCdTextInfoFormat( sKeyword, fmt ), wxEmptyString );
 
 	if ( fmt == BINARY )
 	{
@@ -512,7 +512,7 @@ void wxCueComponent::GetReplacements( wxCueComponent::wxHashString& replacements
 {
 	for ( size_t i = 0; i < CdTextFieldsSize; i++ )
 	{
-		if ( CdTextFields[ i ].replacement == wxT( '\000' ) )
+		if ( CdTextFields[ i ].replacement == '\000' )
 		{
 			continue;
 		}
@@ -521,10 +521,10 @@ void wxCueComponent::GetReplacements( wxCueComponent::wxHashString& replacements
 		wxArrayCueTag tags;
 
 		wxCueTag::GetTags( m_cdTextTags, CdTextFields[ i ].keyword, tags );
-		sValue = wxCueTag::GetFlattenValues( tags, wxT( ',' ) );
+		sValue = wxCueTag::GetFlattenValues( tags, ',' );
 
 		wxString s( CdTextFields[ i ].replacement );
-		s.Prepend( m_bTrack ? wxT( 't' ) : wxT( 'd' ) );
+		s.Prepend( m_bTrack ? 't' : 'd' );
 
 		bool bAdd = false;
 		switch ( CdTextFields[ i ].type )
@@ -533,7 +533,7 @@ void wxCueComponent::GetReplacements( wxCueComponent::wxHashString& replacements
 			{
 				bAdd = true;
 				wxString s( CdTextFields[ i ].replacement );
-				s.Prepend( wxT( 'a' ) );
+				s.Prepend( 'a' );
 				replacements[ s ] = sValue;
 				break;
 			}

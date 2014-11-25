@@ -20,8 +20,8 @@
 
 // ===============================================================================
 
-const wxChar wxMyApp::APP_NAME[]	= wxT( "cue2mkc" );
-const wxChar wxMyApp::APP_VERSION[] = wxT( WXMATROSKA_VERSION_STR );
+const char wxMyApp::APP_NAME[]	= "cue2mkc";
+const char wxMyApp::APP_VERSION[] = WXMATROSKA_VERSION_STR;
 
 // ===============================================================================
 
@@ -489,7 +489,7 @@ wxCueSheet& wxMyApp::GetMergedCueSheet()
 {
 	if ( !HasMergedCueSheet() )
 	{
-		wxLogDebug( wxT( "Creating empty cue sheet for merging" ) );
+		wxLogDebug( "Creating empty cue sheet for merging" );
 		m_pMergedCueSheet.reset( new wxCueSheet() );
 	}
 
@@ -516,25 +516,25 @@ bool wxMyApp::RunMkvmerge( const wxFileName& optionsFile )
 
     if (m_cfg.GetMkvmergeDir( ).IsOk( ))
     {
-        wxFileName mkvmerge( m_cfg.GetMkvmergeDir( ).GetFullPath( ), wxT( "mkvmerge" ) );
+        wxFileName mkvmerge( m_cfg.GetMkvmergeDir( ).GetFullPath( ), "mkvmerge" );
         if (wxLog::GetVerbose( ))
         {
-            sCmdLine.Printf( wxS( "\"%s\" --output-charset utf-8 \"@%s\"" ), mkvmerge.GetFullPath( ), sOptionsFile );
+            sCmdLine.Printf( "\"%s\" --output-charset utf-8 \"@%s\"", mkvmerge.GetFullPath( ), sOptionsFile );
         }
         else
         {
-            sCmdLine.Printf( wxS( "\"%s\" --quiet --output-charset utf-8 \"@%s\"" ), mkvmerge.GetFullPath( ), sOptionsFile );
+            sCmdLine.Printf( "\"%s\" --quiet --output-charset utf-8 \"@%s\"", mkvmerge.GetFullPath( ), sOptionsFile );
         }
     }
     else
     {
         if (wxLog::GetVerbose( ))
         {
-            sCmdLine.Printf( wxS( "mkvmerge --output-charset utf-8 \"@%s\"" ), sOptionsFile );
+            sCmdLine.Printf( "mkvmerge --output-charset utf-8 \"@%s\"", sOptionsFile );
         }
         else
         {
-            sCmdLine.Printf( wxS( "mkvmerge --quiet --output-charset utf-8 \"@%s\"" ), sOptionsFile );
+            sCmdLine.Printf( "mkvmerge --quiet --output-charset utf-8 \"@%s\"", sOptionsFile );
         }
     }
 

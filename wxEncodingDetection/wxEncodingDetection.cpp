@@ -111,9 +111,9 @@ class wxMBConv_MLang:
 			{
 				if ( nDstSize > 0 )
 				{
-					if ( dst != NULL && *dst == wxT( '\uFFFD' ) && srcLen <= 3 )
+					if ( dst != NULL && *dst == wxS( '\uFFFD' ) && srcLen <= 3 )
 					{
-						wxLogDebug( wxT( "Unicode replacement character - FFFE" ) );
+						wxLogDebug( "Unicode replacement character - FFFE" );
 						return wxCONV_FAILED;
 					}
 					else if ( nDstSize < sizeof ( wchar_t ) )
@@ -132,7 +132,7 @@ class wxMBConv_MLang:
 			}
 			else
 			{
-				wxLogDebug( wxT( "wxMBConv_MLang::ToWChar: DoConvert error: 0x%08x" ), hRes );
+				wxLogDebug( "wxMBConv_MLang::ToWChar: DoConvert error: 0x%08x", hRes );
 				return wxCONV_FAILED;
 			}
 		}
@@ -169,7 +169,7 @@ class wxMBConv_MLang:
 			}
 			else
 			{
-				wxLogDebug( wxT( "wxMBConv_MLang::FromWChar: DoConvert error: 0x%08x" ), hRes );
+				wxLogDebug( "wxMBConv_MLang::FromWChar: DoConvert error: 0x%08x", hRes );
 				return wxCONV_FAILED;
 			}
 		}
@@ -198,7 +198,7 @@ class wxMBConv_MLang:
 					{
 						default:
 						{
-							wxLogDebug( wxT( "Unexpected NUL length %u" ), nDstSize );
+							wxLogDebug( "Unexpected NUL length %u", nDstSize );
 							self->m_minMBCharWidth = (size_t)-1;
 							break;
 						}
@@ -720,14 +720,14 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 		{
 			for ( INT i = 0; i < nSize; i++ )
 			{
-				wxLogDebug( wxT( "Detected encoding of file \u201C%s\u201D is %d (%d%%)" ), fn.GetName(), dei[ i ].nCodePage, dei[ i ].nDocPercent );
+				wxLogDebug( wxS( "Detected encoding of file \u201C%s\u201D is %d (%d%%)" ), fn.GetName(), dei[ i ].nCodePage, dei[ i ].nDocPercent );
 			}
 
 			pRes = wxMBConv_MLang::Create( dei[ 0 ].nCodePage, sDescription );
 		}
 		else
 		{
-			wxLogDebug( wxT( "Cannot detect code page - using default encoding" ) );
+			wxLogDebug( "Cannot detect code page - using default encoding" );
 			pRes = wxMBConv_MLang::Create( nDefCodePage, sDescription );
 		}
 	}

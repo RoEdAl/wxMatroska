@@ -7,16 +7,16 @@
 
 // ================================================================================
 
-const wxChar MyAppConsole::APP_VENDOR_NAME[]   = wxS( "Edmunt Pienkowsky" );
-const wxChar MyAppConsole::APP_AUTHOR[]		   = wxS( "Edmunt Pienkowsky - roed@onet.eu" );
-const wxChar MyAppConsole::LICENSE_FILE_NAME[] = wxS( "license.txt" );
+const char MyAppConsole::APP_VENDOR_NAME[]   = "Edmunt Pienkowsky";
+const char MyAppConsole::APP_AUTHOR[]		 = "Edmunt Pienkowsky - roed@onet.eu";
+const char MyAppConsole::LICENSE_FILE_NAME[] = "license.txt";
 
 static const size_t MAX_LICENSE_FILE_SIZE = 4 * 1024;
 
 // ================================================================================
 
 MyAppConsole::MyAppConsole( void ):
-	m_sSeparator( wxT( '=' ), 75 )
+	m_sSeparator( '=', 75 )
 {}
 
 bool MyAppConsole::OnInit()

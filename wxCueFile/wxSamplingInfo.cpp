@@ -13,7 +13,7 @@ wxIMPLEMENT_DYNAMIC_CLASS( wxSamplingInfo, wxObject );
 // ===============================================================================
 
 const wxTimeSpan wxSamplingInfo::wxInvalidDuration		 = wxTimeSpan::Hours( -1 );
-const wxUint64	 wxSamplingInfo::wxInvalidNumberOfFrames = wxULL( 0xFFFFFFFFFFFFFFFF );
+const wxUint64	 wxSamplingInfo::wxInvalidNumberOfFrames = wxUINT64_MAX;
 
 // ===============================================================================
 
@@ -211,7 +211,7 @@ wxString wxSamplingInfo::GetCdFramesStr( wxULongLong frames ) const
 	unsigned long r_seconds = ns.GetLo();
 	unsigned long r_frames	= nf.GetLo();
 
-	return wxString::Format( wxS( "%d:%02d:%02d" ), r_minutes, r_seconds, r_frames );
+	return wxString::Format( "%d:%02d:%02d", r_minutes, r_seconds, r_frames );
 }
 
 wxULongLong wxSamplingInfo::GetFramesFromCdFrames( wxULongLong cdFrames ) const

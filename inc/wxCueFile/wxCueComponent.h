@@ -36,10 +36,10 @@ class wxCueComponent:
 
 		typedef struct _CDTEXT_ENTRY
 		{
-			const wxChar* keyword;
+			const char* keyword;
 			ENTRY_TYPE type;
 			ENTRY_FORMAT format;
-			wxChar replacement;
+			char replacement;
 		} CDTEXT_ENTRY;
 
 		static const CDTEXT_ENTRY CdTextFields[];
@@ -47,7 +47,7 @@ class wxCueComponent:
 
 		typedef struct _KEYWORD_ENTRY
 		{
-			const wxChar* keyword;
+			const char* keyword;
 			ENTRY_TYPE type;
 		} KEYWORD_ENTRY;
 

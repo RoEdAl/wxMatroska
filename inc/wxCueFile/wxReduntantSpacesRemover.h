@@ -10,7 +10,7 @@ class wxReduntantSpacesRemover:
 {
 	public:
 
-		static const wxChar REG_EX[];
+		static const char REG_EX[];
 
 		wxReduntantSpacesRemover( void );
 

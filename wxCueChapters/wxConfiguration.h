@@ -79,7 +79,7 @@ class wxConfiguration:
 		struct CuesheetAttachModeName
 		{
 			CUESHEET_ATTACH_MODE value;
-			const wxChar* description;
+			const char* description;
 		};
 
 		static const CuesheetAttachModeName AttachModeNames[];
@@ -87,7 +87,7 @@ class wxConfiguration:
 		struct RenderModeName
 		{
 			RENDER_MODE value;
-			const wxChar* description;
+			const char* description;
 		};
 
 		static const RenderModeName RenderModeNames[];
@@ -95,7 +95,7 @@ class wxConfiguration:
 		struct INFO_SUBJECT_DESC
 		{
 			INFO_SUBJECT value;
-			const wxChar* description;
+			const char* description;
 		};
 
 		static const INFO_SUBJECT_DESC InfoSubjectDesc[];
@@ -217,18 +217,18 @@ class wxConfiguration:
 
 	public:
 
-		static const wxChar CUE_SHEET_EXT[];
-		static const wxChar MATROSKA_CHAPTERS_EXT[];
-		static const wxChar MATROSKA_TAGS_EXT[];
-		static const wxChar MATROSKA_OPTS_EXT[];
-		static const wxChar MATROSKA_AUDIO_EXT[];
-		static const wxChar CUESHEET_EXT[];
-		static const wxChar MATROSKA_NAME_FORMAT[];
-		static const wxChar TRACK_NAME_FORMAT[];
+		static const char CUE_SHEET_EXT[];
+        static const char MATROSKA_CHAPTERS_EXT[];
+        static const char MATROSKA_TAGS_EXT[];
+        static const char MATROSKA_OPTS_EXT[];
+        static const char MATROSKA_AUDIO_EXT[];
+        static const char CUESHEET_EXT[];
+        static const char MATROSKA_NAME_FORMAT[];
+        static const char TRACK_NAME_FORMAT[];
 		static const size_t MAX_EXT_LEN;
-		static const wxChar LANG_FILE_URL[];
-		static const wxChar LANG_FILE_NAME[];
-		static const wxChar LANG_UND[];
+        static const char LANG_FILE_URL[];
+        static const char LANG_FILE_NAME[];
+        static const char LANG_UND[];
 
 	public:
 

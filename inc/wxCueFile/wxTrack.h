@@ -63,7 +63,7 @@ class wxTrack:
 		typedef struct _FLAG_STR
 		{
 			Flag flag;
-			const wxChar* szName;
+			const char* szName;
 		} FLAG_STR;
 
 		static const FLAG_STR FlagString[];
@@ -72,7 +72,7 @@ class wxTrack:
 		typedef struct _DATA_MODE_STR
 		{
 			DataMode mode;
-			const wxChar* szName;
+			const char* szName;
 		} DATA_MODE_STR;
 
 		static const DATA_MODE_STR DataModeString[];

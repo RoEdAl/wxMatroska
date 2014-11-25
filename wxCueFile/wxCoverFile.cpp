@@ -239,7 +239,7 @@ bool wxCoverFile::GetCoverFile( const wxDir& sourceDir, const wxString& sFileNam
 
     wxString sFileName;
     size_t	 nCounter = 0;
-    wxString sFileSpec( wxString::Format( wxS( "%s.*" ), sFileNameBase ) );
+    wxString sFileSpec( wxString::Format( "%s.*", sFileNameBase ) );
 
     if (sourceDir.GetFirst( &sFileName, sFileSpec, wxDIR_FILES ))
     {

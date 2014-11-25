@@ -65,7 +65,7 @@ void wxDataFile::copy( const wxDataFile& df )
 
 wxString wxDataFile::GetFileTypeRegExp()
 {
-	return get_texts( FileTypeString ).Prepend( wxT( '(' ) ).Append( wxT( ')' ) );
+	return get_texts( FileTypeString ).Prepend( '(' ).Append( ')' );
 }
 
 wxString wxDataFile::ToString( wxDataFile::FileType ftype )
@@ -191,11 +191,11 @@ bool wxDataFile::FindFile( wxFileName& fn, const wxString& sAlternateExt ) const
 	}
 	else if ( m_ftype == MP3 )
 	{
-		sTokens = wxT( "mp3" );
+		sTokens = "mp3";
 	}
 
 	wxFileName		  fnTry( m_fileName );
-	wxStringTokenizer tokenizer( sTokens, wxT( ',' ) );
+	wxStringTokenizer tokenizer( sTokens, ',' );
 	while ( tokenizer.HasMoreTokens() )
 	{
 		fnTry.SetExt( tokenizer.GetNextToken() );

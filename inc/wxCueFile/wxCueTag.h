@@ -49,29 +49,29 @@ class wxCueTag:
 
 		static struct Name
 		{
-			static const wxChar CUESHEET[];
-			static const wxChar TOTALTRACKS[];
-			static const wxChar ARRANGER[];
-			static const wxChar COMPOSER[];
-			static const wxChar ISRC[];
-			static const wxChar TITLE[];
-			static const wxChar ALBUM[];
-			static const wxChar PERFORMER[];
-			static const wxChar ARTIST[];
-			static const wxChar ALBUM_ARTIST[];
-			static const wxChar ALBUMARTIST[];
-			static const wxChar CATALOG[];
-			static const wxChar CDTEXTFILE[];
-			static const wxChar DISC_ID[];
-			static const wxChar GENRE[];
-			static const wxChar MESSAGE[];
-			static const wxChar SONGWRITER[];
-			static const wxChar UPC_EAN[];
-			static const wxChar SIZE_INFO[];
-			static const wxChar TOC_INFO[];
-			static const wxChar TOC_INFO2[];
-			static const wxChar DISCNUMBER[];
-			static const wxChar TOTALDISCS[];
+			static const char CUESHEET[];
+			static const char TOTALTRACKS[];
+			static const char ARRANGER[];
+			static const char COMPOSER[];
+			static const char ISRC[];
+			static const char TITLE[];
+			static const char ALBUM[];
+			static const char PERFORMER[];
+			static const char ARTIST[];
+			static const char ALBUM_ARTIST[];
+			static const char ALBUMARTIST[];
+			static const char CATALOG[];
+			static const char CDTEXTFILE[];
+			static const char DISC_ID[];
+			static const char GENRE[];
+			static const char MESSAGE[];
+			static const char SONGWRITER[];
+			static const char UPC_EAN[];
+			static const char SIZE_INFO[];
+			static const char TOC_INFO[];
+			static const char TOC_INFO2[];
+			static const char DISCNUMBER[];
+			static const char TOTALDISCS[];
 		};
 
 	public:
@@ -119,7 +119,7 @@ class wxCueTag:
 		typedef struct _SOURCE2TEXT
 		{
 			TAG_SOURCE eSource;
-			const wxChar* pText;
+			const char* pText;
 		} SOURCE2TEXT;
 
 		static const SOURCE2TEXT SOURCE2TEXT_MAPPING[];

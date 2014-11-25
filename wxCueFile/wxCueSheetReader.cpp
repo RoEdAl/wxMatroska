@@ -19,22 +19,22 @@ wxIMPLEMENT_DYNAMIC_CLASS( wxCueSheetReader, wxObject );
 
 // ===============================================================================
 
-const wxChar wxCueSheetReader::LOG_EXT[]  = wxS( "log" );
-const wxChar wxCueSheetReader::LOG_MASK[] = wxS( "*.log" );
+const char wxCueSheetReader::LOG_EXT[]  = "log";
+const char wxCueSheetReader::LOG_MASK[] = "*.log";
 
 // ===============================================================================
 
 const wxCueSheetReader::PARSE_STRUCT wxCueSheetReader::parseArray[] =
 {
-	{ wxS( "REM" ), &wxCueSheetReader::ParseComment },
-	{ wxS( "INDEX" ), &wxCueSheetReader::ParseIndex },
-	{ wxS( "PREGAP" ), &wxCueSheetReader::ParsePreGap },
-	{ wxS( "POSTGAP" ), &wxCueSheetReader::ParsePostGap },
-	{ wxS( "FILE" ), &wxCueSheetReader::ParseFile },
-	{ wxS( "FLAGS" ), &wxCueSheetReader::ParseFlags },
-	{ wxS( "TRACK" ), &wxCueSheetReader::ParseTrack },
-	{ wxS( "CATALOG" ), &wxCueSheetReader::ParseCatalog },
-	{ wxS( "CDTEXTFILE" ), &wxCueSheetReader::ParseCdTextFile }
+	{ "REM", &wxCueSheetReader::ParseComment },
+	{ "INDEX", &wxCueSheetReader::ParseIndex },
+	{ "PREGAP", &wxCueSheetReader::ParsePreGap },
+	{ "POSTGAP", &wxCueSheetReader::ParsePostGap },
+	{ "FILE", &wxCueSheetReader::ParseFile },
+	{ "FLAGS", &wxCueSheetReader::ParseFlags },
+	{ "TRACK", &wxCueSheetReader::ParseTrack },
+	{ "CATALOG", &wxCueSheetReader::ParseCatalog },
+	{ "CDTEXTFILE", &wxCueSheetReader::ParseCdTextFile }
 };
 
 // ===============================================================================
@@ -44,7 +44,7 @@ wxString wxCueSheetReader::GetKeywordsRegExp()
 	wxString sKeywordsRegExp( wxCueComponent::GetKeywordsRegExp() );
 	wxString s;
 
-	s.Printf( wxS( "\\A\\s*%s\\s+(\\S.*\\S)\\s*\\Z" ), sKeywordsRegExp );
+	s.Printf( "\\A\\s*%s\\s+(\\S.*\\S)\\s*\\Z", sKeywordsRegExp );
 	return s;
 }
 
@@ -53,7 +53,7 @@ wxString wxCueSheetReader::GetDataModeRegExp()
 	wxString sDataModeRegExp( wxTrack::GetDataModeRegExp() );
 	wxString s;
 
-	s.Printf( wxS( "\\A(\\d{1,2})(?:\\s+%s){0,1}\\Z" ), sDataModeRegExp );
+	s.Printf( "\\A(\\d{1,2})(?:\\s+%s){0,1}\\Z", sDataModeRegExp );
 	return s;
 }
 
@@ -62,7 +62,7 @@ wxString wxCueSheetReader::GetCdTextInfoRegExp()
 	wxString sRegExp( wxCueComponent::GetCdTextInfoRegExp() );
 	wxString s;
 
-	s.Printf( wxS( "\\A\\s*%s\\s+(\\S.*\\S)\\s*\\Z" ), sRegExp );
+	s.Printf( "\\A\\s*%s\\s+(\\S.*\\S)\\s*\\Z", sRegExp );
 	return s;
 }
 
@@ -71,7 +71,7 @@ wxString wxCueSheetReader::GetDataFileRegExp()
 	wxString sRegExp( wxDataFile::GetFileTypeRegExp() );
 	wxString s;
 
-	s.Printf( wxS( "\\A((?:\\\".*\\\")|(?:\\'.*\\'))(?:\\s+%s){0,1}\\Z" ), sRegExp );
+	s.Printf( "\\A((?:\\\".*\\\")|(?:\\'.*\\'))(?:\\s+%s){0,1}\\Z", sRegExp );
 	return s;
 }
 
@@ -123,11 +123,12 @@ wxString wxCueSheetReader::GetOneTrackCue()
 	wxTextOutputStreamOnString tos;
 
 	( *tos ) <<
-	wxS( "REM one-track CUE sheet" ) << endl <<
-	wxS( "FILE \"%source%\" WAVE" ) << endl <<
-	wxS( "\tTRACK 01 AUDIO" ) << endl <<
-	wxS( "\tINDEX 01 00:00:00" ) << endl;
+	"REM one-track CUE sheet" << endl <<
+	"FILE \"%source%\" WAVE" << endl <<
+	"\tTRACK 01 AUDIO" << endl <<
+	"\tINDEX 01 00:00:00" << endl;
 	( *tos ).Flush();
+
 	return tos.GetString();
 }
 
@@ -138,7 +139,7 @@ bool wxCueSheetReader::TestReadFlags( ReadFlags nMask )
 
 wxString wxCueSheetReader::GetTagLibVersion()
 {
-	return wxString::Format( wxS( "TagLib version: %d.%d.%d. Copyright \u00A9 2002 - 2008 by Scott Wheeler" ), TAGLIB_MAJOR_VERSION, TAGLIB_MINOR_VERSION, TAGLIB_PATCH_VERSION );
+	return wxString::Format( "TagLib version: %d.%d.%d. Copyright \u00A9 2002 - 2008 by Scott Wheeler", TAGLIB_MAJOR_VERSION, TAGLIB_MINOR_VERSION, TAGLIB_PATCH_VERSION );
 }
 
 #ifdef __WXDEBUG__
@@ -153,17 +154,17 @@ void TagLibDebugListener::printMessage( const TagLib::String& msg )
 wxCueSheetReader::wxCueSheetReader( void ):
 	m_reKeywords( GetKeywordsRegExp(), wxRE_ADVANCED ),
 	m_reCdTextInfo( GetCdTextInfoRegExp(), wxRE_ADVANCED ),
-	m_reEmpty( wxS( "\\A\\s*\\Z" ), wxRE_ADVANCED ),
-	m_reIndex( wxS( "\\A\\s*(\\d{1,2})\\s+(\\S.*\\S)\\Z" ), wxRE_ADVANCED ),
-	m_reMsf( wxS( "\\A(\\d{1,4}):(\\d{1,2}):(\\d{1,2})\\Z" ), wxRE_ADVANCED ),
+	m_reEmpty( "\\A\\s*\\Z", wxRE_ADVANCED ),
+	m_reIndex( "\\A\\s*(\\d{1,2})\\s+(\\S.*\\S)\\Z", wxRE_ADVANCED ),
+	m_reMsf( "\\A(\\d{1,4}):(\\d{1,2}):(\\d{1,2})\\Z", wxRE_ADVANCED ),
 	m_reQuotesEx( wxUnquoter::RE_SINGLE_QUOTES_EX, wxRE_ADVANCED ),
-	m_reFlags( wxT( "\\s+" ), wxRE_ADVANCED ),
+	m_reFlags( "\\s+", wxRE_ADVANCED ),
 	m_reDataMode( GetDataModeRegExp(), wxRE_ADVANCED ),
 	m_reDataFile( GetDataFileRegExp(), wxRE_ADVANCED ),
-	m_reCatalog( wxS( "\\d{13}" ), wxRE_ADVANCED | wxRE_NOSUB ),
-	m_reIsrc( wxS( "([[:upper:]]{2}|00)-{0,1}[[:upper:][:digit:]]{3}-{0,1}[[:digit:]]{5}" ), wxRE_ADVANCED | wxRE_NOSUB ),
-	m_reTrackComment( wxS( "cue[[.hyphen.][.underscore.][.low-line.]]track([[:digit:]]{1,2})[[.underscore.][.low-line.]]([[:alpha:][.hyphen.][.underscore.][.low-line.][.space.]]+)" ), wxRE_ADVANCED | wxRE_ICASE ),
-	m_reCommentMeta( wxS( "\\A([[.quotation-mark.]]{0,1})([[:upper:][.hyphen.][.underscore.][:space:][.low-line.]]+)\\1[[:space:]]+([^[:space:]].+)\\Z" ), wxRE_ADVANCED ),
+	m_reCatalog( "\\d{13}", wxRE_ADVANCED | wxRE_NOSUB ),
+	m_reIsrc( "([[:upper:]]{2}|00)-{0,1}[[:upper:][:digit:]]{3}-{0,1}[[:digit:]]{5}", wxRE_ADVANCED | wxRE_NOSUB ),
+	m_reTrackComment( "cue[[.hyphen.][.underscore.][.low-line.]]track([[:digit:]]{1,2})[[.underscore.][.low-line.]]([[:alpha:][.hyphen.][.underscore.][.low-line.][.space.]]+)", wxRE_ADVANCED | wxRE_ICASE ),
+	m_reCommentMeta( "\\A([[.quotation-mark.]]{0,1})([[:upper:][.hyphen.][.underscore.][:space:][.low-line.]]+)\\1[[:space:]]+([^[:space:]].+)\\Z", wxRE_ADVANCED ),
 	m_bErrorsAsWarnings( true ),
 	m_nReadFlags( EC_PARSE_COMMENTS | EC_ELLIPSIZE_TAGS | EC_REMOVE_EXTRA_SPACES | EC_MEDIA_READ_TAGS | EC_FIND_COVER | EC_FIND_LOG ),
 	m_sOneTrackCue( GetOneTrackCue() )
@@ -380,7 +381,7 @@ void wxCueSheetReader::AppendTags( const wxArrayCueTag& comments, bool bSingleMe
 				}
 				else
 				{
-					wxLogDebug( wxT( "Invalid track comment regular expression" ) );
+					wxLogDebug( "Invalid track comment regular expression" );
 				}
 			}
 			else
@@ -489,7 +490,7 @@ bool wxCueSheetReader::BuildFromSingleMediaFile( const wxDataFile& mediaFile )
 {
 	m_cueSheet.Clear();
 	wxString sOneTrackCue( m_sOneTrackCue );
-	size_t	 nRepl = sOneTrackCue.Replace( wxS( "%source%" ), mediaFile.GetRealFileName().GetFullPath() );
+	size_t	 nRepl = sOneTrackCue.Replace( "%source%", mediaFile.GetRealFileName().GetFullPath() );
 	wxASSERT( nRepl > 0 );
 
 	if ( ParseCue( wxCueSheetContent( sOneTrackCue, mediaFile, true ) ) )
@@ -506,7 +507,7 @@ bool wxCueSheetReader::BuildFromSingleMediaFile( const wxDataFile& mediaFile )
 
 wxString wxCueSheetReader::internalReadCueSheet( wxInputStream& stream, wxMBConv& conv )
 {
-	wxTextInputStream		   tis( stream, wxS( " \t" ), conv );
+	wxTextInputStream		   tis( stream, " \t", conv );
 	wxTextOutputStreamOnString tos;
 
 	m_cueSheet.Clear();
@@ -555,11 +556,11 @@ void wxCueSheetReader::DumpErrors( size_t nLine ) const
 		{
 			if ( m_bErrorsAsWarnings )
 			{
-				wxLogWarning( _( "Line %d: %s" ), nLine, i->GetData() );
+                wxLogWarning( _( "Line %" wxSizeTFmtSpec "d: %s" ), nLine, i->GetData( ) );
 			}
 			else
 			{
-				wxLogError( _( "Line %d: %s" ), nLine, i->GetData() );
+                wxLogError( _( "Line %" wxSizeTFmtSpec "d: %s" ), nLine, i->GetData( ) );
 			}
 		}
 	}
@@ -637,7 +638,7 @@ void wxCueSheetReader::ParseCdTextInfo( size_t WXUNUSED( nLine ), const wxString
 
 	bool add = true;
 
-	if ( sToken.CmpNoCase( wxT( "ISRC" ) ) == 0 )
+	if ( sToken.CmpNoCase( "ISRC" ) == 0 )
 	{
 		if ( !m_reIsrc.Matches( sBody ) )
 		{
@@ -786,7 +787,7 @@ bool wxCueSheetReader::ParseCueLine( const wxString& sLine, size_t nLine )
 	}
 	else
 	{
-		wxLogWarning( _( "Incorrect line %d: %s" ), nLine, sLine );
+        wxLogWarning( _( "Incorrect line %" wxSizeTFmtSpec "d: %s" ), nLine, sLine );
 		ParseGarbage( sLine );
 		res = false;
 	}
@@ -984,8 +985,8 @@ void wxCueSheetReader::ParseFlags( const wxString& WXUNUSED( sToken ), const wxS
 {
 	wxString sFlags( sBody );
 
-	m_reFlags.ReplaceAll( &sFlags, wxT( '|' ) );
-	wxStringTokenizer tokenizer( sFlags, wxT( "|" ) );
+	m_reFlags.ReplaceAll( &sFlags, '|' );
+	wxStringTokenizer tokenizer( sFlags, "|" );
 	while ( tokenizer.HasMoreTokens() )
 	{
 		wxString sFlag( tokenizer.GetNextToken() );

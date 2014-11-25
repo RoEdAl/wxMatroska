@@ -7,13 +7,13 @@
 
 // ===============================================================================
 
-const wxChar wxReduntantSpacesRemover::REG_EX[] = wxT( "[[:space:]]{2,}" );
+const char wxReduntantSpacesRemover::REG_EX[] = "[[:space:]]{2,}";
 
 // ===============================================================================
 
 wxReduntantSpacesRemover::wxReduntantSpacesRemover():
 	m_reReduntantSpaces( REG_EX, wxRE_ADVANCED ),
-	m_sReplacement( wxT( ' ' ) )
+	m_sReplacement( ' ' )
 {
 	wxASSERT( m_reReduntantSpaces.IsValid() );
 }

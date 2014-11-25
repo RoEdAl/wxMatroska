@@ -7,8 +7,8 @@
 
 // ===============================================================================
 
-const wxChar wxTrailingSpacesRemover::REG_EX[] =
-	wxT( "\\A[[:space:][.newline.][.carriage-return.]]*([^[:space:][.newline.][.carriage-return.]].*[^[:space:][.newline.][.carriage-return.]])[[:space:][.newline.][.carriage-return.]]*\\Z" );
+const char wxTrailingSpacesRemover::REG_EX[] =
+	"\\A[[:space:][.newline.][.carriage-return.]]*([^[:space:][.newline.][.carriage-return.]].*[^[:space:][.newline.][.carriage-return.]])[[:space:][.newline.][.carriage-return.]]*\\Z";
 
 // ===============================================================================
 

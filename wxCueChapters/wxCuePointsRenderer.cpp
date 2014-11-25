@@ -33,8 +33,7 @@ static wxString get_track_title( const wxTrack& track )
 		wxString s;
 		for ( size_t i = 0, nCount = tags.GetCount(); i < nCount; i++ )
 		{
-			s += tags[ i ].GetFlattenValue();
-			s += wxS( ';' );
+            s << tags[i].GetFlattenValue( ) << ';';
 		}
 
 		return s.RemoveLast();
@@ -51,10 +50,10 @@ void wxCuePointsRenderer::RenderDisc( const wxCueSheet& cueSheet )
 	wxDateTime	   dtNow( wxDateTime::Now() );
 
 	*m_os <<
-	wxS( "# This file was created by " ) << wxGetApp().GetAppDisplayName() << wxS( " tool" ) << endl <<
-	wxS( "# Application version: " ) << wxGetApp().APP_VERSION << endl <<
-	wxS( "# Application vendor: " ) << wxGetApp().GetVendorDisplayName() << endl <<
-	wxS( "# Creation time: " ) << dtNow.FormatISODate() << wxS( ' ' ) << dtNow.FormatISOTime() << endl;
+	"# This file was created by " << wxGetApp().GetAppDisplayName() << endl <<
+	"# Application version: " << wxGetApp().APP_VERSION << endl <<
+	"# Application vendor: " << wxGetApp().GetVendorDisplayName() << endl <<
+	"# Creation time: " << dtNow.FormatISODate() << ' ' << dtNow.FormatISOTime() << endl;
 
 	if ( cueSheet.GetContentsCount() > 0u )
 	{
@@ -110,7 +109,7 @@ void wxCuePointsRenderer::RenderDisc( const wxCueSheet& cueSheet )
 		}
 		else
 		{
-			*m_os << sIdx << wxS( "\t# " ) << sTitle << endl;
+			*m_os << sIdx << "\t# " << sTitle << endl;
 		}
 	}
 }

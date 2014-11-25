@@ -13,39 +13,39 @@
 
 // ===============================================================================
 
-const wxChar wxCueTag::Name::CUESHEET[]		= wxS( "CUESHEET" );
-const wxChar wxCueTag::Name::TOTALTRACKS[]	= wxS( "TOTALTRACKS" );
-const wxChar wxCueTag::Name::ARRANGER[]		= wxS( "ARRANGER" );
-const wxChar wxCueTag::Name::COMPOSER[]		= wxS( "COMPOSER" );
-const wxChar wxCueTag::Name::ISRC[]			= wxS( "ISRC" );
-const wxChar wxCueTag::Name::TITLE[]		= wxS( "TITLE" );
-const wxChar wxCueTag::Name::ALBUM[]		= wxS( "ALBUM" );
-const wxChar wxCueTag::Name::PERFORMER[]	= wxS( "PERFORMER" );
-const wxChar wxCueTag::Name::ARTIST[]		= wxS( "ARTIST" );
-const wxChar wxCueTag::Name::ALBUM_ARTIST[] = wxS( "ALBUM ARTIST" );
-const wxChar wxCueTag::Name::ALBUMARTIST[]  = wxS( "ALBUMARTIST" );
-const wxChar wxCueTag::Name::CATALOG[]		= wxS( "CATALOG" );
-const wxChar wxCueTag::Name::CDTEXTFILE[]	= wxS( "CDTEXTFILE" );
-const wxChar wxCueTag::Name::DISC_ID[]		= wxS( "DISC_ID" );
-const wxChar wxCueTag::Name::GENRE[]		= wxS( "GENRE" );
-const wxChar wxCueTag::Name::MESSAGE[]		= wxS( "MESSAGE" );
-const wxChar wxCueTag::Name::SONGWRITER[]	= wxS( "SONGWRITER" );
-const wxChar wxCueTag::Name::UPC_EAN[]		= wxS( "UPC_EAN" );
-const wxChar wxCueTag::Name::SIZE_INFO[]	= wxS( "SIZE_INFO" );
-const wxChar wxCueTag::Name::TOC_INFO[]		= wxS( "TOC_INFO" );
-const wxChar wxCueTag::Name::TOC_INFO2[]	= wxS( "TOC_INFO2" );
-const wxChar wxCueTag::Name::DISCNUMBER[]	= wxS( "DISCNUMBER" );
-const wxChar wxCueTag::Name::TOTALDISCS[]	= wxS( "TOTALDISCS" );
+const char wxCueTag::Name::CUESHEET[]		= "CUESHEET";
+const char wxCueTag::Name::TOTALTRACKS[]	= "TOTALTRACKS";
+const char wxCueTag::Name::ARRANGER[]		= "ARRANGER";
+const char wxCueTag::Name::COMPOSER[]		= "COMPOSER";
+const char wxCueTag::Name::ISRC[]			= "ISRC";
+const char wxCueTag::Name::TITLE[]		    = "TITLE";
+const char wxCueTag::Name::ALBUM[]		    = "ALBUM";
+const char wxCueTag::Name::PERFORMER[]	    = "PERFORMER";
+const char wxCueTag::Name::ARTIST[]		    = "ARTIST";
+const char wxCueTag::Name::ALBUM_ARTIST[]   = "ALBUM ARTIST";
+const char wxCueTag::Name::ALBUMARTIST[]    = "ALBUMARTIST";
+const char wxCueTag::Name::CATALOG[]		= "CATALOG";
+const char wxCueTag::Name::CDTEXTFILE[]	    = "CDTEXTFILE";
+const char wxCueTag::Name::DISC_ID[]		= "DISC_ID";
+const char wxCueTag::Name::GENRE[]		    = "GENRE";
+const char wxCueTag::Name::MESSAGE[]		= "MESSAGE";
+const char wxCueTag::Name::SONGWRITER[]	    = "SONGWRITER";
+const char wxCueTag::Name::UPC_EAN[]		= "UPC_EAN";
+const char wxCueTag::Name::SIZE_INFO[]	    = "SIZE_INFO";
+const char wxCueTag::Name::TOC_INFO[]		= "TOC_INFO";
+const char wxCueTag::Name::TOC_INFO2[]	    = "TOC_INFO2";
+const char wxCueTag::Name::DISCNUMBER[]	    = "DISCNUMBER";
+const char wxCueTag::Name::TOTALDISCS[]	    = "TOTALDISCS";
 
 // ===============================================================================
 
 const wxCueTag::SOURCE2TEXT wxCueTag::SOURCE2TEXT_MAPPING[] =
 {
-	{ TAG_UNKNOWN, _( "Unknown" ) },
-	{ TAG_CD_TEXT, _( "CD-TEXT" ) },
-	{ TAG_CUE_COMMENT, _( "CUE Comment" ) },
-	{ TAG_MEDIA_METADATA, _( "Media metadata" ) },
-	{ TAG_AUTO_GENERATED, _( "Automatically generated" ) }
+	{ TAG_UNKNOWN, "Unknown" },
+	{ TAG_CD_TEXT, "CD-TEXT" },
+	{ TAG_CUE_COMMENT, "CUE Comment" },
+	{ TAG_MEDIA_METADATA, "Media metadata" },
+	{ TAG_AUTO_GENERATED, "Automatically generated" }
 };
 
 const size_t wxCueTag::SOURCE2TEXT_MAPPING_SIZE = WXSIZEOF( wxCueTag::SOURCE2TEXT_MAPPING );
@@ -62,11 +62,11 @@ wxString wxCueTag::SourceToString( wxCueTag::TAG_SOURCE eSource )
 	{
 		if ( eSource == SOURCE2TEXT_MAPPING[ i ].eSource )
 		{
-			return SOURCE2TEXT_MAPPING[ i ].pText;
+			return _( SOURCE2TEXT_MAPPING[ i ].pText );
 		}
 	}
 
-	return wxString::Format( wxT( "TAG_SOURCE <%d>" ), eSource );
+	return wxString::Format( "TAG_SOURCE <%d>", eSource );
 }
 
 wxString wxCueTag::SourcesToString( wxCueTag::TagSources nTagSources )
@@ -77,7 +77,7 @@ wxString wxCueTag::SourcesToString( wxCueTag::TagSources nTagSources )
 	{
 		if ( ( nTagSources & SOURCE2TEXT_MAPPING[ i ].eSource ) != 0u )
 		{
-			s << SOURCE2TEXT_MAPPING[ i ].pText << wxT( ',' );
+			s << SOURCE2TEXT_MAPPING[ i ].pText << ',';
 		}
 	}
 
@@ -166,7 +166,7 @@ wxString wxCueTag::GetQuotedValue( bool bEscape ) const
 
 wxString wxCueTag::GetFlattenValue() const
 {
-	return GetFlattenValue( wxT( '/' ) );
+	return GetFlattenValue( '/' );
 }
 
 wxString wxCueTag::GetFlattenValue( const wxString& sSeparator ) const
@@ -312,9 +312,9 @@ wxString wxCueTag::Escape( const wxString& sValue )
 {
 	wxString s( sValue );
 
-	s.Replace( wxT( '\"' ), wxT( "\\\"" ) );
-	s.Replace( wxT( '\'' ), wxT( "\\'" ) );
-	s.Replace( wxT( '\\' ), wxT( "\\\\" ) );
+	s.Replace( '\"', "\\\"" );
+	s.Replace( '\'', "\\'" );
+	s.Replace( '\\', "\\\\" );
 	return s;
 }
 
@@ -322,15 +322,15 @@ wxString wxCueTag::UnEscape( const wxString& sValue )
 {
 	wxString s( sValue );
 
-	s.Replace( wxT( "\\'" ), wxT( '\'' ) );
-	s.Replace( wxT( "\\\"" ), wxT( '\"' ) );
-	s.Replace( wxT( "\\\\" ), wxT( '\\' ) );
+	s.Replace( "\\'", '\'' );
+	s.Replace( "\\\"", '\"' );
+	s.Replace( "\\\\", '\\' );
 	return s;
 }
 
 wxString wxCueTag::Quote( const wxString& sValue )
 {
-	return wxString::Format( wxT( "\"%s\"" ), sValue );
+	return wxString::Format( "\"%s\"", sValue );
 }
 
 size_t wxCueTag::GetTags( const wxArrayCueTag& sourceTags, const wxString& sTagName, wxArrayCueTag& tags )

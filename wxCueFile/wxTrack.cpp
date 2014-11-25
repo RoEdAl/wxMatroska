@@ -17,12 +17,12 @@ wxIMPLEMENT_DYNAMIC_CLASS( wxTrack, wxCueComponent );
 
 const wxTrack::FLAG_STR wxTrack::FlagString[] =
 {
-	{ DCP, wxT( "DCP" ) },
-	{ CH4, wxT( "CH4" ) },
-	{ PRE, wxT( "PRE" ) },
-	{ SCMS, wxT( "SCMS" ) },
-	{ DATA, wxT( "DATA" ) },
-	{ NONE, wxT( "NONE" ) }
+	{ DCP, "DCP" },
+	{ CH4, "CH4" },
+	{ PRE, "PRE" },
+	{ SCMS, "SCMS" },
+	{ DATA, "DATA" },
+	{ NONE, "NONE" }
 };
 
 const size_t wxTrack::FlagStringSize = WXSIZEOF( wxTrack::FlagString );
@@ -31,14 +31,14 @@ const size_t wxTrack::FlagStringSize = WXSIZEOF( wxTrack::FlagString );
 
 const wxTrack::DATA_MODE_STR wxTrack::DataModeString[] =
 {
-	{ AUDIO, wxT( "AUDIO" ) },
-	{ CDG, wxT( "CDG" ) },
-	{ MODE1_2048, wxT( "MODE1/2048" ) },
-	{ MODE1_2352, wxT( "MODE1/2352" ) },
-	{ MODE2_2336, wxT( "MODE2/2336" ) },
-	{ MODE2_2352, wxT( "MODE2/2352" ) },
-	{ CDI_2336, wxT( "CDI/2336" ) },
-	{ CDI_2352, wxT( "CDI/2352" ) }
+	{ AUDIO, "AUDIO" },
+	{ CDG, "CDG" },
+	{ MODE1_2048, "MODE1/2048" },
+	{ MODE1_2352, "MODE1/2352" },
+	{ MODE2_2336, "MODE2/2336" },
+	{ MODE2_2352, "MODE2/2352" },
+	{ CDI_2336, "CDI/2336" },
+	{ CDI_2352, "CDI/2352" }
 };
 
 const size_t wxTrack::DataModeStringSize = WXSIZEOF( wxTrack::DataModeString );
@@ -158,7 +158,7 @@ const wxIndex& wxTrack::GetPreGap() const
 	}
 	else
 	{
-		wxFAIL_MSG( wxT( "Trying to access nonexistient pre-gap" ) );
+		wxFAIL_MSG( "Trying to access nonexistient pre-gap" );
 		return *m_pPreGap;	// to make compiler happy
 	}
 }
@@ -171,7 +171,7 @@ const wxIndex& wxTrack::GetPostGap() const
 	}
 	else
 	{
-		wxFAIL_MSG( wxT( "Trying to access nonexistient post-gap" ) );
+		wxFAIL_MSG( "Trying to access nonexistient post-gap" );
 		return *m_pPostGap;	// to make compiler happy
 	}
 }
@@ -398,8 +398,7 @@ wxString wxTrack::GetFlagsAsString() const
 
 	for ( size_t i = 0, nCount = m_flags.GetCount(); i < nCount; i++ )
 	{
-		s += FlagToString( m_flags[ i ] );
-		s += wxT( ' ' );
+        s << FlagToString( m_flags[i] ) << ' ';
 	}
 
 	s = s.RemoveLast();
@@ -430,15 +429,12 @@ wxString wxTrack::GetFlagRegExp()
 
 	for ( size_t i = 0; i < FlagStringSize; i++ )
 	{
-		s += FlagString[ i ].szName;
-		s += wxT( '|' );
+        s << FlagString[i].szName << '|';
 	}
 
 	s = s.RemoveLast();
 
-	wxString sResult;
-	sResult.Printf( wxT( "(%s)" ), s );
-	return sResult;
+	return wxString::Format( "(%s)", s );
 }
 
 wxString wxTrack::FlagToString( wxTrack::Flag flag )
@@ -477,15 +473,12 @@ wxString wxTrack::GetDataModeRegExp()
 
 	for ( size_t i = 0; i < DataModeStringSize; i++ )
 	{
-		s += DataModeString[ i ].szName;
-		s += wxT( '|' );
+        s << DataModeString[i].szName << '|';
 	}
 
 	s = s.RemoveLast();
 
-	wxString sResult;
-	sResult.Printf( wxT( "(%s)" ), s );
-	return sResult;
+	return wxString::Format( "(%s)", s );
 }
 
 wxString wxTrack::DataModeToString( wxTrack::DataMode mode )
@@ -581,7 +574,7 @@ void wxTrack::GetReplacements( wxHashString& replacements ) const
 	wxCueComponent::GetReplacements( replacements );
 	wxString sValue;
     sValue.Printf( "%02" wxSizeTFmtSpec "d", m_number );
-	replacements[ wxT( "tn" ) ] = sValue;
+	replacements[ "tn" ] = sValue;
 }
 
 #include <wx/arrimpl.cpp>	// this is a magic incantation which must be done!

@@ -12,9 +12,9 @@ class MyAppConsole:
 
 		MyAppConsole( void );
 
-		static const wxChar APP_VENDOR_NAME[];
-		static const wxChar APP_AUTHOR[];
-		static const wxChar LICENSE_FILE_NAME[];
+		static const char APP_VENDOR_NAME[];
+		static const char APP_AUTHOR[];
+		static const char LICENSE_FILE_NAME[];
 
 	protected:
 

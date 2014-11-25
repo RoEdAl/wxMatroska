@@ -7,8 +7,8 @@
 
 // ===============================================================================
 
-const wxChar wxEllipsizer::REG_EX[] = wxT( "([[:space:]]*\\.\\.\\.)[[:space:]]*\\Z" );
-const wxChar wxEllipsizer::ELLIPSIS = wxT( '\u2026' );
+const char wxEllipsizer::REG_EX[] = "([[:space:]]*\\.\\.\\.)[[:space:]]*\\Z";
+const wxUChar wxEllipsizer::ELLIPSIS = wxS( '\u2026' );
 
 // ===============================================================================
 

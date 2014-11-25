@@ -20,7 +20,7 @@ wxTextCueSheetRenderer::wxTextCueSheetRenderer( wxTextOutputStream* pTextOutputS
 	m_pTextOutputStream( pTextOutputStream ),
 	m_nDumpFlags( nDumpFlags ),
 	m_nDataFileIdx( wxIndex::UnknownDataFileIdx ),
-	m_reSpace( wxT( "[[:space:]]+" ), wxRE_ADVANCED | wxRE_NOSUB )
+	m_reSpace( "[[:space:]]+", wxRE_ADVANCED | wxRE_NOSUB )
 {
 	wxASSERT( m_reSpace.IsValid() );
 }
@@ -64,13 +64,13 @@ bool wxTextCueSheetRenderer::OnRenderIndex( const wxCueSheet& cueSheet, const wx
 
 bool wxTextCueSheetRenderer::OnRenderPreGap( const wxCueSheet& cueSheet, const wxTrack& track, const wxIndex& preGap )
 {
-	InternalRenderIndex( cueSheet, track, preGap, wxT( "PREGAP" ) );
+	InternalRenderIndex( cueSheet, track, preGap, "PREGAP" );
 	return wxCueSheetRenderer::OnRenderPreGap( cueSheet, track, preGap );
 }
 
 bool wxTextCueSheetRenderer::OnRenderPostGap( const wxCueSheet& cueSheet, const wxTrack& track, const wxIndex& postGap )
 {
-	InternalRenderIndex( cueSheet, track, postGap, wxT( "POSTGAP" ) );
+	InternalRenderIndex( cueSheet, track, postGap, "POSTGAP" );
 	return wxCueSheetRenderer::OnRenderPostGap( cueSheet, track, postGap );
 }
 
@@ -87,7 +87,7 @@ void wxTextCueSheetRenderer::DumpComponentTag( const wxCueComponent& component, 
 		sName = tag.GetName();
 	}
 
-	DumpComponentString( component, wxT( "REM" ), wxString::Format( wxT( "%s %s" ), sName, tag.GetFlattenValue() ) );
+	DumpComponentString( component, "REM", wxString::Format( "%s %s", sName, tag.GetFlattenValue() ) );
 }
 
 void wxTextCueSheetRenderer::DumpComponentString(
@@ -98,10 +98,10 @@ void wxTextCueSheetRenderer::DumpComponentString(
 	{
 		if ( component.IsTrack() )
 		{
-			*m_pTextOutputStream << wxT( '\t' );
+			*m_pTextOutputStream << '\t';
 		}
 
-		*m_pTextOutputStream << wxT( ' ' ) << sEntry << wxT( ' ' ) << text << endl;
+		*m_pTextOutputStream << ' ' << sEntry << ' ' << text << endl;
 	}
 }
 
@@ -113,7 +113,7 @@ void wxTextCueSheetRenderer::InternalRenderComponent( const wxCueComponent& comp
 		const wxArrayString& comments = component.GetComments();
 		for ( wxArrayString::const_iterator i = comments.begin(); i != comments.end(); i++ )
 		{
-			DumpComponentString( component, wxT( "REM" ), *i );
+			DumpComponentString( component, "REM", *i );
 		}
 	}
 
@@ -186,14 +186,14 @@ void wxTextCueSheetRenderer::InternalRenderTrack( const wxCueSheet& cueSheet, co
 		InternalRenderDataFile( cueSheet, nDataFileIdx );
 	}
 
-	sLine.Printf( wxT( "%02d %s" ), track.GetNumber(), track.GetModeAsString() );
-	DumpComponentString( track, wxT( "TRACK" ), sLine );
+    sLine.Printf( "%02" wxSizeTFmtSpec "d %s", track.GetNumber( ), track.GetModeAsString( ) );
+	DumpComponentString( track, "TRACK", sLine );
 	InternalRenderComponent( track );
 
 	// flags
 	if ( track.HasFlags() )
 	{
-		DumpComponentString( track, wxT( "FLAGS" ), track.GetFlagsAsString() );
+		DumpComponentString( track, "FLAGS", track.GetFlagsAsString() );
 	}
 }
 
@@ -206,7 +206,7 @@ void wxTextCueSheetRenderer::InternalRenderIndex( const wxCueSheet& cueSheet, co
 
 	wxString sIdx( m_si.GetIndexOffsetFramesStr( idx ) );
 
-	*m_pTextOutputStream << wxT( "\t\t " ) << desc << wxT( ' ' ) << sIdx << endl;
+	*m_pTextOutputStream << "\t\t " << desc << ' ' << sIdx << endl;
 }
 
 void wxTextCueSheetRenderer::InternalRenderIndex( const wxCueSheet& cueSheet, const wxTrack& WXUNUSED( track ), const wxIndex& idx )
@@ -219,8 +219,8 @@ void wxTextCueSheetRenderer::InternalRenderIndex( const wxCueSheet& cueSheet, co
 	wxString sIdxNo;
 	wxString sIdx( m_si.GetIndexOffsetFramesStr( idx ) );
 
-	sIdxNo.Printf( wxT( "%02d" ), idx.GetNumber() );
-	*m_pTextOutputStream << wxT( "\t\t INDEX " ) << sIdxNo << wxT( ' ' ) <<
+    sIdxNo.Printf( "%02" wxSizeTFmtSpec "d", idx.GetNumber( ) );
+	*m_pTextOutputStream << "\t\t INDEX " << sIdxNo << ' ' <<
 	sIdx << endl;
 }
 
@@ -231,8 +231,8 @@ void wxTextCueSheetRenderer::InternalRenderDataFile( const wxCueSheet& cueSheet,
 	{
 		const wxDataFile& dataFile = cueSheet.GetDataFiles().Item( nDataFileIdx );
 		*m_pTextOutputStream <<
-		wxT( "FILE \"" ) << dataFile.GetFileName().GetFullName() <<
-		wxT( "\" " ) << dataFile.GetFileTypeAsString() << endl;
+		"FILE \"" << dataFile.GetFileName().GetFullName() <<
+		"\" " << dataFile.GetFileTypeAsString() << endl;
 		m_nDataFileIdx = nDataFileIdx;
 	}
 }

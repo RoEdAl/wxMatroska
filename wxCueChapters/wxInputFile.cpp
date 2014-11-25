@@ -7,7 +7,7 @@
 
 // ===============================================================================
 
-const wxChar wxInputFile::SEPARATOR = wxT( ';' );
+const char wxInputFile::SEPARATOR = ';';
 
 wxIMPLEMENT_DYNAMIC_CLASS( wxInputFile, wxObject );
 
