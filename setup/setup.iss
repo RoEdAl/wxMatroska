@@ -1,6 +1,5 @@
 #include "ISPPBuiltins.iss"
 
-#define Cue2MkcExe SourcePath + "/../bin/Release/cue2mkc.exe"
 #define Cue2MkcFileVersion GetFileVersion(Cue2MkcExe)
 #define Cue2MkcFileCompany GetFileCompany(Cue2MkcExe)
 #define Cue2MkcFileCopyright GetFileCopyright(Cue2MkcExe)
@@ -11,24 +10,22 @@
 [Setup]
 AppID=cue2mkc
 AppName={cm:cue2mkc}
-AppVerName={cm:cue2mkc} {#Cue2MkcFileVersion}
+AppVerName={cm:cue2mkc} {#Cue2MkcExeArch} {#Cue2MkcFileVersion}
 AppVersion={#Cue2MkcFileVersion}
 AppCopyright={#Cue2MkcFileCopyright}
 AppPublisher={#Cue2MkcFileCompany}
-VersionInfoProductName=cue2mkc
+VersionInfoProductName=cue2mkc ({#Cue2MkcExeArch})
 VersionInfoDescription={#Cue2MkcFileDescription}
 VersionInfoVersion={#Cue2MkcFileVersion}
 VersionInfoCompany={#Cue2MkcFileCompany}
 VersionInfoCopyright={#Cue2MkcFileCopyright}
 DefaultDirName={pf}\cue2mkc
 SetupIconFile=..\gui\icons\cd_mka.ico
-OutputDir=..\bin\setup
-OutputBaseFilename=cue2mkc_setup
 ShowLanguageDialog=no
-MinVersion=,5.1.2600
+MinVersion=0,5.1.2600
 Compression=lzma2/Max
 DefaultGroupName=cue2mkc
-ArchitecturesAllowed=x86 x64
+ArchitecturesAllowed={#Cue2MkcExeArch}
 PrivilegesRequired=admin
 
 [Languages]
@@ -47,8 +44,8 @@ Name: gui; Description: {cm:desc_component_gui}; Types: full custom;
 Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:AdditionalIcons}
 
 [Files]
-Source: ..\bin\x86\Release\cue2mkc.exe; DestDir: {app}; Flags: comparetimestamp; Components: cli; 
-Source: ..\bin\Release\cue2mkcgui.exe; DestDir: {app}; Flags: comparetimestamp; Components: gui; 
+Source: {#Cue2MkcExe}; DestDir: {app}; Flags: comparetimestamp; Components: cli; 
+Source: {#Cue2MkcExeGui}; DestDir: {app}; Flags: comparetimestamp; Components: gui; 
 Source: ..\wxCueChapters\license.txt; DestDir: {app}; Flags: comparetimestamp; 
 Source: ..\cue\ISO-639-2_utf-8.txt; DestDir: {app}; Flags: comparetimestamp; 
 

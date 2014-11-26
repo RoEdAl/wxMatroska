@@ -1,11 +1,8 @@
 #NoTrayIcon
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
-#AutoIt3Wrapper_Icon=icons/cd_mka.ico
-#AutoIt3Wrapper_Outfile=../bin/Release/cue2mkcgui.exe
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Res_Comment=This is frontend to cue2mkc tool
 #AutoIt3Wrapper_Res_Description=Graphical user interface for cue2mkc command line tool
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.83
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html
 #AutoIt3Wrapper_Res_SaveSource=y

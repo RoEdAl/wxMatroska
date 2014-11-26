@@ -18,27 +18,6 @@ MACRO(ADD_MSVC_PRECOMPILED_HEADER PrecompiledHeader PrecompiledSource SourcesVar
   ENDIF(MSVC)
 ENDMACRO(ADD_MSVC_PRECOMPILED_HEADER)
 
-project(wxmatroska VERSION 1.0.1.0)
-
-set(PROJECT_VERSION_STR ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
-set(PROJECT_VERSION_STR4 "${PROJECT_VERSION_MAJOR}, ${PROJECT_VERSION_MINOR}, ${PROJECT_VERSION_PATCH}, ${PROJECT_VERSION_TWEAK}")
-
-configure_file(
-	${PROJECT_SOURCE_DIR}/app_config.h.in
-	${PROJECT_BINARY_DIR}/app_config.h
-)
-
-set(PROJECT_CONFIG_FILE ${PROJECT_BINARY_DIR}/app_config.h)
-
-include_directories( ${PROJECT_BINARY_DIR} )
-
-#source_group("Include files" REGULAR_EXPRESSION "*([.]h|[.]hpp)$" )
-
-# installation directory of external libraries
-SET(EXT_INSTALL_PREFIX ${PROJECT_BINARY_DIR}/extlib)
-
-# MESSAGE( ${EXT_INSTALL_PREFIX} )
-
 ExternalProject_Add(
 	ZLIB
 	URL "http://zlib.net/zlib-1.2.8.tar.gz"
@@ -60,18 +39,48 @@ ExternalProject_Add (
 	CMAKE_ARGS -DENABLE_STATIC=ON -DENABLE_STATIC_RUNTIME=OFF -DCMAKE_INSTALL_PREFIX=${EXT_INSTALL_PREFIX}
 )
 
-add_definitions(-DTAGLIB_STATIC)
-
-add_library(TagLib STATIC IMPORTED)
-set_property(TARGET TagLib PROPERTY IMPORTED_LOCATION ${EXT_INSTALL_PREFIX}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}tag${CMAKE_STATIC_LIBRARY_SUFFIX})
-add_dependencies(TagLib project_taglib) 
-
 #ExternalProject_Add (
 #	HARU
 #	GIT_REPOSITORY "https://github.com/libharu/libharu"
 #	DEPENDS ZLIB PNG
 #	CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${EXT_INSTALL_PREFIX}
 #)
+
+project(wxmatroska VERSION 1.0.1.0)
+
+# Test 32/64 bits
+if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+    message(STATUS "Target is 64 bits")
+    SET( EX_PLATFORM 64 )
+    SET( EX_PLATFORM_NAME "x64" )
+else("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+    message(STATUS "Target is 32 bits")
+	SET( EX_PLATFORM 32 )
+    SET( EX_PLATFORM_NAME "x86" )
+endif("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+
+set(PROJECT_VERSION_STR ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
+set(PROJECT_VERSION_STR4 "${PROJECT_VERSION_MAJOR}, ${PROJECT_VERSION_MINOR}, ${PROJECT_VERSION_PATCH}, ${PROJECT_VERSION_TWEAK}")
+
+set(PROJECT_CONFIG_FILE ${PROJECT_BINARY_DIR}/app_config.h)
+
+configure_file(
+	${PROJECT_SOURCE_DIR}/app_config.h.in
+	${PROJECT_CONFIG_FILE}
+)
+
+include_directories( ${PROJECT_BINARY_DIR} )
+
+#source_group("Include files" REGULAR_EXPRESSION "*([.]h|[.]hpp)$" )
+
+# installation directory of external libraries
+SET(EXT_INSTALL_PREFIX ${PROJECT_BINARY_DIR}/extlib)
+
+add_definitions(-DTAGLIB_STATIC)
+
+add_library(TagLib STATIC IMPORTED)
+set_property(TARGET TagLib PROPERTY IMPORTED_LOCATION ${EXT_INSTALL_PREFIX}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}tag${CMAKE_STATIC_LIBRARY_SUFFIX})
+add_dependencies(TagLib project_taglib) 
 
 IF(MSVC)
 set(wxWidgets_CONFIGURATION mswu)
@@ -89,3 +98,5 @@ add_subdirectory(wxEncodingDetection)
 add_subdirectory(wxCueFile)
 add_subdirectory(wxCueChapters)
 add_subdirectory(gui)
+add_subdirectory(setup)
+

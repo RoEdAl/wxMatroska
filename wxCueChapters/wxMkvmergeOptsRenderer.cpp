@@ -47,7 +47,7 @@ namespace
     {
         public:
 
-        static int tc2padding( size_t count )
+        static size_t tc2padding( size_t count )
         {
             if (count > 1000) return 4;
             else if (count > 100) return 3;
@@ -94,7 +94,7 @@ namespace
                 return const_cast<file_desc&>(*this);
             }
 
-            if (m_nPadding <= 0)
+            if (m_nPadding == 0)
             {
                 os << m_fileNo;
             }
@@ -129,7 +129,7 @@ namespace
         size_t m_fileNo;
         bool m_showFileNo;
         wxString m_fileExt;
-        int m_nPadding;
+        size_t m_nPadding;
     };
 
     wxTextOutputStream& operator<<(wxTextOutputStream& os, const file_desc& fd)
