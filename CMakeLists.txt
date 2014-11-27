@@ -18,7 +18,9 @@ MACRO(ADD_MSVC_PRECOMPILED_HEADER PrecompiledHeader PrecompiledSource SourcesVar
   ENDIF(MSVC)
 ENDMACRO(ADD_MSVC_PRECOMPILED_HEADER)
 
-project(wxmatroska VERSION 1.0.1.0)
+project(wxmatroska VERSION 1.0.2.0)
+
+SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Test 32/64 bits
 if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
@@ -49,11 +51,13 @@ SET(EXT_INSTALL_PREFIX ${PROJECT_BINARY_DIR}/extlib)
 message( External projects dir: ${EXT_INSTALL_PREFIX} )
 
 ExternalProject_Add(
-	project_ZLIB
+	project_zlib
 	URL "http://zlib.net/zlib-1.2.8.tar.gz"
 	URL_MD5 "44d667c142d7cda120332623eab69f40"
 	CMAKE_ARGS -DASM686=OFF -DAMD64=OFF -DCMAKE_INSTALL_PREFIX=${EXT_INSTALL_PREFIX}
 )
+
+SET_PROPERTY(TARGET project_zlib PROPERTY FOLDER "extlib")
 
 #ExternalProject_Add(
 #	PNG
@@ -65,9 +69,11 @@ ExternalProject_Add(
 ExternalProject_Add (
 	project_taglib
 	GIT_REPOSITORY "https://github.com/taglib/taglib"
-	DEPENDS project_ZLIB
+	DEPENDS project_zlib
 	CMAKE_ARGS -DENABLE_STATIC=ON -DENABLE_STATIC_RUNTIME=OFF -DCMAKE_INSTALL_PREFIX=${EXT_INSTALL_PREFIX}
 )
+
+SET_PROPERTY(TARGET project_taglib PROPERTY FOLDER "extlib")
 
 #ExternalProject_Add (
 #	HARU

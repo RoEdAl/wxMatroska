@@ -29,3 +29,4 @@ add_custom_command(
 
 add_custom_target( isetup SOURCES ${ISETUP_SOURCES} ../cue/ISO-639-2_utf-8.txt ../wxCueChapters/license.txt DEPENDS ${ISETUP} )
 add_dependencies( isetup cue2mkc cue2mkcgui )
+SET_PROPERTY(TARGET isetup PROPERTY FOLDER "setup")

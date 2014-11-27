@@ -11,6 +11,7 @@ add_library(icon_pack SHARED
 )
 
 set_target_properties(icon_pack PROPERTIES LINK_FLAGS "/NOENTRY")
+SET_PROPERTY(TARGET icon_pack PROPERTY FOLDER "gui")
 
 # gui
 
@@ -44,3 +45,5 @@ add_custom_command(
 
 add_custom_target( cue2mkcgui SOURCES ${CUE2MKCGUI_SOURCES} DEPENDS ${CUE2MKCGUI} )
 add_dependencies(cue2mkc icon_pack)
+SET_PROPERTY(TARGET cue2mkcgui PROPERTY FOLDER "gui")
+
