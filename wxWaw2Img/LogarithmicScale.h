@@ -45,7 +45,7 @@ class LogarithmicScale
 			return *this;
 		}
 
-		LogarithmicScale operator!() const
+		LogarithmicScale operator !() const
 		{
 			return LogarithmicScale( m_fLogBase, m_fLogBase1, m_fLogLogBase, IsInverted() ? &LogarithmicScale::calc_fn : &LogarithmicScale::calc_fn_inv );
 		}
@@ -105,6 +105,5 @@ class LogarithmicScale
 			return 1.0f - ( log( ( 1.0f - fValue ) * m_fLogBase1 + 1.0f ) / m_fLogLogBase );
 		}
 };
-
 #endif
 

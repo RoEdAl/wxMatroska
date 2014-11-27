@@ -15,8 +15,9 @@ McDcWaveDrawer::McDcWaveDrawer( wxUint16 nChannels ):
 {}
 
 void McDcWaveDrawer::Initialize(
-	wxDC* pDc
-)
+		wxDC* pDc
+		)
 {
 	m_pDc.reset( pDc );
 }
+

@@ -42,18 +42,18 @@ class wxMkvmergeOptsRenderer:
 		static wxString mkvmerge_escape( const wxFileName& );
 		static wxString mkvmerge_escape( const wxDataFile& );
 
-        static wxTextOutputStream& append_cover( wxTextOutputStream&, const wxCoverFile& );
+		static wxTextOutputStream& append_cover( wxTextOutputStream&, const wxCoverFile& );
 
 		wxString GetEscapedFile( const wxFileName& );
 
-        void write_cover_attachments( const wxInputFile&, const wxArrayCoverFile& ) const;
+		void write_cover_attachments( const wxInputFile&, const wxArrayCoverFile& ) const;
 		void write_cdtextfiles_attachments( const wxArrayFileName& );
 		void write_log_attachments( const wxArrayFileName& );
 		void write_eac_attachments( const wxInputFile&, const wxCueSheet& );
 		void write_source_eac_attachments( const wxInputFile&, const wxArrayCueSheetContent& );
 		void write_decoded_eac_attachments( const wxInputFile&, const wxArrayCueSheetContent& );
 		void write_rendered_eac_attachments( const wxInputFile&, const wxCueSheet& );
-        bool save_cover( const wxInputFile&, wxCoverFile& ) const;
+		bool save_cover( const wxInputFile&, wxCoverFile& ) const;
 		bool save_cuesheet( const wxInputFile&, const wxString&, const wxString&, wxFileName& ) const;
 		bool render_cuesheet( const wxInputFile&, const wxString&, const wxCueSheet&, wxFileName& );
 
@@ -67,6 +67,5 @@ class wxMkvmergeOptsRenderer:
 		bool Save();
 		const wxFileName& GetMkvmergeOptsFile() const;
 };
-
 #endif
 

@@ -10,10 +10,10 @@ class PdfPolyWaveDrawer:
 	public:
 
 		PdfPolyWaveDrawer( wxUint64,
-						wxPdfDocument*,
-						const wxRect2DInt&,
-						const DrawerSettings&,
-						const ChaptersArrayScopedPtr& );
+						   wxPdfDocument*,
+						   const wxRect2DInt&,
+						   const DrawerSettings&,
+						   const ChaptersArrayScopedPtr& );
 
 	protected:
 
@@ -30,6 +30,5 @@ class PdfPolyWaveDrawer:
 
 		wxPdfShape build_path() const;
 };
-
 #endif
 

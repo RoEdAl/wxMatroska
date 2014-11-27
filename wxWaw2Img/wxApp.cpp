@@ -175,6 +175,7 @@ bool wxMyApp::ShowInfo() const
 void wxMyApp::OnInitCmdLine( wxCmdLineParser& cmdline )
 {
 	MyAppConsole::OnInitCmdLine( cmdline );
+
 	cmdline.SetLogo( _( "This application draws a waveform from audio file." ) );
 	m_cfg.AddCmdLineParams( cmdline );
 }
@@ -316,20 +317,20 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 
 		case DRAWING_MODE_POLY_PDF:
 		{
-			wxRect2DIntArray  drawerRects;
+			wxRect2DIntArray	  drawerRects;
 			const DrawerSettings& drawerSettings = cfg.GetDrawerSettings();
-			wxSize pageSize( cfg.GetImageSizePt() );
+			wxSize				  pageSize( cfg.GetImageSizePt() );
 
 			if ( cfg.MultiChannel() )
 			{
 				cfg.GetDrawerRectsPt( nChannels, drawerRects );
 
-				McPdfWaveDrawer* pPc = new McPdfWaveDrawer( nChannels );
-				wxPdfDocument* pPdf = pPc->Initialize( pageSize, drawerSettings.GetBackgroundColour(), drawerRects, cfg.GetInputFile().GetFullName() );
+				McPdfWaveDrawer* pPc  = new McPdfWaveDrawer( nChannels );
+				wxPdfDocument*	 pPdf = pPc->Initialize( pageSize, drawerSettings.GetBackgroundColour(), drawerRects, cfg.GetInputFile().GetFullName() );
 
 				for ( wxUint16 nChannel = 0; nChannel < nChannels; nChannel++ )
 				{
-					pPc->AddDrawer( new PdfPolyWaveDrawer( nSamples, pPdf, drawerRects[ nChannel ], cfg.GetDrawerSettings(), pChapters  ) );
+					pPc->AddDrawer( new PdfPolyWaveDrawer( nSamples, pPdf, drawerRects[ nChannel ], cfg.GetDrawerSettings(), pChapters ) );
 				}
 
 				pMcwd = pPc;
@@ -342,7 +343,7 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 
 				wxPdfDocument* pPdf = pPc->Initialize( pageSize, drawerSettings.GetBackgroundColour(), drawerRects, cfg.GetInputFile().GetFullName() );
 
-				pPc->AddDrawer( new PdfPolyWaveDrawer( nSamples, pPdf, drawerRects[ 0 ], cfg.GetDrawerSettings(), pChapters  ) );
+				pPc->AddDrawer( new PdfPolyWaveDrawer( nSamples, pPdf, drawerRects[ 0 ], cfg.GetDrawerSettings(), pChapters ) );
 				pMcwd = pPc;
 			}
 
@@ -454,7 +455,6 @@ static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, wxEnhM
 		return false;
 	}
 }
-
 #endif
 #endif
 
@@ -714,6 +714,7 @@ class AnimationThread:
 			wxString sExt( m_cfg.GetDefaultImageExt() );
 
 			wxFileName fn( m_workDir );
+
 			fn.SetExt( sExt );
 
 			wxUint32 nWidth;
@@ -891,7 +892,7 @@ static bool create_animation(
 
 			for ( int i = 0; i < nCpuCount; i++ )
 			{
-				wxDELETE( ta[i] );
+				wxDELETE( ta[ i ] );
 			}
 		}
 
@@ -1074,10 +1075,11 @@ static bool save_rendered_wave( McChainWaveDrawer& waveDrawer, const wxConfigura
 
 		case DRAWING_MODE_POLY_PDF:
 		{
-			McPdfWaveDrawer* pPd			= static_cast< McPdfWaveDrawer* >( waveDrawer.GetWaveDrawer() );
+			McPdfWaveDrawer* pPd = static_cast< McPdfWaveDrawer* >( waveDrawer.GetWaveDrawer() );
 			return pPd->Save( fn );
+
+			break;
 		}
-		break;
 
 		case DRAWING_MODE_SIMPLE:
 		case DRAWING_MODE_RASTER1:
@@ -1119,6 +1121,7 @@ int wxMyApp::OnRun()
 	if ( m_cfg.HasChaptersFile() )
 	{
 		pChapters.reset( new ChaptersArray() );
+
 		if ( !m_cfg.ReadChapters( *pChapters ) )
 		{
 			return 1000;
@@ -1154,7 +1157,7 @@ int wxMyApp::OnRun()
 		return false;
 	}
 
-	const SF_INFO& sfInfo	= sfReader.GetInfo();
+	const SF_INFO& sfInfo = sfReader.GetInfo();
 	wxTimeSpan	   duration( wxTimeSpan::Milliseconds( sfInfo.frames * 1000 / sfInfo.samplerate ) );
 	wxLogMessage( _( "Format: %s, samplerate: %uHz, channels: %u, duration: %s" ),
 			SoundFile::GetFormatName( sfInfo.format ),
@@ -1172,12 +1175,13 @@ int wxMyApp::OnRun()
 			}
 
 			bool bGenerated = m_cfg.GenerateChapters( duration, *pChapters );
+
 			if ( !bGenerated )
 			{
-				wxLogWarning( _("Cannot generate chapters") );
+				wxLogWarning( _( "Cannot generate chapters" ) );
 			}
 
-			//calculate_positions( *pChapters, sfInfo.frames, duration );
+			// calculate_positions( *pChapters, sfInfo.frames, duration );
 		}
 
 		pChapters->Add( duration );

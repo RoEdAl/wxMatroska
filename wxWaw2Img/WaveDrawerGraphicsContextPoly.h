@@ -29,6 +29,5 @@ class GraphicsContextWaveDrawerPoly:
 		wxInt32			   m_yoffset;
 		wxGraphicsPath	   m_path;
 };
-
 #endif
 

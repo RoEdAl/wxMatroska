@@ -11,7 +11,7 @@ class McDcSvgWaveDrawer:
 	public:
 
 		McDcSvgWaveDrawer( wxUint16 );
-		wxDC* Initialize( const wxSize &, const wxColour &, const wxRect2DIntArray &, const wxString&  );
+		wxDC* Initialize( const wxSize&, const wxColour&, const wxRect2DIntArray&, const wxString& );
 		bool Save( const wxFileName& );
 
 	protected:
@@ -22,6 +22,5 @@ class McDcSvgWaveDrawer:
 
 		wxFileName m_tmpFileName;
 };
-
 #endif
 

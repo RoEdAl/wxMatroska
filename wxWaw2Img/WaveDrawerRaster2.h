@@ -20,6 +20,5 @@ class Raster2WaveDrawer:
 		virtual void GetThreeColours( wxFloat32, wxColour &, wxColour &, wxColour & );
 		virtual void GetTwoColours( wxFloat32, bool, wxColour &, wxColour & );
 };
-
 #endif
 

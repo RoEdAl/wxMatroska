@@ -18,6 +18,5 @@ class wxTextOutputStreamWithBOMFactory
 
 		static void WriteBOM( wxOutputStream&, const wxByteBuffer& );
 };
-
 #endif
 

@@ -29,6 +29,5 @@ class ColumnPainterWaveDrawer:
 		wxGraphicsBrush create_brush( const wxGraphicsGradientStops&, const wxPoint2DDouble&, const wxPoint2DDouble& ) const;
 		void fill_rect( const wxGraphicsBrush&, const wxPoint2DDouble&, const wxPoint2DDouble& ) const;
 };
-
 #endif
 

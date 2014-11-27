@@ -21,6 +21,5 @@ class SoundFileReader
 		wxUint16 GetChannels() const;
 		void ReadSamples( MultiChannelWaveDrawer& );
 };
-
 #endif
 

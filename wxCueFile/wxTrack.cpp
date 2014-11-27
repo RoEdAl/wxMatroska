@@ -398,7 +398,7 @@ wxString wxTrack::GetFlagsAsString() const
 
 	for ( size_t i = 0, nCount = m_flags.GetCount(); i < nCount; i++ )
 	{
-        s << FlagToString( m_flags[i] ) << ' ';
+		s << FlagToString( m_flags[ i ] ) << ' ';
 	}
 
 	s = s.RemoveLast();
@@ -429,7 +429,7 @@ wxString wxTrack::GetFlagRegExp()
 
 	for ( size_t i = 0; i < FlagStringSize; i++ )
 	{
-        s << FlagString[i].szName << '|';
+		s << FlagString[ i ].szName << '|';
 	}
 
 	s = s.RemoveLast();
@@ -473,7 +473,7 @@ wxString wxTrack::GetDataModeRegExp()
 
 	for ( size_t i = 0; i < DataModeStringSize; i++ )
 	{
-        s << DataModeString[i].szName << '|';
+		s << DataModeString[ i ].szName << '|';
 	}
 
 	s = s.RemoveLast();
@@ -573,7 +573,8 @@ void wxTrack::GetReplacements( wxHashString& replacements ) const
 {
 	wxCueComponent::GetReplacements( replacements );
 	wxString sValue;
-    sValue.Printf( "%02" wxSizeTFmtSpec "d", m_number );
+
+	sValue.Printf( "%02" wxSizeTFmtSpec "d", m_number );
 	replacements[ "tn" ] = sValue;
 }
 

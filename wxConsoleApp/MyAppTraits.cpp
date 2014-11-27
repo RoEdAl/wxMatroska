@@ -92,7 +92,6 @@ wxTimerImpl* MyAppTraits::CreateTimerImpl( wxTimer* timer )
 
 	return m_pAppTraits->CreateTimerImpl( timer );
 }
-
 #endif
 
 void* MyAppTraits::BeforeChildWaitLoop()
@@ -123,7 +122,6 @@ WXDWORD MyAppTraits::WaitForThread( WXHANDLE handle, int flags )
 
 	return m_pAppTraits->WaitForThread( handle, flags );
 }
-
 #endif	// wxUSE_THREADS
 
 bool MyAppTraits::CanUseStderr()
@@ -147,7 +145,6 @@ wxEventLoopBase* MyAppTraits::CreateEventLoop()
 
 	return m_pAppTraits->CreateEventLoop();
 }
-
 #endif	// !wxUSE_CONSOLE_EVENTLOOP
 
 #if wxUSE_LOG
@@ -159,7 +156,6 @@ wxLog* MyAppTraits::CreateLogTarget()
 
 	// return m_pAppTraits->CreateLogTarget();
 }
-
 #endif	// wxUSE_LOG
 
 wxMessageOutput* MyAppTraits::CreateMessageOutput()
@@ -178,7 +174,6 @@ wxFontMapper* MyAppTraits::CreateFontMapper()
 
 	return m_pAppTraits->CreateFontMapper();
 }
-
 #endif	// wxUSE_FONTMAP
 
 wxRendererNative* MyAppTraits::CreateRenderer()

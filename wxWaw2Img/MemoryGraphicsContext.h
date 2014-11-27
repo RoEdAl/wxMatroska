@@ -20,6 +20,5 @@ class MemoryGraphicsContext
 		wxBitmap				  m_bmp;
 		wxScopedPtr< wxMemoryDC > m_pMemDc;
 };
-
 #endif
 

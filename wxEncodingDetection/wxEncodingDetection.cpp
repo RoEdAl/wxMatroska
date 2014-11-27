@@ -24,7 +24,6 @@ const wxUint32 wxEncodingDetection::CP::UTF8	 = 65001;
 
 // ===========================================================
 
-
 class wxMBConv_MLang:
 	public wxMBConv
 {

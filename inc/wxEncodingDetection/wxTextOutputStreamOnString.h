@@ -27,10 +27,9 @@ class wxTextOutputStreamOnString:
 
 	protected:
 
-		wxNoConv			m_conv;
+		wxNoConv			 m_conv;
 		wxMemoryOutputStream m_outputStream;
 		wxTextOutputStream	 m_textOutputStream;
 };
-
 #endif
 

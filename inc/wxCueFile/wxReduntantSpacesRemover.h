@@ -24,6 +24,5 @@ class wxReduntantSpacesRemover:
 		wxRegEx	 m_reReduntantSpaces;
 		wxString m_sReplacement;
 };
-
 #endif
 

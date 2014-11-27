@@ -16,6 +16,5 @@ class ColourInterpolation
 
 		static unsigned int linear_interpolation( unsigned int, unsigned int, wxFloat32 );
 };
-
 #endif
 

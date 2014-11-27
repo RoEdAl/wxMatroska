@@ -48,7 +48,7 @@ class wxCueSheet:
 
 		wxArrayCueSheetContent m_content;
 		wxArrayFileName		   m_logs;
-        wxArrayCoverFile	   m_covers;
+		wxArrayCoverFile	   m_covers;
 		wxArrayDataFile		   m_dataFiles;
 		wxArrayCueTag		   m_catalogs;
 		wxArrayFileName		   m_cdtextfiles;
@@ -83,8 +83,8 @@ class wxCueSheet:
 		size_t GetLogsCount() const;
 		const wxArrayFileName& GetLogs() const;
 		size_t GetCoversCount() const;
-        const wxArrayCoverFile& GetCovers( ) const;
-        void GetSortedCovers( wxArrayCoverFile& ) const;
+		const wxArrayCoverFile& GetCovers() const;
+		void GetSortedCovers( wxArrayCoverFile& ) const;
 		size_t GetCatalogsCount() const;
 		const wxArrayCueTag& GetCatalogs() const;
 		size_t GetCdTextFilesCount() const;
@@ -107,8 +107,8 @@ class wxCueSheet:
 		wxCueSheet& AddContent( const wxString& );
 		wxCueSheet& AddLog( const wxFileName& );
 		void AddCover( const wxFileName& );
-        void AddCover( const wxCoverFile& );
-        void AddCovers( const wxArrayCoverFile& );
+		void AddCover( const wxCoverFile& );
+		void AddCovers( const wxArrayCoverFile& );
 		wxCueSheet& AddDataFile( const wxDataFile& );
 
 		virtual bool HasDuration() const;
@@ -137,6 +137,5 @@ class wxCueSheet:
 
 		wxString FormatTrack( size_t, const wxString & ) const;
 };
-
 #endif	// _WX_CUE_SHEET_H_
 

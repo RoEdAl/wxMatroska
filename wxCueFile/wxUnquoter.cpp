@@ -14,14 +14,14 @@ wxIMPLEMENT_DYNAMIC_CLASS( wxUnquoter, wxObject );
 // DC1=11H, DC2=12H
 const char wxUnquoter::OPENING_QOUTATION_MARK_REPLACEMENT = '\x11';
 const char wxUnquoter::CLOSING_QOUTATION_MARK_REPLACEMENT = '\x12';
-const char wxUnquoter::GENERIC_REPLACEMENT[]				= "\\1\x11\\2\x12";
+const char wxUnquoter::GENERIC_REPLACEMENT[]			  = "\\1\x11\\2\x12";
 
 // ===============================================================================
 
-const char wxUnquoter::RE_SINGLE_QUOTES[]			= "([[:space:][:punct:]]|^)[[.apostrophe.]]((?:[^[.apostrophe.]]|\\B[[.apostrophe.]])*)(?!\\B)[[.apostrophe.]](?=[[:space:][:punct:]]|$)" ;
-const char wxUnquoter::RE_SINGLE_QUOTES_EX[]		= "([[:space:][:punct:]]|^)[[.apostrophe.]]((?:[^[.apostrophe.]\\u201E\\\u201D]|\\B[[.apostrophe.]])*)(?!\\B)[[.apostrophe.]](?=[[:space:][:punct:]]|$)";
-const char wxUnquoter::RE_DOUBLE_QUOTES[]			= "([[:space:][:punct:]]|^)[[.quotation-mark.]]((?:[^[.quotation-mark.]]|\\B[[.quotation-mark.]])*)(?!\\B)[[.quotation-mark.]](?=[[:space:][:punct:]]|$)";
-const char wxUnquoter::RE_PSEUDO_DOUUBLE_QUOTES[]   = "([[:space:][:punct:]]|^)[[.apostrophe.]]{2}(([^[.apostrophe.]]|\\B[[.apostrophe.]])+)(?!\\B)[[.apostrophe.]]{2}(?=[[:space:][:punct:]]|$)";
+const char wxUnquoter::RE_SINGLE_QUOTES[]		  = "([[:space:][:punct:]]|^)[[.apostrophe.]]((?:[^[.apostrophe.]]|\\B[[.apostrophe.]])*)(?!\\B)[[.apostrophe.]](?=[[:space:][:punct:]]|$)";
+const char wxUnquoter::RE_SINGLE_QUOTES_EX[]	  = "([[:space:][:punct:]]|^)[[.apostrophe.]]((?:[^[.apostrophe.]\\u201E\\\u201D]|\\B[[.apostrophe.]])*)(?!\\B)[[.apostrophe.]](?=[[:space:][:punct:]]|$)";
+const char wxUnquoter::RE_DOUBLE_QUOTES[]		  = "([[:space:][:punct:]]|^)[[.quotation-mark.]]((?:[^[.quotation-mark.]]|\\B[[.quotation-mark.]])*)(?!\\B)[[.quotation-mark.]](?=[[:space:][:punct:]]|$)";
+const char wxUnquoter::RE_PSEUDO_DOUUBLE_QUOTES[] = "([[:space:][:punct:]]|^)[[.apostrophe.]]{2}(([^[.apostrophe.]]|\\B[[.apostrophe.]])+)(?!\\B)[[.apostrophe.]]{2}(?=[[:space:][:punct:]]|$)";
 
 const char wxUnquoter::RE_FULL_SINGLE_QUOTES[] = "\\A[[:space:]]*\\'(([^\\']|\\\')*)\\'[[:space:]]*\\Z";
 const char wxUnquoter::RE_FULL_DOUBLE_QUOTES[] = "\\A[[:space:]]*\\\"(([^\\\"]|\\\\\")*)\\\"[[:space:]]*\\Z";
@@ -30,8 +30,8 @@ const char wxUnquoter::RE_FULL_DOUBLE_QUOTES[] = "\\A[[:space:]]*\\\"(([^\\\"]|\
 
 const wxUnquoter::QUOTATION_MARKS wxUnquoter::ASCII_QUOTES[] =
 {
-	{ wxS("\""), wxS("\"") },
-	{ wxS("'"), wxS("'") }
+	{ wxS( "\"" ), wxS( "\"" ) },
+	{ wxS( "'" ), wxS( "'" ) }
 };
 
 const size_t wxUnquoter::ASCII_QUOTES_SIZE = WXSIZEOF( wxUnquoter::ASCII_QUOTES );

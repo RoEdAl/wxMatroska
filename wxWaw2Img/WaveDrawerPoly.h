@@ -36,6 +36,5 @@ class PolyWaveDrawer:
 			bool ) const;
 		void build_paths( wxGraphicsPath&, wxGraphicsPath& ) const;
 };
-
 #endif
 

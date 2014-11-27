@@ -127,6 +127,5 @@ class wxCueComponent:
 
 		static wxString FormatCdTextData( const wxString&, const wxString& );
 };
-
 #endif
 

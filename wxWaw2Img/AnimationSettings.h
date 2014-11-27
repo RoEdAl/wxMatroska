@@ -32,6 +32,5 @@ class AnimationSettings
 		wxUint16   m_nBorderWidth;
 		wxFileName m_progressBitmap;
 };
-
 #endif
 

@@ -116,11 +116,11 @@ class wxCueTag:
 
 	protected:
 
-		typedef struct _SOURCE2TEXT
+		struct SOURCE2TEXT
 		{
 			TAG_SOURCE eSource;
 			const char* pText;
-		} SOURCE2TEXT;
+		};
 
 		static const SOURCE2TEXT SOURCE2TEXT_MAPPING[];
 		static const size_t		 SOURCE2TEXT_MAPPING_SIZE;
@@ -154,6 +154,5 @@ class wxCueTag:
 
 		void copy( const wxCueTag& );
 };
-
 #endif
 

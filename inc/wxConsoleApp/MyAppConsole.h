@@ -33,6 +33,5 @@ class MyAppConsole:
 
 		wxString m_sSeparator;
 };
-
 #endif
 

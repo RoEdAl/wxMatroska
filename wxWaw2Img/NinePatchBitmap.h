@@ -33,6 +33,5 @@ class NinePatchBitmap
 		wxImage		m_img;
 		wxRect2DInt m_stretchedArea;
 };
-
 #endif
 

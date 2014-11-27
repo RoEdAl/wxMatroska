@@ -39,7 +39,6 @@
  */
 typedef struct tagMSG
 {} MSG, * LPMSG;
-
 #endif
 
 #include <wx/wx.h>
@@ -88,6 +87,5 @@ typedef struct tagMSG
 
 #include <wx/pdfdocument.h>
 #include <wx/pdfshape.h>
-
 #endif	// _STD_WX_H
 

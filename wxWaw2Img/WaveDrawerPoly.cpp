@@ -29,6 +29,7 @@ PolyWaveDrawer::PolyWaveDrawer( wxUint64 nNumberOfSamples,
 void PolyWaveDrawer::ProcessInitializer()
 {
 	__super::ProcessInitializer();
+
 	m_points.Clear();
 }
 

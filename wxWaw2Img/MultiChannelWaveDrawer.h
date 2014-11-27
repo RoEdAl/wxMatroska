@@ -22,8 +22,7 @@ class MultiChannelWaveDrawer:
 
 		virtual void ProcessFrame( const wxFloat32* ) = 0;
 
-		void ProcessFames( const wxFloat32 *, size_t );
+		void ProcessFames( const wxFloat32*, size_t );
 };
-
 #endif
 

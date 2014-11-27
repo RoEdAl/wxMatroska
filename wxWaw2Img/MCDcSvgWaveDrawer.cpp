@@ -31,6 +31,7 @@ wxDC* McDcSvgWaveDrawer::Initialize(
 void McDcSvgWaveDrawer::ProcessFinalizer()
 {
 	__super::ProcessFinalizer();
+
 	m_pDc.reset( NULL );
 }
 
@@ -46,3 +47,4 @@ bool McDcSvgWaveDrawer::Save( const wxFileName& fn )
 		return false;
 	}
 }
+

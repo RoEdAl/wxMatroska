@@ -78,6 +78,5 @@ class wxMyApp:
 };
 
 wxDECLARE_APP( wxMyApp );
-
 #endif
 

@@ -127,6 +127,7 @@ wxTagSynonimsCollection::wxTagSynonimsCollection( const wxTagSynonimsCollection&
 wxTagSynonimsCollection& wxTagSynonimsCollection::operator =( const wxTagSynonimsCollection& src )
 {
 	_wxArrayTagSynonims::operator =( src );
+
 	return *this;
 }
 

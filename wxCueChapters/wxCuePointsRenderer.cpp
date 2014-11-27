@@ -33,7 +33,7 @@ static wxString get_track_title( const wxTrack& track )
 		wxString s;
 		for ( size_t i = 0, nCount = tags.GetCount(); i < nCount; i++ )
 		{
-            s << tags[i].GetFlattenValue( ) << ';';
+			s << tags[ i ].GetFlattenValue() << ';';
 		}
 
 		return s.RemoveLast();
@@ -50,10 +50,10 @@ void wxCuePointsRenderer::RenderDisc( const wxCueSheet& cueSheet )
 	wxDateTime	   dtNow( wxDateTime::Now() );
 
 	*m_os <<
-	"# This file was created by " << wxGetApp().GetAppDisplayName() << endl <<
-	"# Application version: " << wxGetApp().APP_VERSION << endl <<
-	"# Application vendor: " << wxGetApp().GetVendorDisplayName() << endl <<
-	"# Creation time: " << dtNow.FormatISODate() << ' ' << dtNow.FormatISOTime() << endl;
+		"# This file was created by " << wxGetApp().GetAppDisplayName() << endl <<
+		"# Application version: " << wxGetApp().APP_VERSION << endl <<
+		"# Application vendor: " << wxGetApp().GetVendorDisplayName() << endl <<
+		"# Creation time: " << dtNow.FormatISODate() << ' ' << dtNow.FormatISOTime() << endl;
 
 	if ( cueSheet.GetContentsCount() > 0u )
 	{

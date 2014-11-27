@@ -155,6 +155,5 @@ class wxTrack:
 };
 
 WX_DECLARE_OBJARRAY( wxTrack, wxArrayTrack );
-
 #endif
 

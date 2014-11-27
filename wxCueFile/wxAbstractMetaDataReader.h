@@ -22,6 +22,5 @@ class wxAbstractMetaDataReader:
 				virtual size_t OnSysWrite( const void* WXUNUSED( buffer ), size_t bufsize ){ return bufsize; }
 		};
 };
-
 #endif
 

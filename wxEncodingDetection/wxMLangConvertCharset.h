@@ -35,6 +35,5 @@ class wxMLangConvertCharset:
 
 		static wxUint32 GetRealCodePage( wxUint32 );
 };
-
 #endif
 

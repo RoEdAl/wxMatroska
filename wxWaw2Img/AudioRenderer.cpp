@@ -53,6 +53,7 @@ const AudioColumnArray& AudioRenderer::GetAudioColumns() const
 void AudioRenderer::ProcessInitializer()
 {
 	__super::ProcessInitializer();
+
 	m_ac.Clear();
 }
 

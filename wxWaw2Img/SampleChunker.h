@@ -41,6 +41,5 @@ class SampleChunker:
 
 		wxUint64 get_next_sample_limit() const;
 };
-
 #endif
 

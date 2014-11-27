@@ -69,6 +69,5 @@ class wxSamplingInfo:
 
 		void copy( const wxSamplingInfo& );
 };
-
 #endif
 

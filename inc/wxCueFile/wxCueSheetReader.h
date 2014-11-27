@@ -43,13 +43,13 @@ class wxCueSheetContent;
 
 #ifdef __WXDEBUG__
 
-class TagLibDebugListener: public TagLib::DebugListener
+class TagLibDebugListener:
+	public TagLib::DebugListener
 {
-    public:
+	public:
 
-    virtual void printMessage( const TagLib::String& );
+		virtual void printMessage( const TagLib::String& );
 };
-
 #endif
 
 class wxCueSheetReader:
@@ -111,9 +111,9 @@ class wxCueSheetReader:
 		wxArrayString	  m_errors;
 		wxCueSheet		  m_cueSheet;
 
-        // TagLib debug listener
+		// TagLib debug listener
 #ifdef __WXDEBUG__
-        TagLibDebugListener m_debugListener;
+		TagLibDebugListener m_debugListener;
 #endif
 
 	protected:
@@ -153,7 +153,7 @@ class wxCueSheetReader:
 		bool ParseCueLine( const wxString &, size_t );
 
 		template< size_t SIZE >
-		bool ParseLine( const wxString&, const wxString&, const PARSE_STRUCT( & )[ SIZE ] );
+		bool ParseLine( const wxString&, const wxString&, const PARSE_STRUCT(&)[ SIZE ] );
 
 		void ParseLine( size_t, const wxString &, const wxString & );
 		void ParseCdTextInfo( size_t, const wxString &, const wxString & );
@@ -187,16 +187,16 @@ class wxCueSheetReader:
 
 		bool FindLog( const wxCueSheetContent& );
 
-        void FindCoversInRelatedFiles();
+		void FindCoversInRelatedFiles();
 		bool FindCover( const wxCueSheetContent& );
-        void ExtractCoversFromDataFile( const wxDataFile& );
+		void ExtractCoversFromDataFile( const wxDataFile& );
 
 	public:
 
 		wxCueSheetReader( void );
 
 #ifdef __WXDEBUG__
-        virtual ~wxCueSheetReader( void );
+		virtual ~wxCueSheetReader( void );
 #endif
 
 		static wxString GetTagLibVersion();
@@ -205,7 +205,7 @@ class wxCueSheetReader:
 		bool ErrorsAsWarnings() const;
 		wxCueSheetReader& SetErrorsAsWarnings( bool = true );
 		wxCueSheetReader& CorrectQuotationMarks( bool, const wxString& );
-		const wxString&	  GetAlternateExt() const;
+		const wxString& GetAlternateExt() const;
 		wxCueSheetReader& SetAlternateExt( const wxString& );
 		ReadFlags GetReadFlags() const;
 
@@ -216,11 +216,10 @@ class wxCueSheetReader:
 		bool ReadCueSheet( const wxString&, wxMBConv& );
 		bool ReadCueSheet( wxInputStream& );
 		bool ReadCueSheet( wxInputStream&, wxMBConv& );
-		bool ReadEmbeddedCueSheet( const wxString& );
+		bool ReadCueSheetEx( const wxString&, bool );
 
 		// reading
 		const wxCueSheet& GetCueSheet() const;
 };
-
 #endif
 

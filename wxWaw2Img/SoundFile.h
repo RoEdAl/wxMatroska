@@ -51,6 +51,5 @@ class SoundFile
 		sf_count_t vio_write( const void* ptr, sf_count_t count );
 		sf_count_t vio_tell();
 };
-
 #endif
 

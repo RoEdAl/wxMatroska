@@ -37,6 +37,5 @@ class ProcessorHolder
 
 		SampleProcessor& m_processor;
 };
-
 #endif;
 

@@ -18,6 +18,5 @@ class MyLogStderr:
 		FILE*						   m_fp;
 		wxScopedPtr< wxMessageOutput > m_pAdditionalMessageOutput;
 };
-
 #endif
 

@@ -15,10 +15,11 @@ wxTextOutputStreamOnString::wxTextOutputStreamOnString():
 wxString wxTextOutputStreamOnString::GetString() const
 {
 	const wxStreamBuffer* const sb = m_outputStream.GetOutputStreamBuffer();
-	return wxString( 
-		static_cast<const char*>( sb->GetBufferStart() ),
-		m_conv,
-		sb->GetBufferSize() - sb->GetBytesLeft() );
+
+	return wxString(
+			static_cast< const char* >( sb->GetBufferStart() ),
+			m_conv,
+			sb->GetBufferSize() - sb->GetBytesLeft() );
 }
 
 const wxMemoryOutputStream& wxTextOutputStreamOnString::GetMemoryStream() const
@@ -33,13 +34,13 @@ wxTextOutputStream& wxTextOutputStreamOnString::GetStream()
 
 wxTextOutputStream& wxTextOutputStreamOnString::operator *() const
 {
-    return const_cast<wxTextOutputStream&>(m_textOutputStream);
+	return const_cast< wxTextOutputStream& >( m_textOutputStream );
 }
 
 void wxTextOutputStreamOnString::SaveTo( wxTextOutputStream& tos, const wxString& s )
 {
 	wxTextInputStreamOnString tis( s );
-	wxString sLine;
+	wxString				  sLine;
 
 	while ( !tis.Eof() )
 	{
@@ -62,3 +63,4 @@ void wxTextOutputStreamOnString::SaveTo( wxTextOutputStream& tos ) const
 {
 	SaveTo( tos, GetString() );
 }
+

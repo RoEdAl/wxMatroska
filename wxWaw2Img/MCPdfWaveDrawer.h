@@ -15,13 +15,12 @@ class McPdfWaveDrawer:
 	public:
 
 		McPdfWaveDrawer( wxUint16 );
-		wxPdfDocument* Initialize( const wxSize &, const wxColour &, const wxRect2DIntArray &, const wxString&  );
+		wxPdfDocument* Initialize( const wxSize&, const wxColour&, const wxRect2DIntArray&, const wxString& );
 		bool Save( const wxFileName& );
 
 	protected:
 
 		virtual void ProcessFinalizer();
 };
-
 #endif
 

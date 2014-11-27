@@ -105,6 +105,5 @@ class wxDataFile:
 		static bool FromString( const wxString&, FileType& );
 		static wxString GetFileTypeRegExp();
 };
-
 #endif	// _WX_DATA_FILE_H_
 

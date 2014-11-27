@@ -13,29 +13,29 @@
 
 // ===============================================================================
 
-const char wxCueTag::Name::CUESHEET[]		= "CUESHEET";
-const char wxCueTag::Name::TOTALTRACKS[]	= "TOTALTRACKS";
-const char wxCueTag::Name::ARRANGER[]		= "ARRANGER";
-const char wxCueTag::Name::COMPOSER[]		= "COMPOSER";
-const char wxCueTag::Name::ISRC[]			= "ISRC";
-const char wxCueTag::Name::TITLE[]		    = "TITLE";
-const char wxCueTag::Name::ALBUM[]		    = "ALBUM";
-const char wxCueTag::Name::PERFORMER[]	    = "PERFORMER";
-const char wxCueTag::Name::ARTIST[]		    = "ARTIST";
-const char wxCueTag::Name::ALBUM_ARTIST[]   = "ALBUM ARTIST";
-const char wxCueTag::Name::ALBUMARTIST[]    = "ALBUMARTIST";
-const char wxCueTag::Name::CATALOG[]		= "CATALOG";
-const char wxCueTag::Name::CDTEXTFILE[]	    = "CDTEXTFILE";
-const char wxCueTag::Name::DISC_ID[]		= "DISC_ID";
-const char wxCueTag::Name::GENRE[]		    = "GENRE";
-const char wxCueTag::Name::MESSAGE[]		= "MESSAGE";
-const char wxCueTag::Name::SONGWRITER[]	    = "SONGWRITER";
-const char wxCueTag::Name::UPC_EAN[]		= "UPC_EAN";
-const char wxCueTag::Name::SIZE_INFO[]	    = "SIZE_INFO";
-const char wxCueTag::Name::TOC_INFO[]		= "TOC_INFO";
-const char wxCueTag::Name::TOC_INFO2[]	    = "TOC_INFO2";
-const char wxCueTag::Name::DISCNUMBER[]	    = "DISCNUMBER";
-const char wxCueTag::Name::TOTALDISCS[]	    = "TOTALDISCS";
+const char wxCueTag::Name::CUESHEET[]	  = "CUESHEET";
+const char wxCueTag::Name::TOTALTRACKS[]  = "TOTALTRACKS";
+const char wxCueTag::Name::ARRANGER[]	  = "ARRANGER";
+const char wxCueTag::Name::COMPOSER[]	  = "COMPOSER";
+const char wxCueTag::Name::ISRC[]		  = "ISRC";
+const char wxCueTag::Name::TITLE[]		  = "TITLE";
+const char wxCueTag::Name::ALBUM[]		  = "ALBUM";
+const char wxCueTag::Name::PERFORMER[]	  = "PERFORMER";
+const char wxCueTag::Name::ARTIST[]		  = "ARTIST";
+const char wxCueTag::Name::ALBUM_ARTIST[] = "ALBUM ARTIST";
+const char wxCueTag::Name::ALBUMARTIST[]  = "ALBUMARTIST";
+const char wxCueTag::Name::CATALOG[]	  = "CATALOG";
+const char wxCueTag::Name::CDTEXTFILE[]	  = "CDTEXTFILE";
+const char wxCueTag::Name::DISC_ID[]	  = "DISC_ID";
+const char wxCueTag::Name::GENRE[]		  = "GENRE";
+const char wxCueTag::Name::MESSAGE[]	  = "MESSAGE";
+const char wxCueTag::Name::SONGWRITER[]	  = "SONGWRITER";
+const char wxCueTag::Name::UPC_EAN[]	  = "UPC_EAN";
+const char wxCueTag::Name::SIZE_INFO[]	  = "SIZE_INFO";
+const char wxCueTag::Name::TOC_INFO[]	  = "TOC_INFO";
+const char wxCueTag::Name::TOC_INFO2[]	  = "TOC_INFO2";
+const char wxCueTag::Name::DISCNUMBER[]	  = "DISCNUMBER";
+const char wxCueTag::Name::TOTALDISCS[]	  = "TOTALDISCS";
 
 // ===============================================================================
 
@@ -181,6 +181,7 @@ wxString wxCueTag::GetFlattenValue( const wxString& sSeparator ) const
 		while ( !tis.Eof() )
 		{
 			sLine = ( *tis ).ReadLine();
+
 			if ( sLine.IsEmpty() )
 			{
 				*tos << sSeparator;
@@ -225,6 +226,7 @@ wxCueTag& wxCueTag::SetValue( const wxString& sValue )
 	while ( !tis.Eof() )
 	{
 		sLine = ( *tis ).ReadLine();
+
 		if ( sLine.IsEmpty() )
 		{
 			*tos << endl;
@@ -480,7 +482,7 @@ size_t wxCueTag::RemoveTag( wxArrayCueTag& tags, const wxString& sTagName )
 
 void wxCueTag::AddTags( wxArrayCueTag& tags, const wxArrayCueTag& newTags )
 {
-	for ( size_t i = 0, nCount = newTags.GetCount(); i < nCount; i++ )
+	for ( size_t i = 0, nCount = newTags.GetCount(); i < nCount; ++i )
 	{
 		AddTag( tags, newTags[ i ] );
 	}
@@ -488,7 +490,7 @@ void wxCueTag::AddTags( wxArrayCueTag& tags, const wxArrayCueTag& newTags )
 
 void wxCueTag::AddTags( wxArrayCueTag& tags, const wxHashArrayCueTag& tagsHash )
 {
-	for ( wxHashArrayCueTag::const_iterator i = tagsHash.begin(); i != tagsHash.end(); i++ )
+	for ( wxHashArrayCueTag::const_iterator i = tagsHash.begin(); i != tagsHash.end(); ++i )
 	{
 		AddTags( tags, i->second );
 	}
@@ -498,7 +500,7 @@ size_t wxCueTag::RemoveTags( wxArrayCueTag& tags, const wxArrayCueTag& tagsToDel
 {
 	size_t nCounter = 0;
 
-	for ( size_t i = 0, nCount = tagsToDelete.GetCount(); i < nCount; i++ )
+	for ( size_t i = 0, nCount = tagsToDelete.GetCount(); i < nCount; ++i )
 	{
 		nCounter += RemoveTag( tags, tagsToDelete[ i ] );
 	}
@@ -509,7 +511,7 @@ size_t wxCueTag::RemoveTags( wxArrayCueTag& tags, const wxArrayCueTag& tagsToDel
 void wxCueTag::CommonTags( wxArrayCueTag& commonTags, const wxArrayCueTag& group1, const wxArrayCueTag& group2 )
 {
 	commonTags.Clear();
-	for ( size_t i = 0, nCount = group1.GetCount(); i < nCount; i++ )
+	for ( size_t i = 0, nCount = group1.GetCount(); i < nCount; ++i )
 	{
 		if ( FindTag( group2, group1[ i ] ) )
 		{
@@ -557,10 +559,9 @@ wxString wxCueTag::GetFlattenValues( const wxArrayCueTag& tags, const wxString& 
 {
 	wxString sResult;
 
-	for ( size_t i = 0, nCount = tags.GetCount(); i < nCount; i++ )
+	for ( size_t i = 0, nCount = tags.GetCount(); i < nCount; ++i )
 	{
-		sResult.Append( tags[ i ].GetFlattenValue( sSeparator ) );
-		sResult.Append( sSeparator );
+		sResult << tags[ i ].GetFlattenValue( sSeparator ) << sSeparator;
 	}
 
 	if ( tags.IsEmpty() )

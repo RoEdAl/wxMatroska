@@ -18,34 +18,6 @@ MACRO(ADD_MSVC_PRECOMPILED_HEADER PrecompiledHeader PrecompiledSource SourcesVar
   ENDIF(MSVC)
 ENDMACRO(ADD_MSVC_PRECOMPILED_HEADER)
 
-ExternalProject_Add(
-	ZLIB
-	URL "http://zlib.net/zlib-1.2.8.tar.gz"
-	URL_MD5 "44d667c142d7cda120332623eab69f40"
-	CMAKE_ARGS -DASM686=OFF -DAMD64=OFF -DCMAKE_INSTALL_PREFIX=${EXT_INSTALL_PREFIX}
-)
-
-#ExternalProject_Add(
-#	PNG
-#	URL "ftp://ftp.simplesystems.org/pub/libpng/png/src/libpng16/libpng-1.6.14.tar.gz"
-#	URL_MD5 "2101b3de1d5f348925990f9aa8405660"
-#	CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${EXT_INSTALL_PREFIX}
-#)
-
-ExternalProject_Add (
-	project_taglib
-	GIT_REPOSITORY "https://github.com/taglib/taglib"
-	DEPENDS ZLIB
-	CMAKE_ARGS -DENABLE_STATIC=ON -DENABLE_STATIC_RUNTIME=OFF -DCMAKE_INSTALL_PREFIX=${EXT_INSTALL_PREFIX}
-)
-
-#ExternalProject_Add (
-#	HARU
-#	GIT_REPOSITORY "https://github.com/libharu/libharu"
-#	DEPENDS ZLIB PNG
-#	CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${EXT_INSTALL_PREFIX}
-#)
-
 project(wxmatroska VERSION 1.0.1.0)
 
 # Test 32/64 bits
@@ -71,10 +43,40 @@ configure_file(
 
 include_directories( ${PROJECT_BINARY_DIR} )
 
-#source_group("Include files" REGULAR_EXPRESSION "*([.]h|[.]hpp)$" )
-
 # installation directory of external libraries
 SET(EXT_INSTALL_PREFIX ${PROJECT_BINARY_DIR}/extlib)
+
+message( External projects dir: ${EXT_INSTALL_PREFIX} )
+
+ExternalProject_Add(
+	project_ZLIB
+	URL "http://zlib.net/zlib-1.2.8.tar.gz"
+	URL_MD5 "44d667c142d7cda120332623eab69f40"
+	CMAKE_ARGS -DASM686=OFF -DAMD64=OFF -DCMAKE_INSTALL_PREFIX=${EXT_INSTALL_PREFIX}
+)
+
+#ExternalProject_Add(
+#	PNG
+#	URL "ftp://ftp.simplesystems.org/pub/libpng/png/src/libpng16/libpng-1.6.14.tar.gz"
+#	URL_MD5 "2101b3de1d5f348925990f9aa8405660"
+#	CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${EXT_INSTALL_PREFIX}
+#)
+
+ExternalProject_Add (
+	project_taglib
+	GIT_REPOSITORY "https://github.com/taglib/taglib"
+	DEPENDS project_ZLIB
+	CMAKE_ARGS -DENABLE_STATIC=ON -DENABLE_STATIC_RUNTIME=OFF -DCMAKE_INSTALL_PREFIX=${EXT_INSTALL_PREFIX}
+)
+
+#ExternalProject_Add (
+#	HARU
+#	GIT_REPOSITORY "https://github.com/libharu/libharu"
+#	DEPENDS ZLIB PNG
+#	CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${EXT_INSTALL_PREFIX}
+#)
+
+#source_group("Include files" REGULAR_EXPRESSION "*([.]h|[.]hpp)$" )
 
 add_definitions(-DTAGLIB_STATIC)
 

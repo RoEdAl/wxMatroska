@@ -45,4 +45,3 @@ void ChannelMixer::ProcessFrame( const wxFloat32* frame )
 	__super::ProcessFrame( &fMix );
 }
 
-

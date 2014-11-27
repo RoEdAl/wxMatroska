@@ -20,7 +20,7 @@
 
 // ===============================================================================
 
-const char wxMyApp::APP_NAME[]	= "cue2mkc";
+const char wxMyApp::APP_NAME[]	  = "cue2mkc";
 const char wxMyApp::APP_VERSION[] = WXMATROSKA_VERSION_STR;
 
 // ===============================================================================
@@ -45,9 +45,6 @@ void wxMyApp::InfoUsage( wxMessageOutput& out )
 	out.Output( _( "Input file format specification:" ) );
 	out.Output( _( "Input file may be a wildcard:" ) );
 	out.Output( _( "\t*.cue" ) );
-	out.Output( _( "When -ec is used input file may be a path to media file with embedded cue sheet:" ) );
-	out.Output( _( "\t*.flac test.wv" ) );
-	out.Output( _( "To read embedded cue sheet MediaInfo library is used." ) );
 	out.Printf( _( "You may also specify data files after cue file using %c as separator." ), wxInputFile::SEPARATOR );
 	out.Printf( _( "\t\"test.cue%ctest.flac\"" ), wxInputFile::SEPARATOR );
 	out.Output( _( "This allow you to override data file specification in cue sheet file." ) );
@@ -115,6 +112,7 @@ bool wxMyApp::ShowInfo() const
 void wxMyApp::OnInitCmdLine( wxCmdLineParser& cmdline )
 {
 	MyAppConsole::OnInitCmdLine( cmdline );
+
 	m_cfg.AddCmdLineParams( cmdline );
 	cmdline.SetLogo( _( "This application converts cue sheet files to Matroska XML chapter files in a more advanced way than standard Matroska tools." ) );
 }
@@ -295,25 +293,10 @@ int wxMyApp::ProcessCueFile( const wxInputFile& inputFile, const wxTagSynonimsCo
 
 	wxLogMessage( _( "Processing \u201C%s\u201D" ), sInputFile );
 
-	if ( m_cfg.IsEmbedded() )
+	if ( !reader.ReadCueSheetEx( sInputFile, m_cfg.UseMLang() ) )
 	{
-		wxLogInfo( _( "Reading cue sheet from media file" ) );
-
-		if ( !reader.ReadEmbeddedCueSheet( sInputFile ) )
-		{
-			wxLogError( _( "Fail to read embedded sue sheet from \u201C%s\u201D or parse error" ), sInputFile );
-			return 1;
-		}
-	}
-	else
-	{
-		wxLogInfo( _( "Reading cue sheet from text file" ) );
-
-		if ( !reader.ReadCueSheet( sInputFile, m_cfg.UseMLang() ) )
-		{
-			wxLogError( _( "Fail to read or parse input cue file \u201C%s\u201D" ), sInputFile );
-			return 1;
-		}
+		wxLogError( _( "Fail to read or parse input cue file \u201C%s\u201D" ), sInputFile );
+		return 1;
 	}
 
 	wxCueSheet cueSheet( reader.GetCueSheet() );
@@ -503,40 +486,41 @@ bool wxMyApp::RunMkvmerge( const wxFileName& optionsFile )
 	wxASSERT( m_cfg.RunMkvmerge() );
 
 	wxString sCmdLine;
-    wxString sOptionsFile;
+	wxString sOptionsFile;
 
-    if (m_cfg.UseFullPaths())
-    {
-        sOptionsFile = optionsFile.GetFullPath();
-    }
-    else
-    {
-        sOptionsFile = optionsFile.GetFullName();
-    }
+	if ( m_cfg.UseFullPaths() )
+	{
+		sOptionsFile = optionsFile.GetFullPath();
+	}
+	else
+	{
+		sOptionsFile = optionsFile.GetFullName();
+	}
 
-    if (m_cfg.GetMkvmergeDir( ).IsOk( ))
-    {
-        wxFileName mkvmerge( m_cfg.GetMkvmergeDir( ).GetFullPath( ), "mkvmerge" );
-        if (wxLog::GetVerbose( ))
-        {
-            sCmdLine.Printf( "\"%s\" --output-charset utf-8 \"@%s\"", mkvmerge.GetFullPath( ), sOptionsFile );
-        }
-        else
-        {
-            sCmdLine.Printf( "\"%s\" --quiet --output-charset utf-8 \"@%s\"", mkvmerge.GetFullPath( ), sOptionsFile );
-        }
-    }
-    else
-    {
-        if (wxLog::GetVerbose( ))
-        {
-            sCmdLine.Printf( "mkvmerge --output-charset utf-8 \"@%s\"", sOptionsFile );
-        }
-        else
-        {
-            sCmdLine.Printf( "mkvmerge --quiet --output-charset utf-8 \"@%s\"", sOptionsFile );
-        }
-    }
+	if ( m_cfg.GetMkvmergeDir().IsOk() )
+	{
+		wxFileName mkvmerge( m_cfg.GetMkvmergeDir().GetFullPath(), "mkvmerge" );
+
+		if ( wxLog::GetVerbose() )
+		{
+			sCmdLine.Printf( "\"%s\" --output-charset utf-8 \"@%s\"", mkvmerge.GetFullPath(), sOptionsFile );
+		}
+		else
+		{
+			sCmdLine.Printf( "\"%s\" --quiet --output-charset utf-8 \"@%s\"", mkvmerge.GetFullPath(), sOptionsFile );
+		}
+	}
+	else
+	{
+		if ( wxLog::GetVerbose() )
+		{
+			sCmdLine.Printf( "mkvmerge --output-charset utf-8 \"@%s\"", sOptionsFile );
+		}
+		else
+		{
+			sCmdLine.Printf( "mkvmerge --quiet --output-charset utf-8 \"@%s\"", sOptionsFile );
+		}
+	}
 
 	wxLogMessage( _( "Running mkvmerge with options from file \u201C%s\u201D" ), sOptionsFile );
 	wxLogDebug( sCmdLine );

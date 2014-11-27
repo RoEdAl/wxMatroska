@@ -76,6 +76,5 @@ class wxCueSheetRenderer:
 
 		bool Render( const wxCueSheet& );
 };
-
 #endif
 

@@ -43,6 +43,5 @@ class wxInputFile:
 
 		wxString ToString( bool = false ) const;
 };
-
 #endif
 

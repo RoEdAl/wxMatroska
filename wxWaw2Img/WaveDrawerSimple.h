@@ -29,6 +29,5 @@ class SimpleWaveDrawer:
 		wxGraphicsPath m_pathUp;
 		wxGraphicsPath m_pathDown;
 };
-
 #endif
 

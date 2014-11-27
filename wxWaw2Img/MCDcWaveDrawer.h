@@ -13,12 +13,11 @@ class McDcWaveDrawer:
 		wxScopedPtr< wxDC > m_pDc;
 
 		McDcWaveDrawer( wxUint16 );
-		void Initialize( wxDC*  );
+		void Initialize( wxDC* );
 
 	public:
 
 		virtual bool Save( const wxFileName& ) = 0;
 };
-
 #endif
 

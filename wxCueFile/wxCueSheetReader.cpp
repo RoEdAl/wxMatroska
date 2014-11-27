@@ -19,7 +19,7 @@ wxIMPLEMENT_DYNAMIC_CLASS( wxCueSheetReader, wxObject );
 
 // ===============================================================================
 
-const char wxCueSheetReader::LOG_EXT[]  = "log";
+const char wxCueSheetReader::LOG_EXT[]	= "log";
 const char wxCueSheetReader::LOG_MASK[] = "*.log";
 
 // ===============================================================================
@@ -123,10 +123,10 @@ wxString wxCueSheetReader::GetOneTrackCue()
 	wxTextOutputStreamOnString tos;
 
 	( *tos ) <<
-	"REM one-track CUE sheet" << endl <<
-	"FILE \"%source%\" WAVE" << endl <<
-	"\tTRACK 01 AUDIO" << endl <<
-	"\tINDEX 01 00:00:00" << endl;
+		"REM one-track CUE sheet" << endl <<
+		"FILE \"%source%\" WAVE" << endl <<
+		"\tTRACK 01 AUDIO" << endl <<
+		"\tINDEX 01 00:00:00" << endl;
 	( *tos ).Flush();
 
 	return tos.GetString();
@@ -146,9 +146,8 @@ wxString wxCueSheetReader::GetTagLibVersion()
 
 void TagLibDebugListener::printMessage( const TagLib::String& msg )
 {
-    wxLogDebug( msg.toCWString() );
+	wxLogDebug( msg.toCWString() );
 }
-
 #endif
 
 wxCueSheetReader::wxCueSheetReader( void ):
@@ -184,14 +183,14 @@ wxCueSheetReader::wxCueSheetReader( void ):
 	wxASSERT( m_reCommentMeta.IsValid() );
 
 #ifdef __WXDEBUG__
-    TagLib::setDebugListener( &m_debugListener );
+	TagLib::setDebugListener( &m_debugListener );
 #endif
 }
 
 #ifdef __WXDEBUG__
 wxCueSheetReader::~wxCueSheetReader()
 {
-    TagLib::setDebugListener( (TagLib::DebugListener*)NULL );
+	TagLib::setDebugListener( (TagLib::DebugListener*)NULL );
 }
 #endif
 
@@ -394,7 +393,7 @@ void wxCueSheetReader::AppendTags( const wxArrayCueTag& comments, bool bSingleMe
 
 void wxCueSheetReader::AppendTags( const wxArrayCueTag& tags, size_t nTrackFrom, size_t nTrackTo )
 {
-	for ( size_t i = 0, nTags = tags.GetCount(); i < nTags; i++ )
+	for ( size_t i = 0, nTags = tags.GetCount(); i < nTags; ++i )
 	{
 		wxCueTag tag( tags[ i ] );
 
@@ -446,7 +445,7 @@ void wxCueSheetReader::AppendTags( const wxArrayCueTag& tags, size_t nTrackFrom,
 		}
 		else
 		{
-			for ( size_t j = nTrackFrom; j <= nTrackTo; j++ )
+			for ( size_t j = nTrackFrom; j <= nTrackTo; ++j )
 			{
 				m_cueSheet.GetTrack( j ).AddTag( tag );
 			}
@@ -454,34 +453,35 @@ void wxCueSheetReader::AppendTags( const wxArrayCueTag& tags, size_t nTrackFrom,
 	}
 }
 
-bool wxCueSheetReader::ReadEmbeddedCueSheet( const wxString& sMediaFile )
+bool wxCueSheetReader::ReadCueSheetEx( const wxString& sFile, bool bUseMLang )
 {
-	wxDataFile dataFile( sMediaFile, wxDataFile::WAVE );
+	wxDataFile dataFile( sFile, wxDataFile::WAVE );
 
-	if ( !dataFile.GetInfo( m_sAlternateExt ) )
-	{
-		return false;
-	}
+	if ( dataFile.GetInfo( m_sAlternateExt ) )
+	{	// embedded or single
+		bool bSingleMediaFile = TestReadFlags( EC_SINGLE_MEDIA_FILE );
+		bool bCueSheet		  = dataFile.HasCueSheet();
 
-	bool bSingleMediaFile = TestReadFlags( EC_SINGLE_MEDIA_FILE );
-	bool bCueSheet		  = dataFile.HasCueSheet();
-
-	if ( !bSingleMediaFile )
-	{
-		if ( !bCueSheet )
+		if ( bSingleMediaFile )
 		{
-			wxLogWarning( _( "Cannot find cue sheet" ) );
-			return false;
+			return BuildFromSingleMediaFile( dataFile );
+		}
+		else
+		{
+			if ( bCueSheet )
+			{
+				return ParseCue( wxCueSheetContent( dataFile ) );
+			}
+			else
+			{
+				wxLogWarning( _( "Cannot find cue sheet" ) );
+				return false;
+			}
 		}
 	}
-
-	if ( bSingleMediaFile )
-	{
-		return BuildFromSingleMediaFile( dataFile );
-	}
 	else
-	{
-		return ParseCue( wxCueSheetContent( dataFile ) );
+	{	// assuming normal text file
+		return ReadCueSheet( sFile, bUseMLang );
 	}
 }
 
@@ -556,11 +556,11 @@ void wxCueSheetReader::DumpErrors( size_t nLine ) const
 		{
 			if ( m_bErrorsAsWarnings )
 			{
-                wxLogWarning( _( "Line %" wxSizeTFmtSpec "d: %s" ), nLine, i->GetData( ) );
+				wxLogWarning( _( "Line %" wxSizeTFmtSpec "d: %s" ), nLine, i->GetData() );
 			}
 			else
 			{
-                wxLogError( _( "Line %" wxSizeTFmtSpec "d: %s" ), nLine, i->GetData( ) );
+				wxLogError( _( "Line %" wxSizeTFmtSpec "d: %s" ), nLine, i->GetData() );
 			}
 		}
 	}
@@ -584,9 +584,9 @@ wxString wxCueSheetReader::Unquote( const wxString& qs )
 }
 
 template< size_t SIZE >
-bool wxCueSheetReader::ParseLine( const wxString& sToken, const wxString& sRest, const PARSE_STRUCT( &pa )[ SIZE ] )
+bool wxCueSheetReader::ParseLine( const wxString& sToken, const wxString& sRest, const PARSE_STRUCT(&pa)[ SIZE ] )
 {
-	for ( size_t i = 0; i < SIZE; i++ )
+	for ( size_t i = 0; i < SIZE; ++i )
 	{
 		if ( sToken.CmpNoCase( pa[ i ].token ) == 0 )
 		{
@@ -740,10 +740,10 @@ bool wxCueSheetReader::ParseCue( const wxCueSheetContent& content )
 
 		if ( TestReadFlags( EC_FIND_COVER ) )
 		{
-            if (TestReadFlags( EC_MEDIA_READ_TAGS ))
-            {
-                FindCoversInRelatedFiles( );
-            }
+			if ( TestReadFlags( EC_MEDIA_READ_TAGS ) )
+			{
+				FindCoversInRelatedFiles();
+			}
 			FindCover( content );
 		}
 	}
@@ -787,7 +787,7 @@ bool wxCueSheetReader::ParseCueLine( const wxString& sLine, size_t nLine )
 	}
 	else
 	{
-        wxLogWarning( _( "Incorrect line %" wxSizeTFmtSpec "d: %s" ), nLine, sLine );
+		wxLogWarning( _( "Incorrect line %" wxSizeTFmtSpec "d: %s" ), nLine, sLine );
 		ParseGarbage( sLine );
 		res = false;
 	}
@@ -1045,6 +1045,7 @@ void wxCueSheetReader::ParseCatalog( const wxString& WXUNUSED( sToken ), const w
 void wxCueSheetReader::ParseCdTextFile( const wxString& WXUNUSED( sToken ), const wxString& sBody )
 {
 	wxFileName cdTextFile( Unquote( sBody ) );
+
 	if ( cdTextFile.GetPath().IsEmpty() && m_cueSheetContent.HasSource() )
 	{
 		cdTextFile.SetPath( m_cueSheetContent.GetSource().GetFileName().GetPath() );
@@ -1064,7 +1065,7 @@ bool wxCueSheetReader::ReadTagsFromRelatedFiles()
 	size_t				   nTrackFrom, nTrackTo;
 	bool				   bRes = true;
 
-	for ( size_t i = 0, nCount = dataFiles.GetCount(); i < nCount; i++ )
+	for ( size_t i = 0, nCount = dataFiles.GetCount(); i < nCount; ++i )
 	{
 		wxASSERT( dataFiles[ i ].HasRealFileName() );
 
@@ -1086,17 +1087,17 @@ bool wxCueSheetReader::ReadTagsFromRelatedFiles()
 
 void wxCueSheetReader::FindCoversInRelatedFiles()
 {
-    if (!m_cueSheet.CalculateDuration( m_sAlternateExt ))
-    {
-        return;
-    }
+	if ( !m_cueSheet.CalculateDuration( m_sAlternateExt ) )
+	{
+		return;
+	}
 
-    const wxArrayDataFile& dataFiles = m_cueSheet.GetDataFiles( );
- 
-    for (size_t i = 0, nCount = dataFiles.GetCount( ); i < nCount; ++i)
-    {
-        ExtractCoversFromDataFile( dataFiles[i] );
-    }
+	const wxArrayDataFile& dataFiles = m_cueSheet.GetDataFiles();
+
+	for ( size_t i = 0, nCount = dataFiles.GetCount(); i < nCount; ++i )
+	{
+		ExtractCoversFromDataFile( dataFiles[ i ] );
+	}
 }
 
 bool wxCueSheetReader::ReadTagsFromMediaFile( const wxDataFile& _dataFile, size_t nTrackFrom, size_t nTrackTo )
@@ -1125,10 +1126,10 @@ bool wxCueSheetReader::ReadTagsFromMediaFile( const wxDataFile& _dataFile, size_
 
 void wxCueSheetReader::ExtractCoversFromDataFile( const wxDataFile& dataFile )
 {
-    if (!dataFile.HasRealFileName()) return;
+	if ( !dataFile.HasRealFileName() ) { return; }
 
-    wxArrayCoverFile covers;
-    wxCoverFile::Extract( dataFile.GetRealFileName(), covers );
-    m_cueSheet.AddCovers( covers );
+	wxArrayCoverFile covers;
+	wxCoverFile::Extract( dataFile.GetRealFileName(), covers );
+	m_cueSheet.AddCovers( covers );
 }
 

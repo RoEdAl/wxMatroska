@@ -22,7 +22,8 @@
  *    GetClassInfoW.
  * That's why we define NOUSER.
  */
-#define WIN32_LEAN_AND_MEAN																																// Exclude
+#define WIN32_LEAN_AND_MEAN																																																																//
+																																																																						// Exclude
 #define NOUSER
 #define NOGDI
 #define NOMB
@@ -38,7 +39,6 @@
  */
 typedef struct tagMSG
 {} MSG, * LPMSG;
-
 #endif
 
 #include <wx/wx.h>
@@ -70,7 +70,7 @@ typedef struct tagMSG
 
 extern wxXmlNode* const wxNullXmlNode;
 
-#if defined(__WIN64__)
+#if defined( __WIN64__ )
 #define wxSizeTFmtSpec wxLongLongFmtSpec
 #else
 #define wxSizeTFmtSpec
@@ -79,6 +79,5 @@ extern wxXmlNode* const wxNullXmlNode;
 #ifdef WIN32
 #include <objbase.h>
 #endif
-
 #endif	// _STD_WX_H
 

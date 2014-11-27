@@ -37,7 +37,6 @@ class McGraphicalContextWaveDrawer:
 #ifdef __WXMSW__
 #if wxUSE_ENH_METAFILE
 		wxEnhMetaFile* GetMetafile() const;
-
 #endif
 #endif
 
@@ -52,10 +51,8 @@ class McGraphicalContextWaveDrawer:
 #ifdef __WXMSW__
 #if wxUSE_ENH_METAFILE
 		void create_context_on_emf( const wxSize& );
-
 #endif
 #endif
 };
-
 #endif
 

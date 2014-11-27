@@ -186,7 +186,7 @@ void wxTextCueSheetRenderer::InternalRenderTrack( const wxCueSheet& cueSheet, co
 		InternalRenderDataFile( cueSheet, nDataFileIdx );
 	}
 
-    sLine.Printf( "%02" wxSizeTFmtSpec "d %s", track.GetNumber( ), track.GetModeAsString( ) );
+	sLine.Printf( "%02" wxSizeTFmtSpec "d %s", track.GetNumber(), track.GetModeAsString() );
 	DumpComponentString( track, "TRACK", sLine );
 	InternalRenderComponent( track );
 
@@ -219,9 +219,9 @@ void wxTextCueSheetRenderer::InternalRenderIndex( const wxCueSheet& cueSheet, co
 	wxString sIdxNo;
 	wxString sIdx( m_si.GetIndexOffsetFramesStr( idx ) );
 
-    sIdxNo.Printf( "%02" wxSizeTFmtSpec "d", idx.GetNumber( ) );
+	sIdxNo.Printf( "%02" wxSizeTFmtSpec "d", idx.GetNumber() );
 	*m_pTextOutputStream << "\t\t INDEX " << sIdxNo << ' ' <<
-	sIdx << endl;
+		sIdx << endl;
 }
 
 void wxTextCueSheetRenderer::InternalRenderDataFile( const wxCueSheet& cueSheet, size_t nDataFileIdx )
@@ -231,8 +231,8 @@ void wxTextCueSheetRenderer::InternalRenderDataFile( const wxCueSheet& cueSheet,
 	{
 		const wxDataFile& dataFile = cueSheet.GetDataFiles().Item( nDataFileIdx );
 		*m_pTextOutputStream <<
-		"FILE \"" << dataFile.GetFileName().GetFullName() <<
-		"\" " << dataFile.GetFileTypeAsString() << endl;
+			"FILE \"" << dataFile.GetFileName().GetFullName() <<
+			"\" " << dataFile.GetFileTypeAsString() << endl;
 		m_nDataFileIdx = nDataFileIdx;
 	}
 }
@@ -255,5 +255,7 @@ wxString wxTextCueSheetRenderer::ToString( const wxCueSheet& cueSheet, int nDump
 bool wxTextCueSheetRenderer::ToString( wxTextOutputStream& tos, const wxCueSheet& cueSheet, int nDumpFlags )
 {
 	wxTextCueSheetRenderer renderer( &tos, nDumpFlags );
+
 	return renderer.Render( cueSheet );
 }
+

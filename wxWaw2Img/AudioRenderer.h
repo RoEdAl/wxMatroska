@@ -43,6 +43,5 @@ class AudioRenderer:
 		wxUint32		 m_nSourceSamplerate;
 		AudioColumnArray m_ac;
 };
-
 #endif
 

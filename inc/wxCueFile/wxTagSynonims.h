@@ -56,6 +56,5 @@ class wxTagSynonimsCollection:
 		bool GetName( const wxString&, wxString& ) const;
 		bool GetName( const wxCueTag&, wxCueTag& ) const;
 };
-
 #endif
 

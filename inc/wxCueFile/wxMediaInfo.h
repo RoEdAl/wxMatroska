@@ -79,6 +79,5 @@ class wxMediaInfo:
 		bool IsLoaded() const;
 		void Unload();
 };
-
 #endif
 

@@ -7,7 +7,7 @@
 
 #ifdef WIN32
 #include <targetver.h>
-#define WIN32_LEAN_AND_MEAN																																																																																																																																//
+#define WIN32_LEAN_AND_MEAN																																																																																																																																																																																																																																																																//
 #endif
 
 #include <wx/wx.h>
@@ -28,7 +28,7 @@
 #include <wx/dir.h>
 #include <wx/mimetype.h>
 
-#if defined(__WIN64__)
+#if defined( __WIN64__ )
 #define wxSizeTFmtSpec wxLongLongFmtSpec
 #else
 #define wxSizeTFmtSpec
@@ -50,6 +50,5 @@
 #include <taglib/flacfile.h>
 
 // #include <mpegproperties.h>
-
 #endif	// _STD_WX_H
 

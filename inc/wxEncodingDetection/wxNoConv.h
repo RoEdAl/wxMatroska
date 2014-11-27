@@ -1,6 +1,6 @@
 /*
-	wxNoConv.h
-*/
+ *      wxNoConv.h
+ */
 
 #ifndef _NO_CONV_H_
 #define _NO_CONV_H_
@@ -75,5 +75,5 @@ class wxNoConv:
 			return new wxNoConv();
 		}
 };
+#endif	// _NO_CONV_H_
 
-#endif // _NO_CONV_H_

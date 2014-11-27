@@ -1,6 +1,6 @@
 /*
-    wxCoverFile.cpp
-*/
+ *  wxCoverFile.cpp
+ */
 
 #include "StdWx.h"
 #include <wxCueFile/wxCoverFile.h>
@@ -10,10 +10,10 @@
 
 const char* const wxCoverFile::CoverNames[] =
 {
-    "cover",
-    "front",
-    "folder",
-    "picture"
+	"cover",
+	"front",
+	"folder",
+	"picture"
 };
 
 const size_t wxCoverFile::CoverNamesSize = WXSIZEOF( wxCoverFile::CoverNames );
@@ -22,36 +22,37 @@ const size_t wxCoverFile::CoverNamesSize = WXSIZEOF( wxCoverFile::CoverNames );
 
 const char* const wxCoverFile::CoverExts[] =
 {
-    "jpg",
-    "jpeg",
-    "png"
+	"jpg",
+	"jpeg",
+	"png"
 };
 
 const size_t wxCoverFile::CoverExtsSize = WXSIZEOF( wxCoverFile::CoverExts );
 
 const wxULongLong wxCoverFile::MAX_FILE_SIZE = wxUINT32_MAX;
 
-const wxCoverFile::TypeName wxCoverFile::TypeNames[] = {
-    {wxCoverFile::FrontCover, "FrontCover"},
-    {wxCoverFile::BackCover, "BackCover"},
-    {wxCoverFile::FileIcon, "FileIcon"},
-    {wxCoverFile::LeafletPage, "LeafletPage"},
-    {wxCoverFile::Media, "Media"},
-    {wxCoverFile::LeadArtist, "LeadArtist"},
-    {wxCoverFile::Artist, "Artist"},
-    {wxCoverFile::Conductor, "Conductor"},
-    {wxCoverFile::Band, "Band"},
-    {wxCoverFile::Composer, "Composer"},
-    {wxCoverFile::Lyricist, "Lyricist"},
-    {wxCoverFile::RecordingLocation, "RecordingLocation"},
-    {wxCoverFile::DuringRecording, "DuringRecording"},
-    {wxCoverFile::DuringPerformance, "DuringPerformance"},
-    {wxCoverFile::MovieScreenCapture, "MovieScreenCapture"},
-    {wxCoverFile::ColouredFish, "ColouredFish"},
-    {wxCoverFile::Illustration, "Illustration"},
-    {wxCoverFile::BandLogo, "BandLogo"},
-    {wxCoverFile::PublisherLogo, "PublisherLogo"},
-    {wxCoverFile::OtherFileIcon, "OtherFileIcon"}
+const wxCoverFile::TypeName wxCoverFile::TypeNames[] =
+{
+	{ wxCoverFile::FrontCover, "FrontCover" },
+	{ wxCoverFile::BackCover, "BackCover" },
+	{ wxCoverFile::FileIcon, "FileIcon" },
+	{ wxCoverFile::LeafletPage, "LeafletPage" },
+	{ wxCoverFile::Media, "Media" },
+	{ wxCoverFile::LeadArtist, "LeadArtist" },
+	{ wxCoverFile::Artist, "Artist" },
+	{ wxCoverFile::Conductor, "Conductor" },
+	{ wxCoverFile::Band, "Band" },
+	{ wxCoverFile::Composer, "Composer" },
+	{ wxCoverFile::Lyricist, "Lyricist" },
+	{ wxCoverFile::RecordingLocation, "RecordingLocation" },
+	{ wxCoverFile::DuringRecording, "DuringRecording" },
+	{ wxCoverFile::DuringPerformance, "DuringPerformance" },
+	{ wxCoverFile::MovieScreenCapture, "MovieScreenCapture" },
+	{ wxCoverFile::ColouredFish, "ColouredFish" },
+	{ wxCoverFile::Illustration, "Illustration" },
+	{ wxCoverFile::BandLogo, "BandLogo" },
+	{ wxCoverFile::PublisherLogo, "PublisherLogo" },
+	{ wxCoverFile::OtherFileIcon, "OtherFileIcon" }
 };
 
 const size_t wxCoverFile::TypeNamesSize = WXSIZEOF( wxCoverFile::TypeNames );
@@ -61,405 +62,424 @@ const size_t wxCoverFile::TypeNamesSize = WXSIZEOF( wxCoverFile::TypeNames );
 wxCoverFile::wxCoverFile()
 {}
 
-wxCoverFile::wxCoverFile( const wxCoverFile& cf )
-:m_fileName( cf.m_fileName ), m_data( cf.m_data ), m_mimeType( cf.m_mimeType ), m_description( cf.m_description ), m_checksum( cf.m_checksum ), m_type( cf.m_type )
+wxCoverFile::wxCoverFile( const wxCoverFile& cf ):
+	m_fileName( cf.m_fileName ), m_data( cf.m_data ), m_mimeType( cf.m_mimeType ), m_description( cf.m_description ), m_checksum( cf.m_checksum ), m_type( cf.m_type )
 {}
 
 bool wxCoverFile::GetMimeFromExt( const wxFileName& fn, wxString& mimeType )
 {
-    wxScopedPtr<wxFileType> pFileType( wxTheMimeTypesManager->GetFileTypeFromExtension( fn.GetExt( ) ) );
-    if (pFileType.get( ) != nullptr)
-    {
-        wxString s;
-        if (pFileType->GetMimeType( &s ))
-        {
-            mimeType = s;
-            return true;
-        }
-        else
-        {
-            wxLogWarning( _( "Could not find mime type for extension %s" ), fn.GetExt() );
-            return false;
-        }
-    }
-    return false;
+	wxScopedPtr< wxFileType > pFileType( wxTheMimeTypesManager->GetFileTypeFromExtension( fn.GetExt() ) );
+
+	if ( pFileType.get() != nullptr )
+	{
+		wxString s;
+
+		if ( pFileType->GetMimeType( &s ) )
+		{
+			mimeType = s;
+			return true;
+		}
+		else
+		{
+			wxLogWarning( _( "Could not find mime type for extension %s" ), fn.GetExt() );
+			return false;
+		}
+	}
+	return false;
 }
 
-wxCoverFile::wxCoverFile( const wxFileName& fn, wxCoverFile::Type type )
-: m_fileName( fn ), m_type( type )
+wxCoverFile::wxCoverFile( const wxFileName& fn, wxCoverFile::Type type ):
+	m_fileName( fn ), m_type( type )
 {
-    m_checksum = wxMD5::Get( fn );
-    GetMimeFromExt( fn, m_mimeType );
-    m_fileSize = fn.GetSize();
+	m_checksum = wxMD5::Get( fn );
+	GetMimeFromExt( fn, m_mimeType );
+	m_fileSize = fn.GetSize();
 }
 
-wxCoverFile::wxCoverFile( const wxMemoryBuffer& data, wxCoverFile::Type type, const wxString& mimeType, const wxString& description )
-: m_data( data ), m_mimeType( mimeType ), m_description( description ), m_checksum( wxMD5::Get( data ) ), m_type( type )
+wxCoverFile::wxCoverFile( const wxMemoryBuffer& data, wxCoverFile::Type type, const wxString& mimeType, const wxString& description ):
+	m_data( data ), m_mimeType( mimeType ), m_description( description ), m_checksum( wxMD5::Get( data ) ), m_type( type )
 {}
 
 const wxFileName& wxCoverFile::GetFileName() const
 {
-    return m_fileName;
+	return m_fileName;
 }
 
 const wxMemoryBuffer& wxCoverFile::GetData() const
 {
-    return m_data;
+	return m_data;
 }
 
 const wxString& wxCoverFile::GetMimeType() const
 {
-    return m_mimeType;
+	return m_mimeType;
 }
 
 const wxString& wxCoverFile::GetDescription() const
 {
-    return m_description;
+	return m_description;
 }
 
 const wxMemoryBuffer& wxCoverFile::GetChecksum() const
 {
-    return m_checksum;
+	return m_checksum;
 }
 
 wxString wxCoverFile::GetExt() const
 {
-    if (HasFileName())
-    {
-        return m_fileName.GetExt();
-    }
-    else if (HasMimeType())
-    {
-        wxScopedPtr<wxFileType> pFileType( wxTheMimeTypesManager->GetFileTypeFromMimeType( m_mimeType ) );
-        if (pFileType.get() != nullptr)
-        {
-            wxArrayString exts;
-            if (pFileType->GetExtensions( exts ) && !exts.IsEmpty() )
-            {
-                wxString ext;
-                if (exts[0].StartsWith( '.', &ext ))
-                {
-                    return ext;
-                }
-                else
-                {
-                    return exts[0];
-                }
-            }
-        }
-    }
+	if ( HasFileName() )
+	{
+		return m_fileName.GetExt();
+	}
+	else if ( HasMimeType() )
+	{
+		wxScopedPtr< wxFileType > pFileType( wxTheMimeTypesManager->GetFileTypeFromMimeType( m_mimeType ) );
 
-    return wxEmptyString;
+		if ( pFileType.get() != nullptr )
+		{
+			wxArrayString exts;
+
+			if ( pFileType->GetExtensions( exts ) && !exts.IsEmpty() )
+			{
+				wxString ext;
+
+				if ( exts[ 0 ].StartsWith( '.', &ext ) )
+				{
+					return ext;
+				}
+				else
+				{
+					return exts[ 0 ];
+				}
+			}
+		}
+	}
+
+	return wxEmptyString;
 }
 
 wxCoverFile::Type wxCoverFile::GetType() const
 {
-    return m_type;
+	return m_type;
 }
 
 size_t wxCoverFile::GetSize() const
 {
-    if (HasFileName())
-    {
-        wxASSERT( m_fileSize < MAX_FILE_SIZE );
-        return m_fileSize.GetLo();
-    }
-    else
-    {
-        return m_data.GetDataLen();
-    }
+	if ( HasFileName() )
+	{
+		wxASSERT( m_fileSize < MAX_FILE_SIZE );
+		return m_fileSize.GetLo();
+	}
+	else
+	{
+		return m_data.GetDataLen();
+	}
 }
 
 bool wxCoverFile::Save( const wxFileName& fn )
 {
-    wxASSERT( HasData() );
-    wxASSERT( !HasFileName() );
+	wxASSERT( HasData() );
+	wxASSERT( !HasFileName() );
 
-    wxFileOutputStream fos( fn.GetFullPath() );
-    if (fos.IsOk())
-    {
-        wxLogInfo( _( "Creating image file \u201C%s\u201D" ), fn.GetFullName( ) );
-        fos.Write( m_data.GetData(), m_data.GetDataLen() );
-        fos.Close();
-        m_fileName = fn;
-        m_fileSize = m_data.GetDataLen();
-        return true;
-    }
-    else
-    {
-        wxLogError( _( "Fail to save image to \u201C%s\u201D" ), fn.GetFullName( ) );
-        return false;
-    }
+	wxFileOutputStream fos( fn.GetFullPath() );
+
+	if ( fos.IsOk() )
+	{
+		wxLogInfo( _( "Creating image file \u201C%s\u201D" ), fn.GetFullName() );
+		fos.Write( m_data.GetData(), m_data.GetDataLen() );
+		fos.Close();
+		m_fileName = fn;
+		m_fileSize = m_data.GetDataLen();
+		return true;
+	}
+	else
+	{
+		wxLogError( _( "Fail to save image to \u201C%s\u201D" ), fn.GetFullName() );
+		return false;
+	}
 }
 
 void wxCoverFile::Append( wxArrayCoverFile& ar, const wxCoverFile& cover )
 {
-    bool bAdd = true;
+	bool bAdd = true;
 
-    for (size_t i = 0, nSize = ar.GetCount(); i < nSize; ++i)
-    {
-        if (wxMD5::AreEqual( cover.GetChecksum( ), ar[i].GetChecksum( ) ))
-        {
-            bAdd = false;
-            break;
-        }
-    }
+	for ( size_t i = 0, nSize = ar.GetCount(); i < nSize; ++i )
+	{
+		if ( wxMD5::AreEqual( cover.GetChecksum(), ar[ i ].GetChecksum() ) )
+		{
+			bAdd = false;
+			break;
+		}
+	}
 
-    if (bAdd)
-    {
-        ar.Add( cover );
-    }
+	if ( bAdd )
+	{
+		ar.Add( cover );
+	}
 }
 
 void wxCoverFile::Append( wxArrayCoverFile& ar, const wxArrayCoverFile& covers )
 {
-    for (size_t i = 0, nSize = covers.GetCount(); i < nSize; ++i) Append( ar, covers[i] );
+	for ( size_t i = 0, nSize = covers.GetCount(); i < nSize; ++i )
+	{
+		Append( ar, covers[ i ] );
+	}
 }
 
 bool wxCoverFile::IsCoverFile( const wxFileName& fileName )
 {
-    for (size_t i = 0; i < CoverExtsSize; i++)
-    {
-        if (fileName.GetExt( ).CmpNoCase( CoverExts[i] ) == 0)
-        {
-            wxULongLong fsize = fileName.GetSize();
-            if (fsize < MAX_FILE_SIZE)
-            {
-                return true;
-            }
-        }
-    }
+	for ( size_t i = 0; i < CoverExtsSize; i++ )
+	{
+		if ( fileName.GetExt().CmpNoCase( CoverExts[ i ] ) == 0 )
+		{
+			wxULongLong fsize = fileName.GetSize();
 
-    return false;
+			if ( fsize < MAX_FILE_SIZE )
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 bool wxCoverFile::GetCoverFile( const wxDir& sourceDir, const wxString& sFileNameBase, wxFileName& coverFile )
 {
-    wxASSERT( sourceDir.IsOpened( ) );
+	wxASSERT( sourceDir.IsOpened() );
 
-    wxString sFileName;
-    size_t	 nCounter = 0;
-    wxString sFileSpec( wxString::Format( "%s.*", sFileNameBase ) );
+	wxString sFileName;
+	size_t	 nCounter = 0;
+	wxString sFileSpec( wxString::Format( "%s.*", sFileNameBase ) );
 
-    if (sourceDir.GetFirst( &sFileName, sFileSpec, wxDIR_FILES ))
-    {
-        while (true)
-        {
-            wxFileName fileName( sourceDir.GetName( ), sFileName );
+	if ( sourceDir.GetFirst( &sFileName, sFileSpec, wxDIR_FILES ) )
+	{
+		while ( true )
+		{
+			wxFileName fileName( sourceDir.GetName(), sFileName );
 
-            if (IsCoverFile( fileName ))
-            {
-                coverFile = fileName;
-                return true;
-            }
+			if ( IsCoverFile( fileName ) )
+			{
+				coverFile = fileName;
+				return true;
+			}
 
-            if (!sourceDir.GetNext( &sFileName ))
-            {
-                break;
-            }
-        }
-    }
+			if ( !sourceDir.GetNext( &sFileName ) )
+			{
+				break;
+			}
+		}
+	}
 
-    return false;
+	return false;
 }
 
 bool wxCoverFile::GetCoverFile( const wxFileName& inputFile, wxFileName& coverFile )
 {
-    wxFileName sourceDirFn( inputFile );
+	wxFileName sourceDirFn( inputFile );
 
-    sourceDirFn.SetName( wxEmptyString );
-    sourceDirFn.ClearExt( );
-    wxASSERT( sourceDirFn.IsDirReadable( ) );
+	sourceDirFn.SetName( wxEmptyString );
+	sourceDirFn.ClearExt();
+	wxASSERT( sourceDirFn.IsDirReadable() );
 
-    wxDir sourceDir( sourceDirFn.GetPath( ) );
+	wxDir sourceDir( sourceDirFn.GetPath() );
 
-    if (!sourceDir.IsOpened( ))
-    {
-        wxLogError( _( "Fail to open directory \u201C%s\u201D" ), sourceDirFn.GetPath( ) );
-        return false;
-    }
+	if ( !sourceDir.IsOpened() )
+	{
+		wxLogError( _( "Fail to open directory \u201C%s\u201D" ), sourceDirFn.GetPath() );
+		return false;
+	}
 
-    for (size_t i = 0; i < CoverNamesSize; ++i)
-    {
-        if (GetCoverFile( sourceDir, CoverNames[i], coverFile ))
-        {
-            return true;
-        }
-    }
+	for ( size_t i = 0; i < CoverNamesSize; ++i )
+	{
+		if ( GetCoverFile( sourceDir, CoverNames[ i ], coverFile ) )
+		{
+			return true;
+		}
+	}
 
-    return false;
+	return false;
 }
 
 namespace
 {
-    void extract_flac_pictures( TagLib::FLAC::File& flac, wxArrayCoverFile& covers )
-    {
-        const TagLib::List< TagLib::FLAC::Picture*>& pictures = flac.pictureList( );
-        for (auto i = pictures.begin( ); i != pictures.end( ); ++i)
-        {
-            const TagLib::FLAC::Picture& picture = **i;
-            const TagLib::ByteVector& pictureData = picture.data( );
+	void extract_flac_pictures( TagLib::FLAC::File& flac, wxArrayCoverFile& covers )
+	{
+		const TagLib::List< TagLib::FLAC::Picture* >& pictures = flac.pictureList();
 
-            wxMemoryBuffer buffer( pictureData.size( ) );
-            buffer.AppendData( pictureData.data( ), pictureData.size( ) );
+		for ( auto i = pictures.begin(); i != pictures.end(); ++i )
+		{
+			const TagLib::FLAC::Picture& picture	 = **i;
+			const TagLib::ByteVector&	 pictureData = picture.data();
 
-            wxCoverFile::Type pictureType = (wxCoverFile::Type)picture.type( );
+			wxMemoryBuffer buffer( pictureData.size() );
+			buffer.AppendData( pictureData.data(), pictureData.size() );
 
-            covers.Add( wxCoverFile( buffer, pictureType, picture.mimeType( ).toWString( ), picture.description( ).toWString( ) ) );
-        }
-    }
+			wxCoverFile::Type pictureType = (wxCoverFile::Type)picture.type();
 
-    void extract_ape_pictures( const TagLib::APE::Tag& tag, wxArrayCoverFile& covers )
-    {
-        for (auto i = tag.itemListMap( ).begin( ), end = tag.itemListMap( ).end( ); i != end; ++i)
-        {
-            if (i->second.type( ) != TagLib::APE::Item::Binary) continue;
-            if (!i->first.startsWith( "COVER ART" )) continue;
+			covers.Add( wxCoverFile( buffer, pictureType, picture.mimeType().toWString(), picture.description().toWString() ) );
+		}
+	}
 
-            wxString sName( i->first.toWString( ) );
-            TagLib::ByteVector binary = i->second.binaryData( );
+	void extract_ape_pictures( const TagLib::APE::Tag& tag, wxArrayCoverFile& covers )
+	{
+		for ( auto i = tag.itemListMap().begin(), end = tag.itemListMap().end(); i != end; ++i )
+		{
+			if ( i->second.type() != TagLib::APE::Item::Binary ) { continue; }
 
-            int p = binary.find( 0 );
-            if (p <= 0) continue;
+			if ( !i->first.startsWith( "COVER ART" ) ) { continue; }
 
-            wxString s( binary.data( ), wxConvUTF8, p );
-            wxString mimeType;
-            if (!wxCoverFile::GetMimeFromExt( s, mimeType )) continue;
+			wxString		   sName( i->first.toWString() );
+			TagLib::ByteVector binary = i->second.binaryData();
 
-            size_t nPicLen = binary.size( ) - p - 1;
-            wxMemoryBuffer buffer( nPicLen );
-            buffer.AppendData( binary.data( ) + p + 1, nPicLen );
+			int p = binary.find( 0 );
 
-            wxString sDesc( i->first.substr( 9 ).toCWString( ) );
-            sDesc.Trim( true ).Trim( false );
-            if (sDesc.StartsWith( '(' )) sDesc.Remove( 0, 1 );
-            if (sDesc.EndsWith( ')' )) sDesc.RemoveLast( );
-            sDesc.Trim( true ).Trim( false );
+			if ( p <= 0 ) { continue; }
 
-            wxCoverFile::Type pictureType = wxCoverFile::GetTypeFromStr( sDesc );
+			wxString s( binary.data(), wxConvUTF8, p );
+			wxString mimeType;
 
-            if (pictureType != wxCoverFile::Other) sDesc.Empty( );
+			if ( !wxCoverFile::GetMimeFromExt( s, mimeType ) ) { continue; }
 
-            covers.Add( wxCoverFile( buffer, pictureType, mimeType, sDesc ) );
-        }
-    }
+			size_t		   nPicLen = binary.size() - p - 1;
+			wxMemoryBuffer buffer( nPicLen );
+			buffer.AppendData( binary.data() + p + 1, nPicLen );
+
+			wxString sDesc( i->first.substr( 9 ).toCWString() );
+			sDesc.Trim( true ).Trim( false );
+
+			if ( sDesc.StartsWith( '(' ) ) { sDesc.Remove( 0, 1 ); }
+
+			if ( sDesc.EndsWith( ')' ) ) { sDesc.RemoveLast(); }
+			sDesc.Trim( true ).Trim( false );
+
+			wxCoverFile::Type pictureType = wxCoverFile::GetTypeFromStr( sDesc );
+
+			if ( pictureType != wxCoverFile::Other ) { sDesc.Empty(); }
+
+			covers.Add( wxCoverFile( buffer, pictureType, mimeType, sDesc ) );
+		}
+	}
 }
 
 void wxCoverFile::Extract( const wxFileName& fileName, wxArrayCoverFile& covers )
 {
-    TagLib::FileRef fileRef( fileName.GetFullPath( ).t_str( ), true, TagLib::AudioProperties::Accurate );
+	TagLib::FileRef fileRef( fileName.GetFullPath().t_str(), true, TagLib::AudioProperties::Accurate );
 
-    if (fileRef.isNull( ))
-    {
-        wxLogError( _( "Fail to initialize TagLib library." ) );
-        return;
-    }
+	if ( fileRef.isNull() )
+	{
+		wxLogError( _( "Fail to initialize TagLib library." ) );
+		return;
+	}
 
-    TagLib::File*			   pFile = fileRef.file( );
-    if (dynamic_cast<TagLib::FLAC::File*>(pFile) != nullptr)
-    {
-        TagLib::FLAC::File* pFlac = dynamic_cast<TagLib::FLAC::File*>(pFile);
-        extract_flac_pictures( *pFlac, covers );
-    }
-    else if (dynamic_cast<TagLib::WavPack::File*>(pFile) != nullptr)
-    {
-        TagLib::WavPack::File* pWv = dynamic_cast<TagLib::WavPack::File*>(pFile);
-        if (pWv->hasAPETag( ))
-        {
-            extract_ape_pictures( *(pWv->APETag()), covers );
-        }
-    }
+	TagLib::File* pFile = fileRef.file();
+
+	if ( dynamic_cast< TagLib::FLAC::File* >( pFile ) != nullptr )
+	{
+		TagLib::FLAC::File* pFlac = dynamic_cast< TagLib::FLAC::File* >( pFile );
+		extract_flac_pictures( *pFlac, covers );
+	}
+	else if ( dynamic_cast< TagLib::WavPack::File* >( pFile ) != nullptr )
+	{
+		TagLib::WavPack::File* pWv = dynamic_cast< TagLib::WavPack::File* >( pFile );
+
+		if ( pWv->hasAPETag() )
+		{
+			extract_ape_pictures( *( pWv->APETag() ), covers );
+		}
+	}
 }
 
 wxCoverFile::Type wxCoverFile::GetTypeFromStr( const wxString& stype )
 {
-    for (size_t i = 0; i < TypeNamesSize; ++i)
-    {
-        if (stype.CmpNoCase( TypeNames[i].name ) == 0) return TypeNames[i].type;
-    }
+	for ( size_t i = 0; i < TypeNamesSize; ++i )
+	{
+		if ( stype.CmpNoCase( TypeNames[ i ].name ) == 0 ) { return TypeNames[ i ].type; }
+	}
 
-    if (stype.CmpNoCase( "Front" ) == 0)
-    {
-        return FrontCover;
-    }
-    else if (stype.CmpNoCase( "Back" ) == 0 )
-    {
-        return BackCover;
-    }
-    else
-    {
-        return Other;
-    }
+	if ( stype.CmpNoCase( "Front" ) == 0 )
+	{
+		return FrontCover;
+	}
+	else if ( stype.CmpNoCase( "Back" ) == 0 )
+	{
+		return BackCover;
+	}
+	else
+	{
+		return Other;
+	}
 }
 
 bool wxCoverFile::GetStrFromType( wxCoverFile::Type type, wxString& name )
 {
-    for (size_t i = 0; i < TypeNamesSize; ++i)
-    {
-        if (type == TypeNames[i].type)
-        {
-            name = TypeNames[i].name;
-            return true;
-        }
-    }
+	for ( size_t i = 0; i < TypeNamesSize; ++i )
+	{
+		if ( type == TypeNames[ i ].type )
+		{
+			name = TypeNames[ i ].name;
+			return true;
+		}
+	}
 
-    return false;
+	return false;
 }
 
 size_t wxCoverFile::GetSortOrder( wxCoverFile::Type type )
 {
-    for (size_t i = 0; i < TypeNamesSize; ++i)
-    {
-        if (type == TypeNames[i].type) return i;
-    }
+	for ( size_t i = 0; i < TypeNamesSize; ++i )
+	{
+		if ( type == TypeNames[ i ].type ) { return i; }
+	}
 
-    return 100;
+	return 100;
 }
 
 namespace
 {
-    int size_cmp( size_t s1, size_t s2 )
-    {
-        if (s1 < s2)
-        {
-            return -1;
-        }
-        else if (s1 > s2)
-        {
-            return 1;
-        }
-        else
-        {
-            return 0;
-        }
-    }
+	int size_cmp( size_t s1, size_t s2 )
+	{
+		if ( s1 < s2 )
+		{
+			return -1;
+		}
+		else if ( s1 > s2 )
+		{
+			return 1;
+		}
+		else
+		{
+			return 0;
+		}
+	}
 }
 
 int wxCoverFile::Cmp( wxCoverFile** f1, wxCoverFile** f2 )
 {
-    size_t so1 = GetSortOrder( (*f1)->GetType() );
-    size_t so2 = GetSortOrder( (*f2)->GetType() );
+	size_t so1 = GetSortOrder( ( *f1 )->GetType() );
+	size_t so2 = GetSortOrder( ( *f2 )->GetType() );
 
-    if (so1 < so2)
-    {
-        return -1;
-    }
-    else if (so1 > so2)
-    {
-        return 1;
-    }
-    else
-    {
-        return size_cmp( (*f1)->GetSize(), (*f2)->GetSize() );
-    }
+	if ( so1 < so2 )
+	{
+		return -1;
+	}
+	else if ( so1 > so2 )
+	{
+		return 1;
+	}
+	else
+	{
+		return size_cmp( ( *f1 )->GetSize(), ( *f2 )->GetSize() );
+	}
 }
 
 void wxCoverFile::Sort( wxArrayCoverFile& covers )
 {
-    covers.Sort( wxCoverFile::Cmp );
+	covers.Sort( wxCoverFile::Cmp );
 }
 
 // ===============================================================================
 
 #include <wx/arrimpl.cpp>	// this is a magic incantation which must be done!
 WX_DEFINE_OBJARRAY( wxArrayCoverFile );
+

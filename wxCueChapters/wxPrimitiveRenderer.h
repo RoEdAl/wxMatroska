@@ -37,6 +37,5 @@ class wxPrimitiveRenderer:
 
 		wxPrimitiveRenderer( const wxConfiguration& );
 };
-
 #endif
 

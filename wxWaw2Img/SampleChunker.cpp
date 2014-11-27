@@ -77,7 +77,7 @@ void SampleChunker::ProcessSample( wxFloat32 fSample )
 	{
 		if ( m_pLogarithmicScale )
 		{
-			wxFloat32 fLogSample = ( *m_pLogarithmicScale )( m_fAbsMaxSample );
+			wxFloat32 fLogSample = ( * m_pLogarithmicScale )( m_fAbsMaxSample );
 			wxASSERT( fLogSample >= 0.0f && fLogSample <= 1.0f );
 			NextColumn( m_fMaxSample, ( m_fMaxSample >= 0.0f ) ? fLogSample : -fLogSample );
 		}

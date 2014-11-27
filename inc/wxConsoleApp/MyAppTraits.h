@@ -18,7 +18,6 @@ class MyAppTraits:
 
 #if wxUSE_TIMER
 		virtual wxTimerImpl* CreateTimerImpl( wxTimer* );
-
 #endif
 
 		virtual void* BeforeChildWaitLoop();
@@ -35,14 +34,12 @@ class MyAppTraits:
 
 #if wxUSE_LOG
 		virtual wxLog* CreateLogTarget();
-
 #endif	// wxUSE_LOG
 
 		virtual wxMessageOutput* CreateMessageOutput();
 
 #if wxUSE_FONTMAP
 		virtual wxFontMapper* CreateFontMapper();
-
 #endif	// wxUSE_FONTMAP
 
 		virtual wxRendererNative* CreateRenderer();
@@ -56,6 +53,5 @@ class MyAppTraits:
 
 		wxScopedPtr< wxAppTraits > m_pAppTraits;
 };
-
 #endif
 

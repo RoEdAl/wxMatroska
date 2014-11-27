@@ -115,7 +115,7 @@ class wxXmlCueSheetRenderer:
 		wxXmlNode* AddDiscTags( const wxCueSheet&, wxXmlNode*, const wxULongLong&, int = 50 );
 		wxXmlNode* AppendDiscTags( const wxCueSheet&, wxXmlNode*, long = 50 );
 
-		wxXmlNode* SetTotalParts( size_t, wxXmlNode *, long = 50 );
+		wxXmlNode* SetTotalParts( size_t, wxXmlNode*, long = 50 );
 		wxXmlNode* AddTrackTags( const wxTrack&, const wxULongLong&, wxXmlNode*, int = 30 );
 
 		wxXmlNode* AddChapterTimeStart( wxXmlNode*, const wxCueSheet&, const wxIndex& ) const;
@@ -143,21 +143,21 @@ class wxXmlCueSheetRenderer:
 		static bool is_album_tag( wxXmlNode*, long );
 		static wxXmlNode* find_disc_tag_node( wxXmlNode*, long );
 
-		static bool set_total_parts( wxXmlNode *, size_t );
+		static bool set_total_parts( wxXmlNode*, size_t );
 		static wxXmlNode* add_chapter_time_end( wxXmlNode*, const wxString&, const wxString& );
 		static wxXmlNode* add_chapter_time_end( wxXmlNode*, const wxDuration&, const wxString& );
 		static bool has_chapter_time_end( wxXmlNode* );
 		static wxXmlNode* add_chapter_display( wxXmlNode*, const wxString&, const wxString& );
 		static wxXmlNode* add_hidden_flag( wxXmlNode*, bool );
 
-		static wxXmlNode* add_idx_chapter_atom( wxXmlNode *, const wxDuration &, size_t, const wxString &, const wxString &, bool );
+		static wxXmlNode* add_idx_chapter_atom( wxXmlNode*, const wxDuration &, size_t, const wxString &, const wxString &, bool );
 		static wxXmlNode* create_simple_tag( const wxCueTag&, const wxString& );
 		wxXmlDocument* create_xml_document( const wxString& );
 		static bool is_simple( wxXmlNode*, const wxCueTag& );
 		static wxXmlNode* find_simple_tag( wxXmlNode*, const wxCueTag& );
 		static wxXmlNode* add_simple_tag( wxXmlNode*, const wxString&, const wxString&, const wxString& );
 
-		static wxXmlNode* add_simple_tag( wxXmlNode *, const wxString &, size_t, const wxString & );
+		static wxXmlNode* add_simple_tag( wxXmlNode*, const wxString &, size_t, const wxString & );
 		static wxXmlNode* add_simple_tag( wxXmlNode*, const wxCueTag&, const wxString& );
 		static void add_simple_tags( wxXmlNode*, const wxArrayCueTag&, const wxString& );
 		static wxXmlNode* create_comment_node( const wxString& );
@@ -185,6 +185,5 @@ class wxXmlCueSheetRenderer:
 
 		bool SaveXmlDoc();
 };
-
 #endif
 

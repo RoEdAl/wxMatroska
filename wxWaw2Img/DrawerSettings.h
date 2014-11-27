@@ -113,6 +113,5 @@ class DrawerSettings
 
 		DrawerSettings& SetCompositionMode( wxCompositionMode );
 };
-
 #endif
 

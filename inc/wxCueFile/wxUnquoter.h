@@ -74,7 +74,7 @@ class wxUnquoter:
 		wxScopedCharBuffer get_german_replacement( int, bool ) const;
 		wxScopedCharBuffer get_french_replacement( int, bool ) const;
 
-		static wxScopedCharBuffer get_replacement( const QUOTATION_MARKS *, size_t, int, bool );
+		static wxScopedCharBuffer get_replacement( const QUOTATION_MARKS*, size_t, int, bool );
 
 		void InternalCorrectQuotes( wxString& ) const;
 
@@ -100,6 +100,5 @@ class wxUnquoter:
 
 		bool IsQuoted( const wxString& ) const;
 };
-
 #endif
 

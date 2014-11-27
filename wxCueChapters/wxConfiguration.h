@@ -103,14 +103,13 @@ class wxConfiguration:
 	protected:
 
 		INFO_SUBJECT m_infoSubject;
-		bool		 m_bChapterTimeEnd;																																																																//
+		bool		 m_bChapterTimeEnd;																																																																																																																																//
 		// default=true
-		bool		  m_bUnknownChapterTimeEndToNextChapter;	// default=false
+		bool		  m_bUnknownChapterTimeEndToNextChapter;		// default=false
 		unsigned long m_nChapterOffset;	//
 		// in
 		// frames
 		bool						m_bUseDataFiles;// default=true
-		bool						m_bEmbedded;
 		bool						m_bCorrectQuotationMarks;
 		RENDER_MODE					m_eRenderMode;
 		bool						m_bGenerateTags;
@@ -178,7 +177,6 @@ class wxConfiguration:
 		const wxString&			GetTrackNameFormat() const;
 		const wxString&			GetMatroskaNameFormat() const;
 		const wxArrayInputFile& GetInputFiles() const;
-		bool IsEmbedded() const;
 		bool CorrectQuotationMarks() const;
 		RENDER_MODE GetRenderMode() const;
 		bool TrackOneIndexOne() const;
@@ -213,22 +211,22 @@ class wxConfiguration:
 		void GetOutputFile( const wxInputFile&, wxFileName&, wxFileName& ) const;
 		void GetOutputMatroskaFile( const wxInputFile&, wxFileName&, wxFileName& ) const;
 		bool GetOutputCueSheetFile( const wxInputFile&, const wxString&, wxFileName& ) const;
-        bool GetOutputFile( const wxInputFile&, const wxString&, const wxString&, wxFileName& ) const;
+		bool GetOutputFile( const wxInputFile&, const wxString&, const wxString&, wxFileName& ) const;
 
 	public:
 
-		static const char CUE_SHEET_EXT[];
-        static const char MATROSKA_CHAPTERS_EXT[];
-        static const char MATROSKA_TAGS_EXT[];
-        static const char MATROSKA_OPTS_EXT[];
-        static const char MATROSKA_AUDIO_EXT[];
-        static const char CUESHEET_EXT[];
-        static const char MATROSKA_NAME_FORMAT[];
-        static const char TRACK_NAME_FORMAT[];
+		static const char	CUE_SHEET_EXT[];
+		static const char	MATROSKA_CHAPTERS_EXT[];
+		static const char	MATROSKA_TAGS_EXT[];
+		static const char	MATROSKA_OPTS_EXT[];
+		static const char	MATROSKA_AUDIO_EXT[];
+		static const char	CUESHEET_EXT[];
+		static const char	MATROSKA_NAME_FORMAT[];
+		static const char	TRACK_NAME_FORMAT[];
 		static const size_t MAX_EXT_LEN;
-        static const char LANG_FILE_URL[];
-        static const char LANG_FILE_NAME[];
-        static const char LANG_UND[];
+		static const char	LANG_FILE_URL[];
+		static const char	LANG_FILE_NAME[];
+		static const char	LANG_UND[];
 
 	public:
 
@@ -240,6 +238,5 @@ class wxConfiguration:
 		void Dump() const;
 		void BuildXmlComments( const wxFileName&, wxXmlNode* ) const;
 };
-
 #endif	// _WX_CONFIGURATION_H
 

@@ -12,10 +12,10 @@
 #include "WaveDrawerPdf.h"
 
 PdfWaveDrawer::PdfWaveDrawer( wxUint64 nNumberOfSamples, wxPdfDocument* pPdf,
-													  bool bCalcLogarithmic, wxFloat32 fLogBase,
-													  const wxRect2DInt& rc,
-													  const DrawerSettings& drawerSettings,
-													  const ChaptersArrayScopedPtr& pChapters ):
+							  bool bCalcLogarithmic, wxFloat32 fLogBase,
+							  const wxRect2DInt& rc,
+							  const DrawerSettings& drawerSettings,
+							  const ChaptersArrayScopedPtr& pChapters ):
 	SampleChunker( nNumberOfSamples, rc.m_width, bCalcLogarithmic, fLogBase ),
 	m_pPdf( pPdf ),
 	m_rc( rc ),
@@ -31,7 +31,7 @@ namespace
 
 		p = rc.GetLeftTop();
 		shape.MoveTo( p.m_x, p.m_y );
-	
+
 		p = rc.GetRightTop();
 		shape.LineTo( p.m_x, p.m_y );
 
@@ -47,21 +47,21 @@ namespace
 	void set_fill_colour( wxPdfDocument& pdfDoc, const wxColour& clr )
 	{
 		pdfDoc.SetFillColour( clr );
-		float fAlpha = static_cast<float>( clr.Alpha() ) / 255.0f;
+		float fAlpha = static_cast< float >( clr.Alpha() ) / 255.0f;
 		pdfDoc.SetAlpha( fAlpha, fAlpha );
 	}
 
 	void set_draw_colour( wxPdfDocument& pdfDoc, const wxColour& clr )
 	{
 		pdfDoc.SetDrawColour( clr );
-		float fAlpha = static_cast<float>( clr.Alpha() ) / 255.0f;
+		float fAlpha = static_cast< float >( clr.Alpha() ) / 255.0f;
 		pdfDoc.SetAlpha( fAlpha, fAlpha );
 	}
 
 	template< class R >
 	void fill_rect( wxPdfDocument& pdfDoc, const R& rc, int roundCorner )
 	{
-		//pdfDoc.RoundedRect( rc.m_x, rc.m_y, rc.m_width, rc.m_height, 0.45, roundCorner, wxPDF_STYLE_FILL );
+		// pdfDoc.RoundedRect( rc.m_x, rc.m_y, rc.m_width, rc.m_height, 0.45, roundCorner, wxPDF_STYLE_FILL );
 		pdfDoc.Rect( rc.m_x, rc.m_y, rc.m_width, rc.m_height, wxPDF_STYLE_FILL );
 	}
 
@@ -83,7 +83,6 @@ namespace
 		set_draw_colour( pdfDoc, clr );
 		pdfDoc.Shape( shape, wxPDF_STYLE_DRAW );
 	}
-
 }
 
 void PdfWaveDrawer::ProcessInitializer()

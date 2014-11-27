@@ -15,6 +15,7 @@
 static wxGraphicsRenderer* get_renderer()
 {
 	wxGraphicsRenderer* pRenderer = wxGraphicsRenderer::GetCairoRenderer();
+
 	if ( pRenderer == NULL )
 	{
 		pRenderer = wxGraphicsRenderer::GetDefaultRenderer();
@@ -29,7 +30,6 @@ static wxGraphicsRenderer* get_renderer()
 {
 	return wxGraphicsRenderer::GetDefaultRenderer();
 }
-
 #endif
 
 McGraphicalContextWaveDrawer::McGraphicalContextWaveDrawer( wxUint16 nChannels ):
@@ -65,7 +65,6 @@ wxEnhMetaFile* McGraphicalContextWaveDrawer::GetMetafile() const
 		return NULL;
 	}
 }
-
 #endif
 #endif
 
@@ -190,7 +189,6 @@ void McGraphicalContextWaveDrawer::create_context_on_emf( const wxSize& imageSiz
 	wxLogInfo( _( "Creating graphics context" ) );
 	m_gc.reset( pRenderer->CreateContext( *m_emfDc ) );
 }
-
 #endif
 #endif
 

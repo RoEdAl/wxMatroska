@@ -950,25 +950,30 @@ const wxSize& wxConfiguration::GetImageSize() const
 wxSize wxConfiguration::GetImageSizePt() const
 {
 	double pageWidth = m_imageSize.GetWidth();
+
 	pageWidth /= m_imageResolution.GetWidth();
 
 	double pageHeight = m_imageSize.GetHeight();
 	pageHeight /= m_imageResolution.GetHeight();
 
-	switch( m_imageResolutionUnits )
+	switch ( m_imageResolutionUnits )
 	{
 		case wxIMAGE_RESOLUTION_INCHES:
-		pageWidth *= 72.0f;
-		pageHeight *= 72.0f;
-		break;
+		{
+			pageWidth  *= 72.0f;
+			pageHeight *= 72.0f;
+			break;
+		}
 
 		case wxIMAGE_RESOLUTION_CM:
-		pageWidth *= 28.33f;
-		pageHeight *= 28.33f;
-		break;
+		{
+			pageWidth  *= 28.33f;
+			pageHeight *= 28.33f;
+			break;
+		}
 	}
 
-	wxSize s( static_cast<int>( pageWidth + 0.5f ), static_cast< int >( pageHeight + 0.5f ) );
+	wxSize s( static_cast< int >( pageWidth + 0.5f ), static_cast< int >( pageHeight + 0.5f ) );
 	return s;
 }
 
@@ -1075,7 +1080,7 @@ wxRect2DInt wxConfiguration::GetDrawerRectPt() const
 {
 	wxASSERT( !m_bMultiChannel );
 
-	wxSize imageSize( GetImageSizePt() );
+	wxSize		imageSize( GetImageSizePt() );
 	wxRect2DInt rc( 0, 0, imageSize.GetWidth(), imageSize.GetHeight() );
 	add_margin( rc, true, true, true, true );
 	return rc;
@@ -1227,3 +1232,4 @@ void wxConfiguration::SetImageOptions( wxImage& img, const wxFileName& fn ) cons
 	img.SetOption( wxIMAGE_OPTION_PNG_COMPRESSION_LEVEL, GetPngCompressionLevel() );
 	img.SetOption( wxIMAGE_OPTION_FILENAME, fn.GetName() );
 }
+

@@ -59,7 +59,7 @@ wxString wxCueComponent::GetCdTextInfoRegExp()
 
 	for ( size_t i = 0; i < CdTextFieldsSize; i++ )
 	{
-		*tos << CdTextFields[ i ].keyword << '|' ;
+		*tos << CdTextFields[ i ].keyword << '|';
 	}
 
 	( *tos ).Flush();
@@ -468,6 +468,7 @@ size_t wxCueComponent::MoveCdTextInfoTags( const wxTagSynonimsCollection& synoni
 	size_t		  res = wxCueTag::MoveTags( m_tags, synonimCollections, cdTextTags );
 
 	wxCueTag::AddTags( m_cdTextTags, cdTextTags );
+
 	return res;
 }
 

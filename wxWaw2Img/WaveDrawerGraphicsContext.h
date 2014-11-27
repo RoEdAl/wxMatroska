@@ -36,23 +36,22 @@ class GraphicsContextWaveDrawer:
 			wxGraphicsPath &, wxGraphicsPath & );
 
 		static void create_chapter_segments_path( const wxRect2DInt&,
-											  const ChaptersArray&,
-											  wxGraphicsPath& );
+												  const ChaptersArray&,
+												  wxGraphicsPath& );
 
 		static void create_chapter_lines_path( const wxRect2DInt&,
-										   const ChaptersArray&,
-										   wxGraphicsPath& );
+											   const ChaptersArray&,
+											   wxGraphicsPath& );
 
 	protected:
 
-		wxGraphicsContext*	   m_gc;
-		wxRect2DInt			   m_rc;
-		wxFloat32			   m_heightUp;
-		wxFloat32			   m_heightDown;
-		wxFloat32			   m_yoffset;
-		const DrawerSettings&  m_drawerSettings;
+		wxGraphicsContext*			  m_gc;
+		wxRect2DInt					  m_rc;
+		wxFloat32					  m_heightUp;
+		wxFloat32					  m_heightDown;
+		wxFloat32					  m_yoffset;
+		const DrawerSettings&		  m_drawerSettings;
 		const ChaptersArrayScopedPtr& m_pChapters;
 };
-
 #endif
 

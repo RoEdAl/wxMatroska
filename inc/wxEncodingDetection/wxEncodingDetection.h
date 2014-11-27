@@ -41,8 +41,7 @@ class wxEncodingDetection:
 
 	protected:
 
-		static bool test_bom( const wxByteBuffer &, const wxByte *, size_t );
+		static bool test_bom( const wxByteBuffer &, const wxByte*, size_t );
 };
-
 #endif
 

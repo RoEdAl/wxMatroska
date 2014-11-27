@@ -12,8 +12,8 @@ class wxEllipsizer:
 
 		wxEllipsizer( void );
 
-		static const char REG_EX[];
-        static const wxUChar ELLIPSIS;
+		static const char	 REG_EX[];
+		static const wxUChar ELLIPSIS;
 
 		bool EllipsizeEx( const wxString&, wxString& ) const;
 		wxString Ellipsize( const wxString& ) const;
@@ -22,6 +22,5 @@ class wxEllipsizer:
 
 		wxRegEx m_reEllipsis;
 };
-
 #endif
 

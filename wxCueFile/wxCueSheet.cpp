@@ -139,16 +139,16 @@ size_t wxCueSheet::GetCoversCount() const
 	return m_covers.GetCount();
 }
 
-const wxArrayCoverFile& wxCueSheet::GetCovers( ) const
+const wxArrayCoverFile& wxCueSheet::GetCovers() const
 {
 	return m_covers;
 }
 
 void wxCueSheet::GetSortedCovers( wxArrayCoverFile& covers ) const
 {
-    covers.Clear();
-    WX_APPEND_ARRAY( covers, m_covers );
-    wxCoverFile::Sort( covers );
+	covers.Clear();
+	WX_APPEND_ARRAY( covers, m_covers );
+	wxCoverFile::Sort( covers );
 }
 
 wxCueSheet& wxCueSheet::AddLog( const wxFileName& logFile )
@@ -159,17 +159,17 @@ wxCueSheet& wxCueSheet::AddLog( const wxFileName& logFile )
 
 void wxCueSheet::AddCover( const wxFileName& coverFn )
 {
-    AddCover( wxCoverFile( coverFn, wxCoverFile::FrontCover ) );
+	AddCover( wxCoverFile( coverFn, wxCoverFile::FrontCover ) );
 }
 
 void wxCueSheet::AddCover( const wxCoverFile& cover )
 {
-    wxCoverFile::Append( m_covers, cover );
+	wxCoverFile::Append( m_covers, cover );
 }
 
 void wxCueSheet::AddCovers( const wxArrayCoverFile& covers )
 {
-    wxCoverFile::Append( m_covers, covers );
+	wxCoverFile::Append( m_covers, covers );
 }
 
 bool wxCueSheet::HasTracks() const
@@ -367,6 +367,7 @@ void wxCueSheet::Clear( void )
 void wxCueSheet::copy( const wxCueSheet& cs )
 {
 	wxCueComponent::copy( cs );
+
 	m_content	  = cs.m_content;
 	m_logs		  = cs.m_logs;
 	m_covers	  = cs.m_covers;
@@ -463,7 +464,7 @@ wxCueSheet& wxCueSheet::Append( const wxCueSheet& _cs )
 
 	WX_APPEND_ARRAY( m_content, cs.m_content );
 	AppendFileNames( m_logs, cs.m_logs );
-    wxCoverFile::Append( m_covers, cs.m_covers );
+	wxCoverFile::Append( m_covers, cs.m_covers );
 	WX_APPEND_ARRAY( m_catalogs, cs.m_catalogs );
 	WX_APPEND_ARRAY( m_cdtextfiles, cs.m_cdtextfiles );
 
@@ -658,7 +659,7 @@ wxDuration wxCueSheet::GetDuration( size_t nDataFileIdx ) const
 	{
 		if ( !GetRelatedTracks( i, nFirstTrack, nLastTrack ) )
 		{
-            wxLogDebug( "wxCueSheet::GetDuration - skipping unused data file %" wxSizeTFmtSpec "d", i );
+			wxLogDebug( "wxCueSheet::GetDuration - skipping unused data file %" wxSizeTFmtSpec "d", i );
 			continue;
 		}
 
@@ -699,7 +700,7 @@ bool wxCueSheet::CalculateDuration( const wxString& sAlternateExt )
 		{
 			if ( !m_dataFiles[ i ].GetInfo( sAlternateExt ) )
 			{
-                wxLogDebug( "Fail to calculate duration for track %" wxSizeTFmtSpec "d", i );
+				wxLogDebug( "Fail to calculate duration for track %" wxSizeTFmtSpec "d", i );
 				bRes = false;
 			}
 		}
@@ -753,7 +754,7 @@ void wxCueSheet::FindCommonTags( const wxTagSynonimsCollection& discSynonims, co
 	size_t nTracks = m_tracks.GetCount();
 
 	MoveCdTextInfoTags( discSynonims );
-	for ( size_t i = 0; i < nTracks; i++ )
+	for ( size_t i = 0; i < nTracks; ++i )
 	{
 		m_tracks[ i ].MoveCdTextInfoTags( trackSynonims );
 	}
@@ -804,7 +805,7 @@ void wxCueSheet::FindCommonTags( const wxTagSynonimsCollection& discSynonims, co
 	{
 		wxArrayCueTag albumTags;
 		MoveTags( wxCueTag::Name::ALBUM, albumTags );
-		for ( size_t i = 0, nCount = albumTags.GetCount(); i < nCount; i++ )
+		for ( size_t i = 0, nCount = albumTags.GetCount(); i < nCount; ++i )
 		{
 			AddCdTextInfoTag( wxCueTag( albumTags[ i ].GetSource(), wxCueTag::Name::TITLE, albumTags[ i ].GetValue() ) );
 		}
@@ -816,12 +817,12 @@ void wxCueSheet::FindCommonTags( const wxTagSynonimsCollection& discSynonims, co
 		AddTag( wxCueTag(
 						wxCueTag::TAG_AUTO_GENERATED,
 						wxCueTag::Name::TOTALDISCS,
-                        wxString::Format( "%" wxSizeTFmtSpec "u", m_content.GetCount( ) ) ) );
+						wxString::Format( "%" wxSizeTFmtSpec "u", m_content.GetCount() ) ) );
 
 		wxArrayCueTag albumTags;
 		size_t		  nElements = 1;
 
-		for ( size_t i = 0; i < nTracks && nElements > 0; i++ )
+		for ( size_t i = 0; i < nTracks && nElements > 0; ++i )
 		{
 			nElements = m_tracks[ i ].GetTags( wxCueTag::Name::ALBUM, albumTags );
 		}
@@ -839,7 +840,7 @@ void wxCueSheet::FindCommonTags( const wxTagSynonimsCollection& discSynonims, co
 			wxASSERT( reDisc1.IsValid() );
 			wxRegEx reDisc2( wxString::Format( ALBUM_REG_EX2, GetCdAliasesRegExp() ), wxRE_ADVANCED | wxRE_ICASE );
 			wxASSERT( reDisc2.IsValid() );
-			for ( size_t j = 0, nCount = albumTags.GetCount(); j < nCount && bIsCommon; j++ )
+			for ( size_t j = 0, nCount = albumTags.GetCount(); j < nCount && bIsCommon; ++j )
 			{
 				wxString sAlbum( albumTags[ j ].GetValue() );
 
@@ -897,7 +898,7 @@ void wxCueSheet::FindCommonTags( const wxTagSynonimsCollection& discSynonims, co
 					wxCueTag discNumberTag( wxCueTag::TAG_AUTO_GENERATED, wxCueTag::Name::DISCNUMBER, wxString::Format( "%u", i->second ) );
 					wxCueTag albumTag( wxCueTag::TAG_AUTO_GENERATED, wxCueTag::Name::ALBUM, i->first );
 
-					for ( size_t j = 0; j < nTracks; j++ )
+					for ( size_t j = 0; j < nTracks; ++j )
 					{
 						m_tracks[ j ].AddTagIfAndRemove( discNumberTag, albumTag );
 					}

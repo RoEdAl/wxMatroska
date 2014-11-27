@@ -182,6 +182,5 @@ class wxConfiguration:
 		static const wxSystemColour COLOR_BACKGROUND;
 		static const wxSystemColour COLOR_BACKGROUND2;
 };
-
 #endif	// _WX_CONFIGURATION_H
 

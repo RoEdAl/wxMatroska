@@ -34,6 +34,5 @@ class Interval
 		static bool Parse( const wxString&, Interval& );
 		wxString AsString() const;
 };
-
 #endif
 

@@ -31,7 +31,7 @@ wxPdfDocument* McPdfWaveDrawer::Initialize(
 {
 	m_pPdf.reset( new wxPdfDocument( wxPORTRAIT, pageSize.GetWidth(), pageSize.GetHeight(), wxS( "pt" ) ) );
 
-	m_pPdf->SetCreator( wxString::Format(  wxS( "%s %s" ), wxGetApp().GetAppDisplayName(), wxMyApp::APP_VERSION ) );
+	m_pPdf->SetCreator( wxString::Format( wxS( "%s %s" ), wxGetApp().GetAppDisplayName(), wxMyApp::APP_VERSION ) );
 	m_pPdf->SetTitle( sTitle );
 	m_pPdf->SetDisplayMode( wxPDF_ZOOM_FULLPAGE );
 
@@ -46,6 +46,7 @@ wxPdfDocument* McPdfWaveDrawer::Initialize(
 void McPdfWaveDrawer::ProcessFinalizer()
 {
 	__super::ProcessFinalizer();
+
 	m_pPdf->Close();
 }
 
@@ -54,3 +55,4 @@ bool McPdfWaveDrawer::Save( const wxFileName& fn )
 	m_pPdf->SaveAsFile( fn.GetFullPath() );
 	return true;
 }
+

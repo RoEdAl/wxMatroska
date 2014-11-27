@@ -9,6 +9,7 @@
 static wxGraphicsRenderer* get_renderer()
 {
 	wxGraphicsRenderer* pRenderer = wxGraphicsRenderer::GetCairoRenderer();
+
 	if ( pRenderer == NULL )
 	{
 		pRenderer = wxGraphicsRenderer::GetDefaultRenderer();
@@ -23,7 +24,6 @@ static wxGraphicsRenderer* get_renderer()
 {
 	return wxGraphicsRenderer::GetDefaultRenderer();
 }
-
 #endif
 
 MemoryGraphicsContext::MemoryGraphicsContext( const wxSize& imgSize, int nImgColourDepth, bool bCreateMemContext ):

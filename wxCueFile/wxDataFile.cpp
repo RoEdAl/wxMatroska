@@ -312,7 +312,6 @@ bool wxDataFile::GetMediaInfo(
 	return true;
 }
 
-
 bool wxDataFile::GetInfo( const wxString& sAlternateExt )
 {
 	if ( !HasRealFileName() )
