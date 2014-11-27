@@ -1,3 +1,18 @@
+file( GLOB ICONPACK_ICON_FILES "icons/*.ico" )
+
+# icon pack
+set(ICONPACK_SOURCE_FILES
+	icon_pack.rc
+)
+
+add_library(icon_pack SHARED
+	${ICONPACK_ICON_FILES}
+	${ICONPACK_SOURCE_FILES}
+)
+
+set_target_properties(icon_pack PROPERTIES LINK_FLAGS "/NOENTRY")
+
+# gui
 
 set( AUT2EXEHINT "")
 foreach( H ${CMAKE_SYSTEM_PREFIX_PATH} )
@@ -8,8 +23,7 @@ find_program( AUT2EXE "Aut2Exe" HINT ${AUT2EXEHINT} )
 set( CUE2MKCGUI ${CMAKE_CURRENT_BINARY_DIR}/cue2mkcgui${CMAKE_EXECUTABLE_SUFFIX} )
 set( CUE2MKCGUI ${CMAKE_CURRENT_BINARY_DIR}/cue2mkcgui${CMAKE_EXECUTABLE_SUFFIX} PARENT_SCOPE )
 
-file( GLOB CUE2MKCGUI_ICON_FILES "icons/*.ico" )
-set( CUE2MKCGUI_SOURCES cue2mkcgui.au3 ${CUE2MKCGUI_ICON_FILES} )
+set( CUE2MKCGUI_SOURCES cue2mkcgui.au3 )
 
 add_custom_command( 
 	OUTPUT ${CUE2MKCGUI}
@@ -29,3 +43,4 @@ add_custom_command(
 )
 
 add_custom_target( cue2mkcgui SOURCES ${CUE2MKCGUI_SOURCES} DEPENDS ${CUE2MKCGUI} )
+add_dependencies(cue2mkc icon_pack)

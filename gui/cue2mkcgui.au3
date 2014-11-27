@@ -56,6 +56,9 @@ Dim Const $APP_NAME = "cue2mkc GUI"
 
 Dim Const $CUE2MKC_EXE = get_tool_full_path("cue2mkc")
 Dim Const $CUE2MKC_EXE_EXISTS = @extended
+Dim Const $ICON_PACK = get_tool_full_path("icon_pack", "dll")
+Dim Const $ICON_PACK_EXISTS = @extended
+
 
 Dim $sErr = ""
 
@@ -895,6 +898,11 @@ If Not $CUE2MKC_EXE_EXISTS Then
 	log_msg("Warning: cue2mkc tool not found.")
 EndIf
 
+If Not $ICON_PACK_EXISTS Then
+	;GUICtrlSetState($LabelPdftoppm, $GUI_DISABLE)
+	log_msg("Warning: icon_pack library not found.")
+EndIf
+
 $tip = "Try to correct ""simple 'quotation' marks"" inside strings." & @CRLF & _
 		"Examples:" & @CRLF & _
 		@TAB & "„polish ‚quotation’ marks”" & @CRLF & _
@@ -924,13 +932,13 @@ GUICtrlSetTip($CheckBoxCover, $tip, "Attach cover image", 1)
 If @Compiled Then
 	GUISetIcon(@ScriptFullPath, -1, $FormMain)
 	GUICtrlSetStyle($ButtonInputAdd, $BS_ICON)
-	GUICtrlSetImage($ButtonInputAdd, @ScriptFullPath, -6, 1)
+	GUICtrlSetImage($ButtonInputAdd, $ICON_PACK, -3, 1)
 	GUICtrlSetStyle($ButtonDataFile, $BS_ICON)
-	GUICtrlSetImage($ButtonDataFile, @ScriptFullPath, -9, 1)
+	GUICtrlSetImage($ButtonDataFile, $ICON_PACK, -8, 1)
 	GUICtrlSetStyle($ButtonInputDelete, $BS_ICON)
-	GUICtrlSetImage($ButtonInputDelete, @ScriptFullPath, -7, 1)
+	GUICtrlSetImage($ButtonInputDelete, $ICON_PACK, -2, 1)
 	GUICtrlSetStyle($ButtonMakeMask, $BS_ICON)
-	GUICtrlSetImage($ButtonMakeMask, @ScriptFullPath, -10, 1)
+	GUICtrlSetImage($ButtonMakeMask, $ICON_PACK, -4, 1)
 Else
 	GUISetIcon(@ScriptDir & "\icons\cd_mka.ico", -1, $FormMain)
 	GUICtrlSetStyle($ButtonInputAdd, $BS_ICON)

@@ -19,10 +19,11 @@ add_custom_command(
 		/dCue2MkcExe=$<TARGET_FILE:cue2mkc>
 		/dCue2MkcExeGui=${CUE2MKCGUI}
 		/dCue2MkcExeArch=${EX_PLATFORM_NAME}
+		/dIconPackDll=$<TARGET_FILE:icon_pack>
 		/Q
 		${ISETUP_SOURCES}
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-	DEPENDS cue2mkcgui cue2mkcgui
+	DEPENDS cue2mkcgui cue2mkcgui icon_pack
 	COMMENT "Creating setup ${EX_PLATFORM_NAME}"
 )
 
