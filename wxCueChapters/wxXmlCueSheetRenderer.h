@@ -63,6 +63,8 @@ class wxXmlCueSheetRenderer:
 		wxTagSynonimsCollection m_trackCdTextSynonims;
 		wxTagSynonimsCollection m_trackSynonims;
 
+        wxArrayCueTag m_artistTags;
+
 	public:
 
 		static wxXmlCueSheetRenderer* const Null;

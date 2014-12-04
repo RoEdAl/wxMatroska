@@ -18,20 +18,19 @@ MACRO(ADD_MSVC_PRECOMPILED_HEADER PrecompiledHeader PrecompiledSource SourcesVar
   ENDIF(MSVC)
 ENDMACRO(ADD_MSVC_PRECOMPILED_HEADER)
 
-project(wxmatroska VERSION 1.0.2.0)
+project(wxmatroska VERSION 1.1.0.0)
 
 SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Test 32/64 bits
 if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
-    message(STATUS "Target is 64 bits")
     SET( EX_PLATFORM 64 )
     SET( EX_PLATFORM_NAME "x64" )
 else("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
-    message(STATUS "Target is 32 bits")
 	SET( EX_PLATFORM 32 )
     SET( EX_PLATFORM_NAME "x86" )
 endif("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+message(STATUS "Target platform: ${EX_PLATFORM_NAME}")
 
 set(PROJECT_VERSION_STR ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
 set(PROJECT_VERSION_STR4 "${PROJECT_VERSION_MAJOR}, ${PROJECT_VERSION_MINOR}, ${PROJECT_VERSION_PATCH}, ${PROJECT_VERSION_TWEAK}")
@@ -46,7 +45,8 @@ configure_file(
 include_directories( ${PROJECT_BINARY_DIR} )
 
 # installation directory of external libraries
-SET(EXT_INSTALL_PREFIX ${PROJECT_BINARY_DIR}/extlib)
+
+SET(EXT_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/extlib/\$(Configuration)")
 
 message( External projects dir: ${EXT_INSTALL_PREFIX} )
 

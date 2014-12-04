@@ -697,6 +697,26 @@ void wxXmlCueSheetRenderer::AddTags(
 	wxArrayCueTag rest;
 
 	component.GetTags( GetConfig().GetTagSources(), cdTextSynonims, synonims, mappedTags, rest );
+
+    if (GetConfig().RenderArtistForTrack())
+    {
+        wxCueTag artistTag( wxCueTag::TAG_UNKNOWN, wxCueTag::Name::ARTIST, wxEmptyString );
+
+        if (component.IsTrack( ))
+        {
+            wxArrayCueTag artists;
+            size_t res = wxCueTag::GetTags( mappedTags, wxCueTag::Name::ARTIST, artists );
+            if ( res == 0 && !m_artistTags.IsEmpty() )
+            {
+                wxCueTag::AddTags( mappedTags, m_artistTags );
+            }
+        }
+        else
+        {
+            wxCueTag::GetTags( mappedTags, wxCueTag::Name::ARTIST, m_artistTags );
+        }
+    }
+
 	add_simple_tags( pTag, mappedTags, GetConfig().GetLang() );
 	add_simple_tags( pTag, rest, GetConfig().GetLang() );
 }
@@ -708,6 +728,7 @@ void wxXmlCueSheetRenderer::AddCdTextInfo( const wxCueComponent& component, wxXm
 	if ( component.IsTrack() )
 	{
 		AddTags( component, m_trackCdTextSynonims, m_trackSynonims, pTag );
+        // wxCueTag::FindTag(  )
 	}
 	else
 	{
@@ -857,6 +878,7 @@ bool wxXmlCueSheetRenderer::OnPreRenderDisc( const wxCueSheet& cueSheet )
 	m_pXmlTags.reset( create_xml_document( Xml::TAGS ) );
 	m_pTags = m_pXmlTags->GetRoot();
 	GetConfig().BuildXmlComments( m_tagsFile, m_pTags );
+    m_artistTags.Empty( );
 	AddDiscTags( cueSheet, m_pTags, editionUID );
 
 	add_comment_node( m_pTags, wxString::Format( wxS( "CUE file: \u201C%s\u201D" ), m_inputFile.ToString( false ) ) );

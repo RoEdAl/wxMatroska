@@ -143,6 +143,8 @@ class wxConfiguration:
 
 		wxSortedArrayString m_asLang;
 
+        bool m_bRenderArtistForTrack;
+
 	protected:
 
 		static bool ReadLanguagesStrings( wxSortedArrayString& );
@@ -193,6 +195,7 @@ class wxConfiguration:
 		bool GenerateEditionUID() const;
 		FILE_ENCODING GetFileEncoding() const;
 		wxString GetXmlFileEncoding() const;
+        bool RenderArtistForTrack() const;
 
 		wxSharedPtr< wxMBConv > GetXmlEncoding() const;
 

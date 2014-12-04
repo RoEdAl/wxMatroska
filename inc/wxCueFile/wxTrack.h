@@ -36,18 +36,18 @@ class wxTrack:
 
 	public:
 
-		typedef enum _Flag
+		enum Flag
 		{
 			DCP, CH4, PRE, SCMS, DATA, NONE
-		} Flag;
+		};
 
 		WX_DEFINE_ARRAY_INT( Flag, wxArrayFlag );
 
-		typedef enum _DataMode
+		enum DataMode
 		{
 			AUDIO, CDG, MODE1_2048, MODE1_2352, MODE2_2336, MODE2_2352, CDI_2336,
 			CDI_2352
-		} DataMode;
+		};
 
 	protected:
 
@@ -60,20 +60,20 @@ class wxTrack:
 
 	protected:
 
-		typedef struct _FLAG_STR
+		struct FLAG_STR
 		{
 			Flag flag;
 			const char* szName;
-		} FLAG_STR;
+		};
 
 		static const FLAG_STR FlagString[];
 		static const size_t	  FlagStringSize;
 
-		typedef struct _DATA_MODE_STR
+		struct DATA_MODE_STR
 		{
 			DataMode mode;
 			const char* szName;
-		} DATA_MODE_STR;
+		};
 
 		static const DATA_MODE_STR DataModeString[];
 		static const size_t		   DataModeStringSize;

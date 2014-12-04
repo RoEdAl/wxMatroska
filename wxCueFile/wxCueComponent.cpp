@@ -239,7 +239,7 @@ void wxCueComponent::GetTags(
 	wxHashArrayCueTag restHash;
 
 	wxCueTag cueTag;
-	for ( size_t i = 0, nTags = m_cdTextTags.GetCount(); i < nTags; i++ )
+	for ( size_t i = 0, nTags = m_cdTextTags.GetCount(); i < nTags; ++i )
 	{
 		if ( !m_cdTextTags[ i ].TestSource( nTagSources ) )
 		{
@@ -256,7 +256,7 @@ void wxCueComponent::GetTags(
 		}
 	}
 
-	for ( size_t i = 0, nTags = m_tags.GetCount(); i < nTags; i++ )
+	for ( size_t i = 0, nTags = m_tags.GetCount(); i < nTags; ++i )
 	{
 		if ( !m_tags[ i ].TestSource( nTagSources ) )
 		{
@@ -285,7 +285,7 @@ void wxCueComponent::GetTags(
 
 void wxCueComponent::remove_duplicates( const wxRegEx& reEmptyValue, wxHashArrayCueTag& tagsHash )
 {
-	for ( wxHashArrayCueTag::iterator i = tagsHash.begin(); i != tagsHash.end(); i++ )
+	for ( wxHashArrayCueTag::iterator i = tagsHash.begin(); i != tagsHash.end(); ++i )
 	{
 		remove_duplicates( reEmptyValue, i->second );
 	}
@@ -295,11 +295,11 @@ void wxCueComponent::remove_duplicates( const wxRegEx& reEmptyValue, wxArrayCueT
 {
 	wxArrayString asLines;
 
-	for ( size_t i = 0, nTags = tags.GetCount(); i < nTags; i += 1 )
+	for ( size_t i = 0, nTags = tags.GetCount(); i < nTags; ++i )
 	{
 		wxString sValue( tags[ i ].GetValue() );
 		bool	 bRemove = false;
-		for ( size_t j = 0; j < nTags; j++ )
+		for ( size_t j = 0; j < nTags; ++j )
 		{
 			if ( i == j )
 			{
@@ -310,7 +310,7 @@ void wxCueComponent::remove_duplicates( const wxRegEx& reEmptyValue, wxArrayCueT
 			size_t nReplCounter = 0;
 			tags[ j ].GetValue( asLines );
 
-			for ( size_t k = 0, nLines = asLines.GetCount(); k < nLines; k++ )
+			for ( size_t k = 0, nLines = asLines.GetCount(); k < nLines; ++k )
 			{
 				if ( sValue.Replace( asLines[ k ], wxEmptyString, false ) > 0 )
 				{

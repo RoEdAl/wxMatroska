@@ -311,7 +311,8 @@ wxConfiguration::wxConfiguration( void ):
 	m_nReadFlags( wxCueSheetReader::EC_PARSE_COMMENTS | wxCueSheetReader::EC_ELLIPSIZE_TAGS | wxCueSheetReader::EC_REMOVE_EXTRA_SPACES | wxCueSheetReader::EC_MEDIA_READ_TAGS | wxCueSheetReader::EC_FIND_COVER | wxCueSheetReader::EC_FIND_LOG ),
 	m_bUseMLang( true ),
 	m_bUseFullPaths( false ),
-	m_eCsAttachMode( CUESHEET_ATTACH_NONE )
+	m_eCsAttachMode( CUESHEET_ATTACH_NONE ),
+    m_bRenderArtistForTrack( false )
 {
 	ReadLanguagesStrings( m_asLang );
 }
@@ -356,6 +357,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 	cmdLine.AddOption( wxEmptyString, "cue-sheet-attach-mode", _( "Mode of attaching cue sheet to mkvmerge options file - possible values are none (default), source, decoded, rendered and default" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxEmptyString, "use-full-paths", wxString::Format( _( "Use full paths in mkvmerge options file (default: %s)" ), BoolToStr( m_bUseFullPaths ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddOption( wxEmptyString, "mkvmerge-directory", _( "Location of mkvmerge tool" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+    cmdLine.AddSwitch( "ra", "render-artist-for-track", wxString::Format( _( "Render artist for track (default: %s)" ), BoolToStr( m_bRenderArtistForTrack ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 
 	// tags usage
 	cmdLine.AddSwitch( wxEmptyString, "use-cdtext-tags", wxString::Format( _( "Use CD-TEXT tags (default: %s)" ), TagSourcesTestStr( wxCueTag::TAG_CD_TEXT ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
@@ -474,6 +476,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	ReadNegatableSwitchValue( cmdLine, "hidden-indexes", m_bHiddenIndexes );
 	ReadNegatableSwitchValue( cmdLine, "run-mkvmerge", m_bRunMkvmerge );
 	ReadNegatableSwitchValue( cmdLine, "use-full-paths", m_bUseFullPaths );
+    ReadNegatableSwitchValue( cmdLine, "ra", m_bRenderArtistForTrack );
 
 	if ( cmdLine.Found( "e", &s ) )
 	{
@@ -737,6 +740,7 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
 	as.Add( wxString::Format( "Matroska tags XML file extension: %s", m_sMatroskaTagsXmlExt ) );
 	as.Add( wxString::Format( "mkvmerge options file extension: %s", m_sMatroskaOptsExt ) );
 	as.Add( wxString::Format( "Correct \"simple 'quotation' marks\" inside strings: %s", BoolToStr( m_bCorrectQuotationMarks ) ) );
+    as.Add( wxString::Format( "Render artist for tracks: %s", BoolToStr( m_bRenderArtistForTrack ) ) );
 	as.Add( wxString::Format( "Read flags: %s", GetReadFlagsDesc( m_nReadFlags ) ) );
 	as.Add( wxString::Format( "Use MLang library: %s", BoolToStr( m_bUseMLang ) ) );
 }
@@ -841,6 +845,11 @@ const wxString& wxConfiguration::GetLang() const
 const wxArrayInputFile& wxConfiguration::GetInputFiles() const
 {
 	return m_inputFile;
+}
+
+bool wxConfiguration::RenderArtistForTrack() const
+{
+    return m_bRenderArtistForTrack;
 }
 
 wxString wxConfiguration::GetExt() const

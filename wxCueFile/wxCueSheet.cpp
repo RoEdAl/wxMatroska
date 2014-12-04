@@ -709,44 +709,47 @@ bool wxCueSheet::CalculateDuration( const wxString& sAlternateExt )
 	return bRes;
 }
 
-static size_t only_suitable_tags( wxArrayCueTag& tags )
+namespace
 {
-	wxCueComponent::ENTRY_TYPE eEntryType;
-	size_t					   nCounter = 0;
+    size_t only_suitable_tags( wxArrayCueTag& tags )
+    {
+        wxCueComponent::ENTRY_TYPE eEntryType;
+        size_t					   nCounter = 0;
 
-	for ( size_t i = 0, nCount = tags.GetCount(); i < nCount; i++ )
-	{
-		if ( wxCueComponent::GetCdTextInfoType( tags[ i ].GetName(), eEntryType ) &&
-			 eEntryType == wxCueComponent::TRACK )
-		{
-			tags.RemoveAt( i );
-			nCounter += 1;
-			nCount	 -= 1;
-			i		 -= 1;
-		}
-	}
+        for (size_t i = 0, nCount = tags.GetCount( ); i < nCount; ++i)
+        {
+            if (wxCueComponent::GetCdTextInfoType( tags[i].GetName( ), eEntryType ) &&
+                    eEntryType == wxCueComponent::TRACK)
+            {
+                tags.RemoveAt( i );
+                nCounter += 1;
+                nCount -= 1;
+                i -= 1;
+            }
+        }
 
-	return nCounter;
-}
+        return nCounter;
+    }
 
-static wxString concatenate( const wxString& s1, const wxString& s2 )
-{
-	if ( s1.IsEmpty() && s2.IsEmpty() )
-	{
-		return wxEmptyString;
-	}
-	else if ( s1.IsEmpty() && !s2.IsEmpty() )
-	{
-		return s2;
-	}
-	else if ( !s1.IsEmpty() && s2.IsEmpty() )
-	{
-		return s1;
-	}
-	else
-	{
-		return s1 + ' ' + s2;
-	}
+    wxString concatenate( const wxString& s1, const wxString& s2 )
+    {
+        if (s1.IsEmpty( ) && s2.IsEmpty( ))
+        {
+            return wxEmptyString;
+        }
+        else if (s1.IsEmpty( ) && !s2.IsEmpty( ))
+        {
+            return s2;
+        }
+        else if (!s1.IsEmpty( ) && s2.IsEmpty( ))
+        {
+            return s1;
+        }
+        else
+        {
+            return s1 + ' ' + s2;
+        }
+    }
 }
 
 void wxCueSheet::FindCommonTags( const wxTagSynonimsCollection& discSynonims, const wxTagSynonimsCollection& trackSynonims, bool bMerge )
@@ -771,7 +774,7 @@ void wxCueSheet::FindCommonTags( const wxTagSynonimsCollection& discSynonims, co
 
 		// CD-TEXT
 		group = m_tracks[ 0 ].GetCdTextTags();
-		for ( size_t i = 1; i < nTracks; i++ )
+		for ( size_t i = 1; i < nTracks; ++i )
 		{
 			wxCueTag::CommonTags( commonTags, group, m_tracks[ i ].GetCdTextTags() );
 			group = commonTags;
@@ -780,7 +783,7 @@ void wxCueSheet::FindCommonTags( const wxTagSynonimsCollection& discSynonims, co
 		only_suitable_tags( commonTags );
 
 		AddCdTextInfoTags( commonTags );
-		for ( size_t i = 0; i < nTracks; i++ )
+		for ( size_t i = 0; i < nTracks; ++i )
 		{
 			m_tracks[ i ].RemoveCdTextInfoTags( commonTags );
 		}
@@ -788,14 +791,14 @@ void wxCueSheet::FindCommonTags( const wxTagSynonimsCollection& discSynonims, co
 		// TAGS
 		commonTags.Clear();
 		group = m_tracks[ 0 ].GetTags();
-		for ( size_t i = 1; i < nTracks; i++ )
+		for ( size_t i = 1; i < nTracks; ++i )
 		{
 			wxCueTag::CommonTags( commonTags, group, m_tracks[ i ].GetTags() );
 			group = commonTags;
 		}
 
 		AddTags( commonTags );
-		for ( size_t i = 0; i < nTracks; i++ )
+		for ( size_t i = 0; i < nTracks; ++i )
 		{
 			m_tracks[ i ].RemoveTags( commonTags );
 		}
@@ -893,7 +896,7 @@ void wxCueSheet::FindCommonTags( const wxTagSynonimsCollection& discSynonims, co
 				wxLogInfo( _( "Album name: \u201C%s\u201D" ), sCommonAlbum );
 				AddCdTextInfoTag( wxCueTag( wxCueTag::TAG_AUTO_GENERATED, wxCueTag::Name::TITLE, sCommonAlbum ) );
 
-				for ( wxHashMapStringToULong::const_iterator i = albumNumbers.begin(), iend = albumNumbers.end(); i != iend; i++ )
+				for ( wxHashMapStringToULong::const_iterator i = albumNumbers.begin(), iend = albumNumbers.end(); i != iend; ++i )
 				{
 					wxCueTag discNumberTag( wxCueTag::TAG_AUTO_GENERATED, wxCueTag::Name::DISCNUMBER, wxString::Format( "%u", i->second ) );
 					wxCueTag albumTag( wxCueTag::TAG_AUTO_GENERATED, wxCueTag::Name::ALBUM, i->first );
