@@ -46,7 +46,9 @@ include_directories( ${PROJECT_BINARY_DIR} )
 
 # installation directory of external libraries
 
-SET(EXT_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/extlib/\$(Configuration)")
+SET(EXT_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/extlib.install/\$(Configuration)")
+# set_property(DIRECTORY PROPERTY EP_STEP_TARGETS configure build)
+set_property( DIRECTORY PROPERTY EP_BASE "extlib" )
 
 message( External projects dir: ${EXT_INSTALL_PREFIX} )
 

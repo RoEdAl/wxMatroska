@@ -378,7 +378,7 @@ void wxMkvmergeOptsRenderer::write_log_attachments( const wxArrayFileName& logFi
 			*m_os <<
 				"# EAC log" << endl <<
 				attachment::name << endl <<
-				file_desc( fprefix::eac, logFiles[ 0 ], nAttachments ) <<
+				file_desc( fprefix::eac, logFiles[ 0 ], nAttachments ) << endl <<
 				attachment::desc << endl <<
 				logFiles[ 0 ].GetFullName() << endl <<
 				attachment::mime << endl <<
@@ -395,7 +395,7 @@ void wxMkvmergeOptsRenderer::write_log_attachments( const wxArrayFileName& logFi
 			{
 				*m_os <<
 					attachment::name << endl <<
-					file_desc( fprefix::eac, i + 1, logFiles[ i ], nAttachments ) <<
+					file_desc( fprefix::eac, i + 1, logFiles[ i ], nAttachments ) << endl <<
 					attachment::desc << endl <<
 					logFiles[ i ].GetFullName() << endl <<
 					attachment::mime << endl <<
