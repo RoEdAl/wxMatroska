@@ -56,6 +56,12 @@ class wxCueComponent:
 
 		static void GetSynonims( wxTagSynonimsCollection&, bool );
 
+    public:
+
+        static const char REG_EXP_FMT[];
+        static wxString GetCdTextInfoRegExp( );
+        static wxString GetKeywordsRegExp( );
+
 	protected:
 
 		bool		  m_bTrack;
@@ -119,8 +125,6 @@ class wxCueComponent:
 		wxCueComponent& operator +=( const wxCueComponent& );
 		wxCueComponent& Append( const wxCueComponent& );
 
-		static wxString GetCdTextInfoRegExp();
-		static wxString GetKeywordsRegExp();
 		static bool GetCdTextInfoFormat( const wxString&, ENTRY_FORMAT& );
 		static bool GetCdTextInfoType( const wxString&, ENTRY_TYPE& );
 		static bool GetEntryType( const wxString&, ENTRY_TYPE& );

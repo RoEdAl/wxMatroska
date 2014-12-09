@@ -53,6 +53,10 @@ const size_t wxCueComponent::KeywordsSize = WXSIZEOF( wxCueComponent::Keywords )
 
 // ===============================================================================
 
+const char wxCueComponent::REG_EXP_FMT[] = "\\A\\s*%s\\s+(\\S.*\\S)\\s*\\Z";
+
+// ===============================================================================
+
 wxString wxCueComponent::GetCdTextInfoRegExp()
 {
 	wxTextOutputStreamOnString tos;

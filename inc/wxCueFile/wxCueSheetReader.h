@@ -118,10 +118,6 @@ class wxCueSheetReader:
 
 	protected:
 
-		static wxString GetDataModeRegExp();
-		static wxString GetKeywordsRegExp();
-		static wxString GetCdTextInfoRegExp();
-		static wxString GetDataFileRegExp();
 		static wxString GetOneTrackCue();
 
 		static bool GetLogFile( const wxFileName&, bool, wxFileName& );

@@ -39,41 +39,48 @@ const wxCueSheetReader::PARSE_STRUCT wxCueSheetReader::parseArray[] =
 
 // ===============================================================================
 
-wxString wxCueSheetReader::GetKeywordsRegExp()
+namespace
 {
-	wxString sKeywordsRegExp( wxCueComponent::GetKeywordsRegExp() );
-	wxString s;
+    template<size_t FMTS, typename G>
+    inline wxString build_regex_str( const char( &fmt )[FMTS], G getter )
+    {
+        wxString se( getter() );
+        wxString s;
 
-	s.Printf( "\\A\\s*%s\\s+(\\S.*\\S)\\s*\\Z", sKeywordsRegExp );
-	return s;
+        s.Printf( fmt, se );
+        return s;
+    }
+
+    template<typename G>
+    inline wxString build_component_regex_str( G getter )
+    {
+        return wxString::Format( wxCueComponent::REG_EXP_FMT, getter() );
+    }
+
+    struct reg_exp
+    {
+        static inline wxString keywords()
+        {
+            return build_component_regex_str( wxCueComponent::GetKeywordsRegExp );
+        }
+
+        static inline wxString data_mode()
+        {
+            return build_regex_str( "\\A(\\d{1,2})(?:\\s+%s){0,1}\\Z", wxTrack::GetDataModeRegExp );
+        }
+
+        static inline wxString cd_text_info()
+        {
+            return build_component_regex_str( wxCueComponent::GetCdTextInfoRegExp );
+        }
+
+        static inline wxString data_file()
+        {
+            return build_regex_str( "\\A((?:\\\".*\\\")|(?:\\'.*\\'))(?:\\s+%s){0,1}\\Z", wxDataFile::GetFileTypeRegExp );
+        }
+    };
 }
 
-wxString wxCueSheetReader::GetDataModeRegExp()
-{
-	wxString sDataModeRegExp( wxTrack::GetDataModeRegExp() );
-	wxString s;
-
-	s.Printf( "\\A(\\d{1,2})(?:\\s+%s){0,1}\\Z", sDataModeRegExp );
-	return s;
-}
-
-wxString wxCueSheetReader::GetCdTextInfoRegExp()
-{
-	wxString sRegExp( wxCueComponent::GetCdTextInfoRegExp() );
-	wxString s;
-
-	s.Printf( "\\A\\s*%s\\s+(\\S.*\\S)\\s*\\Z", sRegExp );
-	return s;
-}
-
-wxString wxCueSheetReader::GetDataFileRegExp()
-{
-	wxString sRegExp( wxDataFile::GetFileTypeRegExp() );
-	wxString s;
-
-	s.Printf( "\\A((?:\\\".*\\\")|(?:\\'.*\\'))(?:\\s+%s){0,1}\\Z", sRegExp );
-	return s;
-}
 
 bool wxCueSheetReader::GetLogFile( const wxFileName& inputFile, bool bAnyLog, wxFileName& logFile )
 {
@@ -151,15 +158,15 @@ void TagLibDebugListener::printMessage( const TagLib::String& msg )
 #endif
 
 wxCueSheetReader::wxCueSheetReader( void ):
-	m_reKeywords( GetKeywordsRegExp(), wxRE_ADVANCED ),
-	m_reCdTextInfo( GetCdTextInfoRegExp(), wxRE_ADVANCED ),
+	m_reKeywords( reg_exp::keywords(), wxRE_ADVANCED ),
+	m_reCdTextInfo( reg_exp::cd_text_info(), wxRE_ADVANCED ),
 	m_reEmpty( "\\A\\s*\\Z", wxRE_ADVANCED ),
 	m_reIndex( "\\A\\s*(\\d{1,2})\\s+(\\S.*\\S)\\Z", wxRE_ADVANCED ),
 	m_reMsf( "\\A(\\d{1,4}):(\\d{1,2}):(\\d{1,2})\\Z", wxRE_ADVANCED ),
 	m_reQuotesEx( wxUnquoter::RE_SINGLE_QUOTES_EX, wxRE_ADVANCED ),
 	m_reFlags( "\\s+", wxRE_ADVANCED ),
-	m_reDataMode( GetDataModeRegExp(), wxRE_ADVANCED ),
-	m_reDataFile( GetDataFileRegExp(), wxRE_ADVANCED ),
+	m_reDataMode( reg_exp::data_mode(), wxRE_ADVANCED ),
+	m_reDataFile( reg_exp::data_file(), wxRE_ADVANCED ),
 	m_reCatalog( "\\d{13}", wxRE_ADVANCED | wxRE_NOSUB ),
 	m_reIsrc( "([[:upper:]]{2}|00)-{0,1}[[:upper:][:digit:]]{3}-{0,1}[[:digit:]]{5}", wxRE_ADVANCED | wxRE_NOSUB ),
 	m_reTrackComment( "cue[[.hyphen.][.underscore.][.low-line.]]track([[:digit:]]{1,2})[[.underscore.][.low-line.]]([[:alpha:][.hyphen.][.underscore.][.low-line.][.space.]]+)", wxRE_ADVANCED | wxRE_ICASE ),
