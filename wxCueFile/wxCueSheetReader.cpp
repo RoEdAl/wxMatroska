@@ -536,15 +536,17 @@ void wxCueSheetReader::AddError0( const wxString& sMsg )
 	m_errors.Add( sMsg );
 }
 
-void wxCueSheetReader::AddError( const wxChar* pszFormat, ... )
+void wxCueSheetReader::AddError( const wxString& sFormat, ... )
 {
 	va_list argptr;
+    wxString s;
+    int nRes;
 
-	va_start( argptr, pszFormat );
-	wxString s;
-	s.PrintfV( pszFormat, argptr );
-	AddError0( s );
+	va_start( argptr, sFormat );
+	nRes = s.PrintfV( sFormat, argptr );
 	va_end( argptr );
+
+    if (nRes > 0) AddError0( s );
 }
 
 void wxCueSheetReader::DumpErrors( size_t nLine ) const

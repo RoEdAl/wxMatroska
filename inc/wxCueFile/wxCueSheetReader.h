@@ -127,7 +127,7 @@ class wxCueSheetReader:
 		static bool GetLogFile( const wxFileName&, bool, wxFileName& );
 
 		void AddError0( const wxString& );
-		void AddError( const wxChar* pszFormat, ... );
+		void AddError( const wxString&, ... );
 
 		void DumpErrors( size_t ) const;
 

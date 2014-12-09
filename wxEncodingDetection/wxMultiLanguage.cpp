@@ -81,7 +81,7 @@ HRESULT wxMultiLanguage::DetectCodepageInStream(
 	wxASSERT( IsValid() );
 
 	IStream* pStream;
-	HRESULT	 hRes = SHCreateStreamOnFile( fn.GetFullPath(), STGM_READ, &pStream );
+	HRESULT	 hRes = SHCreateStreamOnFile( fn.GetFullPath().t_str(), STGM_READ, &pStream );
 
 	if ( hRes != S_OK )
 	{
