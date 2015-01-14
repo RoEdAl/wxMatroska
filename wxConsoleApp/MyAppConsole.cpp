@@ -139,7 +139,7 @@ void MyAppConsole::ShowLicense( wxMessageOutput& out )
 		return;
 	}
 
-	wxTextInputStream tis( fis, wxEmptyString, wxConvISO8859_1 );
+	wxTextInputStream tis( fis, wxEmptyString, wxConvUTF8 );
 	while ( !fis.Eof() )
 	{
 		out.Output( tis.ReadLine() );

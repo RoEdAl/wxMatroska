@@ -29,7 +29,7 @@ ArchitecturesAllowed={#Cue2MkcExeArch}
 PrivilegesRequired=admin
 
 [Languages]
-Name: en; MessagesFile: compiler:Default.isl; LicenseFile: ..\wxCueChapters\license.txt
+Name: en; MessagesFile: compiler:Default.isl; LicenseFile: {#LicenseFileRtf}
 
 [Types]
 Name: full; Description: {cm:full_installation}; 
@@ -47,7 +47,7 @@ Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:Ad
 Source: {#Cue2MkcExe}; DestDir: {app}; Flags: comparetimestamp; Components: cli; 
 Source: {#Cue2MkcExeGui}; DestDir: {app}; Flags: comparetimestamp; Components: gui; 
 Source: {#IconPackDll}; DestDir: {app}; Flags: comparetimestamp; Components: gui; 
-Source: ..\wxCueChapters\license.txt; DestDir: {app}; Flags: comparetimestamp; 
+Source: {#LicenseFileTxt}; DestDir: {app}; Flags: comparetimestamp; 
 Source: ..\cue\ISO-639-2_utf-8.txt; DestDir: {app}; Flags: comparetimestamp; 
 
 [Icons]
