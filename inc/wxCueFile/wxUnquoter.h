@@ -44,26 +44,17 @@ class wxUnquoter:
 		static const char CLOSING_QOUTATION_MARK_REPLACEMENT;
 		static const char GENERIC_REPLACEMENT[];
 
-		typedef struct _QUOTATION_MARKS
+		struct QUOTATION_MARKS
 		{
 			const wxChar* opening;
 			const wxChar* closing;
-		} QUOTATION_MARKS;
+		};
 
 		static const QUOTATION_MARKS ASCII_QUOTES[];
-		static const size_t			 ASCII_QUOTES_SIZE;
-
 		static const QUOTATION_MARKS ENGLISH_QUOTES[];
-		static const size_t			 ENGLISH_QUOTES_SIZE;
-
 		static const QUOTATION_MARKS POLISH_QUOTES[];
-		static const size_t			 POLISH_QUOTES_SIZE;
-
 		static const QUOTATION_MARKS GERMAN_QUOTES[];
-		static const size_t			 GERMAN_QUOTES_SIZE;
-
 		static const QUOTATION_MARKS FRENCH_QUOTES[];
-		static const size_t			 FRENCH_QUOTES_SIZE;
 
 		typedef wxScopedCharTypeBuffer< wxChar > wxScopedCharBuffer;
 		typedef wxScopedCharBuffer ( wxUnquoter::* GET_REPLACEMENT_METHOD )( int, bool ) const;
@@ -74,7 +65,23 @@ class wxUnquoter:
 		wxScopedCharBuffer get_german_replacement( int, bool ) const;
 		wxScopedCharBuffer get_french_replacement( int, bool ) const;
 
-		static wxScopedCharBuffer get_replacement( const QUOTATION_MARKS*, size_t, int, bool );
+        template<size_t SIZE>
+        static wxScopedCharBuffer get_replacement( const QUOTATION_MARKS( &quotation_marks_array )[SIZE], int nLevel, bool bOpening )
+        {
+            if (nLevel < 0)
+            {
+                return wxScopedCharBuffer( );
+            }
+
+            if (bOpening)
+            {
+                return wxScopedCharBuffer::CreateNonOwned( quotation_marks_array[nLevel % SIZE].opening );
+            }
+            else
+            {
+                return wxScopedCharBuffer::CreateNonOwned( quotation_marks_array[nLevel % SIZE].closing );
+            }
+        }
 
 		void InternalCorrectQuotes( wxString& ) const;
 

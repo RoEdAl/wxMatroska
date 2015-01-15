@@ -37,6 +37,11 @@ wxTextOutputStream& wxTextOutputStreamOnString::operator *() const
 	return const_cast< wxTextOutputStream& >( m_textOutputStream );
 }
 
+wxTextOutputStream* wxTextOutputStreamOnString::operator ->() const
+{
+    return const_cast< wxTextOutputStream* >(&m_textOutputStream);
+}
+
 void wxTextOutputStreamOnString::SaveTo( wxTextOutputStream& tos, const wxString& s )
 {
 	wxTextInputStreamOnString tis( s );

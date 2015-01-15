@@ -16,8 +16,6 @@ const char* const wxCoverFile::CoverNames[] =
 	"picture"
 };
 
-const size_t wxCoverFile::CoverNamesSize = WXSIZEOF( wxCoverFile::CoverNames );
-
 // ===============================================================================
 
 const char* const wxCoverFile::CoverExts[] =
@@ -27,9 +25,11 @@ const char* const wxCoverFile::CoverExts[] =
 	"png"
 };
 
-const size_t wxCoverFile::CoverExtsSize = WXSIZEOF( wxCoverFile::CoverExts );
+// ===============================================================================
 
 const wxULongLong wxCoverFile::MAX_FILE_SIZE = wxUINT32_MAX;
+
+// ===============================================================================
 
 const wxCoverFile::TypeName wxCoverFile::TypeNames[] =
 {
@@ -54,8 +54,6 @@ const wxCoverFile::TypeName wxCoverFile::TypeNames[] =
 	{ wxCoverFile::PublisherLogo, "PublisherLogo" },
 	{ wxCoverFile::OtherFileIcon, "OtherFileIcon" }
 };
-
-const size_t wxCoverFile::TypeNamesSize = WXSIZEOF( wxCoverFile::TypeNames );
 
 // ===============================================================================
 
@@ -226,11 +224,12 @@ void wxCoverFile::Append( wxArrayCoverFile& ar, const wxArrayCoverFile& covers )
 	}
 }
 
-bool wxCoverFile::IsCoverFile( const wxFileName& fileName )
+template<size_t SIZE>
+bool wxCoverFile::IsCoverFile( const wxFileName& fileName, const char* const (&coverExts)[SIZE] )
 {
-	for ( size_t i = 0; i < CoverExtsSize; i++ )
+	for ( size_t i = 0; i < SIZE; ++i )
 	{
-		if ( fileName.GetExt().CmpNoCase( CoverExts[ i ] ) == 0 )
+		if ( fileName.GetExt().CmpNoCase( coverExts[ i ] ) == 0 )
 		{
 			wxULongLong fsize = fileName.GetSize();
 
@@ -242,6 +241,11 @@ bool wxCoverFile::IsCoverFile( const wxFileName& fileName )
 	}
 
 	return false;
+}
+
+bool wxCoverFile::IsCoverFile( const wxFileName& fileName )
+{
+    return IsCoverFile( fileName, CoverExts );
 }
 
 bool wxCoverFile::GetCoverFile( const wxDir& sourceDir, const wxString& sFileNameBase, wxFileName& coverFile )
@@ -274,7 +278,8 @@ bool wxCoverFile::GetCoverFile( const wxDir& sourceDir, const wxString& sFileNam
 	return false;
 }
 
-bool wxCoverFile::GetCoverFile( const wxFileName& inputFile, wxFileName& coverFile )
+template<size_t SIZE>
+bool wxCoverFile::GetCoverFile( const wxFileName& inputFile, wxFileName& coverFile, const char* const (&coverNames)[SIZE] )
 {
 	wxFileName sourceDirFn( inputFile );
 
@@ -290,15 +295,20 @@ bool wxCoverFile::GetCoverFile( const wxFileName& inputFile, wxFileName& coverFi
 		return false;
 	}
 
-	for ( size_t i = 0; i < CoverNamesSize; ++i )
+	for ( size_t i = 0; i < SIZE; ++i )
 	{
-		if ( GetCoverFile( sourceDir, CoverNames[ i ], coverFile ) )
+		if ( GetCoverFile( sourceDir, coverNames[ i ], coverFile ) )
 		{
 			return true;
 		}
 	}
 
 	return false;
+}
+
+bool wxCoverFile::GetCoverFile( const wxFileName& inputFile, wxFileName& coverFile )
+{
+    return GetCoverFile( inputFile, coverFile, CoverNames );
 }
 
 namespace
@@ -390,11 +400,12 @@ void wxCoverFile::Extract( const wxFileName& fileName, wxArrayCoverFile& covers 
 	}
 }
 
-wxCoverFile::Type wxCoverFile::GetTypeFromStr( const wxString& stype )
+template<size_t SIZE>
+wxCoverFile::Type wxCoverFile::GetTypeFromStr( const wxString& stype, const wxCoverFile::TypeName (&typeNames)[SIZE] )
 {
-	for ( size_t i = 0; i < TypeNamesSize; ++i )
+	for ( size_t i = 0; i < SIZE; ++i )
 	{
-		if ( stype.CmpNoCase( TypeNames[ i ].name ) == 0 ) { return TypeNames[ i ].type; }
+		if ( stype.CmpNoCase( typeNames[ i ].name ) == 0 ) { return typeNames[ i ].type; }
 	}
 
 	if ( stype.CmpNoCase( "Front" ) == 0 )
@@ -411,13 +422,19 @@ wxCoverFile::Type wxCoverFile::GetTypeFromStr( const wxString& stype )
 	}
 }
 
-bool wxCoverFile::GetStrFromType( wxCoverFile::Type type, wxString& name )
+wxCoverFile::Type wxCoverFile::GetTypeFromStr( const wxString& stype )
 {
-	for ( size_t i = 0; i < TypeNamesSize; ++i )
+    return GetTypeFromStr( stype, TypeNames );
+}
+
+template<size_t SIZE>
+bool wxCoverFile::GetStrFromType( wxCoverFile::Type type, wxString& name, const wxCoverFile::TypeName( &typeNames )[SIZE] )
+{
+	for ( size_t i = 0; i < SIZE; ++i )
 	{
-		if ( type == TypeNames[ i ].type )
+		if ( type == typeNames[ i ].type )
 		{
-			name = TypeNames[ i ].name;
+			name = typeNames[ i ].name;
 			return true;
 		}
 	}
@@ -425,19 +442,30 @@ bool wxCoverFile::GetStrFromType( wxCoverFile::Type type, wxString& name )
 	return false;
 }
 
-size_t wxCoverFile::GetSortOrder( wxCoverFile::Type type )
+bool wxCoverFile::GetStrFromType( wxCoverFile::Type type, wxString& name )
 {
-	for ( size_t i = 0; i < TypeNamesSize; ++i )
+    return GetStrFromType( type, name, TypeNames );
+}
+
+template<size_t SIZE>
+size_t wxCoverFile::GetSortOrder( wxCoverFile::Type type, const wxCoverFile::TypeName( &typeNames )[SIZE] )
+{
+	for ( size_t i = 0; i < SIZE; ++i )
 	{
-		if ( type == TypeNames[ i ].type ) { return i; }
+		if ( type == typeNames[ i ].type ) { return i; }
 	}
 
 	return 100;
 }
 
+size_t wxCoverFile::GetSortOrder( wxCoverFile::Type type )
+{
+    return GetSortOrder( type, TypeNames );
+}
+
 namespace
 {
-	int size_cmp( size_t s1, size_t s2 )
+	inline int size_cmp( size_t s1, size_t s2 )
 	{
 		if ( s1 < s2 )
 		{

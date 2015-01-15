@@ -118,12 +118,11 @@ class wxCueTag:
 
 		struct SOURCE2TEXT
 		{
-			TAG_SOURCE eSource;
-			const char* pText;
+			TAG_SOURCE source;
+			const char* const text;
 		};
 
 		static const SOURCE2TEXT SOURCE2TEXT_MAPPING[];
-		static const size_t		 SOURCE2TEXT_MAPPING_SIZE;
 
 	public:
 
@@ -153,6 +152,44 @@ class wxCueTag:
 	protected:
 
 		void copy( const wxCueTag& );
+
+    protected:
+
+     template<size_t SIZE>
+     static wxString SourceToString( wxCueTag::TAG_SOURCE eSource, const SOURCE2TEXT( &source2text_mapping )[SIZE] )
+     {
+         for (size_t i = 0; i < SIZE; ++i)
+         {
+             if (eSource == source2text_mapping[i].source)
+             {
+                 return _( source2text_mapping[i].text );
+             }
+         }
+
+         return wxString::Format( "TAG_SOURCE <%d>", eSource );
+     }
+
+     template<size_t SIZE>
+     static wxString SourcesToString( wxCueTag::TagSources nTagSources, const SOURCE2TEXT( &source2text_mapping )[SIZE] )
+     {
+         wxString s;
+
+         for (size_t i = 0; i < SIZE; ++i)
+         {
+             if ((nTagSources & source2text_mapping[i].source) != 0u)
+             {
+                 s << source2text_mapping[i].text << ',';
+             }
+         }
+
+         if (!s.IsEmpty( ))
+         {
+             s.RemoveLast( );
+         }
+
+         return s;
+     }
+
 };
 #endif
 

@@ -48,8 +48,6 @@ const wxCueTag::SOURCE2TEXT wxCueTag::SOURCE2TEXT_MAPPING[] =
 	{ TAG_AUTO_GENERATED, "Automatically generated" }
 };
 
-const size_t wxCueTag::SOURCE2TEXT_MAPPING_SIZE = WXSIZEOF( wxCueTag::SOURCE2TEXT_MAPPING );
-
 // ===============================================================================
 
 wxIMPLEMENT_DYNAMIC_CLASS( wxCueTag, wxObject );
@@ -58,35 +56,12 @@ wxIMPLEMENT_DYNAMIC_CLASS( wxCueTag, wxObject );
 
 wxString wxCueTag::SourceToString( wxCueTag::TAG_SOURCE eSource )
 {
-	for ( size_t i = 0; i < SOURCE2TEXT_MAPPING_SIZE; i++ )
-	{
-		if ( eSource == SOURCE2TEXT_MAPPING[ i ].eSource )
-		{
-			return _( SOURCE2TEXT_MAPPING[ i ].pText );
-		}
-	}
-
-	return wxString::Format( "TAG_SOURCE <%d>", eSource );
+    return SourceToString( eSource, SOURCE2TEXT_MAPPING );
 }
 
 wxString wxCueTag::SourcesToString( wxCueTag::TagSources nTagSources )
 {
-	wxString s;
-
-	for ( size_t i = 0; i < SOURCE2TEXT_MAPPING_SIZE; i++ )
-	{
-		if ( ( nTagSources & SOURCE2TEXT_MAPPING[ i ].eSource ) != 0u )
-		{
-			s << SOURCE2TEXT_MAPPING[ i ].pText << ',';
-		}
-	}
-
-	if ( !s.IsEmpty() )
-	{
-		s.RemoveLast();
-	}
-
-	return s;
+    return SourcesToString( nTagSources, SOURCE2TEXT_MAPPING );
 }
 
 bool wxCueTag::TestTagSources( wxCueTag::TagSources sources, wxCueTag::TagSources mask )

@@ -134,7 +134,7 @@ wxString wxCueSheetReader::GetOneTrackCue()
 		"FILE \"%source%\" WAVE" << endl <<
 		"\tTRACK 01 AUDIO" << endl <<
 		"\tINDEX 01 00:00:00" << endl;
-	( *tos ).Flush();
+	tos->Flush();
 
 	return tos.GetString();
 }
@@ -146,7 +146,7 @@ bool wxCueSheetReader::TestReadFlags( ReadFlags nMask )
 
 wxString wxCueSheetReader::GetTagLibVersion()
 {
-	return wxString::Format( "TagLib version: %d.%d.%d. Copyright \u00A9 2002 - 2008 by Scott Wheeler", TAGLIB_MAJOR_VERSION, TAGLIB_MINOR_VERSION, TAGLIB_PATCH_VERSION );
+	return wxString::Format( wxS("TagLib version: %d.%d.%d. Copyright \u00A9 2002 - 2008 by Scott Wheeler"), TAGLIB_MAJOR_VERSION, TAGLIB_MINOR_VERSION, TAGLIB_PATCH_VERSION );
 }
 
 #ifdef __WXDEBUG__
@@ -168,7 +168,7 @@ wxCueSheetReader::wxCueSheetReader( void ):
 	m_reDataMode( reg_exp::data_mode(), wxRE_ADVANCED ),
 	m_reDataFile( reg_exp::data_file(), wxRE_ADVANCED ),
 	m_reCatalog( "\\d{13}", wxRE_ADVANCED | wxRE_NOSUB ),
-	m_reIsrc( "([[:upper:]]{2}|00)-{0,1}[[:upper:][:digit:]]{3}-{0,1}[[:digit:]]{5}", wxRE_ADVANCED | wxRE_NOSUB ),
+	m_reIsrc( "\\A([[:upper:]]{2}|00)-{0,1}[[:upper:][:digit:]]{3}-{0,1}[[:digit:]]{2}-{0,1}[[:digit:]]{5}\\Z", wxRE_ADVANCED | wxRE_NOSUB ),
 	m_reTrackComment( "cue[[.hyphen.][.underscore.][.low-line.]]track([[:digit:]]{1,2})[[.underscore.][.low-line.]]([[:alpha:][.hyphen.][.underscore.][.low-line.][.space.]]+)", wxRE_ADVANCED | wxRE_ICASE ),
 	m_reCommentMeta( "\\A([[.quotation-mark.]]{0,1})([[:upper:][.hyphen.][.underscore.][:space:][.low-line.]]+)\\1[[:space:]]+([^[:space:]].+)\\Z", wxRE_ADVANCED ),
 	m_bErrorsAsWarnings( true ),

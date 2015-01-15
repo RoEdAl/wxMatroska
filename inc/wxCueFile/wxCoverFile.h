@@ -80,21 +80,17 @@ class wxCoverFile
 		};
 
 		static const char* const CoverNames[];
-		static const size_t		 CoverNamesSize;
-
 		static const char* const CoverExts[];
-		static const size_t		 CoverExtsSize;
 
 		static const wxULongLong MAX_FILE_SIZE;
 
 		struct TypeName
 		{
 			Type type;
-			const char* name;
+			const char* const name;
 		};
 
 		static const TypeName TypeNames[];
-		static const size_t	  TypeNamesSize;
 
 		wxCoverFile();
 		wxCoverFile( const wxCoverFile& );
@@ -165,6 +161,21 @@ class wxCoverFile
 	private:
 
 		static int Cmp( wxCoverFile**, wxCoverFile** );
+
+        template<size_t SIZE>
+        static bool GetCoverFile( const wxFileName&, wxFileName&, const char* const (&)[SIZE] );
+
+        template<size_t SIZE>
+        static bool IsCoverFile( const wxFileName&, const char* const (&)[SIZE] );
+
+        template<size_t SIZE>
+        static Type GetTypeFromStr( const wxString&, const TypeName (&)[SIZE] );
+
+        template<size_t SIZE>
+        static bool GetStrFromType( Type type, wxString& name, const TypeName(&)[SIZE] );
+
+        template<size_t SIZE>
+        static size_t GetSortOrder( wxCoverFile::Type type, const TypeName( &)[SIZE] );
 };
 #endif
 
