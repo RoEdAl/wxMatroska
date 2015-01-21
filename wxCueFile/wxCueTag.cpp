@@ -8,6 +8,7 @@
 #include <wxCueFile/wxTrailingSpacesRemover.h>
 #include <wxCueFile/wxReduntantSpacesRemover.h>
 #include <wxCueFile/wxEllipsizer.h>
+#include <wxCueFile/wxRomanNumeralsConv.h>
 #include <wxEncodingDetection/wxTextOutputStreamOnString.h>
 #include <wxEncodingDetection/wxTextInputStreamOnString.h>
 
@@ -283,6 +284,18 @@ int wxCueTag::RemoveExtraSpaces( const wxReduntantSpacesRemover& spacesRemover )
 void wxCueTag::Ellipsize( const wxEllipsizer& ellipsizer )
 {
 	ellipsizer.EllipsizeEx( m_sValue, m_sValue );
+}
+
+void wxCueTag::ConvertRomanNumerals( const wxRomanNumeralsConv& romanNumveralsConv, bool upper )
+{
+    if (upper)
+    {
+        m_sValue = romanNumveralsConv.ConvertUpper( m_sValue );
+    }
+    else
+    {
+        m_sValue = romanNumveralsConv.ConvertLower( m_sValue );
+    }
 }
 
 wxString wxCueTag::Escape( const wxString& sValue )

@@ -654,7 +654,7 @@
 								<property name="Left" vt="Int16">272</property>
 								<property name="Top" vt="Int8">3</property>
 								<property name="Width" vt="Int16">233</property>
-								<property name="Height" vt="Int8">85</property>
+								<property name="Height" vt="Int8">117</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
 								<property name="Caption" vt="String">&amp;Tags parsing</property>
@@ -722,12 +722,42 @@
 									</properties>
 									<components/>
 								</object>
+								<object type="TACheckbox" name="CheckBoxUpperRomanNumerals">
+									<properties>
+										<property name="Left" vt="Int8">4</property>
+										<property name="Top" vt="Int8">78</property>
+										<property name="Width" vt="Int16">209</property>
+										<property name="Height" vt="Int8">17</property>
+										<property name="Hint" vt="String">Use Unicode characters for Roman Numerals when possilble</property>
+										<property name="Caption" vt="String">Convert capitalized Roman Numerals</property>
+										<property name="TabOrder" vt="Int8">4</property>
+										<property name="CtrlStyle" vt="Int32">1342242819</property>
+										<property name="CtrlExStyle" vt="Int8">0</property>
+										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+									</properties>
+									<components/>
+								</object>
+								<object type="TACheckbox" name="CheckBoxLowerRomanNumerals">
+									<properties>
+										<property name="Left" vt="Int8">4</property>
+										<property name="Top" vt="Int8">93</property>
+										<property name="Width" vt="Int16">193</property>
+										<property name="Height" vt="Int8">17</property>
+										<property name="Hint" vt="String">Use Unicode characters for Roman Numerals when possilble</property>
+										<property name="Caption" vt="String">Convert lowercase Roman Numerals</property>
+										<property name="TabOrder" vt="Int8">5</property>
+										<property name="CtrlStyle" vt="Int32">1342242819</property>
+										<property name="CtrlExStyle" vt="Int8">0</property>
+										<property name="Resizing" vt="Set">DockLeft, DockTop, DockWidth, DockHeight</property>
+									</properties>
+									<components/>
+								</object>
 							</components>
 						</object>
 						<object type="TAGroup" name="GroupOther">
 							<properties>
 								<property name="Left" vt="Int16">272</property>
-								<property name="Top" vt="Int16">163</property>
+								<property name="Top" vt="Int16">201</property>
 								<property name="Width" vt="Int16">233</property>
 								<property name="Height" vt="Int8">95</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
@@ -800,7 +830,7 @@
 						<object type="TAGroup" name="GroupUsedTags">
 							<properties>
 								<property name="Left" vt="Int16">272</property>
-								<property name="Top" vt="Int8">91</property>
+								<property name="Top" vt="Int8">123</property>
 								<property name="Width" vt="Int16">233</property>
 								<property name="Height" vt="Int8">72</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>

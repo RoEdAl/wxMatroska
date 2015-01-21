@@ -172,7 +172,7 @@ wxCueSheetReader::wxCueSheetReader( void ):
 	m_reTrackComment( "cue[[.hyphen.][.underscore.][.low-line.]]track([[:digit:]]{1,2})[[.underscore.][.low-line.]]([[:alpha:][.hyphen.][.underscore.][.low-line.][.space.]]+)", wxRE_ADVANCED | wxRE_ICASE ),
 	m_reCommentMeta( "\\A([[.quotation-mark.]]{0,1})([[:upper:][.hyphen.][.underscore.][:space:][.low-line.]]+)\\1[[:space:]]+([^[:space:]].+)\\Z", wxRE_ADVANCED ),
 	m_bErrorsAsWarnings( true ),
-	m_nReadFlags( EC_PARSE_COMMENTS | EC_ELLIPSIZE_TAGS | EC_REMOVE_EXTRA_SPACES | EC_MEDIA_READ_TAGS | EC_FIND_COVER | EC_FIND_LOG ),
+	m_nReadFlags( EC_PARSE_COMMENTS | EC_ELLIPSIZE_TAGS | EC_REMOVE_EXTRA_SPACES | EC_MEDIA_READ_TAGS | EC_FIND_COVER | EC_FIND_LOG | EC_CONVERT_UPPER_ROMAN_NUMERALS ),
 	m_sOneTrackCue( GetOneTrackCue() )
 {
 	wxASSERT( m_reKeywords.IsValid() );
@@ -331,7 +331,7 @@ bool wxCueSheetReader::ReadCueSheet( wxInputStream& stream, wxMBConv& conv )
 
 void wxCueSheetReader::AppendTags( const wxArrayCueTag& comments, bool bSingleMediaFile )
 {
-	for ( size_t i = 0, nComments = comments.GetCount(); i < nComments; i++ )
+	for ( size_t i = 0, nComments = comments.GetCount(); i < nComments; ++i )
 	{
 		wxCueTag comment( comments[ i ] );
 
@@ -352,6 +352,16 @@ void wxCueSheetReader::AppendTags( const wxArrayCueTag& comments, bool bSingleMe
 		{
 			comment.Ellipsize( m_ellipsizer );
 		}
+
+        if (TestReadFlags( EC_CONVERT_UPPER_ROMAN_NUMERALS ))
+        {
+            comment.ConvertRomanNumerals( m_romanNumveralsConv, true );
+        }
+
+        if (TestReadFlags( EC_CONVERT_LOWER_ROMAN_NUMERALS ))
+        {
+            comment.ConvertRomanNumerals( m_romanNumveralsConv, false );
+        }
 
 		if ( bSingleMediaFile )	// just add to first track
 		{
@@ -426,6 +436,16 @@ void wxCueSheetReader::AppendTags( const wxArrayCueTag& tags, size_t nTrackFrom,
 		{
 			tag.Ellipsize( m_ellipsizer );
 		}
+
+        if (TestReadFlags( EC_CONVERT_UPPER_ROMAN_NUMERALS ))
+        {
+            tag.ConvertRomanNumerals( m_romanNumveralsConv, true );
+        }
+
+        if (TestReadFlags( EC_CONVERT_LOWER_ROMAN_NUMERALS ))
+        {
+            tag.ConvertRomanNumerals( m_romanNumveralsConv, false );
+        }
 
 		if ( m_reTrackComment.Matches( tag.GetName() ) )
 		{
@@ -687,7 +707,31 @@ void wxCueSheetReader::ParseComment( wxCueComponent& component, const wxString& 
 
 	if ( m_reCommentMeta.Matches( sComment ) )
 	{
-		component.AddTag( wxCueTag::TAG_CUE_COMMENT, m_reCommentMeta.GetMatch( sComment, 2 ), m_genericUnquoter.Unquote( m_reCommentMeta.GetMatch( sComment, 3 ) ) );
+        wxCueTag comment( wxCueTag::TAG_CUE_COMMENT, m_reCommentMeta.GetMatch( sComment, 2 ), m_genericUnquoter.Unquote( m_reCommentMeta.GetMatch( sComment, 3 ) ) );
+
+        comment.RemoveTrailingSpaces( m_trailingSpacesRemover );
+
+        if (TestReadFlags( EC_REMOVE_EXTRA_SPACES ))
+        {
+            comment.RemoveExtraSpaces( m_reduntantSpacesRemover );
+        }
+
+        if (TestReadFlags( EC_ELLIPSIZE_TAGS ))
+        {
+            comment.Ellipsize( m_ellipsizer );
+        }
+
+        if (TestReadFlags( EC_CONVERT_UPPER_ROMAN_NUMERALS ))
+        {
+            comment.ConvertRomanNumerals( m_romanNumveralsConv, true );
+        }
+
+        if (TestReadFlags( EC_CONVERT_LOWER_ROMAN_NUMERALS ))
+        {
+            comment.ConvertRomanNumerals( m_romanNumveralsConv, false );
+        }
+
+		component.AddTag( comment );
 	}
 	else
 	{
@@ -817,6 +861,16 @@ bool wxCueSheetReader::AddCdTextInfo( const wxString& sToken, const wxString& sB
 	{
 		m_reduntantSpacesRemover.Remove( sModifiedBody );
 	}
+
+    if (TestReadFlags( EC_CONVERT_UPPER_ROMAN_NUMERALS ))
+    {
+        sModifiedBody = m_romanNumveralsConv.ConvertUpper( sModifiedBody );
+    }
+
+    if (TestReadFlags( EC_CONVERT_LOWER_ROMAN_NUMERALS ))
+    {
+        sModifiedBody = m_romanNumveralsConv.ConvertLower( sModifiedBody );
+    }
 
 	if ( m_cueSheet.HasTracks() )
 	{
@@ -1122,7 +1176,7 @@ bool wxCueSheetReader::ReadTagsFromMediaFile( const wxDataFile& _dataFile, size_
 
 		if ( dataFile.GetInfo() )
 		{
-			AppendTags( dataFile.GetTags(), nTrackFrom, nTrackTo );
+			AppendTags( _dataFile.GetTags(), nTrackFrom, nTrackTo );
 			return true;
 		}
 		else

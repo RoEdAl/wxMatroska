@@ -22,6 +22,7 @@ set(CUEFILE_SOURCE_FILES
 	wxUnquoter.cpp
 	wxCoverFile.cpp
 	wxMd5.cpp
+	wxRomanNumeralsConv.cpp
 )
 
 ADD_MSVC_PRECOMPILED_HEADER("StdWx.h" "StdWx.cpp" CUEFILE_SOURCE_FILES )

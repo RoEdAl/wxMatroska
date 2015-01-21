@@ -37,6 +37,10 @@ class wxFlacMetaDataReader;
 #include "wxEllipsizer.h"
 #endif
 
+#ifndef _WX_ROMAN_NUMERALS_H_
+#include "wxRomanNumeralsConv.h"
+#endif
+
 #ifndef _WX_CUE_SHEET_CONTENT_H_
 class wxCueSheetContent;
 #endif
@@ -72,7 +76,9 @@ class wxCueSheetReader:
 			EC_MEDIA_READ_TAGS	   = 8,
 			EC_SINGLE_MEDIA_FILE   = 16,
 			EC_FIND_COVER		   = 32,
-			EC_FIND_LOG			   = 64
+			EC_FIND_LOG			   = 64,
+            EC_CONVERT_UPPER_ROMAN_NUMERALS = 128,
+            EC_CONVERT_LOWER_ROMAN_NUMERALS = 256
 		};
 
 		bool TestReadFlags( ReadFlags );
@@ -98,6 +104,7 @@ class wxCueSheetReader:
 		wxTrailingSpacesRemover	 m_trailingSpacesRemover;
 		wxReduntantSpacesRemover m_reduntantSpacesRemover;
 		wxEllipsizer			 m_ellipsizer;
+        wxRomanNumeralsConv      m_romanNumveralsConv;
 		wxString				 m_sOneTrackCue;
 
 		// settings

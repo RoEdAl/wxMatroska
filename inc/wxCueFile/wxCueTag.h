@@ -21,6 +21,10 @@ class wxReduntantSpacesRemover;
 class wxEllipsizer;
 #endif
 
+#ifndef _WX_ROMAN_NUMERALS_H_
+class wxRomanNumeralsConv;
+#endif
+
 #ifndef _WX_TAG_SYNONIMS_H_
 class wxTagSynonimsCollection;
 #endif
@@ -106,6 +110,7 @@ class wxCueTag:
 		void RemoveTrailingSpaces( const wxTrailingSpacesRemover& );
 		int RemoveExtraSpaces( const wxReduntantSpacesRemover& );
 		void Ellipsize( const wxEllipsizer& );
+        void ConvertRomanNumerals( const wxRomanNumeralsConv&, bool );
 
 	protected:
 
