@@ -22,7 +22,7 @@ class wxEllipsizer;
 #endif
 
 #ifndef _WX_ROMAN_NUMERALS_H_
-class wxRomanNumeralsConv;
+#include <wxCueFile/wxRomanNumeralsConv.h>
 #endif
 
 #ifndef _WX_TAG_SYNONIMS_H_
@@ -110,7 +110,12 @@ class wxCueTag:
 		void RemoveTrailingSpaces( const wxTrailingSpacesRemover& );
 		int RemoveExtraSpaces( const wxReduntantSpacesRemover& );
 		void Ellipsize( const wxEllipsizer& );
-        void ConvertRomanNumerals( const wxRomanNumeralsConv&, bool );
+
+        template<bool UPPER>
+        void ConvertRomanNumerals( const wxRomanNumeralsConv<UPPER>& converter )
+        {
+            m_sValue = converter.Convert( m_sValue );
+        }
 
 	protected:
 

@@ -81,7 +81,7 @@ class wxCueSheetReader:
             EC_CONVERT_LOWER_ROMAN_NUMERALS = 256
 		};
 
-		bool TestReadFlags( ReadFlags );
+		bool TestReadFlags( ReadFlags ) const;
 
 	protected:
 
@@ -104,7 +104,8 @@ class wxCueSheetReader:
 		wxTrailingSpacesRemover	 m_trailingSpacesRemover;
 		wxReduntantSpacesRemover m_reduntantSpacesRemover;
 		wxEllipsizer			 m_ellipsizer;
-        wxRomanNumeralsConv      m_romanNumveralsConv;
+        wxRomanNumeralsConv<true>   m_romanNumveralsConvUpper;
+        wxRomanNumeralsConv<false>   m_romanNumveralsConvLower;
 		wxString				 m_sOneTrackCue;
 
 		// settings
@@ -141,7 +142,7 @@ class wxCueSheetReader:
 		typedef void ( wxCueSheetReader::* PARSE_METHOD )( const wxString&, const wxString& );
 		struct PARSE_STRUCT
 		{
-			const char* token;
+			const char* const token;
 			PARSE_METHOD method;
 		};
 
@@ -175,6 +176,9 @@ class wxCueSheetReader:
 		void ParseTrack( const wxString&, const wxString& );
 		void ParseCatalog( const wxString&, const wxString& );
 		void ParseCdTextFile( const wxString&, const wxString& );
+
+        void CorrectTag( wxCueTag& ) const;
+        void CorrectString( wxString& ) const;
 
 		bool AddCdTextInfo( const wxString&, const wxString& );
 		void AppendTags( const wxArrayCueTag&, bool );

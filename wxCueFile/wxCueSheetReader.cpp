@@ -139,7 +139,7 @@ wxString wxCueSheetReader::GetOneTrackCue()
 	return tos.GetString();
 }
 
-bool wxCueSheetReader::TestReadFlags( ReadFlags nMask )
+bool wxCueSheetReader::TestReadFlags( ReadFlags nMask ) const
 {
 	return ( m_nReadFlags & nMask ) == nMask;
 }
@@ -341,27 +341,7 @@ void wxCueSheetReader::AppendTags( const wxArrayCueTag& comments, bool bSingleMe
 		}
 
 		comment.Unquote( m_unquoter );
-		comment.RemoveTrailingSpaces( m_trailingSpacesRemover );
-
-		if ( TestReadFlags( EC_REMOVE_EXTRA_SPACES ) )
-		{
-			comment.RemoveExtraSpaces( m_reduntantSpacesRemover );
-		}
-
-		if ( TestReadFlags( EC_ELLIPSIZE_TAGS ) )
-		{
-			comment.Ellipsize( m_ellipsizer );
-		}
-
-        if (TestReadFlags( EC_CONVERT_UPPER_ROMAN_NUMERALS ))
-        {
-            comment.ConvertRomanNumerals( m_romanNumveralsConv, true );
-        }
-
-        if (TestReadFlags( EC_CONVERT_LOWER_ROMAN_NUMERALS ))
-        {
-            comment.ConvertRomanNumerals( m_romanNumveralsConv, false );
-        }
+        CorrectTag( comment );
 
 		if ( bSingleMediaFile )	// just add to first track
 		{
@@ -425,27 +405,7 @@ void wxCueSheetReader::AppendTags( const wxArrayCueTag& tags, size_t nTrackFrom,
 		}
 
 		tag.Unquote( m_unquoter );
-		tag.RemoveTrailingSpaces( m_trailingSpacesRemover );
-
-		if ( TestReadFlags( EC_REMOVE_EXTRA_SPACES ) )
-		{
-			tag.RemoveExtraSpaces( m_reduntantSpacesRemover );
-		}
-
-		if ( TestReadFlags( EC_ELLIPSIZE_TAGS ) )
-		{
-			tag.Ellipsize( m_ellipsizer );
-		}
-
-        if (TestReadFlags( EC_CONVERT_UPPER_ROMAN_NUMERALS ))
-        {
-            tag.ConvertRomanNumerals( m_romanNumveralsConv, true );
-        }
-
-        if (TestReadFlags( EC_CONVERT_LOWER_ROMAN_NUMERALS ))
-        {
-            tag.ConvertRomanNumerals( m_romanNumveralsConv, false );
-        }
+        CorrectTag( tag );
 
 		if ( m_reTrackComment.Matches( tag.GetName() ) )
 		{
@@ -697,6 +657,56 @@ void wxCueSheetReader::ParseGarbage( const wxString& sLine )
 	}
 }
 
+void wxCueSheetReader::CorrectTag( wxCueTag& tag ) const
+{
+    tag.RemoveTrailingSpaces( m_trailingSpacesRemover );
+
+    if (TestReadFlags( EC_REMOVE_EXTRA_SPACES ))
+    {
+        tag.RemoveExtraSpaces( m_reduntantSpacesRemover );
+    }
+
+    if (TestReadFlags( EC_ELLIPSIZE_TAGS ))
+    {
+        tag.Ellipsize( m_ellipsizer );
+    }
+
+    if (TestReadFlags( EC_CONVERT_UPPER_ROMAN_NUMERALS ))
+    {
+        tag.ConvertRomanNumerals( m_romanNumveralsConvUpper );
+    }
+
+    if (TestReadFlags( EC_CONVERT_LOWER_ROMAN_NUMERALS ))
+    {
+        tag.ConvertRomanNumerals( m_romanNumveralsConvLower );
+    }
+}
+
+void wxCueSheetReader::CorrectString( wxString& str ) const
+{
+    str = m_trailingSpacesRemover.Remove( str );
+
+    if (TestReadFlags( EC_REMOVE_EXTRA_SPACES ))
+    {
+        m_reduntantSpacesRemover.Remove( str );
+    }
+
+    if (TestReadFlags( EC_ELLIPSIZE_TAGS ))
+    {
+        str = m_ellipsizer.Ellipsize( str );
+    }
+
+    if (TestReadFlags( EC_CONVERT_UPPER_ROMAN_NUMERALS ))
+    {
+        str = m_romanNumveralsConvUpper.Convert( str );
+    }
+
+    if (TestReadFlags( EC_CONVERT_LOWER_ROMAN_NUMERALS ))
+    {
+        str = m_romanNumveralsConvLower.Convert( str );
+    }
+}
+
 void wxCueSheetReader::ParseComment( wxCueComponent& component, const wxString& sComment )
 {
 	if ( !TestReadFlags( EC_PARSE_COMMENTS ) )
@@ -708,29 +718,7 @@ void wxCueSheetReader::ParseComment( wxCueComponent& component, const wxString& 
 	if ( m_reCommentMeta.Matches( sComment ) )
 	{
         wxCueTag comment( wxCueTag::TAG_CUE_COMMENT, m_reCommentMeta.GetMatch( sComment, 2 ), m_genericUnquoter.Unquote( m_reCommentMeta.GetMatch( sComment, 3 ) ) );
-
-        comment.RemoveTrailingSpaces( m_trailingSpacesRemover );
-
-        if (TestReadFlags( EC_REMOVE_EXTRA_SPACES ))
-        {
-            comment.RemoveExtraSpaces( m_reduntantSpacesRemover );
-        }
-
-        if (TestReadFlags( EC_ELLIPSIZE_TAGS ))
-        {
-            comment.Ellipsize( m_ellipsizer );
-        }
-
-        if (TestReadFlags( EC_CONVERT_UPPER_ROMAN_NUMERALS ))
-        {
-            comment.ConvertRomanNumerals( m_romanNumveralsConv, true );
-        }
-
-        if (TestReadFlags( EC_CONVERT_LOWER_ROMAN_NUMERALS ))
-        {
-            comment.ConvertRomanNumerals( m_romanNumveralsConv, false );
-        }
-
+        CorrectTag( comment );
 		component.AddTag( comment );
 	}
 	else
@@ -850,27 +838,8 @@ bool wxCueSheetReader::ParseCueLine( const wxString& sLine, size_t nLine )
 
 bool wxCueSheetReader::AddCdTextInfo( const wxString& sToken, const wxString& sBody )
 {
-	wxString sModifiedBody( m_trailingSpacesRemover.Remove( sBody ) );
-
-	if ( TestReadFlags( EC_ELLIPSIZE_TAGS ) )
-	{
-		sModifiedBody = m_ellipsizer.Ellipsize( sModifiedBody );
-	}
-
-	if ( TestReadFlags( EC_REMOVE_EXTRA_SPACES ) )
-	{
-		m_reduntantSpacesRemover.Remove( sModifiedBody );
-	}
-
-    if (TestReadFlags( EC_CONVERT_UPPER_ROMAN_NUMERALS ))
-    {
-        sModifiedBody = m_romanNumveralsConv.ConvertUpper( sModifiedBody );
-    }
-
-    if (TestReadFlags( EC_CONVERT_LOWER_ROMAN_NUMERALS ))
-    {
-        sModifiedBody = m_romanNumveralsConv.ConvertLower( sModifiedBody );
-    }
+	wxString sModifiedBody( sBody );
+    CorrectString( sModifiedBody );
 
 	if ( m_cueSheet.HasTracks() )
 	{
@@ -1176,7 +1145,7 @@ bool wxCueSheetReader::ReadTagsFromMediaFile( const wxDataFile& _dataFile, size_
 
 		if ( dataFile.GetInfo() )
 		{
-			AppendTags( _dataFile.GetTags(), nTrackFrom, nTrackTo );
+			AppendTags( dataFile.GetTags(), nTrackFrom, nTrackTo );
 			return true;
 		}
 		else
