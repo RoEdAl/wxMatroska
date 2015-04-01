@@ -78,7 +78,8 @@ class wxCueSheetReader:
 			EC_FIND_COVER		   = 32,
 			EC_FIND_LOG			   = 64,
             EC_CONVERT_UPPER_ROMAN_NUMERALS = 128,
-            EC_CONVERT_LOWER_ROMAN_NUMERALS = 256
+            EC_CONVERT_LOWER_ROMAN_NUMERALS = 256,
+            EC_CONVERT_COVER_TO_JPEG = 512
 		};
 
 		bool TestReadFlags( ReadFlags ) const;
@@ -184,6 +185,9 @@ class wxCueSheetReader:
 		void AppendTags( const wxArrayCueTag&, bool );
 
 		void AppendTags( const wxArrayCueTag &, size_t, size_t );
+
+        void AddCover( const wxFileName& );
+        void AddCovers( const wxArrayCoverFile& );
 
 	protected:
 

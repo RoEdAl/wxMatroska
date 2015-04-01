@@ -8,6 +8,10 @@
 
 // ===============================================================================
 
+const char wxCoverFile::JPEG_MIME[] = "image/jpeg";
+
+// ===============================================================================
+
 const char* const wxCoverFile::CoverNames[] =
 {
 	"cover",
@@ -57,6 +61,28 @@ const wxCoverFile::TypeName wxCoverFile::TypeNames[] =
 
 // ===============================================================================
 
+namespace
+{
+    // how to avoid memory copying
+    wxMemoryBuffer memory_stream_to_buffer( const wxMemoryOutputStream& os )
+    {
+        wxMemoryBuffer data;
+        size_t nSize = os.GetLength();
+
+        void* pData = data.GetWriteBuf( nSize );
+        os.CopyTo( pData, nSize );
+        data.UngetWriteBuf(nSize);
+
+        return data;
+    }
+
+    wxImage image_from_memory_buffer( const wxMemoryBuffer& data, const wxString& mimeType )
+    {
+        wxMemoryInputStream is( data.GetData( ), data.GetDataLen( ) );
+        return wxImage( is, mimeType );
+    }
+}
+
 wxCoverFile::wxCoverFile()
 {}
 
@@ -97,6 +123,11 @@ wxCoverFile::wxCoverFile( const wxFileName& fn, wxCoverFile::Type type ):
 wxCoverFile::wxCoverFile( const wxMemoryBuffer& data, wxCoverFile::Type type, const wxString& mimeType, const wxString& description ):
 	m_data( data ), m_mimeType( mimeType ), m_description( description ), m_checksum( wxMD5::Get( data ) ), m_type( type )
 {}
+
+wxCoverFile::wxCoverFile( const wxMemoryBuffer& data, const wxMemoryBuffer& checksum, wxCoverFile::Type type, const wxString& mimeType, const wxString& description ) :
+m_data( data ), m_mimeType( mimeType ), m_description( description ), m_checksum( checksum ), m_type( type )
+{}
+
 
 const wxFileName& wxCoverFile::GetFileName() const
 {
@@ -172,6 +203,27 @@ size_t wxCoverFile::GetSize() const
 	{
 		return m_data.GetDataLen();
 	}
+}
+
+wxCoverFile wxCoverFile::Load() const
+{
+    if (HasData() || !HasFileName()) return  wxCoverFile( *this );
+
+    wxMemoryOutputStream ms;
+
+    {
+        wxFileInputStream fs( m_fileName.GetFullPath() );
+        if (fs.IsOk()) fs >> ms;
+    }
+
+    if (ms.GetLength() > 0)
+    {
+        return wxCoverFile( memory_stream_to_buffer( ms ), m_checksum, m_type, m_mimeType, m_description );
+    }
+    else
+    {
+        return wxCoverFile( *this );
+    }
 }
 
 bool wxCoverFile::Save( const wxFileName& fn )
@@ -504,6 +556,74 @@ int wxCoverFile::Cmp( wxCoverFile** f1, wxCoverFile** f2 )
 void wxCoverFile::Sort( wxArrayCoverFile& covers )
 {
 	covers.Sort( wxCoverFile::Cmp );
+}
+
+wxImage wxCoverFile::ToImage() const
+{
+    if (HasData())
+    {
+        return image_from_memory_buffer( m_data, m_mimeType );
+
+    }
+    else
+    {
+        wxCoverFile inMem( Load() );
+        if (inMem.HasData())
+        {
+            return image_from_memory_buffer( inMem.GetData(), inMem.GetMimeType() );
+        }
+    }
+
+    return wxImage();
+}
+
+wxCoverFile wxCoverFile::ToJpeg(int nQuality) const
+{
+    wxImage img( ToImage() );
+    if (img.IsOk())
+    {
+        const wxString jpegMime( JPEG_MIME );
+
+        img.SetOption( wxIMAGE_OPTION_QUALITY, nQuality );
+
+        wxMemoryOutputStream os;
+        if (img.SaveFile( os, jpegMime ))
+        {
+            return wxCoverFile( memory_stream_to_buffer(os), m_type, jpegMime, m_description );
+        }
+    }
+
+   return wxCoverFile();
+}
+
+size_t wxCoverFile::ToJpeg( const wxArrayCoverFile& covers, wxArrayCoverFile& ncovers, int nQuality )
+{
+    size_t nCounter = 0;
+
+    for (size_t i = 0, nSize = covers.GetCount( ); i < nSize; ++i)
+    {
+        wxASSERT( covers[i].HasData( ) );
+
+        if (covers[i].GetMimeType().CmpNoCase( JPEG_MIME ) == 0)
+        { // do not convert
+            ncovers.Add( covers[i] );
+            continue;
+        }
+
+        wxCoverFile jpeg( covers[i].ToJpeg( nQuality ) );
+        if (jpeg.HasData())
+        {
+            ncovers.Add( jpeg );
+        }
+        else
+        {
+            wxLogDebug( "Cannot convert cover to JPEG - using original one" );
+            nCounter += 1;
+            ncovers.Add( covers[i] );
+        }
+    }
+
+    return nCounter;
 }
 
 // ===============================================================================

@@ -144,6 +144,7 @@ class wxConfiguration:
 		wxSortedArrayString m_asLang;
 
         bool m_bRenderArtistForTrack;
+        int m_nJpegImageQuality;
 
 	protected:
 
@@ -196,11 +197,11 @@ class wxConfiguration:
 		FILE_ENCODING GetFileEncoding() const;
 		wxString GetXmlFileEncoding() const;
         bool RenderArtistForTrack() const;
+        bool ConvertCoversToJpeg() const;
+        int GetJpegImageQuality() const;
 
 		wxSharedPtr< wxMBConv > GetXmlEncoding() const;
-
-		wxSharedPtr< wxTextOutputStream > GetOutputTextStream( wxOutputStream& )
-		const;
+		wxSharedPtr< wxTextOutputStream > GetOutputTextStream( wxOutputStream& ) const;
 		bool GetMerge() const;
 		wxCueSheetReader::ReadFlags GetReadFlags() const;
 		wxCueTag::TagSources GetTagSources() const;

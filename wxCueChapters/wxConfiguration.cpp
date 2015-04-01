@@ -312,7 +312,8 @@ wxConfiguration::wxConfiguration( void ):
 	m_bUseMLang( true ),
 	m_bUseFullPaths( false ),
 	m_eCsAttachMode( CUESHEET_ATTACH_NONE ),
-    m_bRenderArtistForTrack( false )
+    m_bRenderArtistForTrack( false ),
+    m_nJpegImageQuality( 80 )
 {
 	ReadLanguagesStrings( m_asLang );
 }
@@ -371,6 +372,9 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 	cmdLine.AddOption( wxEmptyString, "matroska-chapters-file-extension", wxString::Format( _( "Matroska chapters XML file extension (default: %s)" ), MATROSKA_CHAPTERS_EXT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxEmptyString, "matroska-tags-file-extension", wxString::Format( _( "Matroska tags XML file extension (default: %s)" ), MATROSKA_TAGS_EXT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxEmptyString, "mkvmerge-options-file-extension", wxString::Format( _( "File extension of mkvmerge options file (default: %s)" ), MATROSKA_OPTS_EXT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+
+    cmdLine.AddSwitch( wxEmptyString, "convert-conver-to-jpeg", wxString::Format( _( "Convert cover files to JPEG (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+    cmdLine.AddOption( wxEmptyString, "jpeg-image-quality", wxString::Format( _( "JPEG image quality (default %d)" ), m_nJpegImageQuality ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 
 	// input files
 	cmdLine.AddParam( _( "<cue sheet>" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE | wxCMD_LINE_PARAM_OPTIONAL );
@@ -658,6 +662,21 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		}
 	}
 
+    ReadReadFlags( cmdLine, "convert-cover-to-jpeg", wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG );
+
+    if (cmdLine.Found( "jpeg-image-quality", &v ))
+    {
+        if ((v < 0) || (v > 1000))
+        {
+            wxLogWarning( _( "Wrong JPEG image quality - %d" ), v );
+            bRes = false;
+        }
+        else
+        {
+            m_nJpegImageQuality = (unsigned long)v;
+        }
+    }
+
 	return bRes;
 }
 
@@ -697,6 +716,7 @@ wxString wxConfiguration::GetReadFlagsDesc( wxCueSheetReader::ReadFlags flags )
 	AddFlag( as, flags, wxCueSheetReader::EC_FIND_LOG, "find-log" );
     AddFlag( as, flags, wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS, "upper-roman-numerals" );
     AddFlag( as, flags, wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS, "lower-roman-numerals" );
+    AddFlag( as, flags, wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG, "convert-cover-to-jpeg" );
 
 	wxString s;
 	for ( size_t i = 0, nCount = as.GetCount(); i < nCount; i++ )
@@ -749,6 +769,7 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
     as.Add( wxString::Format( "Render artist for tracks: %s", BoolToStr( m_bRenderArtistForTrack ) ) );
 	as.Add( wxString::Format( "Read flags: %s", GetReadFlagsDesc( m_nReadFlags ) ) );
 	as.Add( wxString::Format( "Use MLang library: %s", BoolToStr( m_bUseMLang ) ) );
+    as.Add( wxString::Format( "JPEG image quality: %d", m_nJpegImageQuality ) );
 }
 
 void wxConfiguration::Dump() const
@@ -1294,6 +1315,16 @@ bool wxConfiguration::AttachEacLog() const
 bool wxConfiguration::AttachCover() const
 {
 	return (m_nReadFlags& wxCueSheetReader::EC_FIND_COVER) != 0;
+}
+
+bool wxConfiguration::ConvertCoversToJpeg( ) const
+{
+    return (m_nReadFlags& wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG) != 0;
+}
+
+int wxConfiguration::GetJpegImageQuality() const
+{
+    return m_nJpegImageQuality;
 }
 
 wxConfiguration::CUESHEET_ATTACH_MODE wxConfiguration::GetCueSheetAttachMode() const

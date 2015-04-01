@@ -13,6 +13,8 @@ class wxCoverFile
 {
 	public:
 
+        static const char JPEG_MIME[];
+
 		enum Type
 		{
 			// ! A type not enumerated below
@@ -97,6 +99,10 @@ class wxCoverFile
 		wxCoverFile( const wxFileName&, Type );
 		wxCoverFile( const wxMemoryBuffer&, Type, const wxString&, const wxString& );
 
+    protected:
+
+        wxCoverFile( const wxMemoryBuffer&, const wxMemoryBuffer&, Type, const wxString&, const wxString& );
+
 	public:
 
 		const wxFileName&	  GetFileName() const;
@@ -109,6 +115,11 @@ class wxCoverFile
 		size_t GetSize() const;
 
 		static bool GetMimeFromExt( const wxFileName&, wxString& );
+
+        bool IsOK() const
+        {
+            return HasFileName() || HasData();
+        }
 
 		bool HasFileName() const
 		{
@@ -146,7 +157,13 @@ class wxCoverFile
 
 		static void Sort( wxArrayCoverFile& );
 
+        wxCoverFile Load() const;
 		bool Save( const wxFileName& );
+
+        wxImage ToImage() const;
+        wxCoverFile ToJpeg(int = 80) const;
+
+        static size_t ToJpeg( const wxArrayCoverFile&, wxArrayCoverFile&, int = 80 );
 
 	protected:
 

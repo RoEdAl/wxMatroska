@@ -144,10 +144,17 @@ const wxArrayCoverFile& wxCueSheet::GetCovers() const
 	return m_covers;
 }
 
-void wxCueSheet::GetSortedCovers( wxArrayCoverFile& covers ) const
+void wxCueSheet::GetSortedCovers( wxArrayCoverFile& covers, bool bConvertToJpeg, int nJpegQuality ) const
 {
 	covers.Clear();
-	WX_APPEND_ARRAY( covers, m_covers );
+    if (bConvertToJpeg)
+    {
+        wxCoverFile::ToJpeg( m_covers, covers, nJpegQuality );
+    }
+    else
+    {
+        WX_APPEND_ARRAY( covers, m_covers );
+    }
 	wxCoverFile::Sort( covers );
 }
 

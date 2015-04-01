@@ -141,16 +141,13 @@ bool wxMyApp::OnInit()
 	wxDateTime dt( wxDateTime::Now() );
 	srand( dt.GetTicks() );
 
-	if ( !CheckLicense() )
-	{
-		wxLogError( _( "Cannot find or load license file" ) );
-		return false;
-	}
-
 	if ( !MyAppConsole::OnInit() )
 	{
 		return false;
 	}
+
+    //wxInitAllImageHandlers();
+    wxImage::AddHandler( new wxJPEGHandler ); // just JPEG handler
 
 	return true;
 }

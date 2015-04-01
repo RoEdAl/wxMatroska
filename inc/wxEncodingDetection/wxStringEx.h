@@ -55,8 +55,8 @@ struct wxStringEx
 #else
                 textstr.data( ) + matchStart,
 #endif
-                countRepl ? wxRE_NOTBOL : 0 ))
-                //WXREGEX_IF_NEED_LEN( textlen - matchStart ) ))
+                countRepl ? wxRE_NOTBOL : 0,
+                textlen - matchStart ) )
         {
             size_t  matchCount = regEx.GetMatchCount( );
             matches.SetCount( matchCount );
@@ -68,7 +68,7 @@ struct wxStringEx
                 if (!regEx.GetMatch( &start, &len, i ))
                 {
                     // we did have match as Matches() returned true above!
-                    wxFAIL_MSG( wxT( "internal logic error in wxStringOperations::Replace" ) );
+                    wxFAIL_MSG( wxT( "internal logic error in wxStringEx::Replace" ) );
 
                     return wxNOT_FOUND;
                 }
@@ -85,7 +85,7 @@ struct wxStringEx
             if (!regEx.GetMatch( &start, &len ))
             {
                 // we did have match as Matches() returned true above!
-                wxFAIL_MSG( wxT( "internal logic error in wxStringOperations::Replace" ) );
+                wxFAIL_MSG( wxT( "internal logic error in wxStringEx::Replace" ) );
 
                 return wxNOT_FOUND;
             }

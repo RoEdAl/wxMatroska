@@ -268,7 +268,7 @@ bool wxCueSheetReader::FindCover( const wxCueSheetContent& content )
 
 	if ( wxCoverFile::GetCoverFile( content.GetSource().GetFileName(), coverFile ) )
 	{
-		m_cueSheet.AddCover( coverFile );
+		AddCover( coverFile );
 		return true;
 	}
 	else
@@ -1162,6 +1162,15 @@ void wxCueSheetReader::ExtractCoversFromDataFile( const wxDataFile& dataFile )
 
 	wxArrayCoverFile covers;
 	wxCoverFile::Extract( dataFile.GetRealFileName(), covers );
-	m_cueSheet.AddCovers( covers );
+	AddCovers( covers );
 }
 
+void wxCueSheetReader::AddCover( const wxFileName& fn )
+{
+    m_cueSheet.AddCover( fn.GetFullPath() );
+}
+
+void wxCueSheetReader::AddCovers( const wxArrayCoverFile& covers )
+{
+    m_cueSheet.AddCovers( covers );
+}

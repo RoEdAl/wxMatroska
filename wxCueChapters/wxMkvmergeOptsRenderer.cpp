@@ -702,7 +702,7 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile,
 	if ( m_cfg.AttachCover() )
 	{
 		wxArrayCoverFile covers;
-		cueSheet.GetSortedCovers( covers );
+		cueSheet.GetSortedCovers( covers,m_cfg.ConvertCoversToJpeg(),m_cfg.GetJpegImageQuality() );
 		write_cover_attachments( inputFile, covers );
 	}
 

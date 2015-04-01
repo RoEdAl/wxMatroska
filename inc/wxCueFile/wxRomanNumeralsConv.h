@@ -114,7 +114,7 @@ class wxRomanNumeralsConv
 {
     public:
 
-    typedef roman_numeral_traits<UPPER> numeral_traits;
+        typedef roman_numeral_traits<UPPER> numeral_traits;
 
     public:
 
