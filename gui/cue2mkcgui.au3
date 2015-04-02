@@ -759,7 +759,7 @@ Func read_options()
 	negatable_switch($s, $CheckBoxArtistForTrack, "ra")
 	negatable_switch($s, $CheckBoxUpperRomanNumerals, "ru")
 	negatable_switch($s, $CheckBoxLowerRomanNumerals, "rl")
-	negatable_switch_long($s, $CheckBoxJpegCovers, "convert-conver-to-jpeg")
+	negatable_switch_long($s, $CheckBoxJpegCovers, "convert-cover-to-jpeg")
 
 	$s &= " --cue-sheet-attach-mode "
 	$s &= get_attach_mode_str(_GUICtrlComboBox_GetCurSel($ComboCueSheetAttachMode))

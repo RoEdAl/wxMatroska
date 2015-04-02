@@ -374,7 +374,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 	cmdLine.AddOption( wxEmptyString, "matroska-tags-file-extension", wxString::Format( _( "Matroska tags XML file extension (default: %s)" ), MATROSKA_TAGS_EXT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxEmptyString, "mkvmerge-options-file-extension", wxString::Format( _( "File extension of mkvmerge options file (default: %s)" ), MATROSKA_OPTS_EXT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 
-    cmdLine.AddSwitch( wxEmptyString, "convert-conver-to-jpeg", wxString::Format( _( "Convert cover files to JPEG (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+    cmdLine.AddSwitch( wxEmptyString, "convert-cover-to-jpeg", wxString::Format( _( "Convert cover files to JPEG (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
     cmdLine.AddOption( wxEmptyString, "jpeg-image-quality", wxString::Format( _( "JPEG image quality (default %d)" ), m_nJpegImageQuality ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 
 	// input files

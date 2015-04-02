@@ -76,7 +76,7 @@ wxCoverFile::wxCoverFile()
 {}
 
 wxCoverFile::wxCoverFile( const wxCoverFile& cf ):
-	m_fileName( cf.m_fileName ), m_data( cf.m_data ), m_mimeType( cf.m_mimeType ), m_description( cf.m_description ), m_checksum( cf.m_checksum ), m_type( cf.m_type )
+m_fileName( cf.m_fileName ), m_data( cf.m_data ), m_mimeType( cf.m_mimeType ), m_description( cf.m_description ), m_checksum( cf.m_checksum ), m_type( cf.m_type ), m_fileSize( cf.m_fileSize )
 {}
 
 bool wxCoverFile::GetMimeFromExt( const wxFileName& fn, wxString& mimeType )
@@ -619,8 +619,6 @@ size_t wxCoverFile::Convert( const wxArrayCoverFile& covers, wxArrayCoverFile& n
 
     for (size_t i = 0, nSize = covers.GetCount( ); i < nSize; ++i)
     {
-        wxASSERT( covers[i].HasData( ) );
-
         if (covers[i].IsTypeOf( handler ) )
         { // do not convert
             ncovers.Add( covers[i] );
