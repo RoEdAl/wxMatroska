@@ -146,8 +146,11 @@ bool wxMyApp::OnInit()
 		return false;
 	}
 
-    //wxInitAllImageHandlers();
-    wxImage::AddHandler( new wxJPEGHandler ); // just JPEG handler
+    wxInitAllImageHandlers();
+    if (!m_cfg.InitJpegHandler())
+    {
+        wxLogWarning( _( "Unable to initialize JPEG image handler." ) );
+    }
 
 	return true;
 }

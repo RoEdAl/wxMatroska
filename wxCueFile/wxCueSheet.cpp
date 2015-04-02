@@ -144,12 +144,12 @@ const wxArrayCoverFile& wxCueSheet::GetCovers() const
 	return m_covers;
 }
 
-void wxCueSheet::GetSortedCovers( wxArrayCoverFile& covers, bool bConvertToJpeg, int nJpegQuality ) const
+void wxCueSheet::GetSortedCovers( wxArrayCoverFile& covers, wxImageHandler* const handler, int nJpegQuality ) const
 {
 	covers.Clear();
-    if (bConvertToJpeg)
+    if (handler != nullptr)
     {
-        wxCoverFile::ToJpeg( m_covers, covers, nJpegQuality );
+        wxCoverFile::Convert( m_covers, covers, handler, nJpegQuality );
     }
     else
     {

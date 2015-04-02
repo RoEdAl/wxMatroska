@@ -308,12 +308,13 @@ wxConfiguration::wxConfiguration( void ):
 	m_sMatroskaTagsXmlExt( MATROSKA_TAGS_EXT ),
 	m_sMatroskaOptsExt( MATROSKA_OPTS_EXT ),
 	m_bMerge( false ),
-    m_nReadFlags( wxCueSheetReader::EC_PARSE_COMMENTS | wxCueSheetReader::EC_ELLIPSIZE_TAGS | wxCueSheetReader::EC_REMOVE_EXTRA_SPACES | wxCueSheetReader::EC_MEDIA_READ_TAGS | wxCueSheetReader::EC_FIND_COVER | wxCueSheetReader::EC_FIND_LOG | wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS ),
+    m_nReadFlags( wxCueSheetReader::EC_PARSE_COMMENTS | wxCueSheetReader::EC_ELLIPSIZE_TAGS | wxCueSheetReader::EC_REMOVE_EXTRA_SPACES | wxCueSheetReader::EC_MEDIA_READ_TAGS | wxCueSheetReader::EC_FIND_COVER | wxCueSheetReader::EC_FIND_LOG | wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS | wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG ),
 	m_bUseMLang( true ),
 	m_bUseFullPaths( false ),
 	m_eCsAttachMode( CUESHEET_ATTACH_NONE ),
     m_bRenderArtistForTrack( false ),
-    m_nJpegImageQuality( 80 )
+    m_nJpegImageQuality( 80 ),
+    m_imageHandler( nullptr )
 {
 	ReadLanguagesStrings( m_asLang );
 }
@@ -678,6 +679,17 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
     }
 
 	return bRes;
+}
+
+bool wxConfiguration::InitJpegHandler()
+{
+    if (ConvertCoversToJpeg())
+    {
+        m_imageHandler = wxImage::FindHandler( wxBITMAP_TYPE_JPEG );
+        return m_imageHandler != nullptr;
+    }
+
+    return true;
 }
 
 wxString wxConfiguration::BoolToIdx( bool b )
@@ -1325,6 +1337,11 @@ bool wxConfiguration::ConvertCoversToJpeg( ) const
 int wxConfiguration::GetJpegImageQuality() const
 {
     return m_nJpegImageQuality;
+}
+
+wxImageHandler* const wxConfiguration::GetImageHandler() const
+{
+    return m_imageHandler;
 }
 
 wxConfiguration::CUESHEET_ATTACH_MODE wxConfiguration::GetCueSheetAttachMode() const

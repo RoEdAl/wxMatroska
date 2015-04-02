@@ -61,7 +61,7 @@ class wxMD5
 		// ! Returns the MD5 for the given memory buffer.
 		static wxMemoryBuffer Get( const wxMemoryBuffer& );
 
-		static wxString GeString( const wxMemoryBuffer& );
+		static wxString ToString( const wxMemoryBuffer& );
 
 		static bool AreEqual( const wxMemoryBuffer&, const wxMemoryBuffer& );
 };

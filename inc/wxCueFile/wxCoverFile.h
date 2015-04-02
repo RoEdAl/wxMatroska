@@ -13,8 +13,6 @@ class wxCoverFile
 {
 	public:
 
-        static const char JPEG_MIME[];
-
 		enum Type
 		{
 			// ! A type not enumerated below
@@ -82,7 +80,7 @@ class wxCoverFile
 		};
 
 		static const char* const CoverNames[];
-		static const char* const CoverExts[];
+        static const wxBitmapType CoverFileTypes[];
 
 		static const wxULongLong MAX_FILE_SIZE;
 
@@ -141,12 +139,14 @@ class wxCoverFile
 			return !m_description.IsEmpty();
 		}
 
+        bool IsTypeOf( const wxImageHandler* const ) const;
+
 		static void Append( wxArrayCoverFile&, const wxCoverFile& );
 		static void Append( wxArrayCoverFile&, const wxArrayCoverFile& );
 
 		static bool IsCoverFile( const wxFileName& );
-		static bool GetCoverFile( const wxDir&, const wxString&, wxFileName& );
-		static bool GetCoverFile( const wxFileName&, wxFileName& );
+		static bool Find( const wxDir&, const wxString&, wxFileName& );
+		static bool Find( const wxFileName&, wxFileName& );
 
 		static void Extract( const wxFileName&, wxArrayCoverFile& );
 
@@ -161,9 +161,12 @@ class wxCoverFile
 		bool Save( const wxFileName& );
 
         wxImage ToImage() const;
-        wxCoverFile ToJpeg(int = 80) const;
+        wxCoverFile Convert( wxImageHandler* const, int = 80) const;
+        static size_t Convert( const wxArrayCoverFile&, wxArrayCoverFile&, wxImageHandler* const, int = 80 );
 
-        static size_t ToJpeg( const wxArrayCoverFile&, wxArrayCoverFile&, int = 80 );
+    protected:
+
+        wxImage ToImageFromData() const;
 
 	protected:
 
@@ -180,10 +183,10 @@ class wxCoverFile
 		static int Cmp( wxCoverFile**, wxCoverFile** );
 
         template<size_t SIZE>
-        static bool GetCoverFile( const wxFileName&, wxFileName&, const char* const (&)[SIZE] );
+        static bool Find( const wxFileName&, wxFileName&, const char* const (&)[SIZE] );
 
         template<size_t SIZE>
-        static bool IsCoverFile( const wxFileName&, const char* const (&)[SIZE] );
+        static bool IsCoverFile( const wxFileName&, const wxBitmapType (&)[SIZE] );
 
         template<size_t SIZE>
         static Type GetTypeFromStr( const wxString&, const TypeName (&)[SIZE] );

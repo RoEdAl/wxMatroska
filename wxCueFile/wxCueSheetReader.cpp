@@ -266,7 +266,7 @@ bool wxCueSheetReader::FindCover( const wxCueSheetContent& content )
 	wxASSERT( TestReadFlags( EC_FIND_COVER ) );
 	wxFileName coverFile;
 
-	if ( wxCoverFile::GetCoverFile( content.GetSource().GetFileName(), coverFile ) )
+	if ( wxCoverFile::Find( content.GetSource().GetFileName(), coverFile ) )
 	{
 		AddCover( coverFile );
 		return true;

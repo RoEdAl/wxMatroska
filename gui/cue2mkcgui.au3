@@ -564,7 +564,7 @@ Func set_default_options()
 	GUICtrlSetState($CheckBoxRs, $GUI_CHECKED)
 	GUICtrlSetState($CheckBoxArtistForTrack, $GUI_CHECKED)
 	_GUICtrlComboBox_SetCurSel($ComboCueSheetAttachMode, 0)
-	GUICtrlSetState($CheckBoxJpegCovers, $GUI_UNCHECKED)
+	GUICtrlSetState($CheckBoxJpegCovers, $GUI_CHECKED)
 	GUICtrlSetData($InputJpegQuality, 80 )
 EndFunc   ;==>set_default_options
 

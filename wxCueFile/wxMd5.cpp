@@ -354,13 +354,13 @@ wxMemoryBuffer wxMD5::Get( wxInputStream& stream )
 	return MD5End( &ctx );
 }
 
-wxString wxMD5::GeString( const wxMemoryBuffer& buffer )
+wxString wxMD5::ToString( const wxMemoryBuffer& buffer )
 {
 	if ( buffer.IsEmpty() ) { return wxEmptyString; }
 
 	wxASSERT( buffer.GetDataLen() == HASHBYTES );
 
-	char buf[ 32 ];
+    char buf[HASHBYTES * 2];
 
 	const wxByte* const digest = reinterpret_cast< const wxByte* const >( buffer.GetData() );
 
@@ -370,7 +370,7 @@ wxString wxMD5::GeString( const wxMemoryBuffer& buffer )
 		buf[ i + i + 1 ] = HEXD[ digest[ i ] & 0x0f ];
 	}
 
-	return wxString( buf, wxConvUTF8, 32 );
+    return wxString( buf, wxConvUTF8, HASHBYTES * 2 );
 }
 
 bool wxMD5::AreEqual( const wxMemoryBuffer& buf1, const wxMemoryBuffer& buf2 )

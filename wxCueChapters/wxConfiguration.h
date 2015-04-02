@@ -146,6 +146,10 @@ class wxConfiguration:
         bool m_bRenderArtistForTrack;
         int m_nJpegImageQuality;
 
+    protected:
+
+        wxImageHandler* m_imageHandler;
+
 	protected:
 
 		static bool ReadLanguagesStrings( wxSortedArrayString& );
@@ -217,6 +221,8 @@ class wxConfiguration:
 		bool GetOutputCueSheetFile( const wxInputFile&, const wxString&, wxFileName& ) const;
 		bool GetOutputFile( const wxInputFile&, const wxString&, const wxString&, wxFileName& ) const;
 
+        wxImageHandler* const GetImageHandler() const;
+
 	public:
 
 		static const char	CUE_SHEET_EXT[];
@@ -241,6 +247,8 @@ class wxConfiguration:
 
 		void Dump() const;
 		void BuildXmlComments( const wxFileName&, wxXmlNode* ) const;
+
+        bool InitJpegHandler();
 };
 #endif	// _WX_CONFIGURATION_H
 
