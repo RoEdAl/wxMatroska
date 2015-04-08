@@ -345,6 +345,11 @@ void wxCueSheetReader::AppendTags( const wxArrayCueTag& comments, bool bSingleMe
 
 		if ( bSingleMediaFile )	// just add to first track
 		{
+            if (comment == wxCueTag::Name::TRACKNUMBER)
+            {
+                continue;
+            }
+
 			wxASSERT( m_cueSheet.HasTrack( 1 ) );
 			wxTrack& firstTrack = m_cueSheet.GetTrackByNumber( 1 );
 			firstTrack.AddTag( comment );
@@ -403,6 +408,11 @@ void wxCueSheetReader::AppendTags( const wxArrayCueTag& tags, size_t nTrackFrom,
 		{
 			continue;
 		}
+
+        if (tag == wxCueTag::Name::TRACKNUMBER)
+        {
+            continue;
+        }
 
 		tag.Unquote( m_unquoter );
         CorrectTag( tag );

@@ -507,7 +507,7 @@ bool wxEncodingDetection::test_bom( const wxByteBuffer& buffer, const wxByte* bo
 {
 	wxASSERT( nLen >= 2 );
 	bool bRes = true;
-	for ( size_t i = 0; bRes && ( i < nLen ); i++ )
+	for ( size_t i = 0; bRes && ( i < nLen ); ++i )
 	{
 		if ( buffer[ i ] != bom[ i ] )
 		{

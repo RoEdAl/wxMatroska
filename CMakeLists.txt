@@ -18,7 +18,7 @@ MACRO(ADD_MSVC_PRECOMPILED_HEADER PrecompiledHeader PrecompiledSource SourcesVar
   ENDIF(MSVC)
 ENDMACRO(ADD_MSVC_PRECOMPILED_HEADER)
 
-project(wxmatroska VERSION 1.4.2.0)
+project(wxmatroska VERSION 1.4.3.0)
 
 SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -77,6 +77,15 @@ ExternalProject_Add (
 
 SET_PROPERTY(TARGET project_taglib PROPERTY FOLDER "extlib")
 
+# ExternalProject_Add (
+#	project_mozjpeg
+#	GIT_REPOSITORY "https://github.com/mozilla/mozjpeg"
+#	DEPENDS project_zlib
+#	CMAKE_ARGS -DWITH_JPEG7=OFF -DCMAKE_INSTALL_PREFIX=${EXT_INSTALL_PREFIX} -DNASM=C:/Users/Normal/AppData/Local/nasm/nasm.exe
+# )
+
+# SET_PROPERTY(TARGET project_mozjpeg PROPERTY FOLDER "extlib")
+
 #ExternalProject_Add (
 #	HARU
 #	GIT_REPOSITORY "https://github.com/libharu/libharu"
@@ -91,6 +100,10 @@ add_definitions(-DTAGLIB_STATIC)
 add_library(TagLib STATIC IMPORTED)
 set_property(TARGET TagLib PROPERTY IMPORTED_LOCATION ${EXT_INSTALL_PREFIX}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}tag${CMAKE_STATIC_LIBRARY_SUFFIX})
 add_dependencies(TagLib project_taglib) 
+
+# add_library(MozJpeg STATIC IMPORTED)
+# set_property(TARGET MozJpeg PROPERTY IMPORTED_LOCATION ${EXT_INSTALL_PREFIX}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}jpeg-static${CMAKE_STATIC_LIBRARY_SUFFIX})
+# add_dependencies(MozJpeg project_mozjpeg) 
 
 IF(MSVC)
 set(wxWidgets_CONFIGURATION mswu)

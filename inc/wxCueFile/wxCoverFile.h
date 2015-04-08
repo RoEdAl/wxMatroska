@@ -141,6 +141,8 @@ class wxCoverFile
 
         bool IsTypeOf( const wxImageHandler* const ) const;
 
+        wxString GetInfo() const;
+
 		static void Append( wxArrayCoverFile&, const wxCoverFile& );
 		static void Append( wxArrayCoverFile&, const wxArrayCoverFile& );
 
@@ -161,12 +163,8 @@ class wxCoverFile
 		bool Save( const wxFileName& );
 
         wxImage ToImage() const;
-        wxCoverFile Convert( wxImageHandler* const, int = 80) const;
-        static size_t Convert( const wxArrayCoverFile&, wxArrayCoverFile&, wxImageHandler* const, int = 80 );
-
-    protected:
-
-        wxImage ToImageFromData() const;
+        wxCoverFile Convert( wxImageHandler* const, int ) const;
+        static size_t Convert( const wxArrayCoverFile&, wxArrayCoverFile&, wxImageHandler* const, int );
 
 	protected:
 

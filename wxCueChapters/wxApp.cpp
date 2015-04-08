@@ -157,7 +157,7 @@ bool wxMyApp::OnInit()
 
 int wxMyApp::AppendCueSheet( wxCueSheet& cueSheet )
 {
-	wxASSERT( m_cfg.GetMerge() );
+	wxASSERT( m_cfg.MergeMode() );
 
 	if ( !( cueSheet.HasDuration() || cueSheet.CalculateDuration( m_cfg.GetAlternateExtensions() ) ) )
 	{
@@ -309,7 +309,7 @@ int wxMyApp::ProcessCueFile( const wxInputFile& inputFile, const wxTagSynonimsCo
 		cueSheet.SetDataFiles( dataFiles );
 	}
 
-	if ( m_cfg.GetMerge() )
+	if ( m_cfg.MergeMode() )
 	{
 		return AppendCueSheet( cueSheet );
 	}
@@ -394,7 +394,7 @@ int wxMyApp::OnRun()
 
 				res = ProcessCueFile( singleFile, discSynonims, trackSynonims );
 
-				if ( ( res != 0 ) && ( m_cfg.AbortOnError() || m_cfg.GetMerge() ) )
+				if ( ( res != 0 ) && ( m_cfg.AbortOnError() || m_cfg.MergeMode() ) )
 				{
 					break;
 				}
@@ -407,14 +407,14 @@ int wxMyApp::OnRun()
 		}
 	}
 
-	if ( m_cfg.GetMerge() && ( res == 0 ) )
+	if ( m_cfg.MergeMode() && ( res == 0 ) )
 	{
 		wxASSERT( !bFirst );
 		GetMergedCueSheet().FindCommonTags( discSynonims, trackSynonims, true );
 		res = ConvertCueSheet( firstInputFile, GetMergedCueSheet() );
 	}
 
-	return ( m_cfg.AbortOnError() || m_cfg.GetMerge() ) ? res : 0;
+	return ( m_cfg.AbortOnError() || m_cfg.MergeMode() ) ? res : 0;
 }
 
 int wxMyApp::OnExit()
@@ -436,7 +436,7 @@ wxMkvmergeOptsRenderer& wxMyApp::GetMkvmergeOptsRenderer( bool bCreate )
 {
 	bool bShowInfo = false;
 
-	if ( m_cfg.GetMerge() )
+	if ( m_cfg.MergeMode() )
 	{
 		if ( !HasMkvmergeOptsRenderer() )
 		{

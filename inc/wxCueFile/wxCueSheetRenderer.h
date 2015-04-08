@@ -70,8 +70,6 @@ class wxCueSheetRenderer:
 
 	public:
 
-		static wxCueSheetRenderer* const Null;
-
 		wxCueSheetRenderer( void );
 
 		bool Render( const wxCueSheet& );

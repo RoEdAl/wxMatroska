@@ -42,6 +42,9 @@ AutoItSetOption("GUICloseOnESC", 0)
 #include <File.au3>
 #include <GuiTreeView.au3>
 
+Global Const $EN_DASH = ChrW(0x2013)
+Global Const $HAIR_SPACE = ChrW(0x200A)
+
 Func get_tool_full_path($sExeName, $sExt = "exe")
 	Local $sBin = $sExeName & "." & $sExt
 	Local $sPath = @ScriptDir & "\" & $sBin
@@ -528,8 +531,8 @@ Func set_default_options()
 	GUICtrlSetData($InputFo, 150)
 	frame_offset_enable(False)
 	GUICtrlSetData($InputAlternateExt, "")
-	GUICtrlSetData($InputTf, "%dp% - %dt% - %tt%")
-	GUICtrlSetData($InputMf, "%dp% - %dt%")
+	GUICtrlSetData($InputTf, "%dp%" & $HAIR_SPACE & $EN_DASH & $HAIR_SPACE & "%dt%" & $HAIR_SPACE & $EN_DASH & $HAIR_SPACE & "%tt%")
+	GUICtrlSetData($InputMf, "%dp%" & $HAIR_SPACE & $EN_DASH & $HAIR_SPACE & "%dt%")
 	GUICtrlSetData($InputLang, "und")
 	GUICtrlSetState($CheckBoxHiddenIndexes, $GUI_UNCHECKED)
 	GUICtrlSetData($InputDce, "cue")
@@ -546,7 +549,7 @@ Func set_default_options()
 	GUICtrlSetState($CheckBoxCq, $GUI_CHECKED)
 	GUICtrlSetState($CheckBoxEu, $GUI_UNCHECKED)
 	GUICtrlSetState($CheckBoxTc, $GUI_CHECKED)
-	GUICtrlSetState($CheckBoxUpperRomanNumerals, $GUI_CHECKED)
+	GUICtrlSetState($CheckBoxUpperRomanNumerals, $GUI_UNCHECKED)
 	GUICtrlSetState($CheckBoxLowerRomanNumerals, $GUI_UNCHECKED)
 	GUICtrlSetState($CheckBoxTagUseCdText, $GUI_CHECKED)
 	GUICtrlSetState($CheckBoxTagUseCueComments, $GUI_CHECKED)
@@ -565,7 +568,7 @@ Func set_default_options()
 	GUICtrlSetState($CheckBoxArtistForTrack, $GUI_CHECKED)
 	_GUICtrlComboBox_SetCurSel($ComboCueSheetAttachMode, 0)
 	GUICtrlSetState($CheckBoxJpegCovers, $GUI_CHECKED)
-	GUICtrlSetData($InputJpegQuality, 80 )
+	GUICtrlSetData($InputJpegQuality, 75 )
 EndFunc   ;==>set_default_options
 
 Func get_encoding_str($nSel)

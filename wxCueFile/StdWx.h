@@ -27,6 +27,7 @@
 #include <wx/sharedptr.h>
 #include <wx/dir.h>
 #include <wx/mimetype.h>
+#include <wx/base64.h>
 
 #if defined( __WIN64__ )
 #define wxSizeTFmtSpec wxLongLongFmtSpec

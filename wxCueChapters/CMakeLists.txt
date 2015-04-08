@@ -26,5 +26,5 @@ target_link_libraries(cue2mkc ${wxWidgets_LIBRARIES} Shlwapi.lib
 	wxConsoleApp
 	wxEncodingDetection
 	wxCueFile
-	TagLib
+	TagLib	
 )

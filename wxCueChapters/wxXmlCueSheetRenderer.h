@@ -67,11 +67,9 @@ class wxXmlCueSheetRenderer:
 
 	public:
 
-		static wxXmlCueSheetRenderer* const Null;
-
 		static struct Tag
 		{
-			static const char ORIGINAL_MEDIA_TYPE[];
+			static const char PREPARER[];
 			static const char CATALOG_NUMBER[];
 			static const char TOTAL_PARTS[];
 			static const char PART_NUMBER[];
@@ -79,6 +77,7 @@ class wxXmlCueSheetRenderer:
 
 		static struct Xml
 		{
+            static const char BINARY[];
 			static const char CHAPTER_UID[];
 			static const char EDITION_ENTRY[];
 			static const char EDITION_UID[];

@@ -15,10 +15,6 @@ wxIMPLEMENT_ABSTRACT_CLASS( wxCueSheetRenderer, wxObject )
 
 // ===============================================================================
 
-wxCueSheetRenderer * const wxCueSheetRenderer::Null = (wxCueSheetRenderer* const)NULL;
-
-// ===============================================================================
-
 wxCueSheetRenderer::wxCueSheetRenderer( void )
 {}
 
@@ -94,7 +90,7 @@ bool wxCueSheetRenderer::OnPreRenderTracks( const wxCueSheet& WXUNUSED( cueSheet
 
 bool wxCueSheetRenderer::OnRenderTracks( const wxCueSheet& cueSheet, const wxArrayTrack& tracks )
 {
-	for ( size_t i = 0, nCount = tracks.GetCount(); i < nCount; i++ )
+	for ( size_t i = 0, nCount = tracks.GetCount(); i < nCount; ++i )
 	{
 		if ( !RenderTrack( cueSheet, tracks[ i ] ) )
 		{
@@ -185,7 +181,7 @@ bool wxCueSheetRenderer::OnRenderIndexes( const wxCueSheet& cueSheet, const wxTr
 		}
 	}
 
-	for ( size_t i = 0, nCount = indexes.GetCount(); i < nCount; i++ )
+	for ( size_t i = 0, nCount = indexes.GetCount(); i < nCount; ++i )
 	{
 		if ( !RenderIndex( cueSheet, track, indexes[ i ] ) )
 		{

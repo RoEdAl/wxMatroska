@@ -569,30 +569,27 @@ void wxCoverFile::Sort( wxArrayCoverFile& covers )
 	covers.Sort( wxCoverFile::Cmp );
 }
 
-wxImage wxCoverFile::ToImageFromData() const
-{
-    wxASSERT( HasData() );
-
-    wxMemoryInputStream is( m_data.GetData( ), m_data.GetDataLen( ) );
-    return wxImage( is, m_mimeType );
-}
-
 wxImage wxCoverFile::ToImage() const
 {
     if (HasData())
     {
-        return ToImageFromData();
+        wxMemoryInputStream is( m_data.GetData( ), m_data.GetDataLen( ) );
+        return wxImage( is, m_mimeType );
     }
     else
     {
-        wxCoverFile inMem( Load() );
-        if (inMem.HasData())
+        wxImage img;
+        if (img.LoadFile( m_fileName.GetFullPath(), m_mimeType ))
         {
-            return inMem.ToImageFromData();
+            return img;
+        }
+        else
+        {
+            wxLogWarning( _( "Fail to load image \u201C%s\u201D" ), m_fileName.GetFullName() );
         }
     }
 
-    return wxImage();
+    return wxNullImage;
 }
 
 wxCoverFile wxCoverFile::Convert( wxImageHandler* const handler, int nQuality) const
@@ -625,20 +622,37 @@ size_t wxCoverFile::Convert( const wxArrayCoverFile& covers, wxArrayCoverFile& n
             continue;
         }
 
-        wxCoverFile jpeg( covers[i].Convert( handler, nQuality ) );
-        if (jpeg.HasData())
+        wxLogInfo( _( "Converting image [%s] to %s" ), covers[i].GetInfo(), handler->GetMimeType() );
+        wxCoverFile conv( covers[i].Convert( handler, nQuality ) );
+        if (conv.HasData())
         {
-            ncovers.Add( jpeg );
+            ncovers.Add( conv );
         }
         else
         {
-            wxLogDebug( "Cannot convert cover to JPEG - using original one" );
+            wxLogDebug( "Cannot convert cover to %s - using original one", handler->GetMimeType() );
             nCounter += 1;
             ncovers.Add( covers[i] );
         }
     }
 
     return nCounter;
+}
+
+wxString wxCoverFile::GetInfo() const
+{
+    if (HasFileName())
+    {
+        return wxString::Format( wxS("\u201C%s\u201D - %s"), m_fileName.GetFullName( ), m_description );
+    }
+    else if (HasData())
+    {
+        return wxString::Format( "%s - %s", wxMD5::ToString( m_checksum ), m_description );
+    }
+    else
+    {
+        return m_description;
+    }
 }
 
 // ===============================================================================

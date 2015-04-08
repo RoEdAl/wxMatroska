@@ -55,6 +55,7 @@ class wxCueTag:
 		{
 			static const char CUESHEET[];
 			static const char TOTALTRACKS[];
+            static const char TRACKNUMBER[];
 			static const char ARRANGER[];
 			static const char COMPOSER[];
 			static const char ISRC[];
@@ -92,11 +93,13 @@ class wxCueTag:
 		const wxString& GetName() const;
 
 		const wxString& GetValue() const;
+        wxString GetValueBase64( ) const;
 		const wxCueTag& GetValue( wxArrayString& ) const;
 		wxString GetQuotedValue( bool = true ) const;
 		bool IsMultiline() const;
 		wxString GetFlattenValue() const;
 		wxString GetFlattenValue( const wxString& ) const;
+        bool IsReplayGain() const;
 
 		wxCueTag& SetSource( TAG_SOURCE );
 		wxCueTag& SetName( const wxString& );

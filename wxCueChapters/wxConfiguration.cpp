@@ -20,8 +20,11 @@ const char	 wxConfiguration::MATROSKA_TAGS_EXT[]	  = "mkt.xml";
 const char	 wxConfiguration::MATROSKA_OPTS_EXT[]	  = "opt.txt";
 const char	 wxConfiguration::MATROSKA_AUDIO_EXT[]	  = "mka";
 const char	 wxConfiguration::CUESHEET_EXT[]		  = "cue";
-const char	 wxConfiguration::TRACK_NAME_FORMAT[]	  = "%dp% - %dt% - %tt%";
-const char	 wxConfiguration::MATROSKA_NAME_FORMAT[]  = "%dp% - %dt%";
+
+// en dash - U+2013, hair space - U+200A 
+const wxChar	 wxConfiguration::TRACK_NAME_FORMAT[]	  = wxS("%dp%\u200A\u2013\u200A%dt%\u200A\u2013\u200A%tt%");
+const wxChar	 wxConfiguration::MATROSKA_NAME_FORMAT[]  = wxS("%dp%\u200A\u2013\u200A%dt%");
+
 const size_t wxConfiguration::MAX_EXT_LEN			  = 20;
 const char	 wxConfiguration::LANG_FILE_URL[]		  = "http://www.loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt";
 const char	 wxConfiguration::LANG_FILE_NAME[]		  = "ISO-639-2_utf-8.txt";
@@ -264,7 +267,7 @@ bool wxConfiguration::ReadLanguagesStrings( wxSortedArrayString& as )
 
 			if ( sLang.IsEmpty() || ( sLang.Length() > 3 ) )
 			{
-				wxLogDebug( wxS( "Skipping language %s" ), sLang );
+				wxLogDebug( "Skipping language %s", sLang );
 			}
 			else
 			{
@@ -308,12 +311,12 @@ wxConfiguration::wxConfiguration( void ):
 	m_sMatroskaTagsXmlExt( MATROSKA_TAGS_EXT ),
 	m_sMatroskaOptsExt( MATROSKA_OPTS_EXT ),
 	m_bMerge( false ),
-    m_nReadFlags( wxCueSheetReader::EC_PARSE_COMMENTS | wxCueSheetReader::EC_ELLIPSIZE_TAGS | wxCueSheetReader::EC_REMOVE_EXTRA_SPACES | wxCueSheetReader::EC_MEDIA_READ_TAGS | wxCueSheetReader::EC_FIND_COVER | wxCueSheetReader::EC_FIND_LOG | wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS | wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG ),
+    m_nReadFlags( wxCueSheetReader::EC_PARSE_COMMENTS | wxCueSheetReader::EC_ELLIPSIZE_TAGS | wxCueSheetReader::EC_REMOVE_EXTRA_SPACES | wxCueSheetReader::EC_MEDIA_READ_TAGS | wxCueSheetReader::EC_FIND_COVER | wxCueSheetReader::EC_FIND_LOG | wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG ),
 	m_bUseMLang( true ),
 	m_bUseFullPaths( false ),
 	m_eCsAttachMode( CUESHEET_ATTACH_NONE ),
     m_bRenderArtistForTrack( false ),
-    m_nJpegImageQuality( 80 ),
+    m_nJpegImageQuality( 75 ),
     m_imageHandler( nullptr )
 {
 	ReadLanguagesStrings( m_asLang );
@@ -798,7 +801,7 @@ void wxConfiguration::Dump() const
 		size_t	   strings = as.GetCount();
 		wxDateTime dt( wxDateTime::Now() );
 		wxLog*	   pLog = wxLog::GetActiveTarget();
-		for ( size_t i = 0; i < strings; i++ )
+		for ( size_t i = 0; i < strings; ++i )
 		{
 			pLog->OnLog( wxLOG_Info, as[ i ], dt.GetTicks() );
 		}
@@ -810,7 +813,7 @@ void wxConfiguration::BuildXmlComments( const wxFileName& outputFile, wxXmlNode*
 	wxString sInit;
 
 	sInit.Printf( "This file was created by %s", wxGetApp().GetAppDisplayName() );
-	wxXmlNode* pComment = new wxXmlNode( wxNullXmlNode, wxXML_COMMENT_NODE, wxEmptyString, sInit );
+	wxXmlNode* pComment = new wxXmlNode( nullptr, wxXML_COMMENT_NODE, wxEmptyString, sInit );
 	pNode->AddChild( pComment );
 
 	wxArrayString as;
@@ -824,9 +827,9 @@ void wxConfiguration::BuildXmlComments( const wxFileName& outputFile, wxXmlNode*
 	FillArray( as );
 
 	size_t strings = as.GetCount();
-	for ( size_t i = 0; i < strings; i++ )
+	for ( size_t i = 0; i < strings; ++i )
 	{
-		wxXmlNode* pComment = new wxXmlNode( wxNullXmlNode, wxXML_COMMENT_NODE, wxEmptyString, as[ i ] );
+		wxXmlNode* pComment = new wxXmlNode( nullptr, wxXML_COMMENT_NODE, wxEmptyString, as[ i ] );
 		pNode->AddChild( pComment );
 	}
 }
@@ -1198,51 +1201,54 @@ wxString wxConfiguration::GetXmlFileEncoding() const
 	}
 }
 
-static void enc_2_cp( wxConfiguration::FILE_ENCODING enc, wxUint32& nCodePage, bool& bBom )
+namespace
 {
-	bBom = false;
+    void enc_2_cp( wxConfiguration::FILE_ENCODING enc, wxUint32& nCodePage, bool& bBom )
+    {
+        bBom = false;
 
-	switch ( enc )
-	{
-		case wxConfiguration::ENCODING_UTF8_WITH_BOM:
-		{
-			bBom = true;
-		}
+        switch (enc)
+        {
+            case wxConfiguration::ENCODING_UTF8_WITH_BOM:
+            {
+                bBom = true;
+            }
 
-		case wxConfiguration::ENCODING_UTF8:
-		{
-			nCodePage = wxEncodingDetection::CP::UTF8;
-			break;
-		}
+            case wxConfiguration::ENCODING_UTF8:
+            {
+                nCodePage = wxEncodingDetection::CP::UTF8;
+                break;
+            }
 
-		case wxConfiguration::ENCODING_UTF16_LE_WITH_BOM:
-		{
-			bBom = true;
-		}
+            case wxConfiguration::ENCODING_UTF16_LE_WITH_BOM:
+            {
+                 bBom = true;
+            }
 
-		case wxConfiguration::ENCODING_UTF16_LE:
-		{
-			nCodePage = wxEncodingDetection::CP::UTF16_LE;
-			break;
-		}
+            case wxConfiguration::ENCODING_UTF16_LE:
+            {
+                nCodePage = wxEncodingDetection::CP::UTF16_LE;
+                break;
+            }
 
-		case wxConfiguration::ENCODING_UTF16_BE_WITH_BOM:
-		{
-			bBom = true;
-		}
+            case wxConfiguration::ENCODING_UTF16_BE_WITH_BOM:
+            {
+                bBom = true;
+            }
 
-		case wxConfiguration::ENCODING_UTF16_BE:
-		{
-			nCodePage = wxEncodingDetection::CP::UTF16_BE;
-			break;
-		}
+            case wxConfiguration::ENCODING_UTF16_BE:
+            {
+                nCodePage = wxEncodingDetection::CP::UTF16_BE;
+                break;
+            }
 
-		default:
-		{
-			nCodePage = wxEncodingDetection::GetDefaultEncoding();
-			break;
-		}
-	}
+            default:
+            {
+                nCodePage = wxEncodingDetection::GetDefaultEncoding();
+                break;
+            }
+        }
+    }
 }
 
 wxSharedPtr< wxTextOutputStream > wxConfiguration::GetOutputTextStream( wxOutputStream& os ) const
@@ -1274,7 +1280,7 @@ wxSharedPtr< wxMBConv > wxConfiguration::GetXmlEncoding() const
 	return pRes;
 }
 
-bool wxConfiguration::GetMerge() const
+bool wxConfiguration::MergeMode() const
 {
 	return m_bMerge;
 }

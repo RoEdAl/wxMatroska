@@ -15,6 +15,7 @@
 
 const char wxCueTag::Name::CUESHEET[]	  = "CUESHEET";
 const char wxCueTag::Name::TOTALTRACKS[]  = "TOTALTRACKS";
+const char wxCueTag::Name::TRACKNUMBER[]  = "TRACKNUMBER";
 const char wxCueTag::Name::ARRANGER[]	  = "ARRANGER";
 const char wxCueTag::Name::COMPOSER[]	  = "COMPOSER";
 const char wxCueTag::Name::ISRC[]		  = "ISRC";
@@ -107,6 +108,28 @@ const wxString& wxCueTag::GetName() const
 const wxString& wxCueTag::GetValue() const
 {
 	return m_sValue;
+}
+
+namespace
+{
+    wxMemoryBuffer memory_stream_to_buffer( const wxMemoryOutputStream& os )
+    {
+        size_t nSize = os.GetLength( );
+        wxMemoryBuffer data( nSize );
+        void* pData = data.GetWriteBuf( nSize );
+        os.CopyTo( pData, nSize );
+        data.UngetWriteBuf( nSize );
+        return data;
+    }
+}
+
+wxString wxCueTag::GetValueBase64() const
+{
+    wxMemoryOutputStream mos;
+    wxTextOutputStream tos( mos, wxEOL_UNIX, wxConvUTF8 );
+    wxTextOutputStreamOnString::SaveTo( tos, m_sValue );
+
+    return wxBase64Encode( memory_stream_to_buffer( mos ) );
 }
 
 const wxCueTag& wxCueTag::GetValue( wxArrayString& asLines ) const
@@ -547,6 +570,11 @@ wxString wxCueTag::GetFlattenValues( const wxArrayCueTag& tags, const wxString& 
 	{
 		return sResult.Truncate( sResult.Length() - sSeparator.Length() );
 	}
+}
+
+bool wxCueTag::IsReplayGain() const
+{
+    return m_sName.StartsWith( "REPLAYGAIN_" );
 }
 
 #include <wx/arrimpl.cpp>

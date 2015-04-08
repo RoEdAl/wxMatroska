@@ -294,7 +294,7 @@ void wxMkvmergeOptsRenderer::write_cover_attachments( const wxInputFile& inputFi
 			}
 
 			// rest
-			for ( size_t i = 1; i < nAttachments; i++ )
+			for ( size_t i = 1; i < nAttachments; ++i )
 			{
 				if ( save_cover( inputFile, coverFiles[ i ] ) )
 				{
@@ -340,9 +340,9 @@ void wxMkvmergeOptsRenderer::write_cdtextfiles_attachments( const wxArrayFileNam
 
 		default:
 		{
-			*m_os << "# covers (" << nAttachments << ')' << endl;
+			*m_os << "# CDTEXT (" << nAttachments << ')' << endl;
 
-			for ( size_t i = 0; i < nAttachments; i++ )
+			for ( size_t i = 0; i < nAttachments; ++i )
 			{
 				*m_os <<
 					attachment::name << endl <<
@@ -391,7 +391,7 @@ void wxMkvmergeOptsRenderer::write_log_attachments( const wxArrayFileName& logFi
 		default:
 		{
 			*m_os << "# EAC logs (" << nAttachments << ')' << endl;
-			for ( size_t i = 0; i < nAttachments; i++ )
+			for ( size_t i = 0; i < nAttachments; ++i )
 			{
 				*m_os <<
 					attachment::name << endl <<
@@ -487,7 +487,7 @@ void wxMkvmergeOptsRenderer::write_source_eac_attachments(
 		default:
 		{
 			*m_os << "# cuesheets (" << nSourceContents << ')' << endl;
-			for ( size_t i = 0, nCounter = 1; i < nContents; i++ )
+			for ( size_t i = 0, nCounter = 1; i < nContents; ++i )
 			{
 				const wxCueSheetContent& cnt = contents[ i ];
 
@@ -587,7 +587,7 @@ void wxMkvmergeOptsRenderer::write_decoded_eac_attachments( const wxInputFile& i
 		default:
 		{
 			*m_os << "# cuesheets" << endl;
-			for ( size_t i = 0; i < nContents; i++ )
+			for ( size_t i = 0; i < nContents; ++i )
 			{
 				if ( save_cuesheet( inputFile, wxString::Format( "embedded%02" wxSizeTFmtSpec "u", i + 1 ), contents[ i ].GetValue(), cueSheetPath ) )
 				{
@@ -658,6 +658,8 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile,
 		"# mkvmerge's UI language" << endl <<
 		"--ui-language" << endl <<
 		"en" << endl <<
+        "# do not create BPS, DURATION, NUMBER_OF_BYTES and NUMBER_OF_FRAMES tags" << endl <<
+        "--disable-track-statistics-tags" << endl <<
 		"# Output file" << endl <<
 		"-o" << endl << GetEscapedFile( matroskaFile ) << endl <<
 		"--language" << endl << "0:" << m_cfg.GetLang() << endl <<

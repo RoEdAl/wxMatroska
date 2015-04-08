@@ -22,17 +22,14 @@ wxIMPLEMENT_DYNAMIC_CLASS( wxXmlCueSheetRenderer, wxCueSheetRenderer );
 
 // ===============================================================================
 
-wxXmlCueSheetRenderer* const wxXmlCueSheetRenderer::Null = (wxXmlCueSheetRenderer* const)wxCueSheetRenderer::Null;
-
-// ===============================================================================
-
-const char wxXmlCueSheetRenderer::Tag::ORIGINAL_MEDIA_TYPE[] = "ORIGINAL_MEDIA_TYPE";
+const char wxXmlCueSheetRenderer::Tag::PREPARER[]            = "PREPARER";
 const char wxXmlCueSheetRenderer::Tag::CATALOG_NUMBER[]		 = "CATALOG_NUMBER";
 const char wxXmlCueSheetRenderer::Tag::TOTAL_PARTS[]		 = "TOTAL_PARTS";
 const char wxXmlCueSheetRenderer::Tag::PART_NUMBER[]		 = "PART_NUMBER";
 
 // ===============================================================================
 
+const char wxXmlCueSheetRenderer::Xml::BINARY[]              = "Binary";
 const char wxXmlCueSheetRenderer::Xml::CHAPTER_UID[]		 = "ChapterUID";
 const char wxXmlCueSheetRenderer::Xml::EDITION_ENTRY[]		 = "EditionEntry";
 const char wxXmlCueSheetRenderer::Xml::EDITION_UID[]		 = "EditionUID";
@@ -63,23 +60,23 @@ const char wxXmlCueSheetRenderer::XmlValue::TRACK[] = "TRACK";
 
 wxXmlNode* wxXmlCueSheetRenderer::create_comment_node( const wxString& sComment )
 {
-	wxXmlNode* pComment = new wxXmlNode( wxNullXmlNode, wxXML_COMMENT_NODE, wxEmptyString, sComment );
+	wxXmlNode* pComment = new wxXmlNode( nullptr, wxXML_COMMENT_NODE, wxEmptyString, sComment );
 
 	return pComment;
 }
 
 void wxXmlCueSheetRenderer::add_comment_node( wxXmlNode* pNode, const wxString& sComment )
 {
-	wxASSERT( pNode != wxNullXmlNode );
+	wxASSERT( pNode != nullptr );
 	pNode->AddChild( create_comment_node( sComment ) );
 }
 
 wxXmlNode* wxXmlCueSheetRenderer::get_last_child( wxXmlNode* pNode )
 {
 	wxXmlNode* pChild = pNode->GetChildren();
-	wxXmlNode* pPrev  = wxNullXmlNode;
+	wxXmlNode* pPrev  = nullptr;
 
-	while ( pChild != wxNullXmlNode )
+	while ( pChild != nullptr )
 	{
 		pPrev  = pChild;
 		pChild = pChild->GetNext();
@@ -90,7 +87,7 @@ wxXmlNode* wxXmlCueSheetRenderer::get_last_child( wxXmlNode* pNode )
 
 wxXmlNode* wxXmlCueSheetRenderer::add_chapter_uid( wxXmlNode* pChapterAtom, const wxULongLong& uid )
 {
-	wxXmlNode* pChapterUID	   = new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, Xml::CHAPTER_UID );
+	wxXmlNode* pChapterUID	   = new wxXmlNode( nullptr, wxXML_ELEMENT_NODE, Xml::CHAPTER_UID );
 	wxXmlNode* pChapterUIDText = new wxXmlNode( pChapterUID, wxXML_TEXT_NODE, wxEmptyString, uid.ToString() );
 
 	pChapterAtom->AddChild( pChapterUID );
@@ -99,7 +96,7 @@ wxXmlNode* wxXmlCueSheetRenderer::add_chapter_uid( wxXmlNode* pChapterAtom, cons
 
 wxXmlNode* wxXmlCueSheetRenderer::add_chapter_time_start( wxXmlNode* pChapterAtom, const wxString& s, const wxString& sComment )
 {
-	wxXmlNode* pChapterTimeStart	 = new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, Xml::CHAPTER_TIME_START );
+	wxXmlNode* pChapterTimeStart	 = new wxXmlNode( nullptr, wxXML_ELEMENT_NODE, Xml::CHAPTER_TIME_START );
 	wxXmlNode* pChapterTimeStartText = new wxXmlNode( pChapterTimeStart, wxXML_TEXT_NODE, wxEmptyString, s );
 	wxXmlNode* pCommentNode			 = create_comment_node( sComment );
 
@@ -117,9 +114,9 @@ wxXmlNode* wxXmlCueSheetRenderer::add_chapter_time_start( wxXmlNode* pChapterAto
 wxXmlNode* wxXmlCueSheetRenderer::find_chapter_time_start( wxXmlNode* pChapterAtom )
 {
 	wxXmlNode* pChild = pChapterAtom->GetChildren();
-	wxXmlNode* pPrev  = wxNullXmlNode;
+	wxXmlNode* pPrev  = nullptr;
 
-	while ( pChild != wxNullXmlNode )
+	while ( pChild != nullptr )
 	{
 		if ( pChild->GetName().CmpNoCase( Xml::CHAPTER_TIME_START ) == 0 )
 		{
@@ -130,7 +127,7 @@ wxXmlNode* wxXmlCueSheetRenderer::find_chapter_time_start( wxXmlNode* pChapterAt
 		pChild = pChild->GetNext();
 	}
 
-	wxASSERT( pPrev != wxNullXmlNode );
+	wxASSERT( pPrev != nullptr );
 	return pPrev;
 }
 
@@ -138,7 +135,7 @@ bool wxXmlCueSheetRenderer::is_album_tag( wxXmlNode* pTag, long nTargetTypeValue
 {
 	wxXmlNode* pChild = pTag->GetChildren();
 
-	while ( pChild != wxNullXmlNode )
+	while ( pChild != nullptr )
 	{
 		if ( pChild->GetType() == wxXML_ELEMENT_NODE )
 		{
@@ -148,7 +145,7 @@ bool wxXmlCueSheetRenderer::is_album_tag( wxXmlNode* pTag, long nTargetTypeValue
 		pChild = pChild->GetNext();
 	}
 
-	if ( pChild == wxNullXmlNode )
+	if ( pChild == nullptr )
 	{
 		return false;
 	}
@@ -160,14 +157,14 @@ bool wxXmlCueSheetRenderer::is_album_tag( wxXmlNode* pTag, long nTargetTypeValue
 
 	wxXmlNode* pTargetTypeValue = pChild->GetChildren();
 
-	if ( pTargetTypeValue == wxNullXmlNode )
+	if ( pTargetTypeValue == nullptr )
 	{
 		return false;
 	}
 
 	wxXmlNode* pText = pTargetTypeValue->GetChildren();
 
-	if ( pText == wxNullXmlNode )
+	if ( pText == nullptr )
 	{
 		return false;
 	}
@@ -186,7 +183,7 @@ wxXmlNode* wxXmlCueSheetRenderer::find_disc_tag_node( wxXmlNode* pTags, long nTa
 {
 	wxXmlNode* pChild = pTags->GetChildren();
 
-	while ( pChild != wxNullXmlNode )
+	while ( pChild != nullptr )
 	{
 		if ( ( pChild->GetType() == wxXML_ELEMENT_NODE ) && ( pChild->GetName().CmpNoCase( Xml::TAG ) == 0 ) )
 		{
@@ -199,19 +196,19 @@ wxXmlNode* wxXmlCueSheetRenderer::find_disc_tag_node( wxXmlNode* pTags, long nTa
 		pChild = pChild->GetNext();
 	}
 
-	return wxNullXmlNode;
+	return nullptr;
 }
 
 bool wxXmlCueSheetRenderer::set_total_parts( wxXmlNode* pSimple, size_t nTotalParts )
 {
 	wxXmlNode* pChild = pSimple->GetChildren();
 
-	while ( pChild != wxNullXmlNode )
+	while ( pChild != nullptr )
 	{
 		if ( ( pChild->GetType() == wxXML_ELEMENT_NODE ) && ( pChild->GetName().CmpNoCase( Xml::STRING ) == 0 ) )
 		{
 			wxXmlNode* pText = pChild->GetChildren();
-			wxASSERT( pText != wxNullXmlNode );
+			wxASSERT( pText != nullptr );
 			pText->SetContent( wxString::Format( "%" wxSizeTFmtSpec "u", nTotalParts ) );
 			return true;
 		}
@@ -225,7 +222,7 @@ bool wxXmlCueSheetRenderer::set_total_parts( wxXmlNode* pSimple, size_t nTotalPa
 wxXmlNode* wxXmlCueSheetRenderer::add_chapter_time_end( wxXmlNode* pChapterAtom, const wxString& text, const wxString& sComment )
 {
 	wxXmlNode* pChapterTimeStart   = find_chapter_time_start( pChapterAtom );
-	wxXmlNode* pChapterTimeEnd	   = new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, Xml::CHAPTER_TIME_END );
+	wxXmlNode* pChapterTimeEnd	   = new wxXmlNode( nullptr, wxXML_ELEMENT_NODE, Xml::CHAPTER_TIME_END );
 	wxXmlNode* pChapterTimeEndText = new wxXmlNode( pChapterTimeEnd, wxXML_TEXT_NODE, wxEmptyString, text );
 	wxXmlNode* pCommentNode		   = create_comment_node( sComment );
 
@@ -244,7 +241,7 @@ bool wxXmlCueSheetRenderer::has_chapter_time_end( wxXmlNode* pChapterAtom )
 {
 	wxXmlNode* pChild = pChapterAtom->GetChildren();
 
-	while ( pChild != wxNullXmlNode )
+	while ( pChild != nullptr )
 	{
 		if ( pChild->GetName().CmpNoCase( Xml::CHAPTER_TIME_END ) == 0 )
 		{
@@ -259,10 +256,10 @@ bool wxXmlCueSheetRenderer::has_chapter_time_end( wxXmlNode* pChapterAtom )
 
 wxXmlNode* wxXmlCueSheetRenderer::add_chapter_display( wxXmlNode* pChapterAtom, const wxString& sChapterString, const wxString& sLang )
 {
-	wxXmlNode* pChapterDisplay		= new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, Xml::CHAPTER_DISPLAY );
+	wxXmlNode* pChapterDisplay		= new wxXmlNode( nullptr, wxXML_ELEMENT_NODE, Xml::CHAPTER_DISPLAY );
 	wxXmlNode* pChapterString		= new wxXmlNode( pChapterDisplay, wxXML_ELEMENT_NODE, Xml::CHAPTER_STRING );
 	wxXmlNode* pChapterStringText	= new wxXmlNode( pChapterString, wxXML_TEXT_NODE, wxEmptyString, sChapterString );
-	wxXmlNode* pChapterLanguage		= new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, Xml::CHAPTER_LANGUAGE );
+	wxXmlNode* pChapterLanguage		= new wxXmlNode( nullptr, wxXML_ELEMENT_NODE, Xml::CHAPTER_LANGUAGE );
 	wxXmlNode* pChapterLanguageText = new wxXmlNode( pChapterLanguage, wxXML_TEXT_NODE, wxEmptyString, sLang );
 
 	pChapterDisplay->AddChild( pChapterLanguage );
@@ -272,7 +269,7 @@ wxXmlNode* wxXmlCueSheetRenderer::add_chapter_display( wxXmlNode* pChapterAtom, 
 
 wxXmlNode* wxXmlCueSheetRenderer::add_hidden_flag( wxXmlNode* pChapterAtom, bool bHiddenFlag )
 {
-	wxXmlNode* pChapterHidden	  = new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, Xml::CHAPTER_FLAG_HIDDEN );
+	wxXmlNode* pChapterHidden	  = new wxXmlNode( nullptr, wxXML_ELEMENT_NODE, Xml::CHAPTER_FLAG_HIDDEN );
 	wxXmlNode* pChapterHiddenText = new wxXmlNode( pChapterHidden, wxXML_TEXT_NODE, wxEmptyString, bHiddenFlag ? wxS( "1" ) : wxS( "0" ) );
 
 	pChapterAtom->AddChild( pChapterHidden );
@@ -290,7 +287,7 @@ wxXmlNode* wxXmlCueSheetRenderer::add_idx_chapter_atom(
 {
 	wxASSERT( nIndexNumber > 1u );
 
-	wxXmlNode* pIdxChapterAtom	 = new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, Xml::CHAPTER_ATOM );
+	wxXmlNode* pIdxChapterAtom	 = new wxXmlNode( nullptr, wxXML_ELEMENT_NODE, Xml::CHAPTER_ATOM );
 	wxXmlNode* pChapterTimeStart = add_chapter_time_start( pIdxChapterAtom, duration, wxString::Format( "INDEX %" wxSizeTFmtSpec "u %s", nIndexNumber, sComment ) );
 
 	add_chapter_display( pIdxChapterAtom, wxString::Format( "INDEX %02" wxSizeTFmtSpec "d", nIndexNumber - 1u ), sLang );
@@ -470,7 +467,7 @@ wxXmlNode* wxXmlCueSheetRenderer::AddChapterTimeStart( wxXmlNode* pChapterAtom, 
 	{
 		const wxDataFile& dataFile = cueSheet.GetDataFiles().Item( idx.GetDataFileIdx() );
 		wxLogError( _( "Cannot calulate duration of data file \u201C%s\u201D (index %d)" ), dataFile.GetRealFileName().GetFullName(), idx.GetDataFileIdx() );
-		return wxNullXmlNode;
+		return nullptr;
 	}
 }
 
@@ -497,7 +494,7 @@ wxXmlNode* wxXmlCueSheetRenderer::AddChapterTimeEnd( wxXmlNode* pChapterAtom, co
 	{
 		const wxDataFile& dataFile = cueSheet.GetDataFiles().Item( idx.GetDataFileIdx() );
 		wxLogError( _( "Cannot calulate duration of data file \u201C%s\u201D (index %" wxSizeTFmtSpec "u)" ), dataFile.GetRealFileName().GetFullName(), idx.GetDataFileIdx() );
-		return wxNullXmlNode;
+		return nullptr;
 	}
 }
 
@@ -529,7 +526,7 @@ wxXmlNode* wxXmlCueSheetRenderer::AddIdxChapterAtom( wxXmlNode* pChapterAtom, co
 	{
 		const wxDataFile& dataFile = cueSheet.GetDataFiles().Item( idx.GetDataFileIdx() );
 		wxLogError( _( "Cannot calulate duration of data file \u201C%s\u201D (index %" wxSizeTFmtSpec "u)" ), dataFile.GetRealFileName().GetFullName(), idx.GetDataFileIdx() );
-		return wxNullXmlNode;
+		return nullptr;
 	}
 }
 
@@ -539,28 +536,28 @@ wxXmlDocument* wxXmlCueSheetRenderer::create_xml_document( const wxString& sRoot
 
 	pXmlDoc->SetVersion( wxS( "1.0" ) );
 	pXmlDoc->SetFileEncoding( GetConfig().GetXmlFileEncoding() );
-	wxXmlNode* pRoot = new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, sRootNode );
+	wxXmlNode* pRoot = new wxXmlNode( nullptr, wxXML_ELEMENT_NODE, sRootNode );
 	pXmlDoc->SetRoot( pRoot );
 	return pXmlDoc;
 }
 
 wxXmlNode* wxXmlCueSheetRenderer::create_simple_tag( const wxCueTag& tag, const wxString& sLanguage )
 {
-	wxXmlNode* pSimple = new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, Xml::SIMPLE );
+	wxXmlNode* pSimple = new wxXmlNode( nullptr, wxXML_ELEMENT_NODE, Xml::SIMPLE );
 
 	wxXmlNode* pName	 = new wxXmlNode( pSimple, wxXML_ELEMENT_NODE, Xml::NAME );
 	wxXmlNode* pNameText = new wxXmlNode( pName, wxXML_TEXT_NODE, wxEmptyString, tag.GetName() );
 
 	add_comment_node( pSimple, wxString::Format( "Source: %s", tag.GetSourceAsString() ) );
 
-	wxXmlNode* pValue	  = new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, Xml::STRING );
-	wxXmlNode* pValueText = new wxXmlNode( pValue, tag.IsMultiline() ? wxXML_CDATA_SECTION_NODE : wxXML_TEXT_NODE, wxEmptyString, tag.GetValue() );
+    wxXmlNode* pValue = new wxXmlNode( nullptr, wxXML_ELEMENT_NODE, tag.IsMultiline( ) ?  Xml::BINARY : Xml::STRING );
+    wxXmlNode* pValueText = new wxXmlNode( pValue, wxXML_TEXT_NODE, wxEmptyString, tag.IsMultiline( ) ?  tag.GetValueBase64() : tag.GetValue( ) );
 
 	pSimple->AddChild( pValue );
 
-	wxXmlNode* pLang = new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, Xml::TAG_LANGUAGE );
+	wxXmlNode* pLang = new wxXmlNode( nullptr, wxXML_ELEMENT_NODE, Xml::TAG_LANGUAGE );
 
-	if ( tag.TestSource( wxCueTag::TAG_AUTO_GENERATED ) )
+	if ( tag.TestSource( wxCueTag::TAG_AUTO_GENERATED ) || tag.IsReplayGain() )
 	{	// automatically generated tags are language agnostic
 		wxXmlNode* pLangText = new wxXmlNode( pLang, wxXML_TEXT_NODE, wxEmptyString, wxConfiguration::LANG_UND );
 	}
@@ -576,13 +573,13 @@ wxXmlNode* wxXmlCueSheetRenderer::create_simple_tag( const wxCueTag& tag, const 
 
 bool wxXmlCueSheetRenderer::is_simple( wxXmlNode* pNode, const wxCueTag& tag )
 {
-	wxASSERT( pNode != wxNullXmlNode );
+	wxASSERT( pNode != nullptr );
 
 	wxXmlNode* pChild = pNode->GetChildren();
 	bool	   bName  = false;
 	bool	   bValue = false;
 
-	while ( pChild != wxNullXmlNode )
+	while ( pChild != nullptr )
 	{
 		if ( pChild->GetType() == wxXML_ELEMENT_NODE )
 		{
@@ -590,7 +587,7 @@ bool wxXmlCueSheetRenderer::is_simple( wxXmlNode* pNode, const wxCueTag& tag )
 			{
 				wxXmlNode* pText = pChild->GetChildren();
 
-				if ( pText == wxNullXmlNode )
+				if ( pText == nullptr )
 				{
 					return false;
 				}
@@ -607,7 +604,7 @@ bool wxXmlCueSheetRenderer::is_simple( wxXmlNode* pNode, const wxCueTag& tag )
 			{
 				wxXmlNode* pText = pChild->GetChildren();
 
-				if ( pText == wxNullXmlNode )
+				if ( pText == nullptr )
 				{
 					return false;
 				}
@@ -630,10 +627,10 @@ bool wxXmlCueSheetRenderer::is_simple( wxXmlNode* pNode, const wxCueTag& tag )
 
 wxXmlNode* wxXmlCueSheetRenderer::find_simple_tag( wxXmlNode* pNode, const wxCueTag& tag )
 {
-	wxASSERT( pNode != wxNullXmlNode );
+	wxASSERT( pNode != nullptr );
 
 	wxXmlNode* pChild = pNode->GetChildren();
-	while ( pChild != wxNullXmlNode )
+	while ( pChild != nullptr )
 	{
 		if ( is_simple( pChild, tag ) )
 		{
@@ -643,14 +640,14 @@ wxXmlNode* wxXmlCueSheetRenderer::find_simple_tag( wxXmlNode* pNode, const wxCue
 		pChild = pChild->GetNext();
 	}
 
-	return wxNullXmlNode;
+	return nullptr;
 }
 
 wxXmlNode* wxXmlCueSheetRenderer::add_simple_tag( wxXmlNode* pNode,
 		const wxString& sName, const wxString& sValue,
 		const wxString& sLanguage )
 {
-	wxASSERT( pNode != wxNullXmlNode );
+	wxASSERT( pNode != nullptr );
 
 	wxCueTag   tag( wxCueTag::TAG_AUTO_GENERATED, sName, sValue );
 	wxXmlNode* pTagNode = create_simple_tag( tag, sLanguage );
@@ -668,7 +665,7 @@ wxXmlNode* wxXmlCueSheetRenderer::add_simple_tag( wxXmlNode* pNode,
 
 wxXmlNode* wxXmlCueSheetRenderer::add_simple_tag( wxXmlNode* pNode, const wxCueTag& tag, const wxString& sLanguage )
 {
-	wxASSERT( pNode != wxNullXmlNode );
+	wxASSERT( pNode != nullptr );
 
 	wxXmlNode* pTagNode = create_simple_tag( tag, sLanguage );
 	pNode->AddChild( pTagNode );
@@ -677,7 +674,7 @@ wxXmlNode* wxXmlCueSheetRenderer::add_simple_tag( wxXmlNode* pNode, const wxCueT
 
 void wxXmlCueSheetRenderer::add_simple_tags( wxXmlNode* pNode, const wxArrayCueTag& tags, const wxString& sLanguage )
 {
-	wxASSERT( pNode != wxNullXmlNode );
+	wxASSERT( pNode != nullptr );
 
 	for ( size_t i = 0, nCount = tags.GetCount(); i < nCount; i++ )
 	{
@@ -691,7 +688,7 @@ void wxXmlCueSheetRenderer::AddTags(
 		const wxTagSynonimsCollection& synonims,
 		wxXmlNode* pTag )
 {
-	wxASSERT( pTag != wxNullXmlNode );
+	wxASSERT( pTag != nullptr );
 
 	wxArrayCueTag mappedTags;
 	wxArrayCueTag rest;
@@ -723,7 +720,7 @@ void wxXmlCueSheetRenderer::AddTags(
 
 void wxXmlCueSheetRenderer::AddCdTextInfo( const wxCueComponent& component, wxXmlNode* pTag )
 {
-	wxASSERT( pTag != wxNullXmlNode );
+	wxASSERT( pTag != nullptr );
 
 	if ( component.IsTrack() )
 	{
@@ -742,32 +739,32 @@ wxXmlNode* wxXmlCueSheetRenderer::AddDiscTags(
 		const wxULongLong& editionUID,
 		int nTargetTypeValue )
 {
-	wxASSERT( pTags != wxNullXmlNode );
+	wxASSERT( pTags != nullptr );
 
-	wxXmlNode* pTag = new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, Xml::TAG );
+	wxXmlNode* pTag = new wxXmlNode( nullptr, wxXML_ELEMENT_NODE, Xml::TAG );
 
 	pTags->AddChild( pTag );
 
 	add_comment_node( pTag, "Disc tag" );
 
-	wxXmlNode* pTargets = new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, Xml::TARGETS );
+	wxXmlNode* pTargets = new wxXmlNode( nullptr, wxXML_ELEMENT_NODE, Xml::TARGETS );
 	pTag->AddChild( pTargets );
 
 	wxXmlNode* pTargetTypeValue		= new wxXmlNode( pTargets, wxXML_ELEMENT_NODE, Xml::TARGET_TYPE_VALUE );
 	wxXmlNode* pTargetTypeValueText = new wxXmlNode( pTargetTypeValue, wxXML_TEXT_NODE, wxEmptyString, wxString::Format( "%d", nTargetTypeValue ) );
 
-	wxXmlNode* pTargetType	   = new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, Xml::TARGET_TYPE );
+	wxXmlNode* pTargetType	   = new wxXmlNode( nullptr, wxXML_ELEMENT_NODE, Xml::TARGET_TYPE );
 	wxXmlNode* pTargetTypeText = new wxXmlNode( pTargetType, wxXML_TEXT_NODE, wxEmptyString, XmlValue::ALBUM );
 	pTargets->AddChild( pTargetType );
 
 	if ( GetConfig().GenerateEditionUID() )
 	{
-		wxXmlNode* pEditionUID	   = new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, Xml::EDITION_UID );
+		wxXmlNode* pEditionUID	   = new wxXmlNode( nullptr, wxXML_ELEMENT_NODE, Xml::EDITION_UID );
 		wxXmlNode* pEditionUIDText = new wxXmlNode( pEditionUID, wxXML_TEXT_NODE, wxEmptyString, editionUID.ToString() );
 		pTargets->AddChild( pEditionUID );
 	}
 
-	wxXmlNode* pSimple = add_simple_tag( pTag, Tag::ORIGINAL_MEDIA_TYPE, wxS( "CD" ), GetConfig().GetLang() );
+    wxXmlNode* pSimple = add_simple_tag( pTag, Tag::PREPARER, wxString::Format( wxS("%s\u200A%s"), wxGetApp( ).GetAppDisplayName( ), wxGetApp( ).APP_VERSION ), GetConfig( ).GetLang( ) );
 	AppendDiscTags( cueSheet, pTags, nTargetTypeValue );
 	return pTag;
 }
@@ -777,18 +774,18 @@ wxXmlNode* wxXmlCueSheetRenderer::AppendDiscTags(
 		wxXmlNode* pTags,
 		long nTargetTypeValue )
 {
-	wxASSERT( pTags != wxNullXmlNode );
+	wxASSERT( pTags != nullptr );
 
 	wxXmlNode* pTag = find_disc_tag_node( pTags, nTargetTypeValue );
 
-	wxASSERT( pTag != wxNullXmlNode );
+	wxASSERT( pTag != nullptr );
 
 	add_comment_node( pTag, wxString::Format( wxS( "CUE file: \u201C%s\u201D" ), m_inputFile.ToString( false ) ) );
 
 	AddCdTextInfo( cueSheet, pTag );
 
 	const wxArrayCueTag& catalogs = cueSheet.GetCatalogs();
-	for ( size_t i = 0, nCount = catalogs.GetCount(); i < nCount; i++ )
+	for ( size_t i = 0, nCount = catalogs.GetCount(); i < nCount; ++i )
 	{
 		wxXmlNode* pSimple = add_simple_tag( pTag, Tag::CATALOG_NUMBER, catalogs[ i ].GetValue(), GetConfig().GetLang() );
 	}
@@ -801,13 +798,13 @@ wxXmlNode* wxXmlCueSheetRenderer::SetTotalParts(
 		wxXmlNode* pTags,
 		long nTargetTypeValue )
 {
-	wxASSERT( pTags != wxNullXmlNode );
+	wxASSERT( pTags != nullptr );
 
 	wxXmlNode* pTag = find_disc_tag_node( pTags, nTargetTypeValue );
 
-	wxASSERT( pTag != wxNullXmlNode );
+	wxASSERT( pTag != nullptr );
 
-	add_comment_node( pTag, wxS( "Total number of tracks" ) );
+	add_comment_node( pTag, "Total number of tracks" );
 	wxXmlNode* pSimple = add_simple_tag( pTag, Tag::TOTAL_PARTS, nTotalParts, GetConfig().GetLang() );
 
 	return pTag;
@@ -819,25 +816,25 @@ wxXmlNode* wxXmlCueSheetRenderer::AddTrackTags(
 		wxXmlNode* pTags,
 		int nTargetTypeValue )
 {
-	wxASSERT( pTags != wxNullXmlNode );
+	wxASSERT( pTags != nullptr );
 
-	wxXmlNode* pTag = new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, Xml::TAG );
+	wxXmlNode* pTag = new wxXmlNode( nullptr, wxXML_ELEMENT_NODE, Xml::TAG );
 
 	pTags->AddChild( pTag );
 
 	add_comment_node( pTag, wxString::Format( "Track %02" wxSizeTFmtSpec "d", track.GetNumber() ) );
 
-	wxXmlNode* pTargets = new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, Xml::TARGETS );
+	wxXmlNode* pTargets = new wxXmlNode( nullptr, wxXML_ELEMENT_NODE, Xml::TARGETS );
 	pTag->AddChild( pTargets );
 
 	wxXmlNode* pTargetTypeValue		= new wxXmlNode( pTargets, wxXML_ELEMENT_NODE, Xml::TARGET_TYPE_VALUE );
 	wxXmlNode* pTargetTypeValueText = new wxXmlNode( pTargetTypeValue, wxXML_TEXT_NODE, wxEmptyString, wxString::Format( "%d", nTargetTypeValue ) );
 
-	wxXmlNode* pTargetType	   = new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, Xml::TARGET_TYPE );
+	wxXmlNode* pTargetType	   = new wxXmlNode( nullptr, wxXML_ELEMENT_NODE, Xml::TARGET_TYPE );
 	wxXmlNode* pTargetTypeText = new wxXmlNode( pTargetType, wxXML_TEXT_NODE, wxEmptyString, XmlValue::TRACK );
 	pTargets->AddChild( pTargetType );
 
-	wxXmlNode* pChapterUID	   = new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, Xml::CHAPTER_UID );
+	wxXmlNode* pChapterUID	   = new wxXmlNode( nullptr, wxXML_ELEMENT_NODE, Xml::CHAPTER_UID );
 	wxXmlNode* pChapterUIDText = new wxXmlNode( pChapterUID, wxXML_TEXT_NODE, wxEmptyString, chapterUID.ToString() );
 	pTargets->AddChild( pChapterUID );
 
@@ -852,27 +849,27 @@ bool wxXmlCueSheetRenderer::OnPreRenderDisc( const wxCueSheet& cueSheet )
 	wxASSERT( !HasXmlDoc() );
 	wxASSERT( !HasXmlTags() );
 
-	m_pFirstChapterAtom = wxNullXmlNode;
+	m_pFirstChapterAtom = nullptr;
 	wxULongLong editionUID( GenerateUID() );
 
 	wxLogInfo( _( "Creating XML document" ) );
 	m_pXmlDoc.reset( create_xml_document( Xml::CHAPTERS ) );
 	wxXmlNode* pChapters = m_pXmlDoc->GetRoot();
 	GetConfig().BuildXmlComments( m_outputFile, pChapters );
-	m_pEditionEntry = new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, Xml::EDITION_ENTRY );
+	m_pEditionEntry = new wxXmlNode( nullptr, wxXML_ELEMENT_NODE, Xml::EDITION_ENTRY );
 	pChapters->AddChild( m_pEditionEntry );
 
 	if ( GetConfig().GenerateEditionUID() )
 	{
-		wxXmlNode* pEditionUID	   = new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, Xml::EDITION_UID );
+		wxXmlNode* pEditionUID	   = new wxXmlNode( nullptr, wxXML_ELEMENT_NODE, Xml::EDITION_UID );
 		wxXmlNode* pEditionUIDText = new wxXmlNode( pEditionUID, wxXML_TEXT_NODE, wxEmptyString, editionUID.ToString() );
 		m_pEditionEntry->AddChild( pEditionUID );
 	}
 
-	m_pChapterAtom	   = wxNullXmlNode;
-	m_pPrevChapterAtom = wxNullXmlNode;
+	m_pChapterAtom	   = nullptr;
+	m_pPrevChapterAtom = nullptr;
 
-	wxASSERT( m_pEditionEntry != wxNullXmlNode );
+	wxASSERT( m_pEditionEntry != nullptr );
 	add_comment_node( m_pEditionEntry, wxString::Format( wxS( "CUE file: \u201C%s\u201D" ), m_inputFile.ToString( false ) ) );
 
 	m_pXmlTags.reset( create_xml_document( Xml::TAGS ) );
@@ -889,12 +886,12 @@ bool wxXmlCueSheetRenderer::OnPreRenderDisc( const wxCueSheet& cueSheet )
 
 bool wxXmlCueSheetRenderer::OnPreRenderTrack( const wxCueSheet& cueSheet, const wxTrack& track )
 {
-	wxASSERT( m_pEditionEntry != wxNullXmlNode );
+	wxASSERT( m_pEditionEntry != nullptr );
 	wxLogInfo( _( "Converting track %" wxSizeTFmtSpec "u" ), track.GetNumber() );
 
-	m_pChapterAtom = new wxXmlNode( wxNullXmlNode, wxXML_ELEMENT_NODE, Xml::CHAPTER_ATOM );
+	m_pChapterAtom = new wxXmlNode( nullptr, wxXML_ELEMENT_NODE, Xml::CHAPTER_ATOM );
 
-	if ( m_pFirstChapterAtom == wxNullXmlNode )
+	if ( m_pFirstChapterAtom == nullptr )
 	{
 		m_pFirstChapterAtom = m_pChapterAtom;
 	}
@@ -914,7 +911,7 @@ bool wxXmlCueSheetRenderer::OnRenderTrack( const wxCueSheet& cueSheet, const wxT
 
 bool wxXmlCueSheetRenderer::OnPostRenderTrack( const wxCueSheet& cueSheet, const wxTrack& track )
 {
-	wxASSERT( m_pEditionEntry != wxNullXmlNode );
+	wxASSERT( m_pEditionEntry != nullptr );
 	size_t nTrackIdx = cueSheet.GetTrackIdxFromNumber( track.GetNumber() );
 	add_chapter_display( m_pChapterAtom, cueSheet.FormatTrack( nTrackIdx, GetConfig().GetTrackNameFormat() ), GetConfig().GetLang() );
 	m_pEditionEntry->AddChild( m_pChapterAtom );
@@ -930,7 +927,7 @@ bool wxXmlCueSheetRenderer::OnRenderPreGap( const wxCueSheet& cueSheet, const wx
 	{
 		if ( !GetConfig().TrackOneIndexOne() )
 		{
-			if ( AddChapterTimeStart( m_pChapterAtom, cueSheet, preGap ) == wxNullXmlNode )
+			if ( AddChapterTimeStart( m_pChapterAtom, cueSheet, preGap ) == nullptr )
 			{
 				return false;
 			}
@@ -938,9 +935,9 @@ bool wxXmlCueSheetRenderer::OnRenderPreGap( const wxCueSheet& cueSheet, const wx
 	}
 	else if ( GetConfig().GetChapterTimeEnd() )
 	{
-		if ( m_pPrevChapterAtom != wxNullXmlNode )
+		if ( m_pPrevChapterAtom != nullptr )
 		{
-			if ( AddChapterTimeEnd( m_pPrevChapterAtom, cueSheet, preGap, wxString::Format( "from pre-gap of track %" wxSizeTFmtSpec "u", track.GetNumber() ) ) == wxNullXmlNode )
+			if ( AddChapterTimeEnd( m_pPrevChapterAtom, cueSheet, preGap, wxString::Format( "from pre-gap of track %" wxSizeTFmtSpec "u", track.GetNumber() ) ) == nullptr )
 			{
 				return false;
 			}
@@ -956,7 +953,7 @@ bool wxXmlCueSheetRenderer::OnRenderPostGap( const wxCueSheet& cueSheet, const w
 
 	if ( GetConfig().GetChapterTimeEnd() )
 	{
-		if ( AddChapterTimeEnd( m_pChapterAtom, cueSheet, postGap, wxString::Format( "from post-gap of track %" wxSizeTFmtSpec "d", track.GetNumber() ) ) == wxNullXmlNode )
+		if ( AddChapterTimeEnd( m_pChapterAtom, cueSheet, postGap, wxString::Format( "from post-gap of track %" wxSizeTFmtSpec "d", track.GetNumber() ) ) == nullptr )
 		{
 			return false;
 		}
@@ -977,7 +974,7 @@ bool wxXmlCueSheetRenderer::OnRenderIndex( const wxCueSheet& cueSheet, const wxT
 			{
 				if ( !GetConfig().TrackOneIndexOne() )
 				{
-					if ( AddChapterTimeStart( m_pChapterAtom, cueSheet, idx ) == wxNullXmlNode )
+					if ( AddChapterTimeStart( m_pChapterAtom, cueSheet, idx ) == nullptr )
 					{
 						return false;
 					}
@@ -985,9 +982,9 @@ bool wxXmlCueSheetRenderer::OnRenderIndex( const wxCueSheet& cueSheet, const wxT
 			}
 			else if ( GetConfig().GetChapterTimeEnd() )
 			{
-				if ( m_pPrevChapterAtom != wxNullXmlNode )
+				if ( m_pPrevChapterAtom != nullptr )
 				{
-					if ( AddChapterTimeEnd( m_pPrevChapterAtom, cueSheet, idx, wxString::Format( "from index 0 of track %" wxSizeTFmtSpec "d", track.GetNumber() ) ) == wxNullXmlNode )
+					if ( AddChapterTimeEnd( m_pPrevChapterAtom, cueSheet, idx, wxString::Format( "from index 0 of track %" wxSizeTFmtSpec "d", track.GetNumber() ) ) == nullptr )
 					{
 						return false;
 					}
@@ -1003,13 +1000,13 @@ bool wxXmlCueSheetRenderer::OnRenderIndex( const wxCueSheet& cueSheet, const wxT
 			{
 				if ( GetConfig().TrackOneIndexOne() )
 				{
-					if ( AddChapterTimeStart( m_pChapterAtom, cueSheet, idx ) == wxNullXmlNode )
+					if ( AddChapterTimeStart( m_pChapterAtom, cueSheet, idx ) == nullptr )
 					{
 						return false;
 					}
 				}
 			}
-			else if ( AddChapterTimeStart( m_pChapterAtom, cueSheet, idx ) == wxNullXmlNode )
+			else if ( AddChapterTimeStart( m_pChapterAtom, cueSheet, idx ) == nullptr )
 			{
 				return false;
 			}
@@ -1019,7 +1016,7 @@ bool wxXmlCueSheetRenderer::OnRenderIndex( const wxCueSheet& cueSheet, const wxT
 
 		default:
 		{
-			if ( AddIdxChapterAtom( m_pChapterAtom, cueSheet, idx ) == wxNullXmlNode )
+			if ( AddIdxChapterAtom( m_pChapterAtom, cueSheet, idx ) == nullptr )
 			{
 				return false;
 			}
@@ -1040,7 +1037,7 @@ bool wxXmlCueSheetRenderer::OnPostRenderDisc( const wxCueSheet& cueSheet )
 
 	if ( GetConfig().GetChapterTimeEnd() )
 	{
-		wxASSERT( m_pFirstChapterAtom != wxNullXmlNode );
+		wxASSERT( m_pFirstChapterAtom != nullptr );
 		wxXmlNode* pChapterAtom = m_pFirstChapterAtom;
 
 		for ( size_t i = 0; i < nTracksCount; i++ )
@@ -1070,7 +1067,7 @@ bool wxXmlCueSheetRenderer::OnPostRenderDisc( const wxCueSheet& cueSheet )
 						sComment << duration.GetCdFramesStr() << " : from media file(s) (" <<
 							( nDataFileIdx + 1u ) << wxS( " \u201C" ) << dataFile.GetRealFileName().GetFullName() << wxS( "\u201D)" );
 
-						if ( AddChapterTimeEnd( pChapterAtom, duration, sComment ) == wxNullXmlNode )
+						if ( AddChapterTimeEnd( pChapterAtom, duration, sComment ) == nullptr )
 						{
 							return false;
 						}
@@ -1082,7 +1079,7 @@ bool wxXmlCueSheetRenderer::OnPostRenderDisc( const wxCueSheet& cueSheet )
 					{
 						const wxTrack& nextTrack = cueSheet.GetTrack( i + 1u );
 
-						if ( AddChapterTimeEnd( pChapterAtom, cueSheet, nextTrack ) == wxNullXmlNode )
+						if ( AddChapterTimeEnd( pChapterAtom, cueSheet, nextTrack ) == nullptr )
 						{
 							return false;
 						}

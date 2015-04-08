@@ -68,8 +68,6 @@ typedef struct tagMSG
 #include <taglib/tdebuglistener.h>
 #endif
 
-extern wxXmlNode* const wxNullXmlNode;
-
 #if defined( __WIN64__ )
 #define wxSizeTFmtSpec wxLongLongFmtSpec
 #else

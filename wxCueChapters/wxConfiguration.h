@@ -206,7 +206,7 @@ class wxConfiguration:
 
 		wxSharedPtr< wxMBConv > GetXmlEncoding() const;
 		wxSharedPtr< wxTextOutputStream > GetOutputTextStream( wxOutputStream& ) const;
-		bool GetMerge() const;
+		bool MergeMode() const;
 		wxCueSheetReader::ReadFlags GetReadFlags() const;
 		wxCueTag::TagSources GetTagSources() const;
 		bool UseMLang() const;
@@ -231,8 +231,8 @@ class wxConfiguration:
 		static const char	MATROSKA_OPTS_EXT[];
 		static const char	MATROSKA_AUDIO_EXT[];
 		static const char	CUESHEET_EXT[];
-		static const char	MATROSKA_NAME_FORMAT[];
-		static const char	TRACK_NAME_FORMAT[];
+		static const wxChar	MATROSKA_NAME_FORMAT[];
+		static const wxChar	TRACK_NAME_FORMAT[];
 		static const size_t MAX_EXT_LEN;
 		static const char	LANG_FILE_URL[];
 		static const char	LANG_FILE_NAME[];
