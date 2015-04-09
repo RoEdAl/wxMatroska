@@ -21,6 +21,8 @@
 #include <wxCueFile/wxCueSheetReader.h>
 #endif
 
+#include <enum2str.h>
+
 WX_DECLARE_OBJARRAY( wxInputFile, wxArrayInputFile );
 
 class wxConfiguration:
@@ -76,28 +78,12 @@ class wxConfiguration:
 
 	protected:
 
-		struct CuesheetAttachModeName
-		{
-			CUESHEET_ATTACH_MODE value;
-			const char* description;
-		};
+        typedef VALUE_NAME_PAIR<CUESHEET_ATTACH_MODE> CuesheetAttachModeName;
+        typedef VALUE_NAME_PAIR<RENDER_MODE> RenderModeName;
+        typedef VALUE_NAME_PAIR<INFO_SUBJECT> INFO_SUBJECT_DESC;
 
 		static const CuesheetAttachModeName AttachModeNames[];
-
-		struct RenderModeName
-		{
-			RENDER_MODE value;
-			const char* description;
-		};
-
 		static const RenderModeName RenderModeNames[];
-
-		struct INFO_SUBJECT_DESC
-		{
-			INFO_SUBJECT value;
-			const char* description;
-		};
-
 		static const INFO_SUBJECT_DESC InfoSubjectDesc[];
 
 	protected:

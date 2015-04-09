@@ -25,8 +25,6 @@ const wxTrack::FLAG_STR wxTrack::FlagString[] =
 	{ NONE, "NONE" }
 };
 
-const size_t wxTrack::FlagStringSize = WXSIZEOF( wxTrack::FlagString );
-
 // ===============================================================================
 
 const wxTrack::DATA_MODE_STR wxTrack::DataModeString[] =
@@ -40,8 +38,6 @@ const wxTrack::DATA_MODE_STR wxTrack::DataModeString[] =
 	{ CDI_2336, "CDI/2336" },
 	{ CDI_2352, "CDI/2352" }
 };
-
-const size_t wxTrack::DataModeStringSize = WXSIZEOF( wxTrack::DataModeString );
 
 // ===============================================================================
 
@@ -423,92 +419,34 @@ bool wxTrack::HasFlag( wxTrack::Flag f ) const
 	return false;
 }
 
-wxString wxTrack::GetFlagRegExp()
+wxString wxTrack::GetFlagRegExp( )
 {
-	wxString s;
-
-	for ( size_t i = 0; i < FlagStringSize; i++ )
-	{
-		s << FlagString[ i ].szName << '|';
-	}
-
-	s = s.RemoveLast();
-
-	return wxString::Format( "(%s)", s );
+    return get_texts_regexp( FlagString );
 }
 
 wxString wxTrack::FlagToString( wxTrack::Flag flag )
 {
-	wxString s;
-
-	for ( size_t i = 0; i < FlagStringSize; i++ )
-	{
-		if ( FlagString[ i ].flag == flag )
-		{
-			s = FlagString[ i ].szName;
-			break;
-		}
-	}
-
-	return s;
+    return to_string( flag, FlagString );
 }
 
 bool wxTrack::StringToFlag( const wxString& s, wxTrack::Flag& flag )
 {
-	for ( size_t i = 0; i < FlagStringSize; i++ )
-	{
-		if ( s.CmpNoCase( FlagString[ i ].szName ) == 0 )
-		{
-			flag = FlagString[ i ].flag;
-			return true;
-		}
-	}
-
-	return false;
+    return from_string( s, flag, FlagString );
 }
 
 wxString wxTrack::GetDataModeRegExp()
 {
-	wxString s;
-
-	for ( size_t i = 0; i < DataModeStringSize; i++ )
-	{
-		s << DataModeString[ i ].szName << '|';
-	}
-
-	s = s.RemoveLast();
-
-	return wxString::Format( "(%s)", s );
+    return get_texts_regexp( DataModeString );
 }
 
 wxString wxTrack::DataModeToString( wxTrack::DataMode mode )
 {
-	wxString s;
-
-	for ( size_t i = 0; i < DataModeStringSize; i++ )
-	{
-		if ( DataModeString[ i ].mode == mode )
-		{
-			s = DataModeString[ i ].szName;
-			break;
-		}
-	}
-
-	return s;
+    return to_string( mode, DataModeString );
 }
 
 bool wxTrack::StringToDataMode( const wxString& s, wxTrack::DataMode& mode )
 {
-	for ( size_t i = 0; i < DataModeStringSize; i++ )
-	{
-		if ( s.CmpNoCase( DataModeString[ i ].szName ) == 0 )
-		{
-			mode = DataModeString[ i ].mode;
-			return true;
-		}
-	}
-
-	return false;
+    return from_string( s, mode, DataModeString );
 }
 
 bool wxTrack::SetMode( const wxString& sMode )

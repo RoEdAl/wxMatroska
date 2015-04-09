@@ -13,6 +13,8 @@
 #include <wxCueFile/wxCueTag.h>
 #endif
 
+#include <enum2str.h>
+
 class wxDataFile;
 class wxArrayCoverFile;
 
@@ -42,12 +44,7 @@ class wxDataFile:
 
 	protected:
 
-		struct FILE_TYPE_STR
-		{
-			FileType value;
-			const char* description;
-		};
-
+        typedef VALUE_NAME_PAIR<FileType> FILE_TYPE_STR;
 		static const FILE_TYPE_STR FileTypeString[];
 
 	protected:

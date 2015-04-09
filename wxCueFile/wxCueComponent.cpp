@@ -36,15 +36,15 @@ const wxCueComponent::CDTEXT_ENTRY wxCueComponent::CdTextFields[] =
 
 const wxCueComponent::KEYWORD_ENTRY wxCueComponent::Keywords[] =
 {
-	{ "REM", wxCueComponent::ANY },
-	{ "INDEX", wxCueComponent::TRACK },
-	{ "PREGAP", wxCueComponent::TRACK },
-	{ "POSTGAP", wxCueComponent::TRACK },
-	{ "FILE", wxCueComponent::ANY },
-	{ "FLAGS", wxCueComponent::TRACK },
-	{ "TRACK", wxCueComponent::ANY },
-	{ "CATALOG", wxCueComponent::DISC },
-	{ "CDTEXTFILE", wxCueComponent::DISC }
+	{  wxCueComponent::ANY, "REM" },
+	{ wxCueComponent::TRACK, "INDEX" },
+	{ wxCueComponent::TRACK, "PREGAP" },
+	{ wxCueComponent::TRACK, "POSTGAP" },
+	{ wxCueComponent::ANY, "FILE" },
+	{ wxCueComponent::TRACK, "FLAGS" },
+	{ wxCueComponent::ANY, "TRACK" },
+	{ wxCueComponent::DISC, "CATALOG" },
+	{ wxCueComponent::DISC, "CDTEXTFILE" }
 };
 
 // ===============================================================================
@@ -74,25 +74,9 @@ wxString wxCueComponent::GetCdTextInfoRegExp()
     return GetCdTextInfoRegExp( CdTextFields );
 }
 
-template<size_t SIZE>
-wxString wxCueComponent::GetKeywordsRegExp( const wxCueComponent::KEYWORD_ENTRY( &keywords )[SIZE] )
-{
-	wxTextOutputStreamOnString tos;
-
-	for ( size_t i = 0; i < SIZE; ++i )
-	{
-		*tos << keywords[ i ].keyword << '|';
-	}
-
-	( *tos ).Flush();
-	const wxString& s = tos.GetString();
-	wxASSERT( !s.IsEmpty() );
-	return wxString::Format( "(%s)", s.Left( s.Length() - 1 ) );
-}
-
 wxString wxCueComponent::GetKeywordsRegExp()
 {
-    return GetKeywordsRegExp( Keywords );
+    return get_texts_regexp( Keywords );
 }
 
 template<size_t SIZE>
@@ -135,24 +119,9 @@ bool wxCueComponent::GetCdTextInfoType( const wxString& sKeyword, wxCueComponent
     return GetCdTextInfoType( sKeyword, et, CdTextFields );
 }
 
-template<size_t SIZE>
-bool wxCueComponent::GetEntryType( const wxString& sKeyword, wxCueComponent::ENTRY_TYPE& et, const wxCueComponent::KEYWORD_ENTRY( &keywords )[SIZE] )
-{
-	for ( size_t i = 0; i < SIZE; ++i )
-	{
-		if ( sKeyword.CmpNoCase( keywords[ i ].keyword ) == 0 )
-		{
-			et = keywords[ i ].type;
-			return true;
-		}
-	}
-
-	return false;
-}
-
 bool wxCueComponent::GetEntryType( const wxString& sKeyword, wxCueComponent::ENTRY_TYPE& et )
 {
-    return GetEntryType( sKeyword, et, Keywords );
+    return from_string( sKeyword, et, Keywords );
 }
 
 wxCueComponent::wxCueComponent( bool bTrack ):

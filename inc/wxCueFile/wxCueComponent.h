@@ -13,6 +13,8 @@ class wxTagSynonimsCollection;
 #include "wxCueTag.h"
 #endif
 
+#include <enum2str.h>
+
 class wxCueComponent:
 	public wxObject
 {
@@ -44,12 +46,7 @@ class wxCueComponent:
 
 		static const CDTEXT_ENTRY CdTextFields[];
 
-		struct KEYWORD_ENTRY
-		{
-			const char* const keyword;
-			ENTRY_TYPE type;
-		};
-
+        typedef VALUE_NAME_PAIR<ENTRY_TYPE> KEYWORD_ENTRY;
 		static const KEYWORD_ENTRY Keywords[];
 
 		static void GetSynonims( wxTagSynonimsCollection&, bool );
@@ -135,16 +132,10 @@ class wxCueComponent:
         static wxString GetCdTextInfoRegExp( const CDTEXT_ENTRY( &)[SIZE] );
 
         template<size_t SIZE>
-        static wxString GetKeywordsRegExp( const KEYWORD_ENTRY( &)[SIZE] );
-
-        template<size_t SIZE>
         static bool GetCdTextInfoFormat( const wxString&, ENTRY_FORMAT&, const CDTEXT_ENTRY( &)[SIZE] );
 
         template<size_t SIZE>
         static bool GetCdTextInfoType( const wxString&, ENTRY_TYPE&, const CDTEXT_ENTRY( &)[SIZE] );
-
-        template<size_t SIZE>
-        static bool GetEntryType( const wxString&, ENTRY_TYPE&, const KEYWORD_ENTRY( &)[SIZE] );
 
         template<size_t SIZE>
         bool AddCdTextInfoTag( const wxString&, const wxString&, const CDTEXT_ENTRY( &)[SIZE] );

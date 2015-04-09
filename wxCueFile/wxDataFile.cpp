@@ -3,7 +3,6 @@
  */
 
 #include "StdWx.h"
-#include <enum2str.h>
 #include <wxCueFile/wxSamplingInfo.h>
 #include <wxCueFile/wxDuration.h>
 #include <wxCueFile/wxIndex.h>
@@ -65,7 +64,7 @@ void wxDataFile::copy( const wxDataFile& df )
 
 wxString wxDataFile::GetFileTypeRegExp()
 {
-	return get_texts( FileTypeString ).Prepend( '(' ).Append( ')' );
+	return get_texts_regexp( FileTypeString );
 }
 
 wxString wxDataFile::ToString( wxDataFile::FileType ftype )

@@ -29,6 +29,8 @@ class wxDuration;
 class wxSamplingInfo;
 #endif
 
+#include <enum2str.h>
+
 class wxTrack:
 	public wxCueComponent
 {
@@ -60,23 +62,11 @@ class wxTrack:
 
 	protected:
 
-		struct FLAG_STR
-		{
-			Flag flag;
-			const char* szName;
-		};
+        typedef VALUE_NAME_PAIR<Flag> FLAG_STR;
+        typedef VALUE_NAME_PAIR<DataMode> DATA_MODE_STR;
 
 		static const FLAG_STR FlagString[];
-		static const size_t	  FlagStringSize;
-
-		struct DATA_MODE_STR
-		{
-			DataMode mode;
-			const char* szName;
-		};
-
 		static const DATA_MODE_STR DataModeString[];
-		static const size_t		   DataModeStringSize;
 
 	protected:
 
