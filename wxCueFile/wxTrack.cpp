@@ -569,9 +569,9 @@ const wxIndex& wxTrack::GetFirstIndex() const
 	return m_indexes[ 0 ];
 }
 
-void wxTrack::GetReplacements( wxHashString& replacements ) const
+void wxTrack::GetReplacements( wxCueTag::TagSources sources, wxHashString& replacements ) const
 {
-	wxCueComponent::GetReplacements( replacements );
+	wxCueComponent::GetReplacements( sources, replacements );
 	wxString sValue;
 
 	sValue.Printf( "%02" wxSizeTFmtSpec "d", m_number );

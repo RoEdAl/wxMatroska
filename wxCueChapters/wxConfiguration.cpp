@@ -21,9 +21,9 @@ const char	 wxConfiguration::MATROSKA_OPTS_EXT[]	  = "opt.txt";
 const char	 wxConfiguration::MATROSKA_AUDIO_EXT[]	  = "mka";
 const char	 wxConfiguration::CUESHEET_EXT[]		  = "cue";
 
-// en dash - U+2013, hair space - U+200A 
-const wxChar	 wxConfiguration::TRACK_NAME_FORMAT[]	  = wxS("%dp%\u200A\u2013\u200A%dt%\u200A\u2013\u200A%tt%");
-const wxChar	 wxConfiguration::MATROSKA_NAME_FORMAT[]  = wxS("%dp%\u200A\u2013\u200A%dt%");
+// en dash - U+2013, thin space - U+2009
+const wxChar	 wxConfiguration::TRACK_NAME_FORMAT[]	  = wxS("%dp%\u2009\u2013\u2009%dt%\u2009\u2013\u2009%tt%");
+const wxChar	 wxConfiguration::MATROSKA_NAME_FORMAT[]  = wxS("%dp%\u2009\u2013\u2009%dt%");
 
 const size_t wxConfiguration::MAX_EXT_LEN			  = 20;
 const char	 wxConfiguration::LANG_FILE_URL[]		  = "http://www.loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt";
@@ -363,7 +363,6 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 	cmdLine.AddSwitch( wxEmptyString, "hidden-indexes", wxString::Format( _( "Convert indexes to hidden (sub)chapters (default %s)" ), BoolToStr( m_bHiddenIndexes ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddOption( wxEmptyString, "cue-sheet-attach-mode", _( "Mode of attaching cue sheet to mkvmerge options file - possible values are none (default), source, decoded, rendered and default" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxEmptyString, "use-full-paths", wxString::Format( _( "Use full paths in mkvmerge options file (default: %s)" ), BoolToStr( m_bUseFullPaths ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
-	cmdLine.AddOption( wxEmptyString, "mkvmerge-directory", _( "Location of mkvmerge tool" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
     cmdLine.AddSwitch( "ra", "render-artist-for-track", wxString::Format( _( "Render artist for track (default: %s)" ), BoolToStr( m_bRenderArtistForTrack ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 
 	// tags usage
@@ -620,17 +619,6 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		}
 	}
 
-	if ( cmdLine.Found( "mkvmerge-directory", &s ) )
-	{
-		m_mkvmergeDir.AssignDir( s );
-
-		if ( !m_mkvmergeDir.MakeAbsolute() )
-		{
-			wxLogInfo( _( "Fail to normalize path \u201C%s\u201D" ), s );
-			bRes = false;
-		}
-	}
-
 	ReadTagSources( cmdLine, "use-cdtext-tags", wxCueTag::TAG_CD_TEXT );
 	ReadTagSources( cmdLine, "use-cue-comments-tags", wxCueTag::TAG_CUE_COMMENT );
 	ReadTagSources( cmdLine, "use-media-tags", wxCueTag::TAG_MEDIA_METADATA );
@@ -747,20 +735,7 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
 	as.Add( wxString::Format( "Rendering method: %s", ToString( m_eRenderMode ) ) );
 	as.Add( wxString::Format( "Generate tags file: %s", BoolToStr( m_bGenerateTags ) ) );
 	as.Add( wxString::Format( "Generate mkvmerge options file: %s", BoolToStr( m_bGenerateMkvmergeOpts ) ) );
-
-	if ( m_bGenerateMkvmergeOpts )
-	{
-		as.Add( wxString::Format( "Run mkvmerge: %s", BoolToStr( m_bRunMkvmerge ) ) );
-
-		if ( m_mkvmergeDir.IsOk() )
-		{
-			as.Add( wxString::Format( "mkvmerge dir: %s", m_mkvmergeDir.GetFullPath() ) );
-		}
-
-		as.Add( wxString::Format( "Generate full paths: %s", BoolToStr( m_bUseFullPaths ) ) );
-		as.Add( wxString::Format( "Cue sheet attach mode: %s", ToString( m_eCsAttachMode ) ) );
-	}
-
+    as.Add( wxString::Format( "Run mkvmerge: %s", BoolToStr( m_bRunMkvmerge ) ) );
 	as.Add( wxString::Format( "Generate edition UID: %s", BoolToStr( m_bGenerateEditionUID ) ) );
 	as.Add( wxString::Format( "Tag sources: %s", wxCueTag::SourcesToString( m_nTagSources ) ) );
 	as.Add( wxString::Format( "Output file encoding: %s", ToString( m_eFileEncoding ) ) );
@@ -1313,11 +1288,6 @@ const wxString& wxConfiguration::MatroskaOptsExt() const
 bool wxConfiguration::RunMkvmerge() const
 {
 	return m_bRunMkvmerge;
-}
-
-const wxFileName& wxConfiguration::GetMkvmergeDir() const
-{
-	return m_mkvmergeDir;
 }
 
 bool wxConfiguration::UseFullPaths() const

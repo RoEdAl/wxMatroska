@@ -133,9 +133,9 @@ class wxCueSheet:
 
 		void Clear( void );
 
-		wxString Format( const wxString& ) const;
+		wxString Format( wxCueTag::TagSources, const wxString& ) const;
 
-		wxString FormatTrack( size_t, const wxString & ) const;
+		wxString FormatTrack( wxCueTag::TagSources, size_t, const wxString & ) const;
 };
 #endif	// _WX_CUE_SHEET_H_
 

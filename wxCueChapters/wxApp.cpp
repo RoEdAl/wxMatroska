@@ -497,34 +497,16 @@ bool wxMyApp::RunMkvmerge( const wxFileName& optionsFile )
 		sOptionsFile = optionsFile.GetFullName();
 	}
 
-	if ( m_cfg.GetMkvmergeDir().IsOk() )
+	if ( wxLog::GetVerbose() )
 	{
-		wxFileName mkvmerge( m_cfg.GetMkvmergeDir().GetFullPath(), "mkvmerge" );
-
-		if ( wxLog::GetVerbose() )
-		{
-			sCmdLine.Printf( "\"%s\" --output-charset utf-8 \"@%s\"", mkvmerge.GetFullPath(), sOptionsFile );
-		}
-		else
-		{
-			sCmdLine.Printf( "\"%s\" --quiet --output-charset utf-8 \"@%s\"", mkvmerge.GetFullPath(), sOptionsFile );
-		}
+		sCmdLine.Printf( "mkvmerge --output-charset utf-8 \"@%s\"", sOptionsFile );
 	}
 	else
 	{
-		if ( wxLog::GetVerbose() )
-		{
-			sCmdLine.Printf( "mkvmerge --output-charset utf-8 \"@%s\"", sOptionsFile );
-		}
-		else
-		{
-			sCmdLine.Printf( "mkvmerge --quiet --output-charset utf-8 \"@%s\"", sOptionsFile );
-		}
+		sCmdLine.Printf( "mkvmerge --quiet --output-charset utf-8 \"@%s\"", sOptionsFile );
 	}
 
-	wxLogMessage( _( "Running mkvmerge with options from file \u201C%s\u201D" ), sOptionsFile );
-	wxLogDebug( sCmdLine );
-
+    wxLogMessage( sCmdLine );
 	long nRes = 0;
 
 	if ( m_cfg.UseFullPaths() )

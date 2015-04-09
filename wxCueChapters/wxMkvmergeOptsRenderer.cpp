@@ -664,7 +664,7 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile,
 		"-o" << endl << GetEscapedFile( matroskaFile ) << endl <<
 		"--language" << endl << "0:" << m_cfg.GetLang() << endl <<
 		"--default-track" << endl << "0:yes" << endl <<
-		"--track-name" << endl << "0:" << cueSheet.Format( m_cfg.GetMatroskaNameFormat() ) << endl <<
+		"--track-name" << endl << "0:" << cueSheet.Format( m_cfg.GetTagSources(), m_cfg.GetMatroskaNameFormat() ) << endl <<
 		"# Input file(s)" << endl;
 
 	// tracks
@@ -722,7 +722,7 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile,
 	*m_os <<
 		"# General options" << endl <<
 		"--default-language" << endl << m_cfg.GetLang() << endl <<
-		"--title" << endl << cueSheet.Format( m_cfg.GetMatroskaNameFormat() ) << endl <<
+		"--title" << endl << cueSheet.Format( m_cfg.GetTagSources(), m_cfg.GetMatroskaNameFormat() ) << endl <<
 		"--chapters" << endl << GetEscapedFile( outputFile ) << endl;
 
 	if ( m_cfg.GenerateTags() )

@@ -534,16 +534,16 @@ size_t wxCueSheet::GetDataFileIdxIfLastForTrack( size_t nTrackNo ) const
 	}
 }
 
-wxString wxCueSheet::FormatTrack( size_t trackNo, const wxString& sFmt ) const
+wxString wxCueSheet::FormatTrack( wxCueTag::TagSources sources, size_t trackNo, const wxString& sFmt ) const
 {
 	wxHashString replacements;
 
-	GetReplacements( replacements );
+	GetReplacements( sources, replacements );
 	const wxTrack& track = GetTrack( trackNo );
-	track.GetReplacements( replacements );
+	track.GetReplacements( sources, replacements );
 
 	wxString s( sFmt );
-	for ( wxHashString::const_iterator i = replacements.begin(); i != replacements.end(); i++ )
+	for ( wxHashString::const_iterator i = replacements.begin(); i != replacements.end(); ++i )
 	{
 		wxString sFind( i->first );
 		sFind.Prepend( '%' ).Append( '%' );
@@ -553,14 +553,14 @@ wxString wxCueSheet::FormatTrack( size_t trackNo, const wxString& sFmt ) const
 	return s;
 }
 
-wxString wxCueSheet::Format( const wxString& sFmt ) const
+wxString wxCueSheet::Format( wxCueTag::TagSources sources, const wxString& sFmt ) const
 {
 	wxHashString replacements;
 
-	GetReplacements( replacements );
+	GetReplacements( sources, replacements );
 
 	wxString s( sFmt );
-	for ( wxHashString::const_iterator i = replacements.begin(); i != replacements.end(); i++ )
+	for ( wxHashString::const_iterator i = replacements.begin(); i != replacements.end(); ++i )
 	{
 		wxString sFind( i->first );
 		sFind.Prepend( '%' ).Append( '%' );

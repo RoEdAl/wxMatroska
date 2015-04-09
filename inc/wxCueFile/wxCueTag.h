@@ -144,6 +144,7 @@ class wxCueTag:
 		static bool		TestTagSources( TagSources, TagSources );
 
 		static size_t GetTags( const wxArrayCueTag&, const wxString&, wxArrayCueTag& );
+        static size_t GetTags( const wxArrayCueTag&, TagSources, const wxString&, wxArrayCueTag& );
 		static size_t MoveTags( wxArrayCueTag&, const wxString&, wxArrayCueTag& );
 		static size_t MoveTags( wxArrayCueTag&, const wxTagSynonimsCollection&, wxArrayCueTag& );
 		static bool FindTag( const wxArrayCueTag&, const wxCueTag& );

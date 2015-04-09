@@ -112,7 +112,7 @@ class wxCueComponent:
 		void AddComment( const wxString& );
 		void AddGarbage( const wxString& );
 
-		virtual void GetReplacements( wxHashString& ) const;
+		virtual void GetReplacements( wxCueTag::TagSources, wxHashString& ) const;
 
 	public:
 
@@ -156,7 +156,7 @@ class wxCueComponent:
         static void GetSynonims( wxTagSynonimsCollection&, bool, const CDTEXT_ENTRY(&)[SIZE] );
 
         template<size_t SIZE>
-        void GetReplacements( wxHashString&, const CDTEXT_ENTRY(&)[SIZE] ) const;
+        void GetReplacements( wxHashString&, wxCueTag::TagSources, const CDTEXT_ENTRY(&)[SIZE] ) const;
 };
 #endif
 

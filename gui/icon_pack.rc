@@ -39,12 +39,12 @@ BEGIN
         BEGIN
             VALUE "Comments", "Icons pack."
             VALUE "CompanyName", "Edmunt Pienkowsky - roed@onet.eu"
-            VALUE "FileDescription", "Icons pack."
+            VALUE "FileDescription", "cue2mkc GUI - Icons pack."
             VALUE "FileVersion", WXMATROSKA_VERSION_STR4
             VALUE "InternalName", "wxCueChapters"
             VALUE "LegalCopyright", "Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html"
-            VALUE "OriginalFilename", "cue2mkc.exe"
-            VALUE "ProductName", "cue2mkc"
+            VALUE "OriginalFilename", "icon_pack.dll"
+            VALUE "ProductName", "icon_pack"
             VALUE "ProductVersion", WXMATROSKA_VERSION_STR4
         END
     END

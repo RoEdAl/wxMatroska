@@ -38,11 +38,10 @@ add_custom_command(
 		/in ${CUE2MKCGUI_SOURCES}
 		/out ${CUE2MKCGUI}
 		/icon icons/cd_mka.ico
-		/nopack
 		$<$<EQUAL:${EX_PLATFORM},64>:/x64>
 		/gui
-		/fileversion ${PROJECT_VERSION_STR4}
-		/productversion ${PROJECT_VERSION_STR4}
+		/fileversion ${PROJECT_VERSION_STR4_DOTTED}
+		/productversion ${PROJECT_VERSION_STR4_DOTTED}
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 

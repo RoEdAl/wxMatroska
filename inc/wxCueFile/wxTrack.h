@@ -134,7 +134,7 @@ class wxTrack:
 		void SetDataFileIdx( size_t );
 		void ShiftDataFileIdx( size_t );
 
-		virtual void GetReplacements( wxHashString& ) const;
+		virtual void GetReplacements( wxCueTag::TagSources, wxHashString& ) const;
 
 	public:
 

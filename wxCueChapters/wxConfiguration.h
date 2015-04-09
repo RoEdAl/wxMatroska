@@ -134,7 +134,6 @@ class wxConfiguration:
 
 		wxArrayInputFile m_inputFile;
 		wxFileName		 m_outputFile;
-		wxFileName		 m_mkvmergeDir;
 
 		wxString m_sCueSheetExt;
 		wxString m_sMatroskaChaptersXmlExt;
@@ -196,7 +195,6 @@ class wxConfiguration:
 		bool GenerateTags() const;
 		bool GenerateMkvmergeOpts() const;
 		bool RunMkvmerge() const;
-		const wxFileName& GetMkvmergeDir() const;
 		bool GenerateEditionUID() const;
 		FILE_ENCODING GetFileEncoding() const;
 		wxString GetXmlFileEncoding() const;

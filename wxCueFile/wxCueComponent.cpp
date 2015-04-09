@@ -558,7 +558,7 @@ static size_t find_keyword( const wxArrayCueTag& tags, const wxString& sKeyword 
 }
 
 template<size_t SIZE>
-void wxCueComponent::GetReplacements( wxCueComponent::wxHashString& replacements, const wxCueComponent::CDTEXT_ENTRY( &cdTextFields )[SIZE] ) const
+void wxCueComponent::GetReplacements( wxCueComponent::wxHashString& replacements, wxCueTag::TagSources sources, const wxCueComponent::CDTEXT_ENTRY( &cdTextFields )[SIZE] ) const
 {
 	for ( size_t i = 0; i < SIZE; ++i )
 	{
@@ -570,8 +570,8 @@ void wxCueComponent::GetReplacements( wxCueComponent::wxHashString& replacements
 		wxString	  sValue;
 		wxArrayCueTag tags;
 
-		wxCueTag::GetTags( m_cdTextTags, cdTextFields[ i ].keyword, tags );
-		sValue = wxCueTag::GetFlattenValues( tags, ',' );
+		wxCueTag::GetTags( m_cdTextTags, sources, cdTextFields[ i ].keyword, tags );
+		sValue = wxCueTag::GetFlattenValues( tags, wxS(",\u2009") ); // thin space
 
 		wxString s( cdTextFields[ i ].replacement );
 		s.Prepend( m_bTrack ? 't' : 'd' );
@@ -613,7 +613,7 @@ void wxCueComponent::GetReplacements( wxCueComponent::wxHashString& replacements
 	}
 }
 
-void wxCueComponent::GetReplacements( wxCueComponent::wxHashString& replacements ) const
+void wxCueComponent::GetReplacements( wxCueTag::TagSources sources, wxCueComponent::wxHashString& replacements ) const
 {
-    return GetReplacements( replacements, CdTextFields );
+    return GetReplacements( replacements, sources, CdTextFields );
 }
