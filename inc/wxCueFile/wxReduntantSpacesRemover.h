@@ -22,7 +22,8 @@ class wxReduntantSpacesRemover:
 	protected:
 
 		wxRegEx	 m_reReduntantSpaces;
-		wxString m_sReplacement;
+		wxUniChar m_cReplacement;
+        wxUniChar m_cLongReplacement;
 };
 #endif
 

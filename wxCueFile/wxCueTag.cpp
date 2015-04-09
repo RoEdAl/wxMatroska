@@ -8,6 +8,7 @@
 #include <wxCueFile/wxTrailingSpacesRemover.h>
 #include <wxCueFile/wxReduntantSpacesRemover.h>
 #include <wxCueFile/wxEllipsizer.h>
+#include <wxCueFile/wxDashesCorrector.h>
 #include <wxEncodingDetection/wxTextOutputStreamOnString.h>
 #include <wxEncodingDetection/wxTextInputStreamOnString.h>
 
@@ -306,6 +307,11 @@ int wxCueTag::RemoveExtraSpaces( const wxReduntantSpacesRemover& spacesRemover )
 void wxCueTag::Ellipsize( const wxEllipsizer& ellipsizer )
 {
 	ellipsizer.EllipsizeEx( m_sValue, m_sValue );
+}
+
+void wxCueTag::CorrectDashes( const wxDashesCorrector& dashesCorrector )
+{
+    dashesCorrector.Replace( m_sValue );
 }
 
 wxString wxCueTag::Escape( const wxString& sValue )

@@ -311,7 +311,7 @@ wxConfiguration::wxConfiguration( void ):
 	m_sMatroskaTagsXmlExt( MATROSKA_TAGS_EXT ),
 	m_sMatroskaOptsExt( MATROSKA_OPTS_EXT ),
 	m_bMerge( false ),
-    m_nReadFlags( wxCueSheetReader::EC_PARSE_COMMENTS | wxCueSheetReader::EC_ELLIPSIZE_TAGS | wxCueSheetReader::EC_REMOVE_EXTRA_SPACES | wxCueSheetReader::EC_MEDIA_READ_TAGS | wxCueSheetReader::EC_FIND_COVER | wxCueSheetReader::EC_FIND_LOG | wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG ),
+    m_nReadFlags( wxCueSheetReader::EC_PARSE_COMMENTS | wxCueSheetReader::EC_ELLIPSIZE_TAGS | wxCueSheetReader::EC_REMOVE_EXTRA_SPACES | wxCueSheetReader::EC_MEDIA_READ_TAGS | wxCueSheetReader::EC_FIND_COVER | wxCueSheetReader::EC_FIND_LOG | wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG | wxCueSheetReader::EC_CORRECT_DASHES ),
 	m_bUseMLang( true ),
 	m_bUseFullPaths( false ),
 	m_eCsAttachMode( CUESHEET_ATTACH_NONE ),
@@ -356,6 +356,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 	cmdLine.AddSwitch( wxEmptyString, "attach-cover", wxString::Format( _( "Attach cover image (cover.*;front.*;album.*) to mkvmerge options file (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_FIND_COVER ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
     cmdLine.AddSwitch( "ru", "upper-roman-numerals", wxString::Format( _( "Convert roman numerals - upper case (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
     cmdLine.AddSwitch( "rl", "lower-roman-numerals", wxString::Format( _( "Convert roman numerals - lower case (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_CONVERT_LOWER_ROMAN_NUMERALS ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+    cmdLine.AddSwitch( wxEmptyString, "correct-dashes", wxString::Format( _( "Correct dashes (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_CORRECT_DASHES ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 
 	// advanced options
 	cmdLine.AddSwitch( wxEmptyString, "use-mlang", wxString::Format( _( "Use MLang library (default: %s)" ), BoolToStr( m_bUseMLang ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
@@ -632,6 +633,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	ReadReadFlags( cmdLine, "attach-cover", wxCueSheetReader::EC_FIND_COVER );
     ReadReadFlags( cmdLine, "ru", wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS );
     ReadReadFlags( cmdLine, "rl", wxCueSheetReader::EC_CONVERT_LOWER_ROMAN_NUMERALS );
+    ReadReadFlags( cmdLine, "correct-dashes", wxCueSheetReader::EC_CORRECT_DASHES );
 
 	// MLang
 	ReadNegatableSwitchValue( cmdLine, "use-mlang", m_bUseMLang );
@@ -720,9 +722,10 @@ wxString wxConfiguration::GetReadFlagsDesc( wxCueSheetReader::ReadFlags flags )
     AddFlag( as, flags, wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS, "upper-roman-numerals" );
     AddFlag( as, flags, wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS, "lower-roman-numerals" );
     AddFlag( as, flags, wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG, "convert-cover-to-jpeg" );
+    AddFlag( as, flags, wxCueSheetReader::EC_CORRECT_DASHES, "correct-dashes" );
 
 	wxString s;
-	for ( size_t i = 0, nCount = as.GetCount(); i < nCount; i++ )
+	for ( size_t i = 0, nCount = as.GetCount(); i < nCount; ++i )
 	{
 		s << as[ i ] << ',';
 	}

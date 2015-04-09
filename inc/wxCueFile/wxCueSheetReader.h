@@ -41,6 +41,10 @@ class wxFlacMetaDataReader;
 #include "wxRomanNumeralsConv.h"
 #endif
 
+#ifndef _WX_DASHES_CORRECTOR_H_
+#include "wxDashesCorrector.h"
+#endif
+
 #ifndef _WX_CUE_SHEET_CONTENT_H_
 class wxCueSheetContent;
 #endif
@@ -79,7 +83,8 @@ class wxCueSheetReader:
 			EC_FIND_LOG			   = 64,
             EC_CONVERT_UPPER_ROMAN_NUMERALS = 128,
             EC_CONVERT_LOWER_ROMAN_NUMERALS = 256,
-            EC_CONVERT_COVER_TO_JPEG = 512
+            EC_CONVERT_COVER_TO_JPEG = 512,
+            EC_CORRECT_DASHES = 1024
 		};
 
 		bool TestReadFlags( ReadFlags ) const;
@@ -107,6 +112,7 @@ class wxCueSheetReader:
 		wxEllipsizer			 m_ellipsizer;
         wxRomanNumeralsConv<true>   m_romanNumveralsConvUpper;
         wxRomanNumeralsConv<false>   m_romanNumveralsConvLower;
+        wxDashesCorrector        m_dashesCorrector;
 		wxString				 m_sOneTrackCue;
 
 		// settings

@@ -197,7 +197,7 @@ wxCueSheetReader::wxCueSheetReader( void ):
 #ifdef __WXDEBUG__
 wxCueSheetReader::~wxCueSheetReader()
 {
-	TagLib::setDebugListener( (TagLib::DebugListener*)NULL );
+	TagLib::setDebugListener( nullptr );
 }
 #endif
 
@@ -690,6 +690,11 @@ void wxCueSheetReader::CorrectTag( wxCueTag& tag ) const
     {
         tag.ConvertRomanNumerals( m_romanNumveralsConvLower );
     }
+
+    if (TestReadFlags( EC_CORRECT_DASHES ))
+    {
+        tag.CorrectDashes( m_dashesCorrector );
+    }
 }
 
 void wxCueSheetReader::CorrectString( wxString& str ) const
@@ -714,6 +719,11 @@ void wxCueSheetReader::CorrectString( wxString& str ) const
     if (TestReadFlags( EC_CONVERT_LOWER_ROMAN_NUMERALS ))
     {
         str = m_romanNumveralsConvLower.Convert( str );
+    }
+
+    if (TestReadFlags( EC_CORRECT_DASHES ))
+    {
+        m_dashesCorrector.Replace( str );
     }
 }
 

@@ -29,6 +29,10 @@ class wxEllipsizer;
 class wxTagSynonimsCollection;
 #endif
 
+#ifndef _WX_DASHES_CORRECTOR_H_
+class wxDashesCorrector;
+#endif
+
 class wxCueTag;
 WX_DECLARE_OBJARRAY( wxCueTag, wxArrayCueTag );
 WX_DECLARE_STRING_HASH_MAP( wxArrayCueTag, wxHashArrayCueTag );
@@ -119,6 +123,8 @@ class wxCueTag:
         {
             m_sValue = converter.Convert( m_sValue );
         }
+
+        void CorrectDashes( const wxDashesCorrector& );
 
 	protected:
 

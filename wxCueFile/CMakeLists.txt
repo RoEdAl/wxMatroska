@@ -23,6 +23,7 @@ set(CUEFILE_SOURCE_FILES
 	wxCoverFile.cpp
 	wxMd5.cpp
 	wxRomanNumeralsConv.cpp
+	wxDashesCorrector.cpp
 )
 
 ADD_MSVC_PRECOMPILED_HEADER("StdWx.h" "StdWx.cpp" CUEFILE_SOURCE_FILES )
