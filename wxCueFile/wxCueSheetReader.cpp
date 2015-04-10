@@ -86,7 +86,7 @@ bool wxCueSheetReader::GetLogFile( const wxFileName& inputFile, bool bAnyLog, wx
 {
 	wxASSERT( inputFile.IsOk() );
 
-	if ( bAnyLog )	// any lof file in the same directory
+	if ( bAnyLog )	// any log file in the same directory
 	{
 		wxFileName sourceDirFn( inputFile );
 
@@ -637,7 +637,7 @@ void wxCueSheetReader::ParseCdTextInfo( size_t WXUNUSED( nLine ), const wxString
 
 	bool add = true;
 
-	if ( sToken.CmpNoCase( "ISRC" ) == 0 )
+	if ( sToken.CmpNoCase( wxCueTag::Name::ISRC ) == 0 )
 	{
 		if ( !m_reIsrc.Matches( sBody ) )
 		{
@@ -1038,7 +1038,7 @@ void wxCueSheetReader::ParseFlags( const wxString& WXUNUSED( sToken ), const wxS
 	wxString sFlags( sBody );
 
 	m_reFlags.ReplaceAll( &sFlags, '|' );
-	wxStringTokenizer tokenizer( sFlags, "|" );
+	wxStringTokenizer tokenizer( sFlags, '|' );
 	while ( tokenizer.HasMoreTokens() )
 	{
 		wxString sFlag( tokenizer.GetNextToken() );

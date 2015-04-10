@@ -26,12 +26,8 @@ wxString wxDashesCorrector::GetReplacement( uvalue_type nUniSpace, uvalue_type n
 
 // en dash - U+2013, en dash - U+2014, thin space - U+2009
 wxDashesCorrector::wxDashesCorrector( ) :
-    m_reEn( REG_EX_EN, wxRE_ADVANCED ), m_reEm( REG_EX_EM, wxRE_ADVANCED ),
-    m_sEnReplacement( GetReplacement( 0x2009, 0x2013 ) ), m_sEmReplacement( GetReplacement( 0x2009, 0x2014 ) )
-{
-    wxASSERT( m_reEn.IsValid( ) );
-    wxASSERT( m_reEm.IsValid( ) );
-}
+    wxDashesCorrector( 0x2009, 0x2013, 0x2014 )
+{}
 
 wxDashesCorrector::wxDashesCorrector( uvalue_type nUniSpace, uvalue_type nUniEnDash, uvalue_type nUniEmDash ) :
     m_reEn( REG_EX_EN, wxRE_ADVANCED ), m_reEm( REG_EX_EM, wxRE_ADVANCED ),

@@ -349,7 +349,7 @@ bool wxCueComponent::CheckEntryType( wxCueComponent::ENTRY_TYPE ctype ) const
 template<size_t SIZE>
 bool wxCueComponent::AddCdTextInfoTag( const wxString& sKeyword, const wxString& sBody, const wxCueComponent::CDTEXT_ENTRY( &cdTextFields )[SIZE] )
 {
-	for ( size_t i = 0; i < SIZE; i++ )
+	for ( size_t i = 0; i < SIZE; ++i )
 	{
 		if ( ( sKeyword.CmpNoCase( cdTextFields[ i ].keyword ) == 0 ) && CheckEntryType( cdTextFields[ i ].type ) )
 		{

@@ -5,8 +5,7 @@
 #ifndef _WX_REDUNTANT_SPACES_REMOVER_H_
 #define _WX_REDUNTANT_SPACES_REMOVER_H_
 
-class wxReduntantSpacesRemover:
-	public wxObject
+class wxReduntantSpacesRemover
 {
 	public:
 
@@ -21,9 +20,8 @@ class wxReduntantSpacesRemover:
 
 	protected:
 
-		wxRegEx	 m_reReduntantSpaces;
+		wxRegEx	 m_re;
 		wxUniChar m_cReplacement;
-        wxUniChar m_cLongReplacement;
 };
 #endif
 
