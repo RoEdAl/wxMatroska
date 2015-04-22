@@ -550,6 +550,8 @@ wxXmlNode* wxXmlCueSheetRenderer::create_simple_tag( const wxCueTag& tag, const 
 
 	add_comment_node( pSimple, wxString::Format( "Source: %s", tag.GetSourceAsString() ) );
 
+    wxXmlNode* pValue = nullptr;
+
     // show mulitline tag content
     if (tag.IsMultiline())
     {
@@ -558,15 +560,34 @@ wxXmlNode* wxXmlCueSheetRenderer::create_simple_tag( const wxCueTag& tag, const 
         tag.GetValue( as );
 
         add_comment_node( pSimple, sSeparator );
-        for (size_t i = 0, nCount = as.GetCount(); i < nCount; ++i)
+        for (size_t i = 0, n = as.GetCount(); i < n; ++i)
         {
             add_comment_node( pSimple, as[i] );
         }
         add_comment_node( pSimple, sSeparator );
-    }
 
-    wxXmlNode* pValue = new wxXmlNode( nullptr, wxXML_ELEMENT_NODE, tag.IsMultiline( ) ?  Xml::BINARY : Xml::STRING );
-    wxXmlNode* pValueText = new wxXmlNode( pValue, wxXML_TEXT_NODE, wxEmptyString, tag.IsMultiline( ) ?  tag.GetValueBase64() : tag.GetValue( ) );
+        wxString s;
+        tag.GetValueBase64( 76, as );
+        wxASSERT( !as.IsEmpty() );
+
+        size_t nCount = as.GetCount();
+        if (nCount > 1)
+        {
+            for (size_t i = 0, n = nCount-1; i < n; ++i)
+            {
+                s << as[i] << "\r\n";
+            }
+        }
+        s << as[nCount-1];
+
+        pValue = new wxXmlNode( nullptr, wxXML_ELEMENT_NODE, Xml::BINARY );
+        wxXmlNode* pValueText = new wxXmlNode( pValue, wxXML_TEXT_NODE, wxEmptyString, s );
+    }
+    else
+    {
+        pValue = new wxXmlNode( nullptr, wxXML_ELEMENT_NODE, Xml::STRING );
+        wxXmlNode* pValueText = new wxXmlNode( pValue, wxXML_TEXT_NODE, wxEmptyString, tag.GetValue( ) );
+    }
 
 	pSimple->AddChild( pValue );
 
@@ -1058,7 +1079,7 @@ bool wxXmlCueSheetRenderer::OnPostRenderDisc( const wxCueSheet& cueSheet )
 		wxASSERT( m_pFirstChapterAtom != nullptr );
 		wxXmlNode* pChapterAtom = m_pFirstChapterAtom;
 
-		for ( size_t i = 0; i < nTracksCount; i++ )
+		for ( size_t i = 0; i < nTracksCount; ++i )
 		{
 			if ( !has_chapter_time_end( pChapterAtom ) )
 			{

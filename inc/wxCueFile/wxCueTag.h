@@ -98,6 +98,7 @@ class wxCueTag:
 
 		const wxString& GetValue() const;
         wxString GetValueBase64( ) const;
+        void GetValueBase64( size_t, wxArrayString& ) const;
 		const wxCueTag& GetValue( wxArrayString& ) const;
 		wxString GetQuotedValue( bool = true ) const;
 		bool IsMultiline() const;

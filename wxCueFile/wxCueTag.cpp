@@ -130,7 +130,27 @@ wxString wxCueTag::GetValueBase64() const
     wxTextOutputStream tos( mos, wxEOL_UNIX, wxConvUTF8 );
     wxTextOutputStreamOnString::SaveTo( tos, m_sValue );
 
+    wxString s = wxBase64Encode( memory_stream_to_buffer( mos ) );
+    wxArrayString as;
+    wxString l;
+
+
+
     return wxBase64Encode( memory_stream_to_buffer( mos ) );
+}
+
+void wxCueTag::GetValueBase64( size_t nLineLen, wxArrayString& as ) const
+{
+    wxString s = GetValueBase64();
+    wxString l;
+
+    as.Empty();
+    while (!s.IsEmpty( ))
+    {
+        l = s.Left( nLineLen );
+        as.Add( l );
+        s.Remove( 0, l.Len( ) );
+    }
 }
 
 const wxCueTag& wxCueTag::GetValue( wxArrayString& asLines ) const
