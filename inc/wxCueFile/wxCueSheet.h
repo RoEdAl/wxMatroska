@@ -36,9 +36,6 @@ class wxCueSheet:
 
 	public:
 
-		static const char* const CD_ALIASES[];
-		static const size_t		 CD_ALIASES_SIZE;
-
 		static wxString GetCdAliasesRegExp();
 
 		static const char ALBUM_REG_EX1[];
@@ -48,10 +45,11 @@ class wxCueSheet:
 
 		wxArrayCueSheetContent m_content;
 		wxArrayFileName		   m_logs;
+        wxArrayFileName		   m_accuripLogs;
 		wxArrayCoverFile	   m_covers;
 		wxArrayDataFile		   m_dataFiles;
 		wxArrayCueTag		   m_catalogs;
-		wxArrayFileName		   m_cdtextfiles;
+		wxArrayFileName		   m_cdTextFiles;
 		wxArrayTrack		   m_tracks;
 
 	protected:
@@ -82,6 +80,8 @@ class wxCueSheet:
 		const wxArrayCueSheetContent& GetContents() const;
 		size_t GetLogsCount() const;
 		const wxArrayFileName& GetLogs() const;
+        size_t GetAccurateRipLogsCount() const;
+        const wxArrayFileName& GetAccurateRipLogs() const;
 		size_t GetCoversCount() const;
 		const wxArrayCoverFile& GetCovers() const;
 		void GetSortedCovers( wxArrayCoverFile&, wxImageHandler* const, int ) const;
@@ -106,6 +106,7 @@ class wxCueSheet:
 		wxCueSheet& AddContent( const wxCueSheetContent& );
 		wxCueSheet& AddContent( const wxString& );
 		wxCueSheet& AddLog( const wxFileName& );
+        wxCueSheet& AddAccuripLog( const wxFileName& );
 		void AddCover( const wxFileName& );
 		void AddCover( const wxCoverFile& );
 		void AddCovers( const wxArrayCoverFile& );

@@ -144,12 +144,14 @@ namespace
 		static const char cover[];
 		static const char cdtext[];
 		static const char eac[];
+        static const char accurip[];
 		static const char cuesheet[];
 	};
 
 	const char fprefix::cover[]	   = "cover";
 	const char fprefix::cdtext[]   = "cdtext";
 	const char fprefix::eac[]	   = "eac";
+    const char fprefix::accurip[]  = "accurip";
 	const char fprefix::cuesheet[] = "cuesheet";
 }
 
@@ -407,6 +409,55 @@ void wxMkvmergeOptsRenderer::write_log_attachments( const wxArrayFileName& logFi
 			break;
 		}
 	}
+}
+
+void wxMkvmergeOptsRenderer::write_accurip_log_attachments( const wxArrayFileName& logFiles )
+{
+    size_t nAttachments = logFiles.GetCount( );
+
+    switch (nAttachments)
+    {
+        case 0:
+        {
+                  wxLogWarning( _( "AccurateRip log(s) not found." ) );
+                  *m_os << "# no AccurateRip log(s)" << endl;
+                  return;
+        }
+
+        case 1:
+        {
+                  *m_os <<
+                      "# AccurateRip log" << endl <<
+                      attachment::name << endl <<
+                      file_desc( fprefix::accurip, logFiles[0], nAttachments ) << endl <<
+                      attachment::desc << endl <<
+                      logFiles[0].GetFullName( ) << endl <<
+                      attachment::mime << endl <<
+                      mime::text_plain << endl <<
+                      attachment::file << endl <<
+                      mkvmerge_escape( logFiles[0] ) << endl;
+                  break;
+        }
+
+        default:
+        {
+                   *m_os << "# AccurateRip logs (" << nAttachments << ')' << endl;
+                   for (size_t i = 0; i < nAttachments; ++i)
+                   {
+                       *m_os <<
+                           attachment::name << endl <<
+                           file_desc( fprefix::accurip, i + 1, logFiles[i], nAttachments ) << endl <<
+                           attachment::desc << endl <<
+                           logFiles[i].GetFullName( ) << endl <<
+                           attachment::mime << endl <<
+                           mime::text_plain << endl <<
+                           attachment::file << endl <<
+                           mkvmerge_escape( logFiles[i] ) << endl;
+                   }
+
+                   break;
+        }
+    }
 }
 
 void wxMkvmergeOptsRenderer::write_eac_attachments(
@@ -717,6 +768,12 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile,
 	}
 
 	write_eac_attachments( inputFile, cueSheet );
+
+    // accurip
+    if (m_cfg.AttachAccurateRipLog())
+    {
+        write_accurip_log_attachments( cueSheet.GetAccurateRipLogs() );
+    }
 
 	// post
 	*m_os <<

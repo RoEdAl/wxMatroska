@@ -67,8 +67,17 @@ class wxCueSheetReader:
 
 	public:
 
-		static const char LOG_EXT[];
-		static const char LOG_MASK[];
+        struct eac_log
+        {
+            static const char EXT[];
+            static const char MASK[];
+        }; 
+
+        struct accurip_log
+        {
+            static const char EXT[];
+            static const char MASK[];
+        };
 
 		typedef wxUint32 ReadFlags;
 
@@ -84,7 +93,8 @@ class wxCueSheetReader:
             EC_CONVERT_UPPER_ROMAN_NUMERALS = 128,
             EC_CONVERT_LOWER_ROMAN_NUMERALS = 256,
             EC_CONVERT_COVER_TO_JPEG = 512,
-            EC_CORRECT_DASHES = 1024
+            EC_CORRECT_DASHES = 1024,
+            EC_FIND_ACCURIP_LOG = 2048
 		};
 
 		bool TestReadFlags( ReadFlags ) const;
@@ -135,6 +145,7 @@ class wxCueSheetReader:
 
 		static wxString GetOneTrackCue();
 
+        template<typename T>
 		static bool GetLogFile( const wxFileName&, bool, wxFileName& );
 
 		void AddError0( const wxString& );
@@ -203,6 +214,7 @@ class wxCueSheetReader:
 		bool ReadTagsFromMediaFile( const wxDataFile &, size_t, size_t );
 
 		bool FindLog( const wxCueSheetContent& );
+        bool FindAccurateRipLog( const wxCueSheetContent& );
 
 		void FindCoversInRelatedFiles();
 		bool FindCover( const wxCueSheetContent& );

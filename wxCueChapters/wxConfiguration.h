@@ -196,6 +196,7 @@ class wxConfiguration:
 		bool UseMLang() const;
 		bool UseFullPaths() const;
 		bool AttachEacLog() const;
+        bool AttachAccurateRipLog( ) const;
 		CUESHEET_ATTACH_MODE GetCueSheetAttachMode() const;
 		bool AttachCover() const;
 		wxString GetExt() const;

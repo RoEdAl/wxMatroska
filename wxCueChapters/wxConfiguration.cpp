@@ -311,7 +311,7 @@ wxConfiguration::wxConfiguration( void ):
 	m_sMatroskaTagsXmlExt( MATROSKA_TAGS_EXT ),
 	m_sMatroskaOptsExt( MATROSKA_OPTS_EXT ),
 	m_bMerge( false ),
-    m_nReadFlags( wxCueSheetReader::EC_PARSE_COMMENTS | wxCueSheetReader::EC_ELLIPSIZE_TAGS | wxCueSheetReader::EC_REMOVE_EXTRA_SPACES | wxCueSheetReader::EC_MEDIA_READ_TAGS | wxCueSheetReader::EC_FIND_COVER | wxCueSheetReader::EC_FIND_LOG | wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG | wxCueSheetReader::EC_CORRECT_DASHES ),
+    m_nReadFlags( wxCueSheetReader::EC_PARSE_COMMENTS | wxCueSheetReader::EC_ELLIPSIZE_TAGS | wxCueSheetReader::EC_REMOVE_EXTRA_SPACES | wxCueSheetReader::EC_MEDIA_READ_TAGS | wxCueSheetReader::EC_FIND_COVER | wxCueSheetReader::EC_FIND_LOG | wxCueSheetReader::EC_FIND_ACCURIP_LOG | wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG | wxCueSheetReader::EC_CORRECT_DASHES ),
 	m_bUseMLang( true ),
 	m_bUseFullPaths( false ),
 	m_eCsAttachMode( CUESHEET_ATTACH_NONE ),
@@ -354,6 +354,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 	cmdLine.AddSwitch( wxEmptyString, "read-media-tags", wxString::Format( _( "Embedded mode flag. Read tags from media file (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_MEDIA_READ_TAGS ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxEmptyString, "attach-eac-log", wxString::Format( _( "Attach EAC log file to mkvmerge options file (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_FIND_LOG ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxEmptyString, "attach-cover", wxString::Format( _( "Attach cover image (cover.*;front.*;album.*) to mkvmerge options file (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_FIND_COVER ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+    cmdLine.AddSwitch( wxEmptyString, "attach-accurip-log", wxString::Format( _( "Attach AccurateRip log (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_FIND_ACCURIP_LOG ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
     cmdLine.AddSwitch( "ru", "upper-roman-numerals", wxString::Format( _( "Convert roman numerals - upper case (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
     cmdLine.AddSwitch( "rl", "lower-roman-numerals", wxString::Format( _( "Convert roman numerals - lower case (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_CONVERT_LOWER_ROMAN_NUMERALS ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
     cmdLine.AddSwitch( wxEmptyString, "correct-dashes", wxString::Format( _( "Correct dashes (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_CORRECT_DASHES ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
@@ -630,6 +631,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	ReadReadFlags( cmdLine, "single-media-file", wxCueSheetReader::EC_SINGLE_MEDIA_FILE );
 	ReadReadFlags( cmdLine, "read-media-tags", wxCueSheetReader::EC_MEDIA_READ_TAGS );
 	ReadReadFlags( cmdLine, "attach-eac-log", wxCueSheetReader::EC_FIND_LOG );
+    ReadReadFlags( cmdLine, "attach-accurip-log", wxCueSheetReader::EC_FIND_ACCURIP_LOG );
 	ReadReadFlags( cmdLine, "attach-cover", wxCueSheetReader::EC_FIND_COVER );
     ReadReadFlags( cmdLine, "ru", wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS );
     ReadReadFlags( cmdLine, "rl", wxCueSheetReader::EC_CONVERT_LOWER_ROMAN_NUMERALS );
@@ -719,6 +721,7 @@ wxString wxConfiguration::GetReadFlagsDesc( wxCueSheetReader::ReadFlags flags )
 	AddFlag( as, flags, wxCueSheetReader::EC_MEDIA_READ_TAGS, "media-tags" );
 	AddFlag( as, flags, wxCueSheetReader::EC_FIND_COVER, "find-cover" );
 	AddFlag( as, flags, wxCueSheetReader::EC_FIND_LOG, "find-log" );
+    AddFlag( as, flags, wxCueSheetReader::EC_FIND_ACCURIP_LOG, "find-accurip-log" );
     AddFlag( as, flags, wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS, "upper-roman-numerals" );
     AddFlag( as, flags, wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS, "lower-roman-numerals" );
     AddFlag( as, flags, wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG, "convert-cover-to-jpeg" );
@@ -1301,6 +1304,11 @@ bool wxConfiguration::UseFullPaths() const
 bool wxConfiguration::AttachEacLog() const
 {
 	return (m_nReadFlags& wxCueSheetReader::EC_FIND_LOG) != 0;
+}
+
+bool wxConfiguration::AttachAccurateRipLog( ) const
+{
+    return (m_nReadFlags& wxCueSheetReader::EC_FIND_ACCURIP_LOG) != 0;
 }
 
 bool wxConfiguration::AttachCover() const

@@ -19,8 +19,11 @@ wxIMPLEMENT_DYNAMIC_CLASS( wxCueSheetReader, wxObject );
 
 // ===============================================================================
 
-const char wxCueSheetReader::LOG_EXT[]	= "log";
-const char wxCueSheetReader::LOG_MASK[] = "*.log";
+const char wxCueSheetReader::eac_log::EXT[]	= "log";
+const char wxCueSheetReader::eac_log::MASK[] = "*.log";
+
+const char wxCueSheetReader::accurip_log::EXT[] = "accurip";
+const char wxCueSheetReader::accurip_log::MASK[] = "*.accurip";
 
 // ===============================================================================
 
@@ -81,7 +84,7 @@ namespace
     };
 }
 
-
+template<typename T>
 bool wxCueSheetReader::GetLogFile( const wxFileName& inputFile, bool bAnyLog, wxFileName& logFile )
 {
 	wxASSERT( inputFile.IsOk() );
@@ -104,7 +107,7 @@ bool wxCueSheetReader::GetLogFile( const wxFileName& inputFile, bool bAnyLog, wx
 
 		wxString sFileName;
 
-		if ( sourceDir.GetFirst( &sFileName, LOG_MASK, wxDIR_FILES ) )
+		if ( sourceDir.GetFirst( &sFileName, T::MASK, wxDIR_FILES ) )
 		{
 			while ( true )
 			{
@@ -119,7 +122,7 @@ bool wxCueSheetReader::GetLogFile( const wxFileName& inputFile, bool bAnyLog, wx
 	else
 	{
 		logFile = inputFile;
-		logFile.SetExt( LOG_EXT );
+		logFile.SetExt( T::EXT );
 		wxASSERT( logFile.IsOk() );
 		return logFile.IsFileReadable();
 	}
@@ -172,7 +175,7 @@ wxCueSheetReader::wxCueSheetReader( void ):
 	m_reTrackComment( "cue[[.hyphen.][.underscore.][.low-line.]]track([[:digit:]]{1,2})[[.underscore.][.low-line.]]([[:alpha:][.hyphen.][.underscore.][.low-line.][.space.]]+)", wxRE_ADVANCED | wxRE_ICASE ),
 	m_reCommentMeta( "\\A([[.quotation-mark.]]{0,1})([[:upper:][.hyphen.][.underscore.][:space:][.low-line.]]+)\\1[[:space:]]+([^[:space:]].+)\\Z", wxRE_ADVANCED ),
 	m_bErrorsAsWarnings( true ),
-	m_nReadFlags( EC_PARSE_COMMENTS | EC_ELLIPSIZE_TAGS | EC_REMOVE_EXTRA_SPACES | EC_MEDIA_READ_TAGS | EC_FIND_COVER | EC_FIND_LOG | EC_CONVERT_UPPER_ROMAN_NUMERALS ),
+	m_nReadFlags( EC_PARSE_COMMENTS | EC_ELLIPSIZE_TAGS | EC_REMOVE_EXTRA_SPACES | EC_MEDIA_READ_TAGS | EC_FIND_COVER | EC_FIND_LOG| EC_FIND_ACCURIP_LOG | EC_CONVERT_UPPER_ROMAN_NUMERALS ),
 	m_sOneTrackCue( GetOneTrackCue() )
 {
 	wxASSERT( m_reKeywords.IsValid() );
@@ -250,7 +253,7 @@ bool wxCueSheetReader::FindLog( const wxCueSheetContent& content )
 	wxASSERT( TestReadFlags( EC_FIND_LOG ) );
 	wxFileName logFile;
 
-	if ( GetLogFile( content.GetSource().GetFileName(), TestReadFlags( EC_SINGLE_MEDIA_FILE ), logFile ) )
+	if ( GetLogFile<eac_log>( content.GetSource().GetFileName(), TestReadFlags( EC_SINGLE_MEDIA_FILE ), logFile ) )
 	{
 		m_cueSheet.AddLog( logFile );
 		return true;
@@ -259,6 +262,22 @@ bool wxCueSheetReader::FindLog( const wxCueSheetContent& content )
 	{
 		return false;
 	}
+}
+
+bool wxCueSheetReader::FindAccurateRipLog( const wxCueSheetContent& content )
+{
+    wxASSERT( TestReadFlags( EC_FIND_ACCURIP_LOG ) );
+    wxFileName logFile;
+
+    if (GetLogFile<accurip_log>( content.GetSource( ).GetFileName( ), TestReadFlags( EC_SINGLE_MEDIA_FILE ), logFile ))
+    {
+        m_cueSheet.AddAccuripLog( logFile );
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 bool wxCueSheetReader::FindCover( const wxCueSheetContent& content )
@@ -798,6 +817,11 @@ bool wxCueSheetReader::ParseCue( const wxCueSheetContent& content )
 		{
 			FindLog( content );
 		}
+
+        if (TestReadFlags( EC_FIND_ACCURIP_LOG ))
+        {
+            FindAccurateRipLog( content );
+        }
 
 		if ( TestReadFlags( EC_FIND_COVER ) )
 		{
