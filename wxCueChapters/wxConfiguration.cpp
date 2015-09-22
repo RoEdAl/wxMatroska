@@ -312,7 +312,7 @@ wxConfiguration::wxConfiguration( void ):
 	m_sMatroskaOptsExt( MATROSKA_OPTS_EXT ),
 	m_bMerge( false ),
     m_nReadFlags( wxCueSheetReader::EC_PARSE_COMMENTS | wxCueSheetReader::EC_ELLIPSIZE_TAGS | wxCueSheetReader::EC_REMOVE_EXTRA_SPACES | wxCueSheetReader::EC_MEDIA_READ_TAGS | wxCueSheetReader::EC_FIND_COVER | wxCueSheetReader::EC_FIND_LOG | wxCueSheetReader::EC_FIND_ACCURIP_LOG | wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG | wxCueSheetReader::EC_CORRECT_DASHES ),
-	m_bUseMLang( true ),
+	m_bUseMLang( false ),
 	m_bUseFullPaths( false ),
 	m_eCsAttachMode( CUESHEET_ATTACH_NONE ),
     m_bRenderArtistForTrack( false ),
