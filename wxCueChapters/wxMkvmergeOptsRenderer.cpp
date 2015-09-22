@@ -414,6 +414,7 @@ void wxMkvmergeOptsRenderer::write_log_attachments( const wxArrayFileName& logFi
 void wxMkvmergeOptsRenderer::write_accurip_log_attachments( const wxArrayFileName& logFiles )
 {
     size_t nAttachments = logFiles.GetCount( );
+    const wxString logExt( "log" );
 
     switch (nAttachments)
     {
@@ -429,7 +430,7 @@ void wxMkvmergeOptsRenderer::write_accurip_log_attachments( const wxArrayFileNam
                   *m_os <<
                       "# AccurateRip log" << endl <<
                       attachment::name << endl <<
-                      file_desc( fprefix::accurip, logFiles[0], nAttachments ) << endl <<
+                      file_desc( fprefix::accurip, logExt, nAttachments ) << endl <<
                       attachment::desc << endl <<
                       logFiles[0].GetFullName( ) << endl <<
                       attachment::mime << endl <<
@@ -446,7 +447,7 @@ void wxMkvmergeOptsRenderer::write_accurip_log_attachments( const wxArrayFileNam
                    {
                        *m_os <<
                            attachment::name << endl <<
-                           file_desc( fprefix::accurip, i + 1, logFiles[i], nAttachments ) << endl <<
+                           file_desc( fprefix::accurip, i + 1, logExt, nAttachments ) << endl <<
                            attachment::desc << endl <<
                            logFiles[i].GetFullName( ) << endl <<
                            attachment::mime << endl <<
