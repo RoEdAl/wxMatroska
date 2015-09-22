@@ -339,7 +339,7 @@ int wxMyApp::OnRun()
 	int						res		  = 0;
 	const wxArrayInputFile& inputFile = m_cfg.GetInputFiles();
 
-	for ( size_t i = 0, nCount = inputFile.GetCount(); i < nCount; i++ )
+	for ( size_t i = 0, nCount = inputFile.GetCount(); i < nCount; ++i )
 	{
 		wxFileName fn( inputFile[ i ].GetInputFile() );
 

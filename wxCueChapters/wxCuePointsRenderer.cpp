@@ -31,7 +31,7 @@ static wxString get_track_title( const wxTrack& track )
 	if ( nTags > 0u )
 	{
 		wxString s;
-		for ( size_t i = 0, nCount = tags.GetCount(); i < nCount; i++ )
+		for ( size_t i = 0, nCount = tags.GetCount(); i < nCount; ++i )
 		{
 			s << tags[ i ].GetFlattenValue() << ';';
 		}
@@ -67,7 +67,7 @@ void wxCuePointsRenderer::RenderDisc( const wxCueSheet& cueSheet )
 	}
 
 	const wxArrayTrack& tracks = cueSheet.GetTracks();
-	for ( size_t i = 0, nCount = tracks.GetCount(); i < nCount; i++ )
+	for ( size_t i = 0, nCount = tracks.GetCount(); i < nCount; ++i )
 	{
 		const wxTrack& track = tracks[ i ];
 		wxString	   sTitle( get_track_title( track ) );

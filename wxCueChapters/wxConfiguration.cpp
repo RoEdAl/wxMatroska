@@ -570,7 +570,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 
 	if ( cmdLine.GetParamCount() > 0 )
 	{
-		for ( size_t i = 0; i < cmdLine.GetParamCount(); i++ )
+		for ( size_t i = 0; i < cmdLine.GetParamCount(); ++i )
 		{
 			wxInputFile inputFile( cmdLine.GetParam( i ) );
 
