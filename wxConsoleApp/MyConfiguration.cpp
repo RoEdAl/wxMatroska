@@ -20,7 +20,7 @@ wxString MyConfiguration::ToString( bool b )
 bool MyConfiguration::ReadNegatableSwitchValue( const wxCmdLineParser& cmdLine, const wxString& name, bool& switchVal )
 {
 	wxCmdLineSwitchState state = cmdLine.FoundSwitch( name );
-	bool				 res   = true;
+	bool                 res   = true;
 
 	switch ( state )
 	{

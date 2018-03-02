@@ -19,5 +19,6 @@ class MyConfiguration:
 		static bool ReadNegatableSwitchValue( const wxCmdLineParser&, const wxString&, bool& );
 		static bool ReadNegatableSwitchValueAndNegate( const wxCmdLineParser&, const wxString&, bool& );
 };
+
 #endif
 

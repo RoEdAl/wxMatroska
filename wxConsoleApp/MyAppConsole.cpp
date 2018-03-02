@@ -7,20 +7,29 @@
 
 // ================================================================================
 
-const char MyAppConsole::APP_VENDOR_NAME[]	 = "Edmunt Pienkowsky";
-const char MyAppConsole::APP_AUTHOR[]		 = "Edmunt Pienkowsky - roed@onet.eu";
+const char MyAppConsole::APP_VENDOR_NAME[]   = "Edmunt Pienkowsky";
+const char MyAppConsole::APP_AUTHOR[]        = "Edmunt Pienkowsky - roed@onet.eu";
 const char MyAppConsole::LICENSE_FILE_NAME[] = "license.txt";
 
 namespace
 {
-    const size_t MAX_LICENSE_FILE_SIZE = 4 * 1024;
+	const size_t MAX_LICENSE_FILE_SIZE = 4 * 1024;
 }
 
 // ================================================================================
 
-MyAppConsole::MyAppConsole( void ):
+MyAppConsole::MyAppConsole( void ) :
 	m_sSeparator( '=', 75 )
 {}
+
+bool MyAppConsole::OnCmdLineParsed( wxCmdLineParser& parser )
+{
+	bool res = wxAppConsole::OnCmdLineParsed( parser );
+
+	wxLog::SetLogLevel( parser.Found( "verbose" ) ? wxLOG_Info : wxLOG_Message );
+
+	return res;
+}
 
 bool MyAppConsole::OnInit()
 {
@@ -75,10 +84,9 @@ bool MyAppConsole::CheckLicense()
 {
 #ifdef _DEBUG
 	return true;
-
 #else
 	const wxStandardPaths& paths = wxStandardPaths::Get();
-	wxFileName			   fn( paths.GetExecutablePath() );
+	wxFileName             fn( paths.GetExecutablePath() );
 	fn.SetFullName( LICENSE_FILE_NAME );
 
 	if ( !fn.IsFileReadable() )
@@ -108,7 +116,7 @@ bool MyAppConsole::CheckLicense()
 void MyAppConsole::ShowLicense( wxMessageOutput& out )
 {
 	const wxStandardPaths& paths = wxStandardPaths::Get();
-	wxFileName			   fn( paths.GetExecutablePath() );
+	wxFileName             fn( paths.GetExecutablePath() );
 
 	fn.SetFullName( LICENSE_FILE_NAME );
 

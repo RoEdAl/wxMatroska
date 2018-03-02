@@ -20,8 +20,9 @@ class wxReduntantSpacesRemover
 
 	protected:
 
-		wxRegEx	 m_re;
+		wxRegEx m_re;
 		wxUniChar m_cReplacement;
 };
+
 #endif
 

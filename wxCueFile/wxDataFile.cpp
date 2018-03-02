@@ -26,7 +26,7 @@ const wxDataFile::FILE_TYPE_STR wxDataFile::FileTypeString[] =
 
 // ===============================================================================
 
-wxDataFile::wxDataFile( void ):
+wxDataFile::wxDataFile( void ) :
 	m_ftype( wxDataFile::BINARY ), m_mediaType( wxDataFile::MEDIA_TYPE_UNKNOWN )
 {}
 
@@ -35,12 +35,12 @@ wxDataFile::wxDataFile( const wxDataFile& df )
 	copy( df );
 }
 
-wxDataFile::wxDataFile( const wxString& sFilePath, wxDataFile::FileType ftype ):
+wxDataFile::wxDataFile( const wxString& sFilePath, wxDataFile::FileType ftype ) :
 	m_fileName( sFilePath ),
 	m_ftype( ftype )
 {}
 
-wxDataFile::wxDataFile( const wxFileName& fileName, wxDataFile::FileType ftype ):
+wxDataFile::wxDataFile( const wxFileName& fileName, wxDataFile::FileType ftype ) :
 	m_fileName( fileName ),
 	m_ftype( ftype )
 {}
@@ -53,12 +53,12 @@ wxDataFile& wxDataFile::operator =( const wxDataFile& df )
 
 void wxDataFile::copy( const wxDataFile& df )
 {
-	m_fileName	   = df.m_fileName;
+	m_fileName     = df.m_fileName;
 	m_realFileName = df.m_realFileName;
-	m_ftype		   = df.m_ftype;
-	m_mediaType	   = df.m_mediaType;
-	m_tags		   = df.m_tags;
-	m_sCueSheet	   = df.m_sCueSheet;
+	m_ftype        = df.m_ftype;
+	m_mediaType    = df.m_mediaType;
+	m_tags         = df.m_tags;
+	m_sCueSheet    = df.m_sCueSheet;
 	wxDurationHolder::Copy( df );
 }
 
@@ -141,7 +141,7 @@ void wxDataFile::Clear()
 {
 	m_fileName.Clear();
 	m_realFileName.Clear();
-	m_ftype		= BINARY;
+	m_ftype     = BINARY;
 	m_mediaType = MEDIA_TYPE_UNKNOWN;
 	m_tags.Clear();
 	m_sCueSheet.Empty();
@@ -152,7 +152,7 @@ wxDataFile& wxDataFile::Assign( const wxString& sFilePath, wxDataFile::FileType 
 {
 	m_fileName = sFilePath;
 	m_realFileName.Clear();
-	m_ftype		= ftype;
+	m_ftype     = ftype;
 	m_mediaType = MEDIA_TYPE_UNKNOWN;
 	m_tags.Clear();
 	m_sCueSheet.Empty();
@@ -165,7 +165,7 @@ wxDataFile& wxDataFile::Assign( const wxFileName& fileName, wxDataFile::FileType
 {
 	m_fileName = fileName;
 	m_realFileName.Clear();
-	m_ftype		= ftype;
+	m_ftype     = ftype;
 	m_mediaType = MEDIA_TYPE_UNKNOWN;
 	m_tags.Clear();
 	m_sCueSheet.Empty();
@@ -193,7 +193,7 @@ bool wxDataFile::FindFile( wxFileName& fn, const wxString& sAlternateExt ) const
 		sTokens = "mp3";
 	}
 
-	wxFileName		  fnTry( m_fileName );
+	wxFileName        fnTry( m_fileName );
 	wxStringTokenizer tokenizer( sTokens, ',' );
 	while ( tokenizer.HasMoreTokens() )
 	{
@@ -246,7 +246,7 @@ bool wxDataFile::GetMediaInfo(
 		return false;
 	}
 
-	TagLib::File const*			   pFile   = fileRef.file();
+	TagLib::File const*            pFile   = fileRef.file();
 	TagLib::AudioProperties const* pAprops = pFile->audioProperties();
 
 	si.SetSamplingRate( pAprops->sampleRate() );
@@ -322,8 +322,8 @@ bool wxDataFile::GetInfo( const wxString& sAlternateExt )
 	}
 
 	wxSamplingInfo si;
-	wxULongLong	   frames;
-	bool		   res;
+	wxULongLong    frames;
+	bool           res;
 
 	if ( IsBinary() )
 	{
@@ -332,7 +332,7 @@ bool wxDataFile::GetInfo( const wxString& sAlternateExt )
 		m_tags.Clear();
 		m_sCueSheet.Empty();
 		frames = GetNumberOfFramesFromBinary( m_realFileName, si );
-		res	   = ( frames != wxSamplingInfo::wxInvalidNumberOfFrames );
+		res    = ( frames != wxSamplingInfo::wxInvalidNumberOfFrames );
 	}
 	else
 	{

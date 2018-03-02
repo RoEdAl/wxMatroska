@@ -9,7 +9,7 @@
 #include "MultiChannelWaveDrawer.h"
 #include "ArrayWaveDrawer.h"
 
-ArrayWaveDrawer::ArrayWaveDrawer( wxUint16 nChannels ):
+ArrayWaveDrawer::ArrayWaveDrawer( wxUint16 nChannels ) :
 	MultiChannelWaveDrawer( nChannels )
 {}
 

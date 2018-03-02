@@ -13,7 +13,7 @@ class wxEncodingDetection:
 		typedef wxCharTypeBuffer< wxByte > wxByteBuffer;
 		typedef wxSharedPtr< wxMBConv > wxMBConvSharedPtr;
 
-		static struct BOM
+		struct BOM
 		{
 			static const wxByte UTF32_BE[ 4 ];
 			static const wxByte UTF32_LE[ 4 ];
@@ -22,7 +22,7 @@ class wxEncodingDetection:
 			static const wxByte UTF8[ 3 ];
 		};
 
-		static struct CP
+		struct CP
 		{
 			static const wxUint32 UTF32_BE;
 			static const wxUint32 UTF32_LE;
@@ -31,17 +31,18 @@ class wxEncodingDetection:
 			static const wxUint32 UTF8;
 		};
 
-		static bool GetBOM( wxUint32, wxByteBuffer & );
+		static bool GetBOM( wxUint32, wxByteBuffer& );
 		static wxMBConvSharedPtr GetDefaultEncoding( bool, wxString& );
 		static wxUint32 GetDefaultEncoding();
 
-		static wxMBConvSharedPtr GetStandardMBConv( wxUint32, bool, wxString & );
+		static wxMBConvSharedPtr GetStandardMBConv( wxUint32, bool, wxString& );
 		static wxMBConvSharedPtr GetFileEncodingFromBOM( const wxFileName&, bool, wxString& );
 		static wxMBConvSharedPtr GetFileEncoding( const wxFileName&, bool, wxString& );
 
 	protected:
 
-		static bool test_bom( const wxByteBuffer &, const wxByte*, size_t );
+		static bool test_bom( const wxByteBuffer&, const wxByte*, size_t );
 };
+
 #endif
 

@@ -44,13 +44,13 @@ class wxCueSheet:
 	protected:
 
 		wxArrayCueSheetContent m_content;
-		wxArrayFileName		   m_logs;
-        wxArrayFileName		   m_accuripLogs;
-		wxArrayCoverFile	   m_covers;
-		wxArrayDataFile		   m_dataFiles;
-		wxArrayCueTag		   m_catalogs;
-		wxArrayFileName		   m_cdTextFiles;
-		wxArrayTrack		   m_tracks;
+		wxArrayFileName m_logs;
+		wxArrayFileName m_accuripLogs;
+		wxArrayCoverFile m_covers;
+		wxArrayDataFile m_dataFiles;
+		wxArrayCueTag m_catalogs;
+		wxArrayFileName m_cdTextFiles;
+		wxArrayTrack m_tracks;
 
 	protected:
 
@@ -80,8 +80,8 @@ class wxCueSheet:
 		const wxArrayCueSheetContent& GetContents() const;
 		size_t GetLogsCount() const;
 		const wxArrayFileName& GetLogs() const;
-        size_t GetAccurateRipLogsCount() const;
-        const wxArrayFileName& GetAccurateRipLogs() const;
+		size_t GetAccurateRipLogsCount() const;
+		const wxArrayFileName& GetAccurateRipLogs() const;
 		size_t GetCoversCount() const;
 		const wxArrayCoverFile& GetCovers() const;
 		void GetSortedCovers( wxArrayCoverFile&, wxImageHandler* const, int ) const;
@@ -97,7 +97,7 @@ class wxCueSheet:
 		const wxArrayDataFile& GetDataFiles() const;
 		size_t GetLastDataFileIdx() const;
 
-		bool GetRelatedTracks( size_t, size_t &, size_t & ) const;
+		bool GetRelatedTracks( size_t, size_t&, size_t& ) const;
 
 		void FindCommonTags( const wxTagSynonimsCollection&, const wxTagSynonimsCollection&, bool );
 
@@ -106,7 +106,7 @@ class wxCueSheet:
 		wxCueSheet& AddContent( const wxCueSheetContent& );
 		wxCueSheet& AddContent( const wxString& );
 		wxCueSheet& AddLog( const wxFileName& );
-        wxCueSheet& AddAccuripLog( const wxFileName& );
+		wxCueSheet& AddAccuripLog( const wxFileName& );
 		void AddCover( const wxFileName& );
 		void AddCover( const wxCoverFile& );
 		void AddCovers( const wxArrayCoverFile& );
@@ -124,19 +124,20 @@ class wxCueSheet:
 		wxTrack& GetLastTrack();
 		wxTrack& GetBeforeLastTrack();
 
-		bool	 HasTrack( size_t ) const;
+		bool HasTrack( size_t ) const;
 		wxTrack& GetTrackByNumber( size_t );
-		size_t	 GetTrackIdxFromNumber( size_t ) const;
+		size_t GetTrackIdxFromNumber( size_t ) const;
 
 		const wxTrack& GetTrack( size_t ) const;
 		const wxTrack& GetLastTrack() const;
-		wxArrayTrack&  SortTracks();
+		wxArrayTrack& SortTracks();
 
 		void Clear( void );
 
 		wxString Format( wxCueTag::TagSources, const wxString& ) const;
 
-		wxString FormatTrack( wxCueTag::TagSources, size_t, const wxString & ) const;
+		wxString FormatTrack( wxCueTag::TagSources, size_t, const wxString& ) const;
 };
+
 #endif	// _WX_CUE_SHEET_H_
 

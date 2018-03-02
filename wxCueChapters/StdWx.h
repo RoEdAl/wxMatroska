@@ -22,8 +22,8 @@
  *    GetClassInfoW.
  * That's why we define NOUSER.
  */
-#define WIN32_LEAN_AND_MEAN																																																																//
-																																																																						// Exclude
+#define WIN32_LEAN_AND_MEAN																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																//
+// Exclude
 #define NOUSER
 #define NOGDI
 #define NOMB
@@ -40,6 +40,8 @@
 typedef struct tagMSG
 {} MSG, * LPMSG;
 #endif
+
+#define wxDEBUG_LEVEL 0
 
 #include <wx/wx.h>
 #include <wx/defs.h>
@@ -70,8 +72,24 @@ typedef struct tagMSG
 
 #if defined( __WIN64__ )
 #define wxSizeTFmtSpec wxLongLongFmtSpec
+namespace
+{
+	inline wxTextOutputStream& WriteSizeT( wxTextOutputStream& stream, size_t c )
+	{
+		stream.Write64( c );
+		return stream;
+	}
+}
 #else
 #define wxSizeTFmtSpec
+namespace
+{
+	inline wxTextOutputStream& WriteSizeT( wxTextOutputStream& stream, size_t c )
+	{
+		stream.Write32( c );
+		return stream;
+	}
+}
 #endif
 
 #ifdef WIN32

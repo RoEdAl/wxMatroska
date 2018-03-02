@@ -28,8 +28,8 @@ class AudioRenderer:
 		AudioRenderer( wxUint64, wxUint32, bool, wxFloat32, wxUint32 );
 		const AudioColumnArray& GetAudioColumns() const;
 
-		bool		GenerateAudio( const wxFileName &, wxUint32, wxFloat32 ) const;
-		static bool GenerateAudio( const wxFileName &, const AudioColumnArray &, wxUint32, wxUint32, wxFloat32 );
+		bool GenerateAudio( const wxFileName&, wxUint32, wxFloat32 ) const;
+		static bool GenerateAudio( const wxFileName&, const AudioColumnArray&, wxUint32, wxUint32, wxFloat32 );
 
 	protected:
 
@@ -39,9 +39,10 @@ class AudioRenderer:
 
 	protected:
 
-		bool			 m_bUseLogarithmicScale;
-		wxUint32		 m_nSourceSamplerate;
+		bool m_bUseLogarithmicScale;
+		wxUint32 m_nSourceSamplerate;
 		AudioColumnArray m_ac;
 };
+
 #endif
 

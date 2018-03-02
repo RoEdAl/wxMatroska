@@ -38,20 +38,20 @@
 
 // ===============================================================================
 
-const wxChar wxMyApp::APP_NAME[]	= wxS( "wav2img" );
+const wxChar wxMyApp::APP_NAME[]    = wxS( "wav2img" );
 const wxChar wxMyApp::APP_VERSION[] = wxS( "1.0" );
 
 // ===============================================================================
 
-const wxChar wxMyApp::CMD_FFMPEG[]		   = wxS( "FFMPEG" );
-const wxChar wxMyApp::CMD_AUDIO[]		   = wxS( "AUDIO" );
-const wxChar wxMyApp::CMD_INPUT[]		   = wxS( "INPUT" );
+const wxChar wxMyApp::CMD_FFMPEG[]         = wxS( "FFMPEG" );
+const wxChar wxMyApp::CMD_AUDIO[]          = wxS( "AUDIO" );
+const wxChar wxMyApp::CMD_INPUT[]          = wxS( "INPUT" );
 const wxChar wxMyApp::CMD_INPUT_OVERLAY[]  = wxS( "INPUT_OVERLAY" );
 const wxChar wxMyApp::CMD_INPUT_DURATION[] = wxS( "INPUT_DURATION" );
 const wxChar wxMyApp::CMD_INPUT_FRAMES[]   = wxS( "INPUT_FRAMES" );
-const wxChar wxMyApp::CMD_INPUT_RATE[]	   = wxS( "INPUT_RATE" );
-const wxChar wxMyApp::CMD_OUTPUT[]		   = wxS( "OUTPUT" );
-const wxChar wxMyApp::CMD_KEY_FRAMES[]	   = wxS( "KEY_FRAMES" );
+const wxChar wxMyApp::CMD_INPUT_RATE[]     = wxS( "INPUT_RATE" );
+const wxChar wxMyApp::CMD_OUTPUT[]         = wxS( "OUTPUT" );
+const wxChar wxMyApp::CMD_KEY_FRAMES[]     = wxS( "KEY_FRAMES" );
 
 const wxChar wxMyApp::BACKGROUND_IMG[] = wxS( "background.png" );
 
@@ -112,9 +112,9 @@ void wxMyApp::InfoCmdLineTemplate( wxMessageOutput& out )
 
 void wxMyApp::InfoSystemSettings( wxMessageOutput& out )
 {
-	wxRect dplRect	 = wxGetClientDisplayRect();
-	int	   nDepth	 = wxDisplayDepth();
-	wxSize res		 = wxGetDisplayPPI();
+	wxRect dplRect   = wxGetClientDisplayRect();
+	int    nDepth    = wxDisplayDepth();
+	wxSize res       = wxGetDisplayPPI();
 	wxSize dplSizeMm = wxGetDisplaySizeMM();
 
 	out.Printf( _( "Display size (pixels): %dx%d (%dx%d)" ), dplRect.width, dplRect.height, dplRect.x, dplRect.y );
@@ -236,9 +236,9 @@ static void read_audio_samples( SoundFile& soundFile, MultiChannelWaveDrawer& wa
 	 * }
 	 */
 
-	int		   nChannels   = soundFile.GetInfo().channels;
-	int		   nSamplerate = soundFile.GetInfo().samplerate;
-	sf_count_t nBlock	   = nChannels * nSamplerate;
+	int        nChannels   = soundFile.GetInfo().channels;
+	int        nSamplerate = soundFile.GetInfo().samplerate;
+	sf_count_t nBlock      = nChannels * nSamplerate;
 
 	wxFloatArray block( new float[ nBlock ] );
 
@@ -292,9 +292,9 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 
 	const DrawerSettings& drawerSettings = cfg.GetDrawerSettings();
 
-	wxUint64 nSamples		= sfInfo.frames;
-	wxUint16 nChannels		= sfInfo.channels;
-	wxUint32 nSamplerate	= sfInfo.samplerate;
+	wxUint64 nSamples       = sfInfo.frames;
+	wxUint16 nChannels      = sfInfo.channels;
+	wxUint32 nSamplerate    = sfInfo.samplerate;
 	wxUint32 nTrackDuration = nSamples / nSamplerate;
 
 	if ( ( nSamples % nSamplerate ) != wxULL( 0 ) )	// round up
@@ -317,16 +317,16 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 
 		case DRAWING_MODE_POLY_PDF:
 		{
-			wxRect2DIntArray	  drawerRects;
+			wxRect2DIntArray      drawerRects;
 			const DrawerSettings& drawerSettings = cfg.GetDrawerSettings();
-			wxSize				  pageSize( cfg.GetImageSizePt() );
+			wxSize                pageSize( cfg.GetImageSizePt() );
 
 			if ( cfg.MultiChannel() )
 			{
 				cfg.GetDrawerRectsPt( nChannels, drawerRects );
 
 				McPdfWaveDrawer* pPc  = new McPdfWaveDrawer( nChannels );
-				wxPdfDocument*	 pPdf = pPc->Initialize( pageSize, drawerSettings.GetBackgroundColour(), drawerRects, cfg.GetInputFile().GetFullName() );
+				wxPdfDocument*   pPdf = pPc->Initialize( pageSize, drawerSettings.GetBackgroundColour(), drawerRects, cfg.GetInputFile().GetFullName() );
 
 				for ( wxUint16 nChannel = 0; nChannel < nChannels; nChannel++ )
 				{
@@ -356,7 +356,7 @@ static McChainWaveDrawer* create_wave_drawer( const wxConfiguration& cfg, const 
 		case DRAWING_MODE_POLY:
 		{
 			const DrawerSettings& drawerSettings = cfg.GetDrawerSettings();
-			wxRect2DIntArray	  drawerRects;
+			wxRect2DIntArray      drawerRects;
 
 			if ( cfg.MultiChannel() )
 			{
@@ -431,7 +431,7 @@ static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, wxEnhM
 	wxASSERT( pEmf != NULL );
 
 	wxLogInfo( _( "Opening metafile" ) );
-	const wxSize&	imgSize = cfg.GetImageSize();
+	const wxSize&   imgSize = cfg.GetImageSize();
 	wxEnhMetaFileDC emfDc( fn.GetFullPath(), imgSize.GetWidth(), imgSize.GetHeight(), fn.GetName() );
 
 	if ( !emfDc.IsOk() )
@@ -455,6 +455,7 @@ static bool save_image( const wxFileName& fn, const wxConfiguration& cfg, wxEnhM
 		return false;
 	}
 }
+
 #endif
 #endif
 
@@ -469,7 +470,7 @@ static wxImage draw_progress( MemoryGraphicsContext& mgc, const NinePatchBitmap&
 
 		{
 			const wxSize&  imgSize = mgc.GetSize();
-			wxGraphicsPath path	   = pGc->CreatePath();
+			wxGraphicsPath path    = pGc->CreatePath();
 			path.AddRectangle( 0, 0, imgSize.GetWidth(), imgSize.GetHeight() );
 
 			pGc->SetBrush( wxColour( 0, 0, 0, wxALPHA_TRANSPARENT ) );
@@ -509,7 +510,7 @@ static wxString read_cmd_file( const wxFileName& cmdFile, bool bUseMLang )
 {
 	wxLogInfo( _( "Opening command template file \u201C%s\u201D" ), cmdFile.GetFullName() );
 
-	wxString							   sCPDescription;
+	wxString                               sCPDescription;
 	wxEncodingDetection::wxMBConvSharedPtr pConv( wxEncodingDetection::GetFileEncoding( cmdFile, bUseMLang, sCPDescription ) );
 
 	if ( pConv )
@@ -531,7 +532,7 @@ static wxString read_cmd_file( const wxFileName& cmdFile, bool bUseMLang )
 	}
 
 	wxTextInputStream tis( fis, wxT( '\t' ), *pConv );
-	wxString		  sCmdLine;
+	wxString          sCmdLine;
 	while ( !tis.GetInputStream().Eof() )
 	{
 		wxString s( tis.ReadLine() );
@@ -687,7 +688,7 @@ class AnimationThread:
 						 const wxRect2DIntArray& rects,
 						 wxImageResizeQuality eResizeQuality,
 						 const wxFileName& workDir,
-						 const wxConfiguration& cfg ):
+						 const wxConfiguration& cfg ) :
 			wxThread( wxTHREAD_JOINABLE ),
 			m_nThreadNumber( nThreadNumber ),
 			m_nWidth( nWidth ),
@@ -718,7 +719,7 @@ class AnimationThread:
 			fn.SetExt( sExt );
 
 			wxUint32 nWidth;
-			int		 nSeqCounter = 0;
+			int      nSeqCounter = 0;
 			while ( GetNextWidth( nWidth ) )
 			{
 				if ( TestDestroy() )
@@ -792,18 +793,18 @@ class AnimationThread:
 
 	protected:
 
-		int				   m_nThreadNumber;
+		int m_nThreadNumber;
 		volatile wxUint32& m_nWidth;
-		wxUint32		   m_nMaxWidth;
-		wxAtomicInt&	   m_nErrorCounter;
+		wxUint32 m_nMaxWidth;
+		wxAtomicInt& m_nErrorCounter;
 		wxCriticalSection& m_critSect;
 
-		wxSize				   m_imgSize;
-		MemoryGraphicsContext  m_mgc;
-		NinePatchBitmap		   m_npb;
-		wxRect2DIntArray	   m_rects;
-		wxImageResizeQuality   m_eResizeQuality;
-		wxFileName			   m_workDir;
+		wxSize m_imgSize;
+		MemoryGraphicsContext m_mgc;
+		NinePatchBitmap m_npb;
+		wxRect2DIntArray m_rects;
+		wxImageResizeQuality m_eResizeQuality;
+		wxFileName m_workDir;
 		const wxConfiguration& m_cfg;
 };
 
@@ -846,8 +847,8 @@ static bool create_animation(
 
 	if ( nCpuCount > 1 )// many threads
 	{
-		volatile wxUint32 nWidth		= 0u;
-		wxAtomicInt		  nErrorCounter = 0;
+		volatile wxUint32 nWidth        = 0u;
+		wxAtomicInt       nErrorCounter = 0;
 		wxCriticalSection critSect;
 
 		wxThreadArray ta( nCpuCount );
@@ -1068,8 +1069,8 @@ static bool save_rendered_wave( McChainWaveDrawer& waveDrawer, const wxConfigura
 	{
 		case DRAWING_MODE_AUDIO:
 		{
-			ArrayWaveDrawer* pAwd			= static_cast< ArrayWaveDrawer* >( waveDrawer.GetWaveDrawer() );
-			AudioRenderer*	 pAudioRenderer = static_cast< AudioRenderer* >( pAwd->GetDrawer( 0 ) );
+			ArrayWaveDrawer* pAwd           = static_cast< ArrayWaveDrawer* >( waveDrawer.GetWaveDrawer() );
+			AudioRenderer*   pAudioRenderer = static_cast< AudioRenderer* >( pAwd->GetDrawer( 0 ) );
 			return pAudioRenderer->GenerateAudio( fn, cfg.GetDrawerSettings().GetFrequency(), cfg.GetDrawerSettings().GetBaselinePosition() );
 		}
 
@@ -1158,7 +1159,7 @@ int wxMyApp::OnRun()
 	}
 
 	const SF_INFO& sfInfo = sfReader.GetInfo();
-	wxTimeSpan	   duration( wxTimeSpan::Milliseconds( sfInfo.frames * 1000 / sfInfo.samplerate ) );
+	wxTimeSpan     duration( wxTimeSpan::Milliseconds( sfInfo.frames * 1000 / sfInfo.samplerate ) );
 	wxLogMessage( _( "Format: %s, samplerate: %uHz, channels: %u, duration: %s" ),
 			SoundFile::GetFormatName( sfInfo.format ),
 			sfInfo.samplerate,

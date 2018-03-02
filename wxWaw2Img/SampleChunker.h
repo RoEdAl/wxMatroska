@@ -32,14 +32,15 @@ class SampleChunker:
 
 	private:
 
-		wxUint64						m_nLimit;
-		wxFloat32						m_fMaxSample;
-		wxFloat32						m_fAbsMaxSample;
+		wxUint64 m_nLimit;
+		wxFloat32 m_fMaxSample;
+		wxFloat32 m_fAbsMaxSample;
 		wxScopedPtr< LogarithmicScale > m_pLogarithmicScale;
 
 	private:
 
 		wxUint64 get_next_sample_limit() const;
 };
+
 #endif
 

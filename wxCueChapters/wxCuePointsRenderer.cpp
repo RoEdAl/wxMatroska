@@ -19,14 +19,14 @@
 
 // ===============================================================================
 
-wxCuePointsRenderer::wxCuePointsRenderer( const wxConfiguration& cfg ):
+wxCuePointsRenderer::wxCuePointsRenderer( const wxConfiguration& cfg ) :
 	wxPrimitiveRenderer( cfg )
 {}
 
 static wxString get_track_title( const wxTrack& track )
 {
 	wxArrayCueTag tags;
-	size_t		  nTags = wxCueTag::GetTags( track.GetCdTextTags(), wxCueTag::Name::TITLE, tags );
+	size_t        nTags = wxCueTag::GetTags( track.GetCdTextTags(), wxCueTag::Name::TITLE, tags );
 
 	if ( nTags > 0u )
 	{
@@ -47,7 +47,7 @@ static wxString get_track_title( const wxTrack& track )
 void wxCuePointsRenderer::RenderDisc( const wxCueSheet& cueSheet )
 {
 	wxSamplingInfo si;
-	wxDateTime	   dtNow( wxDateTime::Now() );
+	wxDateTime     dtNow( wxDateTime::Now() );
 
 	*m_os <<
 		"# This file was created by " << wxGetApp().GetAppDisplayName() << endl <<
@@ -70,9 +70,9 @@ void wxCuePointsRenderer::RenderDisc( const wxCueSheet& cueSheet )
 	for ( size_t i = 0, nCount = tracks.GetCount(); i < nCount; ++i )
 	{
 		const wxTrack& track = tracks[ i ];
-		wxString	   sTitle( get_track_title( track ) );
-		wxIndex		   idx;
-		wxString	   sIdx;
+		wxString       sTitle( get_track_title( track ) );
+		wxIndex        idx;
+		wxString       sIdx;
 
 		if ( track.GetNumber() == 1u && !m_cfg.TrackOneIndexOne() && track.HasZeroIndex() )
 		{
@@ -89,7 +89,8 @@ void wxCuePointsRenderer::RenderDisc( const wxCueSheet& cueSheet )
 		if ( !duration.IsValid() )
 		{
 			wxLogWarning( _( "Cannot render cue point for track %u" ), i );
-			*m_os << _( "# Cannot render cue point for track " ) << i << endl;
+			*m_os << _( "# Cannot render cue point for track " );
+			WriteSizeT( *m_os, i ) << endl;
 			continue;
 		}
 

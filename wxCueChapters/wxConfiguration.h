@@ -78,9 +78,9 @@ class wxConfiguration:
 
 	protected:
 
-        typedef VALUE_NAME_PAIR<CUESHEET_ATTACH_MODE> CuesheetAttachModeName;
-        typedef VALUE_NAME_PAIR<RENDER_MODE> RenderModeName;
-        typedef VALUE_NAME_PAIR<INFO_SUBJECT> INFO_SUBJECT_DESC;
+		typedef VALUE_NAME_PAIR< CUESHEET_ATTACH_MODE > CuesheetAttachModeName;
+		typedef VALUE_NAME_PAIR< RENDER_MODE > RenderModeName;
+		typedef VALUE_NAME_PAIR< INFO_SUBJECT > INFO_SUBJECT_DESC;
 
 		static const CuesheetAttachModeName AttachModeNames[];
 		static const RenderModeName RenderModeNames[];
@@ -89,29 +89,29 @@ class wxConfiguration:
 	protected:
 
 		INFO_SUBJECT m_infoSubject;
-		bool		 m_bChapterTimeEnd;																																																																																																																																//
+		bool m_bChapterTimeEnd;	//
 		// default=true
-		bool		  m_bUnknownChapterTimeEndToNextChapter;		// default=false
+		bool m_bUnknownChapterTimeEndToNextChapter;	// default=false
 		unsigned long m_nChapterOffset;	//
 		// in
 		// frames
-		bool						m_bUseDataFiles;// default=true
-		bool						m_bCorrectQuotationMarks;
-		RENDER_MODE					m_eRenderMode;
-		bool						m_bGenerateTags;
-		bool						m_bGenerateMkvmergeOpts;
-		bool						m_bRunMkvmerge;
-		bool						m_bGenerateEditionUID;
-		FILE_ENCODING				m_eFileEncoding;
-		bool						m_bTrackOneIndexOne;// or zero
-		bool						m_bAbortOnError;
-		bool						m_bHiddenIndexes;
-		bool						m_bMerge;
+		bool m_bUseDataFiles;	// default=true
+		bool m_bCorrectQuotationMarks;
+		RENDER_MODE m_eRenderMode;
+		bool m_bGenerateTags;
+		bool m_bGenerateMkvmergeOpts;
+		bool m_bRunMkvmerge;
+		bool m_bGenerateEditionUID;
+		FILE_ENCODING m_eFileEncoding;
+		bool m_bTrackOneIndexOne;	// or zero
+		bool m_bAbortOnError;
+		bool m_bHiddenIndexes;
+		bool m_bMerge;
 		wxCueSheetReader::ReadFlags m_nReadFlags;
-		wxCueTag::TagSources		m_nTagSources;
-		bool						m_bUseMLang;
-		bool						m_bUseFullPaths;
-		CUESHEET_ATTACH_MODE		m_eCsAttachMode;
+		wxCueTag::TagSources m_nTagSources;
+		bool m_bUseMLang;
+		bool m_bUseFullPaths;
+		CUESHEET_ATTACH_MODE m_eCsAttachMode;
 
 		wxString m_sAlternateExtensions;
 		wxString m_sLang;
@@ -119,7 +119,7 @@ class wxConfiguration:
 		wxString m_sMatroskaNameFormat;
 
 		wxArrayInputFile m_inputFile;
-		wxFileName		 m_outputFile;
+		wxFileName m_outputFile;
 
 		wxString m_sCueSheetExt;
 		wxString m_sMatroskaChaptersXmlExt;
@@ -128,12 +128,12 @@ class wxConfiguration:
 
 		wxSortedArrayString m_asLang;
 
-        bool m_bRenderArtistForTrack;
-        int m_nJpegImageQuality;
+		bool m_bRenderArtistForTrack;
+		int m_nJpegImageQuality;
 
-    protected:
+	protected:
 
-        wxImageHandler* m_imageHandler;
+		wxImageHandler* m_imageHandler;
 
 	protected:
 
@@ -165,9 +165,9 @@ class wxConfiguration:
 		bool GetUseDataFiles() const;
 		const wxString& GetAlternateExtensions() const;
 		bool HasAlternateExtensions() const;
-		const wxString&			GetLang() const;
-		const wxString&			GetTrackNameFormat() const;
-		const wxString&			GetMatroskaNameFormat() const;
+		const wxString& GetLang() const;
+		const wxString& GetTrackNameFormat() const;
+		const wxString& GetMatroskaNameFormat() const;
 		const wxArrayInputFile& GetInputFiles() const;
 		bool CorrectQuotationMarks() const;
 		RENDER_MODE GetRenderMode() const;
@@ -184,11 +184,12 @@ class wxConfiguration:
 		bool GenerateEditionUID() const;
 		FILE_ENCODING GetFileEncoding() const;
 		wxString GetXmlFileEncoding() const;
-        bool RenderArtistForTrack() const;
-        bool ConvertCoversToJpeg() const;
-        int GetJpegImageQuality() const;
+		bool RenderArtistForTrack() const;
+		bool ConvertCoversToJpeg() const;
+		int GetJpegImageQuality() const;
 
 		wxSharedPtr< wxMBConv > GetXmlEncoding() const;
+
 		wxSharedPtr< wxTextOutputStream > GetOutputTextStream( wxOutputStream& ) const;
 		bool MergeMode() const;
 		wxCueSheetReader::ReadFlags GetReadFlags() const;
@@ -196,7 +197,7 @@ class wxConfiguration:
 		bool UseMLang() const;
 		bool UseFullPaths() const;
 		bool AttachEacLog() const;
-        bool AttachAccurateRipLog( ) const;
+		bool AttachAccurateRipLog() const;
 		CUESHEET_ATTACH_MODE GetCueSheetAttachMode() const;
 		bool AttachCover() const;
 		wxString GetExt() const;
@@ -206,22 +207,22 @@ class wxConfiguration:
 		bool GetOutputCueSheetFile( const wxInputFile&, const wxString&, wxFileName& ) const;
 		bool GetOutputFile( const wxInputFile&, const wxString&, const wxString&, wxFileName& ) const;
 
-        wxImageHandler* const GetImageHandler() const;
+		wxImageHandler* const GetImageHandler() const;
 
 	public:
 
-		static const char	CUE_SHEET_EXT[];
-		static const char	MATROSKA_CHAPTERS_EXT[];
-		static const char	MATROSKA_TAGS_EXT[];
-		static const char	MATROSKA_OPTS_EXT[];
-		static const char	MATROSKA_AUDIO_EXT[];
-		static const char	CUESHEET_EXT[];
-		static const wxChar	MATROSKA_NAME_FORMAT[];
-		static const wxChar	TRACK_NAME_FORMAT[];
+		static const char CUE_SHEET_EXT[];
+		static const char MATROSKA_CHAPTERS_EXT[];
+		static const char MATROSKA_TAGS_EXT[];
+		static const char MATROSKA_OPTS_EXT[];
+		static const char MATROSKA_AUDIO_EXT[];
+		static const char CUESHEET_EXT[];
+		static const wxChar MATROSKA_NAME_FORMAT[];
+		static const wxChar TRACK_NAME_FORMAT[];
 		static const size_t MAX_EXT_LEN;
-		static const char	LANG_FILE_URL[];
-		static const char	LANG_FILE_NAME[];
-		static const char	LANG_UND[];
+		static const char LANG_FILE_URL[];
+		static const char LANG_FILE_NAME[];
+		static const char LANG_UND[];
 
 	public:
 
@@ -233,7 +234,8 @@ class wxConfiguration:
 		void Dump() const;
 		void BuildXmlComments( const wxFileName&, wxXmlNode* ) const;
 
-        bool InitJpegHandler();
+		bool InitJpegHandler();
 };
+
 #endif	// _WX_CONFIGURATION_H
 

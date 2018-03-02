@@ -8,7 +8,7 @@
 NinePatchBitmap::NinePatchBitmap( void )
 {}
 
-NinePatchBitmap::NinePatchBitmap( const NinePatchBitmap& npb ):
+NinePatchBitmap::NinePatchBitmap( const NinePatchBitmap& npb ) :
 	m_img( npb.m_img ), m_stretchedArea( npb.m_stretchedArea )
 {}
 
@@ -46,9 +46,9 @@ bool NinePatchBitmap::Init( const wxColour& clrBorder, const wxColour& crlInside
 		pGc->DrawPath( p );
 	}
 
-	m_stretchedArea.m_x		 = nBorderWidth;
-	m_stretchedArea.m_y		 = nBorderWidth;
-	m_stretchedArea.m_width	 = 8;
+	m_stretchedArea.m_x      = nBorderWidth;
+	m_stretchedArea.m_y      = nBorderWidth;
+	m_stretchedArea.m_width  = 8;
 	m_stretchedArea.m_height = 8;
 
 	wxImage img( mgc.GetImage() );
@@ -70,13 +70,13 @@ class PixelIterator
 			PixelWhiteOrTransparent
 		};
 
-		PixelIterator( const wxImage& img, wxUint32 nRow, wxUint32 nColumn ):
+		PixelIterator( const wxImage& img, wxUint32 nRow, wxUint32 nColumn ) :
 			m_img( img ), m_nRow( nRow ), m_nColumn( nColumn )
 		{
 			wxASSERT( img.IsOk() );
 		}
 
-		PixelIterator( const PixelIterator& pi ):
+		PixelIterator( const PixelIterator& pi ) :
 			m_img( pi.m_img ), m_nRow( pi.m_nRow ), m_nColumn( pi.m_nColumn )
 		{}
 
@@ -118,8 +118,8 @@ class PixelIterator
 	protected:
 
 		const wxImage& m_img;
-		wxUint32	   m_nRow;
-		wxUint32	   m_nColumn;
+		wxUint32 m_nRow;
+		wxUint32 m_nColumn;
 };
 
 class HorizontalPixelIterator:
@@ -137,11 +137,11 @@ class HorizontalPixelIterator:
 			return HorizontalPixelIterator( img, nRow, img.GetWidth() );
 		}
 
-		HorizontalPixelIterator( const wxImage& img, wxUint32 nRow ):
+		HorizontalPixelIterator( const wxImage& img, wxUint32 nRow ) :
 			PixelIterator( img, nRow, 0u )
 		{}
 
-		HorizontalPixelIterator( const HorizontalPixelIterator& hpi ):
+		HorizontalPixelIterator( const HorizontalPixelIterator& hpi ) :
 			PixelIterator( hpi )
 		{}
 
@@ -158,7 +158,7 @@ class HorizontalPixelIterator:
 
 	protected:
 
-		HorizontalPixelIterator( const wxImage& img, wxUint32 nRow, wxUint32 nColumn ):
+		HorizontalPixelIterator( const wxImage& img, wxUint32 nRow, wxUint32 nColumn ) :
 			PixelIterator( img, nRow, nColumn )
 		{}
 };
@@ -178,11 +178,11 @@ class VerticalPixelIterator:
 			return VerticalPixelIterator( img, img.GetHeight(), nColumn );
 		}
 
-		VerticalPixelIterator( const wxImage& img, wxUint32 nColumn ):
+		VerticalPixelIterator( const wxImage& img, wxUint32 nColumn ) :
 			PixelIterator( img, 0u, nColumn )
 		{}
 
-		VerticalPixelIterator( const VerticalPixelIterator& vpi ):
+		VerticalPixelIterator( const VerticalPixelIterator& vpi ) :
 			PixelIterator( vpi )
 		{}
 
@@ -199,7 +199,7 @@ class VerticalPixelIterator:
 
 	protected:
 
-		VerticalPixelIterator( const wxImage& img, wxUint32 nRow, wxUint32 nColumn ):
+		VerticalPixelIterator( const wxImage& img, wxUint32 nRow, wxUint32 nColumn ) :
 			PixelIterator( img, nRow, nColumn )
 		{}
 };
@@ -207,7 +207,7 @@ class VerticalPixelIterator:
 template< class I >
 bool get_black_position_and_range( const I& startIt, const I& stopIt, wxUint32& nPos, wxUint32& nLen )
 {
-	int		 phase = 0;
+	int      phase = 0;
 	wxUint32 nStart, nStop;
 
 	for ( I i( startIt ); i != stopIt && phase >= 0; ++i )
@@ -273,10 +273,10 @@ bool NinePatchBitmap::analyze_image( const wxImage& img, wxRect2DInt& stretchedA
 		get_black_position_and_range( HorizontalPixelIterator::GetStartPixelIterator( img, 0u ), HorizontalPixelIterator::GetEndPixelIterator( img, 0u ), lineXStart, lineXStop ) &&
 		get_black_position_and_range( VerticalPixelIterator::GetStartPixelIterator( img, 0u ), VerticalPixelIterator::GetEndPixelIterator( img, 0u ), lineYStart, lineYStop ) )
 	{
-		stretchedArea.m_x	  = lineXStart;
+		stretchedArea.m_x     = lineXStart;
 		stretchedArea.m_width = lineXStop - lineXStart;
 
-		stretchedArea.m_y	   = lineYStart;
+		stretchedArea.m_y      = lineYStart;
 		stretchedArea.m_height = lineYStop - lineYStart;
 
 		stretchedArea.m_x -= 1;
@@ -331,7 +331,7 @@ wxImage NinePatchBitmap::GetStretchedEx( wxRect2DInt& rcStretchedArea, wxImageRe
 	rcStretchedArea.m_y -= m_stretchedArea.m_y;
 
 	wxSize minSize( GetMinimumImageSize() );
-	rcStretchedArea.m_width	 += minSize.GetWidth();
+	rcStretchedArea.m_width  += minSize.GetWidth();
 	rcStretchedArea.m_height += minSize.GetHeight();
 
 	return GetStretched( rcStretchedArea.GetSize(), resizeQuality );
@@ -379,13 +379,13 @@ wxImage NinePatchBitmap::GetStretched( const wxSize& rcSize, wxImageResizeQualit
 	wxRect2DInt rcDst;
 
 	// upper-left corner
-	rcSrc.m_x	   = 0;
-	rcSrc.m_y	   = 0;
+	rcSrc.m_x      = 0;
+	rcSrc.m_y      = 0;
 	rcSrc.m_width  = m_stretchedArea.m_x;
 	rcSrc.m_height = m_stretchedArea.m_y;
 
-	rcDst.m_x	   = 0;
-	rcDst.m_y	   = 0;
+	rcDst.m_x      = 0;
+	rcDst.m_y      = 0;
 	rcDst.m_width  = rcSrc.m_width;
 	rcDst.m_height = rcSrc.m_height;
 
@@ -393,32 +393,32 @@ wxImage NinePatchBitmap::GetStretched( const wxSize& rcSize, wxImageResizeQualit
 
 	// upper - middle, stretched horizontally
 
-	rcSrc.m_x	 += rcSrc.m_width;
+	rcSrc.m_x    += rcSrc.m_width;
 	rcSrc.m_width = m_stretchedArea.m_width;
 
-	rcDst.m_x	 += rcDst.m_width;
+	rcDst.m_x    += rcDst.m_width;
 	rcDst.m_width = rcSize.GetWidth() - ( imgSize.GetWidth() - m_stretchedArea.m_width );
 
 	draw_bmp( si, rcSrc, rcDst, resizeQuality );
 
 	// upper - right corner
-	rcSrc.m_x	 += rcSrc.m_width;
+	rcSrc.m_x    += rcSrc.m_width;
 	rcSrc.m_width = imgSize.GetWidth() - m_stretchedArea.GetRight();
 
-	rcDst.m_x	 += rcDst.m_width;
+	rcDst.m_x    += rcDst.m_width;
 	rcDst.m_width = rcSrc.m_width;
 
 	draw_bmp( si, rcSrc, rcDst, resizeQuality );
 
 	// middle - left, stretchd vertically
 
-	rcSrc.m_x	   = 0;
-	rcSrc.m_y	   = m_stretchedArea.m_y;
+	rcSrc.m_x      = 0;
+	rcSrc.m_y      = m_stretchedArea.m_y;
 	rcSrc.m_width  = m_stretchedArea.m_x;
 	rcSrc.m_height = m_stretchedArea.m_height;
 
-	rcDst.m_x	   = 0;
-	rcDst.m_y	  += rcDst.m_height;
+	rcDst.m_x      = 0;
+	rcDst.m_y     += rcDst.m_height;
 	rcDst.m_width  = rcSrc.m_width;
 	rcDst.m_height = rcSize.GetHeight() - ( imgSize.GetHeight() - m_stretchedArea.m_height );
 
@@ -427,28 +427,28 @@ wxImage NinePatchBitmap::GetStretched( const wxSize& rcSize, wxImageResizeQualit
 	// middle - middle, stretched horizontally and vertically
 	rcSrc = m_stretchedArea;
 
-	rcDst.m_x	 += rcDst.m_width;
+	rcDst.m_x    += rcDst.m_width;
 	rcDst.m_width = rcSize.GetWidth() - ( imgSize.GetWidth() - m_stretchedArea.m_width );
 
 	draw_bmp( si, rcSrc, rcDst, resizeQuality );
 
 	// middle - right, stretched vertically
-	rcSrc.m_x	 += rcSrc.m_width;
+	rcSrc.m_x    += rcSrc.m_width;
 	rcSrc.m_width = imgSize.GetWidth() - m_stretchedArea.GetRight();
 
-	rcDst.m_x	 += rcDst.m_width;
+	rcDst.m_x    += rcDst.m_width;
 	rcDst.m_width = rcSrc.m_width;
 
 	draw_bmp( si, rcSrc, rcDst, resizeQuality );
 
 	// bottom - left corner
-	rcSrc.m_x	   = 0;
-	rcSrc.m_y	   = m_stretchedArea.GetBottom();
+	rcSrc.m_x      = 0;
+	rcSrc.m_y      = m_stretchedArea.GetBottom();
 	rcSrc.m_width  = m_stretchedArea.m_x;
 	rcSrc.m_height = imgSize.GetHeight() - m_stretchedArea.GetBottom();
 
-	rcDst.m_x	   = 0;
-	rcDst.m_y	  += rcDst.m_height;
+	rcDst.m_x      = 0;
+	rcDst.m_y     += rcDst.m_height;
 	rcDst.m_width  = rcSrc.m_width;
 	rcDst.m_height = rcSrc.m_height;
 
@@ -456,19 +456,19 @@ wxImage NinePatchBitmap::GetStretched( const wxSize& rcSize, wxImageResizeQualit
 
 	// bottom - middle, stretched horizontally
 
-	rcSrc.m_x	 += rcSrc.m_width;
+	rcSrc.m_x    += rcSrc.m_width;
 	rcSrc.m_width = m_stretchedArea.m_width;
 
-	rcDst.m_x	 += rcDst.m_width;
+	rcDst.m_x    += rcDst.m_width;
 	rcDst.m_width = rcSize.GetWidth() - ( imgSize.GetWidth() - m_stretchedArea.m_width );
 
 	draw_bmp( si, rcSrc, rcDst, resizeQuality );
 
 	// bottom - right corner
-	rcSrc.m_x	 += rcSrc.m_width;
+	rcSrc.m_x    += rcSrc.m_width;
 	rcSrc.m_width = imgSize.GetWidth() - m_stretchedArea.GetRight();
 
-	rcDst.m_x	 += rcDst.m_width;
+	rcDst.m_x    += rcDst.m_width;
 	rcDst.m_width = rcSrc.m_width;
 
 	draw_bmp( si, rcSrc, rcDst, resizeQuality );

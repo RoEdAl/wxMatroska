@@ -15,13 +15,13 @@ IMPLEMENT_DYNAMIC_CLASS( wxTagSynonims, wxObject )
 wxTagSynonims::wxTagSynonims( void )
 {}
 
-wxTagSynonims::wxTagSynonims( const wxString& sName ):
+wxTagSynonims::wxTagSynonims( const wxString& sName ) :
 	m_sName( sName )
 {
 	wxASSERT( !sName.IsEmpty() );
 }
 
-wxTagSynonims::wxTagSynonims( const wxString& sName, const wxArrayString& asSynonims ):
+wxTagSynonims::wxTagSynonims( const wxString& sName, const wxArrayString& asSynonims ) :
 	m_sName( sName ), m_asSynonims( asSynonims )
 {
 	wxASSERT( !sName.IsEmpty() );
@@ -40,7 +40,7 @@ wxTagSynonims& wxTagSynonims::operator =( const wxTagSynonims& synonims )
 
 void wxTagSynonims::copy( const wxTagSynonims& synonims )
 {
-	m_sName		 = synonims.m_sName;
+	m_sName      = synonims.m_sName;
 	m_asSynonims = synonims.m_asSynonims;
 }
 
@@ -120,7 +120,7 @@ bool wxTagSynonims::GetName( const wxCueTag& synonim, wxCueTag& cueTag ) const
 wxTagSynonimsCollection::wxTagSynonimsCollection( void )
 {}
 
-wxTagSynonimsCollection::wxTagSynonimsCollection( const wxTagSynonimsCollection& src ):
+wxTagSynonimsCollection::wxTagSynonimsCollection( const wxTagSynonimsCollection& src ) :
 	_wxArrayTagSynonims( src )
 {}
 

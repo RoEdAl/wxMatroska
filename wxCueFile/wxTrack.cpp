@@ -41,17 +41,17 @@ const wxTrack::DATA_MODE_STR wxTrack::DataModeString[] =
 
 // ===============================================================================
 
-wxTrack::wxTrack( void ):
+wxTrack::wxTrack( void ) :
 	wxCueComponent( true ), m_number( 0 )
 {}
 
-wxTrack::wxTrack( const wxTrack& track ):
+wxTrack::wxTrack( const wxTrack& track ) :
 	wxCueComponent( true ), m_dataMode( AUDIO )
 {
 	copy( track );
 }
 
-wxTrack::wxTrack( unsigned long number ):
+wxTrack::wxTrack( unsigned long number ) :
 	wxCueComponent( true ), m_number( number ), m_dataMode( AUDIO )
 {}
 
@@ -71,7 +71,7 @@ void wxTrack::copy( const wxTrack& track )
 	m_number   = track.m_number;
 	m_dataMode = track.m_dataMode;
 	m_indexes  = track.m_indexes;
-	m_flags	   = track.m_flags;
+	m_flags    = track.m_flags;
 
 	if ( track.HasPreGap() )
 	{
@@ -419,34 +419,34 @@ bool wxTrack::HasFlag( wxTrack::Flag f ) const
 	return false;
 }
 
-wxString wxTrack::GetFlagRegExp( )
+wxString wxTrack::GetFlagRegExp()
 {
-    return get_texts_regexp( FlagString );
+	return get_texts_regexp( FlagString );
 }
 
 wxString wxTrack::FlagToString( wxTrack::Flag flag )
 {
-    return to_string( flag, FlagString );
+	return to_string( flag, FlagString );
 }
 
 bool wxTrack::StringToFlag( const wxString& s, wxTrack::Flag& flag )
 {
-    return from_string( s, flag, FlagString );
+	return from_string( s, flag, FlagString );
 }
 
 wxString wxTrack::GetDataModeRegExp()
 {
-    return get_texts_regexp( DataModeString );
+	return get_texts_regexp( DataModeString );
 }
 
 wxString wxTrack::DataModeToString( wxTrack::DataMode mode )
 {
-    return to_string( mode, DataModeString );
+	return to_string( mode, DataModeString );
 }
 
 bool wxTrack::StringToDataMode( const wxString& s, wxTrack::DataMode& mode )
 {
-    return from_string( s, mode, DataModeString );
+	return from_string( s, mode, DataModeString );
 }
 
 bool wxTrack::SetMode( const wxString& sMode )

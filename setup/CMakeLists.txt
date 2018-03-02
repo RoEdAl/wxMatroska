@@ -24,7 +24,8 @@ add_custom_command(
 	COMMAND pandoc
 		-i ${LICENSE_FILE}
 		--template ${LICENSE_FILE_TEMPLATE}
-		-s --smart
+		-s
+		-t rtf+smart
 		-o ${PROJECT_LICENSE_FILE_RTF}
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
@@ -35,8 +36,8 @@ add_custom_command(
 	DEPENDS ${LICENSE_FILE} 
 	COMMAND pandoc
 		-i ${LICENSE_FILE}
-		-s --smart
-		-t plain
+		-s
+		-t plain+smart
 		-o ${PROJECT_LICENSE_FILE_TXT}
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )

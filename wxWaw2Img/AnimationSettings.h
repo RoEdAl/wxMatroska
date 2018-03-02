@@ -21,16 +21,17 @@ class AnimationSettings
 	public:
 
 		wxColour& GetBorderColour();
-		wxColour&	GetFillColour();
-		wxUint16&	GetBorderWidth();
+		wxColour& GetFillColour();
+		wxUint16& GetBorderWidth();
 		wxFileName& GetBitmapFilename();
 
 	protected:
 
-		wxColour   m_clrBorder;
-		wxColour   m_clrFill;
-		wxUint16   m_nBorderWidth;
+		wxColour m_clrBorder;
+		wxColour m_clrFill;
+		wxUint16 m_nBorderWidth;
 		wxFileName m_progressBitmap;
 };
+
 #endif
 

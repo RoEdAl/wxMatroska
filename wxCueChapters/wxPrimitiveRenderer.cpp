@@ -17,7 +17,7 @@
 
 // ===============================================================================
 
-wxPrimitiveRenderer::wxPrimitiveRenderer( const wxConfiguration& cfg ):
+wxPrimitiveRenderer::wxPrimitiveRenderer( const wxConfiguration& cfg ) :
 	m_cfg( cfg )
 {}
 

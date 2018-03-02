@@ -17,9 +17,9 @@ class wxTextOutputStreamOnString:
 		wxTextOutputStreamOnString();
 
 		const wxMemoryOutputStream& GetMemoryStream() const;
-		wxTextOutputStream&			GetStream();
-		wxTextOutputStream&			operator *() const;
-        wxTextOutputStream*         operator->() const;
+		wxTextOutputStream& GetStream();
+		wxTextOutputStream& operator *() const;
+		wxTextOutputStream* operator ->() const;
 
 		wxString GetString() const;
 
@@ -28,9 +28,10 @@ class wxTextOutputStreamOnString:
 
 	protected:
 
-		wxNoConv			 m_conv;
+		wxNoConv m_conv;
 		wxMemoryOutputStream m_outputStream;
-		wxTextOutputStream	 m_textOutputStream;
+		wxTextOutputStream m_textOutputStream;
 };
+
 #endif
 

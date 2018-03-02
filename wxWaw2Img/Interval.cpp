@@ -5,21 +5,21 @@
 #include "StdWx.h"
 #include "Interval.h"
 
-Interval::Interval():
+Interval::Interval() :
 	m_eUnit( INTERVAL_UNIT_NONE ), m_nValue( 0 )
 {}
 
-Interval::Interval( INTERVAL_UNIT eUnit, wxUint32 nValue ):
+Interval::Interval( INTERVAL_UNIT eUnit, wxUint32 nValue ) :
 	m_eUnit( eUnit ), m_nValue( nValue )
 {}
 
-Interval::Interval( const Interval& interval ):
+Interval::Interval( const Interval& interval ) :
 	m_eUnit( interval.m_eUnit ), m_nValue( interval.m_nValue )
 {}
 
 Interval& Interval::operator =( const Interval& interval )
 {
-	m_eUnit	 = interval.m_eUnit;
+	m_eUnit  = interval.m_eUnit;
 	m_nValue = interval.m_nValue;
 	return *this;
 }
@@ -73,7 +73,7 @@ bool Interval::Parse( const wxString& _s, Interval& parsing )
 	}
 
 	bool   bTruncate = true;
-	wxChar c		 = s.Last();
+	wxChar c         = s.Last();
 
 	switch ( c )
 	{
@@ -104,7 +104,7 @@ bool Interval::Parse( const wxString& _s, Interval& parsing )
 		default:
 		{
 			parsing.m_eUnit = INTERVAL_UNIT_MINUTE;
-			bTruncate		= false;
+			bTruncate       = false;
 			break;
 		}
 	}

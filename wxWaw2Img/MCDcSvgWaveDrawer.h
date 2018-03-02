@@ -22,5 +22,6 @@ class McDcSvgWaveDrawer:
 
 		wxFileName m_tmpFileName;
 };
+
 #endif
 

@@ -6,7 +6,7 @@
 
 // ======================================================================
 
-AnimationSettings::AnimationSettings( void ):
+AnimationSettings::AnimationSettings( void ) :
 	m_clrBorder( 0, 148, 255 ),
 	m_clrFill( 94, 188, 255, 64 ),
 	m_nBorderWidth( 0 )

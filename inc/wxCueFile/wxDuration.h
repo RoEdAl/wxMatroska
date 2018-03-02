@@ -21,7 +21,7 @@ class wxDuration:
 	protected:
 
 		wxSamplingInfo m_si;
-		wxULongLong	   m_numberOfSamples;
+		wxULongLong m_numberOfSamples;
 
 	public:
 
@@ -31,10 +31,10 @@ class wxDuration:
 
 		wxDuration& operator =( const wxDuration& );
 
-		wxDuration& Assign( const wxSamplingInfo &, wxULongLong );
+		wxDuration& Assign( const wxSamplingInfo&, wxULongLong );
 
 		const wxSamplingInfo& GetSamplingInfo() const;
-		const wxULongLong&	  GetNumberOfSamples() const;
+		const wxULongLong& GetNumberOfSamples() const;
 		wxString GetSamplesStr() const;
 
 		wxString GetCdFramesStr() const;
@@ -57,7 +57,7 @@ class wxAbstractDurationHolder
 {
 	public:
 
-		virtual bool HasDuration() const	   = 0;
+		virtual bool HasDuration() const       = 0;
 		virtual wxDuration GetDuration() const = 0;
 };
 
@@ -81,5 +81,6 @@ class wxDurationHolder:
 		void ClearDuration();
 		void Copy( const wxAbstractDurationHolder& );
 };
+
 #endif
 

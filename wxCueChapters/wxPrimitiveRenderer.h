@@ -30,12 +30,13 @@ class wxPrimitiveRenderer:
 {
 	protected:
 
-		const wxConfiguration&	   m_cfg;
+		const wxConfiguration& m_cfg;
 		wxTextOutputStreamOnString m_os;
 
 	protected:
 
 		wxPrimitiveRenderer( const wxConfiguration& );
 };
+
 #endif
 

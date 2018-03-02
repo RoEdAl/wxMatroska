@@ -15,7 +15,7 @@ PdfWaveDrawer::PdfWaveDrawer( wxUint64 nNumberOfSamples, wxPdfDocument* pPdf,
 							  bool bCalcLogarithmic, wxFloat32 fLogBase,
 							  const wxRect2DInt& rc,
 							  const DrawerSettings& drawerSettings,
-							  const ChaptersArrayScopedPtr& pChapters ):
+							  const ChaptersArrayScopedPtr& pChapters ) :
 	SampleChunker( nNumberOfSamples, rc.m_width, bCalcLogarithmic, fLogBase ),
 	m_pPdf( pPdf ),
 	m_rc( rc ),
@@ -87,9 +87,9 @@ namespace
 
 void PdfWaveDrawer::ProcessInitializer()
 {
-	m_heightUp	 = m_rc.m_height * ( 1.0f - m_drawerSettings.GetBaselinePosition() );
+	m_heightUp   = m_rc.m_height * ( 1.0f - m_drawerSettings.GetBaselinePosition() );
 	m_heightDown = m_rc.m_height * m_drawerSettings.GetBaselinePosition();
-	m_yoffset	 = m_rc.m_y + m_heightUp;
+	m_yoffset    = m_rc.m_y + m_heightUp;
 
 	if ( m_drawerSettings.OneBackgroundColour() )
 	{
@@ -100,7 +100,7 @@ void PdfWaveDrawer::ProcessInitializer()
 		wxRect2DDouble rc( m_rc.m_x, m_rc.m_y, m_rc.m_width, m_heightUp );
 		fill_rect_colour( *m_pPdf, rc, m_drawerSettings.GetTopColourSettings().GetBackgroundColour(), wxPDF_CORNER_TOP_LEFT | wxPDF_CORNER_TOP_RIGHT );
 
-		rc.m_y	   += m_rc.m_height;
+		rc.m_y     += m_rc.m_height;
 		rc.m_height = m_heightDown;
 		fill_rect_colour( *m_pPdf, rc, m_drawerSettings.GetBottomColourSettings().GetBackgroundColour(), wxPDF_CORNER_BOTTOM_LEFT | wxPDF_CORNER_BOTTOM_RIGHT );
 	}
@@ -161,21 +161,21 @@ void PdfWaveDrawer::create_chapter_segments_paths(
 
 	wxFloat64 endPos = chapters.Last().GetMilliseconds().ToDouble();
 
-	wxDouble fHeightTop	   = rect.m_height * ( 1.0f - fBaseline );
+	wxDouble fHeightTop    = rect.m_height * ( 1.0f - fBaseline );
 	wxDouble fHeightBottom = rect.m_height * fBaseline;
 
 	for ( size_t i = 0, nCount1 = chapters.GetCount() - 1; i < nCount1; i += 2 )
 	{
 		wxFloat64 tsFrom = chapters[ i ].GetMilliseconds().ToDouble();
-		wxFloat64 tsTo	 = chapters[ i + 1 ].GetMilliseconds().ToDouble();
+		wxFloat64 tsTo   = chapters[ i + 1 ].GetMilliseconds().ToDouble();
 
-		wxRect2DDouble rc( tsFrom * rect.m_width / endPos, 0, ( tsTo - tsFrom ) * rect.m_width / endPos, fHeightTop );
+		wxRect2DDouble rc( tsFrom* rect.m_width / endPos, 0, ( tsTo - tsFrom ) * rect.m_width / endPos, fHeightTop );
 		rc.m_x += rect.m_x;
 		rc.m_y += rect.m_y;
 
 		add_rectangle_to_shape( pathTop, rc );
 
-		rc.m_y	   += fHeightTop;
+		rc.m_y     += fHeightTop;
 		rc.m_height = fHeightBottom;
 
 		add_rectangle_to_shape( pathBottom, rc );
@@ -192,14 +192,14 @@ void PdfWaveDrawer::create_chapter_lines_paths(
 
 	wxFloat64 endPos = chapters.Last().GetMilliseconds().ToDouble();
 
-	wxDouble fHeightTop	   = rect.m_height * ( 1.0f - fBaseline );
+	wxDouble fHeightTop    = rect.m_height * ( 1.0f - fBaseline );
 	wxDouble fHeightBottom = rect.m_height * fBaseline;
 
 	for ( size_t i = 0, nCount1 = chapters.GetCount() - 1; i < nCount1; i += 1 )
 	{
 		wxFloat64 ts = chapters[ i ].GetMilliseconds().ToDouble();
 
-		wxPoint2DDouble pt( ts * rect.m_width / endPos, 0.0 );
+		wxPoint2DDouble pt( ts* rect.m_width / endPos, 0.0 );
 		pt.m_x += rect.m_x;
 		pt.m_y += rect.m_y;
 
@@ -227,9 +227,9 @@ void PdfWaveDrawer::create_chapter_segments_path(
 	for ( size_t i = 0, nCount1 = chapters.GetCount() - 1; i < nCount1; i += 2 )
 	{
 		wxFloat64 tsFrom = chapters[ i ].GetMilliseconds().ToDouble();
-		wxFloat64 tsTo	 = chapters[ i + 1 ].GetMilliseconds().ToDouble();
+		wxFloat64 tsTo   = chapters[ i + 1 ].GetMilliseconds().ToDouble();
 
-		wxRect2DDouble rc( tsFrom * rect.m_width / endPos, 0, ( tsTo - tsFrom ) * rect.m_width / endPos, rect.m_height );
+		wxRect2DDouble rc( tsFrom* rect.m_width / endPos, 0, ( tsTo - tsFrom ) * rect.m_width / endPos, rect.m_height );
 		rc.m_x += rect.m_x;
 		rc.m_y += rect.m_y;
 
@@ -252,7 +252,7 @@ void PdfWaveDrawer::create_chapter_lines_path(
 	{
 		wxFloat64 ts = chapters[ i ].GetMilliseconds().ToDouble();
 
-		wxPoint2DDouble pt( ts * rect.m_width / endPos, 0 );
+		wxPoint2DDouble pt( ts* rect.m_width / endPos, 0 );
 		pt.m_x += rect.m_x;
 		pt.m_y += rect.m_y;
 		path.MoveTo( pt.m_x, pt.m_y );

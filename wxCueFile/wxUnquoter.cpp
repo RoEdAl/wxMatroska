@@ -14,13 +14,13 @@ wxIMPLEMENT_DYNAMIC_CLASS( wxUnquoter, wxObject );
 // DC1=11H, DC2=12H
 const char wxUnquoter::OPENING_QOUTATION_MARK_REPLACEMENT = '\x11';
 const char wxUnquoter::CLOSING_QOUTATION_MARK_REPLACEMENT = '\x12';
-const char wxUnquoter::GENERIC_REPLACEMENT[]			  = "\\1\x11\\2\x12";
+const char wxUnquoter::GENERIC_REPLACEMENT[]              = "\\1\x11\\2\x12";
 
 // ===============================================================================
 
-const char wxUnquoter::RE_SINGLE_QUOTES[]		  = "([[:space:][:punct:]]|^)[[.apostrophe.]]((?:[^[.apostrophe.]]|\\B[[.apostrophe.]])*)(?!\\B)[[.apostrophe.]](?=[[:space:][:punct:]]|$)";
-const char wxUnquoter::RE_SINGLE_QUOTES_EX[]	  = "([[:space:][:punct:]]|^)[[.apostrophe.]]((?:[^[.apostrophe.]\\u201E\\\u201D]|\\B[[.apostrophe.]])*)(?!\\B)[[.apostrophe.]](?=[[:space:][:punct:]]|$)";
-const char wxUnquoter::RE_DOUBLE_QUOTES[]		  = "([[:space:][:punct:]]|^)[[.quotation-mark.]]((?:[^[.quotation-mark.]]|\\B[[.quotation-mark.]])*)(?!\\B)[[.quotation-mark.]](?=[[:space:][:punct:]]|$)";
+const char wxUnquoter::RE_SINGLE_QUOTES[]         = "([[:space:][:punct:]]|^)[[.apostrophe.]]((?:[^[.apostrophe.]]|\\B[[.apostrophe.]])*)(?!\\B)[[.apostrophe.]](?=[[:space:][:punct:]]|$)";
+const char wxUnquoter::RE_SINGLE_QUOTES_EX[]      = "([[:space:][:punct:]]|^)[[.apostrophe.]]((?:[^[.apostrophe.]\\u201E\\\u201D]|\\B[[.apostrophe.]])*)(?!\\B)[[.apostrophe.]](?=[[:space:][:punct:]]|$)";
+const char wxUnquoter::RE_DOUBLE_QUOTES[]         = "([[:space:][:punct:]]|^)[[.quotation-mark.]]((?:[^[.quotation-mark.]]|\\B[[.quotation-mark.]])*)(?!\\B)[[.quotation-mark.]](?=[[:space:][:punct:]]|$)";
 const char wxUnquoter::RE_PSEUDO_DOUUBLE_QUOTES[] = "([[:space:][:punct:]]|^)[[.apostrophe.]]{2}(([^[.apostrophe.]]|\\B[[.apostrophe.]])+)(?!\\B)[[.apostrophe.]]{2}(?=[[:space:][:punct:]]|$)";
 
 const char wxUnquoter::RE_FULL_SINGLE_QUOTES[] = "\\A[[:space:]]*\\'(([^\\']|\\\')*)\\'[[:space:]]*\\Z";
@@ -71,7 +71,7 @@ const wxUnquoter::QUOTATION_MARKS wxUnquoter::FRENCH_QUOTES[] =
 
 // ===============================================================================
 
-wxUnquoter::wxUnquoter( void ):
+wxUnquoter::wxUnquoter( void ) :
 	m_sGenericReplacement( GENERIC_REPLACEMENT ),
 	m_reSingleQuotes( RE_SINGLE_QUOTES, wxRE_ADVANCED ),
 	m_reDoubleQuotes( RE_DOUBLE_QUOTES, wxRE_ADVANCED ),
@@ -217,7 +217,7 @@ wxUnquoter::wxScopedCharBuffer wxUnquoter::get_french_replacement( int nLevel, b
 
 void wxUnquoter::InternalCorrectQuotes( wxString& s ) const
 {
-	int		 nLevel = 0;
+	int      nLevel = 0;
 	wxString res;
 
 	for ( wxString::const_iterator i = s.begin(); i != s.end(); ++i )

@@ -24,5 +24,6 @@ class MultiChannelWaveDrawer:
 
 		void ProcessFames( const wxFloat32*, size_t );
 };
+
 #endif
 

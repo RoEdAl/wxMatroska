@@ -17,13 +17,13 @@ Raster1WaveDrawer::Raster1WaveDrawer( wxUint64 nNumberOfSamples,
 									  wxGraphicsContext* gc,
 									  const wxRect2DInt& rc,
 									  const DrawerSettings& drawerSettings,
-									  const ChaptersArrayScopedPtr& pChapters ):
+									  const ChaptersArrayScopedPtr& pChapters ) :
 	ColumnPainterWaveDrawer( nNumberOfSamples, gc, rc, drawerSettings, pChapters )
 {}
 
 void Raster1WaveDrawer::GetThreeColours( wxFloat32, wxColour& clrTop, wxColour& clrMiddle, wxColour& clrBottom )
 {
-	clrTop	  = m_drawerSettings.GetTopColourSettings().GetEdgeColour();
+	clrTop    = m_drawerSettings.GetTopColourSettings().GetEdgeColour();
 	clrMiddle = m_drawerSettings.GetTopColourSettings().GetMiddleColour();
 	clrBottom = m_drawerSettings.GetBottomColourSettings().GetEdgeColour();
 }
@@ -33,12 +33,12 @@ void Raster1WaveDrawer::GetTwoColours( wxFloat32, bool bUp, wxColour& clrFrom, w
 	if ( bUp )
 	{
 		clrFrom = m_drawerSettings.GetTopColourSettings().GetEdgeColour();
-		clrTo	= m_drawerSettings.GetTopColourSettings().GetMiddleColour();
+		clrTo   = m_drawerSettings.GetTopColourSettings().GetMiddleColour();
 	}
 	else
 	{
 		clrFrom = m_drawerSettings.GetBottomColourSettings().GetMiddleColour();
-		clrTo	= m_drawerSettings.GetBottomColourSettings().GetEdgeColour();
+		clrTo   = m_drawerSettings.GetBottomColourSettings().GetEdgeColour();
 	}
 }
 

@@ -18,5 +18,6 @@ class ChannelMixer:
 
 		wxFloat32 m_fFactor;
 };
+
 #endif
 

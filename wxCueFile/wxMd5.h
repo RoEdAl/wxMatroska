@@ -65,5 +65,6 @@ class wxMD5
 
 		static bool AreEqual( const wxMemoryBuffer&, const wxMemoryBuffer& );
 };
+
 #endif	// _WX_MD5_H_
 

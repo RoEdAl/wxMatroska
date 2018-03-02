@@ -75,5 +75,6 @@ class wxNoConv:
 			return new wxNoConv();
 		}
 };
+
 #endif	// _NO_CONV_H_
 

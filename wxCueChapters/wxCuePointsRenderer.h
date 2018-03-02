@@ -40,5 +40,6 @@ class wxCuePointsRenderer:
 		bool Save( const wxFileName& );
 		const wxFileName& GetFileName() const;
 };
+
 #endif
 

@@ -17,13 +17,13 @@ class wxSamplingInfo:
 	public:
 
 		static const wxTimeSpan wxInvalidDuration;
-		static const wxUint64	wxInvalidNumberOfFrames;
+		static const wxUint64 wxInvalidNumberOfFrames;
 
 		wxSamplingInfo( void );
 		wxSamplingInfo( const wxSamplingInfo& );
 		wxSamplingInfo( unsigned long, unsigned short, unsigned short );
 
-		bool IsOK( bool = false ) const;
+		bool IsOK( bool                          = false ) const;
 		bool Equals( const wxSamplingInfo&, bool = false ) const;
 
 		wxSamplingInfo& operator =( const wxSamplingInfo& );
@@ -43,7 +43,7 @@ class wxSamplingInfo:
 
 		wxTimeSpan GetDuration( wxULongLong );
 
-		void		GetNumberOfCdFrames( wxULongLong, wxULongLong &, wxUint32 & ) const;
+		void GetNumberOfCdFrames( wxULongLong, wxULongLong&, wxUint32& ) const;
 		wxULongLong GetNumberOfCdFrames( wxULongLong ) const;
 
 		wxString GetSamplesStr( wxULongLong ) const;
@@ -53,7 +53,7 @@ class wxSamplingInfo:
 		wxULongLong GetIndexOffset( const wxIndex& ) const;
 		wxIndex ConvertIndex( const wxIndex& ) const;
 
-		wxIndex ConvertIndex( const wxIndex &, wxULongLong, bool ) const;
+		wxIndex ConvertIndex( const wxIndex&, wxULongLong, bool ) const;
 		wxString GetIndexOffsetStr( const wxIndex& ) const;
 		wxString GetIndexOffsetFramesStr( const wxIndex& ) const;
 
@@ -61,7 +61,7 @@ class wxSamplingInfo:
 
 	protected:
 
-		unsigned long  m_nSamplingRate;
+		unsigned long m_nSamplingRate;
 		unsigned short m_nNumChannels;
 		unsigned short m_nBitsPerSample;
 
@@ -69,5 +69,6 @@ class wxSamplingInfo:
 
 		void copy( const wxSamplingInfo& );
 };
+
 #endif
 

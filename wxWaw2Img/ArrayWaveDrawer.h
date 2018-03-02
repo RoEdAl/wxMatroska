@@ -31,5 +31,6 @@ class ArrayWaveDrawer:
 		virtual void ProcessFrame( const wxFloat32* );
 		virtual void ProcessFinalizer();
 };
+
 #endif
 

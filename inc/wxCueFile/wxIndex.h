@@ -13,10 +13,10 @@ class wxIndex:
 
 	protected:
 
-		size_t		m_number;
+		size_t m_number;
 		wxULongLong m_offset;
-		bool		m_bCdFrames;
-		size_t		m_nDataFileIdx;
+		bool m_bCdFrames;
+		size_t m_nDataFileIdx;
 
 	protected:
 
@@ -39,7 +39,7 @@ class wxIndex:
 		wxIndex& SetNumber( size_t );
 		wxIndex& SetOffset( wxULongLong );
 		wxIndex& SetDataFileIdx( size_t );
-		bool	 ShiftDataFileIdx( size_t );
+		bool ShiftDataFileIdx( size_t );
 
 		wxIndex& Assign( size_t, wxULongLong );
 		wxIndex& Assign( size_t, wxULongLong, size_t );

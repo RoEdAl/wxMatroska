@@ -44,17 +44,17 @@ class wxDataFile:
 
 	protected:
 
-        typedef VALUE_NAME_PAIR<FileType> FILE_TYPE_STR;
+		typedef VALUE_NAME_PAIR< FileType > FILE_TYPE_STR;
 		static const FILE_TYPE_STR FileTypeString[];
 
 	protected:
 
-		wxFileName	  m_fileName;
-		wxFileName	  m_realFileName;
-		FileType	  m_ftype;
-		MediaType	  m_mediaType;
+		wxFileName m_fileName;
+		wxFileName m_realFileName;
+		FileType m_ftype;
+		MediaType m_mediaType;
 		wxArrayCueTag m_tags;
-		wxString	  m_sCueSheet;
+		wxString m_sCueSheet;
 
 	protected:
 
@@ -80,21 +80,21 @@ class wxDataFile:
 		bool IsBinary() const;
 		bool IsEmpty() const;
 
-		wxDataFile& Assign( const wxString &, FileType = BINARY );
-		wxDataFile& Assign( const wxFileName &, FileType = BINARY );
+		wxDataFile& Assign( const wxString&, FileType   = BINARY );
+		wxDataFile& Assign( const wxFileName&, FileType = BINARY );
 
 	public:
 
 		wxDataFile( void );
 		wxDataFile( const wxDataFile& );
-		wxDataFile( const wxString&, FileType = BINARY );
+		wxDataFile( const wxString&, FileType   = BINARY );
 		wxDataFile( const wxFileName&, FileType = BINARY );
 
 		wxDataFile& operator =( const wxDataFile& );
 		void Clear();
 
 		bool FindFile( wxFileName&, const wxString& = wxEmptyString ) const;
-		bool FindFile( const wxString& = wxEmptyString );
+		bool FindFile( const wxString&              = wxEmptyString );
 
 		bool GetInfo( const wxString& = wxEmptyString );
 
@@ -102,5 +102,6 @@ class wxDataFile:
 		static bool FromString( const wxString&, FileType& );
 		static wxString GetFileTypeRegExp();
 };
+
 #endif	// _WX_DATA_FILE_H_
 

@@ -9,7 +9,7 @@
 #include "MultiChannelWaveDrawer.h"
 #include "MCChainWaveDrawer.h"
 
-McChainWaveDrawer::McChainWaveDrawer( wxUint16 nChannels, MultiChannelWaveDrawer* pMcWaveDrawer ):
+McChainWaveDrawer::McChainWaveDrawer( wxUint16 nChannels, MultiChannelWaveDrawer* pMcWaveDrawer ) :
 	MultiChannelWaveDrawer( nChannels ), m_pMcWaveDrawer( pMcWaveDrawer )
 {
 	wxASSERT( pMcWaveDrawer != NULL );

@@ -53,17 +53,17 @@ class wxTrack:
 
 	protected:
 
-		size_t				   m_number;
-		DataMode			   m_dataMode;
-		wxArrayIndex		   m_indexes;
+		size_t m_number;
+		DataMode m_dataMode;
+		wxArrayIndex m_indexes;
 		wxScopedPtr< wxIndex > m_pPreGap;
 		wxScopedPtr< wxIndex > m_pPostGap;
-		wxArrayFlag			   m_flags;
+		wxArrayFlag m_flags;
 
 	protected:
 
-        typedef VALUE_NAME_PAIR<Flag> FLAG_STR;
-        typedef VALUE_NAME_PAIR<DataMode> DATA_MODE_STR;
+		typedef VALUE_NAME_PAIR< Flag > FLAG_STR;
+		typedef VALUE_NAME_PAIR< DataMode > DATA_MODE_STR;
 
 		static const FLAG_STR FlagString[];
 		static const DATA_MODE_STR DataModeString[];
@@ -89,7 +89,7 @@ class wxTrack:
 		bool HasIndexes() const;
 		size_t GetIndexesCount() const;
 		const wxArrayIndex& GetIndexes() const;
-		const wxIndex&		GetFirstIndex() const;
+		const wxIndex& GetFirstIndex() const;
 		void AddIndex( const wxIndex& );
 
 		bool HasPreGap() const;

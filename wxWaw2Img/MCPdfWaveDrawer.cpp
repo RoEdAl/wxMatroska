@@ -18,7 +18,7 @@
 #include "wxConfiguration.h"
 #include "wxApp.h"
 
-McPdfWaveDrawer::McPdfWaveDrawer( wxUint16 nChannels ):
+McPdfWaveDrawer::McPdfWaveDrawer( wxUint16 nChannels ) :
 	ArrayWaveDrawer( nChannels )
 {}
 

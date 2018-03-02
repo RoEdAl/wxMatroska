@@ -7,12 +7,12 @@
 
 // ===============================================================================
 
-const char	  wxEllipsizer::REG_EX[] = "([[:space:]]*\\.\\.\\.)[[:space:]]*\\Z";
+const char    wxEllipsizer::REG_EX[] = "([[:space:]]*\\.\\.\\.)[[:space:]]*\\Z";
 const wxUChar wxEllipsizer::ELLIPSIS = wxS( '\u2026' );
 
 // ===============================================================================
 
-wxEllipsizer::wxEllipsizer():
+wxEllipsizer::wxEllipsizer() :
 	m_reEllipsis( REG_EX, wxRE_ADVANCED )
 {
 	wxASSERT( m_reEllipsis.IsValid() );

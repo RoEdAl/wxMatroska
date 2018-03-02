@@ -23,7 +23,7 @@ class wxTextOutputStreamWithBOM:
 								   bool bWriteBOM,
 								   const wxMBConv& conv,
 								   const wxTextOutputStreamWithBOMFactory::
-								   wxByteBuffer& bom ):
+								   wxByteBuffer& bom ) :
 			wxTextOutputStream( s, mode, conv )
 		{
 			if ( bWriteBOM )
@@ -41,11 +41,11 @@ wxTextOutputStreamWithBOMFactory::wxTextOutputStreamSharedPtr wxTextOutputStream
 		bool bUseMLang )
 {
 	wxTextOutputStreamSharedPtr pRes;
-	wxByteBuffer				bom;
+	wxByteBuffer                bom;
 
 	if ( wxEncodingDetection::GetBOM( nCodePage, bom ) )
 	{
-		wxString				sDescription;
+		wxString                sDescription;
 		wxSharedPtr< wxMBConv > pConv( wxEncodingDetection::GetStandardMBConv( nCodePage, bUseMLang, sDescription ) );
 		pRes = new wxTextOutputStreamWithBOM( s, mode, bWriteBOM, *pConv, bom );
 	}
@@ -66,7 +66,6 @@ wxTextOutputStreamWithBOMFactory::wxTextOutputStreamSharedPtr wxTextOutputStream
 {
 #if WORDS_BIGENDIAN
 	return Create( s, mode, bWriteBOM, wxEncodingDetection::CP::UTF16_BE, bUseMLang );
-
 #else
 	return Create( s, mode, bWriteBOM, wxEncodingDetection::CP::UTF16_LE, bUseMLang );
 #endif

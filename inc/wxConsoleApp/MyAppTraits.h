@@ -45,7 +45,7 @@ class MyAppTraits:
 		virtual wxRendererNative* CreateRenderer();
 		virtual bool ShowAssertDialog( const wxString& );
 		virtual bool HasStderr();
-		virtual wxPortId GetToolkitVersion( int* verMaj = NULL, int* verMin = NULL ) const;
+		virtual wxPortId GetToolkitVersion( int* verMaj = NULL, int* verMin = NULL, int* microVer = NULL ) const;
 		virtual bool IsUsingUniversalWidgets() const;
 		virtual wxString GetDesktopEnvironment() const;
 
@@ -53,5 +53,6 @@ class MyAppTraits:
 
 		wxScopedPtr< wxAppTraits > m_pAppTraits;
 };
+
 #endif
 

@@ -24,5 +24,6 @@ class MyMessageOutputStderr:
 
 		FILE* m_fp;
 };
+
 #endif
 

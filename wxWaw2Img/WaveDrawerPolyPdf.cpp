@@ -15,7 +15,7 @@ PdfPolyWaveDrawer::PdfPolyWaveDrawer( wxUint64 nNumberOfSamples,
 									  wxPdfDocument* pPdf,
 									  const wxRect2DInt& rc,
 									  const DrawerSettings& drawerSettings,
-									  const ChaptersArrayScopedPtr& pChapters ):
+									  const ChaptersArrayScopedPtr& pChapters ) :
 	PdfWaveDrawer(
 		nNumberOfSamples,
 		pPdf,
@@ -48,7 +48,7 @@ void PdfPolyWaveDrawer::ProcessFinalizer()
 		{
 			wxPdfColour edgeColour( m_drawerSettings.GetTopColourSettings().GetEdgeColour() );
 			wxPdfColour middleColour( m_drawerSettings.GetTopColourSettings().GetMiddleColour() );
-			int			gradient = m_pPdf->MidAxialGradient( edgeColour, middleColour, 0, 0, 0, 1, m_drawerSettings.GetBaselinePosition() );
+			int         gradient = m_pPdf->MidAxialGradient( edgeColour, middleColour, 0, 0, 0, 1, m_drawerSettings.GetBaselinePosition() );
 
 			double alpha = m_drawerSettings.GetTopColourSettings().GetMiddleColour().Alpha();
 			alpha /= 255;
@@ -59,7 +59,7 @@ void PdfPolyWaveDrawer::ProcessFinalizer()
 		{
 			wxPdfColour c1( m_drawerSettings.GetTopColourSettings().GetEdgeColour() );
 			wxPdfColour c2( m_drawerSettings.GetTopColourSettings().GetMiddleColour() );
-			int			gr1 = m_pPdf->LinearGradient( c2, c1, wxPDF_LINEAR_GRADIENT_VERTICAL );
+			int         gr1 = m_pPdf->LinearGradient( c2, c1, wxPDF_LINEAR_GRADIENT_VERTICAL );
 
 			double alpha = m_drawerSettings.GetTopColourSettings().GetMiddleColour().Alpha();
 			alpha /= 255;
@@ -130,7 +130,7 @@ wxPdfShape PdfPolyWaveDrawer::build_path() const
 		wxPoint2DDouble pt( m_points[ i ] );
 
 		pt.m_x += m_rc.m_x;
-		pt.m_y	= m_yoffset - ( abs( pt.m_y ) * m_heightUp );
+		pt.m_y  = m_yoffset - ( abs( pt.m_y ) * m_heightUp );
 
 		path.LineTo( pt.m_x, pt.m_y );
 	}
@@ -142,7 +142,7 @@ wxPdfShape PdfPolyWaveDrawer::build_path() const
 		wxPoint2DDouble pt( m_points[ i - 1 ] );
 
 		pt.m_x += m_rc.m_x;
-		pt.m_y	= m_yoffset + ( abs( pt.m_y ) * m_heightDown );
+		pt.m_y  = m_yoffset + ( abs( pt.m_y ) * m_heightDown );
 
 		path.LineTo( pt.m_x, pt.m_y );
 	}

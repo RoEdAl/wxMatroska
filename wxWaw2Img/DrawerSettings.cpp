@@ -7,7 +7,7 @@
 
 // ===============================================================
 
-ColourSettings::ColourSettings( void ):
+ColourSettings::ColourSettings( void ) :
 	m_clrMiddle( 0, 0, 0, wxALPHA_OPAQUE ),
 	m_clrEdge( 0, 0, 0, wxALPHA_TRANSPARENT ),
 	m_clrBg( wxTransparentColour ),
@@ -86,7 +86,7 @@ ColourSettings& ColourSettings::SetBackgroundColour2( const wxColour& clr )
 
 // ===============================================================
 
-DrawerSettings::DrawerSettings():
+DrawerSettings::DrawerSettings() :
 	m_bDrawWithGradient( true ),
 	m_bLogarithmicScale( false ),
 	m_bLogarithmicColorGradient( false ),

@@ -21,7 +21,7 @@ wxDuration::wxDuration( const wxDuration& duration )
 	copy( duration );
 }
 
-wxDuration::wxDuration( const wxSamplingInfo& si, wxULongLong numberOfSamples ):
+wxDuration::wxDuration( const wxSamplingInfo& si, wxULongLong numberOfSamples ) :
 	m_si( si ), m_numberOfSamples( numberOfSamples )
 {}
 
@@ -33,13 +33,13 @@ wxDuration& wxDuration::operator =( const wxDuration& duration )
 
 void wxDuration::copy( const wxDuration& duration )
 {
-	m_si			  = duration.m_si;
+	m_si              = duration.m_si;
 	m_numberOfSamples = duration.m_numberOfSamples;
 }
 
 wxDuration& wxDuration::Assign( const wxSamplingInfo& si, wxULongLong numberOfSamples )
 {
-	m_si			  = si;
+	m_si              = si;
 	m_numberOfSamples = numberOfSamples;
 	return *this;
 }

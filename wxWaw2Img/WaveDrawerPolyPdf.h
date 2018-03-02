@@ -30,5 +30,6 @@ class PdfPolyWaveDrawer:
 
 		wxPdfShape build_path() const;
 };
+
 #endif
 

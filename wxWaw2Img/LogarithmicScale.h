@@ -9,27 +9,27 @@ class LogarithmicScale
 {
 	public:
 
-		LogarithmicScale():
+		LogarithmicScale() :
 			m_fLogBase( 10 )
 		{
 			init( false );
 		}
 
-		LogarithmicScale( wxFloat32 fLogBase ):
+		LogarithmicScale( wxFloat32 fLogBase ) :
 			m_fLogBase( fLogBase )
 		{
 			wxASSERT( fLogBase > 1.0f );
 			init( false );
 		}
 
-		LogarithmicScale( wxFloat32 fLogBase, bool bInv ):
+		LogarithmicScale( wxFloat32 fLogBase, bool bInv ) :
 			m_fLogBase( fLogBase )
 		{
 			wxASSERT( fLogBase > 1.0f );
 			init( false );
 		}
 
-		LogarithmicScale( const LogarithmicScale& ls ):
+		LogarithmicScale( const LogarithmicScale& ls ) :
 			m_fLogBase( ls.m_fLogBase ),
 			m_fLogBase1( ls.m_fLogBase1 ),
 			m_fLogLogBase( ls.m_fLogLogBase ),
@@ -38,10 +38,10 @@ class LogarithmicScale
 
 		LogarithmicScale& operator =( const LogarithmicScale& ls )
 		{
-			m_fLogBase	  = ls.m_fLogBase;
-			m_fLogBase1	  = ls.m_fLogBase1;
+			m_fLogBase    = ls.m_fLogBase;
+			m_fLogBase1   = ls.m_fLogBase1;
 			m_fLogLogBase = ls.m_fLogLogBase;
-			m_calc_fn	  = ls.m_calc_fn;
+			m_calc_fn     = ls.m_calc_fn;
 			return *this;
 		}
 
@@ -73,18 +73,18 @@ class LogarithmicScale
 		wxFloat32 m_fLogBase;
 		wxFloat32 m_fLogBase1;
 		wxFloat32 m_fLogLogBase;
-		CALC_FN	  m_calc_fn;
+		CALC_FN m_calc_fn;
 
 	private:
 
 		void init( bool bInv )
 		{
-			m_fLogBase1	  = m_fLogBase - 1.0f;
+			m_fLogBase1   = m_fLogBase - 1.0f;
 			m_fLogLogBase = log( m_fLogBase );
-			m_calc_fn	  = bInv ? &LogarithmicScale::calc_fn_inv : &LogarithmicScale::calc_fn;
+			m_calc_fn     = bInv ? &LogarithmicScale::calc_fn_inv : &LogarithmicScale::calc_fn;
 		}
 
-		LogarithmicScale( wxFloat32 fLogBase, wxFloat32 fLogBase1, wxFloat32 fLogLogBase, CALC_FN calc_fn ):
+		LogarithmicScale( wxFloat32 fLogBase, wxFloat32 fLogBase1, wxFloat32 fLogLogBase, CALC_FN calc_fn ) :
 			m_fLogBase( fLogBase ),
 			m_fLogBase1( fLogBase1 ),
 			m_fLogLogBase( fLogLogBase ),
@@ -105,5 +105,6 @@ class LogarithmicScale
 			return 1.0f - ( log( ( 1.0f - fValue ) * m_fLogBase1 + 1.0f ) / m_fLogLogBase );
 		}
 };
+
 #endif
 

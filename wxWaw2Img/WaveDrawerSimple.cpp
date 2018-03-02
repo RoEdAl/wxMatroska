@@ -15,7 +15,7 @@ SimpleWaveDrawer::SimpleWaveDrawer( wxUint64 nNumberOfSamples,
 									wxGraphicsContext* gc,
 									const wxRect2DInt& rc,
 									const DrawerSettings& drawerSettings,
-									const ChaptersArrayScopedPtr& pChapters ):
+									const ChaptersArrayScopedPtr& pChapters ) :
 	GraphicsContextWaveDrawer(
 		nNumberOfSamples,
 		gc,
@@ -48,7 +48,7 @@ void SimpleWaveDrawer::NextColumn( wxFloat32 fValue, wxFloat32 fLogValue )
 {
 	wxPoint2DDouble point_central( m_nCurrentColumn + m_rc.m_x, m_yoffset );
 
-	wxFloat32 v	 = abs( m_drawerSettings.UseLogarithmicScale() ? fLogValue : fValue );
+	wxFloat32 v  = abs( m_drawerSettings.UseLogarithmicScale() ? fLogValue : fValue );
 	wxFloat32 pu = v * m_heightUp;
 	wxFloat32 pd = v * m_heightDown;
 

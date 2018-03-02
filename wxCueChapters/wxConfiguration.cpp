@@ -14,21 +14,21 @@
 
 // ===============================================================================
 
-const char	 wxConfiguration::CUE_SHEET_EXT[]		  = "cue";
-const char	 wxConfiguration::MATROSKA_CHAPTERS_EXT[] = "mkc.xml";
-const char	 wxConfiguration::MATROSKA_TAGS_EXT[]	  = "mkt.xml";
-const char	 wxConfiguration::MATROSKA_OPTS_EXT[]	  = "opt.txt";
-const char	 wxConfiguration::MATROSKA_AUDIO_EXT[]	  = "mka";
-const char	 wxConfiguration::CUESHEET_EXT[]		  = "cue";
+const char wxConfiguration::CUE_SHEET_EXT[]         = "cue";
+const char wxConfiguration::MATROSKA_CHAPTERS_EXT[] = "mkc.xml";
+const char wxConfiguration::MATROSKA_TAGS_EXT[]     = "mkt.xml";
+const char wxConfiguration::MATROSKA_OPTS_EXT[]     = "json";
+const char wxConfiguration::MATROSKA_AUDIO_EXT[]    = "mka";
+const char wxConfiguration::CUESHEET_EXT[]          = "cue";
 
 // en dash - U+2013, thin space - U+2009
-const wxChar	 wxConfiguration::TRACK_NAME_FORMAT[]	  = wxS("%dp%\u2009\u2013\u2009%dt%\u2009\u2013\u2009%tt%");
-const wxChar	 wxConfiguration::MATROSKA_NAME_FORMAT[]  = wxS("%dp%\u2009\u2013\u2009%dt%");
+const wxChar wxConfiguration::TRACK_NAME_FORMAT[]    = wxS( "%dp%\u2009\u2013\u2009%dt%\u2009\u2013\u2009%tt%" );
+const wxChar wxConfiguration::MATROSKA_NAME_FORMAT[] = wxS( "%dp%\u2009\u2013\u2009%dt%" );
 
-const size_t wxConfiguration::MAX_EXT_LEN			  = 20;
-const char	 wxConfiguration::LANG_FILE_URL[]		  = "http://www.loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt";
-const char	 wxConfiguration::LANG_FILE_NAME[]		  = "ISO-639-2_utf-8.txt";
-const char	 wxConfiguration::LANG_UND[]			  = "und";
+const size_t wxConfiguration::MAX_EXT_LEN      = 20;
+const char   wxConfiguration::LANG_FILE_URL[]  = "http://www.loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt";
+const char   wxConfiguration::LANG_FILE_NAME[] = "ISO-639-2_utf-8.txt";
+const char   wxConfiguration::LANG_UND[]       = "und";
 
 // ===============================================================================
 
@@ -228,7 +228,7 @@ bool wxConfiguration::FromString( const wxString& sCsAttachMode, wxConfiguration
 bool wxConfiguration::ReadLanguagesStrings( wxSortedArrayString& as )
 {
 	const wxStandardPaths& paths = wxStandardPaths::Get();
-	wxFileName			   fn( paths.GetExecutablePath() );
+	wxFileName             fn( paths.GetExecutablePath() );
 
 	fn.SetFullName( LANG_FILE_NAME );
 
@@ -249,7 +249,7 @@ bool wxConfiguration::ReadLanguagesStrings( wxSortedArrayString& as )
 
 	as.Clear();
 	wxTextInputStream tis( fis );
-	size_t			  n = 0;
+	size_t            n = 0;
 	while ( !fis.Eof() )
 	{
 		wxString sLine( tis.ReadLine() );
@@ -286,7 +286,7 @@ bool wxConfiguration::ReadLanguagesStrings( wxSortedArrayString& as )
 	return true;
 }
 
-wxConfiguration::wxConfiguration( void ):
+wxConfiguration::wxConfiguration( void ) :
 	m_infoSubject( INFO_NONE ),
 	m_bChapterTimeEnd( true ),
 	m_bUnknownChapterTimeEndToNextChapter( false ),
@@ -311,13 +311,13 @@ wxConfiguration::wxConfiguration( void ):
 	m_sMatroskaTagsXmlExt( MATROSKA_TAGS_EXT ),
 	m_sMatroskaOptsExt( MATROSKA_OPTS_EXT ),
 	m_bMerge( false ),
-    m_nReadFlags( wxCueSheetReader::EC_PARSE_COMMENTS | wxCueSheetReader::EC_ELLIPSIZE_TAGS | wxCueSheetReader::EC_REMOVE_EXTRA_SPACES | wxCueSheetReader::EC_MEDIA_READ_TAGS | wxCueSheetReader::EC_FIND_COVER | wxCueSheetReader::EC_FIND_LOG | wxCueSheetReader::EC_FIND_ACCURIP_LOG | wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG | wxCueSheetReader::EC_CORRECT_DASHES ),
+	m_nReadFlags( wxCueSheetReader::EC_PARSE_COMMENTS | wxCueSheetReader::EC_ELLIPSIZE_TAGS | wxCueSheetReader::EC_REMOVE_EXTRA_SPACES | wxCueSheetReader::EC_MEDIA_READ_TAGS | wxCueSheetReader::EC_FIND_COVER | wxCueSheetReader::EC_FIND_LOG | wxCueSheetReader::EC_FIND_ACCURIP_LOG | wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG | wxCueSheetReader::EC_CORRECT_DASHES ),
 	m_bUseMLang( false ),
 	m_bUseFullPaths( false ),
 	m_eCsAttachMode( CUESHEET_ATTACH_NONE ),
-    m_bRenderArtistForTrack( false ),
-    m_nJpegImageQuality( 75 ),
-    m_imageHandler( nullptr )
+	m_bRenderArtistForTrack( false ),
+	m_nJpegImageQuality( 75 ),
+	m_imageHandler( nullptr )
 {
 	ReadLanguagesStrings( m_asLang );
 }
@@ -354,10 +354,10 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 	cmdLine.AddSwitch( wxEmptyString, "read-media-tags", wxString::Format( _( "Embedded mode flag. Read tags from media file (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_MEDIA_READ_TAGS ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxEmptyString, "attach-eac-log", wxString::Format( _( "Attach EAC log file to mkvmerge options file (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_FIND_LOG ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxEmptyString, "attach-cover", wxString::Format( _( "Attach cover image (cover.*;front.*;album.*) to mkvmerge options file (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_FIND_COVER ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
-    cmdLine.AddSwitch( wxEmptyString, "attach-accurip-log", wxString::Format( _( "Attach AccurateRip log (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_FIND_ACCURIP_LOG ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
-    cmdLine.AddSwitch( "ru", "upper-roman-numerals", wxString::Format( _( "Convert roman numerals - upper case (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
-    cmdLine.AddSwitch( "rl", "lower-roman-numerals", wxString::Format( _( "Convert roman numerals - lower case (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_CONVERT_LOWER_ROMAN_NUMERALS ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
-    cmdLine.AddSwitch( wxEmptyString, "correct-dashes", wxString::Format( _( "Correct dashes (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_CORRECT_DASHES ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( wxEmptyString, "attach-accurip-log", wxString::Format( _( "Attach AccurateRip log (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_FIND_ACCURIP_LOG ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( "ru", "upper-roman-numerals", wxString::Format( _( "Convert roman numerals - upper case (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( "rl", "lower-roman-numerals", wxString::Format( _( "Convert roman numerals - lower case (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_CONVERT_LOWER_ROMAN_NUMERALS ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( wxEmptyString, "correct-dashes", wxString::Format( _( "Correct dashes (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_CORRECT_DASHES ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 
 	// advanced options
 	cmdLine.AddSwitch( wxEmptyString, "use-mlang", wxString::Format( _( "Use MLang library (default: %s)" ), BoolToStr( m_bUseMLang ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
@@ -365,7 +365,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 	cmdLine.AddSwitch( wxEmptyString, "hidden-indexes", wxString::Format( _( "Convert indexes to hidden (sub)chapters (default %s)" ), BoolToStr( m_bHiddenIndexes ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddOption( wxEmptyString, "cue-sheet-attach-mode", _( "Mode of attaching cue sheet to mkvmerge options file - possible values are none (default), source, decoded, rendered and default" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( wxEmptyString, "use-full-paths", wxString::Format( _( "Use full paths in mkvmerge options file (default: %s)" ), BoolToStr( m_bUseFullPaths ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
-    cmdLine.AddSwitch( "ra", "render-artist-for-track", wxString::Format( _( "Render artist for track (default: %s)" ), BoolToStr( m_bRenderArtistForTrack ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( "ra", "render-artist-for-track", wxString::Format( _( "Render artist for track (default: %s)" ), BoolToStr( m_bRenderArtistForTrack ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 
 	// tags usage
 	cmdLine.AddSwitch( wxEmptyString, "use-cdtext-tags", wxString::Format( _( "Use CD-TEXT tags (default: %s)" ), TagSourcesTestStr( wxCueTag::TAG_CD_TEXT ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
@@ -378,8 +378,8 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 	cmdLine.AddOption( wxEmptyString, "matroska-tags-file-extension", wxString::Format( _( "Matroska tags XML file extension (default: %s)" ), MATROSKA_TAGS_EXT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( wxEmptyString, "mkvmerge-options-file-extension", wxString::Format( _( "File extension of mkvmerge options file (default: %s)" ), MATROSKA_OPTS_EXT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 
-    cmdLine.AddSwitch( wxEmptyString, "convert-cover-to-jpeg", wxString::Format( _( "Convert cover files to JPEG (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
-    cmdLine.AddOption( wxEmptyString, "jpeg-image-quality", wxString::Format( _( "JPEG image quality (default %d)" ), m_nJpegImageQuality ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
+	cmdLine.AddSwitch( wxEmptyString, "convert-cover-to-jpeg", wxString::Format( _( "Convert cover files to JPEG (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddOption( wxEmptyString, "jpeg-image-quality", wxString::Format( _( "JPEG image quality (default %d)" ), m_nJpegImageQuality ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 
 	// input files
 	cmdLine.AddParam( _( "<cue sheet>" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE | wxCMD_LINE_PARAM_OPTIONAL );
@@ -406,7 +406,7 @@ bool wxConfiguration::CheckLang( const wxString& sLang ) const
 bool wxConfiguration::ReadReadFlags( const wxCmdLineParser& cmdLine, const wxString& name, wxCueSheetReader::ReadFlags nReadFlags )
 {
 	wxCmdLineSwitchState state = cmdLine.FoundSwitch( name );
-	bool				 bSwitchValue;
+	bool                 bSwitchValue;
 
 	if ( ReadNegatableSwitchValue( cmdLine, name, bSwitchValue ) )
 	{
@@ -423,7 +423,7 @@ bool wxConfiguration::ReadReadFlags( const wxCmdLineParser& cmdLine, const wxStr
 bool wxConfiguration::ReadTagSources( const wxCmdLineParser& cmdLine, const wxString& name, wxCueTag::TagSources nTagSources )
 {
 	wxCmdLineSwitchState state = cmdLine.FoundSwitch( name );
-	bool				 bSwitchValue;
+	bool                 bSwitchValue;
 
 	if ( ReadNegatableSwitchValue( cmdLine, name, bSwitchValue ) )
 	{
@@ -439,9 +439,9 @@ bool wxConfiguration::ReadTagSources( const wxCmdLineParser& cmdLine, const wxSt
 
 bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 {
-	bool	 bRes = true;
+	bool     bRes = true;
 	wxString s;
-	long	 v;
+	long     v;
 
 	if ( cmdLine.Found( "i", &s ) )
 	{
@@ -487,7 +487,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	ReadNegatableSwitchValue( cmdLine, "hidden-indexes", m_bHiddenIndexes );
 	ReadNegatableSwitchValue( cmdLine, "run-mkvmerge", m_bRunMkvmerge );
 	ReadNegatableSwitchValue( cmdLine, "use-full-paths", m_bUseFullPaths );
-    ReadNegatableSwitchValue( cmdLine, "ra", m_bRenderArtistForTrack );
+	ReadNegatableSwitchValue( cmdLine, "ra", m_bRenderArtistForTrack );
 
 	if ( cmdLine.Found( "e", &s ) )
 	{
@@ -631,11 +631,11 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	ReadReadFlags( cmdLine, "single-media-file", wxCueSheetReader::EC_SINGLE_MEDIA_FILE );
 	ReadReadFlags( cmdLine, "read-media-tags", wxCueSheetReader::EC_MEDIA_READ_TAGS );
 	ReadReadFlags( cmdLine, "attach-eac-log", wxCueSheetReader::EC_FIND_LOG );
-    ReadReadFlags( cmdLine, "attach-accurip-log", wxCueSheetReader::EC_FIND_ACCURIP_LOG );
+	ReadReadFlags( cmdLine, "attach-accurip-log", wxCueSheetReader::EC_FIND_ACCURIP_LOG );
 	ReadReadFlags( cmdLine, "attach-cover", wxCueSheetReader::EC_FIND_COVER );
-    ReadReadFlags( cmdLine, "ru", wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS );
-    ReadReadFlags( cmdLine, "rl", wxCueSheetReader::EC_CONVERT_LOWER_ROMAN_NUMERALS );
-    ReadReadFlags( cmdLine, "correct-dashes", wxCueSheetReader::EC_CORRECT_DASHES );
+	ReadReadFlags( cmdLine, "ru", wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS );
+	ReadReadFlags( cmdLine, "rl", wxCueSheetReader::EC_CONVERT_LOWER_ROMAN_NUMERALS );
+	ReadReadFlags( cmdLine, "correct-dashes", wxCueSheetReader::EC_CORRECT_DASHES );
 
 	// MLang
 	ReadNegatableSwitchValue( cmdLine, "use-mlang", m_bUseMLang );
@@ -658,33 +658,33 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 		}
 	}
 
-    ReadReadFlags( cmdLine, "convert-cover-to-jpeg", wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG );
+	ReadReadFlags( cmdLine, "convert-cover-to-jpeg", wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG );
 
-    if (cmdLine.Found( "jpeg-image-quality", &v ))
-    {
-        if ((v < 0) || (v > 1000))
-        {
-            wxLogWarning( _( "Wrong JPEG image quality - %d" ), v );
-            bRes = false;
-        }
-        else
-        {
-            m_nJpegImageQuality = (unsigned long)v;
-        }
-    }
+	if ( cmdLine.Found( "jpeg-image-quality", &v ) )
+	{
+		if ( ( v < 0 ) || ( v > 1000 ) )
+		{
+			wxLogWarning( _( "Wrong JPEG image quality - %d" ), v );
+			bRes = false;
+		}
+		else
+		{
+			m_nJpegImageQuality = (unsigned long)v;
+		}
+	}
 
 	return bRes;
 }
 
 bool wxConfiguration::InitJpegHandler()
 {
-    if (ConvertCoversToJpeg())
-    {
-        m_imageHandler = wxImage::FindHandler( wxBITMAP_TYPE_JPEG );
-        return m_imageHandler != nullptr;
-    }
+	if ( ConvertCoversToJpeg() )
+	{
+		m_imageHandler = wxImage::FindHandler( wxBITMAP_TYPE_JPEG );
+		return m_imageHandler != nullptr;
+	}
 
-    return true;
+	return true;
 }
 
 wxString wxConfiguration::BoolToIdx( bool b )
@@ -721,11 +721,11 @@ wxString wxConfiguration::GetReadFlagsDesc( wxCueSheetReader::ReadFlags flags )
 	AddFlag( as, flags, wxCueSheetReader::EC_MEDIA_READ_TAGS, "media-tags" );
 	AddFlag( as, flags, wxCueSheetReader::EC_FIND_COVER, "find-cover" );
 	AddFlag( as, flags, wxCueSheetReader::EC_FIND_LOG, "find-log" );
-    AddFlag( as, flags, wxCueSheetReader::EC_FIND_ACCURIP_LOG, "find-accurip-log" );
-    AddFlag( as, flags, wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS, "upper-roman-numerals" );
-    AddFlag( as, flags, wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS, "lower-roman-numerals" );
-    AddFlag( as, flags, wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG, "convert-cover-to-jpeg" );
-    AddFlag( as, flags, wxCueSheetReader::EC_CORRECT_DASHES, "correct-dashes" );
+	AddFlag( as, flags, wxCueSheetReader::EC_FIND_ACCURIP_LOG, "find-accurip-log" );
+	AddFlag( as, flags, wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS, "upper-roman-numerals" );
+	AddFlag( as, flags, wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS, "lower-roman-numerals" );
+	AddFlag( as, flags, wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG, "convert-cover-to-jpeg" );
+	AddFlag( as, flags, wxCueSheetReader::EC_CORRECT_DASHES, "correct-dashes" );
 
 	wxString s;
 	for ( size_t i = 0, nCount = as.GetCount(); i < nCount; ++i )
@@ -741,7 +741,7 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
 	as.Add( wxString::Format( "Rendering method: %s", ToString( m_eRenderMode ) ) );
 	as.Add( wxString::Format( "Generate tags file: %s", BoolToStr( m_bGenerateTags ) ) );
 	as.Add( wxString::Format( "Generate mkvmerge options file: %s", BoolToStr( m_bGenerateMkvmergeOpts ) ) );
-    as.Add( wxString::Format( "Run mkvmerge: %s", BoolToStr( m_bRunMkvmerge ) ) );
+	as.Add( wxString::Format( "Run mkvmerge: %s", BoolToStr( m_bRunMkvmerge ) ) );
 	as.Add( wxString::Format( "Generate edition UID: %s", BoolToStr( m_bGenerateEditionUID ) ) );
 	as.Add( wxString::Format( "Tag sources: %s", wxCueTag::SourcesToString( m_nTagSources ) ) );
 	as.Add( wxString::Format( "Output file encoding: %s", ToString( m_eFileEncoding ) ) );
@@ -762,26 +762,26 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
 	as.Add( wxString::Format( "Matroska tags XML file extension: %s", m_sMatroskaTagsXmlExt ) );
 	as.Add( wxString::Format( "mkvmerge options file extension: %s", m_sMatroskaOptsExt ) );
 	as.Add( wxString::Format( "Correct \"simple 'quotation' marks\" inside strings: %s", BoolToStr( m_bCorrectQuotationMarks ) ) );
-    as.Add( wxString::Format( "Render artist for tracks: %s", BoolToStr( m_bRenderArtistForTrack ) ) );
+	as.Add( wxString::Format( "Render artist for tracks: %s", BoolToStr( m_bRenderArtistForTrack ) ) );
 	as.Add( wxString::Format( "Read flags: %s", GetReadFlagsDesc( m_nReadFlags ) ) );
 	as.Add( wxString::Format( "Use MLang library: %s", BoolToStr( m_bUseMLang ) ) );
-    as.Add( wxString::Format( "JPEG image quality: %d", m_nJpegImageQuality ) );
+	as.Add( wxString::Format( "JPEG image quality: %d", m_nJpegImageQuality ) );
 }
 
 void wxConfiguration::Dump() const
 {
 	if ( wxLog::IsLevelEnabled( wxLOG_Info, wxLOG_COMPONENT ) && wxLog::GetVerbose() )
 	{
-		wxString	  sSeparator( '=', 65 );
+		wxString      sSeparator( '=', 65 );
 		wxArrayString as;
 		as.Add( sSeparator );
 		as.Add( _( "Configuration:" ) );
 		FillArray( as );
 		as.Add( wxString::Format( _( "Output path: \u201C%s\u201D" ), m_outputFile.GetFullPath() ) );
 		as.Add( sSeparator );
-		size_t	   strings = as.GetCount();
+		size_t     strings = as.GetCount();
 		wxDateTime dt( wxDateTime::Now() );
-		wxLog*	   pLog = wxLog::GetActiveTarget();
+		wxLog*     pLog = wxLog::GetActiveTarget();
 		for ( size_t i = 0; i < strings; ++i )
 		{
 			pLog->OnLog( wxLOG_Info, as[ i ], dt.GetTicks() );
@@ -798,7 +798,7 @@ void wxConfiguration::BuildXmlComments( const wxFileName& outputFile, wxXmlNode*
 	pNode->AddChild( pComment );
 
 	wxArrayString as;
-	wxDateTime	  dtNow( wxDateTime::Now() );
+	wxDateTime    dtNow( wxDateTime::Now() );
 
 	as.Add( wxString::Format( "Application version: %s", wxGetApp().APP_VERSION ) );
 	as.Add( wxString::Format( "Application vendor: %s", wxGetApp().GetVendorDisplayName() ) );
@@ -872,7 +872,7 @@ const wxArrayInputFile& wxConfiguration::GetInputFiles() const
 
 bool wxConfiguration::RenderArtistForTrack() const
 {
-    return m_bRenderArtistForTrack;
+	return m_bRenderArtistForTrack;
 }
 
 wxString wxConfiguration::GetExt() const
@@ -1184,59 +1184,59 @@ wxString wxConfiguration::GetXmlFileEncoding() const
 
 namespace
 {
-    void enc_2_cp( wxConfiguration::FILE_ENCODING enc, wxUint32& nCodePage, bool& bBom )
-    {
-        bBom = false;
+	void enc_2_cp( wxConfiguration::FILE_ENCODING enc, wxUint32& nCodePage, bool& bBom )
+	{
+		bBom = false;
 
-        switch (enc)
-        {
-            case wxConfiguration::ENCODING_UTF8_WITH_BOM:
-            {
-                bBom = true;
-            }
+		switch ( enc )
+		{
+			case wxConfiguration::ENCODING_UTF8_WITH_BOM:
+			{
+				bBom = true;
+			}
 
-            case wxConfiguration::ENCODING_UTF8:
-            {
-                nCodePage = wxEncodingDetection::CP::UTF8;
-                break;
-            }
+			case wxConfiguration::ENCODING_UTF8:
+			{
+				nCodePage = wxEncodingDetection::CP::UTF8;
+				break;
+			}
 
-            case wxConfiguration::ENCODING_UTF16_LE_WITH_BOM:
-            {
-                 bBom = true;
-            }
+			case wxConfiguration::ENCODING_UTF16_LE_WITH_BOM:
+			{
+				bBom = true;
+			}
 
-            case wxConfiguration::ENCODING_UTF16_LE:
-            {
-                nCodePage = wxEncodingDetection::CP::UTF16_LE;
-                break;
-            }
+			case wxConfiguration::ENCODING_UTF16_LE:
+			{
+				nCodePage = wxEncodingDetection::CP::UTF16_LE;
+				break;
+			}
 
-            case wxConfiguration::ENCODING_UTF16_BE_WITH_BOM:
-            {
-                bBom = true;
-            }
+			case wxConfiguration::ENCODING_UTF16_BE_WITH_BOM:
+			{
+				bBom = true;
+			}
 
-            case wxConfiguration::ENCODING_UTF16_BE:
-            {
-                nCodePage = wxEncodingDetection::CP::UTF16_BE;
-                break;
-            }
+			case wxConfiguration::ENCODING_UTF16_BE:
+			{
+				nCodePage = wxEncodingDetection::CP::UTF16_BE;
+				break;
+			}
 
-            default:
-            {
-                nCodePage = wxEncodingDetection::GetDefaultEncoding();
-                break;
-            }
-        }
-    }
+			default:
+			{
+				nCodePage = wxEncodingDetection::GetDefaultEncoding();
+				break;
+			}
+		}
+	}
 }
 
 wxSharedPtr< wxTextOutputStream > wxConfiguration::GetOutputTextStream( wxOutputStream& os ) const
 {
 	wxSharedPtr< wxTextOutputStream > pRes;
-	wxUint32						  nCodePage;
-	bool							  bBom;
+	wxUint32                          nCodePage;
+	bool                              bBom;
 	enc_2_cp( m_eFileEncoding, nCodePage, bBom );
 
 	return wxTextOutputStreamWithBOMFactory::Create( os, wxEOL_NATIVE, bBom, nCodePage, m_bUseMLang );
@@ -1247,8 +1247,8 @@ wxSharedPtr< wxMBConv > wxConfiguration::GetXmlEncoding() const
 	wxString sDescription;
 
 	wxSharedPtr< wxMBConv > pRes;
-	wxUint32				nCodePage;
-	bool					bBom;
+	wxUint32                nCodePage;
+	bool                    bBom;
 	enc_2_cp( m_eFileEncoding, nCodePage, bBom );
 
 	pRes = wxEncodingDetection::GetStandardMBConv( nCodePage, m_bUseMLang, sDescription );
@@ -1306,9 +1306,9 @@ bool wxConfiguration::AttachEacLog() const
 	return (m_nReadFlags& wxCueSheetReader::EC_FIND_LOG) != 0;
 }
 
-bool wxConfiguration::AttachAccurateRipLog( ) const
+bool wxConfiguration::AttachAccurateRipLog() const
 {
-    return (m_nReadFlags& wxCueSheetReader::EC_FIND_ACCURIP_LOG) != 0;
+	return (m_nReadFlags& wxCueSheetReader::EC_FIND_ACCURIP_LOG) != 0;
 }
 
 bool wxConfiguration::AttachCover() const
@@ -1316,19 +1316,19 @@ bool wxConfiguration::AttachCover() const
 	return (m_nReadFlags& wxCueSheetReader::EC_FIND_COVER) != 0;
 }
 
-bool wxConfiguration::ConvertCoversToJpeg( ) const
+bool wxConfiguration::ConvertCoversToJpeg() const
 {
-    return (m_nReadFlags& wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG) != 0;
+	return (m_nReadFlags& wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG) != 0;
 }
 
 int wxConfiguration::GetJpegImageQuality() const
 {
-    return m_nJpegImageQuality;
+	return m_nJpegImageQuality;
 }
 
 wxImageHandler* const wxConfiguration::GetImageHandler() const
 {
-    return m_imageHandler;
+	return m_imageHandler;
 }
 
 wxConfiguration::CUESHEET_ATTACH_MODE wxConfiguration::GetCueSheetAttachMode() const

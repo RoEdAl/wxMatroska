@@ -34,9 +34,9 @@ class wxMyApp:
 {
 	protected:
 
-		wxConfiguration						  m_cfg;
+		wxConfiguration m_cfg;
 		wxScopedPtr< wxMkvmergeOptsRenderer > m_pMkvmergeOptsRenderer;
-		wxScopedPtr< wxCueSheet >			  m_pMergedCueSheet;
+		wxScopedPtr< wxCueSheet > m_pMergedCueSheet;
 
 	protected:
 
@@ -52,7 +52,7 @@ class wxMyApp:
 
 		wxSharedPtr< wxXmlCueSheetRenderer > GetXmlRenderer( const wxInputFile& );
 		wxMkvmergeOptsRenderer& GetMkvmergeOptsRenderer( bool = true );
-		wxCueSheet&				GetMergedCueSheet();
+		wxCueSheet& GetMergedCueSheet();
 
 		bool HasMkvmergeOptsRenderer() const;
 		bool HasMergedCueSheet() const;

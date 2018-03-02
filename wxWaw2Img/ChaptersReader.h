@@ -23,5 +23,6 @@ class ChaptersReader
 
 		bool ParseChapterPosition( const wxString&, ChapterDesc& );
 };
+
 #endif
 

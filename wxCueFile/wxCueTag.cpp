@@ -14,30 +14,30 @@
 
 // ===============================================================================
 
-const char wxCueTag::Name::CUESHEET[]	  = "CUESHEET";
+const char wxCueTag::Name::CUESHEET[]     = "CUESHEET";
 const char wxCueTag::Name::TOTALTRACKS[]  = "TOTALTRACKS";
 const char wxCueTag::Name::TRACKNUMBER[]  = "TRACKNUMBER";
-const char wxCueTag::Name::ARRANGER[]	  = "ARRANGER";
-const char wxCueTag::Name::COMPOSER[]	  = "COMPOSER";
-const char wxCueTag::Name::ISRC[]		  = "ISRC";
-const char wxCueTag::Name::TITLE[]		  = "TITLE";
-const char wxCueTag::Name::ALBUM[]		  = "ALBUM";
-const char wxCueTag::Name::PERFORMER[]	  = "PERFORMER";
-const char wxCueTag::Name::ARTIST[]		  = "ARTIST";
+const char wxCueTag::Name::ARRANGER[]     = "ARRANGER";
+const char wxCueTag::Name::COMPOSER[]     = "COMPOSER";
+const char wxCueTag::Name::ISRC[]         = "ISRC";
+const char wxCueTag::Name::TITLE[]        = "TITLE";
+const char wxCueTag::Name::ALBUM[]        = "ALBUM";
+const char wxCueTag::Name::PERFORMER[]    = "PERFORMER";
+const char wxCueTag::Name::ARTIST[]       = "ARTIST";
 const char wxCueTag::Name::ALBUM_ARTIST[] = "ALBUM ARTIST";
 const char wxCueTag::Name::ALBUMARTIST[]  = "ALBUMARTIST";
-const char wxCueTag::Name::CATALOG[]	  = "CATALOG";
-const char wxCueTag::Name::CDTEXTFILE[]	  = "CDTEXTFILE";
-const char wxCueTag::Name::DISC_ID[]	  = "DISC_ID";
-const char wxCueTag::Name::GENRE[]		  = "GENRE";
-const char wxCueTag::Name::MESSAGE[]	  = "MESSAGE";
-const char wxCueTag::Name::SONGWRITER[]	  = "SONGWRITER";
-const char wxCueTag::Name::UPC_EAN[]	  = "UPC_EAN";
-const char wxCueTag::Name::SIZE_INFO[]	  = "SIZE_INFO";
-const char wxCueTag::Name::TOC_INFO[]	  = "TOC_INFO";
-const char wxCueTag::Name::TOC_INFO2[]	  = "TOC_INFO2";
-const char wxCueTag::Name::DISCNUMBER[]	  = "DISCNUMBER";
-const char wxCueTag::Name::TOTALDISCS[]	  = "TOTALDISCS";
+const char wxCueTag::Name::CATALOG[]      = "CATALOG";
+const char wxCueTag::Name::CDTEXTFILE[]   = "CDTEXTFILE";
+const char wxCueTag::Name::DISC_ID[]      = "DISC_ID";
+const char wxCueTag::Name::GENRE[]        = "GENRE";
+const char wxCueTag::Name::MESSAGE[]      = "MESSAGE";
+const char wxCueTag::Name::SONGWRITER[]   = "SONGWRITER";
+const char wxCueTag::Name::UPC_EAN[]      = "UPC_EAN";
+const char wxCueTag::Name::SIZE_INFO[]    = "SIZE_INFO";
+const char wxCueTag::Name::TOC_INFO[]     = "TOC_INFO";
+const char wxCueTag::Name::TOC_INFO2[]    = "TOC_INFO2";
+const char wxCueTag::Name::DISCNUMBER[]   = "DISCNUMBER";
+const char wxCueTag::Name::TOTALDISCS[]   = "TOTALDISCS";
 
 // ===============================================================================
 
@@ -58,12 +58,12 @@ wxIMPLEMENT_DYNAMIC_CLASS( wxCueTag, wxObject );
 
 wxString wxCueTag::SourceToString( wxCueTag::TAG_SOURCE eSource )
 {
-    return SourceToString( eSource, SOURCE2TEXT_MAPPING );
+	return SourceToString( eSource, SOURCE2TEXT_MAPPING );
 }
 
 wxString wxCueTag::SourcesToString( wxCueTag::TagSources nTagSources )
 {
-    return SourcesToString( nTagSources, SOURCE2TEXT_MAPPING );
+	return SourcesToString( nTagSources, SOURCE2TEXT_MAPPING );
 }
 
 bool wxCueTag::TestTagSources( wxCueTag::TagSources sources, wxCueTag::TagSources mask )
@@ -71,11 +71,11 @@ bool wxCueTag::TestTagSources( wxCueTag::TagSources sources, wxCueTag::TagSource
 	return ( sources & mask ) == mask;
 }
 
-wxCueTag::wxCueTag():
+wxCueTag::wxCueTag() :
 	m_eSource( TAG_UNKNOWN ), m_bMultiline( false )
 {}
 
-wxCueTag::wxCueTag( wxCueTag::TAG_SOURCE eSource, const wxString& sName, const wxString& sValue ):
+wxCueTag::wxCueTag( wxCueTag::TAG_SOURCE eSource, const wxString& sName, const wxString& sValue ) :
 	m_eSource( eSource ), m_sName( sName.Upper() )
 {
 	SetValue( sValue );
@@ -113,44 +113,44 @@ const wxString& wxCueTag::GetValue() const
 
 namespace
 {
-    wxMemoryBuffer memory_stream_to_buffer( const wxMemoryOutputStream& os )
-    {
-        size_t nSize = os.GetLength( );
-        wxMemoryBuffer data( nSize );
-        void* pData = data.GetWriteBuf( nSize );
-        os.CopyTo( pData, nSize );
-        data.UngetWriteBuf( nSize );
-        return data;
-    }
+	wxMemoryBuffer memory_stream_to_buffer( const wxMemoryOutputStream& os )
+	{
+		size_t         nSize = os.GetLength();
+		wxMemoryBuffer data( nSize );
+		void*          pData = data.GetWriteBuf( nSize );
+
+		os.CopyTo( pData, nSize );
+		data.UngetWriteBuf( nSize );
+		return data;
+	}
 }
 
 wxString wxCueTag::GetValueBase64() const
 {
-    wxMemoryOutputStream mos;
-    wxTextOutputStream tos( mos, wxEOL_UNIX, wxConvUTF8 );
-    wxTextOutputStreamOnString::SaveTo( tos, m_sValue );
+	wxMemoryOutputStream mos;
+	wxTextOutputStream   tos( mos, wxEOL_UNIX, wxConvUTF8 );
 
-    wxString s = wxBase64Encode( memory_stream_to_buffer( mos ) );
-    wxArrayString as;
-    wxString l;
+	wxTextOutputStreamOnString::SaveTo( tos, m_sValue );
 
+	wxString      s = wxBase64Encode( memory_stream_to_buffer( mos ) );
+	wxArrayString as;
+	wxString      l;
 
-
-    return wxBase64Encode( memory_stream_to_buffer( mos ) );
+	return wxBase64Encode( memory_stream_to_buffer( mos ) );
 }
 
 void wxCueTag::GetValueBase64( size_t nLineLen, wxArrayString& as ) const
 {
-    wxString s = GetValueBase64();
-    wxString l;
+	wxString s = GetValueBase64();
+	wxString l;
 
-    as.Empty();
-    while (!s.IsEmpty( ))
-    {
-        l = s.Left( nLineLen );
-        as.Add( l );
-        s.Remove( 0, l.Len( ) );
-    }
+	as.Empty();
+	while ( !s.IsEmpty() )
+	{
+		l = s.Left( nLineLen );
+		as.Add( l );
+		s.Remove( 0, l.Len() );
+	}
 }
 
 const wxCueTag& wxCueTag::GetValue( wxArrayString& asLines ) const
@@ -236,7 +236,7 @@ wxCueTag& wxCueTag::SetName( const wxString& sName )
 
 wxCueTag& wxCueTag::SetValue( const wxString& sValue )
 {
-	size_t					   nLines = 0;
+	size_t                     nLines = 0;
 	wxTextInputStreamOnString  tis( sValue );
 	wxTextOutputStreamOnString tos;
 
@@ -259,12 +259,12 @@ wxCueTag& wxCueTag::SetValue( const wxString& sValue )
 
 	if ( nLines > 1 )
 	{
-		m_sValue	 = tos.GetString();
+		m_sValue     = tos.GetString();
 		m_bMultiline = true;
 	}
 	else
 	{
-		m_sValue	 = sValue;
+		m_sValue     = sValue;
 		m_bMultiline = false;
 	}
 
@@ -273,9 +273,9 @@ wxCueTag& wxCueTag::SetValue( const wxString& sValue )
 
 void wxCueTag::copy( const wxCueTag& cueTag )
 {
-	m_eSource	 = cueTag.m_eSource;
-	m_sName		 = cueTag.m_sName.Upper();
-	m_sValue	 = cueTag.m_sValue;
+	m_eSource    = cueTag.m_eSource;
+	m_sName      = cueTag.m_sName.Upper();
+	m_sValue     = cueTag.m_sValue;
 	m_bMultiline = cueTag.m_bMultiline;
 }
 
@@ -331,7 +331,7 @@ void wxCueTag::Ellipsize( const wxEllipsizer& ellipsizer )
 
 void wxCueTag::CorrectDashes( const wxDashesCorrector& dashesCorrector )
 {
-    dashesCorrector.Replace( m_sValue );
+	dashesCorrector.Replace( m_sValue );
 }
 
 wxString wxCueTag::Escape( const wxString& sValue )
@@ -377,18 +377,18 @@ size_t wxCueTag::GetTags( const wxArrayCueTag& sourceTags, const wxString& sTagN
 
 size_t wxCueTag::GetTags( const wxArrayCueTag& sourceTags, wxCueTag::TagSources sources, const wxString& sTagName, wxArrayCueTag& tags )
 {
-    size_t nCounter = 0;
+	size_t nCounter = 0;
 
-    for (size_t i = 0, nCount = sourceTags.GetCount( ); i < nCount; ++i)
-    {
-        if ( sourceTags[i].TestSource( sources ) && sourceTags[i] == sTagName)
-        {
-            AddTag( tags, sourceTags[i] );
-            nCounter += 1;
-        }
-    }
+	for ( size_t i = 0, nCount = sourceTags.GetCount(); i < nCount; ++i )
+	{
+		if ( sourceTags[ i ].TestSource( sources ) && sourceTags[ i ] == sTagName )
+		{
+			AddTag( tags, sourceTags[ i ] );
+			nCounter += 1;
+		}
+	}
 
-    return nCounter;
+	return nCounter;
 }
 
 size_t wxCueTag::MoveTags( wxArrayCueTag& sourceTags, const wxString& sTagName, wxArrayCueTag& tags )
@@ -403,8 +403,8 @@ size_t wxCueTag::MoveTags( wxArrayCueTag& sourceTags, const wxString& sTagName, 
 			sourceTags.RemoveAt( i );
 
 			nCounter += 1;
-			nCount	 -= 1;
-			i		 -= 1;
+			nCount   -= 1;
+			i        -= 1;
 		}
 	}
 
@@ -425,8 +425,8 @@ size_t wxCueTag::MoveTags( wxArrayCueTag& sourceTags, const wxTagSynonimsCollect
 			sourceTags.RemoveAt( i );
 
 			nCounter += 1;
-			nCount	 -= 1;
-			i		 -= 1;
+			nCount   -= 1;
+			i        -= 1;
 		}
 	}
 
@@ -493,8 +493,8 @@ size_t wxCueTag::RemoveTag( wxArrayCueTag& tags, const wxCueTag& cueTag )
 			tags.RemoveAt( i );
 
 			nCounter += 1;
-			nCount	 -= 1;
-			i		 -= 1;
+			nCount   -= 1;
+			i        -= 1;
 		}
 	}
 
@@ -512,8 +512,8 @@ size_t wxCueTag::RemoveTag( wxArrayCueTag& tags, const wxString& sTagName )
 			tags.RemoveAt( i );
 
 			nCounter += 1;
-			nCount	 -= 1;
-			i		 -= 1;
+			nCount   -= 1;
+			i        -= 1;
 		}
 	}
 
@@ -597,29 +597,30 @@ bool wxCueTag::FindCommonPart( wxCueTag& commonTag, const wxCueTag& tag1, const 
 
 wxString wxCueTag::GetFlattenValues( const wxArrayCueTag& tags, const wxString& sSeparator )
 {
-    size_t nCount = tags.GetCount();
-    if (nCount > 0)
-    {
-        wxString sResult;
-        size_t nUpperBound = nCount - 1;
+	size_t nCount = tags.GetCount();
 
-        for (size_t i = 0; i < nUpperBound; ++i)
-        {
-            sResult << tags[i].GetFlattenValue( sSeparator ) << sSeparator;
-        }
+	if ( nCount > 0 )
+	{
+		wxString sResult;
+		size_t   nUpperBound = nCount - 1;
 
-        sResult << tags[nCount - 1].GetFlattenValue( sSeparator );
-        return sResult;
-    }
-    else
-    {
-        return wxEmptyString;
-    }
+		for ( size_t i = 0; i < nUpperBound; ++i )
+		{
+			sResult << tags[ i ].GetFlattenValue( sSeparator ) << sSeparator;
+		}
+
+		sResult << tags[ nCount - 1 ].GetFlattenValue( sSeparator );
+		return sResult;
+	}
+	else
+	{
+		return wxEmptyString;
+	}
 }
 
 bool wxCueTag::IsReplayGain() const
 {
-    return m_sName.StartsWith( "REPLAYGAIN_" );
+	return m_sName.StartsWith( "REPLAYGAIN_" );
 }
 
 #include <wx/arrimpl.cpp>

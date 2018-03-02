@@ -58,6 +58,7 @@ class TagLibDebugListener:
 
 		virtual void printMessage( const TagLib::String& );
 };
+
 #endif
 
 class wxCueSheetReader:
@@ -67,34 +68,34 @@ class wxCueSheetReader:
 
 	public:
 
-        struct eac_log
-        {
-            static const char EXT[];
-            static const char MASK[];
-        }; 
+		struct eac_log
+		{
+			static const char EXT[];
+			static const char MASK[];
+		};
 
-        struct accurip_log
-        {
-            static const char EXT[];
-            static const char MASK[];
-        };
+		struct accurip_log
+		{
+			static const char EXT[];
+			static const char MASK[];
+		};
 
 		typedef wxUint32 ReadFlags;
 
 		enum
 		{
-			EC_PARSE_COMMENTS	   = 1,
-			EC_ELLIPSIZE_TAGS	   = 2,
-			EC_REMOVE_EXTRA_SPACES = 4,
-			EC_MEDIA_READ_TAGS	   = 8,
-			EC_SINGLE_MEDIA_FILE   = 16,
-			EC_FIND_COVER		   = 32,
-			EC_FIND_LOG			   = 64,
-            EC_CONVERT_UPPER_ROMAN_NUMERALS = 128,
-            EC_CONVERT_LOWER_ROMAN_NUMERALS = 256,
-            EC_CONVERT_COVER_TO_JPEG = 512,
-            EC_CORRECT_DASHES = 1024,
-            EC_FIND_ACCURIP_LOG = 2048
+			EC_PARSE_COMMENTS               = 1,
+			EC_ELLIPSIZE_TAGS               = 2,
+			EC_REMOVE_EXTRA_SPACES          = 4,
+			EC_MEDIA_READ_TAGS              = 8,
+			EC_SINGLE_MEDIA_FILE            = 16,
+			EC_FIND_COVER                   = 32,
+			EC_FIND_LOG                     = 64,
+			EC_CONVERT_UPPER_ROMAN_NUMERALS = 128,
+			EC_CONVERT_LOWER_ROMAN_NUMERALS = 256,
+			EC_CONVERT_COVER_TO_JPEG        = 512,
+			EC_CORRECT_DASHES               = 1024,
+			EC_FIND_ACCURIP_LOG             = 2048
 		};
 
 		bool TestReadFlags( ReadFlags ) const;
@@ -102,39 +103,39 @@ class wxCueSheetReader:
 	protected:
 
 		// regex
-		wxRegEx					 m_reKeywords;
-		wxRegEx					 m_reCdTextInfo;
-		wxRegEx					 m_reEmpty;
-		wxRegEx					 m_reIndex;
-		wxRegEx					 m_reMsf;
-		wxUnquoter				 m_unquoter;
-		wxUnquoter				 m_genericUnquoter;
-		wxRegEx					 m_reQuotesEx;
-		wxRegEx					 m_reFlags;
-		wxRegEx					 m_reDataMode;
-		wxRegEx					 m_reDataFile;
-		wxRegEx					 m_reCatalog;
-		wxRegEx					 m_reIsrc;
-		wxRegEx					 m_reTrackComment;
-		wxRegEx					 m_reCommentMeta;
-		wxTrailingSpacesRemover	 m_trailingSpacesRemover;
+		wxRegEx m_reKeywords;
+		wxRegEx m_reCdTextInfo;
+		wxRegEx m_reEmpty;
+		wxRegEx m_reIndex;
+		wxRegEx m_reMsf;
+		wxUnquoter m_unquoter;
+		wxUnquoter m_genericUnquoter;
+		wxRegEx m_reQuotesEx;
+		wxRegEx m_reFlags;
+		wxRegEx m_reDataMode;
+		wxRegEx m_reDataFile;
+		wxRegEx m_reCatalog;
+		wxRegEx m_reIsrc;
+		wxRegEx m_reTrackComment;
+		wxRegEx m_reCommentMeta;
+		wxTrailingSpacesRemover m_trailingSpacesRemover;
 		wxReduntantSpacesRemover m_reduntantSpacesRemover;
-		wxEllipsizer			 m_ellipsizer;
-        wxRomanNumeralsConv<true>   m_romanNumveralsConvUpper;
-        wxRomanNumeralsConv<false>   m_romanNumveralsConvLower;
-        wxDashesCorrector        m_dashesCorrector;
-		wxString				 m_sOneTrackCue;
+		wxEllipsizer m_ellipsizer;
+		wxRomanNumeralsConv< true > m_romanNumveralsConvUpper;
+		wxRomanNumeralsConv< false > m_romanNumveralsConvLower;
+		wxDashesCorrector m_dashesCorrector;
+		wxString m_sOneTrackCue;
 
 		// settings
-		bool	  m_bErrorsAsWarnings;
-		wxString  m_sLang;
-		wxString  m_sAlternateExt;
+		bool m_bErrorsAsWarnings;
+		wxString m_sLang;
+		wxString m_sAlternateExt;
 		ReadFlags m_nReadFlags;
 
 		// work
 		wxCueSheetContent m_cueSheetContent;
-		wxArrayString	  m_errors;
-		wxCueSheet		  m_cueSheet;
+		wxArrayString m_errors;
+		wxCueSheet m_cueSheet;
 
 		// TagLib debug listener
 #ifdef __WXDEBUG__
@@ -145,11 +146,12 @@ class wxCueSheetReader:
 
 		static wxString GetOneTrackCue();
 
-        template<typename T>
+		template< typename T >
 		static bool GetLogFile( const wxFileName&, bool, wxFileName& );
 
 		void AddError0( const wxString& );
-		void AddError( const wxString&, ... );
+
+		void AddError( wxString, ... );
 
 		void DumpErrors( size_t ) const;
 
@@ -172,13 +174,13 @@ class wxCueSheetReader:
 
 		bool ParseCue( const wxCueSheetContent& );
 
-		bool ParseCueLine( const wxString &, size_t );
+		bool ParseCueLine( const wxString&, size_t );
 
 		template< size_t SIZE >
 		bool ParseLine( const wxString&, const wxString&, const PARSE_STRUCT(&)[ SIZE ] );
 
-		void ParseLine( size_t, const wxString &, const wxString & );
-		void ParseCdTextInfo( size_t, const wxString &, const wxString & );
+		void ParseLine( size_t, const wxString&, const wxString& );
+		void ParseCdTextInfo( size_t, const wxString&, const wxString& );
 
 		void ParseGarbage( const wxString& );
 		void ParseComment( const wxString&, const wxString& );
@@ -195,26 +197,26 @@ class wxCueSheetReader:
 		void ParseCatalog( const wxString&, const wxString& );
 		void ParseCdTextFile( const wxString&, const wxString& );
 
-        void CorrectTag( wxCueTag& ) const;
-        void CorrectString( wxString& ) const;
+		void CorrectTag( wxCueTag& ) const;
+		void CorrectString( wxString& ) const;
 
 		bool AddCdTextInfo( const wxString&, const wxString& );
 		void AppendTags( const wxArrayCueTag&, bool );
 
-		void AppendTags( const wxArrayCueTag &, size_t, size_t );
+		void AppendTags( const wxArrayCueTag&, size_t, size_t );
 
-        void AddCover( const wxFileName& );
-        void AddCovers( const wxArrayCoverFile& );
+		void AddCover( const wxFileName& );
+		void AddCovers( const wxArrayCoverFile& );
 
 	protected:
 
 		bool BuildFromSingleMediaFile( const wxDataFile& );
 		bool ReadTagsFromRelatedFiles();
 
-		bool ReadTagsFromMediaFile( const wxDataFile &, size_t, size_t );
+		bool ReadTagsFromMediaFile( const wxDataFile&, size_t, size_t );
 
 		bool FindLog( const wxCueSheetContent& );
-        bool FindAccurateRipLog( const wxCueSheetContent& );
+		bool FindAccurateRipLog( const wxCueSheetContent& );
 
 		void FindCoversInRelatedFiles();
 		bool FindCover( const wxCueSheetContent& );
@@ -250,5 +252,6 @@ class wxCueSheetReader:
 		// reading
 		const wxCueSheet& GetCueSheet() const;
 };
+
 #endif
 

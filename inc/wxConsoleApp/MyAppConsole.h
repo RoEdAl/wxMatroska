@@ -25,6 +25,7 @@ class MyAppConsole:
 
 		virtual bool OnInit();
 		virtual wxAppTraits* CreateTraits();
+		virtual bool OnCmdLineParsed( wxCmdLineParser& );
 		virtual int OnExit();
 
 		void AddSeparator( wxCmdLineParser& );
@@ -33,5 +34,6 @@ class MyAppConsole:
 
 		wxString m_sSeparator;
 };
+
 #endif
 

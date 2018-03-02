@@ -28,17 +28,17 @@ wxUint32 wxMLangConvertCharset::GetRealCodePage( wxUint32 nCodePage )
 	}
 }
 
-wxMLangConvertCharset::wxMLangConvertCharset( void ):
+wxMLangConvertCharset::wxMLangConvertCharset( void ) :
 	m_pMLang( (IMLangConvertCharset*)NULL )
 {}
 
-wxMLangConvertCharset::wxMLangConvertCharset( wxUint32 nCodepageFrom, wxUint32 nCodepageTo ):
+wxMLangConvertCharset::wxMLangConvertCharset( wxUint32 nCodepageFrom, wxUint32 nCodepageTo ) :
 	m_pMLang( (IMLangConvertCharset*)NULL )
 {
 	Initialize( nCodepageFrom, nCodepageTo );
 }
 
-wxMLangConvertCharset::wxMLangConvertCharset( const wxMultiLanguage& mlang, wxUint32 nCodepageFrom, wxUint32 nCodepageTo ):
+wxMLangConvertCharset::wxMLangConvertCharset( const wxMultiLanguage& mlang, wxUint32 nCodepageFrom, wxUint32 nCodepageTo ) :
 	m_pMLang( (IMLangConvertCharset*)NULL )
 {
 	HRESULT hRes = mlang->CreateConvertCharset( GetRealCodePage( nCodepageFrom ), GetRealCodePage( nCodepageTo ), 0, &m_pMLang );
@@ -50,7 +50,7 @@ wxMLangConvertCharset::wxMLangConvertCharset( const wxMultiLanguage& mlang, wxUi
 	}
 }
 
-wxMLangConvertCharset::wxMLangConvertCharset( const wxMLangConvertCharset& ml ):
+wxMLangConvertCharset::wxMLangConvertCharset( const wxMLangConvertCharset& ml ) :
 	m_pMLang( ml.m_pMLang )
 {
 	if ( IsValid() )

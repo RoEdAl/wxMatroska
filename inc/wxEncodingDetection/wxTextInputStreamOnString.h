@@ -20,17 +20,18 @@ class wxTextInputStreamOnString:
 		wxTextInputStreamOnString( const CharBufferType& );
 
 		const wxMemoryInputStream& GetMemoryStream() const;
-		wxTextInputStream&		   GetStream();
-		const CharBufferType&	   GetBuffer() const;
-		wxTextInputStream&		   operator *() const;
+		wxTextInputStream& GetStream();
+		const CharBufferType& GetBuffer() const;
+		wxTextInputStream& operator *() const;
 		bool Eof() const;
 
 	protected:
 
-		wxNoConv			m_conv;
-		CharBufferType		m_charBuffer;
+		wxNoConv m_conv;
+		CharBufferType m_charBuffer;
 		wxMemoryInputStream m_inputStream;
-		wxTextInputStream	m_textInputStream;
+		wxTextInputStream m_textInputStream;
 };
+
 #endif
 

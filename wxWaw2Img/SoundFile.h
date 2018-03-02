@@ -15,16 +15,16 @@ class SoundFile
 
 	protected:
 
-		wxFile	 m_file;
+		wxFile m_file;
 		SNDFILE* m_sndfile;
-		SF_INFO	 m_sf_info;
+		SF_INFO m_sf_info;
 
 	public:
 
 		SoundFile();
 		~SoundFile();
 
-		bool Open( const wxString&, wxFile::OpenMode = wxFile::read );
+		bool Open( const wxString&, wxFile::OpenMode                 = wxFile::read );
 		bool Open( const wxString&, const SF_INFO&, wxFile::OpenMode = wxFile::read );
 		bool Close();
 
@@ -35,7 +35,7 @@ class SoundFile
 
 		SNDFILE* GetHandle() const;
 		const SF_INFO& GetInfo() const;
-		wxFile&		   GetFile() const;
+		wxFile& GetFile() const;
 
 	protected:
 
@@ -51,5 +51,6 @@ class SoundFile
 		sf_count_t vio_write( const void* ptr, sf_count_t count );
 		sf_count_t vio_tell();
 };
+
 #endif
 

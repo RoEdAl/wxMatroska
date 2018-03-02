@@ -19,5 +19,6 @@ class McDcWaveDrawer:
 
 		virtual bool Save( const wxFileName& ) = 0;
 };
+
 #endif
 

@@ -16,7 +16,7 @@ class wxInputFile:
 
 	protected:
 
-		wxFileName		m_inputFile;
+		wxFileName m_inputFile;
 		wxArrayFileName m_dataFile;
 
 	protected:
@@ -33,7 +33,7 @@ class wxInputFile:
 		wxInputFile& operator =( const wxInputFile& );
 
 		bool IsOk() const;
-		const wxFileName&	   GetInputFile() const;
+		const wxFileName& GetInputFile() const;
 		const wxArrayFileName& GetDataFiles() const;
 		void GetDataFiles( wxArrayDataFile&, wxDataFile::FileType = wxDataFile::WAVE ) const;
 		bool HasDataFiles() const;
@@ -43,5 +43,6 @@ class wxInputFile:
 
 		wxString ToString( bool = false ) const;
 };
+
 #endif
 

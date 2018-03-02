@@ -7,7 +7,7 @@
 #include "WaveDrawer.h"
 #include "SampleChunker.h"
 
-SampleChunker::SampleChunker( wxUint64 nNumberOfSamples, wxUint32 nWidth, bool bCalcLogarithmic, wxFloat32 fLogBase ):
+SampleChunker::SampleChunker( wxUint64 nNumberOfSamples, wxUint32 nWidth, bool bCalcLogarithmic, wxFloat32 fLogBase ) :
 	m_nNumberOfSamples( nNumberOfSamples ),
 	m_nCurrentSample( wxULL( 0 ) ),
 	m_nSamplesInColumn( wxULL( 0 ) ),
@@ -48,9 +48,9 @@ void SampleChunker::ProcessInitializer()
 {
 	m_nCurrentSample = wxULL( 0 );
 	m_nCurrentColumn = 0;
-	m_fMaxSample	 = 0.0;
-	m_fAbsMaxSample	 = 0;
-	m_nLimit		 = get_next_sample_limit();
+	m_fMaxSample     = 0.0;
+	m_fAbsMaxSample  = 0;
+	m_nLimit         = get_next_sample_limit();
 }
 
 void SampleChunker::ProcessSample( wxFloat32 fSample )
@@ -66,7 +66,7 @@ void SampleChunker::ProcessSample( wxFloat32 fSample )
 
 	if ( fAbsSample > m_fAbsMaxSample )
 	{
-		m_fMaxSample	= fSample;
+		m_fMaxSample    = fSample;
 		m_fAbsMaxSample = fAbsSample;
 	}
 
@@ -77,7 +77,7 @@ void SampleChunker::ProcessSample( wxFloat32 fSample )
 	{
 		if ( m_pLogarithmicScale )
 		{
-			wxFloat32 fLogSample = ( * m_pLogarithmicScale )( m_fAbsMaxSample );
+			wxFloat32 fLogSample = ( *m_pLogarithmicScale )( m_fAbsMaxSample );
 			wxASSERT( fLogSample >= 0.0f && fLogSample <= 1.0f );
 			NextColumn( m_fMaxSample, ( m_fMaxSample >= 0.0f ) ? fLogSample : -fLogSample );
 		}
@@ -87,9 +87,9 @@ void SampleChunker::ProcessSample( wxFloat32 fSample )
 		}
 
 		m_nCurrentColumn  += 1;
-		m_nLimit		   = get_next_sample_limit();
-		m_fMaxSample	   = 0.0f;
-		m_fAbsMaxSample	   = 0.0f;
+		m_nLimit           = get_next_sample_limit();
+		m_fMaxSample       = 0.0f;
+		m_fAbsMaxSample    = 0.0f;
 		m_nSamplesInColumn = wxULL( 0 );
 	}
 }

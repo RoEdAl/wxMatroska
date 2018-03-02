@@ -10,7 +10,7 @@
 #include "ArrayWaveDrawer.h"
 #include "MCDcWaveDrawer.h"
 
-McDcWaveDrawer::McDcWaveDrawer( wxUint16 nChannels ):
+McDcWaveDrawer::McDcWaveDrawer( wxUint16 nChannels ) :
 	ArrayWaveDrawer( nChannels )
 {}
 

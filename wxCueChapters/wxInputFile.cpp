@@ -16,7 +16,7 @@ wxIMPLEMENT_DYNAMIC_CLASS( wxInputFile, wxObject );
 void wxInputFile::copy( const wxInputFile& inputFile )
 {
 	m_inputFile = inputFile.m_inputFile;
-	m_dataFile	= inputFile.m_dataFile;
+	m_dataFile  = inputFile.m_dataFile;
 }
 
 wxInputFile::wxInputFile( const wxInputFile& inputFile )

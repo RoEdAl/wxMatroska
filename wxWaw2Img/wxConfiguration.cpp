@@ -14,7 +14,7 @@
 
 // ===============================================================================
 
-const wxSystemColour wxConfiguration::COLOR_BACKGROUND	= wxSYS_COLOUR_WINDOW;
+const wxSystemColour wxConfiguration::COLOR_BACKGROUND  = wxSYS_COLOUR_WINDOW;
 const wxSystemColour wxConfiguration::COLOR_BACKGROUND2 = wxSYS_COLOUR_MENUBAR;
 
 // ===============================================================================
@@ -76,7 +76,7 @@ const wxConfiguration::INFO_SUBJECT_DESC wxConfiguration::InfoSubjectDesc[] =
 
 // ===============================================================================
 
-wxConfiguration::wxConfiguration( void ):
+wxConfiguration::wxConfiguration( void ) :
 	m_infoSubject( INFO_NONE ),
 	m_eDrawingMode( DRAWING_MODE_POLY ),
 	m_sDefImageExt( "png" ),
@@ -178,14 +178,14 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 void wxConfiguration::GetDefaultsFromDisplay()
 {
 	wxRect dplRect = wxGetClientDisplayRect();
-	int	   nDepth  = wxDisplayDepth();
-	wxSize res	   = wxGetDisplayPPI();
+	int    nDepth  = wxDisplayDepth();
+	wxSize res     = wxGetDisplayPPI();
 
 	wxLogInfo( _( "Display size in pixels: %dx%d (%dx%d)" ), dplRect.GetWidth(), dplRect.GetHeight(), dplRect.x, dplRect.y );
 	wxLogInfo( _( "Display resolution PPI: %dx%d" ), res.x, res.y );
 	wxLogInfo( _( "Display color depth: %d bits" ), nDepth );
 
-	m_imageSize		   = dplRect.GetSize();
+	m_imageSize        = dplRect.GetSize();
 	m_nImageColorDepth = nDepth;
 	m_imageResolution  = res;
 }
@@ -305,9 +305,9 @@ wxString wxConfiguration::GetInfoSubjectTexts()
 
 bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 {
-	bool	 bRes = true;
+	bool     bRes = true;
 	wxString s;
-	long	 v;
+	long     v;
 	wxDouble vd;
 	wxColour clr;
 
@@ -874,13 +874,13 @@ bool wxConfiguration::GenerateChapters( const wxTimeSpan& duration, ChaptersArra
 
 	wxTimeSpan step;
 	m_interval.Get( duration, step );
-	wxTimeSpan pos		= step;
+	wxTimeSpan pos      = step;
 	wxUint32   nCounter = 0;
 
 	while ( pos < duration )
 	{
 		chapters.Add( pos );
-		pos		 += step;
+		pos      += step;
 		nCounter += 1U;
 	}
 
@@ -1080,7 +1080,7 @@ wxRect2DInt wxConfiguration::GetDrawerRectPt() const
 {
 	wxASSERT( !m_bMultiChannel );
 
-	wxSize		imageSize( GetImageSizePt() );
+	wxSize      imageSize( GetImageSizePt() );
 	wxRect2DInt rc( 0, 0, imageSize.GetWidth(), imageSize.GetHeight() );
 	add_margin( rc, true, true, true, true );
 	return rc;
@@ -1094,18 +1094,18 @@ void wxConfiguration::GetDrawerRects( wxUint16 nChannels, wxRect2DIntArray& draw
 	wxUint16 nRowsNumber = nChannels / m_nColumnNumber;
 	nRowsNumber += ( ( nChannels % m_nColumnNumber ) == 0 ) ? 0 : 1;
 
-	wxUint16 nRowsNumber1	= nRowsNumber - 1U;
+	wxUint16 nRowsNumber1   = nRowsNumber - 1U;
 	wxUint16 nColumnNumber1 = m_nColumnNumber - 1U;
 
-	wxUint32 nWidth	 = m_imageSize.GetWidth() / m_nColumnNumber;
+	wxUint32 nWidth  = m_imageSize.GetWidth() / m_nColumnNumber;
 	wxUint32 nHeight = m_imageSize.GetHeight() / nRowsNumber;
 
 	for ( wxUint16 nChannel = 0; nChannel < nChannels; nChannel++ )
 	{
-		wxUint16 nRow	 = nChannel / m_nColumnNumber;
+		wxUint16 nRow    = nChannel / m_nColumnNumber;
 		wxUint16 nColumn = nChannel % m_nColumnNumber;
 
-		wxRect2DInt rc( nColumn * m_imageSize.GetWidth() / m_nColumnNumber, nRow * m_imageSize.GetHeight() / nRowsNumber, nWidth, nHeight );
+		wxRect2DInt rc( nColumn* m_imageSize.GetWidth() / m_nColumnNumber, nRow* m_imageSize.GetHeight() / nRowsNumber, nWidth, nHeight );
 		add_margin( rc, ( nRow == 0 ), ( nColumn == nColumnNumber1 ), ( nRow == nRowsNumber1 ), ( nColumn == 0 ) );
 		drawerRects.Add( rc );
 	}
@@ -1119,20 +1119,20 @@ void wxConfiguration::GetDrawerRectsPt( wxUint16 nChannels, wxRect2DIntArray& dr
 	wxUint16 nRowsNumber = nChannels / m_nColumnNumber;
 	nRowsNumber += ( ( nChannels % m_nColumnNumber ) == 0 ) ? 0 : 1;
 
-	wxUint16 nRowsNumber1	= nRowsNumber - 1U;
+	wxUint16 nRowsNumber1   = nRowsNumber - 1U;
 	wxUint16 nColumnNumber1 = m_nColumnNumber - 1U;
 
 	wxSize imageSize( GetImageSizePt() );
 
-	wxUint32 nWidth	 = imageSize.GetWidth() / m_nColumnNumber;
+	wxUint32 nWidth  = imageSize.GetWidth() / m_nColumnNumber;
 	wxUint32 nHeight = imageSize.GetHeight() / nRowsNumber;
 
 	for ( wxUint16 nChannel = 0; nChannel < nChannels; nChannel++ )
 	{
-		wxUint16 nRow	 = nChannel / m_nColumnNumber;
+		wxUint16 nRow    = nChannel / m_nColumnNumber;
 		wxUint16 nColumn = nChannel % m_nColumnNumber;
 
-		wxRect2DInt rc( nColumn * imageSize.GetWidth() / m_nColumnNumber, nRow * imageSize.GetHeight() / nRowsNumber, nWidth, nHeight );
+		wxRect2DInt rc( nColumn* imageSize.GetWidth() / m_nColumnNumber, nRow* imageSize.GetHeight() / nRowsNumber, nWidth, nHeight );
 		add_margin( rc, ( nRow == 0 ), ( nColumn == nColumnNumber1 ), ( nRow == nRowsNumber1 ), ( nColumn == 0 ) );
 		drawerRects.Add( rc );
 	}

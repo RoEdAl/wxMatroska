@@ -21,9 +21,9 @@ class wxTextCueSheetRenderer:
 	protected:
 
 		wxTextOutputStream* m_pTextOutputStream;
-		int					m_nDumpFlags;
-		wxSamplingInfo		m_si;
-		wxRegEx				m_reSpace;
+		int m_nDumpFlags;
+		wxSamplingInfo m_si;
+		wxRegEx m_reSpace;
 
 		size_t m_nDataFileIdx;
 
@@ -44,19 +44,19 @@ class wxTextCueSheetRenderer:
 		void InternalRenderCueSheet( const wxCueSheet& );
 		void InternalRenderTrack( const wxCueSheet&, const wxTrack& );
 
-		void InternalRenderIndex( const wxCueSheet &, const wxTrack &, const wxIndex &, wxString );
+		void InternalRenderIndex( const wxCueSheet&, const wxTrack&, const wxIndex&, wxString );
 		void InternalRenderIndex( const wxCueSheet&, const wxTrack&, const wxIndex& );
 
-		void InternalRenderDataFile( const wxCueSheet &, size_t );
+		void InternalRenderDataFile( const wxCueSheet&, size_t );
 
 	public:
 
 		enum
 		{
-			DUMP_COMMENTS	 = 1,
-			DUMP_GARBAGE	 = 2,
+			DUMP_COMMENTS    = 1,
+			DUMP_GARBAGE     = 2,
 			DUMP_EMPTY_LINES = 4,
-			DUMP_TAGS		 = 8
+			DUMP_TAGS        = 8
 		};
 
 		wxTextCueSheetRenderer( wxTextOutputStream* = (wxTextOutputStream*)NULL, int = DUMP_COMMENTS | DUMP_TAGS );
@@ -67,7 +67,8 @@ class wxTextCueSheetRenderer:
 		int GetDumpFlags() const;
 
 		static bool ToString( wxTextOutputStream&, const wxCueSheet&, int = DUMP_COMMENTS | DUMP_TAGS );
-		static wxString ToString( const wxCueSheet&, int = DUMP_COMMENTS | DUMP_TAGS );
+		static wxString ToString( const wxCueSheet&, int                  = DUMP_COMMENTS | DUMP_TAGS );
 };
+
 #endif
 

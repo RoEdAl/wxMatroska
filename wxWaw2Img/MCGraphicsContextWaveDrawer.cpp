@@ -30,9 +30,10 @@ static wxGraphicsRenderer* get_renderer()
 {
 	return wxGraphicsRenderer::GetDefaultRenderer();
 }
+
 #endif
 
-McGraphicalContextWaveDrawer::McGraphicalContextWaveDrawer( wxUint16 nChannels ):
+McGraphicalContextWaveDrawer::McGraphicalContextWaveDrawer( wxUint16 nChannels ) :
 	ArrayWaveDrawer( nChannels ), m_nTrackDuration( 0 )
 {}
 
@@ -65,6 +66,7 @@ wxEnhMetaFile* McGraphicalContextWaveDrawer::GetMetafile() const
 		return NULL;
 	}
 }
+
 #endif
 #endif
 
@@ -189,6 +191,7 @@ void McGraphicalContextWaveDrawer::create_context_on_emf( const wxSize& imageSiz
 	wxLogInfo( _( "Creating graphics context" ) );
 	m_gc.reset( pRenderer->CreateContext( *m_emfDc ) );
 }
+
 #endif
 #endif
 

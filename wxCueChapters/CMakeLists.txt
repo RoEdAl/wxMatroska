@@ -10,13 +10,13 @@ set(CUECHAPTERS_SOURCE_FILES
 	wxMkvmergeOptsRenderer.cpp
 	wxPrimitiveRenderer.cpp
 	wxXmlCueSheetRenderer.cpp
-	wxCueChapters.rc
 )
 
 ADD_MSVC_PRECOMPILED_HEADER("StdWx.h" "StdWx.cpp" CUECHAPTERS_SOURCE_FILES )
 add_executable(cue2mkc
 	${CUECHAPTERS_SOURCE_FILES}
 	${CUECHAPTERS_HEADER_FILES}
+	wxCueChapters.rc
 	${PROJECT_CONFIG_FILE}
 	${CUECHAPTERS_PUBLIC_HEADER_FILES}
 )
@@ -26,5 +26,6 @@ target_link_libraries(cue2mkc ${wxWidgets_LIBRARIES} Shlwapi.lib
 	wxConsoleApp
 	wxEncodingDetection
 	wxCueFile
-	TagLib	
+	TagLib
+	ZLib
 )

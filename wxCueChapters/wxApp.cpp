@@ -20,7 +20,7 @@
 
 // ===============================================================================
 
-const char wxMyApp::APP_NAME[]	  = "cue2mkc";
+const char wxMyApp::APP_NAME[]    = "cue2mkc";
 const char wxMyApp::APP_VERSION[] = WXMATROSKA_VERSION_STR;
 
 // ===============================================================================
@@ -146,11 +146,12 @@ bool wxMyApp::OnInit()
 		return false;
 	}
 
-    wxInitAllImageHandlers();
-    if (!m_cfg.InitJpegHandler())
-    {
-        wxLogWarning( _( "Unable to initialize JPEG image handler." ) );
-    }
+	wxInitAllImageHandlers();
+
+	if ( !m_cfg.InitJpegHandler() )
+	{
+		wxLogWarning( _( "Unable to initialize JPEG image handler." ) );
+	}
 
 	return true;
 }
@@ -206,7 +207,7 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, wxCueSheet& cueSheet
 			}
 
 			wxSharedPtr< wxTextOutputStream > pTos( m_cfg.GetOutputTextStream( fos ) );
-			wxTextCueSheetRenderer			  renderer( pTos.get() );
+			wxTextCueSheetRenderer            renderer( pTos.get() );
 
 			if ( !renderer.Render( cueSheet ) )
 			{
@@ -328,7 +329,7 @@ int wxMyApp::OnRun()
 	}
 
 	wxInputFile firstInputFile;
-	bool		bFirst = true;
+	bool        bFirst = true;
 
 	wxTagSynonimsCollection discSynonims;
 	wxTagSynonimsCollection trackSynonims;
@@ -336,7 +337,7 @@ int wxMyApp::OnRun()
 	wxCueComponent::GetSynonims( discSynonims, false );
 	wxCueComponent::GetSynonims( trackSynonims, true );
 
-	int						res		  = 0;
+	int                     res       = 0;
 	const wxArrayInputFile& inputFile = m_cfg.GetInputFiles();
 
 	for ( size_t i = 0, nCount = inputFile.GetCount(); i < nCount; ++i )
@@ -389,7 +390,7 @@ int wxMyApp::OnRun()
 				if ( bFirst )
 				{
 					firstInputFile = singleFile;
-					bFirst		   = false;
+					bFirst         = false;
 				}
 
 				res = ProcessCueFile( singleFile, discSynonims, trackSynonims );
@@ -506,7 +507,7 @@ bool wxMyApp::RunMkvmerge( const wxFileName& optionsFile )
 		sCmdLine.Printf( "mkvmerge --quiet --output-charset utf-8 \"@%s\"", sOptionsFile );
 	}
 
-    wxLogMessage( sCmdLine );
+	wxLogMessage( sCmdLine );
 	long nRes = 0;
 
 	if ( m_cfg.UseFullPaths() )

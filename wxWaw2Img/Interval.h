@@ -19,7 +19,7 @@ class Interval
 	public:
 
 		INTERVAL_UNIT m_eUnit;
-		wxUint32	  m_nValue;
+		wxUint32 m_nValue;
 
 	public:
 
@@ -34,5 +34,6 @@ class Interval
 		static bool Parse( const wxString&, Interval& );
 		wxString AsString() const;
 };
+
 #endif
 

@@ -9,6 +9,8 @@
 #include <targetver.h>
 #endif
 
+#define wxDEBUG_LEVEL 0
+
 #include <wx/wx.h>
 #include <wx/defs.h>
 #include <wx/app.h>

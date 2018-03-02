@@ -16,7 +16,7 @@ wxIMPLEMENT_DYNAMIC_CLASS( wxTextCueSheetRenderer, wxCueSheetRenderer );
 
 // ===============================================================================
 
-wxTextCueSheetRenderer::wxTextCueSheetRenderer( wxTextOutputStream* pTextOutputStream, int nDumpFlags ):
+wxTextCueSheetRenderer::wxTextCueSheetRenderer( wxTextOutputStream* pTextOutputStream, int nDumpFlags ) :
 	m_pTextOutputStream( pTextOutputStream ),
 	m_nDumpFlags( nDumpFlags ),
 	m_nDataFileIdx( wxIndex::UnknownDataFileIdx ),
@@ -30,7 +30,7 @@ void wxTextCueSheetRenderer::Assign( wxTextOutputStream* pTextOutputStream, int 
 	wxASSERT( pTextOutputStream != (wxTextOutputStream*)NULL );
 
 	m_pTextOutputStream = pTextOutputStream;
-	m_nDumpFlags		= nDumpFlags;
+	m_nDumpFlags        = nDumpFlags;
 }
 
 bool wxTextCueSheetRenderer::OnPreRenderDisc( const wxCueSheet& cueSheet )
@@ -240,7 +240,7 @@ void wxTextCueSheetRenderer::InternalRenderDataFile( const wxCueSheet& cueSheet,
 wxString wxTextCueSheetRenderer::ToString( const wxCueSheet& cueSheet, int nDumpFlags )
 {
 	wxTextOutputStreamOnString tos;
-	wxTextCueSheetRenderer	   renderer( &( tos.GetStream() ), nDumpFlags );
+	wxTextCueSheetRenderer     renderer( &( tos.GetStream() ), nDumpFlags );
 
 	if ( renderer.Render( cueSheet ) )
 	{

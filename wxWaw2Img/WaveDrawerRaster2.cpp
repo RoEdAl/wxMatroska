@@ -17,13 +17,13 @@ Raster2WaveDrawer::Raster2WaveDrawer( wxUint64 nNumberOfSamples,
 									  wxGraphicsContext* gc,
 									  const wxRect2DInt& rc,
 									  const DrawerSettings& drawerSettings,
-									  const ChaptersArrayScopedPtr& pChapters ):
+									  const ChaptersArrayScopedPtr& pChapters ) :
 	ColumnPainterWaveDrawer( nNumberOfSamples, gc, rc, drawerSettings, pChapters )
 {}
 
 void Raster2WaveDrawer::GetThreeColours( wxFloat32 v, wxColour& clrTop, wxColour& clrMiddle, wxColour& clrBottom )
 {
-	clrTop	  = m_drawerSettings.GetTopColourSettings().GetEdgeColour();
+	clrTop    = m_drawerSettings.GetTopColourSettings().GetEdgeColour();
 	clrMiddle = ColourInterpolation::linear_interpolation( m_drawerSettings.GetTopColourSettings().GetEdgeColour(), m_drawerSettings.GetTopColourSettings().GetMiddleColour(), v );
 	clrBottom = m_drawerSettings.GetBottomColourSettings().GetEdgeColour();
 }
@@ -33,12 +33,12 @@ void Raster2WaveDrawer::GetTwoColours( wxFloat32 v, bool bUp, wxColour& clrFrom,
 	if ( bUp )
 	{
 		clrFrom = m_drawerSettings.GetTopColourSettings().GetEdgeColour();
-		clrTo	= ColourInterpolation::linear_interpolation( m_drawerSettings.GetTopColourSettings().GetEdgeColour(), m_drawerSettings.GetTopColourSettings().GetMiddleColour(), v );
+		clrTo   = ColourInterpolation::linear_interpolation( m_drawerSettings.GetTopColourSettings().GetEdgeColour(), m_drawerSettings.GetTopColourSettings().GetMiddleColour(), v );
 	}
 	else
 	{
 		clrFrom = ColourInterpolation::linear_interpolation( m_drawerSettings.GetBottomColourSettings().GetEdgeColour(), m_drawerSettings.GetBottomColourSettings().GetMiddleColour(), v );
-		clrTo	= m_drawerSettings.GetBottomColourSettings().GetEdgeColour();
+		clrTo   = m_drawerSettings.GetBottomColourSettings().GetEdgeColour();
 	}
 }
 

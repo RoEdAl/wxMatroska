@@ -48,16 +48,16 @@ class DrawerSettings
 
 	protected:
 
-		bool			  m_bDrawWithGradient;
-		bool			  m_bLogarithmicScale;
-		bool			  m_bLogarithmicColorGradient;
-		wxFloat32		  m_fLogBase;
-		wxUint16		  m_nFrequency;
-		wxFloat32		  m_fBaselinePosition;
-		wxColour		  m_clrBg;
-		ColourSettings	  m_topColourSettings;
-		ColourSettings	  m_bottomColourSettings;
-		bool			  m_bDrawChapters;
+		bool m_bDrawWithGradient;
+		bool m_bLogarithmicScale;
+		bool m_bLogarithmicColorGradient;
+		wxFloat32 m_fLogBase;
+		wxUint16 m_nFrequency;
+		wxFloat32 m_fBaselinePosition;
+		wxColour m_clrBg;
+		ColourSettings m_topColourSettings;
+		ColourSettings m_bottomColourSettings;
+		bool m_bDrawChapters;
 		wxCompositionMode m_eCompositionMode;
 
 	public:
@@ -69,7 +69,7 @@ class DrawerSettings
 		wxUint16 GetFrequency() const;
 		wxFloat32 GetBaselinePosition() const;
 		wxInt32 GetBaselinePositionPercent() const;
-		const wxColour&		  GetBackgroundColour() const;
+		const wxColour& GetBackgroundColour() const;
 		const ColourSettings& GetTopColourSettings() const;
 		const ColourSettings& GetBottomColourSettings() const;
 		bool OneMiddleColour() const;
@@ -84,10 +84,10 @@ class DrawerSettings
 		bool& GetDrawWithGradient();
 		bool& GetUseLogarithmicScale();
 		bool& GetUseLogarithmicColorGradient();
-		wxFloat32&		GetLogarithmBase();
-		wxUint16&		GetFrequency();
-		wxFloat32&		GetBaselinePosition();
-		wxColour&		GetBackgroundColour();
+		wxFloat32& GetLogarithmBase();
+		wxUint16& GetFrequency();
+		wxFloat32& GetBaselinePosition();
+		wxColour& GetBackgroundColour();
 		ColourSettings& GetTopColourSettings();
 		ColourSettings& GetBottomColourSettings();
 		bool& GetDrawChapters();
@@ -113,5 +113,6 @@ class DrawerSettings
 
 		DrawerSettings& SetCompositionMode( wxCompositionMode );
 };
+
 #endif
 

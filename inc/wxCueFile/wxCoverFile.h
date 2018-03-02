@@ -80,7 +80,7 @@ class wxCoverFile
 		};
 
 		static const char* const CoverNames[];
-        static const wxBitmapType CoverFileTypes[];
+		static const wxBitmapType CoverFileTypes[];
 
 		static const wxULongLong MAX_FILE_SIZE;
 
@@ -97,16 +97,16 @@ class wxCoverFile
 		wxCoverFile( const wxFileName&, Type );
 		wxCoverFile( const wxMemoryBuffer&, Type, const wxString&, const wxString& );
 
-    protected:
+	protected:
 
-        wxCoverFile( const wxMemoryBuffer&, const wxMemoryBuffer&, Type, const wxString&, const wxString& );
+		wxCoverFile( const wxMemoryBuffer&, const wxMemoryBuffer&, Type, const wxString&, const wxString& );
 
 	public:
 
-		const wxFileName&	  GetFileName() const;
+		const wxFileName& GetFileName() const;
 		const wxMemoryBuffer& GetData() const;
-		const wxString&		  GetMimeType() const;
-		const wxString&		  GetDescription() const;
+		const wxString& GetMimeType() const;
+		const wxString& GetDescription() const;
 		const wxMemoryBuffer& GetChecksum() const;
 		wxString GetExt() const;
 		Type GetType() const;
@@ -114,10 +114,10 @@ class wxCoverFile
 
 		static bool GetMimeFromExt( const wxFileName&, wxString& );
 
-        bool IsOK() const
-        {
-            return HasFileName() || HasData();
-        }
+		bool IsOK() const
+		{
+			return HasFileName() || HasData();
+		}
 
 		bool HasFileName() const
 		{
@@ -139,9 +139,9 @@ class wxCoverFile
 			return !m_description.IsEmpty();
 		}
 
-        bool IsTypeOf( const wxImageHandler* const ) const;
+		bool IsTypeOf( const wxImageHandler* const ) const;
 
-        wxString GetInfo() const;
+		wxString GetInfo() const;
 
 		static void Append( wxArrayCoverFile&, const wxCoverFile& );
 		static void Append( wxArrayCoverFile&, const wxArrayCoverFile& );
@@ -154,46 +154,47 @@ class wxCoverFile
 
 		static Type GetTypeFromStr( const wxString& );
 
-		static bool	  GetStrFromType( Type, wxString & );
+		static bool GetStrFromType( Type, wxString& );
 		static size_t GetSortOrder( Type );
 
 		static void Sort( wxArrayCoverFile& );
 
-        wxCoverFile Load() const;
+		wxCoverFile Load() const;
 		bool Save( const wxFileName& );
 
-        wxImage ToImage() const;
-        wxCoverFile Convert( wxImageHandler* const, int ) const;
-        static size_t Convert( const wxArrayCoverFile&, wxArrayCoverFile&, wxImageHandler* const, int );
+		wxImage ToImage() const;
+		wxCoverFile Convert( wxImageHandler* const, int ) const;
+		static size_t Convert( const wxArrayCoverFile&, wxArrayCoverFile&, wxImageHandler* const, int );
 
 	protected:
 
-		wxFileName	   m_fileName;
+		wxFileName m_fileName;
 		wxMemoryBuffer m_data;
-		wxString	   m_mimeType;
-		wxString	   m_description;
+		wxString m_mimeType;
+		wxString m_description;
 		wxMemoryBuffer m_checksum;
-		Type		   m_type;
-		wxULongLong	   m_fileSize;
+		Type m_type;
+		wxULongLong m_fileSize;
 
 	private:
 
 		static int Cmp( wxCoverFile**, wxCoverFile** );
 
-        template<size_t SIZE>
-        static bool Find( const wxFileName&, wxFileName&, const char* const (&)[SIZE] );
+		template< size_t SIZE >
+		static bool Find( const wxFileName&, wxFileName&, const char* const ( & )[ SIZE ] );
 
-        template<size_t SIZE>
-        static bool IsCoverFile( const wxFileName&, const wxBitmapType (&)[SIZE] );
+		template< size_t SIZE >
+		static bool IsCoverFile( const wxFileName&, const wxBitmapType(&)[ SIZE ] );
 
-        template<size_t SIZE>
-        static Type GetTypeFromStr( const wxString&, const TypeName (&)[SIZE] );
+		template< size_t SIZE >
+		static Type GetTypeFromStr( const wxString&, const TypeName(&)[ SIZE ] );
 
-        template<size_t SIZE>
-        static bool GetStrFromType( Type type, wxString& name, const TypeName(&)[SIZE] );
+		template< size_t SIZE >
+		static bool GetStrFromType( Type type, wxString& name, const TypeName(&)[ SIZE ] );
 
-        template<size_t SIZE>
-        static size_t GetSortOrder( wxCoverFile::Type type, const TypeName( &)[SIZE] );
+		template< size_t SIZE >
+		static size_t GetSortOrder( wxCoverFile::Type type, const TypeName(&)[ SIZE ] );
 };
+
 #endif
 

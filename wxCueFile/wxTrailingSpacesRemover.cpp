@@ -12,7 +12,7 @@ const char wxTrailingSpacesRemover::REG_EX[] =
 
 // ===============================================================================
 
-wxTrailingSpacesRemover::wxTrailingSpacesRemover():
+wxTrailingSpacesRemover::wxTrailingSpacesRemover() :
 	m_reTrailingSpaces( REG_EX, wxRE_ADVANCED )
 {
 	wxASSERT( m_reTrailingSpaces.IsValid() );

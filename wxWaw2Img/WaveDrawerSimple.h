@@ -25,9 +25,10 @@ class SimpleWaveDrawer:
 
 	protected:
 
-		bool		   m_bOneMiddleColour;
+		bool m_bOneMiddleColour;
 		wxGraphicsPath m_pathUp;
 		wxGraphicsPath m_pathDown;
 };
+
 #endif
 

@@ -16,9 +16,9 @@ class wxCueSheetContent:
 
 	protected:
 
-		wxString   m_sValue;
+		wxString m_sValue;
 		wxDataFile m_source;
-		bool	   m_bEmbedded;
+		bool m_bEmbedded;
 
 	public:
 
@@ -32,7 +32,7 @@ class wxCueSheetContent:
 
 		bool HasSource() const;
 		const wxDataFile& GetSource() const;
-		const wxString&	  GetValue() const;
+		const wxString& GetValue() const;
 		bool IsEmbedded() const;
 
 	protected:

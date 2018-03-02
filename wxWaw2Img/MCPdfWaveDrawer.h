@@ -22,5 +22,6 @@ class McPdfWaveDrawer:
 
 		virtual void ProcessFinalizer();
 };
+
 #endif
 

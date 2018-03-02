@@ -12,25 +12,25 @@
 
 AudioColumn::AudioColumn()
 {
-	fAmplitude		 = 0.0f;
+	fAmplitude       = 0.0f;
 	nNumberOfSamples = 0;
 }
 
 AudioColumn::AudioColumn( wxFloat32 _fAmplitude, wxUint32 _nNumberOfSamples )
 {
-	fAmplitude		 = _fAmplitude;
+	fAmplitude       = _fAmplitude;
 	nNumberOfSamples = _nNumberOfSamples;
 }
 
 AudioColumn::AudioColumn( const AudioColumn& ac )
 {
-	fAmplitude		 = ac.fAmplitude;
+	fAmplitude       = ac.fAmplitude;
 	nNumberOfSamples = ac.nNumberOfSamples;
 }
 
 AudioColumn& AudioColumn::operator =( const AudioColumn& ac )
 {
-	fAmplitude		 = ac.fAmplitude;
+	fAmplitude       = ac.fAmplitude;
 	nNumberOfSamples = ac.nNumberOfSamples;
 
 	return *this;
@@ -41,7 +41,7 @@ bool AudioColumn::operator ==( const AudioColumn& ac ) const
 	return ( fAmplitude == ac.fAmplitude ) && ( nNumberOfSamples == ac.nNumberOfSamples );
 }
 
-AudioRenderer::AudioRenderer( wxUint64 nNumberOfSamples, wxUint32 nWidth, bool bUseLogarithmicScale, wxFloat32 fLogBase, wxUint32 nSourceSamplerate ):
+AudioRenderer::AudioRenderer( wxUint64 nNumberOfSamples, wxUint32 nWidth, bool bUseLogarithmicScale, wxFloat32 fLogBase, wxUint32 nSourceSamplerate ) :
 	SampleChunker( nNumberOfSamples, nWidth, bUseLogarithmicScale, fLogBase ), m_bUseLogarithmicScale( bUseLogarithmicScale ), m_nSourceSamplerate( nSourceSamplerate )
 {}
 
@@ -76,7 +76,7 @@ namespace
 	{
 		public:
 
-			QGen( wxUint32 nLen, wxFloat32 fBaseline ):
+			QGen( wxUint32 nLen, wxFloat32 fBaseline ) :
 				m_nLen( nLen ),
 				m_sign( true ), m_nPos( 0 ), m_nSamplesCounter( wxULL( 0 ) ),
 				m_ar1( new wxFloat32[ nLen ] ), m_ar2( new wxFloat32[ nLen ] )
@@ -86,11 +86,11 @@ namespace
 				if ( fBaseline <= 0.5f )
 				{
 					m_fDownFactor = fBaseline / ( 1.0f - fBaseline );
-					m_fUpFactor	  = 1.0f;
+					m_fUpFactor   = 1.0f;
 				}
 				else
 				{
-					m_fUpFactor	  = ( 1.0f - fBaseline ) / fBaseline;
+					m_fUpFactor   = ( 1.0f - fBaseline ) / fBaseline;
 					m_fDownFactor = 1.0f;
 				}
 			}
@@ -111,12 +111,12 @@ namespace
 			{
 				while ( nNumberOfSamples > 0 )
 				{
-					wxUint32 n			 = m_nLen - m_nPos;
-					bool	 sign_change = true;
+					wxUint32 n           = m_nLen - m_nPos;
+					bool     sign_change = true;
 
 					if ( n > nNumberOfSamples )
 					{
-						n			= nNumberOfSamples;
+						n           = nNumberOfSamples;
 						sign_change = false;
 					}
 
@@ -128,7 +128,7 @@ namespace
 					}
 
 					nNumberOfSamples  -= n;
-					m_nPos			   = ( m_nPos + n ) % m_nLen;
+					m_nPos             = ( m_nPos + n ) % m_nLen;
 					m_nSamplesCounter += n;
 				}
 			}
@@ -140,14 +140,14 @@ namespace
 
 		protected:
 
-			wxUint32	 m_nLen;
-			wxFloat32	 m_fUpFactor;
-			wxFloat32	 m_fDownFactor;
+			wxUint32 m_nLen;
+			wxFloat32 m_fUpFactor;
+			wxFloat32 m_fDownFactor;
 			wxFloatArray m_ar1;
 			wxFloatArray m_ar2;
-			bool		 m_sign;
-			wxUint32	 m_nPos;
-			wxUint64	 m_nSamplesCounter;
+			bool m_sign;
+			wxUint32 m_nPos;
+			wxUint64 m_nSamplesCounter;
 	};
 }
 
@@ -162,7 +162,7 @@ bool AudioRenderer::GenerateAudio( const wxFileName& filename, const AudioColumn
 	memset( &sf_info, 0, sizeof ( SF_INFO ) );
 	sf_info.channels   = 1;
 	sf_info.samplerate = nSamplerate;
-	sf_info.format	   = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
+	sf_info.format     = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
 
 	SoundFile sf;
 

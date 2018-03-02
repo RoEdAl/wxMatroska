@@ -8,7 +8,7 @@
 
 // ===============================================================================
 
-wxTextOutputStreamOnString::wxTextOutputStreamOnString():
+wxTextOutputStreamOnString::wxTextOutputStreamOnString() :
 	m_textOutputStream( m_outputStream, wxEOL_UNIX, m_conv )
 {}
 
@@ -39,13 +39,13 @@ wxTextOutputStream& wxTextOutputStreamOnString::operator *() const
 
 wxTextOutputStream* wxTextOutputStreamOnString::operator ->() const
 {
-    return const_cast< wxTextOutputStream* >(&m_textOutputStream);
+	return const_cast< wxTextOutputStream* >( &m_textOutputStream );
 }
 
 void wxTextOutputStreamOnString::SaveTo( wxTextOutputStream& tos, const wxString& s )
 {
 	wxTextInputStreamOnString tis( s );
-	wxString				  sLine;
+	wxString                  sLine;
 
 	while ( !tis.Eof() )
 	{

@@ -12,12 +12,12 @@ wxIMPLEMENT_DYNAMIC_CLASS( wxSamplingInfo, wxObject );
 
 // ===============================================================================
 
-const wxTimeSpan wxSamplingInfo::wxInvalidDuration		 = wxTimeSpan::Hours( -1 );
-const wxUint64	 wxSamplingInfo::wxInvalidNumberOfFrames = wxUINT64_MAX;
+const wxTimeSpan wxSamplingInfo::wxInvalidDuration       = wxTimeSpan::Hours( -1 );
+const wxUint64   wxSamplingInfo::wxInvalidNumberOfFrames = wxUINT64_MAX;
 
 // ===============================================================================
 
-wxSamplingInfo::wxSamplingInfo( void ):
+wxSamplingInfo::wxSamplingInfo( void ) :
 	m_nSamplingRate( 44100 ), m_nNumChannels( 2 ), m_nBitsPerSample( 16 )
 {}
 
@@ -26,23 +26,23 @@ wxSamplingInfo::wxSamplingInfo( const wxSamplingInfo& si )
 	copy( si );
 }
 
-wxSamplingInfo::wxSamplingInfo( unsigned long nSamplingRate, unsigned short nNumChannels, unsigned short nBitsPerSample ):
+wxSamplingInfo::wxSamplingInfo( unsigned long nSamplingRate, unsigned short nNumChannels, unsigned short nBitsPerSample ) :
 	m_nSamplingRate( nSamplingRate ), m_nNumChannels( nNumChannels ),
 	m_nBitsPerSample( nBitsPerSample )
 {}
 
 wxSamplingInfo& wxSamplingInfo::Assign( unsigned long nSamplingRate, unsigned short nNumChannels, unsigned short nBitsPerSample )
 {
-	m_nSamplingRate	 = nSamplingRate;
-	m_nNumChannels	 = nNumChannels;
+	m_nSamplingRate  = nSamplingRate;
+	m_nNumChannels   = nNumChannels;
 	m_nBitsPerSample = nBitsPerSample;
 	return *this;
 }
 
 wxSamplingInfo& wxSamplingInfo::SetDefault()
 {
-	m_nSamplingRate	 = 44100;
-	m_nNumChannels	 = 2;
+	m_nSamplingRate  = 44100;
+	m_nNumChannels   = 2;
 	m_nBitsPerSample = 16;
 	return *this;
 }
@@ -55,8 +55,8 @@ wxSamplingInfo& wxSamplingInfo::operator =( const wxSamplingInfo& si )
 
 void wxSamplingInfo::copy( const wxSamplingInfo& si )
 {
-	m_nSamplingRate	 = si.m_nSamplingRate;
-	m_nNumChannels	 = si.m_nNumChannels;
+	m_nSamplingRate  = si.m_nSamplingRate;
+	m_nNumChannels   = si.m_nNumChannels;
 	m_nBitsPerSample = si.m_nBitsPerSample;
 }
 
@@ -124,7 +124,7 @@ bool wxSamplingInfo::Equals( const wxSamplingInfo& si, bool bIgnoreBitsPerSample
 wxULongLong wxSamplingInfo::GetNumberOfFramesFromBytes( const wxULongLong& bytes ) const
 {
 	wxASSERT( IsOK() );
-	wxULongLong bytesPerFrame( 0, m_nBitsPerSample * m_nNumChannels / 8 );
+	wxULongLong bytesPerFrame( 0, m_nBitsPerSample* m_nNumChannels / 8 );
 
 	wxULongLong frames( bytes );
 	frames /= bytesPerFrame;
@@ -156,13 +156,13 @@ void wxSamplingInfo::GetNumberOfCdFrames( wxULongLong frames, wxULongLong& cdFra
 	wxULongLong samplingRate( 0, m_nSamplingRate );
 	wxULongLong urest( cdFrames % samplingRate );
 	cdFrames /= samplingRate;
-	rest	  = urest.GetLo();
+	rest      = urest.GetLo();
 }
 
 wxULongLong wxSamplingInfo::GetNumberOfCdFrames( wxULongLong frames ) const
 {
 	wxULongLong cdFrames;
-	wxUint32	rest;
+	wxUint32    rest;
 
 	GetNumberOfCdFrames( frames, cdFrames, rest );
 	return cdFrames;
@@ -174,15 +174,15 @@ wxString wxSamplingInfo::GetSamplesStr( wxULongLong frames ) const
 	wxULongLong s( frames );
 	wxULongLong samplingRate( 0, m_nSamplingRate );
 	wxULongLong sr( frames % samplingRate );
-	double		rest = sr.ToDouble() / m_nSamplingRate;
+	double      rest = sr.ToDouble() / m_nSamplingRate;
 
 	s -= sr;
 	s /= samplingRate;
 
 	// seconds
 	wxULongLong ss( s % 60 );
-	s	 -= ss;
-	s	 /= wxULL( 60 );
+	s    -= ss;
+	s    /= wxULL( 60 );
 	rest += ss.ToDouble();
 
 	// minutes
@@ -209,7 +209,7 @@ wxString wxSamplingInfo::GetCdFramesStr( wxULongLong frames ) const
 
 	unsigned long r_minutes = cdFrames.GetLo();
 	unsigned long r_seconds = ns.GetLo();
-	unsigned long r_frames	= nf.GetLo();
+	unsigned long r_frames  = nf.GetLo();
 
 	return wxString::Format( "%d:%02d:%02d", r_minutes, r_seconds, r_frames );
 }

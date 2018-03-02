@@ -15,15 +15,15 @@ wxIMPLEMENT_DYNAMIC_CLASS( wxIndex, wxObject );
 
 // ===============================================================================
 
-wxIndex::wxIndex( void ):
+wxIndex::wxIndex( void ) :
 	m_number( 0 ), m_offset( 0, 0 ), m_bCdFrames( false ), m_nDataFileIdx( UnknownDataFileIdx )
 {}
 
-wxIndex::wxIndex( unsigned int number, wxULongLong offset ):
+wxIndex::wxIndex( unsigned int number, wxULongLong offset ) :
 	m_number( number ), m_offset( offset ), m_bCdFrames( false ), m_nDataFileIdx( UnknownDataFileIdx )
 {}
 
-wxIndex::wxIndex( unsigned int number, wxULongLong offset, size_t nDataFileIdx ):
+wxIndex::wxIndex( unsigned int number, wxULongLong offset, size_t nDataFileIdx ) :
 	m_number( number ), m_offset( offset ), m_bCdFrames( false ), m_nDataFileIdx( nDataFileIdx )
 {}
 
@@ -40,9 +40,9 @@ wxIndex& wxIndex::operator =( const wxIndex& idx )
 
 void wxIndex::copy( const wxIndex& idx )
 {
-	m_number	   = idx.m_number;
-	m_offset	   = idx.m_offset;
-	m_bCdFrames	   = idx.m_bCdFrames;
+	m_number       = idx.m_number;
+	m_offset       = idx.m_offset;
+	m_bCdFrames    = idx.m_bCdFrames;
 	m_nDataFileIdx = idx.m_nDataFileIdx;
 }
 
@@ -121,9 +121,9 @@ wxIndex& wxIndex::Assign( size_t number, wxULongLong offset )
 
 wxIndex& wxIndex::Assign( size_t number, wxULongLong offset, size_t nDataFileIdx )
 {
-	m_number	   = number;
-	m_offset	   = offset;
-	m_bCdFrames	   = false;
+	m_number       = number;
+	m_offset       = offset;
+	m_bCdFrames    = false;
 	m_nDataFileIdx = nDataFileIdx;
 	return *this;
 }
@@ -144,11 +144,11 @@ wxIndex& wxIndex::Assign( size_t number,
 {
 	m_number = number;
 	wxULongLong cdFrames( 0, minutes );
-	cdFrames	  *= wxULL( 4500 );
-	cdFrames	  += wxULL( 75 ) * seconds;
-	cdFrames	  += frames;
-	m_offset	   = cdFrames;
-	m_bCdFrames	   = true;
+	cdFrames      *= wxULL( 4500 );
+	cdFrames      += wxULL( 75 ) * seconds;
+	cdFrames      += frames;
+	m_offset       = cdFrames;
+	m_bCdFrames    = true;
 	m_nDataFileIdx = nDataFileIdx;
 	return *this;
 }

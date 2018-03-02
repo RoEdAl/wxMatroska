@@ -24,10 +24,11 @@ class GraphicsContextWaveDrawerPoly:
 	protected:
 
 		wxGraphicsContext* m_gc;
-		wxRect2DInt		   m_rc;
-		wxInt32			   m_height2;
-		wxInt32			   m_yoffset;
-		wxGraphicsPath	   m_path;
+		wxRect2DInt m_rc;
+		wxInt32 m_height2;
+		wxInt32 m_yoffset;
+		wxGraphicsPath m_path;
 };
+
 #endif
 

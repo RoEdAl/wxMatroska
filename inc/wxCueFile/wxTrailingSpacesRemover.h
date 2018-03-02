@@ -23,5 +23,6 @@ class wxTrailingSpacesRemover:
 
 		wxRegEx m_reTrailingSpaces;
 };
+
 #endif
 

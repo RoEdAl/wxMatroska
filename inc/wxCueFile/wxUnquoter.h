@@ -65,23 +65,23 @@ class wxUnquoter:
 		wxScopedCharBuffer get_german_replacement( int, bool ) const;
 		wxScopedCharBuffer get_french_replacement( int, bool ) const;
 
-        template<size_t SIZE>
-        static wxScopedCharBuffer get_replacement( const QUOTATION_MARKS( &quotation_marks_array )[SIZE], int nLevel, bool bOpening )
-        {
-            if (nLevel < 0)
-            {
-                return wxScopedCharBuffer( );
-            }
+		template< size_t SIZE >
+		static wxScopedCharBuffer get_replacement( const QUOTATION_MARKS(&quotation_marks_array)[ SIZE ], int nLevel, bool bOpening )
+		{
+			if ( nLevel < 0 )
+			{
+				return wxScopedCharBuffer();
+			}
 
-            if (bOpening)
-            {
-                return wxScopedCharBuffer::CreateNonOwned( quotation_marks_array[nLevel % SIZE].opening );
-            }
-            else
-            {
-                return wxScopedCharBuffer::CreateNonOwned( quotation_marks_array[nLevel % SIZE].closing );
-            }
-        }
+			if ( bOpening )
+			{
+				return wxScopedCharBuffer::CreateNonOwned( quotation_marks_array[ nLevel % SIZE ].opening );
+			}
+			else
+			{
+				return wxScopedCharBuffer::CreateNonOwned( quotation_marks_array[ nLevel % SIZE ].closing );
+			}
+		}
 
 		void InternalCorrectQuotes( wxString& ) const;
 
@@ -107,5 +107,6 @@ class wxUnquoter:
 
 		bool IsQuoted( const wxString& ) const;
 };
+
 #endif
 

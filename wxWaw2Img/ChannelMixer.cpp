@@ -9,7 +9,7 @@
 #include "MCChainWaveDrawer.h"
 #include "ChannelMixer.h"
 
-ChannelMixer::ChannelMixer( wxUint16 nChannels, MultiChannelWaveDrawer* pMcWaveDrawer, bool bPowerMix ):
+ChannelMixer::ChannelMixer( wxUint16 nChannels, MultiChannelWaveDrawer* pMcWaveDrawer, bool bPowerMix ) :
 	McChainWaveDrawer( nChannels, pMcWaveDrawer )
 {
 	wxASSERT( pMcWaveDrawer->GetNumberOfChannels() == 1 );

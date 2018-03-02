@@ -45,29 +45,29 @@ class wxXmlCueSheetRenderer:
 	protected:
 
 		wxScopedPtr< wxXmlDocument > m_pXmlDoc;
-		wxXmlNode*					 m_pChapterAtom;
-		wxXmlNode*					 m_pFirstChapterAtom;
-		wxXmlNode*					 m_pPrevChapterAtom;
-		wxXmlNode*					 m_pEditionEntry;
+		wxXmlNode* m_pChapterAtom;
+		wxXmlNode* m_pFirstChapterAtom;
+		wxXmlNode* m_pPrevChapterAtom;
+		wxXmlNode* m_pEditionEntry;
 
 		wxScopedPtr< wxXmlDocument > m_pXmlTags;
-		wxXmlNode*					 m_pTags;
+		wxXmlNode* m_pTags;
 
 		const wxConfiguration* m_pCfg;
-		wxInputFile			   m_inputFile;
-		wxFileName			   m_outputFile;
-		wxFileName			   m_tagsFile;
+		wxInputFile m_inputFile;
+		wxFileName m_outputFile;
+		wxFileName m_tagsFile;
 
 		wxTagSynonimsCollection m_discCdTextSynonims;
 		wxTagSynonimsCollection m_discSynonims;
 		wxTagSynonimsCollection m_trackCdTextSynonims;
 		wxTagSynonimsCollection m_trackSynonims;
 
-        wxArrayCueTag m_artistTags;
+		wxArrayCueTag m_artistTags;
 
 	public:
 
-		static struct Tag
+		struct Tag
 		{
 			static const char PREPARER[];
 			static const char CATALOG_NUMBER[];
@@ -75,9 +75,9 @@ class wxXmlCueSheetRenderer:
 			static const char PART_NUMBER[];
 		};
 
-		static struct Xml
+		struct Xml
 		{
-            static const char BINARY[];
+			static const char BINARY[];
 			static const char CHAPTER_UID[];
 			static const char EDITION_ENTRY[];
 			static const char EDITION_UID[];
@@ -100,7 +100,7 @@ class wxXmlCueSheetRenderer:
 			static const char SIMPLE[];
 		};
 
-		static struct XmlValue
+		struct XmlValue
 		{
 			static const char ALBUM[];
 			static const char TRACK[];
@@ -114,7 +114,7 @@ class wxXmlCueSheetRenderer:
 					  wxXmlNode* );
 		void AddCdTextInfo( const wxCueComponent&, wxXmlNode* );
 		wxXmlNode* AddDiscTags( const wxCueSheet&, wxXmlNode*, const wxULongLong&, int = 50 );
-		wxXmlNode* AppendDiscTags( const wxCueSheet&, wxXmlNode*, long = 50 );
+		wxXmlNode* AppendDiscTags( const wxCueSheet&, wxXmlNode*, long                 = 50 );
 
 		wxXmlNode* SetTotalParts( size_t, wxXmlNode*, long = 50 );
 		wxXmlNode* AddTrackTags( const wxTrack&, const wxULongLong&, wxXmlNode*, int = 30 );
@@ -151,14 +151,14 @@ class wxXmlCueSheetRenderer:
 		static wxXmlNode* add_chapter_display( wxXmlNode*, const wxString&, const wxString& );
 		static wxXmlNode* add_hidden_flag( wxXmlNode*, bool );
 
-		static wxXmlNode* add_idx_chapter_atom( wxXmlNode*, const wxDuration &, size_t, const wxString &, const wxString &, bool );
+		static wxXmlNode* add_idx_chapter_atom( wxXmlNode*, const wxDuration&, size_t, const wxString&, const wxString&, bool );
 		static wxXmlNode* create_simple_tag( const wxCueTag&, const wxString& );
 		wxXmlDocument* create_xml_document( const wxString& );
 		static bool is_simple( wxXmlNode*, const wxCueTag& );
 		static wxXmlNode* find_simple_tag( wxXmlNode*, const wxCueTag& );
 		static wxXmlNode* add_simple_tag( wxXmlNode*, const wxString&, const wxString&, const wxString& );
 
-		static wxXmlNode* add_simple_tag( wxXmlNode*, const wxString &, size_t, const wxString & );
+		static wxXmlNode* add_simple_tag( wxXmlNode*, const wxString&, size_t, const wxString& );
 		static wxXmlNode* add_simple_tag( wxXmlNode*, const wxCueTag&, const wxString& );
 		static void add_simple_tags( wxXmlNode*, const wxArrayCueTag&, const wxString& );
 		static wxXmlNode* create_comment_node( const wxString& );
@@ -186,5 +186,6 @@ class wxXmlCueSheetRenderer:
 
 		bool SaveXmlDoc();
 };
+
 #endif
 

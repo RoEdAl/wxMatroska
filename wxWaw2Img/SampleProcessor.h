@@ -15,14 +15,14 @@ class SampleProcessor
 	public:
 
 		virtual void ProcessInitializer() = 0;
-		virtual void ProcessFinalizer()	  = 0;
+		virtual void ProcessFinalizer()   = 0;
 };
 
 class ProcessorHolder
 {
 	public:
 
-		ProcessorHolder( SampleProcessor& processor ):
+		ProcessorHolder( SampleProcessor& processor ) :
 			m_processor( processor )
 		{
 			processor.ProcessInitializer();
@@ -37,5 +37,6 @@ class ProcessorHolder
 
 		SampleProcessor& m_processor;
 };
+
 #endif;
 

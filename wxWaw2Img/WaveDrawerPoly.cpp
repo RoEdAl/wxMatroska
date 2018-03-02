@@ -15,7 +15,7 @@ PolyWaveDrawer::PolyWaveDrawer( wxUint64 nNumberOfSamples,
 								wxGraphicsContext* gc,
 								const wxRect2DInt& rc,
 								const DrawerSettings& drawerSettings,
-								const ChaptersArrayScopedPtr& pChapters ):
+								const ChaptersArrayScopedPtr& pChapters ) :
 	GraphicsContextWaveDrawer(
 		nNumberOfSamples,
 		gc,
@@ -44,7 +44,7 @@ void PolyWaveDrawer::ProcessFinalizer()
 	{
 		if ( m_drawerSettings.OneMiddleColour() )
 		{
-			wxGraphicsPath			path = build_path();
+			wxGraphicsPath          path = build_path();
 			wxGraphicsGradientStops stops( m_drawerSettings.GetTopColourSettings().GetEdgeColour(), m_drawerSettings.GetBottomColourSettings().GetEdgeColour() );
 
 			if ( m_drawerSettings.UseLogarithmicColorGradient() )
@@ -175,7 +175,7 @@ wxGraphicsPath PolyWaveDrawer::build_path() const
 		wxPoint2DDouble pt( m_points[ i ] );
 
 		pt.m_x += m_rc.m_x;
-		pt.m_y	= m_yoffset - ( abs( pt.m_y ) * m_heightUp );
+		pt.m_y  = m_yoffset - ( abs( pt.m_y ) * m_heightUp );
 
 		path.AddLineToPoint( pt );
 	}
@@ -187,7 +187,7 @@ wxGraphicsPath PolyWaveDrawer::build_path() const
 		wxPoint2DDouble pt( m_points[ i - 1 ] );
 
 		pt.m_x += m_rc.m_x;
-		pt.m_y	= m_yoffset + ( abs( pt.m_y ) * m_heightDown );
+		pt.m_y  = m_yoffset + ( abs( pt.m_y ) * m_heightDown );
 
 		path.AddLineToPoint( pt );
 	}
@@ -208,7 +208,7 @@ void PolyWaveDrawer::build_paths( wxGraphicsPath& pathUp, wxGraphicsPath& pathDo
 		wxPoint2DDouble pt( m_points[ i ] );
 
 		pt.m_x += m_rc.m_x;
-		pt.m_y	= m_yoffset - ( abs( pt.m_y ) * m_heightUp );
+		pt.m_y  = m_yoffset - ( abs( pt.m_y ) * m_heightUp );
 
 		pathUp.AddLineToPoint( pt );
 	}
@@ -224,7 +224,7 @@ void PolyWaveDrawer::build_paths( wxGraphicsPath& pathUp, wxGraphicsPath& pathDo
 		wxPoint2DDouble pt( m_points[ i ] );
 
 		pt.m_x += m_rc.m_x;
-		pt.m_y	= m_yoffset + ( abs( pt.m_y ) * m_heightDown );
+		pt.m_y  = m_yoffset + ( abs( pt.m_y ) * m_heightDown );
 
 		pathDown.AddLineToPoint( pt );
 	}

@@ -11,7 +11,7 @@
 #include "MCDcWaveDrawer.h"
 #include "MCDcSvgWaveDrawer.h"
 
-McDcSvgWaveDrawer::McDcSvgWaveDrawer( wxUint16 nChannels ):
+McDcSvgWaveDrawer::McDcSvgWaveDrawer( wxUint16 nChannels ) :
 	McDcWaveDrawer( nChannels )
 {}
 

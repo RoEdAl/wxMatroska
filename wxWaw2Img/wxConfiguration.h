@@ -37,33 +37,33 @@ class wxConfiguration:
 
 	protected:
 
-		INFO_SUBJECT		 m_infoSubject;
-		DRAWING_MODE		 m_eDrawingMode;
-		wxFileName			 m_inputFile;
-		wxFileName			 m_outputFile;
-		wxString			 m_sDefImageExt;
-		DrawerSettings		 m_drawerSettings;
-		wxImageResolution	 m_imageResolutionUnits;
-		wxSize				 m_imageSize;
-		wxSize				 m_imageResolution;
-		wxUint16			 m_nImageQuality;
-		int					 m_nImageColorDepth;
-		bool				 m_bMultiChannel;
-		wxUint16			 m_nColumnNumber;
-		wxSize				 m_margins;
-		bool				 m_bPowerMix;
-		wxFileName			 m_chaptersFile;
-		bool				 m_bGenerateChapters;
-		Interval			 m_interval;
-		bool				 m_bUseMLang;
-		bool				 m_bAnimation;
-		AnimationSettings	 m_animationSettings;
+		INFO_SUBJECT m_infoSubject;
+		DRAWING_MODE m_eDrawingMode;
+		wxFileName m_inputFile;
+		wxFileName m_outputFile;
+		wxString m_sDefImageExt;
+		DrawerSettings m_drawerSettings;
+		wxImageResolution m_imageResolutionUnits;
+		wxSize m_imageSize;
+		wxSize m_imageResolution;
+		wxUint16 m_nImageQuality;
+		int m_nImageColorDepth;
+		bool m_bMultiChannel;
+		wxUint16 m_nColumnNumber;
+		wxSize m_margins;
+		bool m_bPowerMix;
+		wxFileName m_chaptersFile;
+		bool m_bGenerateChapters;
+		Interval m_interval;
+		bool m_bUseMLang;
+		bool m_bAnimation;
+		AnimationSettings m_animationSettings;
 		wxImageResizeQuality m_eResizeQuality;
-		bool				 m_bRunFfmpeg;
-		wxFileName			 m_ffmpegDir;
-		wxFileName			 m_cmdTemplate;
-		bool				 m_bDeleteTemporaryFiles;
-		bool				 m_bUseWorkerThreads;
+		bool m_bRunFfmpeg;
+		wxFileName m_ffmpegDir;
+		wxFileName m_cmdTemplate;
+		bool m_bDeleteTemporaryFiles;
+		bool m_bUseWorkerThreads;
 
 	protected:
 
@@ -136,7 +136,7 @@ class wxConfiguration:
 		wxFileName GetOutputFile() const;
 		wxString GetDefaultImageExt() const;
 		const DrawerSettings& GetDrawerSettings() const;
-		const wxSize&		  GetImageSize() const;
+		const wxSize& GetImageSize() const;
 		wxSize GetImageSizePt() const;
 		wxImageResolution GetImageResolutionUnits() const;
 		const wxSize& GetImageResolution() const;
@@ -149,8 +149,8 @@ class wxConfiguration:
 		wxRect2DInt GetDrawerRect() const;
 		wxRect2DInt GetDrawerRectPt() const;
 
-		void GetDrawerRects( wxUint16, wxRect2DIntArray & ) const;
-		void GetDrawerRectsPt( wxUint16, wxRect2DIntArray & ) const;
+		void GetDrawerRects( wxUint16, wxRect2DIntArray& ) const;
+		void GetDrawerRectsPt( wxUint16, wxRect2DIntArray& ) const;
 		bool PowerMix() const;
 		DRAWING_MODE GetDrawingMode() const;
 		wxString GetDrawingModeAsText() const;
@@ -182,5 +182,6 @@ class wxConfiguration:
 		static const wxSystemColour COLOR_BACKGROUND;
 		static const wxSystemColour COLOR_BACKGROUND2;
 };
+
 #endif	// _WX_CONFIGURATION_H
 

@@ -16,7 +16,7 @@ ColumnPainterWaveDrawer::ColumnPainterWaveDrawer( wxUint64 nNumberOfSamples,
 												  wxGraphicsContext* gc,
 												  const wxRect2DInt& rc,
 												  const DrawerSettings& drawerSettings,
-												  const ChaptersArrayScopedPtr& pChapters ):
+												  const ChaptersArrayScopedPtr& pChapters ) :
 	GraphicsContextWaveDrawer(
 		nNumberOfSamples,
 		gc,
@@ -30,15 +30,15 @@ ColumnPainterWaveDrawer::ColumnPainterWaveDrawer( wxUint64 nNumberOfSamples,
 void ColumnPainterWaveDrawer::NextColumn( wxFloat32 fValue, wxFloat32 fLogValue )
 {
 	wxPoint2DDouble point_central( m_nCurrentColumn + m_rc.m_x, m_yoffset );
-	wxFloat32		va = abs( fValue );
-	wxFloat32		v  = abs( m_drawerSettings.UseLogarithmicScale() ? fLogValue : fValue );
+	wxFloat32       va = abs( fValue );
+	wxFloat32       v  = abs( m_drawerSettings.UseLogarithmicScale() ? fLogValue : fValue );
 
 	if ( m_drawerSettings.OneMiddleColour() && m_drawerSettings.OneEdgeColour() )
 	{
 		wxGraphicsBrush brush;
 
-		wxPoint2DDouble topLeft( point_central.m_x, point_central.m_y - ( v * m_heightUp ) );
-		wxPoint2DDouble bottomRight( topLeft.m_x + 1.0, topLeft.m_y + ( v * m_rc.m_height ) );
+		wxPoint2DDouble topLeft( point_central.m_x, point_central.m_y - ( v* m_heightUp ) );
+		wxPoint2DDouble bottomRight( topLeft.m_x + 1.0, topLeft.m_y + ( v* m_rc.m_height ) );
 
 		if ( m_drawerSettings.DrawWithGradient() )
 		{
@@ -78,7 +78,7 @@ void ColumnPainterWaveDrawer::NextColumn( wxFloat32 fValue, wxFloat32 fLogValue 
 
 		// UP
 		wxPoint2DDouble bottomLeft = point_central;
-		wxPoint2DDouble topRight( bottomLeft.m_x + 1.0, bottomLeft.m_y - ( v * m_heightUp ) );
+		wxPoint2DDouble topRight( bottomLeft.m_x + 1.0, bottomLeft.m_y - ( v* m_heightUp ) );
 
 		wxPoint2DDouble topLeft( bottomLeft.m_x, topRight.m_y );
 		wxPoint2DDouble bottomRight( topRight.m_x, bottomLeft.m_y );
@@ -106,8 +106,8 @@ void ColumnPainterWaveDrawer::NextColumn( wxFloat32 fValue, wxFloat32 fLogValue 
 		fill_rect( brush, topLeft, bottomRight );
 
 		// DOWN
-		topLeft			 = point_central;
-		bottomRight		 = topLeft;
+		topLeft          = point_central;
+		bottomRight      = topLeft;
 		bottomRight.m_x += 1.0;
 		bottomRight.m_y += v * m_heightDown;
 

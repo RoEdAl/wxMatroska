@@ -10,13 +10,14 @@ class MyLogStderr:
 {
 	public:
 
-		MyLogStderr( FILE* fp = NULL );
+		MyLogStderr( FILE* = NULL );
 		virtual void DoLogText( const wxString& );
 
 	protected:
 
-		FILE*						   m_fp;
+		FILE* m_fp;
 		wxScopedPtr< wxMessageOutput > m_pAdditionalMessageOutput;
 };
+
 #endif
 

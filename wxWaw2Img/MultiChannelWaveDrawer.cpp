@@ -9,7 +9,7 @@
 #include "WaveDrawer.h"
 #include "MultiChannelWaveDrawer.h"
 
-MultiChannelWaveDrawer::MultiChannelWaveDrawer( wxUint16 nChannels ):
+MultiChannelWaveDrawer::MultiChannelWaveDrawer( wxUint16 nChannels ) :
 	m_nChannels( nChannels )
 {
 	wxASSERT( nChannels > 0 );

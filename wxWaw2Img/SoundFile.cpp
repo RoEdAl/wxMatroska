@@ -20,7 +20,7 @@ wxString SoundFile::GetVersion()
 
 	{
 		wxStringTypeBufferLength< char > vl( v, 128 );
-		int								 nRes = sf_command( NULL, SFC_GET_LIB_VERSION, vl, 128 );
+		int                              nRes = sf_command( NULL, SFC_GET_LIB_VERSION, vl, 128 );
 		vl.SetLength( nRes );
 	}
 
@@ -38,7 +38,7 @@ wxString SoundFile::GetFormatName( int nFormat )
 	return wxString( fm_info.name );
 }
 
-SoundFile::SoundFile():
+SoundFile::SoundFile() :
 	m_sndfile( NULL )
 {}
 

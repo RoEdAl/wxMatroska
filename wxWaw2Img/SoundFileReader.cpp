@@ -53,9 +53,9 @@ void SoundFileReader::ReadSamples( MultiChannelWaveDrawer& waveDrawer )
 	 * }
 	 */
 
-	int		   nChannels   = m_soundFile.GetInfo().channels;
-	int		   nSamplerate = m_soundFile.GetInfo().samplerate;
-	sf_count_t nBlock	   = nChannels * nSamplerate;
+	int        nChannels   = m_soundFile.GetInfo().channels;
+	int        nSamplerate = m_soundFile.GetInfo().samplerate;
+	sf_count_t nBlock      = nChannels * nSamplerate;
 
 	wxFloatArray block( new float[ nBlock ] );
 

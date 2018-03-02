@@ -24,9 +24,10 @@ static wxGraphicsRenderer* get_renderer()
 {
 	return wxGraphicsRenderer::GetDefaultRenderer();
 }
+
 #endif
 
-MemoryGraphicsContext::MemoryGraphicsContext( const wxSize& imgSize, int nImgColourDepth, bool bCreateMemContext ):
+MemoryGraphicsContext::MemoryGraphicsContext( const wxSize& imgSize, int nImgColourDepth, bool bCreateMemContext ) :
 	m_imgSize( imgSize )
 {
 	m_bmp = wxBitmap( imgSize, nImgColourDepth );

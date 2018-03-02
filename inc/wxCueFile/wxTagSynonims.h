@@ -16,7 +16,7 @@ class wxTagSynonims:
 
 	protected:
 
-		wxString	  m_sName;
+		wxString m_sName;
 		wxArrayString m_asSynonims;
 
 	protected:
@@ -56,5 +56,6 @@ class wxTagSynonimsCollection:
 		bool GetName( const wxString&, wxString& ) const;
 		bool GetName( const wxCueTag&, wxCueTag& ) const;
 };
+
 #endif
 

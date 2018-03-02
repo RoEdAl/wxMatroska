@@ -45,7 +45,7 @@ const size_t wxMD5::HASHBYTES = 16;
 namespace
 {
 	const size_t DEF_BUFFER_SIZE = 102400;
-	const char	 HEXD[]			 = "0123456789abcdef";
+	const char   HEXD[]          = "0123456789abcdef";
 
 	struct MD5_CTX
 	{
@@ -132,7 +132,7 @@ namespace
 	 */
 	void MD5Final( unsigned char digest[ 16 ], MD5_CTX* ctx )
 	{
-		unsigned	   count;
+		unsigned       count;
 		unsigned char* p;
 
 		/* Compute number of bytes mod 64 */
@@ -140,7 +140,7 @@ namespace
 
 		/* Set the first char of padding to 0x80.  This is safe since there is
 		 * always at least one byte free */
-		p	 = ctx->in + count;
+		p    = ctx->in + count;
 		*p++ = 0x80;
 
 		/* Bytes of padding needed to make 64 bytes */
@@ -302,7 +302,7 @@ namespace
 			t = (unsigned int)( (unsigned)buf[ 3 ] << 8 | buf[ 2 ] ) << 16 |
 				( (unsigned)buf[ 1 ] << 8 | buf[ 0 ] );
 			*(unsigned int*)buf = t;
-			buf				   += 4;
+			buf                += 4;
 		}
 		while ( --longs );
 	}
@@ -334,7 +334,7 @@ wxMemoryBuffer wxMD5::Get( wxInputStream& stream )
 	if ( !stream.IsOk() ) { return wxMemoryBuffer(); }
 
 	wxMemoryBuffer buffer;
-	MD5_CTX		   ctx;
+	MD5_CTX        ctx;
 
 	MD5Init( &ctx );
 
@@ -360,17 +360,17 @@ wxString wxMD5::ToString( const wxMemoryBuffer& buffer )
 
 	wxASSERT( buffer.GetDataLen() == HASHBYTES );
 
-    char buf[HASHBYTES * 2];
+	char buf[ HASHBYTES * 2 ];
 
 	const wxByte* const digest = reinterpret_cast< const wxByte* const >( buffer.GetData() );
 
 	for ( size_t i = 0; i < HASHBYTES; i++ )
 	{
-		buf[ i + i ]	 = HEXD[ digest[ i ] >> 4 ];
+		buf[ i + i ]     = HEXD[ digest[ i ] >> 4 ];
 		buf[ i + i + 1 ] = HEXD[ digest[ i ] & 0x0f ];
 	}
 
-    return wxString( buf, wxConvUTF8, HASHBYTES * 2 );
+	return wxString( buf, wxConvUTF8, HASHBYTES * 2 );
 }
 
 bool wxMD5::AreEqual( const wxMemoryBuffer& buf1, const wxMemoryBuffer& buf2 )

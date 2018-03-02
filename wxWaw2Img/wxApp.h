@@ -18,7 +18,7 @@ class wxMyApp:
 {
 	protected:
 
-		wxConfiguration					m_cfg;
+		wxConfiguration m_cfg;
 		wxScopedPtr< wxColourDatabase > m_pColourDatabase;
 
 	protected:

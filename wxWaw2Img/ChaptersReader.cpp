@@ -6,7 +6,7 @@
 #include "Arrays.h"
 #include "ChaptersReader.h"
 
-ChaptersReader::ChaptersReader():
+ChaptersReader::ChaptersReader() :
 	m_reMsf( wxT( "\\A(\\d{1,4}):(\\d{1,2}):(\\d{1,2})\\Z" ), wxRE_ADVANCED ),
 	m_reMsms( wxT( "\\A(\\d{1,4}):(\\d{1,2}).(\\d{1,3})\\Z" ), wxRE_ADVANCED ),
 	m_reHmsms( wxT( "\\A(\\d{1,4}):(\\d{1,4}):(\\d{1,2}).(\\d{1,3})\\Z" ), wxRE_ADVANCED )
@@ -17,7 +17,7 @@ ChaptersReader::ChaptersReader():
 
 static bool parse_msf( const wxRegEx& reMsf, const wxString& s, wxTimeSpan& ts )
 {
-	bool		  res = true;
+	bool          res = true;
 	unsigned long min, sec, frames;
 
 	if ( reMsf.Matches( s ) )
@@ -57,7 +57,7 @@ static bool parse_msf( const wxRegEx& reMsf, const wxString& s, wxTimeSpan& ts )
 
 static bool parse_msms( const wxRegEx& reMsms, const wxString& s, wxTimeSpan& ts )
 {
-	bool		  res = true;
+	bool          res = true;
 	unsigned long min, sec, msec;
 
 	if ( reMsms.Matches( s ) )
@@ -92,7 +92,7 @@ static bool parse_msms( const wxRegEx& reMsms, const wxString& s, wxTimeSpan& ts
 
 static bool parse_hmsms( const wxRegEx& reHmsms, const wxString& s, wxTimeSpan& ts )
 {
-	bool		  res = true;
+	bool          res = true;
 	unsigned long hr, min, sec, msec;
 
 	if ( reHmsms.Matches( s ) )
@@ -133,7 +133,7 @@ static bool parse_hmsms( const wxRegEx& reHmsms, const wxString& s, wxTimeSpan& 
 bool ChaptersReader::ParseChapterPosition( const wxString& s, ChapterDesc& ts )
 {
 	unsigned long sec;
-	double		  dsec;
+	double        dsec;
 
 	if ( parse_msf( m_reMsf, s, ts ) || parse_msms( m_reMsms, s, ts ) || parse_hmsms( m_reHmsms, s, ts ) )
 	{
@@ -170,7 +170,7 @@ bool ChaptersReader::Read( ChaptersArray& chapters, const wxFileName& inputFile,
 {
 	wxLogInfo( _( "Opening cuesheet file \u201C%s\u201D" ), inputFile.GetFullName() );
 
-	wxString							   sCPDescription;
+	wxString                               sCPDescription;
 	wxEncodingDetection::wxMBConvSharedPtr pConv( wxEncodingDetection::GetFileEncoding( inputFile, bUseMLang, sCPDescription ) );
 
 	if ( pConv )

@@ -25,15 +25,15 @@ class PdfWaveDrawer:
 	private:
 
 		static void create_chapter_segments_paths(
-			const wxRect2DInt &,
+			const wxRect2DInt&,
 			wxFloat32,
-			const ChaptersArray &,
-			wxPdfShape &, wxPdfShape & );
+			const ChaptersArray&,
+			wxPdfShape&, wxPdfShape& );
 
 		static void create_chapter_lines_paths(
-			const wxRect2DInt &, wxFloat32,
-			const ChaptersArray &,
-			wxPdfShape &, wxPdfShape & );
+			const wxRect2DInt&, wxFloat32,
+			const ChaptersArray&,
+			wxPdfShape&, wxPdfShape& );
 
 		static void create_chapter_segments_path( const wxRect2DInt&,
 												  const ChaptersArray&,
@@ -45,13 +45,14 @@ class PdfWaveDrawer:
 
 	protected:
 
-		wxPdfDocument*				  m_pPdf;
-		wxRect2DInt					  m_rc;
-		wxFloat32					  m_heightUp;
-		wxFloat32					  m_heightDown;
-		wxFloat32					  m_yoffset;
-		const DrawerSettings&		  m_drawerSettings;
+		wxPdfDocument* m_pPdf;
+		wxRect2DInt m_rc;
+		wxFloat32 m_heightUp;
+		wxFloat32 m_heightDown;
+		wxFloat32 m_yoffset;
+		const DrawerSettings& m_drawerSettings;
 		const ChaptersArrayScopedPtr& m_pChapters;
 };
+
 #endif
 
