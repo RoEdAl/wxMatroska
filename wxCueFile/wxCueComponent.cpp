@@ -541,7 +541,7 @@ void wxCueComponent::GetReplacements( wxCueComponent::wxHashString& replacements
 			}
 		}
 
-		if (!bAdd) continue;
+		if ( !bAdd ) continue;
 		replacements[ s ] = sValue;
 	}
 }

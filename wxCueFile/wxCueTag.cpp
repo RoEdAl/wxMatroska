@@ -197,7 +197,7 @@ wxString wxCueTag::GetFlattenValue( const wxString& sSeparator ) const
 		( *tos ).Flush();
 
 		wxString sOut( tos.GetString() );
-		return sOut.Truncate(sOut.Length() - sSeparator.Length());
+		return sOut.Truncate( sOut.Length() - sSeparator.Length() );
 	}
 	else
 	{

@@ -96,15 +96,16 @@ class wxMainFrame:
 		void OnClose( wxCloseEvent& event );
 		void OnCopyEvents( wxCommandEvent& event );
 		void OnProcessTerminated( wxProcessEvent& event );
+
 #ifdef __WXMSW__
-		void OnTaskKillProcessTerminated(wxProcessEvent& event);
+		void OnTaskKillProcessTerminated( wxProcessEvent& event );
 #endif
 		void OnIdle( wxIdleEvent& event );
 		void OnUpdateRunUiCtrl( wxUpdateUIEvent& event );
-		void OnUpdateMsgCtrls(wxUpdateUIEvent& event);
+		void OnUpdateMsgCtrls( wxUpdateUIEvent& event );
 		void OnUpdateButtonRun( wxUpdateUIEvent& event );
 		void OnIdleWakeupTimer( wxTimerEvent& event );
-		void OnAutoScrollTimer(wxTimerEvent& event);
+		void OnAutoScrollTimer( wxTimerEvent& event );
 		void OnExecCue2Mkc( wxCommandEvent& event );
 		void OnExecInfoCue2Mkc( wxCommandEvent& event );
 		void OnCheckVerbose( wxCommandEvent& event );
@@ -119,12 +120,13 @@ class wxMainFrame:
 		void OnSuggestMergeMode( wxCommandEvent& event );
 		void OnUpdateMergeMode( wxUpdateUIEvent& event );
 		void OnExeMkvmerge( wxCommandEvent& event );
-		void OnUpdateMsgCnt(wxUpdateUIEvent& event);
-		void OnCheckAutoScroll(wxCommandEvent& event);
+		void OnUpdateMsgCnt( wxUpdateUIEvent& event );
+		void OnCheckAutoScroll( wxCommandEvent& event );
 
 	protected:
 
 		void ExecuteCmd( const wxString& cmd, const wxString& cwd );
+
 #ifdef __WXMSW__
 		void ExecuteTaskKill();
 #endif

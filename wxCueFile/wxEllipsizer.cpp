@@ -4,11 +4,11 @@
 
 #include "wxEllipsizer.h"
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxEllipsizer, wxStringProcessor)
+wxIMPLEMENT_DYNAMIC_CLASS( wxEllipsizer, wxStringProcessor )
 
 // ===============================================================================
 
-const char    wxEllipsizer::REG_EX[] = "(\\p{Z}*\\.\\.\\.)\\p{Z}*$";
+const char wxEllipsizer::REG_EX[] = "(\\p{Z}*\\.\\.\\.)\\p{Z}*$";
 const wxUChar wxEllipsizer::ELLIPSIS = wxS( '\u2026' );
 
 // ===============================================================================
@@ -27,10 +27,10 @@ wxStringProcessor* const wxEllipsizer::Clone() const
 bool wxEllipsizer::Process( const wxString& sIn, wxString& sOut ) const
 {
 	sOut = sIn;
-	wxString res(sIn);
-	int nRes = m_reEllipsis.ReplaceAll( &res, ELLIPSIS );
+	wxString res( sIn );
+	int      nRes = m_reEllipsis.ReplaceAll( &res, ELLIPSIS );
 
-	if (nRes > 0)
+	if ( nRes > 0 )
 	{
 		sOut = res;
 		return true;
@@ -38,3 +38,4 @@ bool wxEllipsizer::Process( const wxString& sIn, wxString& sOut ) const
 
 	return false;
 }
+

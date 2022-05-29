@@ -36,17 +36,17 @@ class wxMkvmergeOptsRenderer:
 
 		wxFileName m_matroskaOptsFile;
 		typedef nlohmann::basic_json<
-			std::map,
-			std::vector,
-			std::string,
-			bool,
-			wxInt64,
-			wxUint64,
-			wxDouble,
-			std::allocator,
-			nlohmann::adl_serializer,
-			std::vector<wxByte>
-		> json;
+				std::map,
+				std::vector,
+				std::string,
+				bool,
+				wxInt64,
+				wxUint64,
+				wxDouble,
+				std::allocator,
+				nlohmann::adl_serializer,
+				std::vector< wxByte >
+				> json;
 
 	protected:
 

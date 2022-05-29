@@ -58,7 +58,7 @@ class wxXmlCueSheetRenderer:
 		wxXmlNode* m_pTags;
 
 		const wxConfiguration* m_pCfg;
-		wxScopedPtr<wxStringProcessor> m_pStringProcessor;
+		wxScopedPtr< wxStringProcessor > m_pStringProcessor;
 
 		wxInputFile m_inputFile;
 		wxFileName m_outputFile;

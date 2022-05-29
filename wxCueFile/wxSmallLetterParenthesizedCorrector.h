@@ -9,9 +9,10 @@
 #include <wxCueFile/wxStringProcessor.h>
 #endif
 
-class wxSmallLetterParenthesizedCorrector :public wxStringProcessor
+class wxSmallLetterParenthesizedCorrector:
+	public wxStringProcessor
 {
-	wxDECLARE_DYNAMIC_CLASS(wxSmallLetterParenthesizedCorrector);
+	wxDECLARE_DYNAMIC_CLASS( wxSmallLetterParenthesizedCorrector );
 
 	public:
 
@@ -25,7 +26,6 @@ class wxSmallLetterParenthesizedCorrector :public wxStringProcessor
 	protected:
 
 		wxRegEx m_re;
-
 };
 
 #endif

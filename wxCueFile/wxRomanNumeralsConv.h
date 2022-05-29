@@ -111,11 +111,12 @@ struct roman_numeral_traits< false >
 };
 
 template< bool UPPER >
-class wxRomanNumeralsConv :public wxStringProcessor
+class wxRomanNumeralsConv:
+	public wxStringProcessor
 {
 	public:
 
-		typedef wxRomanNumeralsConv<UPPER> ThisClass;
+		typedef wxRomanNumeralsConv< UPPER > ThisClass;
 		typedef roman_numeral_traits< UPPER > numeral_traits;
 
 	public:
@@ -133,39 +134,39 @@ class wxRomanNumeralsConv :public wxStringProcessor
 
 		virtual bool Process( const wxString& text, wxString& out ) const
 		{
-			wxString w(text);
+			wxString w( text );
 			wxString res;
-			bool replaced = false;
+			bool     replaced = false;
 
-			while (m_re.Matches(w))
+			while ( m_re.Matches( w ) )
 			{
 				size_t idx, len;
 
-				if (!m_re.GetMatch(&idx, &len))
+				if ( !m_re.GetMatch( &idx, &len ) )
 				{
 					replaced = false;
 					break;
 				}
 
-				res += w.Mid(0, idx);
+				res += w.Mid( 0, idx );
 
-				const wxString m1 = get_match(w, 1);
-				const wxString m2 = get_match(w, 2);
-				const wxString m3 = get_match(w, 3);
+				const wxString m1 = get_match( w, 1 );
+				const wxString m2 = get_match( w, 2 );
+				const wxString m3 = get_match( w, 3 );
 
-				wxASSERT(!m1.IsEmpty());
-				wxASSERT(!m2.IsEmpty());
-				wxASSERT(!m3.IsEmpty());
+				wxASSERT( !m1.IsEmpty() );
+				wxASSERT( !m2.IsEmpty() );
+				wxASSERT( !m3.IsEmpty() );
 
-				res += roman_utils::convert(m1, m2, m3, numeral_traits::CINFO);
+				res     += roman_utils::convert( m1, m2, m3, numeral_traits::CINFO );
 				replaced = true;
-				w.Remove(0, idx + len);
+				w.Remove( 0, idx + len );
 			}
 
-			if (replaced)
+			if ( replaced )
 			{
 				res += w;
-				out = res;
+				out  = res;
 				return true;
 			}
 
@@ -178,17 +179,12 @@ class wxRomanNumeralsConv :public wxStringProcessor
 
 	protected:
 
-		wxString get_match(const wxString& s, size_t matchIdx) const
+		wxString get_match( const wxString& s, size_t matchIdx ) const
 		{
 			size_t idx, len;
-			if (m_re.GetMatch(&idx, &len, matchIdx))
-			{
-				return s.Mid(idx, len);
-			}
-			else
-			{
-				return wxEmptyString;
-			}
+
+			if ( m_re.GetMatch( &idx, &len, matchIdx ) ) return s.Mid( idx, len );
+			else return wxEmptyString;
 		}
 };
 

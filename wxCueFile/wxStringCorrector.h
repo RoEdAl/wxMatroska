@@ -9,7 +9,8 @@
 #include <wxCueFile/wxStringProcessor.h>
 #endif
 
-class wxStringCorrector :public wxStringProcessor
+class wxStringCorrector:
+	public wxStringProcessor
 {
 	public:
 
@@ -21,14 +22,14 @@ class wxStringCorrector :public wxStringProcessor
 
 				Configurator();
 
-				Configurator& RemoveExtraSpaces(bool = true);
-				Configurator& Ellipsize(bool = true);
-				Configurator& RomanNumeralsUpper(bool = true);
-				Configurator& RomanNumeralsLower(bool = true);
-				Configurator& Dashes(bool = true);
-				Configurator& SmallEmDash(bool = true);
-				Configurator& NumberFullStop(bool = true);
-				Configurator& SmallLetterParenthesized(bool = true);
+				Configurator& RemoveExtraSpaces( bool        = true );
+				Configurator& Ellipsize( bool                = true );
+				Configurator& RomanNumeralsUpper( bool       = true );
+				Configurator& RomanNumeralsLower( bool       = true );
+				Configurator& Dashes( bool                   = true );
+				Configurator& SmallEmDash( bool              = true );
+				Configurator& NumberFullStop( bool           = true );
+				Configurator& SmallLetterParenthesized( bool = true );
 
 				bool RemoveExtraSpaces() const;
 				bool Ellipsize() const;
@@ -42,7 +43,7 @@ class wxStringCorrector :public wxStringProcessor
 
 			protected:
 
-				Configurator(const Configurator&);
+				Configurator( const Configurator& );
 
 			protected:
 
@@ -56,14 +57,13 @@ class wxStringCorrector :public wxStringProcessor
 				bool m_smallLetterParenthesized;
 		};
 
-
 		wxStringProcessor* const Clone() const;
 		virtual bool Process( const wxString&, wxString& ) const;
 
 	protected:
 
-		wxStringCorrector(const Configurator&);
-		void AddStringProcessor(wxStringProcessor* const);
+		wxStringCorrector( const Configurator& );
+		void AddStringProcessor( wxStringProcessor* const );
 
 	protected:
 

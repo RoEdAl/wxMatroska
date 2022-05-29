@@ -4,7 +4,7 @@
 
 #include "wxTrailingSpacesRemover.h"
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxTrailingSpacesRemover, wxStringProcessor)
+wxIMPLEMENT_DYNAMIC_CLASS( wxTrailingSpacesRemover, wxStringProcessor )
 
 // ===============================================================================
 
@@ -36,14 +36,15 @@ bool wxTrailingSpacesRemover::Process( const wxString& sIn, wxString& sOut ) con
 		wxASSERT( m_reTrailingSpaces.GetMatchCount() >= 1 );
 
 		size_t start, len;
-		m_reTrailingSpaces.GetMatch(&start, &len, 1);
+		m_reTrailingSpaces.GetMatch( &start, &len, 1 );
 
-		if (len < sIn.Length())
+		if ( len < sIn.Length() )
 		{
-			sOut = m_reTrailingSpaces.GetMatch(sIn, 1);
+			sOut = m_reTrailingSpaces.GetMatch( sIn, 1 );
 			return true;
 		}
 	}
 
 	return false;
 }
+

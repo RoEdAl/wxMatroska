@@ -144,15 +144,15 @@ namespace
 	const char fprefix::accurip[]  = "accurip";
 	const char fprefix::cuesheet[] = "cuesheet";
 
-	template<size_t N>
-	void add_string(wxMkvmergeOptsRenderer::json& j, const char(&s)[N])
+	template< size_t N >
+	void add_string( wxMkvmergeOptsRenderer::json& j, const char ( & s )[ N ] )
 	{
-		j.push_back(s);
+		j.push_back( s );
 	}
 
-	void add_string(wxMkvmergeOptsRenderer::json& j, const wxString& s)
+	void add_string( wxMkvmergeOptsRenderer::json& j, const wxString& s )
 	{
-		j.push_back(s.utf8_string());
+		j.push_back( s.utf8_string() );
 	}
 }
 
@@ -167,7 +167,7 @@ const wxFileName& wxMkvmergeOptsRenderer::GetMkvmergeOptsFile() const
 	return m_matroskaOptsFile;
 }
 
-void wxMkvmergeOptsRenderer::append_cover(wxMkvmergeOptsRenderer::json& opts, const wxCoverFile& coverFile )
+void wxMkvmergeOptsRenderer::append_cover( wxMkvmergeOptsRenderer::json& opts, const wxCoverFile& coverFile )
 {
 	wxString stype;
 
@@ -185,17 +185,17 @@ void wxMkvmergeOptsRenderer::append_cover(wxMkvmergeOptsRenderer::json& opts, co
 		sDescription = stype;
 	}
 
-	add_string( opts,  attachment::desc );
-	add_string( opts,  sDescription );
+	add_string( opts, attachment::desc );
+	add_string( opts, sDescription );
 
 	if ( coverFile.HasMimeType() )
 	{
-		add_string( opts,  attachment::mime );
-		add_string( opts,  coverFile.GetMimeType() );
+		add_string( opts, attachment::mime );
+		add_string( opts, coverFile.GetMimeType() );
 	}
 
-	add_string( opts,  attachment::file );
-	add_string( opts,  GetEscapedFile( coverFile.GetFileName() ) );
+	add_string( opts, attachment::file );
+	add_string( opts, GetEscapedFile( coverFile.GetFileName() ) );
 }
 
 wxString wxMkvmergeOptsRenderer::GetEscapedFile( const wxFileName& fn )
@@ -216,7 +216,7 @@ bool wxMkvmergeOptsRenderer::save_cover( const wxInputFile& inputFile, wxCoverFi
 	else return false;
 }
 
-void wxMkvmergeOptsRenderer::write_cover_attachments(wxMkvmergeOptsRenderer::json& opts, const wxInputFile& inputFile, const wxArrayCoverFile& coverFiles )
+void wxMkvmergeOptsRenderer::write_cover_attachments( wxMkvmergeOptsRenderer::json& opts, const wxInputFile& inputFile, const wxArrayCoverFile& coverFiles )
 {
 	size_t nAttachments = coverFiles.GetCount();
 
@@ -231,8 +231,8 @@ void wxMkvmergeOptsRenderer::write_cover_attachments(wxMkvmergeOptsRenderer::jso
 		{
 			if ( save_cover( inputFile, coverFiles[ 0 ] ) )
 			{
-				add_string( opts,  attachment::name );
-				add_string( opts,  file_desc( fprefix::cover, coverFiles[ 0 ].GetFileName(), nAttachments ).ToString() );
+				add_string( opts, attachment::name );
+				add_string( opts, file_desc( fprefix::cover, coverFiles[ 0 ].GetFileName(), nAttachments ).ToString() );
 				append_cover( opts, coverFiles[ 0 ] );
 			}
 			break;
@@ -242,8 +242,8 @@ void wxMkvmergeOptsRenderer::write_cover_attachments(wxMkvmergeOptsRenderer::jso
 		{
 			if ( save_cover( inputFile, coverFiles[ 0 ] ) )
 			{
-				add_string( opts,  attachment::name );
-				add_string( opts,  file_desc( fprefix::cover, coverFiles[ 0 ].GetFileName(), nAttachments ).ToString() );
+				add_string( opts, attachment::name );
+				add_string( opts, file_desc( fprefix::cover, coverFiles[ 0 ].GetFileName(), nAttachments ).ToString() );
 				append_cover( opts, coverFiles[ 0 ] );
 			}
 
@@ -252,8 +252,8 @@ void wxMkvmergeOptsRenderer::write_cover_attachments(wxMkvmergeOptsRenderer::jso
 			{
 				if ( save_cover( inputFile, coverFiles[ i ] ) )
 				{
-					add_string( opts,  attachment::name );
-					add_string( opts,  file_desc( fprefix::cover, i + 1, coverFiles[ 0 ].GetFileName(), nAttachments ).ToString() );
+					add_string( opts, attachment::name );
+					add_string( opts, file_desc( fprefix::cover, i + 1, coverFiles[ 0 ].GetFileName(), nAttachments ).ToString() );
 					append_cover( opts, coverFiles[ i ] );
 				}
 			}
@@ -263,7 +263,7 @@ void wxMkvmergeOptsRenderer::write_cover_attachments(wxMkvmergeOptsRenderer::jso
 	}
 }
 
-void wxMkvmergeOptsRenderer::write_cdtextfiles_attachments(wxMkvmergeOptsRenderer::json& opts, const wxArrayFileName& cdtFiles )
+void wxMkvmergeOptsRenderer::write_cdtextfiles_attachments( wxMkvmergeOptsRenderer::json& opts, const wxArrayFileName& cdtFiles )
 {
 	size_t nAttachments = cdtFiles.GetCount();
 
@@ -276,14 +276,14 @@ void wxMkvmergeOptsRenderer::write_cdtextfiles_attachments(wxMkvmergeOptsRendere
 
 		case 1:
 		{
-			add_string( opts,  attachment::name );
-			add_string( opts,  file_desc( fprefix::cdtext, cdtFiles[ 0 ], nAttachments ).ToString() );
-			add_string( opts,  attachment::desc );
-			add_string( opts,  cdtFiles[ 0 ].GetFullName() );
-			add_string( opts,  attachment::mime );
-			add_string( opts,  mime::octet_stream );
-			add_string( opts,  attachment::file );
-			add_string( opts,  cdtFiles[ 0 ].GetFullPath() );
+			add_string( opts, attachment::name );
+			add_string( opts, file_desc( fprefix::cdtext, cdtFiles[ 0 ], nAttachments ).ToString() );
+			add_string( opts, attachment::desc );
+			add_string( opts, cdtFiles[ 0 ].GetFullName() );
+			add_string( opts, attachment::mime );
+			add_string( opts, mime::octet_stream );
+			add_string( opts, attachment::file );
+			add_string( opts, cdtFiles[ 0 ].GetFullPath() );
 			break;
 		}
 
@@ -291,14 +291,14 @@ void wxMkvmergeOptsRenderer::write_cdtextfiles_attachments(wxMkvmergeOptsRendere
 		{
 			for ( size_t i = 0; i < nAttachments; ++i )
 			{
-				add_string( opts,  attachment::name );
-				add_string( opts,  file_desc( fprefix::cdtext, i + 1, cdtFiles[ i ], nAttachments ).ToString() );
-				add_string( opts,  attachment::desc );
-				add_string( opts,  cdtFiles[ i ].GetFullName() );
-				add_string( opts,  attachment::mime );
-				add_string( opts,  mime::octet_stream );
-				add_string( opts,  attachment::file );
-				add_string( opts,  cdtFiles[ i ].GetFullPath() );
+				add_string( opts, attachment::name );
+				add_string( opts, file_desc( fprefix::cdtext, i + 1, cdtFiles[ i ], nAttachments ).ToString() );
+				add_string( opts, attachment::desc );
+				add_string( opts, cdtFiles[ i ].GetFullName() );
+				add_string( opts, attachment::mime );
+				add_string( opts, mime::octet_stream );
+				add_string( opts, attachment::file );
+				add_string( opts, cdtFiles[ i ].GetFullPath() );
 			}
 
 			break;
@@ -306,7 +306,7 @@ void wxMkvmergeOptsRenderer::write_cdtextfiles_attachments(wxMkvmergeOptsRendere
 	}
 }
 
-void wxMkvmergeOptsRenderer::write_log_attachments(wxMkvmergeOptsRenderer::json& opts, const wxArrayFileName& logFiles )
+void wxMkvmergeOptsRenderer::write_log_attachments( wxMkvmergeOptsRenderer::json& opts, const wxArrayFileName& logFiles )
 {
 	size_t nAttachments = logFiles.GetCount();
 
@@ -319,14 +319,14 @@ void wxMkvmergeOptsRenderer::write_log_attachments(wxMkvmergeOptsRenderer::json&
 
 		case 1:
 		{
-			add_string( opts,  attachment::name );
-			add_string( opts,  file_desc( fprefix::eac, logFiles[ 0 ], nAttachments ).ToString() );
-			add_string( opts,  attachment::desc );
-			add_string( opts,  logFiles[ 0 ].GetFullName() );
-			add_string( opts,  attachment::mime );
-			add_string( opts,  mime::text_plain );
-			add_string( opts,  attachment::file );
-			add_string( opts,  logFiles[ 0 ].GetFullPath() );
+			add_string( opts, attachment::name );
+			add_string( opts, file_desc( fprefix::eac, logFiles[ 0 ], nAttachments ).ToString() );
+			add_string( opts, attachment::desc );
+			add_string( opts, logFiles[ 0 ].GetFullName() );
+			add_string( opts, attachment::mime );
+			add_string( opts, mime::text_plain );
+			add_string( opts, attachment::file );
+			add_string( opts, logFiles[ 0 ].GetFullPath() );
 			break;
 		}
 
@@ -334,14 +334,14 @@ void wxMkvmergeOptsRenderer::write_log_attachments(wxMkvmergeOptsRenderer::json&
 		{
 			for ( size_t i = 0; i < nAttachments; ++i )
 			{
-				add_string( opts,  attachment::name );
-				add_string( opts,  file_desc( fprefix::eac, i + 1, logFiles[ i ], nAttachments ).ToString() );
-				add_string( opts,  attachment::desc );
-				add_string( opts,  logFiles[ i ].GetFullName() );
-				add_string( opts,  attachment::mime );
-				add_string( opts,  mime::text_plain );
-				add_string( opts,  attachment::file );
-				add_string( opts,  logFiles[ i ].GetFullPath() );
+				add_string( opts, attachment::name );
+				add_string( opts, file_desc( fprefix::eac, i + 1, logFiles[ i ], nAttachments ).ToString() );
+				add_string( opts, attachment::desc );
+				add_string( opts, logFiles[ i ].GetFullName() );
+				add_string( opts, attachment::mime );
+				add_string( opts, mime::text_plain );
+				add_string( opts, attachment::file );
+				add_string( opts, logFiles[ i ].GetFullPath() );
 			}
 
 			break;
@@ -349,7 +349,7 @@ void wxMkvmergeOptsRenderer::write_log_attachments(wxMkvmergeOptsRenderer::json&
 	}
 }
 
-void wxMkvmergeOptsRenderer::write_accurip_log_attachments(wxMkvmergeOptsRenderer::json& opts, const wxArrayFileName& logFiles )
+void wxMkvmergeOptsRenderer::write_accurip_log_attachments( wxMkvmergeOptsRenderer::json& opts, const wxArrayFileName& logFiles )
 {
 	size_t         nAttachments = logFiles.GetCount();
 	const wxString logExt( "log" );
@@ -363,14 +363,14 @@ void wxMkvmergeOptsRenderer::write_accurip_log_attachments(wxMkvmergeOptsRendere
 
 		case 1:
 		{
-			add_string( opts,  attachment::name );
-			add_string( opts,  file_desc( fprefix::accurip, logExt, nAttachments ).ToString() );
-			add_string( opts,  attachment::desc );
-			add_string( opts,  logFiles[ 0 ].GetFullName() );
-			add_string( opts,  attachment::mime );
-			add_string( opts,  mime::text_plain );
-			add_string( opts,  attachment::file );
-			add_string( opts,  logFiles[ 0 ].GetFullPath() );
+			add_string( opts, attachment::name );
+			add_string( opts, file_desc( fprefix::accurip, logExt, nAttachments ).ToString() );
+			add_string( opts, attachment::desc );
+			add_string( opts, logFiles[ 0 ].GetFullName() );
+			add_string( opts, attachment::mime );
+			add_string( opts, mime::text_plain );
+			add_string( opts, attachment::file );
+			add_string( opts, logFiles[ 0 ].GetFullPath() );
 			break;
 		}
 
@@ -378,14 +378,14 @@ void wxMkvmergeOptsRenderer::write_accurip_log_attachments(wxMkvmergeOptsRendere
 		{
 			for ( size_t i = 0; i < nAttachments; ++i )
 			{
-				add_string( opts,  attachment::name );
-				add_string( opts,  file_desc( fprefix::accurip, i + 1, logExt, nAttachments ).ToString() );
-				add_string( opts,  attachment::desc );
-				add_string( opts,  logFiles[ i ].GetFullName() );
-				add_string( opts,  attachment::mime );
-				add_string( opts,  mime::text_plain );
-				add_string( opts,  attachment::file );
-				add_string( opts,  logFiles[ i ].GetFullPath() );
+				add_string( opts, attachment::name );
+				add_string( opts, file_desc( fprefix::accurip, i + 1, logExt, nAttachments ).ToString() );
+				add_string( opts, attachment::desc );
+				add_string( opts, logFiles[ i ].GetFullName() );
+				add_string( opts, attachment::mime );
+				add_string( opts, mime::text_plain );
+				add_string( opts, attachment::file );
+				add_string( opts, logFiles[ i ].GetFullPath() );
 			}
 
 			break;
@@ -394,7 +394,7 @@ void wxMkvmergeOptsRenderer::write_accurip_log_attachments(wxMkvmergeOptsRendere
 }
 
 void wxMkvmergeOptsRenderer::write_eac_attachments(
-	wxMkvmergeOptsRenderer::json& opts, const wxInputFile& inputFile, const wxCueSheet& cueSheet )
+		wxMkvmergeOptsRenderer::json& opts, const wxInputFile& inputFile, const wxCueSheet& cueSheet )
 {
 	switch ( m_cfg.GetCueSheetAttachMode() )
 	{
@@ -419,7 +419,7 @@ void wxMkvmergeOptsRenderer::write_eac_attachments(
 }
 
 void wxMkvmergeOptsRenderer::write_source_eac_attachments(
-	wxMkvmergeOptsRenderer::json& opts, const wxInputFile& WXUNUSED( inputFile ), const wxArrayCueSheetContent& contents )
+		wxMkvmergeOptsRenderer::json& opts, const wxInputFile& WXUNUSED( inputFile ), const wxArrayCueSheetContent& contents )
 {
 	size_t nContents       = contents.GetCount();
 	size_t nSourceContents = 0;
@@ -446,14 +446,14 @@ void wxMkvmergeOptsRenderer::write_source_eac_attachments(
 
 				if ( !( cnt.HasSource() && !cnt.IsEmbedded() ) ) continue;
 
-				add_string( opts,  attachment::name );
-				add_string( opts,  file_desc( fprefix::cuesheet, cnt.GetSource().GetFileName(), nSourceContents ).ToString() );
-				add_string( opts,  attachment::desc );
-				add_string( opts,  cnt.GetSource().GetFileName().GetFullName() );
-				add_string( opts,  attachment::mime );
-				add_string( opts,  mime::text_plain );
-				add_string( opts,  attachment::file );
-				add_string( opts,  cnt.GetSource().GetRealFileName().GetFullPath() );
+				add_string( opts, attachment::name );
+				add_string( opts, file_desc( fprefix::cuesheet, cnt.GetSource().GetFileName(), nSourceContents ).ToString() );
+				add_string( opts, attachment::desc );
+				add_string( opts, cnt.GetSource().GetFileName().GetFullName() );
+				add_string( opts, attachment::mime );
+				add_string( opts, mime::text_plain );
+				add_string( opts, attachment::file );
+				add_string( opts, cnt.GetSource().GetRealFileName().GetFullPath() );
 			}
 
 			break;
@@ -467,14 +467,14 @@ void wxMkvmergeOptsRenderer::write_source_eac_attachments(
 
 				if ( !( cnt.HasSource() && !cnt.IsEmbedded() ) ) continue;
 
-				add_string( opts,  attachment::name );
-				add_string( opts,  file_desc( fprefix::cuesheet, nCounter, cnt.GetSource().GetFileName(), nSourceContents ).ToString() );
-				add_string( opts,  attachment::desc );
-				add_string( opts,  cnt.GetSource().GetFileName().GetFullName() );
-				add_string( opts,  attachment::mime );
-				add_string( opts,  mime::text_plain );
-				add_string( opts,  attachment::file );
-				add_string( opts,  cnt.GetSource().GetRealFileName().GetFullPath() );
+				add_string( opts, attachment::name );
+				add_string( opts, file_desc( fprefix::cuesheet, nCounter, cnt.GetSource().GetFileName(), nSourceContents ).ToString() );
+				add_string( opts, attachment::desc );
+				add_string( opts, cnt.GetSource().GetFileName().GetFullName() );
+				add_string( opts, attachment::mime );
+				add_string( opts, mime::text_plain );
+				add_string( opts, attachment::file );
+				add_string( opts, cnt.GetSource().GetRealFileName().GetFullPath() );
 
 				nCounter += 1;
 			}
@@ -517,7 +517,7 @@ bool wxMkvmergeOptsRenderer::render_cuesheet( const wxInputFile& inputFile,
 	return save_cuesheet( inputFile, sPostfix, tos.GetString(), fn );
 }
 
-void wxMkvmergeOptsRenderer::write_decoded_eac_attachments(wxMkvmergeOptsRenderer::json& opts,
+void wxMkvmergeOptsRenderer::write_decoded_eac_attachments( wxMkvmergeOptsRenderer::json& opts,
 		const wxInputFile& inputFile, const wxArrayCueSheetContent& contents )
 {
 	size_t     nContents = contents.GetCount();
@@ -534,12 +534,12 @@ void wxMkvmergeOptsRenderer::write_decoded_eac_attachments(wxMkvmergeOptsRendere
 		{
 			if ( save_cuesheet( inputFile, "embedded", contents[ 0 ].GetValue(), cueSheetPath ) )
 			{
-				add_string( opts,  attachment::name );
-				add_string( opts,  file_desc( fprefix::cuesheet, cueSheetPath, nContents ).ToString() );
-				add_string( opts,  attachment::mime );
-				add_string( opts,  mime::text_plain );
-				add_string( opts,  attachment::file );
-				add_string( opts,  cueSheetPath.GetFullPath() );
+				add_string( opts, attachment::name );
+				add_string( opts, file_desc( fprefix::cuesheet, cueSheetPath, nContents ).ToString() );
+				add_string( opts, attachment::mime );
+				add_string( opts, mime::text_plain );
+				add_string( opts, attachment::file );
+				add_string( opts, cueSheetPath.GetFullPath() );
 			}
 
 			break;
@@ -551,12 +551,12 @@ void wxMkvmergeOptsRenderer::write_decoded_eac_attachments(wxMkvmergeOptsRendere
 			{
 				if ( save_cuesheet( inputFile, wxString::Format( "embedded%02" wxSizeTFmtSpec "u", i + 1 ), contents[ i ].GetValue(), cueSheetPath ) )
 				{
-					add_string( opts,  attachment::name );
-					add_string( opts,  file_desc( fprefix::cuesheet, i + 1, cueSheetPath, nContents ).ToString() );
-					add_string( opts,  attachment::mime );
-					add_string( opts,  mime::text_plain );
-					add_string( opts,  attachment::file );
-					add_string( opts,  cueSheetPath.GetFullPath() );
+					add_string( opts, attachment::name );
+					add_string( opts, file_desc( fprefix::cuesheet, i + 1, cueSheetPath, nContents ).ToString() );
+					add_string( opts, attachment::mime );
+					add_string( opts, mime::text_plain );
+					add_string( opts, attachment::file );
+					add_string( opts, cueSheetPath.GetFullPath() );
 				}
 			}
 
@@ -565,21 +565,21 @@ void wxMkvmergeOptsRenderer::write_decoded_eac_attachments(wxMkvmergeOptsRendere
 	}
 }
 
-void wxMkvmergeOptsRenderer::write_rendered_eac_attachments(wxMkvmergeOptsRenderer::json& opts,
+void wxMkvmergeOptsRenderer::write_rendered_eac_attachments( wxMkvmergeOptsRenderer::json& opts,
 		const wxInputFile& inputFile, const wxCueSheet& cueSheet )
 {
 	wxFileName cueSheetPath;
 
 	if ( render_cuesheet( inputFile, "rendered", cueSheet, cueSheetPath ) )
 	{
-		add_string( opts,  attachment::name );
-		add_string( opts,  file_desc( fprefix::cuesheet, cueSheetPath, 1 ).ToString() );
-		add_string( opts,  attachment::desc );
-		add_string( opts,  "Rendered cue sheet" );
-		add_string( opts,  attachment::mime );
-		add_string( opts,  mime::text_plain );
-		add_string( opts,  attachment::file );
-		add_string( opts,  cueSheetPath.GetFullPath() );
+		add_string( opts, attachment::name );
+		add_string( opts, file_desc( fprefix::cuesheet, cueSheetPath, 1 ).ToString() );
+		add_string( opts, attachment::desc );
+		add_string( opts, "Rendered cue sheet" );
+		add_string( opts, attachment::mime );
+		add_string( opts, mime::text_plain );
+		add_string( opts, attachment::file );
+		add_string( opts, cueSheetPath.GetFullPath() );
 	}
 }
 
@@ -598,18 +598,18 @@ wxString wxMkvmergeOptsRenderer::get_mapping_str( const wxCueSheet& cueSheet )
 
 wxString wxMkvmergeOptsRenderer::get_track_name( const wxCueSheet& cueSheet ) const
 {
-	wxScopedPtr<wxStringProcessor> stringProcessor(m_cfg.CreateStringProcessor());
-	wxString matroskaNameFormat = m_cfg.GetMatroskaNameFormat();
+	wxScopedPtr< wxStringProcessor > stringProcessor( m_cfg.CreateStringProcessor() );
+	wxString                         matroskaNameFormat = m_cfg.GetMatroskaNameFormat();
 
-	(*stringProcessor)(matroskaNameFormat);
+	( *stringProcessor )( matroskaNameFormat );
 	return cueSheet.Format( m_cfg.GetTagSources(), matroskaNameFormat );
 }
 
 void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile,
 		const wxCueSheet& cueSheet )
 {
-	wxFileName    outputFile, tagsFile, matroskaFile;
-	json opts;
+	wxFileName outputFile, tagsFile, matroskaFile;
+	json       opts;
 
 	m_cfg.GetOutputFile( inputFile, outputFile, tagsFile );
 	m_cfg.GetOutputMatroskaFile( inputFile, matroskaFile, m_matroskaOptsFile );
@@ -617,18 +617,18 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile,
 	const wxString trackName = get_track_name( cueSheet );
 
 	// pre
-	add_string( opts,  "--deterministic" );
-	add_string( opts,  wxString(wxMyApp::APP_NAME) );
-	add_string( opts,  "--disable-track-statistics-tags" );
-	add_string( opts,  "--no-date" );
-	add_string( opts,  "-o" );
-	add_string( opts,  GetEscapedFile( matroskaFile ) );
-	add_string( opts,  "--language" );
-	add_string( opts,  wxString::Format( "0:%s", m_cfg.GetLang() ) );
-	add_string( opts,  "--default-track" );
-	add_string( opts,  "0:yes" );
-	add_string( opts,  "--track-name" );
-	add_string( opts,  wxString::Format( "0:%s", trackName ) );
+	add_string( opts, "--deterministic" );
+	add_string( opts, wxString( wxMyApp::APP_NAME ) );
+	add_string( opts, "--disable-track-statistics-tags" );
+	add_string( opts, "--no-date" );
+	add_string( opts, "-o" );
+	add_string( opts, GetEscapedFile( matroskaFile ) );
+	add_string( opts, "--language" );
+	add_string( opts, wxString::Format( "0:%s", m_cfg.GetLang() ) );
+	add_string( opts, "--default-track" );
+	add_string( opts, "0:yes" );
+	add_string( opts, "--track-name" );
+	add_string( opts, wxString::Format( "0:%s", trackName ) );
 
 	// tracks
 	const wxArrayDataFile& dataFiles = cueSheet.GetDataFiles();
@@ -636,26 +636,26 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile,
 
 	for ( size_t nTracks = dataFiles.GetCount(), i = 0; i < nTracks; ++i )
 	{
-		add_string( opts,  "-a" );
-		add_string( opts,  '0' );
-		add_string( opts,  "-D" );
-		add_string( opts,  "-S" );
-		add_string( opts,  "-B" );
-		add_string( opts,  "-T" );
-		add_string( opts,  "-M" );
-		add_string( opts,  "--no-global-tags" );
-		add_string( opts,  "--no-chapters" );
+		add_string( opts, "-a" );
+		add_string( opts, '0' );
+		add_string( opts, "-D" );
+		add_string( opts, "-S" );
+		add_string( opts, "-B" );
+		add_string( opts, "-T" );
+		add_string( opts, "-M" );
+		add_string( opts, "--no-global-tags" );
+		add_string( opts, "--no-chapters" );
 
 		const wxDataFile& dataFile = dataFiles[ i ];
 		wxASSERT( dataFile.HasRealFileName() );
 
 		if ( !bFirst )
 		{
-			add_string( opts,  wxString::Format( "+%s", dataFile.GetRealFileName().GetFullPath() ) );
+			add_string( opts, wxString::Format( "+%s", dataFile.GetRealFileName().GetFullPath() ) );
 		}
 		else
 		{
-			add_string( opts,  wxString::Format( "=%s", dataFile.GetRealFileName().GetFullPath() ) );
+			add_string( opts, wxString::Format( "=%s", dataFile.GetRealFileName().GetFullPath() ) );
 			bFirst = false;
 		}
 	}
@@ -681,27 +681,28 @@ void wxMkvmergeOptsRenderer::RenderDisc( const wxInputFile& inputFile,
 	// post
 	if ( !m_cfg.IsUnkLang() )
 	{
-		add_string( opts,  "--default-language" );
-		add_string( opts,  m_cfg.GetLang() );
+		add_string( opts, "--default-language" );
+		add_string( opts, m_cfg.GetLang() );
 	}
-	add_string( opts,  "--title" );
-	add_string( opts,  trackName );
-	add_string( opts,  "--chapters" );
-	add_string( opts,  GetEscapedFile( outputFile ) );
+	add_string( opts, "--title" );
+	add_string( opts, trackName );
+	add_string( opts, "--chapters" );
+	add_string( opts, GetEscapedFile( outputFile ) );
 
 	if ( m_cfg.GenerateTags() )
 	{
-		add_string( opts,  "--global-tags" );
-		add_string( opts,  GetEscapedFile( tagsFile ) );
+		add_string( opts, "--global-tags" );
+		add_string( opts, GetEscapedFile( tagsFile ) );
 	}
 
 	if ( dataFiles.GetCount() > 1u )
 	{
-		add_string( opts,  "--append-to" );
-		add_string( opts,  get_mapping_str( cueSheet ) );
+		add_string( opts, "--append-to" );
+		add_string( opts, get_mapping_str( cueSheet ) );
 	}
 
-	const wxString j = wxString::FromUTF8Unchecked(opts.dump(2));
+	const wxString j = wxString::FromUTF8Unchecked( opts.dump( 2 ) );
+
 	*m_os << j << endl;
 }
 

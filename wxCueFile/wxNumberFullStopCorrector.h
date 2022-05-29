@@ -9,10 +9,10 @@
 #include <wxCueFile/wxStringProcessor.h>
 #endif
 
-
-class wxNumberFullStopCorrector :public wxStringProcessor
+class wxNumberFullStopCorrector:
+	public wxStringProcessor
 {
-	wxDECLARE_DYNAMIC_CLASS(wxNumberFullStopCorrector);
+	wxDECLARE_DYNAMIC_CLASS( wxNumberFullStopCorrector );
 
 	public:
 

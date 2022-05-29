@@ -9,9 +9,10 @@
 #include <wxCueFile/wxStringProcessor.h>
 #endif
 
-class wxDashesCorrector :public wxStringProcessor
+class wxDashesCorrector:
+	public wxStringProcessor
 {
-	wxDECLARE_DYNAMIC_CLASS(wxDashesCorrector);
+	wxDECLARE_DYNAMIC_CLASS( wxDashesCorrector );
 
 	public:
 

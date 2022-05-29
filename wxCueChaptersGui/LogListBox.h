@@ -5,11 +5,12 @@
 #ifndef _LOG_LIST_BOX_H_
 #define _LOG_LIST_BOX_H_
 
-class ListBox :public wxListBox
+class ListBox:
+	public wxListBox
 {
 	public:
 
-		ListBox(wxWindow*);
+		ListBox( wxWindow* );
 		void ShowLastItem();
 };
 
@@ -26,19 +27,18 @@ class LogListBox:
 		ListBox* m_listBox;
 };
 
-class SimpleLogListBox :
+class SimpleLogListBox:
 	public wxLog
 {
-public:
+	public:
 
-	SimpleLogListBox(ListBox*);
-	virtual void DoLogText(const wxString&);
+		SimpleLogListBox( ListBox* );
+		virtual void DoLogText( const wxString& );
 
-protected:
+	protected:
 
-	ListBox* m_listBox;
+		ListBox* m_listBox;
 };
-
 
 #endif
 

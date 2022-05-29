@@ -303,7 +303,7 @@ wxConfiguration::wxConfiguration( void ) :
 	m_bMerge( false ),
 	m_bIncludeDiscNumberTag( false ),
 	m_nReadFlags( wxCueSheetReader::EC_PARSE_COMMENTS | wxCueSheetReader::EC_ELLIPSIZE_TAGS | wxCueSheetReader::EC_REMOVE_EXTRA_SPACES | wxCueSheetReader::EC_MEDIA_READ_TAGS | wxCueSheetReader::EC_FIND_COVER | wxCueSheetReader::EC_FIND_LOG | wxCueSheetReader::EC_FIND_ACCURIP_LOG | wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG | wxCueSheetReader::EC_CORRECT_DASHES ),
-	m_nTagSources(wxCueTag::TAG_CD_TEXT|wxCueTag::TAG_CUE_COMMENT|wxCueTag::TAG_MEDIA_METADATA|wxCueTag::TAG_AUTO_GENERATED),
+	m_nTagSources( wxCueTag::TAG_CD_TEXT | wxCueTag::TAG_CUE_COMMENT | wxCueTag::TAG_MEDIA_METADATA | wxCueTag::TAG_AUTO_GENERATED ),
 	m_bUseMLang( false ),
 	m_bUseFullPaths( false ),
 	m_eCsAttachMode( CUESHEET_ATTACH_NONE ),
@@ -323,7 +323,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 {
 	cmdLine.AddOption( "i", "info", wxString::Format( _( "Display additional information about [%s]" ), GetInfoSubjectTexts() ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 
-	cmdLine.AddSwitch("a", "abort-on-error", wxString::Format(_("Abort when conversion errors occurs (default: %s)"), BoolToStr(m_bAbortOnError)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
+	cmdLine.AddSwitch( "a", "abort-on-error", wxString::Format( _( "Abort when conversion errors occurs (default: %s)" ), BoolToStr( m_bAbortOnError ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddOption( "o", "output", _( "Output Matroska chapter file or cue sheet file (see -c option)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "od", "output-directory", _( "Output directory (default: input directory)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( "ce", "chapter-time-end", wxString::Format( _( "Calculate end time of chapters if possible (default: %s)" ), BoolToStr( m_bChapterTimeEnd ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
@@ -331,7 +331,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 	cmdLine.AddOption( "fo", "frame-offset", wxString::Format( _( "Offset in frames to use with -uc option (default: %u)" ), m_nChapterOffset ), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddSwitch( "df", "use-data-files", wxString::Format( _( "Use data file(s) to calculate end time of chapters (default: %s)" ), BoolToStr( m_bUseDataFiles ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddOption( "x", "alternate-extensions", _( "Comma-separated list of alternate extensions of data files (default: none)" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-	cmdLine.AddOption("mf", "matroska-title-format", wxString::Format(_("Mtroska container's title format (default: %s)"), MATROSKA_NAME_FORMAT), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
+	cmdLine.AddOption( "mf", "matroska-title-format", wxString::Format( _( "Mtroska container's title format (default: %s)" ), MATROSKA_NAME_FORMAT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "f", "track-title-format", wxString::Format( _( "Track/chapter title format (default: %s)" ), TRACK_NAME_FORMAT ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "l", "language", wxString::Format( _( "Set language of chapters and tags in Matroska container (default: %s)" ), m_sLang ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 	cmdLine.AddOption( "m", "rendering-method", wxString::Format( _( "Rendering method [%s] (default: %s)" ), GetRenderingModes(), ToString( m_eRenderMode ) ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
@@ -351,15 +351,15 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 	cmdLine.AddSwitch( wxEmptyString, "attach-cover", wxString::Format( _( "Attach cover image (cover.*;front.*;album.*) to mkvmerge options file (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_FIND_COVER ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxEmptyString, "attach-accurip-log", wxString::Format( _( "Attach AccurateRip log (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_FIND_ACCURIP_LOG ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 
-	cmdLine.AddSwitch("et", "ellipsize-tags", wxString::Format(_("Tags processing - ellipsize tags - convert last three dots to ellipsis (U+2026) character' (default: %s)"), ReadFlagTestStr(wxCueSheetReader::EC_ELLIPSIZE_TAGS)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
-	cmdLine.AddSwitch("rs", "remove-extra-spaces", wxString::Format(_("Tags processing - remove extra spaces (default: %s)"), ReadFlagTestStr(wxCueSheetReader::EC_REMOVE_EXTRA_SPACES)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
+	cmdLine.AddSwitch( "et", "ellipsize-tags", wxString::Format( _( "Tags processing - ellipsize tags - convert last three dots to ellipsis (U+2026) character' (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_ELLIPSIZE_TAGS ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( "rs", "remove-extra-spaces", wxString::Format( _( "Tags processing - remove extra spaces (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_REMOVE_EXTRA_SPACES ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( "ru", "upper-roman-numerals", wxString::Format( _( "Tags processing - convert roman numerals - upper case (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( "rl", "lower-roman-numerals", wxString::Format( _( "Tags processing - convert roman numerals - lower case (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_CONVERT_LOWER_ROMAN_NUMERALS ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxEmptyString, "correct-dashes", wxString::Format( _( "Tags processing - correct dashes (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_CORRECT_DASHES ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( wxEmptyString, "small-em-dash", wxString::Format( _( "Tags processing - use small em dash (U+FE58) character instead of normal em dash char (U+2014) (default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_SMALL_EM_DASH ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
-	cmdLine.AddSwitch("cq", "correct-quotation-marks", wxString::Format(_("Tags processing - correct quotation marks (default: %s)"), BoolToStr(m_bCorrectQuotationMarks)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
-	cmdLine.AddSwitch("cf", "number-full-stop", wxString::Format(_("Tags processing - use '<number> full stop' Unicode characters (U-2488 to U-249B, default: %s)"), ReadFlagTestStr( wxCueSheetReader::EC_NUMBER_FULL_STOP)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
-	cmdLine.AddSwitch(wxEmptyString, "small-letter-parenthesized", wxString::Format(_("Tags processing - use '<small letter> parenthesized' Unicode characters (U-249C to U-24B5, default: %s)"), ReadFlagTestStr(wxCueSheetReader::EC_SMALL_LETTER_PARENTHESIZED)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
+	cmdLine.AddSwitch( "cq", "correct-quotation-marks", wxString::Format( _( "Tags processing - correct quotation marks (default: %s)" ), BoolToStr( m_bCorrectQuotationMarks ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( "cf", "number-full-stop", wxString::Format( _( "Tags processing - use '<number> full stop' Unicode characters (U-2488 to U-249B, default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_NUMBER_FULL_STOP ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+	cmdLine.AddSwitch( wxEmptyString, "small-letter-parenthesized", wxString::Format( _( "Tags processing - use '<small letter> parenthesized' Unicode characters (U-249C to U-24B5, default: %s)" ), ReadFlagTestStr( wxCueSheetReader::EC_SMALL_LETTER_PARENTHESIZED ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 
 	// advanced options
 	cmdLine.AddSwitch( wxEmptyString, "use-mlang", wxString::Format( _( "Use MLang library (default: %s)" ), BoolToStr( m_bUseMLang ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
@@ -369,7 +369,7 @@ void wxConfiguration::AddCmdLineParams( wxCmdLineParser& cmdLine ) const
 	cmdLine.AddSwitch( wxEmptyString, "use-full-paths", wxString::Format( _( "Use full paths in mkvmerge options file (default: %s)" ), BoolToStr( m_bUseFullPaths ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( "ra", "render-artist-for-track", wxString::Format( _( "Render artist for track (default: %s)" ), BoolToStr( m_bRenderArtistForTrack ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 	cmdLine.AddSwitch( "rm", "render-multiline-tags", wxString::Format( _( "Render multiline tags (default: %s)" ), BoolToStr( m_bRenderMultilineTags ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
-	cmdLine.AddSwitch("rg", "render-replaygain-tags", wxString::Format(_("Render ReplayGain tags (default: %s)"), BoolToStr(m_bRenderReplayGainTags)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
+	cmdLine.AddSwitch( "rg", "render-replaygain-tags", wxString::Format( _( "Render ReplayGain tags (default: %s)" ), BoolToStr( m_bRenderReplayGainTags ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
 
 	// tags usage
 	cmdLine.AddSwitch( wxEmptyString, "use-cdtext-tags", wxString::Format( _( "Use CD-TEXT tags (default: %s)" ), TagSourcesTestStr( wxCueTag::TAG_CD_TEXT ) ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
@@ -493,7 +493,7 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	ReadNegatableSwitchValue( cmdLine, "use-full-paths", m_bUseFullPaths );
 	ReadNegatableSwitchValue( cmdLine, "ra", m_bRenderArtistForTrack );
 	ReadNegatableSwitchValue( cmdLine, "rm", m_bRenderMultilineTags );
-	ReadNegatableSwitchValue(cmdLine, "rg", m_bRenderReplayGainTags);
+	ReadNegatableSwitchValue( cmdLine, "rg", m_bRenderReplayGainTags );
 
 	if ( cmdLine.Found( "e", &s ) )
 	{
@@ -635,8 +635,8 @@ bool wxConfiguration::Read( const wxCmdLineParser& cmdLine )
 	ReadReadFlags( cmdLine, "rl", wxCueSheetReader::EC_CONVERT_LOWER_ROMAN_NUMERALS );
 	ReadReadFlags( cmdLine, "correct-dashes", wxCueSheetReader::EC_CORRECT_DASHES );
 	ReadReadFlags( cmdLine, "small-em-dash", wxCueSheetReader::EC_SMALL_EM_DASH );
-	ReadReadFlags(cmdLine, "number-full-stop", wxCueSheetReader::EC_NUMBER_FULL_STOP);
-	ReadReadFlags(cmdLine, "small-letter-parenthesized", wxCueSheetReader::EC_SMALL_LETTER_PARENTHESIZED);
+	ReadReadFlags( cmdLine, "number-full-stop", wxCueSheetReader::EC_NUMBER_FULL_STOP );
+	ReadReadFlags( cmdLine, "small-letter-parenthesized", wxCueSheetReader::EC_SMALL_LETTER_PARENTHESIZED );
 
 	// MLang
 	ReadNegatableSwitchValue( cmdLine, "use-mlang", m_bUseMLang );
@@ -722,8 +722,8 @@ wxString wxConfiguration::GetReadFlagsDesc( wxCueSheetReader::ReadFlags flags )
 	AddFlag( as, flags, wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG, "convert-cover-to-jpeg" );
 	AddFlag( as, flags, wxCueSheetReader::EC_CORRECT_DASHES, "correct-dashes" );
 	AddFlag( as, flags, wxCueSheetReader::EC_SMALL_EM_DASH, "small-em-dash" );
-	AddFlag(as, flags, wxCueSheetReader::EC_NUMBER_FULL_STOP, "number-full-stop");
-	AddFlag(as, flags, wxCueSheetReader::EC_SMALL_LETTER_PARENTHESIZED, "small-letter-parenthesized");
+	AddFlag( as, flags, wxCueSheetReader::EC_NUMBER_FULL_STOP, "number-full-stop" );
+	AddFlag( as, flags, wxCueSheetReader::EC_SMALL_LETTER_PARENTHESIZED, "small-letter-parenthesized" );
 
 	wxString s;
 
@@ -764,7 +764,7 @@ void wxConfiguration::FillArray( wxArrayString& as ) const
 	as.Add( wxString::Format( "Correct quotation marks: %s", BoolToStr( m_bCorrectQuotationMarks ) ) );
 	as.Add( wxString::Format( "Render artist for tracks: %s", BoolToStr( m_bRenderArtistForTrack ) ) );
 	as.Add( wxString::Format( "Render multiline tags: %s", BoolToStr( m_bRenderMultilineTags ) ) );
-	as.Add(wxString::Format("Render ReplayGain tags: %s", BoolToStr(m_bRenderReplayGainTags)));
+	as.Add( wxString::Format( "Render ReplayGain tags: %s", BoolToStr( m_bRenderReplayGainTags ) ) );
 	as.Add( wxString::Format( "Read flags: %s", GetReadFlagsDesc( m_nReadFlags ) ) );
 	as.Add( wxString::Format( "Use MLang library: %s", BoolToStr( m_bUseMLang ) ) );
 	as.Add( wxString::Format( "JPEG image quality: %d", m_nJpegImageQuality ) );

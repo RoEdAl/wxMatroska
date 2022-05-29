@@ -180,7 +180,7 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, const wxCueSheet& cu
 	if ( m_cfg.GetUseDataFiles() )
 	{
 		// if ( !( cueSheet.HasDuration() || cueSheet.CalculateDuration( m_cfg.GetAlternateExtensions() ) ) )
-		if (!cueSheet.HasDuration())
+		if ( !cueSheet.HasDuration() )
 		{
 			wxLogError( _( "Fail to calculate duration of cue sheet" ) );
 			return 1;

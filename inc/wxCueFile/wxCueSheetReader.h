@@ -77,8 +77,8 @@ class wxCueSheetReader:
 			EC_CORRECT_DASHES               = 1024,
 			EC_FIND_ACCURIP_LOG             = 2048,
 			EC_SMALL_EM_DASH                = 4096,
-			EC_NUMBER_FULL_STOP				= 8192,
-			EC_SMALL_LETTER_PARENTHESIZED	= 16384
+			EC_NUMBER_FULL_STOP             = 8192,
+			EC_SMALL_LETTER_PARENTHESIZED   = 16384
 		};
 
 		static bool TestReadFlags( ReadFlags, ReadFlags );
@@ -104,7 +104,7 @@ class wxCueSheetReader:
 		wxRegEx m_reIsrc;
 		wxRegEx m_reTrackComment;
 		wxRegEx m_reCommentMeta;
-		wxScopedPtr<wxStringProcessor> m_pStringProcessor;
+		wxScopedPtr< wxStringProcessor > m_pStringProcessor;
 		wxString m_sOneTrackCue;
 
 		// settings

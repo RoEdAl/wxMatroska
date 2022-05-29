@@ -21,14 +21,14 @@ wxStringCorrector::Configurator::Configurator()
 	m_smallLetterParenthesized( false )
 {}
 
-wxStringCorrector::Configurator::Configurator(const wxStringCorrector::Configurator& configurator)
-	: m_removeExtraSpaces(configurator.m_removeExtraSpaces),
-	m_ellipsize(configurator.m_ellipsize),
-	m_romanNumeralsUpper(configurator.m_romanNumeralsUpper),
-	m_romanNumeralsLower(configurator.m_romanNumeralsLower),
-	m_dashes(configurator.m_dashes),
-	m_numberFullStop(configurator.m_numberFullStop),
-	m_smallLetterParenthesized(configurator.m_smallLetterParenthesized)
+wxStringCorrector::Configurator::Configurator( const wxStringCorrector::Configurator& configurator )
+	: m_removeExtraSpaces( configurator.m_removeExtraSpaces ),
+	m_ellipsize( configurator.m_ellipsize ),
+	m_romanNumeralsUpper( configurator.m_romanNumeralsUpper ),
+	m_romanNumeralsLower( configurator.m_romanNumeralsLower ),
+	m_dashes( configurator.m_dashes ),
+	m_numberFullStop( configurator.m_numberFullStop ),
+	m_smallLetterParenthesized( configurator.m_smallLetterParenthesized )
 {}
 
 wxStringCorrector::Configurator& wxStringCorrector::Configurator::RemoveExtraSpaces( bool removeExtraSpaces )
@@ -67,13 +67,13 @@ wxStringCorrector::Configurator& wxStringCorrector::Configurator::SmallEmDash( b
 	return *this;
 }
 
-wxStringCorrector::Configurator& wxStringCorrector::Configurator::NumberFullStop(bool numberFullStop)
+wxStringCorrector::Configurator& wxStringCorrector::Configurator::NumberFullStop( bool numberFullStop )
 {
 	m_numberFullStop = numberFullStop;
 	return *this;
 }
 
-wxStringCorrector::Configurator& wxStringCorrector::Configurator::SmallLetterParenthesized(bool smallLetterParenthesized)
+wxStringCorrector::Configurator& wxStringCorrector::Configurator::SmallLetterParenthesized( bool smallLetterParenthesized )
 {
 	m_smallLetterParenthesized = smallLetterParenthesized;
 	return *this;
@@ -116,57 +116,65 @@ bool wxStringCorrector::Configurator::SmallLetterParenthesized() const
 
 wxStringProcessor* const wxStringCorrector::Configurator::Create() const
 {
-	wxStringCorrector* res = new wxStringCorrector(*this);
-	res->AddStringProcessor(new wxTrailingSpacesRemover());
-	if (m_numberFullStop) res->AddStringProcessor(new wxNumberFullStopCorrector());
-	if (m_removeExtraSpaces) res->AddStringProcessor(new wxReduntantSpacesRemover());
-	if (m_ellipsize) res->AddStringProcessor(new wxEllipsizer());
-	if (m_romanNumeralsUpper) res->AddStringProcessor(new wxRomanNumeralsConv< true >());
-	if (m_romanNumeralsLower) res->AddStringProcessor(new wxRomanNumeralsConv< false >());
-	if (m_dashes) res->AddStringProcessor(new wxDashesCorrector(m_smallEmDash));
-	if (m_smallLetterParenthesized) res->AddStringProcessor(new wxSmallLetterParenthesizedCorrector());
+	wxStringCorrector* res = new wxStringCorrector( *this );
+
+	res->AddStringProcessor( new wxTrailingSpacesRemover() );
+
+	if ( m_numberFullStop ) res->AddStringProcessor( new wxNumberFullStopCorrector() );
+
+	if ( m_removeExtraSpaces ) res->AddStringProcessor( new wxReduntantSpacesRemover() );
+
+	if ( m_ellipsize ) res->AddStringProcessor( new wxEllipsizer() );
+
+	if ( m_romanNumeralsUpper ) res->AddStringProcessor( new wxRomanNumeralsConv< true >() );
+
+	if ( m_romanNumeralsLower ) res->AddStringProcessor( new wxRomanNumeralsConv< false >() );
+
+	if ( m_dashes ) res->AddStringProcessor( new wxDashesCorrector( m_smallEmDash ) );
+
+	if ( m_smallLetterParenthesized ) res->AddStringProcessor( new wxSmallLetterParenthesizedCorrector() );
 	return res;
 }
 
 wxStringProcessor* const wxStringCorrector::Clone() const
 {
-	wxStringCorrector* const res = new wxStringCorrector(m_configurator);
+	wxStringCorrector* const res = new wxStringCorrector( m_configurator );
+
 	for (size_t i = 0, cnt = m_processors.GetCount(); i < cnt; ++i)
 	{
-		res->AddStringProcessor(m_processors[i].Clone());
+		res->AddStringProcessor( m_processors[ i ].Clone() );
 	}
+
 	return res;
 }
 
-wxStringCorrector::wxStringCorrector(const wxStringCorrector::Configurator& configurator)
-	:m_configurator(configurator)
-{
+wxStringCorrector::wxStringCorrector( const wxStringCorrector::Configurator& configurator )
+	: m_configurator( configurator )
+{}
 
-}
-
-void wxStringCorrector::AddStringProcessor(wxStringProcessor* const processor)
+void wxStringCorrector::AddStringProcessor( wxStringProcessor* const processor )
 {
-	m_processors.Add(processor);
+	m_processors.Add( processor );
 }
 
 bool wxStringCorrector::Process( const wxString& sIn, wxString& sOut ) const
 {
-	wxString w(sIn);
+	wxString w( sIn );
 	wxString wo;
-	bool processed = false;
+	bool     processed = false;
+
 	for (size_t i = 0, cnt = m_processors.GetCount(); i < cnt; ++i)
 	{
-		if (m_processors[i].Process(w, wo))
+		if ( m_processors[ i ].Process( w, wo ) )
 		{
-			w = wo;
+			w         = wo;
 			processed = true;
 		}
 	}
 
-	if (!processed)
-	{
+	if ( !processed )
 		return false;
-	}
+
 
 	sOut = w;
 	return true;

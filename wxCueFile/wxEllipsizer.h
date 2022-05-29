@@ -12,7 +12,7 @@
 class wxEllipsizer:
 	public wxStringProcessor
 {
-	wxDECLARE_DYNAMIC_CLASS(wxEllipsizer);
+	wxDECLARE_DYNAMIC_CLASS( wxEllipsizer );
 
 	public:
 

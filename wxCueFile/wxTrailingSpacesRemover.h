@@ -12,7 +12,7 @@
 class wxTrailingSpacesRemover:
 	public wxStringProcessor
 {
-	wxDECLARE_DYNAMIC_CLASS(wxTrailingSpacesRemover);
+	wxDECLARE_DYNAMIC_CLASS( wxTrailingSpacesRemover );
 
 	public:
 
@@ -21,7 +21,7 @@ class wxTrailingSpacesRemover:
 		wxTrailingSpacesRemover( void );
 
 		virtual wxStringProcessor* const Clone() const;
-		virtual bool Process(const wxString&, wxString&) const;
+		virtual bool Process( const wxString&, wxString& ) const;
 
 		const wxRegEx& GetRegEx() const;
 

@@ -197,7 +197,7 @@ wxCueSheetReader::wxCueSheetReader( void ) :
 	wxASSERT( m_reTrackComment.IsValid() );
 	wxASSERT( m_reCommentMeta.IsValid() );
 
-	m_pStringProcessor.reset(CreateStringProcessor(m_nReadFlags));
+	m_pStringProcessor.reset( CreateStringProcessor( m_nReadFlags ) );
 
 #ifndef NDEBUG
 	TagLib::setDebugListener( &m_debugListener );
@@ -575,7 +575,7 @@ bool wxCueSheetReader::CheckEntryType( wxCueComponent::ENTRY_TYPE et ) const
 
 wxString wxCueSheetReader::Unquote( const wxString& qs )
 {
-	return wxCueTag::UnEscape( m_quoteCorrector(m_unquoter( qs )) );
+	return wxCueTag::UnEscape( m_quoteCorrector( m_unquoter( qs ) ) );
 }
 
 template< size_t SIZE >
@@ -653,7 +653,7 @@ void wxCueSheetReader::CorrectTag( wxCueTag& tag ) const
 
 void wxCueSheetReader::CorrectString( wxString& str ) const
 {
-	(*m_pStringProcessor)(str);
+	( *m_pStringProcessor )( str );
 }
 
 void wxCueSheetReader::ParseComment( wxCueComponent& component, const wxString& sComment )
@@ -1068,18 +1068,17 @@ void wxCueSheetReader::AddCovers( const wxArrayCoverFile& covers )
 	m_cueSheet.AddCovers( covers );
 }
 
-
 wxStringProcessor* const wxCueSheetReader::CreateStringProcessor( wxCueSheetReader::ReadFlags readFlags )
 {
 	return wxStringCorrector::Configurator()
-	.RemoveExtraSpaces( wxCueSheetReader::TestReadFlags( readFlags, wxCueSheetReader::EC_REMOVE_EXTRA_SPACES ) )
-	.Ellipsize( wxCueSheetReader::TestReadFlags( readFlags, wxCueSheetReader::EC_ELLIPSIZE_TAGS ) )
-	.RomanNumeralsUpper( wxCueSheetReader::TestReadFlags( readFlags, wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS ) )
-	.RomanNumeralsLower( wxCueSheetReader::TestReadFlags( readFlags, wxCueSheetReader::EC_CONVERT_LOWER_ROMAN_NUMERALS ) )
-	.Dashes( wxCueSheetReader::TestReadFlags( readFlags, wxCueSheetReader::EC_CORRECT_DASHES ) )
-	.SmallEmDash( wxCueSheetReader::TestReadFlags( readFlags, wxCueSheetReader::EC_SMALL_EM_DASH ) )
-	.NumberFullStop(wxCueSheetReader::TestReadFlags(readFlags, wxCueSheetReader::EC_NUMBER_FULL_STOP) )
-	.SmallLetterParenthesized(wxCueSheetReader::TestReadFlags(readFlags, wxCueSheetReader::EC_SMALL_LETTER_PARENTHESIZED))
-	.Create();
+		   .RemoveExtraSpaces( wxCueSheetReader::TestReadFlags( readFlags, wxCueSheetReader::EC_REMOVE_EXTRA_SPACES ) )
+		   .Ellipsize( wxCueSheetReader::TestReadFlags( readFlags, wxCueSheetReader::EC_ELLIPSIZE_TAGS ) )
+		   .RomanNumeralsUpper( wxCueSheetReader::TestReadFlags( readFlags, wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS ) )
+		   .RomanNumeralsLower( wxCueSheetReader::TestReadFlags( readFlags, wxCueSheetReader::EC_CONVERT_LOWER_ROMAN_NUMERALS ) )
+		   .Dashes( wxCueSheetReader::TestReadFlags( readFlags, wxCueSheetReader::EC_CORRECT_DASHES ) )
+		   .SmallEmDash( wxCueSheetReader::TestReadFlags( readFlags, wxCueSheetReader::EC_SMALL_EM_DASH ) )
+		   .NumberFullStop( wxCueSheetReader::TestReadFlags( readFlags, wxCueSheetReader::EC_NUMBER_FULL_STOP ) )
+		   .SmallLetterParenthesized( wxCueSheetReader::TestReadFlags( readFlags, wxCueSheetReader::EC_SMALL_LETTER_PARENTHESIZED ) )
+		   .Create();
 }
 

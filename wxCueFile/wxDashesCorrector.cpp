@@ -4,11 +4,11 @@
 
 #include "wxDashesCorrector.h"
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxDashesCorrector, wxStringProcessor)
+wxIMPLEMENT_DYNAMIC_CLASS( wxDashesCorrector, wxStringProcessor )
 
 // ===============================================================================
 
-const char wxDashesCorrector::REG_EX_EN[]  = "\\p{Z}+\\p{Pd}\\p{Z}+";
+const char wxDashesCorrector::REG_EX_EN[] = "\\p{Z}+\\p{Pd}\\p{Z}+";
 const char wxDashesCorrector::REG_EX_EM[]  = "\\p{Z}+\\p{Pd}{2}\\p{Z}+";
 const char wxDashesCorrector::REG_EX_EM2[] = "\\p{Z}+\\p{Pd}{3,}\\p{Z}+";
 
@@ -38,12 +38,13 @@ wxDashesCorrector& wxDashesCorrector::SmallEmDash( bool smallEmDash )
 
 wxStringProcessor* const wxDashesCorrector::Clone() const
 {
-	wxDashesCorrector* const res = new wxDashesCorrector(m_space, m_enDash, m_emDash, m_em2Dash);
+	wxDashesCorrector* const res = new wxDashesCorrector( m_space, m_enDash, m_emDash, m_em2Dash );
+
 	return res;
 }
 
 wxDashesCorrector::wxDashesCorrector( uvalue_type nUniSpace, uvalue_type nUniEnDash, uvalue_type nUniEmDash, uvalue_type nUniEm2Dash ) :
-	m_space(nUniSpace), m_enDash(nUniEnDash), m_emDash(nUniEmDash), m_em2Dash(nUniEm2Dash),
+	m_space( nUniSpace ), m_enDash( nUniEnDash ), m_emDash( nUniEmDash ), m_em2Dash( nUniEm2Dash ),
 	m_reEn( REG_EX_EN ), m_reEm( REG_EX_EM ), m_reEm2( REG_EX_EM2 ),
 	m_sEnReplacement( GetReplacement( nUniSpace, nUniEnDash ) ),
 	m_sEmReplacement( GetReplacement( nUniSpace, nUniEmDash ) ),
@@ -56,9 +57,9 @@ wxDashesCorrector::wxDashesCorrector( uvalue_type nUniSpace, uvalue_type nUniEnD
 
 wxDashesCorrector& wxDashesCorrector::Init( uvalue_type nUniSpace, uvalue_type nUniEnDash, uvalue_type nUniEmDash, uvalue_type nUniEm2Dash )
 {
-	m_space = nUniSpace;
-	m_enDash = nUniEnDash;
-	m_emDash = nUniEmDash;
+	m_space   = nUniSpace;
+	m_enDash  = nUniEnDash;
+	m_emDash  = nUniEmDash;
 	m_em2Dash = nUniEm2Dash;
 
 	m_sEnReplacement  = GetReplacement( nUniSpace, nUniEnDash );
@@ -85,14 +86,14 @@ const wxRegEx& wxDashesCorrector::GetEm2RegEx() const
 
 bool wxDashesCorrector::Process( const wxString& sIn, wxString& sOut ) const
 {
-	int repl = 0;
-	wxString w(sIn);
+	int      repl = 0;
+	wxString w( sIn );
 
-	repl += m_reEn.ReplaceAll(&w, m_sEnReplacement);
-	repl += m_reEm.ReplaceAll(&w, m_sEmReplacement);
-	repl += m_reEm2.ReplaceAll(&w, m_sEm2Replacement);
+	repl += m_reEn.ReplaceAll( &w, m_sEnReplacement );
+	repl += m_reEm.ReplaceAll( &w, m_sEmReplacement );
+	repl += m_reEm2.ReplaceAll( &w, m_sEm2Replacement );
 
-	if (repl > 0)
+	if ( repl > 0 )
 	{
 		sOut = w;
 		return true;
@@ -102,3 +103,4 @@ bool wxDashesCorrector::Process( const wxString& sIn, wxString& sOut ) const
 		return false;
 	}
 }
+
