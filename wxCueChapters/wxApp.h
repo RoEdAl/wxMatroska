@@ -43,7 +43,7 @@ class wxMyApp:
 		bool ShowInfo() const;
 
 		int ProcessCueFile( const wxInputFile&, const wxTagSynonimsCollection&, const wxTagSynonimsCollection& );
-		int ConvertCueSheet( const wxInputFile&, wxCueSheet& );
+		int ConvertCueSheet( const wxInputFile&, const wxCueSheet& );
 		int AppendCueSheet( wxCueSheet& );
 
 		static void InfoVersion( wxMessageOutput& );

@@ -118,8 +118,8 @@ class wxTrack:
 		bool HasFlag( Flag ) const;
 
 		bool IsRelatedToDataFileIdx( size_t, bool = true ) const;
-		size_t GetMaxDataFileIdx( bool = true ) const;
-		size_t GetMinDataFileIdx( bool = true ) const;
+		size_t GetMaxDataFileIdx( bool            = true ) const;
+		size_t GetMinDataFileIdx( bool            = true ) const;
 
 		void SetDataFileIdx( size_t );
 		void ShiftDataFileIdx( size_t );
@@ -145,5 +145,6 @@ class wxTrack:
 };
 
 WX_DECLARE_OBJARRAY( wxTrack, wxArrayTrack );
+
 #endif
 

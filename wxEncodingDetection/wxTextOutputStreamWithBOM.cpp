@@ -2,7 +2,6 @@
  * wxUTF8TextOutputStream.cpp
  */
 
-#include "StdWx.h"
 #include <wxEncodingDetection/wxEncodingDetection.h>
 #include <wxEncodingDetection/wxTextOutputStreamWithBOM.h>
 
@@ -26,10 +25,7 @@ class wxTextOutputStreamWithBOM:
 								   wxByteBuffer& bom ) :
 			wxTextOutputStream( s, mode, conv )
 		{
-			if ( bWriteBOM )
-			{
-				wxTextOutputStreamWithBOMFactory::WriteBOM( s, bom );
-			}
+			if ( bWriteBOM ) wxTextOutputStreamWithBOMFactory::WriteBOM( s, bom );
 		}
 };
 

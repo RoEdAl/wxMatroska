@@ -2,7 +2,6 @@
  * wxTextOutputStreamOnString.cpp
  */
 
-#include "StdWx.h"
 #include <wxEncodingDetection/wxTextOutputStreamOnString.h>
 #include <wxEncodingDetection/wxTextInputStreamOnString.h>
 
@@ -51,14 +50,8 @@ void wxTextOutputStreamOnString::SaveTo( wxTextOutputStream& tos, const wxString
 	{
 		sLine = ( *tis ).ReadLine();
 
-		if ( sLine.IsEmpty() )
-		{
-			tos << endl;
-		}
-		else
-		{
-			tos << sLine << endl;
-		}
+		if ( sLine.IsEmpty() ) tos << endl;
+		else tos << sLine << endl;
 	}
 
 	tos.Flush();

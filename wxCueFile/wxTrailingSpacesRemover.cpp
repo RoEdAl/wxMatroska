@@ -2,20 +2,26 @@
  * wxTriailingSpacesRemover.cpp
  */
 
-#include "StdWx.h"
-#include <wxCueFile/wxTrailingSpacesRemover.h>
+#include "wxTrailingSpacesRemover.h"
+
+wxIMPLEMENT_DYNAMIC_CLASS(wxTrailingSpacesRemover, wxStringProcessor)
 
 // ===============================================================================
 
 const char wxTrailingSpacesRemover::REG_EX[] =
-	"\\A[[:space:][.newline.][.carriage-return.]]*([^[:space:][.newline.][.carriage-return.]].*[^[:space:][.newline.][.carriage-return.]])[[:space:][.newline.][.carriage-return.]]*\\Z";
+	"^[\\p{Z}\\p{Cc}]*([^\\p{Z}\\p{Cc}].*[^\\p{Z}\\p{Cc}])[\\p{Z}\\p{Cc}]*$";
 
 // ===============================================================================
 
 wxTrailingSpacesRemover::wxTrailingSpacesRemover() :
-	m_reTrailingSpaces( REG_EX, wxRE_ADVANCED )
+	m_reTrailingSpaces( REG_EX )
 {
 	wxASSERT( m_reTrailingSpaces.IsValid() );
+}
+
+wxStringProcessor* const wxTrailingSpacesRemover::Clone() const
+{
+	return new wxTrailingSpacesRemover();
 }
 
 const wxRegEx& wxTrailingSpacesRemover::GetRegEx() const
@@ -23,26 +29,21 @@ const wxRegEx& wxTrailingSpacesRemover::GetRegEx() const
 	return m_reTrailingSpaces;
 }
 
-bool wxTrailingSpacesRemover::RemoveEx( const wxString& sIn, wxString& sOut ) const
+bool wxTrailingSpacesRemover::Process( const wxString& sIn, wxString& sOut ) const
 {
 	if ( m_reTrailingSpaces.Matches( sIn ) )
 	{
 		wxASSERT( m_reTrailingSpaces.GetMatchCount() >= 1 );
-		sOut = m_reTrailingSpaces.GetMatch( sIn, 1 );
-		return true;
+
+		size_t start, len;
+		m_reTrailingSpaces.GetMatch(&start, &len, 1);
+
+		if (len < sIn.Length())
+		{
+			sOut = m_reTrailingSpaces.GetMatch(sIn, 1);
+			return true;
+		}
 	}
-	else
-	{
-		sOut = sIn;
-		return false;
-	}
+
+	return false;
 }
-
-wxString wxTrailingSpacesRemover::Remove( const wxString& s ) const
-{
-	wxString sOut;
-
-	RemoveEx( s, sOut );
-	return sOut;
-}
-

@@ -21,6 +21,10 @@
 #include <wxCueFile/wxCueSheetReader.h>
 #endif
 
+#ifndef _WX_STRING_PROCESSOR_H_
+#include <wxCueFile/wxStringProcessor.h>
+#endif
+
 #include <enum2str.h>
 
 WX_DECLARE_OBJARRAY( wxInputFile, wxArrayInputFile );
@@ -89,12 +93,9 @@ class wxConfiguration:
 	protected:
 
 		INFO_SUBJECT m_infoSubject;
-		bool m_bChapterTimeEnd;	//
-		// default=true
+		bool m_bChapterTimeEnd;	// default=true
 		bool m_bUnknownChapterTimeEndToNextChapter;	// default=false
-		unsigned long m_nChapterOffset;	//
-		// in
-		// frames
+		unsigned long m_nChapterOffset;	// in frames
 		bool m_bUseDataFiles;	// default=true
 		bool m_bCorrectQuotationMarks;
 		RENDER_MODE m_eRenderMode;
@@ -107,6 +108,7 @@ class wxConfiguration:
 		bool m_bAbortOnError;
 		bool m_bHiddenIndexes;
 		bool m_bMerge;
+		bool m_bIncludeDiscNumberTag;
 		wxCueSheetReader::ReadFlags m_nReadFlags;
 		wxCueTag::TagSources m_nTagSources;
 		bool m_bUseMLang;
@@ -128,6 +130,8 @@ class wxConfiguration:
 
 		wxSortedArrayString m_asLang;
 
+		bool m_bRenderMultilineTags;
+		bool m_bRenderReplayGainTags;
 		bool m_bRenderArtistForTrack;
 		int m_nJpegImageQuality;
 
@@ -165,6 +169,7 @@ class wxConfiguration:
 		bool GetUseDataFiles() const;
 		const wxString& GetAlternateExtensions() const;
 		bool HasAlternateExtensions() const;
+		bool IsUnkLang() const;
 		const wxString& GetLang() const;
 		const wxString& GetTrackNameFormat() const;
 		const wxString& GetMatroskaNameFormat() const;
@@ -185,6 +190,8 @@ class wxConfiguration:
 		FILE_ENCODING GetFileEncoding() const;
 		wxString GetXmlFileEncoding() const;
 		bool RenderArtistForTrack() const;
+		bool RenderMultilineTags() const;
+		bool RenderReplayGainTags() const;
 		bool ConvertCoversToJpeg() const;
 		int GetJpegImageQuality() const;
 
@@ -192,6 +199,7 @@ class wxConfiguration:
 
 		wxSharedPtr< wxTextOutputStream > GetOutputTextStream( wxOutputStream& ) const;
 		bool MergeMode() const;
+		bool IncludeDiscNumberTag() const;
 		wxCueSheetReader::ReadFlags GetReadFlags() const;
 		wxCueTag::TagSources GetTagSources() const;
 		bool UseMLang() const;
@@ -209,6 +217,8 @@ class wxConfiguration:
 
 		wxImageHandler* const GetImageHandler() const;
 
+		wxStringProcessor* const CreateStringProcessor() const;
+
 	public:
 
 		static const char CUE_SHEET_EXT[];
@@ -217,8 +227,8 @@ class wxConfiguration:
 		static const char MATROSKA_OPTS_EXT[];
 		static const char MATROSKA_AUDIO_EXT[];
 		static const char CUESHEET_EXT[];
-		static const wxChar MATROSKA_NAME_FORMAT[];
-		static const wxChar TRACK_NAME_FORMAT[];
+		static const char MATROSKA_NAME_FORMAT[];
+		static const char TRACK_NAME_FORMAT[];
 		static const size_t MAX_EXT_LEN;
 		static const char LANG_FILE_URL[];
 		static const char LANG_FILE_NAME[];
@@ -227,6 +237,7 @@ class wxConfiguration:
 	public:
 
 		wxConfiguration( void );
+		bool ReadLanguagesStrings();
 
 		void AddCmdLineParams( wxCmdLineParser& ) const;
 		bool Read( const wxCmdLineParser& );
@@ -237,5 +248,5 @@ class wxConfiguration:
 		bool InitJpegHandler();
 };
 
-#endif	// _WX_CONFIGURATION_H
+#endif  // _WX_CONFIGURATION_H
 

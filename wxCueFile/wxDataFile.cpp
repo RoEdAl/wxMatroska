@@ -2,7 +2,6 @@
  * wxDataFile.cpp
  */
 
-#include "StdWx.h"
 #include <wxCueFile/wxSamplingInfo.h>
 #include <wxCueFile/wxDuration.h>
 #include <wxCueFile/wxIndex.h>
@@ -184,17 +183,12 @@ bool wxDataFile::FindFile( wxFileName& fn, const wxString& sAlternateExt ) const
 
 	wxString sTokens( sAlternateExt );
 
-	if ( IsBinary() )
-	{
-		return false;
-	}
-	else if ( m_ftype == MP3 )
-	{
-		sTokens = "mp3";
-	}
+	if ( IsBinary() ) return false;
+	else if ( m_ftype == MP3 ) sTokens = "mp3";
 
 	wxFileName        fnTry( m_fileName );
 	wxStringTokenizer tokenizer( sTokens, ',' );
+
 	while ( tokenizer.HasMoreTokens() )
 	{
 		fnTry.SetExt( tokenizer.GetNextToken() );
@@ -222,10 +216,7 @@ wxULongLong wxDataFile::GetNumberOfFramesFromBinary( const wxFileName& fileName,
 
 	wxULongLong size = fileName.GetSize();
 
-	if ( size == wxInvalidSize )
-	{
-		return wxSamplingInfo::wxInvalidNumberOfFrames;
-	}
+	if ( size == wxInvalidSize ) return wxSamplingInfo::wxInvalidNumberOfFrames;
 
 	return si.GetNumberOfFramesFromBytes( size );
 }
@@ -242,7 +233,7 @@ bool wxDataFile::GetMediaInfo(
 
 	if ( fileRef.isNull() )
 	{
-		wxLogError( _( "Fail to initialize TagLib library." ) );
+		if ( fileName.GetExt().CmpNoCase( "cue" ) != 0 ) wxLogError( _( "Fail to initialize TagLib library." ) );
 		return false;
 	}
 
@@ -283,14 +274,12 @@ bool wxDataFile::GetMediaInfo(
 		si.SetBitsPerSample( pProps->bitsPerSample() );
 	}
 
-	if ( eMediaType == MEDIA_TYPE_UNKNOWN )
-	{
-		return false;
-	}
+	if ( eMediaType == MEDIA_TYPE_UNKNOWN ) return false;
 
 	sCueSheet.Empty();
 	tags.Empty();
 	TagLib::PropertyMap props( pFile->properties() );
+
 	for ( TagLib::PropertyMap::ConstIterator i = props.begin(), pend = props.end(); i != pend; ++i )
 	{
 		wxString propName( i->first.toWString() );
@@ -314,12 +303,7 @@ bool wxDataFile::GetMediaInfo(
 bool wxDataFile::GetInfo( const wxString& sAlternateExt )
 {
 	if ( !HasRealFileName() )
-	{
-		if ( !FindFile( sAlternateExt ) )
-		{
-			return false;
-		}
-	}
+		if ( !FindFile( sAlternateExt ) ) return false;
 
 	wxSamplingInfo si;
 	wxULongLong    frames;
@@ -339,10 +323,7 @@ bool wxDataFile::GetInfo( const wxString& sAlternateExt )
 		res = GetMediaInfo( m_realFileName, frames, si, m_mediaType, m_tags, m_sCueSheet );
 	}
 
-	if ( res )
-	{
-		SetDuration( wxDuration( si, frames ) );
-	}
+	if ( res ) SetDuration( wxDuration( si, frames ) );
 
 	return res;
 }

@@ -33,7 +33,6 @@
  **********************************************************************
  */
 
-#include "StdWx.h"
 #include "wxMd5.h"
 
 // ----------------
@@ -75,10 +74,7 @@ namespace
 
 		t = ctx->bits[ 0 ];
 
-		if ( ( ctx->bits[ 0 ] = t + ( (wxUint32)len << 3 ) ) < t )
-		{
-			ctx->bits[ 1 ]++;	/* Carry from low to high */
-		}
+		if ( ( ctx->bits[ 0 ] = t + ( (wxUint32)len << 3 ) ) < t ) ctx->bits[ 1 ]++;/* Carry from low to high */
 		ctx->bits[ 1 ] += len >> 29;
 
 		t = ( t >> 3 ) & 0x3f;	/* Bytes already in shsInfo->data */
@@ -127,8 +123,7 @@ namespace
 	}
 
 	/*
-	 * Final wrapup - pad to 64-byte boundary with the bit pattern
-	 * 1 0* (64-bit count of bits processed, MSB-first)
+	 * Final wrapup - pad to 64-byte boundary with the bit pattern 1 0* (64-bit count of bits processed, MSB-first)
 	 */
 	void MD5Final( unsigned char digest[ 16 ], MD5_CTX* ctx )
 	{
@@ -138,8 +133,7 @@ namespace
 		/* Compute number of bytes mod 64 */
 		count = ( ctx->bits[ 0 ] >> 3 ) & 0x3F;
 
-		/* Set the first char of padding to 0x80.  This is safe since there is
-		 * always at least one byte free */
+		/* Set the first char of padding to 0x80.  This is safe since there is always at least one byte free */
 		p    = ctx->in + count;
 		*p++ = 0x80;
 
@@ -198,9 +192,8 @@ namespace
 	( w += f( x, y, z ) + data, w = w << s | w >> ( 32 - s ), w += x )
 
 	/*
-	 * The core of the MD5 algorithm, this alters an existing MD5 hash to
-	 * reflect the addition of 16 longwords of new data.  MD5Update blocks
-	 * the data and converts bytes into longwords for this routine.
+	 * The core of the MD5 algorithm, this alters an existing MD5 hash to reflect the addition of 16 longwords of new data.  MD5Update blocks the data and
+	 *converts bytes into longwords for this routine.
 	 */
 	void MD5Transform( wxUint32 buf[ 4 ], wxUint32 const in[ 16 ] )
 	{
@@ -331,7 +324,7 @@ wxMemoryBuffer wxMD5::Get( const wxFileName& fn )
 
 wxMemoryBuffer wxMD5::Get( wxInputStream& stream )
 {
-	if ( !stream.IsOk() ) { return wxMemoryBuffer(); }
+	if ( !stream.IsOk() ) return wxMemoryBuffer();
 
 	wxMemoryBuffer buffer;
 	MD5_CTX        ctx;
@@ -340,10 +333,7 @@ wxMemoryBuffer wxMD5::Get( wxInputStream& stream )
 
 	do
 	{
-		if ( stream.Read( buffer.GetWriteBuf( DEF_BUFFER_SIZE ), DEF_BUFFER_SIZE ).LastRead() <= 0 )
-		{
-			return wxMemoryBuffer();
-		}
+		if ( stream.Read( buffer.GetWriteBuf( DEF_BUFFER_SIZE ), DEF_BUFFER_SIZE ).LastRead() <= 0 ) return wxMemoryBuffer();
 
 		buffer.UngetWriteBuf( stream.LastRead() );
 
@@ -356,7 +346,7 @@ wxMemoryBuffer wxMD5::Get( wxInputStream& stream )
 
 wxString wxMD5::ToString( const wxMemoryBuffer& buffer )
 {
-	if ( buffer.IsEmpty() ) { return wxEmptyString; }
+	if ( buffer.IsEmpty() ) return wxEmptyString;
 
 	wxASSERT( buffer.GetDataLen() == HASHBYTES );
 
@@ -378,9 +368,9 @@ bool wxMD5::AreEqual( const wxMemoryBuffer& buf1, const wxMemoryBuffer& buf2 )
 	wxASSERT( buf1.IsEmpty() || buf1.GetDataLen() == HASHBYTES );
 	wxASSERT( buf2.IsEmpty() || buf2.GetDataLen() == HASHBYTES );
 
-	if ( buf1.IsEmpty() ) { return buf2.IsEmpty(); }
+	if ( buf1.IsEmpty() ) return buf2.IsEmpty();
 
-	if ( buf2.IsEmpty() ) { return buf1.IsEmpty(); }
+	if ( buf2.IsEmpty() ) return buf1.IsEmpty();
 
 	return memcmp( buf1.GetData(), buf2.GetData(), HASHBYTES ) == 0;
 }

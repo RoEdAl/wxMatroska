@@ -2,7 +2,6 @@
  * wxInputFile.cpp
  */
 
-#include "StdWx.h"
 #include "wxInputFile.h"
 
 // ===============================================================================
@@ -34,10 +33,7 @@ wxInputFile::wxInputFile( const wxString& sInputFile )
 {
 	wxStringTokenizer tokenizer( sInputFile, SEPARATOR );
 
-	if ( tokenizer.HasMoreTokens() )
-	{
-		m_inputFile.Assign( tokenizer.GetNextToken() );
-	}
+	if ( tokenizer.HasMoreTokens() ) m_inputFile.Assign( tokenizer.GetNextToken() );
 
 	while ( tokenizer.HasMoreTokens() )
 	{
@@ -108,10 +104,7 @@ wxString wxInputFile::ToString( bool bLongPath ) const
 		s.Append( SEPARATOR );
 	}
 
-	if ( s.Length() > 0 )
-	{
-		s.Truncate( s.Length() - 1 );
-	}
+	if ( s.Length() > 0 ) s.Truncate( s.Length() - 1 );
 
 	return s;
 }

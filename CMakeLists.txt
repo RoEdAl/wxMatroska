@@ -1,24 +1,12 @@
-cmake_minimum_required(VERSION 3.0)
-include(ExternalProject)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.23)
 
-MACRO(ADD_MSVC_PRECOMPILED_HEADER PrecompiledHeader PrecompiledSource SourcesVar)
-  IF(MSVC)
-    GET_FILENAME_COMPONENT(PrecompiledBasename ${PrecompiledHeader} NAME_WE)
-    SET(PrecompiledBinary "$(IntDir)/${PrecompiledBasename}.pch")
-    SET(Sources ${${SourcesVar}})
+SET(CMAKE_CXX_STANDARD 14)
+SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-    SET_SOURCE_FILES_PROPERTIES(${PrecompiledSource}
-                                PROPERTIES COMPILE_FLAGS "/Yc\"${PrecompiledHeader}\" /Fp\"${PrecompiledBinary}\""
-                                           OBJECT_OUTPUTS "${PrecompiledBinary}")
-    SET_SOURCE_FILES_PROPERTIES(${Sources}
-                                PROPERTIES COMPILE_FLAGS "/Yu\"${PrecompiledHeader}\" /FI\"${PrecompiledHeader}\" /Fp\"${PrecompiledBinary}\""
-                                           OBJECT_DEPENDS "${PrecompiledBinary}")  
-    # Add precompiled header to SourcesVar
-    LIST(APPEND ${SourcesVar} ${PrecompiledSource})
-  ENDIF(MSVC)
-ENDMACRO(ADD_MSVC_PRECOMPILED_HEADER)
+INCLUDE(ExternalProject)
+INCLUDE(FetchContent)
 
-project(wxmatroska VERSION 1.5.0.1)
+PROJECT(wxmatroska VERSION 1.6.0.0)
 
 SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -30,104 +18,118 @@ else("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
 	SET( EX_PLATFORM 32 )
     SET( EX_PLATFORM_NAME "x86" )
 endif("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
-message(STATUS "Target platform: ${EX_PLATFORM_NAME}")
+MESSAGE(STATUS "Target platform: ${EX_PLATFORM_NAME}")
 
-set(PROJECT_VERSION_STR "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH} ${EX_PLATFORM_NAME}")
-set(PROJECT_VERSION_STR4 "${PROJECT_VERSION_MAJOR}, ${PROJECT_VERSION_MINOR}, ${PROJECT_VERSION_PATCH}, ${PROJECT_VERSION_TWEAK}")
-set(PROJECT_VERSION_STR4_DOTTED ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}.${PROJECT_VERSION_TWEAK})
+SET(PROJECT_VERSION_STR "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH} ${EX_PLATFORM_NAME}")
+SET(PROJECT_VERSION_STR4 "${PROJECT_VERSION_MAJOR}, ${PROJECT_VERSION_MINOR}, ${PROJECT_VERSION_PATCH}, ${PROJECT_VERSION_TWEAK}")
+SET(PROJECT_VERSION_STR4_DOTTED ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}.${PROJECT_VERSION_TWEAK})
 
-set(PROJECT_CONFIG_FILE ${PROJECT_BINARY_DIR}/app_config.h)
+SET(PROJECT_CONFIG_FILE ${PROJECT_BINARY_DIR}/app_config.h)
+SET(CMAKE_DEBUG_POSTFIX d)
 
-configure_file(
+CONFIGURE_FILE(
 	${PROJECT_SOURCE_DIR}/app_config.h.in
 	${PROJECT_CONFIG_FILE}
 )
 
-include_directories( ${PROJECT_BINARY_DIR} )
+INCLUDE_DIRECTORIES( ${PROJECT_BINARY_DIR} )
 
 # installation directory of external libraries
 
-SET(EXT_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/extlib.install")
+SET(EXT_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/extlib")
 # set_property(DIRECTORY PROPERTY EP_STEP_TARGETS configure build)
-set_property( DIRECTORY PROPERTY EP_BASE "extlib" )
+SET_PROPERTY( DIRECTORY PROPERTY EP_BASE "extlib" )
 
-message( External projects dir: ${EXT_INSTALL_PREFIX} )
+MESSAGE( External projects dir: ${EXT_INSTALL_PREFIX} )
 
 ExternalProject_Add(
 	project_zlib
-	URL "http://zlib.net/zlib-1.2.11.tar.gz"
-	URL_MD5 "1c9f62f0778697a09d36121ead88e08e"
-	CMAKE_ARGS -DASM686=OFF -DAMD64=OFF -DCMAKE_INSTALL_PREFIX=${EXT_INSTALL_PREFIX}
+	URL "http://zlib.net/zlib-1.2.12.tar.gz"
+	URL_HASH SHA256=91844808532e5ce316b3c010929493c0244f3d37593afd6de04f71821d5136d9
+	CMAKE_ARGS
+		-DASM686=OFF
+		-DAMD64=OFF
+		-DCMAKE_DEBUG_POSTFIX=d
+		-DCMAKE_INSTALL_PREFIX=${EXT_INSTALL_PREFIX}/Install/project_zlib
+	PATCH_COMMAND
+		${CMAKE_COMMAND} -DSCRIPT_FILE=${EXT_INSTALL_PREFIX}/Source/project_zlib/CMakeLists.txt -P ${CMAKE_CURRENT_SOURCE_DIR}/cmp0074.cmake
 )
 
 SET_PROPERTY(TARGET project_zlib PROPERTY FOLDER "extlib")
 
-#ExternalProject_Add(
-#	PNG
-#	URL "ftp://ftp.simplesystems.org/pub/libpng/png/src/libpng16/libpng-1.6.14.tar.gz"
-#	URL_MD5 "2101b3de1d5f348925990f9aa8405660"
-#	CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${EXT_INSTALL_PREFIX}
-#)
-
 ExternalProject_Add (
 	project_taglib
-	GIT_REPOSITORY "https://github.com/taglib/taglib"
+	URL "http://github.com/taglib/taglib/releases/download/v1.12/taglib-1.12.tar.gz"
+	URL_HASH SHA256=7fccd07669a523b07a15bd24c8da1bbb92206cb19e9366c3692af3d79253b703
 	DEPENDS project_zlib
-	CMAKE_ARGS -DBUILD_SHARED_LIBS=OFF -DENABLE_STATIC_RUNTIME=OFF -DCMAKE_INSTALL_PREFIX=${EXT_INSTALL_PREFIX}
+	CMAKE_ARGS
+		-DBUILD_SHARED_LIBS=OFF
+		-DENABLE_STATIC_RUNTIME=OFF
+		-DCMAKE_DEBUG_POSTFIX=d
+		-DCMAKE_INSTALL_PREFIX=${EXT_INSTALL_PREFIX}/Install/project_taglib
+		-DCMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH=OFF
+		-DZLIB_ROOT=${EXT_INSTALL_PREFIX}/Install/project_zlib
+		-DZLIB_USE_STATIC_LIBS=ON
+		-DCMAKE_MINIMUM_REQUIRED_VERSION=${CMAKE_MINIMUM_REQUIRED_VERSION}
+	PATCH_COMMAND
+		${CMAKE_COMMAND} -DSCRIPT_FILE=${EXT_INSTALL_PREFIX}/Source/project_taglib/CMakeLists.txt -P ${CMAKE_CURRENT_SOURCE_DIR}/cmp0074.cmake
 )
 
 SET_PROPERTY(TARGET project_taglib PROPERTY FOLDER "extlib")
 
-# ExternalProject_Add (
-#	project_mozjpeg
-#	GIT_REPOSITORY "https://github.com/mozilla/mozjpeg"
-#	DEPENDS project_zlib
-#	CMAKE_ARGS -DWITH_JPEG7=OFF -DCMAKE_INSTALL_PREFIX=${EXT_INSTALL_PREFIX} -DNASM=C:/Users/Normal/AppData/Local/nasm/nasm.exe
-# )
+ADD_DEFINITIONS(-DTAGLIB_STATIC)
 
-# SET_PROPERTY(TARGET project_mozjpeg PROPERTY FOLDER "extlib")
+ADD_LIBRARY(ZLib STATIC IMPORTED)
+ADD_DEPENDENCIES(ZLib project_zlib) 
 
-#ExternalProject_Add (
-#	HARU
-#	GIT_REPOSITORY "https://github.com/libharu/libharu"
-#	DEPENDS ZLIB PNG
-#	CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${EXT_INSTALL_PREFIX}
-#)
+FOREACH(CFG ${CMAKE_CONFIGURATION_TYPES})
+	STRING(TOUPPER ${CFG} CFGU)
+	SET(POSTFIX_VAR_NAME CMAKE_${CFGU}_POSTFIX)
 
-#source_group("Include files" REGULAR_EXPRESSION "*([.]h|[.]hpp)$" )
+	SET_TARGET_PROPERTIES(ZLib PROPERTIES
+		IMPORTED_LOCATION_${CFGU} ${EXT_INSTALL_PREFIX}/Build/project_zlib/${CFG}/${CMAKE_STATIC_LIBRARY_PREFIX}zlibstatic${${POSTFIX_VAR_NAME}}${CMAKE_STATIC_LIBRARY_SUFFIX}
+	)
+ENDFOREACH()
 
-add_definitions(-DTAGLIB_STATIC)
+TARGET_INCLUDE_DIRECTORIES(ZLib INTERFACE ${EXT_INSTALL_PREFIX}/Install/project_zlib/include)
 
-add_library(ZLib STATIC IMPORTED)
-SET_TARGET_PROPERTIES(ZLib PROPERTIES
-    IMPORTED_LOCATION ${EXT_INSTALL_PREFIX}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}zlibstatic${CMAKE_STATIC_LIBRARY_SUFFIX}
-    IMPORTED_LOCATION_DEBUG ${EXT_INSTALL_PREFIX}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}zlibstaticd${CMAKE_STATIC_LIBRARY_SUFFIX}
-    )
-add_dependencies(ZLib project_zlib) 
+ADD_LIBRARY(TagLib STATIC IMPORTED)
+ADD_DEPENDENCIES(TagLib project_taglib)
+TARGET_LINK_LIBRARIES(TagLib INTERFACE ZLib)
 
-add_library(TagLib STATIC IMPORTED)
-set_property(TARGET TagLib PROPERTY IMPORTED_LOCATION ${EXT_INSTALL_PREFIX}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}tag${CMAKE_STATIC_LIBRARY_SUFFIX})
-add_dependencies(TagLib project_taglib) 
+FOREACH(CFG ${CMAKE_CONFIGURATION_TYPES})
+	STRING(TOUPPER ${CFG} CFGU)
+	SET(POSTFIX_VAR_NAME CMAKE_${CFGU}_POSTFIX)
 
-# add_library(MozJpeg STATIC IMPORTED)
-# set_property(TARGET MozJpeg PROPERTY IMPORTED_LOCATION ${EXT_INSTALL_PREFIX}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}jpeg-static${CMAKE_STATIC_LIBRARY_SUFFIX})
-# add_dependencies(MozJpeg project_mozjpeg) 
+	SET_TARGET_PROPERTIES(TagLib PROPERTIES 
+		IMPORTED_LOCATION_${CFGU} ${EXT_INSTALL_PREFIX}/Build/project_taglib/taglib/${CFG}/${CMAKE_STATIC_LIBRARY_PREFIX}tag${${POSTFIX_VAR_NAME}}${CMAKE_STATIC_LIBRARY_SUFFIX}
+	)
+ENDFOREACH()
+
+TARGET_INCLUDE_DIRECTORIES(TagLib INTERFACE ${EXT_INSTALL_PREFIX}/Install/project_taglib/include)
+
+# wxWidgets
 
 IF(MSVC)
-set(wxWidgets_CONFIGURATION mswu)
+SET(wxWidgets_CONFIGURATION mswu)
 ENDIF()
 
-find_package(wxWidgets COMPONENTS core base zlib png xml REQUIRED)
-include(${wxWidgets_USE_FILE})
+FIND_PACKAGE(wxWidgets COMPONENTS core base zlib png xml REQUIRED)
+MESSAGE( wxWidgets at ${wxWidgets_ROOT_DIR} )
+INCLUDE(${wxWidgets_USE_FILE})
+SET(WXWIDGETS_VER_COMPACT "316")
+
+FetchContent_Declare(json URL http://github.com/nlohmann/json/releases/download/v3.10.5/json.tar.xz)
+FetchContent_MakeAvailable(json)
 
 SET(WXMATROSKA_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/inc)
 
-include_directories( ${EXT_INSTALL_PREFIX}/include ${WXMATROSKA_INCLUDE_DIR} )
+INCLUDE_DIRECTORIES( ${WXMATROSKA_INCLUDE_DIR} )
 
-add_subdirectory(wxConsoleApp)
-add_subdirectory(wxEncodingDetection)
-add_subdirectory(wxCueFile)
-add_subdirectory(wxCueChapters)
-add_subdirectory(gui)
-add_subdirectory(setup)
+ADD_SUBDIRECTORY(wxConsoleApp)
+ADD_SUBDIRECTORY(wxEncodingDetection)
+ADD_SUBDIRECTORY(wxCueFile)
+ADD_SUBDIRECTORY(wxCueChapters)
+ADD_SUBDIRECTORY(wxCueChaptersGui)
+ADD_SUBDIRECTORY(setup)
 

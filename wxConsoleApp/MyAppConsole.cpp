@@ -1,7 +1,6 @@
 /*
  *      MyAppConsole.cpp
  */
-#include "StdWx.h"
 #include <wxConsoleApp/MyAppTraits.h>
 #include <wxConsoleApp/MyAppConsole.h>
 
@@ -22,11 +21,41 @@ MyAppConsole::MyAppConsole( void ) :
 	m_sSeparator( '=', 75 )
 {}
 
+void MyAppConsole::OnInitCmdLine( wxCmdLineParser& parser )
+{
+	wxAppConsole::OnInitCmdLine( parser );
+
+	parser.AddLongSwitch( "log-timestamps", _( "Show/hide log timestamps" ), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE );
+}
+
 bool MyAppConsole::OnCmdLineParsed( wxCmdLineParser& parser )
 {
-	bool res = wxAppConsole::OnCmdLineParsed( parser );
+	const bool res = wxAppConsole::OnCmdLineParsed( parser );
 
-	wxLog::SetLogLevel( parser.Found( "verbose" ) ? wxLOG_Info : wxLOG_Message );
+	if ( res )
+	{
+		const wxCmdLineSwitchState state = parser.FoundSwitch( "verbose" );
+		switch ( state )
+		{
+			case wxCMD_SWITCH_ON:
+			{
+				wxLog::SetLogLevel( wxLOG_Info );
+
+				// wxLog::SetVerbose(true);
+				break;
+			}
+
+			default:
+			{
+				wxLog::SetLogLevel( wxLOG_Message );
+
+				// wxLog::SetVerbose(false);
+				break;
+			}
+		}
+
+		if ( parser.FoundSwitch( "log-timestamps" ) == wxCMD_SWITCH_OFF ) wxLog::DisableTimestamp();
+	}
 
 	return res;
 }
@@ -50,10 +79,7 @@ bool MyAppConsole::OnInit()
 	_setmode( _fileno( stdout ), _O_U8TEXT );
 #endif
 
-	if ( !wxAppConsole::OnInit() )
-	{
-		return false;
-	}
+	if ( !wxAppConsole::OnInit() ) return false;
 
 	return true;
 }
@@ -89,10 +115,7 @@ bool MyAppConsole::CheckLicense()
 	wxFileName             fn( paths.GetExecutablePath() );
 	fn.SetFullName( LICENSE_FILE_NAME );
 
-	if ( !fn.IsFileReadable() )
-	{
-		return false;
-	}
+	if ( !fn.IsFileReadable() ) return false;
 
 	wxULongLong fs( fn.GetSize() );
 
@@ -151,6 +174,7 @@ void MyAppConsole::ShowLicense( wxMessageOutput& out )
 	}
 
 	wxTextInputStream tis( fis, wxEmptyString, wxConvUTF8 );
+
 	while ( !fis.Eof() )
 	{
 		out.Output( tis.ReadLine() );

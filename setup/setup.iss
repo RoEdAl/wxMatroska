@@ -1,6 +1,6 @@
 #include "ISPPBuiltins.iss"
 
-#define Cue2MkcFileVersion GetFileVersion(Cue2MkcExe)
+#define Cue2MkcFileVersion GetVersionNumbersString(Cue2MkcExe)
 #define Cue2MkcFileCompany GetFileCompany(Cue2MkcExe)
 #define Cue2MkcFileCopyright GetFileCopyright(Cue2MkcExe)
 #define Cue2MkcFileDescription GetFileDescription(Cue2MkcExe)
@@ -19,14 +19,12 @@ VersionInfoDescription={#Cue2MkcFileDescription}
 VersionInfoVersion={#Cue2MkcFileVersion}
 VersionInfoCompany={#Cue2MkcFileCompany}
 VersionInfoCopyright={#Cue2MkcFileCopyright}
-DefaultDirName={pf}\cue2mkc
+DefaultDirName={autopf}\cue2mkc
 SetupIconFile=..\gui\icons\cd_mka.ico
 ShowLanguageDialog=no
-MinVersion=0,5.1.2600
 Compression=lzma2/Max
 DefaultGroupName=cue2mkc
 ArchitecturesAllowed={#Cue2MkcExeArch}
-PrivilegesRequired=admin
 
 [Languages]
 Name: en; MessagesFile: compiler:Default.isl; LicenseFile: {#LicenseFileRtf}
@@ -45,21 +43,23 @@ Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:Ad
 
 [Files]
 Source: {#Cue2MkcExe}; DestDir: {app}; Flags: comparetimestamp; Components: cli; 
-Source: {#Cue2MkcExeGui}; DestDir: {app}; Flags: comparetimestamp; Components: gui; 
-Source: {#IconPackDll}; DestDir: {app}; Flags: comparetimestamp; Components: gui; 
+Source: {#Cue2MkcGuiExe}; DestDir: {app}; Flags: comparetimestamp; Components: gui; 
+Source: {#WXWidgetsLibDir}\wxbase{#WXVerCompact}u{#WXDebug}_{#WXDllSuffix}; DestDir: {app}; Flags: comparetimestamp; Components: cli gui;
+Source: {#WXWidgetsLibDir}\wxbase{#WXVerCompact}u{#WXDebug}_xml_{#WXDllSuffix}; DestDir: {app}; Flags: comparetimestamp; Components: cli;
+Source: {#WXWidgetsLibDir}\wxmsw{#WXVerCompact}u{#WXDebug}_core_{#WXDllSuffix}; DestDir: {app}; Flags: comparetimestamp; Components: cli gui;
 Source: {#LicenseFileTxt}; DestDir: {app}; Flags: comparetimestamp; 
-Source: ..\cue\ISO-639-2_utf-8.txt; DestDir: {app}; Flags: comparetimestamp; 
+Source: ..\cue\ISO-639-2_utf-8.txt; DestDir: {app}; Flags: comparetimestamp;
 
 [Icons]
-Name: {group}\{cm:cue2mkc} {cm:gui}; Filename: {app}\cue2mkcgui.exe; WorkingDir: {userdocs}; IconFilename: {app}\cue2mkcgui.exe; Comment: {cm:gui_comment}; Components: gui; 
+Name: {group}\{cm:cue2mkc} {cm:gui}; Filename: {app}\cue2mkc-frontend.exe; IconFilename: {app}\cue2mkc-frontend.exe; Comment: {cm:gui_comment}; Components: gui; 
 Name: {group}\{cm:cue2mkc} {cm:console}; Filename: {cmd}; Parameters: "/T:3F /F:ON /V:ON /K SET PATH={app};!PATH!"; WorkingDir: {userdocs}; Components: cli; 
 Name: {group}\{cm:license}; Filename: {app}\license.txt;
 Name: {group}\{cm:UninstallProgram,{cm:cue2mkc}}; Filename: {uninstallexe}
-Name: {commondesktop}\{cm:cue2mkc} {cm:gui}; Filename: {app}\cue2mkcgui.exe; WorkingDir: {app}; Tasks: desktopicon; Flags: createonlyiffileexists; IconFilename: {app}\cue2mkc.exe; Comment: {cm:gui_comment}; Components: gui;
-Name: {commondesktop}\{cm:cue2mkc} {cm:console}; Filename: {cmd}; Parameters: "/T:3F /F:ON /V:ON /K SET PATH={app};!PATH!"; WorkingDir: {userdocs}; Components: cli;
+Name: {autodesktop}\{cm:cue2mkc} {cm:gui}; Filename: {app}\cue2mkc-frontend.exe; WorkingDir: {app}; Tasks: desktopicon; Flags: createonlyiffileexists; Comment: {cm:gui_comment}; Components: gui;
+Name: {autodesktop}\{cm:cue2mkc} {cm:console}; Filename: {cmd}; Parameters: "/T:3F /F:ON /V:ON /K SET PATH={app};!PATH!"; WorkingDir: {userdocs}; Tasks: desktopicon; Components: cli;
 
 [Run]
-Components: gui; Filename: {app}\cue2mkcgui.exe; WorkingDir: {userappdata}; Flags: PostInstall RunAsOriginalUser NoWait; Description: {cm:gui_run}; 
+Components: gui; Filename: {app}\cue2mkc-frontend.exe; Flags: PostInstall RunAsOriginalUser NoWait; Description: {cm:gui_run}; 
 
 [CustomMessages]
 cue2mkc=cue2mkc

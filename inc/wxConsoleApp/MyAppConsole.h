@@ -25,6 +25,7 @@ class MyAppConsole:
 
 		virtual bool OnInit();
 		virtual wxAppTraits* CreateTraits();
+		virtual void OnInitCmdLine( wxCmdLineParser& parser );
 		virtual bool OnCmdLineParsed( wxCmdLineParser& );
 		virtual int OnExit();
 

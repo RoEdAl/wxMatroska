@@ -1,14 +1,9 @@
 /*
  * wxCueTag.cpp
  */
-#include "StdWx.h"
 #include <wxCueFile/wxCueTag.h>
-#include <wxCueFile/wxUnquoter.h>
+#include <wxCueFile/wxStringProcessor.h>
 #include <wxCueFile/wxTagSynonims.h>
-#include <wxCueFile/wxTrailingSpacesRemover.h>
-#include <wxCueFile/wxReduntantSpacesRemover.h>
-#include <wxCueFile/wxEllipsizer.h>
-#include <wxCueFile/wxDashesCorrector.h>
 #include <wxEncodingDetection/wxTextOutputStreamOnString.h>
 #include <wxEncodingDetection/wxTextInputStreamOnString.h>
 
@@ -173,14 +168,8 @@ const wxCueTag& wxCueTag::GetValue( wxArrayString& asLines ) const
 
 wxString wxCueTag::GetQuotedValue( bool bEscape ) const
 {
-	if ( bEscape )
-	{
-		return Quote( Escape( m_sValue ) );
-	}
-	else
-	{
-		return Quote( m_sValue );
-	}
+	if ( bEscape ) return Quote( Escape( m_sValue ) );
+	else return Quote( m_sValue );
 }
 
 wxString wxCueTag::GetFlattenValue() const
@@ -201,20 +190,14 @@ wxString wxCueTag::GetFlattenValue( const wxString& sSeparator ) const
 		{
 			sLine = ( *tis ).ReadLine();
 
-			if ( sLine.IsEmpty() )
-			{
-				*tos << sSeparator;
-			}
-			else
-			{
-				*tos << sLine << sSeparator;
-			}
+			if ( sLine.IsEmpty() ) *tos << sSeparator;
+			else *tos << sLine << sSeparator;
 		}
 
 		( *tos ).Flush();
 
-		const wxString& sOut = tos.GetString();
-		return wxString( sOut, sOut.Length() - sSeparator.Length() );
+		wxString sOut( tos.GetString() );
+		return sOut.Truncate(sOut.Length() - sSeparator.Length());
 	}
 	else
 	{
@@ -246,14 +229,8 @@ wxCueTag& wxCueTag::SetValue( const wxString& sValue )
 	{
 		sLine = ( *tis ).ReadLine();
 
-		if ( sLine.IsEmpty() )
-		{
-			*tos << endl;
-		}
-		else
-		{
-			*tos << sLine << endl;
-		}
+		if ( sLine.IsEmpty() ) *tos << endl;
+		else *tos << sLine << endl;
 		nLines += 1;
 	}
 
@@ -302,36 +279,9 @@ bool wxCueTag::IsMultiline() const
 	return m_bMultiline;
 }
 
-void wxCueTag::Unquote( const wxUnquoter& unquoter )
+void wxCueTag::Correct( const wxStringProcessor& processor )
 {
-	unquoter.CorrectQuotes( m_sValue );
-}
-
-void wxCueTag::RemoveTrailingSpaces( const wxTrailingSpacesRemover& spacesRemover )
-{
-	m_sValue = spacesRemover.Remove( m_sValue );
-}
-
-int wxCueTag::RemoveExtraSpaces( const wxReduntantSpacesRemover& spacesRemover )
-{
-	if ( m_bMultiline )
-	{
-		return 0;
-	}
-	else
-	{
-		return spacesRemover.Remove( m_sValue );
-	}
-}
-
-void wxCueTag::Ellipsize( const wxEllipsizer& ellipsizer )
-{
-	ellipsizer.EllipsizeEx( m_sValue, m_sValue );
-}
-
-void wxCueTag::CorrectDashes( const wxDashesCorrector& dashesCorrector )
-{
-	dashesCorrector.Replace( m_sValue );
+	processor( m_sValue );
 }
 
 wxString wxCueTag::Escape( const wxString& sValue )
@@ -356,7 +306,9 @@ wxString wxCueTag::UnEscape( const wxString& sValue )
 
 wxString wxCueTag::Quote( const wxString& sValue )
 {
-	return wxString::Format( "\"%s\"", sValue );
+	wxString res( sValue );
+
+	return res.Prepend( '"' ).Append( '"' );
 }
 
 size_t wxCueTag::GetTags( const wxArrayCueTag& sourceTags, const wxString& sTagName, wxArrayCueTag& tags )
@@ -437,10 +389,7 @@ bool wxCueTag::FindTag( const wxArrayCueTag& tags, const wxCueTag& cueTag )
 {
 	for ( size_t i = 0, nCount = tags.GetCount(); i < nCount; ++i )
 	{
-		if ( tags[ i ] == cueTag )
-		{
-			return true;
-		}
+		if ( tags[ i ] == cueTag ) return true;
 	}
 
 	return false;
@@ -459,14 +408,8 @@ bool wxCueTag::AddTag( wxArrayCueTag& tags, const wxCueTag& cueTag )
 
 bool wxCueTag::AddTagIf( wxArrayCueTag& tags, const wxCueTag& tagToAdd, const wxCueTag& tagToCheck )
 {
-	if ( FindTag( tags, tagToCheck ) )
-	{
-		return AddTag( tags, tagToAdd );
-	}
-	else
-	{
-		return false;
-	}
+	if ( FindTag( tags, tagToCheck ) ) return AddTag( tags, tagToAdd );
+	else return false;
 }
 
 bool wxCueTag::AddTagIfAndRemove( wxArrayCueTag& tags, const wxCueTag& tagToAdd, const wxCueTag& tagToCheck )
@@ -553,10 +496,7 @@ void wxCueTag::CommonTags( wxArrayCueTag& commonTags, const wxArrayCueTag& group
 	commonTags.Clear();
 	for ( size_t i = 0, nCount = group1.GetCount(); i < nCount; ++i )
 	{
-		if ( FindTag( group2, group1[ i ] ) )
-		{
-			commonTags.Add( group1[ i ] );
-		}
+		if ( FindTag( group2, group1[ i ] ) ) commonTags.Add( group1[ i ] );
 	}
 }
 
@@ -568,15 +508,9 @@ bool wxCueTag::FindCommonPart( wxCueTag& commonTag, const wxCueTag& tag1, const 
 
 	size_t nLen = sValue1.Length();
 
-	if ( sValue2.Length() < nLen )
-	{
-		nLen = sValue2.Length();
-	}
+	if ( sValue2.Length() < nLen ) nLen = sValue2.Length();
 
-	if ( nLen == 0u )
-	{
-		return false;
-	}
+	if ( nLen == 0u ) return false;
 
 	sValue1.Truncate( nLen );
 	sValue2.Truncate( nLen );
@@ -609,7 +543,7 @@ wxString wxCueTag::GetFlattenValues( const wxArrayCueTag& tags, const wxString& 
 			sResult << tags[ i ].GetFlattenValue( sSeparator ) << sSeparator;
 		}
 
-		sResult << tags[ nCount - 1 ].GetFlattenValue( sSeparator );
+		sResult << tags[ nUpperBound ].GetFlattenValue( sSeparator );
 		return sResult;
 	}
 	else
@@ -621,6 +555,38 @@ wxString wxCueTag::GetFlattenValues( const wxArrayCueTag& tags, const wxString& 
 bool wxCueTag::IsReplayGain() const
 {
 	return m_sName.StartsWith( "REPLAYGAIN_" );
+}
+
+bool wxCueTag::Split( const wxCueTag& tag, wxArrayCueTag& tags )
+{
+	if ( tag == Name::DISCNUMBER )
+	{
+		wxStringTokenizer tokenizer( tag.GetValue(), '/' );
+
+		if ( tokenizer.CountTokens() == 2 )
+		{
+			const wxString discNumber = tokenizer.GetNextToken();
+			const wxString totalDiscs = tokenizer.GetNextToken();
+
+			if ( !( discNumber.IsEmpty() || totalDiscs.IsEmpty() ) )
+			{
+				const wxCueTag discNumberTag( tag.GetSource(), Name::DISCNUMBER, discNumber );
+				const wxCueTag totalDiscsTag( tag.GetSource(), Name::TOTALDISCS, totalDiscs );
+
+				tags.Add( discNumberTag );
+				tags.Add( totalDiscsTag );
+
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+bool wxCueTag::Split( wxArrayCueTag& tags ) const
+{
+	return Split( *this, tags );
 }
 
 #include <wx/arrimpl.cpp>

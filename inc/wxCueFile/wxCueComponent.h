@@ -129,25 +129,25 @@ class wxCueComponent:
 	private:
 
 		template< size_t SIZE >
-		static wxString GetCdTextInfosRegExp( const CDTEXT_ENTRY(&)[ SIZE ] );
+		static wxString GetCdTextInfosRegExp( const CDTEXT_ENTRY ( & )[ SIZE ] );
 
 		template< size_t SIZE >
-		static bool GetCdTextInfoFormat( const wxString&, ENTRY_FORMAT&, const CDTEXT_ENTRY(&)[ SIZE ] );
+		static bool GetCdTextInfoFormat( const wxString&, ENTRY_FORMAT&, const CDTEXT_ENTRY ( & )[ SIZE ] );
 
 		template< size_t SIZE >
-		static bool GetCdTextInfoType( const wxString&, ENTRY_TYPE&, const CDTEXT_ENTRY(&)[ SIZE ] );
+		static bool GetCdTextInfoType( const wxString&, ENTRY_TYPE&, const CDTEXT_ENTRY ( & )[ SIZE ] );
 
 		template< size_t SIZE >
-		bool AddCdTextInfoTag( const wxString&, const wxString&, const CDTEXT_ENTRY(&)[ SIZE ] );
+		bool AddCdTextInfoTag( const wxString&, const wxString&, const CDTEXT_ENTRY ( & )[ SIZE ] );
 
 		template< size_t SIZE >
-		bool AddCdTextInfoTag( const wxCueTag&, const CDTEXT_ENTRY(&)[ SIZE ] );
+		bool AddCdTextInfoTag( const wxCueTag&, const CDTEXT_ENTRY ( & )[ SIZE ] );
 
 		template< size_t SIZE >
-		static void GetSynonims( wxTagSynonimsCollection&, bool, const CDTEXT_ENTRY(&)[ SIZE ] );
+		static void GetSynonims( wxTagSynonimsCollection&, bool, const CDTEXT_ENTRY ( & )[ SIZE ] );
 
 		template< size_t SIZE >
-		void GetReplacements( wxHashString&, wxCueTag::TagSources, const CDTEXT_ENTRY(&)[ SIZE ] ) const;
+		void GetReplacements( wxHashString&, wxCueTag::TagSources, const CDTEXT_ENTRY ( & )[ SIZE ] ) const;
 };
 
 #endif

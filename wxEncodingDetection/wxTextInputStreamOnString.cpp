@@ -2,7 +2,6 @@
  * wxTextInputStreamOnString.cpp
  */
 
-#include "StdWx.h"
 #include <wxEncodingDetection/wxTextInputStreamOnString.h>
 
 // ===============================================================================

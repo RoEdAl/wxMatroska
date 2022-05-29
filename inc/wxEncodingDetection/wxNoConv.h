@@ -28,15 +28,9 @@ class wxNoConv:
 				nLen = wxStrlen( wsrc ) * sizeof ( wchar_t );
 			}
 
-			if ( dst != NULL && ( dstLen * sizeof ( wchar_t ) ) < nLen )
-			{
-				nLen = dstLen * sizeof ( wchar_t );
-			}
+			if ( dst != NULL && ( dstLen * sizeof ( wchar_t ) ) < nLen ) nLen = dstLen * sizeof ( wchar_t );
 
-			if ( dst != NULL && nLen >= sizeof ( wchar_t ) )
-			{
-				memcpy( dst, src, nLen );
-			}
+			if ( dst != NULL && nLen >= sizeof ( wchar_t ) ) memcpy( dst, src, nLen );
 
 			return ( nLen >= sizeof ( wchar_t ) ) ? nLen / sizeof ( wchar_t ) : wxCONV_FAILED;
 		}
@@ -47,20 +41,11 @@ class wxNoConv:
 		{
 			size_t nLen = srcLen * sizeof ( wchar_t );
 
-			if ( srcLen == wxNO_LEN )
-			{
-				nLen = wxStrlen( src ) * sizeof ( wchar_t );
-			}
+			if ( srcLen == wxNO_LEN ) nLen = wxStrlen( src ) * sizeof ( wchar_t );
 
-			if ( dst != NULL && dstLen < nLen )
-			{
-				nLen = srcLen;
-			}
+			if ( dst != NULL && dstLen < nLen ) nLen = srcLen;
 
-			if ( dst != NULL && nLen > 0u )
-			{
-				memcpy( dst, src, nLen );
-			}
+			if ( dst != NULL && nLen > 0u ) memcpy( dst, src, nLen );
 
 			return ( nLen == 0 ) ? wxCONV_FAILED : nLen;
 		}
@@ -76,5 +61,5 @@ class wxNoConv:
 		}
 };
 
-#endif	// _NO_CONV_H_
+#endif  // _NO_CONV_H_
 

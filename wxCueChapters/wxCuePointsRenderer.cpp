@@ -2,7 +2,6 @@
  * wxCuePointsRenderer.cpp
  */
 
-#include "StdWx.h"
 #include <wxCueFile/wxDataFile.h>
 #include <wxCueFile/wxCueComponent.h>
 #include <wxCueFile/wxCueSheet.h>
@@ -67,6 +66,7 @@ void wxCuePointsRenderer::RenderDisc( const wxCueSheet& cueSheet )
 	}
 
 	const wxArrayTrack& tracks = cueSheet.GetTracks();
+
 	for ( size_t i = 0, nCount = tracks.GetCount(); i < nCount; ++i )
 	{
 		const wxTrack& track = tracks[ i ];
@@ -74,14 +74,8 @@ void wxCuePointsRenderer::RenderDisc( const wxCueSheet& cueSheet )
 		wxIndex        idx;
 		wxString       sIdx;
 
-		if ( track.GetNumber() == 1u && !m_cfg.TrackOneIndexOne() && track.HasZeroIndex() )
-		{
-			idx = track.GetPreGap();
-		}
-		else
-		{
-			idx = track.GetFirstIndex();
-		}
+		if ( track.GetNumber() == 1u && !m_cfg.TrackOneIndexOne() && track.HasZeroIndex() ) idx = track.GetPreGap();
+		else idx = track.GetFirstIndex();
 
 		wxASSERT( idx.HasDataFileIdx() );
 		wxDuration duration( cueSheet.GetDuration( idx.GetDataFileIdx() ) );
@@ -96,22 +90,13 @@ void wxCuePointsRenderer::RenderDisc( const wxCueSheet& cueSheet )
 
 		wxULongLong indexOffset( duration.GetSamplingInfo().GetIndexOffset( idx ) );
 
-		if ( track.GetNumber() == 1u && idx.GetDataFileIdx() == 0u && indexOffset == wxULL( 0 ) )
-		{
-			continue;
-		}
+		if ( track.GetNumber() == 1u && idx.GetDataFileIdx() == 0u && indexOffset == wxULL( 0 ) ) continue;
 
 		duration.Add( indexOffset );
 		sIdx = duration.GetCdFramesStr();
 
-		if ( sTitle.IsEmpty() )
-		{
-			*m_os << sIdx << endl;
-		}
-		else
-		{
-			*m_os << sIdx << "\t# " << sTitle << endl;
-		}
+		if ( sTitle.IsEmpty() ) *m_os << sIdx << endl;
+		else *m_os << sIdx << "\t# " << sTitle << endl;
 	}
 }
 

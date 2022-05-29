@@ -184,16 +184,16 @@ class wxCoverFile
 		static bool Find( const wxFileName&, wxFileName&, const char* const ( & )[ SIZE ] );
 
 		template< size_t SIZE >
-		static bool IsCoverFile( const wxFileName&, const wxBitmapType(&)[ SIZE ] );
+		static bool IsCoverFile( const wxFileName&, const wxBitmapType ( & )[ SIZE ] );
 
 		template< size_t SIZE >
-		static Type GetTypeFromStr( const wxString&, const TypeName(&)[ SIZE ] );
+		static Type GetTypeFromStr( const wxString&, const TypeName ( & )[ SIZE ] );
 
 		template< size_t SIZE >
-		static bool GetStrFromType( Type type, wxString& name, const TypeName(&)[ SIZE ] );
+		static bool GetStrFromType( Type type, wxString& name, const TypeName ( & )[ SIZE ] );
 
 		template< size_t SIZE >
-		static size_t GetSortOrder( wxCoverFile::Type type, const TypeName(&)[ SIZE ] );
+		static size_t GetSortOrder( wxCoverFile::Type type, const TypeName ( & )[ SIZE ] );
 };
 
 #endif

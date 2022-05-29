@@ -17,39 +17,19 @@ class wxIndex;
 #include "wxDataFile.h"
 #endif
 
-#ifndef _WX_FLAC_META_DATA_READER_H_
-class wxFlacMetaDataReader;
+#ifndef _WX_STRING_PROCESSOR_H_
+#include <wxCueFile/wxStringProcessor.h>
 #endif
 
 #ifndef _WX_UNQUOTER_H_
-#include "wxUnquoter.h"
-#endif
-
-#ifndef _WX_TRAILING_SPACES_REMOVER_H_
-#include "wxTrailingSpacesRemover.h"
-#endif
-
-#ifndef _WX_REDUNTANT_SPACES_REMOVER_H_
-#include "wxReduntantSpacesRemover.h"
-#endif
-
-#ifndef _WX_ELLIPSIZER_H_
-#include "wxEllipsizer.h"
-#endif
-
-#ifndef _WX_ROMAN_NUMERALS_H_
-#include "wxRomanNumeralsConv.h"
-#endif
-
-#ifndef _WX_DASHES_CORRECTOR_H_
-#include "wxDashesCorrector.h"
+#include <wxCueFile/wxUnquoter.h>
 #endif
 
 #ifndef _WX_CUE_SHEET_CONTENT_H_
 class wxCueSheetContent;
 #endif
 
-#ifdef __WXDEBUG__
+#ifndef NDEBUG
 
 class TagLibDebugListener:
 	public TagLib::DebugListener
@@ -95,10 +75,16 @@ class wxCueSheetReader:
 			EC_CONVERT_LOWER_ROMAN_NUMERALS = 256,
 			EC_CONVERT_COVER_TO_JPEG        = 512,
 			EC_CORRECT_DASHES               = 1024,
-			EC_FIND_ACCURIP_LOG             = 2048
+			EC_FIND_ACCURIP_LOG             = 2048,
+			EC_SMALL_EM_DASH                = 4096,
+			EC_NUMBER_FULL_STOP				= 8192,
+			EC_SMALL_LETTER_PARENTHESIZED	= 16384
 		};
 
+		static bool TestReadFlags( ReadFlags, ReadFlags );
 		bool TestReadFlags( ReadFlags ) const;
+
+		static wxStringProcessor* const CreateStringProcessor( ReadFlags );
 
 	protected:
 
@@ -109,8 +95,8 @@ class wxCueSheetReader:
 		wxRegEx m_reIndex;
 		wxRegEx m_reMsf;
 		wxUnquoter m_unquoter;
-		wxUnquoter m_genericUnquoter;
-		wxRegEx m_reQuotesEx;
+		wxQuoteCorrector m_genericQuoteCorrector;
+		wxQuoteCorrector m_quoteCorrector;
 		wxRegEx m_reFlags;
 		wxRegEx m_reDataMode;
 		wxRegEx m_reDataFile;
@@ -118,12 +104,7 @@ class wxCueSheetReader:
 		wxRegEx m_reIsrc;
 		wxRegEx m_reTrackComment;
 		wxRegEx m_reCommentMeta;
-		wxTrailingSpacesRemover m_trailingSpacesRemover;
-		wxReduntantSpacesRemover m_reduntantSpacesRemover;
-		wxEllipsizer m_ellipsizer;
-		wxRomanNumeralsConv< true > m_romanNumveralsConvUpper;
-		wxRomanNumeralsConv< false > m_romanNumveralsConvLower;
-		wxDashesCorrector m_dashesCorrector;
+		wxScopedPtr<wxStringProcessor> m_pStringProcessor;
 		wxString m_sOneTrackCue;
 
 		// settings
@@ -138,7 +119,7 @@ class wxCueSheetReader:
 		wxCueSheet m_cueSheet;
 
 		// TagLib debug listener
-#ifdef __WXDEBUG__
+#ifndef NDEBUG
 		TagLibDebugListener m_debugListener;
 #endif
 
@@ -177,7 +158,7 @@ class wxCueSheetReader:
 		bool ParseCueLine( const wxString&, size_t );
 
 		template< size_t SIZE >
-		bool ParseLine( const wxString&, const wxString&, const PARSE_STRUCT(&)[ SIZE ] );
+		bool ParseLine( const wxString&, const wxString&, const PARSE_STRUCT ( & )[ SIZE ] );
 
 		void ParseLine( size_t, const wxString&, const wxString& );
 		void ParseCdTextInfo( size_t, const wxString&, const wxString& );
@@ -226,7 +207,7 @@ class wxCueSheetReader:
 
 		wxCueSheetReader( void );
 
-#ifdef __WXDEBUG__
+#ifndef NDEBUG
 		virtual ~wxCueSheetReader( void );
 #endif
 

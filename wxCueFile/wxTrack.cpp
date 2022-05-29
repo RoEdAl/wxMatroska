@@ -2,7 +2,6 @@
  * wxTrack.cpp
  */
 
-#include "StdWx.h"
 #include <wxCueFile/wxDataFile.h>
 #include <wxCueFile/wxIndex.h>
 #include <wxCueFile/wxTrack.h>
@@ -73,15 +72,9 @@ void wxTrack::copy( const wxTrack& track )
 	m_indexes  = track.m_indexes;
 	m_flags    = track.m_flags;
 
-	if ( track.HasPreGap() )
-	{
-		SetPreGap( track.GetPreGap() );
-	}
+	if ( track.HasPreGap() ) SetPreGap( track.GetPreGap() );
 
-	if ( track.HasPostGap() )
-	{
-		SetPreGap( track.GetPostGap() );
-	}
+	if ( track.HasPostGap() ) SetPreGap( track.GetPostGap() );
 }
 
 size_t wxTrack::GetNumber() const
@@ -199,33 +192,17 @@ bool wxTrack::IsRelatedToDataFileIdx( size_t nDataFileIdx, bool bPrePost ) const
 	if ( bPrePost )
 	{
 		if ( HasPreGap() )
-		{
-			if ( m_pPreGap->HasDataFileIdx() && ( m_pPreGap->GetDataFileIdx() == nDataFileIdx ) )
-			{
-				return true;
-			}
-		}
+			if ( m_pPreGap->HasDataFileIdx() && ( m_pPreGap->GetDataFileIdx() == nDataFileIdx ) ) return true;
 
 		if ( HasPostGap() )
-		{
-			if ( m_pPostGap->HasDataFileIdx() && ( m_pPostGap->GetDataFileIdx() == nDataFileIdx ) )
-			{
-				return true;
-			}
-		}
+			if ( m_pPostGap->HasDataFileIdx() && ( m_pPostGap->GetDataFileIdx() == nDataFileIdx ) ) return true;
 	}
 
 	for ( size_t i = 0, nCount = m_indexes.GetCount(); i < nCount; i++ )
 	{
-		if ( !bPrePost && m_indexes[ i ].IsZero() )
-		{
-			continue;
-		}
+		if ( !bPrePost && m_indexes[ i ].IsZero() ) continue;
 
-		if ( m_indexes[ i ].HasDataFileIdx() && ( m_indexes[ i ].GetDataFileIdx() == nDataFileIdx ) )
-		{
-			return true;
-		}
+		if ( m_indexes[ i ].HasDataFileIdx() && ( m_indexes[ i ].GetDataFileIdx() == nDataFileIdx ) ) return true;
 	}
 
 	return false;
@@ -233,21 +210,12 @@ bool wxTrack::IsRelatedToDataFileIdx( size_t nDataFileIdx, bool bPrePost ) const
 
 static void MaxDataFile( size_t& nDataFileIdx, const wxIndex& idx, bool bPrePost )
 {
-	if ( !bPrePost && idx.IsZero() )
-	{
-		return;
-	}
+	if ( !bPrePost && idx.IsZero() ) return;
 
 	if ( idx.HasDataFileIdx() )
 	{
-		if ( nDataFileIdx == wxIndex::UnknownDataFileIdx )
-		{
-			nDataFileIdx = idx.GetDataFileIdx();
-		}
-		else if ( idx.GetDataFileIdx() > nDataFileIdx )
-		{
-			nDataFileIdx = idx.GetDataFileIdx();
-		}
+		if ( nDataFileIdx == wxIndex::UnknownDataFileIdx ) nDataFileIdx = idx.GetDataFileIdx();
+		else if ( idx.GetDataFileIdx() > nDataFileIdx ) nDataFileIdx = idx.GetDataFileIdx();
 	}
 }
 
@@ -257,15 +225,9 @@ size_t wxTrack::GetMaxDataFileIdx( bool bPrePost ) const
 
 	if ( bPrePost )
 	{
-		if ( HasPreGap() )
-		{
-			MaxDataFile( nDataFileIdx, *m_pPreGap, true );
-		}
+		if ( HasPreGap() ) MaxDataFile( nDataFileIdx, *m_pPreGap, true );
 
-		if ( HasPostGap() )
-		{
-			MaxDataFile( nDataFileIdx, *m_pPostGap, true );
-		}
+		if ( HasPostGap() ) MaxDataFile( nDataFileIdx, *m_pPostGap, true );
 	}
 
 	for ( size_t i = 0, nCount = m_indexes.GetCount(); i < nCount; i++ )
@@ -278,21 +240,12 @@ size_t wxTrack::GetMaxDataFileIdx( bool bPrePost ) const
 
 static void MinDataFile( size_t& nDataFileIdx, const wxIndex& idx, bool bPrePost )
 {
-	if ( !bPrePost && idx.IsZero() )
-	{
-		return;
-	}
+	if ( !bPrePost && idx.IsZero() ) return;
 
 	if ( idx.HasDataFileIdx() )
 	{
-		if ( nDataFileIdx == wxIndex::UnknownDataFileIdx )
-		{
-			nDataFileIdx = idx.GetDataFileIdx();
-		}
-		else if ( idx.GetDataFileIdx() < nDataFileIdx )
-		{
-			nDataFileIdx = idx.GetDataFileIdx();
-		}
+		if ( nDataFileIdx == wxIndex::UnknownDataFileIdx ) nDataFileIdx = idx.GetDataFileIdx();
+		else if ( idx.GetDataFileIdx() < nDataFileIdx ) nDataFileIdx = idx.GetDataFileIdx();
 	}
 }
 
@@ -302,15 +255,9 @@ size_t wxTrack::GetMinDataFileIdx( bool bPrePost ) const
 
 	if ( bPrePost )
 	{
-		if ( HasPreGap() )
-		{
-			MinDataFile( nDataFileIdx, *m_pPreGap, true );
-		}
+		if ( HasPreGap() ) MinDataFile( nDataFileIdx, *m_pPreGap, true );
 
-		if ( HasPostGap() )
-		{
-			MinDataFile( nDataFileIdx, *m_pPostGap, true );
-		}
+		if ( HasPostGap() ) MinDataFile( nDataFileIdx, *m_pPostGap, true );
 	}
 
 	for ( size_t i = 0, nCount = m_indexes.GetCount(); i < nCount; i++ )
@@ -323,15 +270,9 @@ size_t wxTrack::GetMinDataFileIdx( bool bPrePost ) const
 
 void wxTrack::ShiftDataFileIdx( size_t nOffset )
 {
-	if ( HasPreGap() )
-	{
-		m_pPreGap->ShiftDataFileIdx( nOffset );
-	}
+	if ( HasPreGap() ) m_pPreGap->ShiftDataFileIdx( nOffset );
 
-	if ( HasPostGap() )
-	{
-		m_pPostGap->ShiftDataFileIdx( nOffset );
-	}
+	if ( HasPostGap() ) m_pPostGap->ShiftDataFileIdx( nOffset );
 
 	for ( size_t i = 0, nCount = m_indexes.GetCount(); i < nCount; i++ )
 	{
@@ -341,15 +282,9 @@ void wxTrack::ShiftDataFileIdx( size_t nOffset )
 
 void wxTrack::SetDataFileIdx( size_t nDataFileIdx )
 {
-	if ( HasPreGap() )
-	{
-		m_pPreGap->ShiftDataFileIdx( nDataFileIdx );
-	}
+	if ( HasPreGap() ) m_pPreGap->ShiftDataFileIdx( nDataFileIdx );
 
-	if ( HasPostGap() )
-	{
-		m_pPostGap->ShiftDataFileIdx( nDataFileIdx );
-	}
+	if ( HasPostGap() ) m_pPostGap->ShiftDataFileIdx( nDataFileIdx );
 
 	for ( size_t i = 0, nCount = m_indexes.GetCount(); i < nCount; i++ )
 	{
@@ -410,10 +345,7 @@ bool wxTrack::HasFlag( wxTrack::Flag f ) const
 {
 	for ( size_t i = 0, nCount = m_flags.GetCount(); i < nCount; i++ )
 	{
-		if ( m_flags[ i ] == f )
-		{
-			return true;
-		}
+		if ( m_flags[ i ] == f ) return true;
 	}
 
 	return false;
@@ -453,14 +385,8 @@ bool wxTrack::SetMode( const wxString& sMode )
 {
 	DataMode mode;
 
-	if ( sMode.IsEmpty() )
-	{
-		mode = AUDIO;
-	}
-	else if ( !StringToDataMode( sMode, mode ) )
-	{
-		return false;
-	}
+	if ( sMode.IsEmpty() ) mode = AUDIO;
+	else if ( !StringToDataMode( sMode, mode ) ) return false;
 
 	m_dataMode = mode;
 	return true;
@@ -473,18 +399,9 @@ bool wxTrack::IsValid() const
 
 int wxTrack::CompareFn( wxTrack** t1, wxTrack** t2 )
 {
-	if ( ( *t1 )->GetNumber() < ( *t2 )->GetNumber() )
-	{
-		return -1;
-	}
-	else if ( ( *t1 )->GetNumber() > ( *t2 )->GetNumber() )
-	{
-		return 1;
-	}
-	else
-	{
-		return 0;
-	}
+	if ( ( *t1 )->GetNumber() < ( *t2 )->GetNumber() ) return -1;
+	else if ( ( *t1 )->GetNumber() > ( *t2 )->GetNumber() ) return 1;
+	else return 0;
 }
 
 wxArrayIndex& wxTrack::SortIndicies()
@@ -497,10 +414,7 @@ const wxIndex& wxTrack::GetFirstIndex() const
 {
 	for ( size_t i = 0, nCount = m_indexes.GetCount(); i < nCount; i++ )
 	{
-		if ( m_indexes[ i ].GetNumber() == 1 )
-		{
-			return m_indexes[ i ];
-		}
+		if ( m_indexes[ i ].GetNumber() == 1 ) return m_indexes[ i ];
 	}
 
 	wxASSERT( false );

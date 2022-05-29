@@ -2,40 +2,39 @@
  * wxEllipsizer.cpp
  */
 
-#include "StdWx.h"
-#include <wxCueFile/wxEllipsizer.h>
+#include "wxEllipsizer.h"
+
+wxIMPLEMENT_DYNAMIC_CLASS(wxEllipsizer, wxStringProcessor)
 
 // ===============================================================================
 
-const char    wxEllipsizer::REG_EX[] = "([[:space:]]*\\.\\.\\.)[[:space:]]*\\Z";
+const char    wxEllipsizer::REG_EX[] = "(\\p{Z}*\\.\\.\\.)\\p{Z}*$";
 const wxUChar wxEllipsizer::ELLIPSIS = wxS( '\u2026' );
 
 // ===============================================================================
 
 wxEllipsizer::wxEllipsizer() :
-	m_reEllipsis( REG_EX, wxRE_ADVANCED )
+	m_reEllipsis( REG_EX )
 {
 	wxASSERT( m_reEllipsis.IsValid() );
 }
 
-bool wxEllipsizer::EllipsizeEx( const wxString& sIn, wxString& sOut ) const
+wxStringProcessor* const wxEllipsizer::Clone() const
+{
+	return new wxEllipsizer();
+}
+
+bool wxEllipsizer::Process( const wxString& sIn, wxString& sOut ) const
 {
 	sOut = sIn;
-	int nRes = m_reEllipsis.ReplaceAll( &sOut, ELLIPSIS );
-	return ( nRes > 0 );
-}
+	wxString res(sIn);
+	int nRes = m_reEllipsis.ReplaceAll( &res, ELLIPSIS );
 
-wxString wxEllipsizer::Ellipsize( const wxString& sIn ) const
-{
-	wxString sOut;
-
-	if ( EllipsizeEx( sIn, sOut ) )
+	if (nRes > 0)
 	{
-		return sOut;
+		sOut = res;
+		return true;
 	}
-	else
-	{
-		return sIn;
-	}
-}
 
+	return false;
+}

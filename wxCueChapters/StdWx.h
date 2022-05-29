@@ -17,13 +17,10 @@
  *
  * wxDECLARE_..._CLASS
  *
- * declares method GetClassInfo
- * so when Winuser.h is included method GetClassInfo is renamed to
- *    GetClassInfoW.
- * That's why we define NOUSER.
+ * declares method GetClassInfo so when Winuser.h is included method GetClassInfo is renamed to GetClassInfoW. That's why we define NOUSER.
  */
-#define WIN32_LEAN_AND_MEAN																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																//
-// Exclude
+#define WIN32_LEAN_AND_MEAN
+
 #define NOUSER
 #define NOGDI
 #define NOMB
@@ -32,16 +29,19 @@
 /*
  * Dummy definition of MSG (LPMSG) to make
  *
- * oleidl.h
- * ole2.h
+ * oleidl.h ole2.h
  *
  * happy.
  */
 typedef struct tagMSG
-{} MSG, * LPMSG;
+{} MSG, *LPMSG;
 #endif
 
+#ifdef NDEBUG
 #define wxDEBUG_LEVEL 0
+#else
+#define wxDEBUG_LEVEL 1
+#endif
 
 #include <wx/wx.h>
 #include <wx/defs.h>
@@ -66,7 +66,7 @@ typedef struct tagMSG
 #include <wx/tokenzr.h>
 #include <wx/sharedptr.h>
 
-#ifdef __WXDEBUG__
+#ifndef NDEBUG
 #include <taglib/tdebuglistener.h>
 #endif
 
@@ -95,5 +95,8 @@ namespace
 #ifdef WIN32
 #include <objbase.h>
 #endif
-#endif	// _STD_WX_H
+
+#include <nlohmann/json.hpp>
+
+#endif  // _STD_WX_H
 

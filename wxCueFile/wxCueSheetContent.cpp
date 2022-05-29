@@ -2,7 +2,6 @@
  *      wxCueSheetContent.cpp
  */
 
-#include "StdWx.h"
 #include <wxCueFile/wxDataFile.h>
 #include <wxCueFile/wxCueSheetContent.h>
 

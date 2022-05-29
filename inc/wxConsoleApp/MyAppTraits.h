@@ -27,20 +27,21 @@ class MyAppTraits:
 		virtual bool DoMessageFromThreadWait();
 
 		virtual WXDWORD WaitForThread( WXHANDLE, int );
-#endif	// wxUSE_THREADS
+#endif  // wxUSE_THREADS
 
 		virtual bool CanUseStderr();
 		virtual bool WriteToStderr( const wxString& );
+		virtual WXHWND GetMainHWND() const;
 
 #if wxUSE_LOG
 		virtual wxLog* CreateLogTarget();
-#endif	// wxUSE_LOG
+#endif  // wxUSE_LOG
 
 		virtual wxMessageOutput* CreateMessageOutput();
 
 #if wxUSE_FONTMAP
 		virtual wxFontMapper* CreateFontMapper();
-#endif	// wxUSE_FONTMAP
+#endif  // wxUSE_FONTMAP
 
 		virtual wxRendererNative* CreateRenderer();
 		virtual bool ShowAssertDialog( const wxString& );
@@ -48,6 +49,7 @@ class MyAppTraits:
 		virtual wxPortId GetToolkitVersion( int* verMaj = NULL, int* verMin = NULL, int* microVer = NULL ) const;
 		virtual bool IsUsingUniversalWidgets() const;
 		virtual wxString GetDesktopEnvironment() const;
+		virtual wxString GetStandardCmdLineOptions( wxArrayString& names, wxArrayString& desc ) const;
 
 	protected:
 

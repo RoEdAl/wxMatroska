@@ -2,12 +2,11 @@
  * wxRomanNumeralsConv.cpp
  */
 
-#include "StdWx.h"
-#include <wxCueFile/wxRomanNumeralsConv.h>
+#include "wxRomanNumeralsConv.h"
 
 // ===============================================================================
 
-const char roman_numeral_traits< true >::REGEX[] = "\\m(?=[MDCLXVI])M*(C[MD]|D?C{0,3})(X[CL]|L?X{0,3})(I[XV]|V?I{0,3})\\M";
+const char roman_numeral_traits< true >::REGEX[] = "[[:<:]](?=[MDCLXVI])M*(C[MD]|D?C{0,3})(X[CL]|L?X{0,3})(I[XV]|V?I{0,3})[[:>:]]";
 
 const roman_utils::roman_numeral_conv roman_numeral_traits< true >::CINFO = {
 	{
@@ -31,7 +30,7 @@ const roman_utils::roman_numeral_conv roman_numeral_traits< true >::CINFO = {
 
 // ===============================================================================
 
-const char roman_numeral_traits< false >::REGEX[] = "\\m(?=[mdclxvi])m*(c[md]|d?C{0,3})(x[cl]|l?x{0,3})(i[xv]|v?I{0,3})\\M";
+const char roman_numeral_traits< false >::REGEX[] = "\\b(?=\\w)(?=[mdclxvi])m*(c[md]|d?C{0,3})(x[cl]|l?x{0,3})(i[xv]|v?I{0,3})\\b(?<=\\w)";
 
 const roman_utils::roman_numeral_conv roman_numeral_traits< false >::CINFO = {
 	{

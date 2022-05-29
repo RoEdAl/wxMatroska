@@ -2,7 +2,6 @@
  * wxTagSynonims.cpp
  */
 
-#include "StdWx.h"
 #include <wxCueFile/wxTagSynonims.h>
 #include <wxCueFile/wxCueComponent.h>
 
@@ -76,6 +75,7 @@ bool wxTagSynonims::GetName( const wxString& sSynonim, wxString& sName ) const
 	}
 
 	size_t nSynonims = m_asSynonims.GetCount();
+
 	for ( size_t i = 0; i < nSynonims; i++ )
 	{
 		if ( m_asSynonims[ i ].CmpNoCase( sSynonim ) == 0 )
@@ -100,6 +100,7 @@ bool wxTagSynonims::GetName( const wxCueTag& synonim, wxCueTag& cueTag ) const
 	}
 
 	size_t nSynonims = m_asSynonims.GetCount();
+
 	for ( size_t i = 0; i < nSynonims; i++ )
 	{
 		if ( m_asSynonims[ i ].CmpNoCase( synonim.GetName() ) == 0 )
@@ -137,10 +138,7 @@ bool wxTagSynonimsCollection::GetName( const wxString& sSynonim, wxString& sName
 
 	for ( size_t i = 0; i < nSynonims; i++ )
 	{
-		if ( Item( i ).GetName( sSynonim, sName ) )
-		{
-			return true;
-		}
+		if ( Item( i ).GetName( sSynonim, sName ) ) return true;
 	}
 
 	sName = sSynonim;
@@ -151,10 +149,7 @@ bool wxTagSynonimsCollection::GetName( const wxCueTag& synonim, wxCueTag& cueTag
 {
 	for ( size_t i = 0, nSynonims = GetCount(); i < nSynonims; i++ )
 	{
-		if ( Item( i ).GetName( synonim, cueTag ) )
-		{
-			return true;
-		}
+		if ( Item( i ).GetName( synonim, cueTag ) ) return true;
 	}
 
 	cueTag = synonim;

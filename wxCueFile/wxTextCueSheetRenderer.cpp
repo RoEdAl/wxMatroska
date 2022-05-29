@@ -2,7 +2,6 @@
  * wxTextCueSheetRenderer.cpp
  */
 
-#include "StdWx.h"
 #include <wxCueFile/wxSamplingInfo.h>
 #include <wxCueFile/wxIndex.h>
 #include <wxCueFile/wxTrack.h>
@@ -20,14 +19,14 @@ wxTextCueSheetRenderer::wxTextCueSheetRenderer( wxTextOutputStream* pTextOutputS
 	m_pTextOutputStream( pTextOutputStream ),
 	m_nDumpFlags( nDumpFlags ),
 	m_nDataFileIdx( wxIndex::UnknownDataFileIdx ),
-	m_reSpace( "[[:space:]]+", wxRE_ADVANCED | wxRE_NOSUB )
+	m_reSpace( "\\p{Z}+", wxRE_NOSUB )
 {
 	wxASSERT( m_reSpace.IsValid() );
 }
 
 void wxTextCueSheetRenderer::Assign( wxTextOutputStream* pTextOutputStream, int nDumpFlags )
 {
-	wxASSERT( pTextOutputStream != (wxTextOutputStream*)NULL );
+	wxASSERT( pTextOutputStream != nullptr );
 
 	m_pTextOutputStream = pTextOutputStream;
 	m_nDumpFlags        = nDumpFlags;
@@ -35,7 +34,7 @@ void wxTextCueSheetRenderer::Assign( wxTextOutputStream* pTextOutputStream, int 
 
 bool wxTextCueSheetRenderer::OnPreRenderDisc( const wxCueSheet& cueSheet )
 {
-	if ( m_pTextOutputStream == (wxTextOutputStream*)NULL )
+	if ( m_pTextOutputStream == nullptr )
 	{
 		wxLogError( _( "wxTextCueSheetRenderer: output stream not specified" ) );
 		return false;
@@ -78,14 +77,8 @@ void wxTextCueSheetRenderer::DumpComponentTag( const wxCueComponent& component, 
 {
 	wxString sName;
 
-	if ( m_reSpace.Matches( tag.GetName() ) )
-	{
-		sName = wxCueTag::Quote( tag.GetName() );
-	}
-	else
-	{
-		sName = tag.GetName();
-	}
+	if ( m_reSpace.Matches( tag.GetName() ) ) sName = wxCueTag::Quote( tag.GetName() );
+	else sName = tag.GetName();
 
 	DumpComponentString( component, "REM", wxString::Format( "%s %s", sName, tag.GetFlattenValue() ) );
 }
@@ -96,10 +89,7 @@ void wxTextCueSheetRenderer::DumpComponentString(
 {
 	if ( !text.IsEmpty() )
 	{
-		if ( component.IsTrack() )
-		{
-			*m_pTextOutputStream << '\t';
-		}
+		if ( component.IsTrack() ) *m_pTextOutputStream << '\t';
 
 		*m_pTextOutputStream << ' ' << sEntry << ' ' << text << endl;
 	}
@@ -129,6 +119,7 @@ void wxTextCueSheetRenderer::InternalRenderComponent( const wxCueComponent& comp
 
 	// dump CT-TEXT info
 	const wxArrayCueTag& tags = component.GetCdTextTags();
+
 	for ( size_t i = 0, nCount = tags.GetCount(); i < nCount; i++ )
 	{
 		DumpComponentString( component,
@@ -154,12 +145,14 @@ void wxTextCueSheetRenderer::InternalRenderCueSheet( const wxCueSheet& cueSheet 
 	InternalRenderComponent( cueSheet );
 
 	const wxArrayCueTag& catalogs = cueSheet.GetCatalogs();
+
 	for ( size_t i = 0, nCount = catalogs.GetCount(); i < nCount; i++ )
 	{
 		DumpComponentString( cueSheet, catalogs[ i ].GetName(), catalogs[ i ].GetValue() );
 	}
 
 	const wxArrayFileName& cdtextfiles = cueSheet.GetCdTextFiles();
+
 	for ( size_t i = 0, nCount = cdtextfiles.GetCount(); i < nCount; i++ )
 	{
 		DumpComponentString( cueSheet, wxCueTag::Name::CDTEXTFILE, wxCueTag::Quote( cdtextfiles[ i ].GetFullName() ) );
@@ -170,10 +163,7 @@ void wxTextCueSheetRenderer::InternalRenderTrack( const wxCueSheet& cueSheet, co
 {
 	wxString sLine;
 
-	if ( ( m_nDumpFlags & DUMP_EMPTY_LINES ) != 0 )
-	{
-		*m_pTextOutputStream << endl;
-	}
+	if ( ( m_nDumpFlags & DUMP_EMPTY_LINES ) != 0 ) *m_pTextOutputStream << endl;
 
 	if ( track.GetNumber() == 1u )
 	{
@@ -191,18 +181,12 @@ void wxTextCueSheetRenderer::InternalRenderTrack( const wxCueSheet& cueSheet, co
 	InternalRenderComponent( track );
 
 	// flags
-	if ( track.HasFlags() )
-	{
-		DumpComponentString( track, "FLAGS", track.GetFlagsAsString() );
-	}
+	if ( track.HasFlags() ) DumpComponentString( track, "FLAGS", track.GetFlagsAsString() );
 }
 
 void wxTextCueSheetRenderer::InternalRenderIndex( const wxCueSheet& cueSheet, const wxTrack& WXUNUSED( track ), const wxIndex& idx, wxString desc )
 {
-	if ( idx.HasDataFileIdx() )
-	{
-		InternalRenderDataFile( cueSheet, idx.GetDataFileIdx() );
-	}
+	if ( idx.HasDataFileIdx() ) InternalRenderDataFile( cueSheet, idx.GetDataFileIdx() );
 
 	wxString sIdx( m_si.GetIndexOffsetFramesStr( idx ) );
 
@@ -211,10 +195,7 @@ void wxTextCueSheetRenderer::InternalRenderIndex( const wxCueSheet& cueSheet, co
 
 void wxTextCueSheetRenderer::InternalRenderIndex( const wxCueSheet& cueSheet, const wxTrack& WXUNUSED( track ), const wxIndex& idx )
 {
-	if ( idx.HasDataFileIdx() )
-	{
-		InternalRenderDataFile( cueSheet, idx.GetDataFileIdx() );
-	}
+	if ( idx.HasDataFileIdx() ) InternalRenderDataFile( cueSheet, idx.GetDataFileIdx() );
 
 	wxString sIdxNo;
 	wxString sIdx( m_si.GetIndexOffsetFramesStr( idx ) );
@@ -242,14 +223,8 @@ wxString wxTextCueSheetRenderer::ToString( const wxCueSheet& cueSheet, int nDump
 	wxTextOutputStreamOnString tos;
 	wxTextCueSheetRenderer     renderer( &( tos.GetStream() ), nDumpFlags );
 
-	if ( renderer.Render( cueSheet ) )
-	{
-		return tos.GetString();
-	}
-	else
-	{
-		return wxEmptyString;
-	}
+	if ( renderer.Render( cueSheet ) ) return tos.GetString();
+	else return wxEmptyString;
 }
 
 bool wxTextCueSheetRenderer::ToString( wxTextOutputStream& tos, const wxCueSheet& cueSheet, int nDumpFlags )

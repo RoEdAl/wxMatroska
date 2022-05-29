@@ -5,32 +5,12 @@
 #ifndef _WX_CUE_TAG_H_
 #define _WX_CUE_TAG_H_
 
-#ifndef _WX_UNQUOTER_H_
-class wxUnquoter;
-#endif
-
-#ifndef _WX_TRAILING_SPACES_REMOVER_H_
-class wxTrailingSpacesRemover;
-#endif
-
-#ifndef _WX_REDUNTANT_SPACES_REMOVER_H_
-class wxReduntantSpacesRemover;
-#endif
-
-#ifndef _WX_ELLIPSIZER_H_
-class wxEllipsizer;
-#endif
-
-#ifndef _WX_ROMAN_NUMERALS_H_
-#include <wxCueFile/wxRomanNumeralsConv.h>
-#endif
-
 #ifndef _WX_TAG_SYNONIMS_H_
 class wxTagSynonimsCollection;
 #endif
 
-#ifndef _WX_DASHES_CORRECTOR_H_
-class wxDashesCorrector;
+#ifndef _WX_STRING_PROCESSOR_H_
+class wxStringProcessor;
 #endif
 
 class wxCueTag;
@@ -115,18 +95,8 @@ class wxCueTag:
 		bool operator ==( const wxCueTag& ) const;
 		wxCueTag& operator =( const wxCueTag& );
 
-		void Unquote( const wxUnquoter& );
-		void RemoveTrailingSpaces( const wxTrailingSpacesRemover& );
-		int RemoveExtraSpaces( const wxReduntantSpacesRemover& );
-		void Ellipsize( const wxEllipsizer& );
-
-		template< bool UPPER >
-		void ConvertRomanNumerals( const wxRomanNumeralsConv< UPPER >& converter )
-		{
-			m_sValue = converter.Convert( m_sValue );
-		}
-
-		void CorrectDashes( const wxDashesCorrector& );
+		void Correct( const wxStringProcessor& );
+		bool Split( wxArrayCueTag& ) const;
 
 	protected:
 
@@ -171,6 +141,7 @@ class wxCueTag:
 		static wxString Quote( const wxString& );
 		static wxString Escape( const wxString& );
 		static wxString UnEscape( const wxString& );
+		static bool Split( const wxCueTag&, wxArrayCueTag& );
 
 	protected:
 
@@ -179,36 +150,27 @@ class wxCueTag:
 	protected:
 
 		template< size_t SIZE >
-		static wxString SourceToString( wxCueTag::TAG_SOURCE eSource, const SOURCE2TEXT(&source2text_mapping)[ SIZE ] )
+		static wxString SourceToString( wxCueTag::TAG_SOURCE eSource, const SOURCE2TEXT ( & source2text_mapping )[ SIZE ] )
 		{
 			for ( size_t i = 0; i < SIZE; ++i )
 			{
-				if ( eSource == source2text_mapping[ i ].source )
-				{
-					return _( source2text_mapping[ i ].text );
-				}
+				if ( eSource == source2text_mapping[ i ].source ) return _( source2text_mapping[ i ].text );
 			}
 
 			return wxString::Format( "TAG_SOURCE <%d>", eSource );
 		}
 
 		template< size_t SIZE >
-		static wxString SourcesToString( wxCueTag::TagSources nTagSources, const SOURCE2TEXT(&source2text_mapping)[ SIZE ] )
+		static wxString SourcesToString( wxCueTag::TagSources nTagSources, const SOURCE2TEXT ( & source2text_mapping )[ SIZE ] )
 		{
 			wxString s;
 
 			for ( size_t i = 0; i < SIZE; ++i )
 			{
-				if ( ( nTagSources & source2text_mapping[ i ].source ) != 0u )
-				{
-					s << source2text_mapping[ i ].text << ',';
-				}
+				if ( ( nTagSources & source2text_mapping[ i ].source ) != 0u ) s << source2text_mapping[ i ].text << ',';
 			}
 
-			if ( !s.IsEmpty() )
-			{
-				s.RemoveLast();
-			}
+			if ( !s.IsEmpty() ) s.RemoveLast();
 
 			return s;
 		}

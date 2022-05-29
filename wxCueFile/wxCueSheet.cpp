@@ -2,7 +2,6 @@
  * wxCueSheet.cpp
  */
 
-#include "StdWx.h"
 #include <wxCueFile/wxSamplingInfo.h>
 #include <wxEncodingDetection/wxTextOutputStreamOnString.h>
 #include <wxCueFile/wxDuration.h>
@@ -36,7 +35,8 @@ namespace
 			*tos << aliases[ i ] << '|';
 		}
 
-		const wxString& s = tos.GetString();
+		const wxString s = tos.GetString();
+
 		wxASSERT( !s.IsEmpty() );
 		return wxString::Format( "(%s)", s.Left( s.Length() - 1 ) );
 	}
@@ -45,10 +45,10 @@ namespace
 // ===============================================================================
 
 const char wxCueSheet::ALBUM_REG_EX1[] =
-	"\\A(.*[^[:space:]])[[:space:]]*([[:punct:]][[:space:]]*%s[[:space:][:punct:]]*([[:digit:]]{1,2})[[:space:]]*[[:punct:]])[[:space:]]*([^[:space:]].*){0,1}\\Z";
+	"^(.*\\P{Z})\\p{Z}*(\\p{P}\\p{Z})*%s[\\p{Z}\\p{P}]*(\\p{Nd}{1,2}\\p{Z}*\\p{P})\\p{Z}*(\\P{Z}.*)?$";
 
 const char wxCueSheet::ALBUM_REG_EX2[] =
-	"\\A(.*[^[:space:]])[[:space:]]*(%s[[:space:][:punct:]]*([[:digit:]]{1,2}))[[:space:]]*([^[:space:]].*){0,1}\\Z";
+	"^(.*\\P{Z})\\p{Z}*(%s[\\p{Z}\\p{P}]*(\\p{Nd}{1,2}))\\p{Z}*(\\P{Z}.*)?$";
 
 // ===============================================================================
 
@@ -165,14 +165,8 @@ void wxCueSheet::GetSortedCovers( wxArrayCoverFile& covers, wxImageHandler* cons
 {
 	covers.Clear();
 
-	if ( handler != nullptr )
-	{
-		wxCoverFile::Convert( m_covers, covers, handler, nJpegQuality );
-	}
-	else
-	{
-		WX_APPEND_ARRAY( covers, m_covers );
-	}
+	if ( handler != nullptr ) wxCoverFile::Convert( m_covers, covers, handler, nJpegQuality );
+	else WX_APPEND_ARRAY( covers, m_covers );
 	wxCoverFile::Sort( covers );
 }
 
@@ -220,10 +214,7 @@ const wxArrayTrack& wxCueSheet::GetTracks() const
 
 bool wxCueSheet::AddTrack( const wxTrack& track )
 {
-	if ( m_dataFiles.IsEmpty() && track.HasIndexes() )
-	{
-		return false;
-	}
+	if ( m_dataFiles.IsEmpty() && track.HasIndexes() ) return false;
 
 	m_tracks.Add( track );
 	return true;
@@ -238,10 +229,7 @@ bool wxCueSheet::HasTrack( size_t nTrackNo ) const
 {
 	for ( size_t i = 0, nCount = m_tracks.GetCount(); i < nCount; ++i )
 	{
-		if ( m_tracks[ i ].GetNumber() == nTrackNo )
-		{
-			return true;
-		}
+		if ( m_tracks[ i ].GetNumber() == nTrackNo ) return true;
 	}
 
 	return false;
@@ -253,10 +241,7 @@ wxTrack& wxCueSheet::GetTrackByNumber( size_t nTrackNo )
 
 	for ( size_t i = 0, nCount = m_tracks.GetCount(); i < nCount; ++i )
 	{
-		if ( m_tracks[ i ].GetNumber() == nTrackNo )
-		{
-			return m_tracks[ i ];
-		}
+		if ( m_tracks[ i ].GetNumber() == nTrackNo ) return m_tracks[ i ];
 	}
 
 	wxASSERT( false );
@@ -269,10 +254,7 @@ size_t wxCueSheet::GetTrackIdxFromNumber( size_t nTrackNo ) const
 
 	for ( size_t i = 0, nCount = m_tracks.GetCount(); i < nCount; ++i )
 	{
-		if ( m_tracks[ i ].GetNumber() == nTrackNo )
-		{
-			return i;
-		}
+		if ( m_tracks[ i ].GetNumber() == nTrackNo ) return i;
 	}
 
 	wxASSERT( false );
@@ -330,20 +312,15 @@ size_t wxCueSheet::GetDataFilesCount() const
 
 size_t wxCueSheet::GetLastDataFileIdx() const
 {
-	if ( m_dataFiles.IsEmpty() )
-	{
-		return wxIndex::UnknownDataFileIdx;
-	}
-	else
-	{
-		return m_dataFiles.GetCount() - 1;
-	}
+	if ( m_dataFiles.IsEmpty() ) return wxIndex::UnknownDataFileIdx;
+	else return m_dataFiles.GetCount() - 1;
 }
 
 bool wxCueSheet::GetRelatedTracks( size_t nDataFileIdx, size_t& nTrackFrom, size_t& nTrackTo ) const
 {
 	wxASSERT( nDataFileIdx != wxIndex::UnknownDataFileIdx );
 	bool bTrackFrom = false, bTrackTo = false;
+
 	for ( size_t i = 0, nCount = m_tracks.GetCount(); ( i < nCount ) && !( bTrackFrom && bTrackTo ); ++i )
 	{
 		if ( m_tracks[ i ].IsRelatedToDataFileIdx( nDataFileIdx, false ) )
@@ -480,10 +457,7 @@ void wxCueSheet::AppendFileNames( wxArrayFileName& dest, const wxArrayFileName& 
 			}
 		}
 
-		if ( bAdd )
-		{
-			dest.Add( source[ i ] );
-		}
+		if ( bAdd ) dest.Add( source[ i ] );
 	}
 }
 
@@ -503,6 +477,7 @@ wxCueSheet& wxCueSheet::Append( const wxCueSheet& _cs )
 	WX_APPEND_ARRAY( m_cdTextFiles, cs.m_cdTextFiles );
 
 	size_t nDataFilesCount = m_dataFiles.GetCount();
+
 	WX_APPEND_ARRAY( m_dataFiles, cs.m_dataFiles );
 
 	size_t nNumberOffset = 0;
@@ -514,6 +489,7 @@ wxCueSheet& wxCueSheet::Append( const wxCueSheet& _cs )
 	}
 
 	wxArrayTrack tracks( cs.m_tracks );
+
 	for ( size_t i = 0, nCount = tracks.GetCount(); i < nCount; ++i )
 	{
 		tracks[ i ].SetNumber( nNumberOffset + tracks[ i ].GetNumber() );
@@ -550,14 +526,8 @@ size_t wxCueSheet::GetDataFileIdxIfLastForTrack( size_t nTrackNo ) const
 		size_t nCurDataFileIdx  = GetTrack( nTrackNo ).GetMaxDataFileIdx( true );
 		size_t nNextDataFileIdx = GetTrack( nTrackNo + 1u ).GetMinDataFileIdx( false );
 
-		if ( nNextDataFileIdx > nCurDataFileIdx )
-		{
-			return GetTrack( nTrackNo ).GetMinDataFileIdx( false );
-		}
-		else
-		{
-			return wxIndex::UnknownDataFileIdx;
-		}
+		if ( nNextDataFileIdx > nCurDataFileIdx ) return GetTrack( nTrackNo ).GetMinDataFileIdx( false );
+		else return wxIndex::UnknownDataFileIdx;
 	}
 }
 
@@ -567,9 +537,11 @@ wxString wxCueSheet::FormatTrack( wxCueTag::TagSources sources, size_t trackNo, 
 
 	GetReplacements( sources, replacements );
 	const wxTrack& track = GetTrack( trackNo );
+
 	track.GetReplacements( sources, replacements );
 
 	wxString s( sFmt );
+
 	for ( wxHashString::const_iterator i = replacements.begin(); i != replacements.end(); ++i )
 	{
 		wxString sFind( i->first );
@@ -587,6 +559,7 @@ wxString wxCueSheet::Format( wxCueTag::TagSources sources, const wxString& sFmt 
 	GetReplacements( sources, replacements );
 
 	wxString s( sFmt );
+
 	for ( wxHashString::const_iterator i = replacements.begin(); i != replacements.end(); ++i )
 	{
 		wxString sFind( i->first );
@@ -677,10 +650,7 @@ wxDuration wxCueSheet::GetDuration( size_t nDataFileIdx ) const
 {
 	wxDuration duration;
 
-	if ( nDataFileIdx == wxIndex::UnknownDataFileIdx || nDataFileIdx == 0u )
-	{
-		return duration;
-	}
+	if ( nDataFileIdx == wxIndex::UnknownDataFileIdx || nDataFileIdx == 0u ) return duration;
 
 	wxASSERT( HasDuration() );
 	wxASSERT( nDataFileIdx <= m_dataFiles.GetCount() );
@@ -767,28 +737,16 @@ namespace
 
 	wxString concatenate( const wxString& s1, const wxString& s2 )
 	{
-		if ( s1.IsEmpty() && s2.IsEmpty() )
-		{
-			return wxEmptyString;
-		}
-		else if ( s1.IsEmpty() && !s2.IsEmpty() )
-		{
-			return s2;
-		}
-		else if ( !s1.IsEmpty() && s2.IsEmpty() )
-		{
-			return s1;
-		}
-		else
-		{
-			return s1 + ' ' + s2;
-		}
+		if ( s1.IsEmpty() && s2.IsEmpty() ) return wxEmptyString;
+		else if ( s1.IsEmpty() && !s2.IsEmpty() ) return s2;
+		else if ( !s1.IsEmpty() && s2.IsEmpty() ) return s1;
+		else return s1 + ' ' + s2;
 	}
 }
 
-void wxCueSheet::FindCommonTags( const wxTagSynonimsCollection& discSynonims, const wxTagSynonimsCollection& trackSynonims, bool bMerge )
+void wxCueSheet::SanitizeTags( const wxTagSynonimsCollection& discSynonims, const wxTagSynonimsCollection& trackSynonims, bool bMerge, bool bIncludeDiscNumber )
 {
-	size_t nTracks = m_tracks.GetCount();
+	const size_t nTracks = m_tracks.GetCount();
 
 	MoveCdTextInfoTags( discSynonims );
 	for ( size_t i = 0; i < nTracks; ++i )
@@ -796,12 +754,7 @@ void wxCueSheet::FindCommonTags( const wxTagSynonimsCollection& discSynonims, co
 		m_tracks[ i ].MoveCdTextInfoTags( trackSynonims );
 	}
 
-	if ( nTracks <= 1 )
-	{
-		wxLogDebug( "wxCueSheet::FindCommonTags - too few tracks" );
-		return;
-	}
-
+	if ( nTracks > 1 )
 	{
 		wxArrayCueTag commonTags;
 		wxArrayCueTag group;
@@ -848,68 +801,81 @@ void wxCueSheet::FindCommonTags( const wxTagSynonimsCollection& discSynonims, co
 		}
 	}
 
+	if ( !bIncludeDiscNumber )
+	{
+		RemoveTag( wxCueTag::Name::DISCNUMBER );
+		RemoveTag( wxCueTag::Name::TOTALDISCS );
+
+		for (size_t j = 0; j < nTracks; ++j)
+		{
+			m_tracks[ j ].RemoveTag( wxCueTag::Name::DISCNUMBER );
+			m_tracks[ j ].RemoveTag( wxCueTag::Name::TOTALDISCS );
+		}
+	}
+
 	// Trying to find common part of album tag
 	if ( bMerge )
 	{
-		AddTag( wxCueTag(
-						wxCueTag::TAG_AUTO_GENERATED,
-						wxCueTag::Name::TOTALDISCS,
-						wxString::Format( "%" wxSizeTFmtSpec "u", m_content.GetCount() ) ) );
+		if ( bIncludeDiscNumber )
+		{
+			const wxCueTag totalDiscsTag(
+				wxCueTag::TAG_AUTO_GENERATED,
+				wxCueTag::Name::TOTALDISCS,
+				wxString::Format( "%" wxSizeTFmtSpec "u", m_content.GetCount() ) );
+			AddTag( totalDiscsTag );
+		}
 
 		wxArrayCueTag albumTags;
-		size_t        nElements = 1;
+		size_t        nElements = 0;
 
-		for ( size_t i = 0; i < nTracks && nElements > 0; ++i )
+		for ( size_t i = 0; i < nTracks; ++i )
 		{
-			nElements = m_tracks[ i ].GetTags( wxCueTag::Name::ALBUM, albumTags );
+			nElements += m_tracks[ i ].GetTags( wxCueTag::Name::ALBUM, albumTags );
 		}
 
 		if ( nElements > 0 )
 		{
 			wxASSERT( albumTags.GetCount() >= 1 );
+
 			WX_DECLARE_STRING_HASH_MAP( unsigned long, wxHashMapStringToULong );
 			wxHashMapStringToULong albumNumbers;
 
 			bool     bFirst    = true;
 			bool     bIsCommon = true;
 			wxString sCommonAlbum;
-			wxRegEx  reDisc1( wxString::Format( ALBUM_REG_EX1, GetCdAliasesRegExp() ), wxRE_ADVANCED | wxRE_ICASE );
-			wxASSERT( reDisc1.IsValid() );
-			wxRegEx reDisc2( wxString::Format( ALBUM_REG_EX2, GetCdAliasesRegExp() ), wxRE_ADVANCED | wxRE_ICASE );
-			wxASSERT( reDisc2.IsValid() );
+			wxRegEx  reAlbum1( wxString::Format( ALBUM_REG_EX1, GetCdAliasesRegExp() ), wxRE_ICASE );
+			wxRegEx  reAlbum2( wxString::Format( ALBUM_REG_EX2, GetCdAliasesRegExp() ), wxRE_ICASE );
+
+			wxASSERT( reAlbum1.IsValid() );
+			wxASSERT( reAlbum2.IsValid() );
+
 			for ( size_t j = 0, nCount = albumTags.GetCount(); j < nCount && bIsCommon; ++j )
 			{
 				wxString sAlbum( albumTags[ j ].GetValue() );
 
-				if ( reDisc1.Matches( sAlbum ) )
+				if ( reAlbum1.Matches( sAlbum ) )
 				{
-					wxASSERT( reDisc1.GetMatchCount() > 5 );
-					wxString sLocalAlbum1( reDisc1.GetMatch( sAlbum, 1 ) );
-					wxString sDiscNumber( reDisc1.GetMatch( sAlbum, 4 ) );
-					wxString sLocalAlbum2( reDisc1.GetMatch( sAlbum, 5 ) );
+					wxASSERT( reAlbum1.GetMatchCount() > 5 );
+					wxString sLocalAlbum1( reAlbum1.GetMatch( sAlbum, 1 ) );
+					wxString sDiscNumber( reAlbum1.GetMatch( sAlbum, 4 ) );
+					wxString sLocalAlbum2( reAlbum1.GetMatch( sAlbum, 5 ) );
 
 					unsigned long u;
 
-					if ( sDiscNumber.ToULong( &u ) )
-					{
-						albumNumbers[ albumTags[ j ].GetValue() ] = u;
-					}
+					if ( sDiscNumber.ToULong( &u ) ) albumNumbers[ albumTags[ j ].GetValue() ] = u;
 
 					sAlbum = concatenate( sLocalAlbum1, sLocalAlbum2 );
 				}
-				else if ( reDisc2.Matches( sAlbum ) )
+				else if ( reAlbum2.Matches( sAlbum ) )
 				{
-					wxASSERT( reDisc1.GetMatchCount() > 5 );
-					wxString sLocalAlbum1( reDisc2.GetMatch( sAlbum, 1 ) );
-					wxString sDiscNumber( reDisc2.GetMatch( sAlbum, 4 ) );
-					wxString sLocalAlbum2( reDisc2.GetMatch( sAlbum, 5 ) );
+					wxASSERT( reAlbum1.GetMatchCount() > 5 );
+					wxString sLocalAlbum1( reAlbum2.GetMatch( sAlbum, 1 ) );
+					wxString sDiscNumber( reAlbum2.GetMatch( sAlbum, 4 ) );
+					wxString sLocalAlbum2( reAlbum2.GetMatch( sAlbum, 5 ) );
 
 					unsigned long u;
 
-					if ( sDiscNumber.ToULong( &u ) )
-					{
-						albumNumbers[ albumTags[ j ].GetValue() ] = u;
-					}
+					if ( sDiscNumber.ToULong( &u ) ) albumNumbers[ albumTags[ j ].GetValue() ] = u;
 
 					sAlbum = concatenate( sLocalAlbum1, sLocalAlbum2 );
 				}
@@ -928,16 +894,29 @@ void wxCueSheet::FindCommonTags( const wxTagSynonimsCollection& discSynonims, co
 			if ( bIsCommon )
 			{
 				wxLogInfo( _( "Album name: \u201C%s\u201D" ), sCommonAlbum );
-				AddCdTextInfoTag( wxCueTag( wxCueTag::TAG_AUTO_GENERATED, wxCueTag::Name::TITLE, sCommonAlbum ) );
+
+				const wxCueTag albumNameTag( wxCueTag::TAG_AUTO_GENERATED, wxCueTag::Name::TITLE, sCommonAlbum );
+				AddCdTextInfoTag( albumNameTag );
 
 				for ( wxHashMapStringToULong::const_iterator i = albumNumbers.begin(), iend = albumNumbers.end(); i != iend; ++i )
 				{
-					wxCueTag discNumberTag( wxCueTag::TAG_AUTO_GENERATED, wxCueTag::Name::DISCNUMBER, wxString::Format( "%u", i->second ) );
-					wxCueTag albumTag( wxCueTag::TAG_AUTO_GENERATED, wxCueTag::Name::ALBUM, i->first );
+					const wxCueTag albumTag( wxCueTag::TAG_AUTO_GENERATED, wxCueTag::Name::ALBUM, i->first );
 
-					for ( size_t j = 0; j < nTracks; ++j )
+					if ( bIncludeDiscNumber )
 					{
-						m_tracks[ j ].AddTagIfAndRemove( discNumberTag, albumTag );
+						const wxCueTag discNumberTag( wxCueTag::TAG_AUTO_GENERATED, wxCueTag::Name::DISCNUMBER, wxString::Format( "%u", i->second ) );
+
+						for (size_t j = 0; j < nTracks; ++j)
+						{
+							m_tracks[ j ].AddTagIfAndRemove( discNumberTag, albumTag );
+						}
+					}
+					else
+					{
+						for (size_t j = 0; j < nTracks; ++j)
+						{
+							m_tracks[ j ].RemoveTag( albumTag );
+						}
 					}
 				}
 			}

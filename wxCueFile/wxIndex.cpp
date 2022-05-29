@@ -2,7 +2,6 @@
  * wxIndex.cpp
  */
 
-#include "StdWx.h"
 #include <wxCueFile/wxIndex.h>
 
 // ===============================================================================
@@ -144,6 +143,7 @@ wxIndex& wxIndex::Assign( size_t number,
 {
 	m_number = number;
 	wxULongLong cdFrames( 0, minutes );
+
 	cdFrames      *= wxULL( 4500 );
 	cdFrames      += wxULL( 75 ) * seconds;
 	cdFrames      += frames;
@@ -165,16 +165,14 @@ wxString wxIndex::GetTimeStr( unsigned int hours, unsigned int minutes, double s
 void wxIndex::FixDecimalPoint( wxString& s )
 {
 #if wxUSE_INTL
-	wxString sep = wxLocale::GetInfo( wxLOCALE_DECIMAL_POINT, wxLOCALE_CAT_NUMBER );
-#else	// !wxUSE_INTL
-
+	const wxString sep = wxLocale::GetInfo( wxLOCALE_DECIMAL_POINT, wxLOCALE_CAT_NUMBER );
+#else   // !wxUSE_INTL
 	/*
-	 * As above, this is the most common alternative value. Notice that here it
-	 * doesn't matter if we guess wrongly and the current separator is already
+	 * As above, this is the most common alternative value. Notice that here it doesn't matter if we guess wrongly and the current separator is already
 	 * ".": we'll just waste a call to Replace() in this case.
 	 */
-	wxString sep( "," );
-#endif	// wxUSE_INTL/!wxUSE_INTL
+	const wxString sep( "," );
+#endif  // wxUSE_INTL/!wxUSE_INTL
 
 	s.Replace( sep, '.' );
 }
@@ -195,18 +193,9 @@ wxIndex& wxIndex::operator +=( wxULongLong frames )
 
 int wxIndex::CompareFn( wxIndex** i1, wxIndex** i2 )
 {
-	if ( ( *i1 )->GetNumber() < ( *i2 )->GetNumber() )
-	{
-		return -1;
-	}
-	else if ( ( *i1 )->GetNumber() > ( *i2 )->GetNumber() )
-	{
-		return 1;
-	}
-	else
-	{
-		return 0;
-	}
+	if ( ( *i1 )->GetNumber() < ( *i2 )->GetNumber() ) return -1;
+	else if ( ( *i1 )->GetNumber() > ( *i2 )->GetNumber() ) return 1;
+	else return 0;
 }
 
 #include <wx/arrimpl.cpp>	// this is a magic incantation which must be done!

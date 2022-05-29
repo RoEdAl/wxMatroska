@@ -2,7 +2,6 @@
  * wxSamplingInfo.cpp
  */
 
-#include "StdWx.h"
 #include <wxCueFile/wxSamplingInfo.h>
 #include <wxCueFile/wxIndex.h>
 
@@ -104,29 +103,22 @@ bool wxSamplingInfo::IsOK( bool bIgnoreBitsPerSample ) const
 
 bool wxSamplingInfo::Equals( const wxSamplingInfo& si, bool bIgnoreBitsPerSample ) const
 {
-	if ( !( IsOK( bIgnoreBitsPerSample ) || si.IsOK( bIgnoreBitsPerSample ) ) )
-	{
-		return true;
-	}
+	if ( !( IsOK( bIgnoreBitsPerSample ) || si.IsOK( bIgnoreBitsPerSample ) ) ) return true;
 	else if ( IsOK( bIgnoreBitsPerSample ) && si.IsOK( bIgnoreBitsPerSample ) )
-	{
 		return
 			( m_nSamplingRate == si.m_nSamplingRate ) &&
 			( m_nNumChannels == si.m_nNumChannels ) &&
 			( bIgnoreBitsPerSample ? true : ( m_nBitsPerSample == si.m_nBitsPerSample ) );
-	}
-	else
-	{
-		return false;
-	}
+	else return false;
 }
 
 wxULongLong wxSamplingInfo::GetNumberOfFramesFromBytes( const wxULongLong& bytes ) const
 {
 	wxASSERT( IsOK() );
-	wxULongLong bytesPerFrame( 0, m_nBitsPerSample* m_nNumChannels / 8 );
+	wxULongLong bytesPerFrame( 0, m_nBitsPerSample * m_nNumChannels / 8 );
 
 	wxULongLong frames( bytes );
+
 	frames /= bytesPerFrame;
 	return frames;
 }
@@ -135,16 +127,15 @@ wxTimeSpan wxSamplingInfo::GetDuration( wxULongLong frames )
 {
 	wxASSERT( IsOK( true ) );
 
-	if ( frames.GetValue() == wxInvalidNumberOfFrames )
-	{
-		return wxInvalidDuration;
-	}
+	if ( frames.GetValue() == wxInvalidNumberOfFrames ) return wxInvalidDuration;
 
 	// samples -> duration
 	// 441(00) = 10(00) ms
 	wxULongLong duration( frames );
+
 	duration *= wxULL( 1000 );
 	wxULongLong longSamplesRate( 0, m_nSamplingRate );
+
 	duration /= longSamplesRate;
 	return wxTimeSpan::Milliseconds( duration.GetValue() );
 }
@@ -155,6 +146,7 @@ void wxSamplingInfo::GetNumberOfCdFrames( wxULongLong frames, wxULongLong& cdFra
 	cdFrames *= wxULL( 75 );
 	wxULongLong samplingRate( 0, m_nSamplingRate );
 	wxULongLong urest( cdFrames % samplingRate );
+
 	cdFrames /= samplingRate;
 	rest      = urest.GetLo();
 }
@@ -181,12 +173,14 @@ wxString wxSamplingInfo::GetSamplesStr( wxULongLong frames ) const
 
 	// seconds
 	wxULongLong ss( s % 60 );
+
 	s    -= ss;
 	s    /= wxULL( 60 );
 	rest += ss.ToDouble();
 
 	// minutes
 	wxULongLong mm( s % 60 );
+
 	s -= mm;
 	s /= wxULL( 60 );
 
@@ -204,6 +198,7 @@ wxString wxSamplingInfo::GetCdFramesStr( wxULongLong frames ) const
 	cdFrames -= nf;
 	cdFrames /= wxULL( 75 );
 	wxULongLong ns = cdFrames % wxULL( 60 );
+
 	cdFrames -= ns;
 	cdFrames /= wxULL( 60 );
 
@@ -226,28 +221,16 @@ wxULongLong wxSamplingInfo::GetFramesFromCdFrames( wxULongLong cdFrames ) const
 
 wxULongLong wxSamplingInfo::GetIndexOffset( const wxIndex& idx ) const
 {
-	if ( idx.HasCdFrames() )
-	{
-		return GetFramesFromCdFrames( idx.GetOffset() );
-	}
-	else
-	{
-		return idx.GetOffset();
-	}
+	if ( idx.HasCdFrames() ) return GetFramesFromCdFrames( idx.GetOffset() );
+	else return idx.GetOffset();
 }
 
 wxIndex wxSamplingInfo::ConvertIndex( const wxIndex& idx ) const
 {
 	wxIndex res;
 
-	if ( idx.HasCdFrames() )
-	{
-		res.SetNumber( idx.GetNumber() ).SetOffset( GetFramesFromCdFrames( idx.GetOffset() ) );
-	}
-	else
-	{
-		res = idx;
-	}
+	if ( idx.HasCdFrames() ) res.SetNumber( idx.GetNumber() ).SetOffset( GetFramesFromCdFrames( idx.GetOffset() ) );
+	else res = idx;
 
 	return res;
 }
@@ -256,23 +239,11 @@ wxIndex wxSamplingInfo::ConvertIndex( const wxIndex& idx, wxULongLong offset, bo
 {
 	wxIndex res;
 
-	if ( idx.HasCdFrames() )
-	{
-		res.SetNumber( idx.GetNumber() ).SetOffset( GetFramesFromCdFrames( idx.GetOffset() ) ).SetDataFileIdx( idx.GetDataFileIdx() );
-	}
-	else
-	{
-		res = idx;
-	}
+	if ( idx.HasCdFrames() ) res.SetNumber( idx.GetNumber() ).SetOffset( GetFramesFromCdFrames( idx.GetOffset() ) ).SetDataFileIdx( idx.GetDataFileIdx() );
+	else res = idx;
 
-	if ( bAdd )
-	{
-		res += offset;
-	}
-	else
-	{
-		res -= offset;
-	}
+	if ( bAdd ) res += offset;
+	else res -= offset;
 
 	return res;
 }

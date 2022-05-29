@@ -2,7 +2,6 @@
  * wxCueSheetRenderer.cpp
  */
 
-#include "StdWx.h"
 #include <wxCueFile/wxSamplingInfo.h>
 #include <wxCueFile/wxIndex.h>
 #include <wxCueFile/wxTrack.h>
@@ -25,20 +24,11 @@ bool wxCueSheetRenderer::Render( const wxCueSheet& cueSheet )
 
 bool wxCueSheetRenderer::RenderDisc( const wxCueSheet& cueSheet )
 {
-	if ( !OnPreRenderDisc( cueSheet ) )
-	{
-		return false;
-	}
+	if ( !OnPreRenderDisc( cueSheet ) ) return false;
 
-	if ( !OnRenderDisc( cueSheet ) )
-	{
-		return false;
-	}
+	if ( !OnRenderDisc( cueSheet ) ) return false;
 
-	if ( !OnPostRenderDisc( cueSheet ) )
-	{
-		return false;
-	}
+	if ( !OnPostRenderDisc( cueSheet ) ) return false;
 
 	return true;
 }
@@ -50,10 +40,7 @@ bool wxCueSheetRenderer::OnPreRenderDisc( const wxCueSheet& WXUNUSED( cueSheet )
 
 bool wxCueSheetRenderer::OnRenderDisc( const wxCueSheet& cueSheet )
 {
-	if ( !RenderTracks( cueSheet, cueSheet.GetTracks() ) )
-	{
-		return false;
-	}
+	if ( !RenderTracks( cueSheet, cueSheet.GetTracks() ) ) return false;
 
 	return true;
 }
@@ -65,20 +52,11 @@ bool wxCueSheetRenderer::OnPostRenderDisc( const wxCueSheet& WXUNUSED( cueSheet 
 
 bool wxCueSheetRenderer::RenderTracks( const wxCueSheet& cueSheet, const wxArrayTrack& tracks )
 {
-	if ( !OnPreRenderTracks( cueSheet, tracks ) )
-	{
-		return false;
-	}
+	if ( !OnPreRenderTracks( cueSheet, tracks ) ) return false;
 
-	if ( !OnRenderTracks( cueSheet, tracks ) )
-	{
-		return false;
-	}
+	if ( !OnRenderTracks( cueSheet, tracks ) ) return false;
 
-	if ( !OnPostRenderTracks( cueSheet, tracks ) )
-	{
-		return false;
-	}
+	if ( !OnPostRenderTracks( cueSheet, tracks ) ) return false;
 
 	return true;
 }
@@ -92,10 +70,7 @@ bool wxCueSheetRenderer::OnRenderTracks( const wxCueSheet& cueSheet, const wxArr
 {
 	for ( size_t i = 0, nCount = tracks.GetCount(); i < nCount; ++i )
 	{
-		if ( !RenderTrack( cueSheet, tracks[ i ] ) )
-		{
-			return false;
-		}
+		if ( !RenderTrack( cueSheet, tracks[ i ] ) ) return false;
 	}
 
 	return true;
@@ -108,20 +83,11 @@ bool wxCueSheetRenderer::OnPostRenderTracks( const wxCueSheet& WXUNUSED( cueShee
 
 bool wxCueSheetRenderer::RenderTrack( const wxCueSheet& cueSheet, const wxTrack& track )
 {
-	if ( !OnPreRenderTrack( cueSheet, track ) )
-	{
-		return false;
-	}
+	if ( !OnPreRenderTrack( cueSheet, track ) ) return false;
 
-	if ( !OnRenderTrack( cueSheet, track ) )
-	{
-		return false;
-	}
+	if ( !OnRenderTrack( cueSheet, track ) ) return false;
 
-	if ( !OnPostRenderTrack( cueSheet, track ) )
-	{
-		return false;
-	}
+	if ( !OnPostRenderTrack( cueSheet, track ) ) return false;
 
 	return true;
 }
@@ -133,10 +99,7 @@ bool wxCueSheetRenderer::OnPreRenderTrack( const wxCueSheet& WXUNUSED( cueSheet 
 
 bool wxCueSheetRenderer::OnRenderTrack( const wxCueSheet& cueSheet, const wxTrack& track )
 {
-	if ( !RenderIndexes( cueSheet, track, track.GetIndexes() ) )
-	{
-		return false;
-	}
+	if ( !RenderIndexes( cueSheet, track, track.GetIndexes() ) ) return false;
 
 	return true;
 }
@@ -148,20 +111,11 @@ bool wxCueSheetRenderer::OnPostRenderTrack( const wxCueSheet& WXUNUSED( cueSheet
 
 bool wxCueSheetRenderer::RenderIndexes( const wxCueSheet& cueSheet, const wxTrack& track, const wxArrayIndex& indexes )
 {
-	if ( !OnPreRenderIndexes( cueSheet, track, indexes ) )
-	{
-		return false;
-	}
+	if ( !OnPreRenderIndexes( cueSheet, track, indexes ) ) return false;
 
-	if ( !OnRenderIndexes( cueSheet, track, indexes ) )
-	{
-		return false;
-	}
+	if ( !OnRenderIndexes( cueSheet, track, indexes ) ) return false;
 
-	if ( !OnPostRenderIndexes( cueSheet, track, indexes ) )
-	{
-		return false;
-	}
+	if ( !OnPostRenderIndexes( cueSheet, track, indexes ) ) return false;
 
 	return true;
 }
@@ -174,28 +128,15 @@ bool wxCueSheetRenderer::OnPreRenderIndexes( const wxCueSheet& WXUNUSED( cueShee
 bool wxCueSheetRenderer::OnRenderIndexes( const wxCueSheet& cueSheet, const wxTrack& track, const wxArrayIndex& indexes )
 {
 	if ( track.HasPreGap() )
-	{
-		if ( !RenderPreGap( cueSheet, track, track.GetPreGap() ) )
-		{
-			return false;
-		}
-	}
+		if ( !RenderPreGap( cueSheet, track, track.GetPreGap() ) ) return false;
 
 	for ( size_t i = 0, nCount = indexes.GetCount(); i < nCount; ++i )
 	{
-		if ( !RenderIndex( cueSheet, track, indexes[ i ] ) )
-		{
-			return false;
-		}
+		if ( !RenderIndex( cueSheet, track, indexes[ i ] ) ) return false;
 	}
 
 	if ( track.HasPostGap() )
-	{
-		if ( !RenderPostGap( cueSheet, track, track.GetPostGap() ) )
-		{
-			return false;
-		}
-	}
+		if ( !RenderPostGap( cueSheet, track, track.GetPostGap() ) ) return false;
 
 	return true;
 }
@@ -207,20 +148,11 @@ bool wxCueSheetRenderer::OnPostRenderIndexes( const wxCueSheet& WXUNUSED( cueShe
 
 bool wxCueSheetRenderer::RenderIndex( const wxCueSheet& cueSheet, const wxTrack& track, const wxIndex& index )
 {
-	if ( !OnPreRenderIndex( cueSheet, track, index ) )
-	{
-		return false;
-	}
+	if ( !OnPreRenderIndex( cueSheet, track, index ) ) return false;
 
-	if ( !OnRenderIndex( cueSheet, track, index ) )
-	{
-		return false;
-	}
+	if ( !OnRenderIndex( cueSheet, track, index ) ) return false;
 
-	if ( !OnPostRenderIndex( cueSheet, track, index ) )
-	{
-		return false;
-	}
+	if ( !OnPostRenderIndex( cueSheet, track, index ) ) return false;
 
 	return true;
 }
@@ -242,20 +174,11 @@ bool wxCueSheetRenderer::OnPostRenderIndex( const wxCueSheet& WXUNUSED( cueSheet
 
 bool wxCueSheetRenderer::RenderPreGap( const wxCueSheet& cueSheet, const wxTrack& track, const wxIndex& preGap )
 {
-	if ( !OnPreRenderPreGap( cueSheet, track, preGap ) )
-	{
-		return false;
-	}
+	if ( !OnPreRenderPreGap( cueSheet, track, preGap ) ) return false;
 
-	if ( !OnRenderPreGap( cueSheet, track, preGap ) )
-	{
-		return false;
-	}
+	if ( !OnRenderPreGap( cueSheet, track, preGap ) ) return false;
 
-	if ( !OnPostRenderPreGap( cueSheet, track, preGap ) )
-	{
-		return false;
-	}
+	if ( !OnPostRenderPreGap( cueSheet, track, preGap ) ) return false;
 
 	return true;
 }
@@ -277,20 +200,11 @@ bool wxCueSheetRenderer::OnPostRenderPreGap( const wxCueSheet& WXUNUSED( cueShee
 
 bool wxCueSheetRenderer::RenderPostGap( const wxCueSheet& cueSheet, const wxTrack& track, const wxIndex& postGap )
 {
-	if ( !OnPreRenderPostGap( cueSheet, track, postGap ) )
-	{
-		return false;
-	}
+	if ( !OnPreRenderPostGap( cueSheet, track, postGap ) ) return false;
 
-	if ( !OnRenderPostGap( cueSheet, track, postGap ) )
-	{
-		return false;
-	}
+	if ( !OnRenderPostGap( cueSheet, track, postGap ) ) return false;
 
-	if ( !OnPostRenderPostGap( cueSheet, track, postGap ) )
-	{
-		return false;
-	}
+	if ( !OnPostRenderPostGap( cueSheet, track, postGap ) ) return false;
 
 	return true;
 }

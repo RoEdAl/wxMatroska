@@ -1,7 +1,6 @@
 /*
  *      MyAppTraits.cpp
  */
-#include "StdWx.h"
 #include <wxConsoleApp/MyMessageOutputStderr.h>
 #include <wxConsoleApp/MyLogStderr.h>
 #include <wxConsoleApp/MyAppTraits.h>
@@ -10,26 +9,14 @@
 
 MyMessageOutputStderr::MyMessageOutputStderr( FILE* fp )
 {
-	if ( fp == NULL )
-	{
-		m_fp = stderr;
-	}
-	else
-	{
-		m_fp = fp;
-	}
+	if ( fp == NULL ) m_fp = stderr;
+	else m_fp = fp;
 }
 
 void MyMessageOutputStderr::Output( const wxString& str )
 {
-	if ( AppendLineFeedIfNeeded( str ) )
-	{
-		wxFputs( str + '\n', m_fp );
-	}
-	else
-	{
-		wxFputs( str, m_fp );
-	}
+	if ( AppendLineFeedIfNeeded( str ) ) wxFputs( str + '\n', m_fp );
+	else wxFputs( str, m_fp );
 	fflush( m_fp );
 }
 
@@ -37,14 +24,8 @@ void MyMessageOutputStderr::Output( const wxString& str )
 
 MyLogStderr::MyLogStderr( FILE* fp )
 {
-	if ( fp == NULL )
-	{
-		m_fp = stderr;
-	}
-	else
-	{
-		m_fp = fp;
-	}
+	if ( fp == NULL ) m_fp = stderr;
+	else m_fp = fp;
 
 	// under GUI systems such as Windows or Mac, programs usually don't have
 	// stderr at all, so show the messages also somewhere else, typically in
@@ -54,10 +35,7 @@ MyLogStderr::MyLogStderr( FILE* fp )
 	{
 		wxAppTraits* traits = wxTheApp ? wxTheApp->GetTraits() : NULL;
 
-		if ( traits && !traits->HasStderr() )
-		{
-			m_pAdditionalMessageOutput.reset( new wxMessageOutputDebug() );
-		}
+		if ( traits && !traits->HasStderr() ) m_pAdditionalMessageOutput.reset( new wxMessageOutputDebug() );
 	}
 }
 
@@ -66,10 +44,7 @@ void MyLogStderr::DoLogText( const wxString& msg )
 	wxFputs( msg + '\n', m_fp );
 	fflush( m_fp );
 
-	if ( m_pAdditionalMessageOutput )
-	{
-		m_pAdditionalMessageOutput->Output( msg + wxS( '\n' ) );
-	}
+	if ( m_pAdditionalMessageOutput ) m_pAdditionalMessageOutput->Output( msg + wxS( '\n' ) );
 }
 
 // =======================================================================
@@ -124,7 +99,7 @@ WXDWORD MyAppTraits::WaitForThread( WXHANDLE handle, int flags )
 	return m_pAppTraits->WaitForThread( handle, flags );
 }
 
-#endif	// wxUSE_THREADS
+#endif  // wxUSE_THREADS
 
 bool MyAppTraits::CanUseStderr()
 {
@@ -140,6 +115,13 @@ bool MyAppTraits::WriteToStderr( const wxString& s )
 	return m_pAppTraits->WriteToStderr( s );
 }
 
+WXHWND MyAppTraits::GetMainHWND() const
+{
+	wxASSERT( m_pAppTraits );
+
+	return m_pAppTraits->GetMainHWND();
+}
+
 #if !wxUSE_CONSOLE_EVENTLOOP
 wxEventLoopBase* MyAppTraits::CreateEventLoop()
 {
@@ -148,25 +130,25 @@ wxEventLoopBase* MyAppTraits::CreateEventLoop()
 	return m_pAppTraits->CreateEventLoop();
 }
 
-#endif	// !wxUSE_CONSOLE_EVENTLOOP
+#endif  // !wxUSE_CONSOLE_EVENTLOOP
 
 #if wxUSE_LOG
 wxLog* MyAppTraits::CreateLogTarget()
 {
 	wxASSERT( m_pAppTraits );
 
-	return new MyLogStderr();
+	return new MyLogStderr( stdout );
 
 	// return m_pAppTraits->CreateLogTarget();
 }
 
-#endif	// wxUSE_LOG
+#endif  // wxUSE_LOG
 
 wxMessageOutput* MyAppTraits::CreateMessageOutput()
 {
 	wxASSERT( m_pAppTraits );
 
-	return new MyMessageOutputStderr();
+	return new MyMessageOutputStderr( stdout );
 
 	// return m_pAppTraits->CreateMessageOutput();
 }
@@ -179,7 +161,7 @@ wxFontMapper* MyAppTraits::CreateFontMapper()
 	return m_pAppTraits->CreateFontMapper();
 }
 
-#endif	// wxUSE_FONTMAP
+#endif  // wxUSE_FONTMAP
 
 wxRendererNative* MyAppTraits::CreateRenderer()
 {
@@ -221,5 +203,12 @@ wxString MyAppTraits::GetDesktopEnvironment() const
 	wxASSERT( m_pAppTraits );
 
 	return m_pAppTraits->GetDesktopEnvironment();
+}
+
+wxString MyAppTraits::GetStandardCmdLineOptions( wxArrayString& names, wxArrayString& desc ) const
+{
+	wxASSERT( m_pAppTraits );
+
+	return m_pAppTraits->GetStandardCmdLineOptions( names, desc );
 }
 

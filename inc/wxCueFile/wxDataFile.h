@@ -103,5 +103,5 @@ class wxDataFile:
 		static wxString GetFileTypeRegExp();
 };
 
-#endif	// _WX_DATA_FILE_H_
+#endif  // _WX_DATA_FILE_H_
 

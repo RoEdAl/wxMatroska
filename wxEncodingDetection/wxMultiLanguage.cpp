@@ -2,14 +2,13 @@
  * wxMultiLanguage.cpp
  */
 
-#include "StdWx.h"
 #include "wxMultiLanguage.h"
 
 // ===============================================================================
 
 wxMultiLanguage::wxMultiLanguage( void )
 {
-	m_pMLang = (IMultiLanguage2*)NULL;
+	m_pMLang = nullptr;
 
 	HRESULT hRes = CoCreateInstance(
 			CLSID_CMultiLanguage,
@@ -22,17 +21,14 @@ wxMultiLanguage::wxMultiLanguage( void )
 	if ( hRes != S_OK )
 	{
 		wxLogError( _( "Fail to get CMultiLanguage object; error 0x%08x" ), hRes );
-		m_pMLang = (IMultiLanguage2*)NULL;
+		m_pMLang = nullptr;
 	}
 }
 
 wxMultiLanguage::wxMultiLanguage( const wxMultiLanguage& ml ) :
 	m_pMLang( ml.m_pMLang )
 {
-	if ( IsValid() )
-	{
-		m_pMLang->AddRef();
-	}
+	if ( IsValid() ) m_pMLang->AddRef();
 }
 
 wxMultiLanguage::~wxMultiLanguage( void )
@@ -42,7 +38,7 @@ wxMultiLanguage::~wxMultiLanguage( void )
 
 bool wxMultiLanguage::IsValid() const
 {
-	return ( m_pMLang != (IMultiLanguage2*)NULL );
+	return ( m_pMLang != nullptr );
 }
 
 void wxMultiLanguage::Close()
@@ -50,7 +46,7 @@ void wxMultiLanguage::Close()
 	if ( IsValid() )
 	{
 		m_pMLang->Release();
-		m_pMLang = (IMultiLanguage2*)NULL;
+		m_pMLang = nullptr;
 	}
 }
 
@@ -83,10 +79,7 @@ HRESULT wxMultiLanguage::DetectCodepageInStream(
 	IStream* pStream;
 	HRESULT  hRes = SHCreateStreamOnFile( fn.GetFullPath().t_str(), STGM_READ, &pStream );
 
-	if ( hRes != S_OK )
-	{
-		return hRes;
-	}
+	if ( hRes != S_OK ) return hRes;
 
 	hRes = m_pMLang->DetectCodepageInIStream(
 			dwFlag,
@@ -106,10 +99,7 @@ HRESULT wxMultiLanguage::GetCodePageDescription( UINT nCodePage, wxString& sDesc
 	LANGID     langid = LANG_USER_DEFAULT;
 	HRESULT    hRes   = m_pMLang->GetCodePageInfo( nCodePage, langid, &cpinfo );
 
-	if ( hRes == S_OK )
-	{
-		sDescription = cpinfo.wszDescription;
-	}
+	if ( hRes == S_OK ) sDescription = cpinfo.wszDescription;
 
 	return hRes;
 }

@@ -2,7 +2,6 @@
  * wxApp.cpp
  */
 
-#include "StdWx.h"
 #include <app_config.h>
 #include <wxCueFile/wxTagSynonims.h>
 #include <wxCueFile/wxSamplingInfo.h>
@@ -35,9 +34,11 @@ void wxMyApp::InfoVersion( wxMessageOutput& out )
 	out.Printf( _( "Application version: %s" ), APP_VERSION );
 	out.Printf( _( "Author: %s" ), APP_AUTHOR );
 	out.Output( _( "License: Simplified BSD License - http://www.opensource.org/licenses/bsd-license.php" ) );
-	out.Printf( _( "wxWidgets version: %d.%d.%d. Copyright \u00A9 1992-2008 Julian Smart, Robert Roebling, Vadim Zeitlin and other members of the wxWidgets team" ), wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER );
+	out.Output( wxVERSION_STRING );
 	out.Output( wxCueSheetReader::GetTagLibVersion() );
 	out.Printf( _( "Operating system: %s" ), wxPlatformInfo::Get().GetOperatingSystemDescription() );
+	out.Printf( _( "Compiler: %s %s" ), INFO_CXX_COMPILER_ID, INFO_CXX_COMPILER_VERSION );
+	out.Printf( _( "Compiled on: %s %s (%s)" ), INFO_HOST_SYSTEM_NAME, INFO_HOST_SYSTEM_VERSION, INFO_HOST_SYSTEM_PROCESSOR );
 }
 
 void wxMyApp::InfoUsage( wxMessageOutput& out )
@@ -119,18 +120,15 @@ void wxMyApp::OnInitCmdLine( wxCmdLineParser& cmdline )
 
 bool wxMyApp::OnCmdLineParsed( wxCmdLineParser& cmdline )
 {
-	if ( !MyAppConsole::OnCmdLineParsed( cmdline ) )
-	{
-		return false;
-	}
+	if ( !MyAppConsole::OnCmdLineParsed( cmdline ) ) return false;
 
-	if ( !m_cfg.Read( cmdline ) )
-	{
-		return false;
-	}
+	m_cfg.ReadLanguagesStrings();
+
+	if ( !m_cfg.Read( cmdline ) ) return false;
 
 	wxLogInfo( _( "%s ver. %s" ), GetAppDisplayName(), APP_VERSION );
 	m_cfg.Dump();
+
 	return true;
 }
 
@@ -139,19 +137,14 @@ bool wxMyApp::OnInit()
 	SetAppName( APP_NAME );
 
 	wxDateTime dt( wxDateTime::Now() );
+
 	srand( dt.GetTicks() );
 
-	if ( !MyAppConsole::OnInit() )
-	{
-		return false;
-	}
+	if ( !MyAppConsole::OnInit() ) return false;
 
 	wxInitAllImageHandlers();
 
-	if ( !m_cfg.InitJpegHandler() )
-	{
-		wxLogWarning( _( "Unable to initialize JPEG image handler." ) );
-	}
+	if ( !m_cfg.InitJpegHandler() ) wxLogWarning( _( "Unable to initialize JPEG image handler." ) );
 
 	return true;
 }
@@ -167,11 +160,12 @@ int wxMyApp::AppendCueSheet( wxCueSheet& cueSheet )
 	}
 
 	wxCueSheet& mergedCueSheet = GetMergedCueSheet();
+
 	mergedCueSheet.Append( cueSheet );
 	return 0;
 }
 
-int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, wxCueSheet& cueSheet )
+int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, const wxCueSheet& cueSheet )
 {
 	if ( cueSheet.GetDataFilesCount() > 1u )
 	{
@@ -185,7 +179,8 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, wxCueSheet& cueSheet
 
 	if ( m_cfg.GetUseDataFiles() )
 	{
-		if ( !( cueSheet.HasDuration() || cueSheet.CalculateDuration( m_cfg.GetAlternateExtensions() ) ) )
+		// if ( !( cueSheet.HasDuration() || cueSheet.CalculateDuration( m_cfg.GetAlternateExtensions() ) ) )
+		if (!cueSheet.HasDuration())
 		{
 			wxLogError( _( "Fail to calculate duration of cue sheet" ) );
 			return 1;
@@ -209,10 +204,8 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, wxCueSheet& cueSheet
 			wxSharedPtr< wxTextOutputStream > pTos( m_cfg.GetOutputTextStream( fos ) );
 			wxTextCueSheetRenderer            renderer( pTos.get() );
 
-			if ( !renderer.Render( cueSheet ) )
-			{
-				return 1;
-			}
+			if ( !renderer.Render( cueSheet ) ) return 1;
+
 			break;
 		}
 
@@ -229,27 +222,16 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, wxCueSheet& cueSheet
 					optsRenderer.RenderDisc( inputFile, cueSheet );
 				}
 
-				if ( !pXmlRenderer->SaveXmlDoc() )
-				{
-					return 1;
-				}
+				if ( !pXmlRenderer->SaveXmlDoc() ) return 1;
 
 				if ( m_cfg.GenerateMkvmergeOpts() )
 				{
 					wxMkvmergeOptsRenderer& optsRenderer = GetMkvmergeOptsRenderer( false );
 
-					if ( !optsRenderer.Save() )
-					{
-						return 1;
-					}
+					if ( !optsRenderer.Save() ) return 1;
 
 					if ( m_cfg.RunMkvmerge() )
-					{
-						if ( !RunMkvmerge( optsRenderer.GetMkvmergeOptsFile() ) )
-						{
-							return 1;
-						}
-					}
+						if ( !RunMkvmerge( optsRenderer.GetMkvmergeOptsFile() ) ) return 1;
 				}
 			}
 			else
@@ -269,10 +251,7 @@ int wxMyApp::ConvertCueSheet( const wxInputFile& inputFile, wxCueSheet& cueSheet
 
 			wxLogInfo( _( "Saving cue points to \u201C%s\u201D" ), outputFile.GetFullName() );
 
-			if ( !renderer.Save( outputFile ) )
-			{
-				return 1;
-			}
+			if ( !renderer.Save( outputFile ) ) return 1;
 
 			break;
 		}
@@ -316,17 +295,14 @@ int wxMyApp::ProcessCueFile( const wxInputFile& inputFile, const wxTagSynonimsCo
 	}
 	else
 	{
-		cueSheet.FindCommonTags( discSynonims, trackSynonims, false );
+		cueSheet.SanitizeTags( discSynonims, trackSynonims, false, m_cfg.IncludeDiscNumberTag() );
 		return ConvertCueSheet( inputFile, cueSheet );
 	}
 }
 
 int wxMyApp::OnRun()
 {
-	if ( ShowInfo() )
-	{
-		return 0;
-	}
+	if ( ShowInfo() ) return 0;
 
 	wxInputFile firstInputFile;
 	bool        bFirst = true;
@@ -349,14 +325,8 @@ int wxMyApp::OnRun()
 			wxLogMessage( _( "Directory \u201C%s\u201D doesn't exists" ), fn.GetPath() );
 			res = 1;
 
-			if ( m_cfg.AbortOnError() )
-			{
-				break;
-			}
-			else
-			{
-				continue;
-			}
+			if ( m_cfg.AbortOnError() ) break;
+			else continue;
 		}
 
 		wxDir dir( fn.GetPath() );
@@ -366,14 +336,8 @@ int wxMyApp::OnRun()
 			wxLogError( _( "Cannot open directory \u201C%s\u201D" ), fn.GetPath() );
 			res = 1;
 
-			if ( m_cfg.AbortOnError() )
-			{
-				break;
-			}
-			else
-			{
-				continue;
-			}
+			if ( m_cfg.AbortOnError() ) break;
+			else continue;
 		}
 
 		wxString sFileSpec( fn.GetFullName() );
@@ -395,15 +359,9 @@ int wxMyApp::OnRun()
 
 				res = ProcessCueFile( singleFile, discSynonims, trackSynonims );
 
-				if ( ( res != 0 ) && ( m_cfg.AbortOnError() || m_cfg.MergeMode() ) )
-				{
-					break;
-				}
+				if ( ( res != 0 ) && ( m_cfg.AbortOnError() || m_cfg.MergeMode() ) ) break;
 
-				if ( !dir.GetNext( &sInputFile ) )
-				{
-					break;
-				}
+				if ( !dir.GetNext( &sInputFile ) ) break;
 			}
 		}
 	}
@@ -411,7 +369,7 @@ int wxMyApp::OnRun()
 	if ( m_cfg.MergeMode() && ( res == 0 ) )
 	{
 		wxASSERT( !bFirst );
-		GetMergedCueSheet().FindCommonTags( discSynonims, trackSynonims, true );
+		GetMergedCueSheet().SanitizeTags( discSynonims, trackSynonims, true, m_cfg.IncludeDiscNumberTag() );
 		res = ConvertCueSheet( firstInputFile, GetMergedCueSheet() );
 	}
 
@@ -430,6 +388,7 @@ int wxMyApp::OnExit()
 wxSharedPtr< wxXmlCueSheetRenderer > wxMyApp::GetXmlRenderer( const wxInputFile& inputFile )
 {
 	wxSharedPtr< wxXmlCueSheetRenderer > pRes( wxXmlCueSheetRenderer::CreateObject( m_cfg, inputFile ) );
+
 	return pRes;
 }
 
@@ -439,21 +398,12 @@ wxMkvmergeOptsRenderer& wxMyApp::GetMkvmergeOptsRenderer( bool bCreate )
 
 	if ( m_cfg.MergeMode() )
 	{
-		if ( !HasMkvmergeOptsRenderer() )
-		{
-			m_pMkvmergeOptsRenderer.reset( new wxMkvmergeOptsRenderer( m_cfg ) );
-		}
+		if ( !HasMkvmergeOptsRenderer() ) m_pMkvmergeOptsRenderer.reset( new wxMkvmergeOptsRenderer( m_cfg ) );
 	}
 	else
 	{
-		if ( bCreate )
-		{
-			m_pMkvmergeOptsRenderer.reset( new wxMkvmergeOptsRenderer( m_cfg ) );
-		}
-		else
-		{
-			wxASSERT( HasMkvmergeOptsRenderer() );
-		}
+		if ( bCreate ) m_pMkvmergeOptsRenderer.reset( new wxMkvmergeOptsRenderer( m_cfg ) );
+		else wxASSERT( HasMkvmergeOptsRenderer() );
 	}
 
 	return *m_pMkvmergeOptsRenderer;
@@ -488,24 +438,33 @@ bool wxMyApp::RunMkvmerge( const wxFileName& optionsFile )
 
 	wxString sCmdLine;
 	wxString sOptionsFile;
+	wxString sMkvMerge( "mkvmerge" );
 
-	if ( m_cfg.UseFullPaths() )
-	{
-		sOptionsFile = optionsFile.GetFullPath();
-	}
-	else
-	{
-		sOptionsFile = optionsFile.GetFullName();
-	}
+#ifdef __WINDOWS__
+	wxString sProgramFiles;
 
-	if ( wxLog::GetVerbose() )
+	if ( wxGetEnv( "ProgramFiles", &sProgramFiles ) || wxGetEnv( "ProgramFiles(x86)", &sProgramFiles ) )
 	{
-		sCmdLine.Printf( "mkvmerge --output-charset utf-8 \"@%s\"", sOptionsFile );
+		wxFileName fname;
+		fname.AssignDir( sProgramFiles );
+		fname.AppendDir( "MKVToolNix" );
+		fname.SetName( sMkvMerge );
+		fname.SetExt( "exe" );
+
+		if ( fname.IsFileExecutable() )
+		{
+			sMkvMerge = fname.GetFullPath();
+			wxLogDebug( _( "mkvmerge full path: %s" ), sMkvMerge );
+			sMkvMerge.Prepend( '"' ).Append( '"' );
+		}
 	}
-	else
-	{
-		sCmdLine.Printf( "mkvmerge --quiet --output-charset utf-8 \"@%s\"", sOptionsFile );
-	}
+#endif
+
+	if ( m_cfg.UseFullPaths() ) sOptionsFile = optionsFile.GetFullPath();
+	else sOptionsFile = optionsFile.GetFullName();
+
+	if ( wxLog::GetVerbose() ) sCmdLine.Printf( "%s --ui-language en --output-charset utf-8 \"@%s\"", sMkvMerge, sOptionsFile );
+	else sCmdLine.Printf( "%s --quiet --ui-language en --output-charset utf-8 \"@%s\"", sMkvMerge, sOptionsFile );
 
 	wxLogMessage( sCmdLine );
 	long nRes = 0;
@@ -519,7 +478,7 @@ bool wxMyApp::RunMkvmerge( const wxFileName& optionsFile )
 		wxExecuteEnv env;
 		env.cwd = optionsFile.GetPath();
 
-		nRes = wxExecute( sCmdLine, wxEXEC_SYNC | wxEXEC_NOEVENTS, (wxProcess*)NULL, &env );
+		nRes = wxExecute( sCmdLine, wxEXEC_SYNC | wxEXEC_NOEVENTS, nullptr, &env );
 	}
 
 	if ( nRes == -1 )
@@ -531,12 +490,12 @@ bool wxMyApp::RunMkvmerge( const wxFileName& optionsFile )
 	{
 		if ( nRes <= 1 )
 		{
-			wxLogInfo( _( "mkvmerge exit code: %d" ), nRes );
+			wxLogInfo( _( "mkvmerge exit code: %ld (%08lX)" ), nRes, nRes );
 			return true;
 		}
 		else
 		{
-			wxLogError( _( "mkvmerge exit code: %d" ), nRes );
+			wxLogError( _( "mkvmerge exit code: %ld (%08lX)" ), nRes, nRes );
 			return false;
 		}
 	}

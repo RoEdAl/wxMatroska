@@ -99,7 +99,7 @@ class wxCueSheet:
 
 		bool GetRelatedTracks( size_t, size_t&, size_t& ) const;
 
-		void FindCommonTags( const wxTagSynonimsCollection&, const wxTagSynonimsCollection&, bool );
+		void SanitizeTags( const wxTagSynonimsCollection&, const wxTagSynonimsCollection&, bool, bool );
 
 		wxCueSheet& AddCatalog( const wxString& );
 		wxCueSheet& AddCdTextFile( const wxFileName& );
@@ -139,5 +139,5 @@ class wxCueSheet:
 		wxString FormatTrack( wxCueTag::TagSources, size_t, const wxString& ) const;
 };
 
-#endif	// _WX_CUE_SHEET_H_
+#endif  // _WX_CUE_SHEET_H_
 

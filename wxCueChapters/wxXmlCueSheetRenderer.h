@@ -25,6 +25,10 @@ class wxConfiguration;
 #include <wxCueFile/wxSamplingInfo.h>
 #endif
 
+#ifndef _WX_STRING_PROCESSOR_H_
+class wxStringProcessor;
+#endif
+
 class wxXmlCueSheetRenderer:
 	public wxCueSheetRenderer
 {
@@ -54,9 +58,12 @@ class wxXmlCueSheetRenderer:
 		wxXmlNode* m_pTags;
 
 		const wxConfiguration* m_pCfg;
+		wxScopedPtr<wxStringProcessor> m_pStringProcessor;
+
 		wxInputFile m_inputFile;
 		wxFileName m_outputFile;
 		wxFileName m_tagsFile;
+		wxRegEx m_nonAlphaRegEx;
 
 		wxTagSynonimsCollection m_discCdTextSynonims;
 		wxTagSynonimsCollection m_discSynonims;
@@ -66,6 +73,8 @@ class wxXmlCueSheetRenderer:
 		wxArrayCueTag m_artistTags;
 
 	public:
+
+		static const char NON_ALPHA_REG_EX[];
 
 		struct Tag
 		{
@@ -116,7 +125,7 @@ class wxXmlCueSheetRenderer:
 		wxXmlNode* AddDiscTags( const wxCueSheet&, wxXmlNode*, const wxULongLong&, int = 50 );
 		wxXmlNode* AppendDiscTags( const wxCueSheet&, wxXmlNode*, long                 = 50 );
 
-		wxXmlNode* SetTotalParts( size_t, wxXmlNode*, long = 50 );
+		wxXmlNode* SetTotalParts( size_t, wxXmlNode*, long                           = 50 );
 		wxXmlNode* AddTrackTags( const wxTrack&, const wxULongLong&, wxXmlNode*, int = 30 );
 
 		wxXmlNode* AddChapterTimeStart( wxXmlNode*, const wxCueSheet&, const wxIndex& ) const;
@@ -152,18 +161,20 @@ class wxXmlCueSheetRenderer:
 		static wxXmlNode* add_hidden_flag( wxXmlNode*, bool );
 
 		static wxXmlNode* add_idx_chapter_atom( wxXmlNode*, const wxDuration&, size_t, const wxString&, const wxString&, bool );
-		static wxXmlNode* create_simple_tag( const wxCueTag&, const wxString& );
+		wxXmlNode* create_simple_tag( const wxCueTag& ) const;
 		wxXmlDocument* create_xml_document( const wxString& );
 		static bool is_simple( wxXmlNode*, const wxCueTag& );
 		static wxXmlNode* find_simple_tag( wxXmlNode*, const wxCueTag& );
-		static wxXmlNode* add_simple_tag( wxXmlNode*, const wxString&, const wxString&, const wxString& );
+		void add_simple_tag( wxXmlNode*, const wxString&, const wxString& ) const;
 
-		static wxXmlNode* add_simple_tag( wxXmlNode*, const wxString&, size_t, const wxString& );
-		static wxXmlNode* add_simple_tag( wxXmlNode*, const wxCueTag&, const wxString& );
-		static void add_simple_tags( wxXmlNode*, const wxArrayCueTag&, const wxString& );
+		void add_simple_tag( wxXmlNode*, const wxString&, size_t ) const;
+		void add_simple_tag( wxXmlNode*, const wxCueTag& ) const;
+		void add_simple_tags( wxXmlNode*, const wxArrayCueTag& ) const;
 		static wxXmlNode* create_comment_node( const wxString& );
 		static void add_comment_node( wxXmlNode*, const wxString& );
 		static wxULongLong GenerateUID();
+
+		bool IsNonAlphaTag( const wxCueTag& ) const;
 
 	protected:
 

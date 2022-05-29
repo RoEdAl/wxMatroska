@@ -32,10 +32,7 @@ static inline wxString to_string( const T& e, const VALUE_NAME_PAIR< T >( &desc 
 {
 	for ( size_t i = 0; i < SIZE; i++ )
 	{
-		if ( desc[ i ].value == e )
-		{
-			return desc[ i ].description;
-		}
+		if ( desc[ i ].value == e ) return desc[ i ].description;
 	}
 
 	wxLogDebug( "to_string<%d> - unknnown value name", static_cast< int >( e ) );

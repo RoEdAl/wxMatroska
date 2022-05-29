@@ -9,7 +9,11 @@
 #include <targetver.h>
 #endif
 
+#ifdef NDEBUG
 #define wxDEBUG_LEVEL 0
+#else
+#define wxDEBUG_LEVEL 1
+#endif
 
 #include <wx/wx.h>
 #include <wx/defs.h>
@@ -22,5 +26,5 @@
 
 #include <mlang.h>
 #include <shlwapi.h>
-#endif	// _STD_WX_H
+#endif  // _STD_WX_H
 

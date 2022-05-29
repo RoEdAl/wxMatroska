@@ -2,7 +2,6 @@
  * wxDuration.cpp
  */
 
-#include "StdWx.h"
 #include <wxCueFile/wxSamplingInfo.h>
 #include <wxCueFile/wxIndex.h>
 #include <wxCueFile/wxDuration.h>
@@ -131,13 +130,7 @@ void wxDurationHolder::ClearDuration()
 
 void wxDurationHolder::Copy( const wxAbstractDurationHolder& durationHolder )
 {
-	if ( durationHolder.HasDuration() )
-	{
-		SetDuration( durationHolder.GetDuration() );
-	}
-	else
-	{
-		ClearDuration();
-	}
+	if ( durationHolder.HasDuration() ) SetDuration( durationHolder.GetDuration() );
+	else ClearDuration();
 }
 

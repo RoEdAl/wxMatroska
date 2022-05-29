@@ -1,7 +1,6 @@
 /*
  *      MyConfiguration.cpp
  */
-#include "StdWx.h"
 #include <wxConsoleApp/MyConfiguration.h>
 
 MyConfiguration::MyConfiguration( void )

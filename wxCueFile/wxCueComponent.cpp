@@ -2,7 +2,6 @@
  * wxCueComponent.cpp
  */
 
-#include "StdWx.h"
 #include <wxCueFile/wxTagSynonims.h>
 #include <wxCueFile/wxCueTag.h>
 #include <wxCueFile/wxCueComponent.h>
@@ -49,12 +48,12 @@ const wxCueComponent::KEYWORD_ENTRY wxCueComponent::Keywords[] =
 
 // ===============================================================================
 
-const char wxCueComponent::REG_EXP_FMT[] = "\\A\\s*%s\\s+(\\S.*\\S)\\s*\\Z";
+const char wxCueComponent::REG_EXP_FMT[] = "^\\p{Z}*%s\\p{Z}+(\\P{Z}.*\\P{Z})\\p{Z}*$";
 
 // ===============================================================================
 
 template< size_t SIZE >
-wxString wxCueComponent::GetCdTextInfosRegExp( const wxCueComponent::CDTEXT_ENTRY(&cdTextFields)[ SIZE ] )
+wxString wxCueComponent::GetCdTextInfosRegExp( const wxCueComponent::CDTEXT_ENTRY ( & cdTextFields )[ SIZE ] )
 {
 	wxTextOutputStreamOnString tos;
 
@@ -65,6 +64,7 @@ wxString wxCueComponent::GetCdTextInfosRegExp( const wxCueComponent::CDTEXT_ENTR
 
 	( *tos ).Flush();
 	wxString s( tos.GetString() );
+
 	wxASSERT( !s.IsEmpty() );
 	return s.RemoveLast().Prepend( '(' ).Append( ')' );
 }
@@ -80,7 +80,7 @@ wxString wxCueComponent::GetKeywordsRegExp()
 }
 
 template< size_t SIZE >
-bool wxCueComponent::GetCdTextInfoFormat( const wxString& sKeyword, wxCueComponent::ENTRY_FORMAT& fmt, const wxCueComponent::CDTEXT_ENTRY(&cdTextFields)[ SIZE ] )
+bool wxCueComponent::GetCdTextInfoFormat( const wxString& sKeyword, wxCueComponent::ENTRY_FORMAT& fmt, const wxCueComponent::CDTEXT_ENTRY ( & cdTextFields )[ SIZE ] )
 {
 	for ( size_t i = 0; i < SIZE; ++i )
 	{
@@ -100,7 +100,7 @@ bool wxCueComponent::GetCdTextInfoFormat( const wxString& sKeyword, wxCueCompone
 }
 
 template< size_t SIZE >
-bool wxCueComponent::GetCdTextInfoType( const wxString& sKeyword, wxCueComponent::ENTRY_TYPE& et, const CDTEXT_ENTRY(&cdTextFields)[ SIZE ] )
+bool wxCueComponent::GetCdTextInfoType( const wxString& sKeyword, wxCueComponent::ENTRY_TYPE& et, const CDTEXT_ENTRY ( & cdTextFields )[ SIZE ] )
 {
 	for ( size_t i = 0; i < SIZE; ++i )
 	{
@@ -238,41 +238,25 @@ void wxCueComponent::GetTags(
 	wxHashArrayCueTag restHash;
 
 	wxCueTag cueTag;
+
 	for ( size_t i = 0, nTags = m_cdTextTags.GetCount(); i < nTags; ++i )
 	{
-		if ( !m_cdTextTags[ i ].TestSource( nTagSources ) )
-		{
-			continue;
-		}
+		if ( !m_cdTextTags[ i ].TestSource( nTagSources ) ) continue;
 
-		if ( cdTagsSynonims.GetName( m_cdTextTags[ i ], cueTag ) )
-		{
-			tagsHash[ cueTag.GetName() ].Add( cueTag );
-		}
-		else
-		{
-			restHash[ cueTag.GetName() ].Add( cueTag );
-		}
+		if ( cdTagsSynonims.GetName( m_cdTextTags[ i ], cueTag ) ) tagsHash[ cueTag.GetName() ].Add( cueTag );
+		else restHash[ cueTag.GetName() ].Add( cueTag );
 	}
 
 	for ( size_t i = 0, nTags = m_tags.GetCount(); i < nTags; ++i )
 	{
-		if ( !m_tags[ i ].TestSource( nTagSources ) )
-		{
-			continue;
-		}
+		if ( !m_tags[ i ].TestSource( nTagSources ) ) continue;
 
-		if ( tagsSynonims.GetName( m_tags[ i ], cueTag ) )
-		{
-			tagsHash[ cueTag.GetName() ].Add( cueTag );
-		}
-		else
-		{
-			restHash[ cueTag.GetName() ].Add( cueTag );
-		}
+		if ( tagsSynonims.GetName( m_tags[ i ], cueTag ) ) tagsHash[ cueTag.GetName() ].Add( cueTag );
+		else restHash[ cueTag.GetName() ].Add( cueTag );
 	}
 
-	wxRegEx reEmptyValue( "\\A[[:space:][:punct:]]*\\Z", wxRE_ADVANCED | wxRE_ICASE );
+	wxRegEx reEmptyValue( "^[\\p{Z}\\p{P}]*$", wxRE_ICASE | wxRE_NOSUB );
+
 	wxASSERT( reEmptyValue.IsValid() );
 
 	remove_duplicates( reEmptyValue, tagsHash );
@@ -300,10 +284,7 @@ void wxCueComponent::remove_duplicates( const wxRegEx& reEmptyValue, wxArrayCueT
 		bool     bRemove = false;
 		for ( size_t j = 0; j < nTags; ++j )
 		{
-			if ( i == j )
-			{
-				continue;
-			}
+			if ( i == j ) continue;
 
 			asLines.Clear();
 			size_t nReplCounter = 0;
@@ -311,14 +292,8 @@ void wxCueComponent::remove_duplicates( const wxRegEx& reEmptyValue, wxArrayCueT
 
 			for ( size_t k = 0, nLines = asLines.GetCount(); k < nLines; ++k )
 			{
-				if ( sValue.Replace( asLines[ k ], wxEmptyString, false ) > 0 )
-				{
-					nReplCounter += 1;
-				}
-				else
-				{
-					break;
-				}
+				if ( sValue.Replace( asLines[ k ], wxEmptyString, false ) > 0 ) nReplCounter += 1;
+				else break;
 			}
 
 			if ( nReplCounter == asLines.GetCount() )
@@ -347,14 +322,11 @@ bool wxCueComponent::CheckEntryType( wxCueComponent::ENTRY_TYPE ctype ) const
 }
 
 template< size_t SIZE >
-bool wxCueComponent::AddCdTextInfoTag( const wxString& sKeyword, const wxString& sBody, const wxCueComponent::CDTEXT_ENTRY(&cdTextFields)[ SIZE ] )
+bool wxCueComponent::AddCdTextInfoTag( const wxString& sKeyword, const wxString& sBody, const wxCueComponent::CDTEXT_ENTRY ( & cdTextFields )[ SIZE ] )
 {
 	for ( size_t i = 0; i < SIZE; ++i )
 	{
-		if ( ( sKeyword.CmpNoCase( cdTextFields[ i ].keyword ) == 0 ) && CheckEntryType( cdTextFields[ i ].type ) )
-		{
-			return wxCueTag::AddTag( m_cdTextTags, wxCueTag( wxCueTag::TAG_CD_TEXT, sKeyword, sBody ) );
-		}
+		if ( ( sKeyword.CmpNoCase( cdTextFields[ i ].keyword ) == 0 ) && CheckEntryType( cdTextFields[ i ].type ) ) return wxCueTag::AddTag( m_cdTextTags, wxCueTag( wxCueTag::TAG_CD_TEXT, sKeyword, sBody ) );
 	}
 
 	return false;
@@ -366,14 +338,11 @@ bool wxCueComponent::AddCdTextInfoTag( const wxString& sKeyword, const wxString&
 }
 
 template< size_t SIZE >
-bool wxCueComponent::AddCdTextInfoTag( const wxCueTag& tag, const wxCueComponent::CDTEXT_ENTRY(&cdTextFields)[ SIZE ] )
+bool wxCueComponent::AddCdTextInfoTag( const wxCueTag& tag, const wxCueComponent::CDTEXT_ENTRY ( & cdTextFields )[ SIZE ] )
 {
 	for ( size_t i = 0; i < SIZE; ++i )
 	{
-		if ( tag == cdTextFields[ i ].keyword && CheckEntryType( cdTextFields[ i ].type ) )
-		{
-			return wxCueTag::AddTag( m_cdTextTags, tag );
-		}
+		if ( tag == cdTextFields[ i ].keyword && CheckEntryType( cdTextFields[ i ].type ) ) return wxCueTag::AddTag( m_cdTextTags, tag );
 	}
 
 	return false;
@@ -404,14 +373,24 @@ void wxCueComponent::RemoveCdTextInfoTags( const wxArrayCueTag& cueTags )
 
 void wxCueComponent::AddTag( wxCueTag::TAG_SOURCE eSource, const wxString& sKeyword, const wxString& sBody )
 {
-	wxCueTag newTag( eSource, sKeyword, sBody );
+	const wxCueTag tag( eSource, sKeyword, sBody );
 
-	wxCueTag::AddTag( m_tags, newTag );
+	AddTag( tag );
 }
 
 bool wxCueComponent::AddTag( const wxCueTag& tag )
 {
-	return wxCueTag::AddTag( m_tags, tag );
+	wxArrayCueTag tags;
+
+	if ( tag.Split( tags ) )
+	{
+		AddTags( tags );
+		return true;
+	}
+	else
+	{
+		return wxCueTag::AddTag( m_tags, tag );
+	}
 }
 
 bool wxCueComponent::AddTagIf( const wxCueTag& tagToAdd, const wxCueTag& tagToCheck )
@@ -435,10 +414,11 @@ size_t wxCueComponent::RemoveTag( const wxString& sTagName )
 }
 
 template< size_t SIZE >
-void wxCueComponent::GetSynonims( wxTagSynonimsCollection& synonimCollections, bool bTrack, const wxCueComponent::CDTEXT_ENTRY(&cdTextFields)[ SIZE ] )
+void wxCueComponent::GetSynonims( wxTagSynonimsCollection& synonimCollections, bool bTrack, const wxCueComponent::CDTEXT_ENTRY ( & cdTextFields )[ SIZE ] )
 {
 	synonimCollections.Clear();
 	wxArrayString synonims;
+
 	for ( size_t i = 0; i < SIZE; ++i )
 	{
 		if ( ( bTrack ? ( cdTextFields[ i ].type == wxCueComponent::TRACK ) : ( cdTextFields[ i ].type == wxCueComponent::DISC ) ) ||
@@ -503,38 +483,27 @@ wxString wxCueComponent::FormatCdTextData( const wxString& sKeyword, const wxStr
 
 	wxCHECK( GetCdTextInfoFormat( sKeyword, fmt ), wxEmptyString );
 
-	if ( fmt == BINARY )
-	{
-		return sValue;
-	}
+	if ( fmt == BINARY ) return sValue;
 	else// characters
-	{
 		return wxCueTag::Quote( wxCueTag::Escape( sValue ) );
-	}
 }
 
 static size_t find_keyword( const wxArrayCueTag& tags, const wxString& sKeyword )
 {
 	for ( size_t numTags = tags.GetCount(), i = 0; i < numTags; ++i )
 	{
-		if ( tags[ i ] == sKeyword )
-		{
-			return i;
-		}
+		if ( tags[ i ] == sKeyword ) return i;
 	}
 
 	return -1;
 }
 
 template< size_t SIZE >
-void wxCueComponent::GetReplacements( wxCueComponent::wxHashString& replacements, wxCueTag::TagSources sources, const wxCueComponent::CDTEXT_ENTRY(&cdTextFields)[ SIZE ] ) const
+void wxCueComponent::GetReplacements( wxCueComponent::wxHashString& replacements, wxCueTag::TagSources sources, const wxCueComponent::CDTEXT_ENTRY ( & cdTextFields )[ SIZE ] ) const
 {
 	for ( size_t i = 0; i < SIZE; ++i )
 	{
-		if ( cdTextFields[ i ].replacement == '\000' )
-		{
-			continue;
-		}
+		if ( cdTextFields[ i ].replacement == '\000' ) continue;
 
 		wxString      sValue;
 		wxArrayCueTag tags;
@@ -559,25 +528,20 @@ void wxCueComponent::GetReplacements( wxCueComponent::wxHashString& replacements
 
 			case TRACK:
 			{
-				if ( m_bTrack )
-				{
-					bAdd = true;
-				}
+				if ( m_bTrack ) bAdd = true;
 
 				break;
 			}
 
 			case DISC:
 			{
-				if ( !m_bTrack )
-				{
-					bAdd = true;
-				}
+				if ( !m_bTrack ) bAdd = true;
 
 				break;
 			}
 		}
 
+		if (!bAdd) continue;
 		replacements[ s ] = sValue;
 	}
 }

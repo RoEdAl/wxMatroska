@@ -59,7 +59,7 @@ class wxTextCueSheetRenderer:
 			DUMP_TAGS        = 8
 		};
 
-		wxTextCueSheetRenderer( wxTextOutputStream* = (wxTextOutputStream*)NULL, int = DUMP_COMMENTS | DUMP_TAGS );
+		wxTextCueSheetRenderer( wxTextOutputStream* = nullptr, int = DUMP_COMMENTS | DUMP_TAGS );
 
 		void Assign( wxTextOutputStream*, int = DUMP_COMMENTS );
 
