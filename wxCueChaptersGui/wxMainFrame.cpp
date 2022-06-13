@@ -2432,6 +2432,9 @@ void wxMainFrame::get_cmd_choices(int choice, wxArrayString& choices)
         choices.Add("filters");
         choices.Add("pan filter");
         choices.Add("concat filter");
+        choices.Add("replaygain filter");
+        choices.Add("drmeter filter");
+        choices.Add("ebur128 filter");
         break;
 
         default:
@@ -2550,6 +2553,21 @@ void wxMainFrame::OnToolExec(wxCommandEvent& evt)
                 case 13:
                 args.Add("-h");
                 args.Add("filter=concat");
+                break;
+
+                case 14:
+                args.Add("-h");
+                args.Add("filter=replaygain");
+                break;
+
+                case 15:
+                args.Add("-h");
+                args.Add("filter=drmeter");
+                break;
+
+                case 16:
+                args.Add("-h");
+                args.Add("filter=ebur128");
                 break;
 
                 default:
