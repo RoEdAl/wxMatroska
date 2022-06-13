@@ -10,64 +10,67 @@
 #endif
 
 class wxSamplingInfo:
-	public wxObject
+    public wxObject
 {
-	wxDECLARE_DYNAMIC_CLASS( wxSamplingInfo );
+    wxDECLARE_DYNAMIC_CLASS(wxSamplingInfo);
 
-	public:
+    public:
 
-		static const wxTimeSpan wxInvalidDuration;
-		static const wxUint64 wxInvalidNumberOfFrames;
+    static const wxTimeSpan wxInvalidDuration;
+    static const wxUint64 wxInvalidNumberOfFrames;
 
-		wxSamplingInfo( void );
-		wxSamplingInfo( const wxSamplingInfo& );
-		wxSamplingInfo( unsigned long, unsigned short, unsigned short );
+    wxSamplingInfo(void);
+    wxSamplingInfo(const wxSamplingInfo&);
+    wxSamplingInfo(unsigned long, unsigned short, unsigned short);
 
-		bool IsOK( bool                          = false ) const;
-		bool Equals( const wxSamplingInfo&, bool = false ) const;
+    bool IsOK(bool = false) const;
+    bool Equals(const wxSamplingInfo&, bool = false) const;
 
-		wxSamplingInfo& operator =( const wxSamplingInfo& );
+    wxSamplingInfo& operator =(const wxSamplingInfo&);
 
-		unsigned long GetSamplingRate() const;
-		unsigned short GetNumberOfChannels() const;
-		unsigned short GetBitsPerSample() const;
+    unsigned long GetSamplingRate() const;
+    unsigned short GetNumberOfChannels() const;
+    unsigned short GetBitsPerSample() const;
 
-		wxSamplingInfo& SetSamplingRate( unsigned long );
-		wxSamplingInfo& SetNumberOfChannels( unsigned short );
-		wxSamplingInfo& SetBitsPerSample( unsigned short );
+    wxSamplingInfo& SetSamplingRate(unsigned long);
+    wxSamplingInfo& SetNumberOfChannels(unsigned short);
+    wxSamplingInfo& SetBitsPerSample(unsigned short);
 
-		wxSamplingInfo& Assign( unsigned long, unsigned short, unsigned short );
-		wxSamplingInfo& SetDefault();
+    wxSamplingInfo& Assign(unsigned long, unsigned short, unsigned short);
+    wxSamplingInfo& SetDefault();
 
-		wxULongLong GetNumberOfFramesFromBytes( const wxULongLong& ) const;
+    wxULongLong GetNumberOfFramesFromBytes(const wxULongLong&) const;
 
-		wxTimeSpan GetDuration( wxULongLong );
+    wxTimeSpan GetDuration(wxULongLong) const;
 
-		void GetNumberOfCdFrames( wxULongLong, wxULongLong&, wxUint32& ) const;
-		wxULongLong GetNumberOfCdFrames( wxULongLong ) const;
+    void GetNumberOfCdFrames(wxULongLong, wxULongLong&, wxUint32&) const;
+    wxULongLong GetNumberOfCdFrames(wxULongLong) const;
 
-		wxString GetSamplesStr( wxULongLong ) const;
-		wxString GetCdFramesStr( wxULongLong ) const;
+    wxString GetSamplesStr(wxULongLong) const;
+    wxString GetCdFramesStr(wxULongLong) const;
 
-		wxULongLong GetFramesFromCdFrames( wxULongLong ) const;
-		wxULongLong GetIndexOffset( const wxIndex& ) const;
-		wxIndex ConvertIndex( const wxIndex& ) const;
+    wxDouble ToSeconds(wxULongLong) const;
+    wxULongLong ToNanoseconds(wxULongLong) const;
 
-		wxIndex ConvertIndex( const wxIndex&, wxULongLong, bool ) const;
-		wxString GetIndexOffsetStr( const wxIndex& ) const;
-		wxString GetIndexOffsetFramesStr( const wxIndex& ) const;
+    wxULongLong GetFramesFromCdFrames(wxULongLong) const;
+    wxULongLong GetIndexOffset(const wxIndex&) const;
+    wxIndex ConvertIndex(const wxIndex&) const;
 
-		wxString ToString() const;
+    wxIndex ConvertIndex(const wxIndex&, wxULongLong, bool) const;
+    wxString GetIndexOffsetStr(const wxIndex&) const;
+    wxString GetIndexOffsetFramesStr(const wxIndex&) const;
 
-	protected:
+    wxString ToString() const;
 
-		unsigned long m_nSamplingRate;
-		unsigned short m_nNumChannels;
-		unsigned short m_nBitsPerSample;
+    protected:
 
-	protected:
+    unsigned long m_nSamplingRate;
+    unsigned short m_nNumChannels;
+    unsigned short m_nBitsPerSample;
 
-		void copy( const wxSamplingInfo& );
+    protected:
+
+    void copy(const wxSamplingInfo&);
 };
 
 #endif

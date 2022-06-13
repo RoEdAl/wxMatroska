@@ -10,22 +10,22 @@
 #endif
 
 class wxNumberFullStopCorrector:
-	public wxStringProcessor
+    public wxStringProcessor
 {
-	wxDECLARE_DYNAMIC_CLASS( wxNumberFullStopCorrector );
+    wxDECLARE_DYNAMIC_CLASS(wxNumberFullStopCorrector);
 
-	public:
+    public:
 
-		static const char REG_EX[];
+    static const char REG_EX[];
 
-		wxNumberFullStopCorrector( void );
+    wxNumberFullStopCorrector(void);
 
-		virtual wxStringProcessor* const Clone() const;
-		virtual bool Process( const wxString&, wxString& ) const;
+    virtual wxStringProcessor* const Clone() const;
+    virtual bool Process(const wxString&, wxString&) const;
 
-	protected:
+    protected:
 
-		wxRegEx m_re;
+    wxRegEx m_re;
 };
 
 #endif

@@ -36,34 +36,34 @@
 #ifndef _WX_MD5_H_
 #define _WX_MD5_H_
 
-// wxWidgets headers
+ // wxWidgets headers
 #include <wx/buffer.h>
 #include <wx/stream.h>
 
 // ! A utility class to calculate MD5 checksums from files or strings.
 class wxMD5
 {
-	public:
+    public:
 
-		wxMD5(){}
-		virtual ~wxMD5(){}
+    wxMD5() {}
+    virtual ~wxMD5() {}
 
-	public:
+    public:
 
-		// number of bytes in MD5 checksum
-		static const size_t HASHBYTES;
+    // number of bytes in MD5 checksum
+    static const size_t HASHBYTES;
 
-		static wxMemoryBuffer Get( const wxFileName& );
+    static wxMemoryBuffer Get(const wxFileName&);
 
-		// ! Returns the MD5 checksum for the given input stream
-		static wxMemoryBuffer Get( wxInputStream& str );
+    // ! Returns the MD5 checksum for the given input stream
+    static wxMemoryBuffer Get(wxInputStream& str);
 
-		// ! Returns the MD5 for the given memory buffer.
-		static wxMemoryBuffer Get( const wxMemoryBuffer& );
+    // ! Returns the MD5 for the given memory buffer.
+    static wxMemoryBuffer Get(const wxMemoryBuffer&);
 
-		static wxString ToString( const wxMemoryBuffer& );
+    static wxString ToString(const wxMemoryBuffer&);
 
-		static bool AreEqual( const wxMemoryBuffer&, const wxMemoryBuffer& );
+    static bool AreEqual(const wxMemoryBuffer&, const wxMemoryBuffer&);
 };
 
 #endif  // _WX_MD5_H_

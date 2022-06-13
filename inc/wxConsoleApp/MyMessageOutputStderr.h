@@ -6,23 +6,23 @@
 #define _MY_MESSAGE_OUTPUT_STDERR_H_
 
 class MyMessageOutputStderr:
-	public wxMessageOutput
+    public wxMessageOutput
 {
-	public:
+    public:
 
-		MyMessageOutputStderr( FILE* fp = NULL );
-		virtual void Output( const wxString& );
+    MyMessageOutputStderr(FILE* fp = NULL);
+    virtual void Output(const wxString&);
 
-	protected:
+    protected:
 
-		// return the string with "\n" appended if it doesn't already terminate
-		// with it (in which case it's returned unchanged)
-		static bool AppendLineFeedIfNeeded( const wxString& str )
-		{
-			return ( str.empty() || *str.rbegin() != '\n' );
-		}
+    // return the string with "\n" appended if it doesn't already terminate
+    // with it (in which case it's returned unchanged)
+    static bool AppendLineFeedIfNeeded(const wxString& str)
+    {
+        return (str.empty() || *str.rbegin() != '\n');
+    }
 
-		FILE* m_fp;
+    FILE* m_fp;
 };
 
 #endif

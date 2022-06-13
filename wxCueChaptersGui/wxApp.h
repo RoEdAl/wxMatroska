@@ -6,36 +6,43 @@
 #define _WX_MY_APP_H_
 
 class wxMyApp:
-	public wxApp
+    public wxApp
 {
-	protected:
+    protected:
 
-		virtual void OnInitCmdLine( wxCmdLineParser& parser );
-		virtual bool OnCmdLineParsed( wxCmdLineParser& parser );
-		virtual bool OnInit();
+    virtual void OnInitCmdLine(wxCmdLineParser& parser);
+    virtual bool OnCmdLineParsed(wxCmdLineParser& parser);
+    virtual bool OnInit();
 
-	public:
+    public:
 
-		static const char APP_NAME[];
-		static const char APP_VERSION[];
-		static const char APP_VENDOR_NAME[];
-		static const char APP_AUTHOR[];
-		static const char LICENSE_FILE_NAME[];
+    static const char APP_NAME[];
+    static const char APP_VERSION[];
+    static const char APP_VENDOR_NAME[];
+    static const char APP_AUTHOR[];
+    static const char LICENSE_FILE_NAME[];
 
-		const wxFileName& GetCue2MkcPath() const;
-		const wxFileName& GetMkvmergePath() const;
-		bool ShowLogTimestamps( bool showTimestamps = true );
+    const wxFileName& GetCue2MkcPath() const;
+    const wxFileName& GetMkvmergePath() const;
+    const wxFileName& GetFfmpegPath() const;
+    const wxFileName& GetFfprobePath() const;
 
-	protected:
+    void ShowToolPaths() const;
 
-		wxFileName m_cue2MkcPath;
-		wxFileName m_mkvmergePath;
+    bool ShowLogTimestamps(bool showTimestamps = true);
 
-	public:
+    protected:
 
-		wxMyApp( void );
+    wxFileName m_cue2MkcPath;
+    wxFileName m_mkvmergePath;
+    wxFileName m_ffmpegPath;
+    wxFileName m_ffprobePath;
+
+    public:
+
+    wxMyApp(void);
 };
 
-wxDECLARE_APP( wxMyApp );
+wxDECLARE_APP(wxMyApp);
 #endif
 

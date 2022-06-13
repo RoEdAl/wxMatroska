@@ -4,118 +4,118 @@
 
 #include "wxMultiLanguage.h"
 
-// ===============================================================================
+ // ===============================================================================
 
 wxMultiLanguage::wxMultiLanguage( void )
 {
-	m_pMLang = nullptr;
+    m_pMLang = nullptr;
 
-	HRESULT hRes = CoCreateInstance(
-			CLSID_CMultiLanguage,
-			NULL,
-			CLSCTX_INPROC_SERVER,
-			IID_IMultiLanguage2,
-			(LPVOID*)&m_pMLang
-			);
+    HRESULT hRes = CoCreateInstance(
+            CLSID_CMultiLanguage ,
+            NULL ,
+            CLSCTX_INPROC_SERVER ,
+            IID_IMultiLanguage2 ,
+            (LPVOID*)&m_pMLang
+    );
 
-	if ( hRes != S_OK )
-	{
-		wxLogError( _( "Fail to get CMultiLanguage object; error 0x%08x" ), hRes );
-		m_pMLang = nullptr;
-	}
+    if ( hRes != S_OK )
+    {
+        wxLogError( _( "Fail to get CMultiLanguage object; error 0x%08x" ) , hRes );
+        m_pMLang = nullptr;
+    }
 }
 
-wxMultiLanguage::wxMultiLanguage( const wxMultiLanguage& ml ) :
-	m_pMLang( ml.m_pMLang )
+wxMultiLanguage::wxMultiLanguage( const wxMultiLanguage& ml ):
+    m_pMLang( ml.m_pMLang )
 {
-	if ( IsValid() ) m_pMLang->AddRef();
+    if ( IsValid() ) m_pMLang->AddRef();
 }
 
 wxMultiLanguage::~wxMultiLanguage( void )
 {
-	Close();
+    Close();
 }
 
 bool wxMultiLanguage::IsValid() const
 {
-	return ( m_pMLang != nullptr );
+    return ( m_pMLang != nullptr );
 }
 
 void wxMultiLanguage::Close()
 {
-	if ( IsValid() )
-	{
-		m_pMLang->Release();
-		m_pMLang = nullptr;
-	}
+    if ( IsValid() )
+    {
+        m_pMLang->Release();
+        m_pMLang = nullptr;
+    }
 }
 
 HRESULT wxMultiLanguage::DetectInputCodepage(
-		DWORD dwFlag,
-		DWORD dwPrefWinCodePage,
-		const wxCharBuffer& srcStr,
-		DetectEncodingInfo* lpEncoding, INT* pnScores )
+        DWORD dwFlag ,
+        DWORD dwPrefWinCodePage ,
+        const wxCharBuffer& srcStr ,
+        DetectEncodingInfo* lpEncoding , INT* pnScores )
 {
-	wxASSERT( IsValid() );
+    wxASSERT( IsValid() );
 
-	INT     nSize = (INT)srcStr.length();
-	HRESULT hRes  = m_pMLang->DetectInputCodepage(
-			dwFlag,
-			dwPrefWinCodePage,
-			const_cast< CHAR* >( srcStr.data() ), &nSize,
-			lpEncoding, pnScores );
+    INT     nSize = (INT)srcStr.length();
+    HRESULT hRes = m_pMLang->DetectInputCodepage(
+            dwFlag ,
+            dwPrefWinCodePage ,
+            const_cast<CHAR*>( srcStr.data() ) , &nSize ,
+            lpEncoding , pnScores );
 
-	return hRes;
+    return hRes;
 }
 
 HRESULT wxMultiLanguage::DetectCodepageInStream(
-		DWORD dwFlag,
-		DWORD dwPrefWinCodePage,
-		const wxFileName& fn,
-		DetectEncodingInfo* lpEncoding, INT* pnScores )
+        DWORD dwFlag ,
+        DWORD dwPrefWinCodePage ,
+        const wxFileName& fn ,
+        DetectEncodingInfo* lpEncoding , INT* pnScores )
 {
-	wxASSERT( IsValid() );
+    wxASSERT( IsValid() );
 
-	IStream* pStream;
-	HRESULT  hRes = SHCreateStreamOnFile( fn.GetFullPath().t_str(), STGM_READ, &pStream );
+    IStream* pStream;
+    HRESULT  hRes = SHCreateStreamOnFile( fn.GetFullPath().t_str() , STGM_READ , &pStream );
 
-	if ( hRes != S_OK ) return hRes;
+    if ( hRes != S_OK ) return hRes;
 
-	hRes = m_pMLang->DetectCodepageInIStream(
-			dwFlag,
-			dwPrefWinCodePage,
-			pStream,
-			lpEncoding, pnScores );
+    hRes = m_pMLang->DetectCodepageInIStream(
+            dwFlag ,
+            dwPrefWinCodePage ,
+            pStream ,
+            lpEncoding , pnScores );
 
-	pStream->Release();
-	return hRes;
+    pStream->Release();
+    return hRes;
 }
 
-HRESULT wxMultiLanguage::GetCodePageDescription( UINT nCodePage, wxString& sDescription ) const
+HRESULT wxMultiLanguage::GetCodePageDescription( UINT nCodePage , wxString& sDescription ) const
 {
-	wxASSERT( IsValid() );
+    wxASSERT( IsValid() );
 
-	MIMECPINFO cpinfo;
-	LANGID     langid = LANG_USER_DEFAULT;
-	HRESULT    hRes   = m_pMLang->GetCodePageInfo( nCodePage, langid, &cpinfo );
+    MIMECPINFO cpinfo;
+    LANGID     langid = LANG_USER_DEFAULT;
+    HRESULT    hRes = m_pMLang->GetCodePageInfo( nCodePage , langid , &cpinfo );
 
-	if ( hRes == S_OK ) sDescription = cpinfo.wszDescription;
+    if ( hRes == S_OK ) sDescription = cpinfo.wszDescription;
 
-	return hRes;
+    return hRes;
 }
 
 bool wxMultiLanguage::GetDefaultCodePage( wxUint32& nCodePage )
 {
-	CPINFOEX cpInfo;
+    CPINFOEX cpInfo;
 
-	if ( GetCPInfoEx( CP_THREAD_ACP, 0, &cpInfo ) )
-	{
-		nCodePage = cpInfo.CodePage;
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+    if ( GetCPInfoEx( CP_THREAD_ACP , 0 , &cpInfo ) )
+    {
+        nCodePage = cpInfo.CodePage;
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 

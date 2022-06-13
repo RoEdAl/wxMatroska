@@ -10,27 +10,27 @@
 #endif
 
 class wxTextOutputStreamOnString:
-	public wxObject
+    public wxObject
 {
-	public:
+    public:
 
-		wxTextOutputStreamOnString();
+    wxTextOutputStreamOnString();
 
-		const wxMemoryOutputStream& GetMemoryStream() const;
-		wxTextOutputStream& GetStream();
-		wxTextOutputStream& operator *() const;
-		wxTextOutputStream* operator ->() const;
+    const wxMemoryOutputStream& GetMemoryStream() const;
+    wxTextOutputStream& GetStream();
+    wxTextOutputStream& operator *() const;
+    wxTextOutputStream* operator ->() const;
 
-		wxString GetString() const;
+    wxString GetString() const;
 
-		static void SaveTo( wxTextOutputStream&, const wxString& );
-		void SaveTo( wxTextOutputStream& ) const;
+    static void SaveTo( wxTextOutputStream& , const wxString& );
+    void SaveTo( wxTextOutputStream& ) const;
 
-	protected:
+    protected:
 
-		wxNoConv m_conv;
-		wxMemoryOutputStream m_outputStream;
-		wxTextOutputStream m_textOutputStream;
+    wxNoConv m_conv;
+    wxMemoryOutputStream m_outputStream;
+    wxTextOutputStream m_textOutputStream;
 };
 
 #endif

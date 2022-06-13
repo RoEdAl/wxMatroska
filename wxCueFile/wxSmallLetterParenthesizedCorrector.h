@@ -10,22 +10,22 @@
 #endif
 
 class wxSmallLetterParenthesizedCorrector:
-	public wxStringProcessor
+    public wxStringProcessor
 {
-	wxDECLARE_DYNAMIC_CLASS( wxSmallLetterParenthesizedCorrector );
+    wxDECLARE_DYNAMIC_CLASS(wxSmallLetterParenthesizedCorrector);
 
-	public:
+    public:
 
-		static const char REG_EX[];
+    static const char REG_EX[];
 
-		wxSmallLetterParenthesizedCorrector( void );
+    wxSmallLetterParenthesizedCorrector(void);
 
-		virtual wxStringProcessor* const Clone() const;
-		virtual bool Process( const wxString&, wxString& ) const;
+    virtual wxStringProcessor* const Clone() const;
+    virtual bool Process(const wxString&, wxString&) const;
 
-	protected:
+    protected:
 
-		wxRegEx m_re;
+    wxRegEx m_re;
 };
 
 #endif

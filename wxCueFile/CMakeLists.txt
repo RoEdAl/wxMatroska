@@ -27,6 +27,7 @@ SET(CUEFILE_SOURCE_FILES
 	wxStringCorrector.cpp
 	wxNumberFullStopCorrector.cpp
 	wxSmallLetterParenthesizedCorrector.cpp
+	wxAsciiToUnicode.cpp
 	wxStringProcessor.cpp
 )
 

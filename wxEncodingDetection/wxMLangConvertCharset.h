@@ -10,30 +10,30 @@ class wxMultiLanguage;
 #endif
 
 class wxMLangConvertCharset:
-	public wxObject
+    public wxObject
 {
-	protected:
+    protected:
 
-		IMLangConvertCharset* m_pMLang;
+    IMLangConvertCharset* m_pMLang;
 
-	public:
+    public:
 
-		wxMLangConvertCharset( void );
-		wxMLangConvertCharset( wxUint32, wxUint32 );
-		wxMLangConvertCharset( const wxMultiLanguage&, wxUint32, wxUint32 );
-		wxMLangConvertCharset( const wxMLangConvertCharset& );
-		~wxMLangConvertCharset( void );
+    wxMLangConvertCharset( void );
+    wxMLangConvertCharset( wxUint32 , wxUint32 );
+    wxMLangConvertCharset( const wxMultiLanguage& , wxUint32 , wxUint32 );
+    wxMLangConvertCharset( const wxMLangConvertCharset& );
+    ~wxMLangConvertCharset( void );
 
-		bool Initialize( wxUint32, wxUint32 );
-		bool IsValid() const;
-		void Close();
+    bool Initialize( wxUint32 , wxUint32 );
+    bool IsValid() const;
+    void Close();
 
-		IMLangConvertCharset* operator ->() const
-		{
-			return m_pMLang;
-		}
+    IMLangConvertCharset* operator ->() const
+    {
+        return m_pMLang;
+    }
 
-		static wxUint32 GetRealCodePage( wxUint32 );
+    static wxUint32 GetRealCodePage( wxUint32 );
 };
 
 #endif

@@ -19,6 +19,6 @@ ADD_EXECUTABLE(cue2mkc-frontend WIN32
 )
 
 TARGET_PRECOMPILE_HEADERS(cue2mkc-frontend PRIVATE StdWx.h)
-TARGET_LINK_LIBRARIES(cue2mkc-frontend ${wxWidgets_LIBRARIES} wxEncodingDetection)
+TARGET_LINK_LIBRARIES(cue2mkc-frontend ${wxWidgets_LIBRARIES} wxEncodingDetection wxCmdTools)
 
 SET_PROPERTY(TARGET cue2mkc-frontend PROPERTY FOLDER "gui")

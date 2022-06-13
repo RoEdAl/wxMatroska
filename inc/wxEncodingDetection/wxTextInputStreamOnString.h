@@ -10,27 +10,27 @@
 #endif
 
 class wxTextInputStreamOnString:
-	public wxObject
+    public wxObject
 {
-	public:
+    public:
 
-		typedef wxCharTypeBuffer< wxChar > CharBufferType;
+    typedef wxCharTypeBuffer< wxChar > CharBufferType;
 
-		wxTextInputStreamOnString( const wxString& );
-		wxTextInputStreamOnString( const CharBufferType& );
+    wxTextInputStreamOnString( const wxString& );
+    wxTextInputStreamOnString( const CharBufferType& );
 
-		const wxMemoryInputStream& GetMemoryStream() const;
-		wxTextInputStream& GetStream();
-		const CharBufferType& GetBuffer() const;
-		wxTextInputStream& operator *() const;
-		bool Eof() const;
+    const wxMemoryInputStream& GetMemoryStream() const;
+    wxTextInputStream& GetStream();
+    const CharBufferType& GetBuffer() const;
+    wxTextInputStream& operator *() const;
+    bool Eof() const;
 
-	protected:
+    protected:
 
-		wxNoConv m_conv;
-		CharBufferType m_charBuffer;
-		wxMemoryInputStream m_inputStream;
-		wxTextInputStream m_textInputStream;
+    wxNoConv m_conv;
+    CharBufferType m_charBuffer;
+    wxMemoryInputStream m_inputStream;
+    wxTextInputStream m_textInputStream;
 };
 
 #endif

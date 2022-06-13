@@ -16,138 +16,143 @@ class wxTagSynonimsCollection;
 #include <enum2str.h>
 
 class wxCueComponent:
-	public wxObject
+    public wxObject
 {
-	wxDECLARE_ABSTRACT_CLASS( wxCueComponent );
+    wxDECLARE_ABSTRACT_CLASS(wxCueComponent);
 
-	public:
+    public:
 
-		enum ENTRY_FORMAT
-		{
-			CHARACTER, BINARY
-		};
+    enum ENTRY_FORMAT
+    {
+        CHARACTER, BINARY
+    };
 
-		enum ENTRY_TYPE
-		{
-			ANY, TRACK, DISC
-		};
+    enum ENTRY_TYPE
+    {
+        ANY, TRACK, DISC
+    };
 
-		WX_DECLARE_STRING_HASH_MAP( wxString, wxHashString );
+    WX_DECLARE_STRING_HASH_MAP(wxString, wxHashString);
 
-	public:
+    public:
 
-		struct CDTEXT_ENTRY
-		{
-			const char* const keyword;
-			ENTRY_TYPE type;
-			ENTRY_FORMAT format;
-			char replacement;
-		};
+    struct CDTEXT_ENTRY
+    {
+        const char* const keyword;
+        ENTRY_TYPE type;
+        ENTRY_FORMAT format;
+        char replacement;
+    };
 
-		static const CDTEXT_ENTRY CdTextFields[];
+    static const CDTEXT_ENTRY CdTextFields[];
 
-		typedef VALUE_NAME_PAIR< ENTRY_TYPE > KEYWORD_ENTRY;
-		static const KEYWORD_ENTRY Keywords[];
+    typedef VALUE_NAME_PAIR< ENTRY_TYPE > KEYWORD_ENTRY;
+    static const KEYWORD_ENTRY Keywords[];
 
-		static void GetSynonims( wxTagSynonimsCollection&, bool );
+    template<size_t N>
+    static bool GetCdTextEntryFormat(const wxString&, const CDTEXT_ENTRY (&)[N], ENTRY_FORMAT&);
+    static bool GetCdTextEntryFormat(const wxString&, ENTRY_FORMAT&);
 
-	public:
+    static void GetSynonims(wxTagSynonimsCollection&, bool);
 
-		static const char REG_EXP_FMT[];
-		static wxString GetCdTextInfoRegExp();
-		static wxString GetKeywordsRegExp();
+    public:
 
-	protected:
+    static const char REG_EXP_FMT[];
+    static wxString GetCdTextInfoRegExp();
+    static wxString GetKeywordsRegExp();
 
-		bool m_bTrack;
-		wxArrayString m_comments;
-		wxArrayString m_garbage;
-		wxArrayCueTag m_cdTextTags;
-		wxArrayCueTag m_tags;
+    protected:
 
-	protected:
+    bool m_bTrack;
+    wxArrayString m_comments;
+    wxArrayString m_garbage;
+    wxArrayCueTag m_cdTextTags;
+    wxArrayCueTag m_tags;
 
-		void copy( const wxCueComponent& );
-		static void remove_duplicates( const wxRegEx&, wxHashArrayCueTag& );
-		static void remove_duplicates( const wxRegEx&, wxArrayCueTag& );
+    protected:
 
-	public:
+    void copy(const wxCueComponent&);
+    static void remove_duplicates(const wxRegEx&, wxHashArrayCueTag&);
+    static void remove_duplicates(const wxRegEx&, wxArrayCueTag&);
 
-		const wxArrayString& GetComments() const;
-		const wxArrayString& GetGarbage() const;
-		virtual bool HasGarbage() const;
-		const wxArrayCueTag& GetCdTextTags() const;
-		const wxArrayCueTag& GetTags() const;
-		size_t GetTags( const wxString&, wxArrayCueTag& ) const;
-		size_t MoveTags( const wxString&, wxArrayCueTag& );
-		void GetTags( wxCueTag::TagSources, const wxTagSynonimsCollection&, const wxTagSynonimsCollection&, wxArrayCueTag&, wxArrayCueTag& ) const;
+    public:
 
-		bool AddCdTextInfoTag( const wxString&, const wxString& );
-		bool AddCdTextInfoTag( const wxCueTag& );
-		void AddCdTextInfoTags( const wxArrayCueTag& );
+    const wxArrayString& GetComments() const;
+    const wxArrayString& GetGarbage() const;
+    virtual bool HasGarbage() const;
+    const wxArrayCueTag& GetCdTextTags() const;
+    const wxArrayCueTag& GetTags() const;
+    size_t GetTags(const wxString&, wxArrayCueTag&) const;
+    size_t MoveTags(const wxString&, wxArrayCueTag&);
+    void GetTags(wxCueTag::TagSources, const wxTagSynonimsCollection&, const wxTagSynonimsCollection&, wxArrayCueTag&, wxArrayCueTag&) const;
 
-		void RemoveCdTextInfoTag( const wxCueTag& );
-		void RemoveCdTextInfoTags( const wxArrayCueTag& );
+    bool AddCdTextInfoTag(const wxString&, const wxString&);
+    bool AddCdTextInfoTag(const wxCueTag&);
+    void AddCdTextInfoTags(const wxArrayCueTag&);
 
-		void AddTag( wxCueTag::TAG_SOURCE, const wxString&, const wxString& );
-		bool AddTag( const wxCueTag& );
-		bool AddTagIf( const wxCueTag&, const wxCueTag& );
-		bool AddTagIfAndRemove( const wxCueTag&, const wxCueTag& );
-		void AddTags( const wxArrayCueTag& );
+    void RemoveCdTextInfoTag(const wxCueTag&);
+    void RemoveCdTextInfoTag(const wxString&);
+    void RemoveCdTextInfoTags(const wxArrayCueTag&);
 
-		size_t MoveCdTextInfoTags( const wxTagSynonimsCollection& );
+    void AddTag(wxCueTag::TAG_SOURCE, const wxString&, const wxString&);
+    bool AddTag(const wxCueTag&);
+    bool AddTagIf(const wxCueTag&, const wxCueTag&);
+    bool AddTagIfAndRemove(const wxCueTag&, const wxCueTag&);
+    void AddTags(const wxArrayCueTag&);
 
-		size_t RemoveTag( const wxCueTag& );
-		size_t RemoveTag( const wxString& );
-		size_t RemoveTags( const wxArrayCueTag& );
+    size_t MoveCdTextInfoTags(const wxTagSynonimsCollection&);
 
-		bool CheckEntryType( ENTRY_TYPE ) const;
+    size_t RemoveTag(const wxCueTag&);
+    size_t RemoveTag(const wxString&);
+    size_t RemoveTags(const wxArrayCueTag&);
 
-		void Clear( void );
-		bool IsTrack() const;
+    bool CheckEntryType(ENTRY_TYPE) const;
 
-		void AddComment( const wxString& );
-		void AddGarbage( const wxString& );
+    void Clear(void);
+    bool IsTrack() const;
 
-		virtual void GetReplacements( wxCueTag::TagSources, wxHashString& ) const;
+    void AddComment(const wxString&);
+    void AddGarbage(const wxString&);
 
-	public:
+    virtual void GetReplacements(wxCueTag::TagSources, wxHashString&) const;
 
-		wxCueComponent( bool = false );
-		wxCueComponent( const wxCueComponent& );
-		wxCueComponent& operator =( const wxCueComponent& );
+    public:
 
-		wxCueComponent& operator +=( const wxCueComponent& );
-		wxCueComponent& Append( const wxCueComponent& );
+    wxCueComponent(bool = false);
+    wxCueComponent(const wxCueComponent&);
+    wxCueComponent& operator =(const wxCueComponent&);
 
-		static bool GetCdTextInfoFormat( const wxString&, ENTRY_FORMAT& );
-		static bool GetCdTextInfoType( const wxString&, ENTRY_TYPE& );
-		static bool GetEntryType( const wxString&, ENTRY_TYPE& );
+    wxCueComponent& operator +=(const wxCueComponent&);
+    wxCueComponent& Append(const wxCueComponent&);
 
-		static wxString FormatCdTextData( const wxString&, const wxString& );
+    static bool GetCdTextInfoFormat(const wxString&, ENTRY_FORMAT&);
+    static bool GetCdTextInfoType(const wxString&, ENTRY_TYPE&);
+    static bool GetEntryType(const wxString&, ENTRY_TYPE&);
 
-	private:
+    static wxString FormatCdTextData(const wxString&, const wxString&);
 
-		template< size_t SIZE >
-		static wxString GetCdTextInfosRegExp( const CDTEXT_ENTRY ( & )[ SIZE ] );
+    private:
 
-		template< size_t SIZE >
-		static bool GetCdTextInfoFormat( const wxString&, ENTRY_FORMAT&, const CDTEXT_ENTRY ( & )[ SIZE ] );
+    template< size_t SIZE >
+    static wxString GetCdTextInfosRegExp(const CDTEXT_ENTRY(&)[SIZE]);
 
-		template< size_t SIZE >
-		static bool GetCdTextInfoType( const wxString&, ENTRY_TYPE&, const CDTEXT_ENTRY ( & )[ SIZE ] );
+    template< size_t SIZE >
+    static bool GetCdTextInfoFormat(const wxString&, ENTRY_FORMAT&, const CDTEXT_ENTRY(&)[SIZE]);
 
-		template< size_t SIZE >
-		bool AddCdTextInfoTag( const wxString&, const wxString&, const CDTEXT_ENTRY ( & )[ SIZE ] );
+    template< size_t SIZE >
+    static bool GetCdTextInfoType(const wxString&, ENTRY_TYPE&, const CDTEXT_ENTRY(&)[SIZE]);
 
-		template< size_t SIZE >
-		bool AddCdTextInfoTag( const wxCueTag&, const CDTEXT_ENTRY ( & )[ SIZE ] );
+    template< size_t SIZE >
+    bool AddCdTextInfoTag(const wxString&, const wxString&, const CDTEXT_ENTRY(&)[SIZE]);
 
-		template< size_t SIZE >
-		static void GetSynonims( wxTagSynonimsCollection&, bool, const CDTEXT_ENTRY ( & )[ SIZE ] );
+    template< size_t SIZE >
+    bool AddCdTextInfoTag(const wxCueTag&, const CDTEXT_ENTRY(&)[SIZE]);
 
-		template< size_t SIZE >
-		void GetReplacements( wxHashString&, wxCueTag::TagSources, const CDTEXT_ENTRY ( & )[ SIZE ] ) const;
+    template< size_t SIZE >
+    static void GetSynonims(wxTagSynonimsCollection&, bool, const CDTEXT_ENTRY(&)[SIZE]);
+
+    template< size_t SIZE >
+    void GetReplacements(wxHashString&, wxCueTag::TagSources, const CDTEXT_ENTRY(&)[SIZE]) const;
 };
 
 #endif

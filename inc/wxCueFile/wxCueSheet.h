@@ -30,113 +30,114 @@
 #endif
 
 class wxCueSheet:
-	public wxCueComponent, public wxAbstractDurationHolder
+    public wxCueComponent, public wxAbstractDurationHolder
 {
-	wxDECLARE_DYNAMIC_CLASS( wxCueSheet );
+    wxDECLARE_DYNAMIC_CLASS(wxCueSheet);
 
-	public:
+    public:
 
-		static wxString GetCdAliasesRegExp();
+    static wxString GetCdAliasesRegExp();
 
-		static const char ALBUM_REG_EX1[];
-		static const char ALBUM_REG_EX2[];
+    static const char ALBUM_REG_EX1[];
+    static const char ALBUM_REG_EX2[];
 
-	protected:
+    protected:
 
-		wxArrayCueSheetContent m_content;
-		wxArrayFileName m_logs;
-		wxArrayFileName m_accuripLogs;
-		wxArrayCoverFile m_covers;
-		wxArrayDataFile m_dataFiles;
-		wxArrayCueTag m_catalogs;
-		wxArrayFileName m_cdTextFiles;
-		wxArrayTrack m_tracks;
+    wxArrayCueSheetContent m_content;
+    wxArrayFileName m_logs;
+    wxArrayFileName m_accuripLogs;
+    wxArrayCoverFile m_covers;
+    wxArrayDataFile m_dataFiles;
+    wxArrayCueTag m_catalogs;
+    wxArrayFileName m_cdTextFiles;
+    wxArrayTrack m_tracks;
 
-	protected:
+    protected:
 
-		void copy( const wxCueSheet& );
-		void AddCdTextInfoTagToAllTracks( const wxCueTag& );
-		void AddTagToAllTracks( const wxCueTag& );
-		void PrepareToAppend();
-		static void AppendFileNames( wxArrayFileName&, const wxArrayFileName& );
+    void copy(const wxCueSheet&);
+    void AddCdTextInfoTagToAllTracks(const wxCueTag&);
+    void AddTagToAllTracks(const wxCueTag&);
+    void PrepareToAppend();
+    static void AppendFileNames(wxArrayFileName&, const wxArrayFileName&);
 
-	public:
+    public:
 
-		wxCueSheet( void );
-		wxCueSheet( const wxCueSheet& );
-		wxCueSheet& operator =( const wxCueSheet& );
-		wxCueSheet& Append( const wxCueSheet& );
+    wxCueSheet(void);
+    wxCueSheet(const wxCueSheet&);
+    wxCueSheet& operator =(const wxCueSheet&);
+    wxCueSheet& Append(const wxCueSheet&);
 
-		virtual bool HasGarbage() const;
+    virtual bool HasGarbage() const;
 
-		bool HasSingleDataFile() const;
-		bool HasSingleDataFile( wxDataFile& ) const;
-		wxCueSheet& SetSingleDataFile( const wxDataFile& );
-		wxCueSheet& SetDataFiles( const wxArrayDataFile& );
+    bool HasSingleDataFile() const;
+    bool HasSingleDataFile(wxDataFile&) const;
+    wxCueSheet& SetSingleDataFile(const wxDataFile&);
+    wxCueSheet& SetDataFiles(const wxArrayDataFile&);
 
-		size_t GetDataFileIdxIfLastForTrack( size_t ) const;
+    size_t GetDataFileIdxIfLastForTrack(size_t) const;
 
-		size_t GetContentsCount() const;
-		const wxArrayCueSheetContent& GetContents() const;
-		size_t GetLogsCount() const;
-		const wxArrayFileName& GetLogs() const;
-		size_t GetAccurateRipLogsCount() const;
-		const wxArrayFileName& GetAccurateRipLogs() const;
-		size_t GetCoversCount() const;
-		const wxArrayCoverFile& GetCovers() const;
-		void GetSortedCovers( wxArrayCoverFile&, wxImageHandler* const, int ) const;
-		size_t GetCatalogsCount() const;
-		const wxArrayCueTag& GetCatalogs() const;
-		size_t GetCdTextFilesCount() const;
-		const wxArrayFileName& GetCdTextFiles() const;
-		bool HasTracks() const;
-		size_t GetTracksCount() const;
-		const wxArrayTrack& GetTracks() const;
-		bool HasDataFiles() const;
-		size_t GetDataFilesCount() const;
-		const wxArrayDataFile& GetDataFiles() const;
-		size_t GetLastDataFileIdx() const;
+    size_t GetContentsCount() const;
+    const wxArrayCueSheetContent& GetContents() const;
+    size_t GetLogsCount() const;
+    const wxArrayFileName& GetLogs() const;
+    size_t GetAccurateRipLogsCount() const;
+    const wxArrayFileName& GetAccurateRipLogs() const;
+    size_t GetCoversCount() const;
+    const wxArrayCoverFile& GetCovers() const;
+    void GetSortedCovers(wxArrayCoverFile&, wxImageHandler* const, int) const;
+    size_t GetCatalogsCount() const;
+    const wxArrayCueTag& GetCatalogs() const;
+    size_t GetCdTextFilesCount() const;
+    const wxArrayFileName& GetCdTextFiles() const;
+    bool HasTracks() const;
+    size_t GetTracksCount() const;
+    const wxArrayTrack& GetTracks() const;
+    bool HasDataFiles() const;
+    size_t GetDataFilesCount() const;
+    const wxArrayDataFile& GetDataFiles() const;
+    size_t GetLastDataFileIdx() const;
 
-		bool GetRelatedTracks( size_t, size_t&, size_t& ) const;
+    bool GetRelatedTracks(size_t, size_t&, size_t&) const;
 
-		void SanitizeTags( const wxTagSynonimsCollection&, const wxTagSynonimsCollection&, bool, bool );
+    void SanitizeTags(const wxTagSynonimsCollection&, const wxTagSynonimsCollection&, bool, bool);
 
-		wxCueSheet& AddCatalog( const wxString& );
-		wxCueSheet& AddCdTextFile( const wxFileName& );
-		wxCueSheet& AddContent( const wxCueSheetContent& );
-		wxCueSheet& AddContent( const wxString& );
-		wxCueSheet& AddLog( const wxFileName& );
-		wxCueSheet& AddAccuripLog( const wxFileName& );
-		void AddCover( const wxFileName& );
-		void AddCover( const wxCoverFile& );
-		void AddCovers( const wxArrayCoverFile& );
-		wxCueSheet& AddDataFile( const wxDataFile& );
+    void AddPreparerTag();
+    wxCueSheet& AddCatalog(const wxString&);
+    wxCueSheet& AddCdTextFile(const wxFileName&);
+    wxCueSheet& AddContent(const wxCueSheetContent&);
+    wxCueSheet& AddContent(const wxString&);
+    wxCueSheet& AddLog(const wxFileName&);
+    wxCueSheet& AddAccuripLog(const wxFileName&);
+    void AddCover(const wxFileName&);
+    void AddCover(const wxCoverFile&);
+    void AddCovers(const wxArrayCoverFile&);
+    wxCueSheet& AddDataFile(const wxDataFile&);
 
-		virtual bool HasDuration() const;
-		virtual wxDuration GetDuration() const;
+    virtual bool HasDuration() const;
+    virtual wxDuration GetDuration() const;
 
-		wxDuration GetDuration( size_t ) const;
-		bool CalculateDuration( const wxString& = wxEmptyString );
+    wxDuration GetDuration(size_t) const;
+    bool CalculateDuration(const wxString & = wxEmptyString);
 
-		bool AddTrack( const wxTrack& );
+    bool AddTrack(const wxTrack&);
 
-		wxTrack& GetTrack( size_t );
-		wxTrack& GetLastTrack();
-		wxTrack& GetBeforeLastTrack();
+    wxTrack& GetTrack(size_t);
+    wxTrack& GetLastTrack();
+    wxTrack& GetBeforeLastTrack();
 
-		bool HasTrack( size_t ) const;
-		wxTrack& GetTrackByNumber( size_t );
-		size_t GetTrackIdxFromNumber( size_t ) const;
+    bool HasTrack(size_t) const;
+    wxTrack& GetTrackByNumber(size_t);
+    size_t GetTrackIdxFromNumber(size_t) const;
 
-		const wxTrack& GetTrack( size_t ) const;
-		const wxTrack& GetLastTrack() const;
-		wxArrayTrack& SortTracks();
+    const wxTrack& GetTrack(size_t) const;
+    const wxTrack& GetLastTrack() const;
+    wxArrayTrack& SortTracks();
 
-		void Clear( void );
+    void Clear(void);
 
-		wxString Format( wxCueTag::TagSources, const wxString& ) const;
+    wxString Format(wxCueTag::TagSources, const wxString&) const;
 
-		wxString FormatTrack( wxCueTag::TagSources, size_t, const wxString& ) const;
+    wxString FormatTrack(wxCueTag::TagSources, size_t, const wxString&) const;
 };
 
 #endif  // _WX_CUE_SHEET_H_

@@ -11,7 +11,11 @@ set(CUECHAPTERS_SOURCE_FILES
 	wxInputFile.cpp
 	wxMkvmergeOptsRenderer.cpp
 	wxPrimitiveRenderer.cpp
+	wxFfMetadataRenderer.cpp
+	wxCMakeScriptRenderer.cpp
+	wxFfmpegCMakeScriptRenderer.cpp
 	wxXmlCueSheetRenderer.cpp
+	ff-scan.cmake
 )
 
 ADD_EXECUTABLE(cue2mkc
@@ -23,13 +27,19 @@ ADD_EXECUTABLE(cue2mkc
 )
 
 TARGET_PRECOMPILE_HEADERS(cue2mkc PRIVATE StdWx.h)
-ADD_DEPENDENCIES(cue2mkc wxConsoleApp wxEncodingDetection wxCueFile TagLib)
+ADD_DEPENDENCIES(cue2mkc wxConsoleApp wxEncodingDetection wxCmdTools, wxCueFile TagLib)
 TARGET_LINK_LIBRARIES(cue2mkc PRIVATE ${wxWidgets_LIBRARIES} Shlwapi.lib
 	wxConsoleApp
 	wxEncodingDetection
+	wxCmdTools
 	wxCueFile
 	TagLib
 	nlohmann_json::nlohmann_json
+)
+
+add_custom_command( TARGET cue2mkc POST_BUILD 
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/ff-scan.cmake $<TARGET_FILE_DIR:cue2mkc>
+	COMMENT "Copying ff-scan.cmake script"
 )
 
 SET_PROPERTY(TARGET cue2mkc PROPERTY FOLDER "cli")

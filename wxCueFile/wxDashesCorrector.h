@@ -10,50 +10,50 @@
 #endif
 
 class wxDashesCorrector:
-	public wxStringProcessor
+    public wxStringProcessor
 {
-	wxDECLARE_DYNAMIC_CLASS( wxDashesCorrector );
+    wxDECLARE_DYNAMIC_CLASS(wxDashesCorrector);
 
-	public:
+    public:
 
-		typedef wxUniChar::value_type uvalue_type;
+    typedef wxUniChar::value_type uvalue_type;
 
-		static const char REG_EX_EN[];
-		static const char REG_EX_EM[];
-		static const char REG_EX_EM2[];
+    static const char REG_EX_EN[];
+    static const char REG_EX_EM[];
+    static const char REG_EX_EM2[];
 
-		static wxString GetReplacement( uvalue_type, uvalue_type );
+    static wxString GetReplacement(uvalue_type, uvalue_type);
 
-		wxDashesCorrector( bool = false );
+    wxDashesCorrector(bool = false);
 
-		wxDashesCorrector& SmallEmDash( bool = true );
+    wxDashesCorrector& SmallEmDash(bool = true);
 
-		wxStringProcessor* const Clone() const;
-		virtual bool Process( const wxString&, wxString& ) const;
+    wxStringProcessor* const Clone() const;
+    virtual bool Process(const wxString&, wxString&) const;
 
-		const wxRegEx& GetEnRegEx() const;
-		const wxRegEx& GetEmRegEx() const;
-		const wxRegEx& GetEm2RegEx() const;
+    const wxRegEx& GetEnRegEx() const;
+    const wxRegEx& GetEmRegEx() const;
+    const wxRegEx& GetEm2RegEx() const;
 
-	protected:
+    protected:
 
-		wxDashesCorrector( uvalue_type, uvalue_type, uvalue_type, uvalue_type       = 0x2E3A );
-		wxDashesCorrector& Init( uvalue_type, uvalue_type, uvalue_type, uvalue_type = 0x2E3A );
+    wxDashesCorrector(uvalue_type, uvalue_type, uvalue_type, uvalue_type = 0x2E3A);
+    wxDashesCorrector& Init(uvalue_type, uvalue_type, uvalue_type, uvalue_type = 0x2E3A);
 
-	protected:
+    protected:
 
-		wxUniChar m_space;
-		wxUniChar m_enDash;
-		wxUniChar m_emDash;
-		wxUniChar m_em2Dash;
+    wxUniChar m_space;
+    wxUniChar m_enDash;
+    wxUniChar m_emDash;
+    wxUniChar m_em2Dash;
 
-		wxRegEx m_reEn;
-		wxRegEx m_reEm;
-		wxRegEx m_reEm2;
+    wxRegEx m_reEn;
+    wxRegEx m_reEm;
+    wxRegEx m_reEm2;
 
-		wxString m_sEnReplacement;
-		wxString m_sEmReplacement;
-		wxString m_sEm2Replacement;
+    wxString m_sEnReplacement;
+    wxString m_sEmReplacement;
+    wxString m_sEm2Replacement;
 };
 
 #endif

@@ -10,23 +10,23 @@
 #endif
 
 class wxEllipsizer:
-	public wxStringProcessor
+    public wxStringProcessor
 {
-	wxDECLARE_DYNAMIC_CLASS( wxEllipsizer );
+    wxDECLARE_DYNAMIC_CLASS(wxEllipsizer);
 
-	public:
+    public:
 
-		wxEllipsizer( void );
+    wxEllipsizer(void);
 
-		static const char REG_EX[];
-		static const wxUChar ELLIPSIS;
+    static const char REG_EX[];
+    static const wxUChar ELLIPSIS;
 
-		virtual wxStringProcessor* const Clone() const;
-		virtual bool Process( const wxString&, wxString& ) const;
+    virtual wxStringProcessor* const Clone() const;
+    virtual bool Process(const wxString&, wxString&) const;
 
-	protected:
+    protected:
 
-		wxRegEx m_reEllipsis;
+    wxRegEx m_reEllipsis;
 };
 
 #endif

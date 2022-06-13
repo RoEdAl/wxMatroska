@@ -8,32 +8,33 @@
 #ifdef WIN32
 #include <targetver.h>
 
-/*
- * When Winuser.h is defined GetClassInfo is is a macro defined as:
- *
- * #define GetClassInfo GetClassInfoW
- *
- * wxWidgets macros such as:
- *
- * wxDECLARE_..._CLASS
- *
- * declares method GetClassInfo so when Winuser.h is included method GetClassInfo is renamed to GetClassInfoW. That's why we define NOUSER.
- */
+ /*
+  * When Winuser.h is defined GetClassInfo is is a macro defined as:
+  *
+  * #define GetClassInfo GetClassInfoW
+  *
+  * wxWidgets macros such as:
+  *
+  * wxDECLARE_..._CLASS
+  *
+  * declares method GetClassInfo so when Winuser.h is included method GetClassInfo is renamed to GetClassInfoW. That's why we define NOUSER.
+  */
 #define WIN32_LEAN_AND_MEAN
 
 #define NOUSER
 #define NOMB
 #define NOCOMM
 
-/*
- * Dummy definition of MSG (LPMSG) to make
- *
- * oleidl.h ole2.h
- *
- * happy.
- */
+  /*
+   * Dummy definition of MSG (LPMSG) to make
+   *
+   * oleidl.h ole2.h
+   *
+   * happy.
+   */
 typedef struct tagMSG
-{} MSG, *LPMSG;
+{
+} MSG, * LPMSG;
 #endif
 
 #ifdef NDEBUG
@@ -68,6 +69,7 @@ typedef struct tagMSG
 #include <wx/valgen.h>
 #include <wx/notebook.h>
 #include <wx/treectrl.h>
+#include <wx/collpane.h>
 #include <wx/frame.h>
 #include <wx/app.h>
 #include <wx/cmdline.h>
@@ -85,8 +87,9 @@ typedef struct tagMSG
 #include <wx/regex.h>
 #include <wx/mstream.h>
 #include <wx/dcscreen.h>
+#include <wx/uilocale.h>
+#include <wx/wupdlock.h>
 
-#include <array>
 #include <wxEncodingDetection/wxTextOutputStreamOnString.h>
 
 #endif  // _STD_WX_H

@@ -10,65 +10,68 @@
 #endif
 
 class wxStringCorrector:
-	public wxStringProcessor
+    public wxStringProcessor
 {
-	public:
+    public:
 
-		class Configurator
-		{
-			friend class wxStringCorrector;
+    class Configurator
+    {
+        friend class wxStringCorrector;
 
-			public:
+        public:
 
-				Configurator();
+        Configurator();
 
-				Configurator& RemoveExtraSpaces( bool        = true );
-				Configurator& Ellipsize( bool                = true );
-				Configurator& RomanNumeralsUpper( bool       = true );
-				Configurator& RomanNumeralsLower( bool       = true );
-				Configurator& Dashes( bool                   = true );
-				Configurator& SmallEmDash( bool              = true );
-				Configurator& NumberFullStop( bool           = true );
-				Configurator& SmallLetterParenthesized( bool = true );
+        Configurator& RemoveExtraSpaces(bool = true);
+        Configurator& Ellipsize(bool = true);
+        Configurator& RomanNumeralsUpper(bool = true);
+        Configurator& RomanNumeralsLower(bool = true);
+        Configurator& Dashes(bool = true);
+        Configurator& SmallEmDash(bool = true);
+        Configurator& NumberFullStop(bool = true);
+        Configurator& SmallLetterParenthesized(bool = true);
+        Configurator& AsciiToUnicode(bool = true);
 
-				bool RemoveExtraSpaces() const;
-				bool Ellipsize() const;
-				bool RomanNumeralsUpper() const;
-				bool RomanNumeralsLower() const;
-				bool Dashes() const;
-				bool NumberFullStop() const;
-				bool SmallLetterParenthesized() const;
+        bool RemoveExtraSpaces() const;
+        bool Ellipsize() const;
+        bool RomanNumeralsUpper() const;
+        bool RomanNumeralsLower() const;
+        bool Dashes() const;
+        bool NumberFullStop() const;
+        bool SmallLetterParenthesized() const;
+        bool AsciiToUnicode() const;
 
-				wxStringProcessor* const Create() const;
+        wxStringProcessor* const Create() const;
 
-			protected:
+        protected:
 
-				Configurator( const Configurator& );
+        Configurator(const Configurator&);
 
-			protected:
+        protected:
 
-				bool m_removeExtraSpaces;
-				bool m_ellipsize;
-				bool m_romanNumeralsUpper;
-				bool m_romanNumeralsLower;
-				bool m_dashes;
-				bool m_smallEmDash;
-				bool m_numberFullStop;
-				bool m_smallLetterParenthesized;
-		};
+        bool m_removeExtraSpaces;
+        bool m_ellipsize;
+        bool m_romanNumeralsUpper;
+        bool m_romanNumeralsLower;
+        bool m_dashes;
+        bool m_smallEmDash;
+        bool m_numberFullStop;
+        bool m_smallLetterParenthesized;
+        bool m_asciiToUnicode;
+    };
 
-		wxStringProcessor* const Clone() const;
-		virtual bool Process( const wxString&, wxString& ) const;
+    wxStringProcessor* const Clone() const;
+    virtual bool Process(const wxString&, wxString&) const;
 
-	protected:
+    protected:
 
-		wxStringCorrector( const Configurator& );
-		void AddStringProcessor( wxStringProcessor* const );
+    wxStringCorrector(const Configurator&);
+    void AddStringProcessor(wxStringProcessor* const);
 
-	protected:
+    protected:
 
-		Configurator m_configurator;
-		wxArrayStringProcessor m_processors;
+    Configurator m_configurator;
+    wxArrayStringProcessor m_processors;
 };
 
 #endif

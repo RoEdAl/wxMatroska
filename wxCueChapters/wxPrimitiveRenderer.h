@@ -11,10 +11,21 @@ class wxConfiguration;
 
 #ifndef _WX_CUE_SHEET_H_
 class wxCueSheet;
+class wxArrayCueSheet;
+#endif
+
+#ifndef _WX_CUE_SHEET_CONTENT_H_
+class wxCueSheetContent;
+class wxArrayCueSheetContent;
 #endif
 
 #ifndef _WX_INPUT_FILE_H_
 class wxInputFile;
+#endif
+
+#ifndef _WX_COVER_FILE_H_
+class wxCoverFile;
+class wxArrayCoverFile;
 #endif
 
 #ifndef _WX_DATA_FILE_H_
@@ -25,17 +36,114 @@ class wxArrayFileName;
 #include <wxEncodingDetection/wxTextOutputStreamOnString.h>
 #endif
 
-class wxPrimitiveRenderer:
-	public wxObject
+#ifndef _WX_TAG_SYNONIMS_H_
+#include <wxCueFile/wxTagSynonims.h>
+#endif
+
+class wxMatroskaAttachment
 {
-	protected:
+    public:
 
-		const wxConfiguration& m_cfg;
-		wxTextOutputStreamOnString m_os;
+    wxMatroskaAttachment(const wxFileName&, const wxString&, const wxString&, const wxString&);
+    wxMatroskaAttachment(const wxMatroskaAttachment&);
 
-	protected:
+    public:
 
-		wxPrimitiveRenderer( const wxConfiguration& );
+    const wxFileName& GetFileName() const;
+    bool MakeRelative(const wxFileName&, wxPathFormat = wxPATH_NATIVE);
+    const wxString GetName() const;
+    bool HasMimeType() const;
+    const wxString& GetMimeType() const;
+    bool HasDescription() const;
+    const wxString& GetDescription() const;
+
+    protected:
+
+    wxFileName m_fileName;
+    wxString m_name;
+    wxString m_mimeType;
+    wxString m_description;
+};
+
+WX_DECLARE_OBJARRAY(wxMatroskaAttachment, wxArrayMatroskaAttachment);
+
+class wxTagRenderer
+{
+    protected:
+
+    wxTagRenderer();
+
+    public:
+
+    static const char NON_ALPHA_REG_EX[];
+
+    bool IsNonAlphaTag(const wxCueTag&) const;
+    bool IsLanguageAgnostic(const wxConfiguration&, const wxCueTag&) const;
+
+    private:
+
+    wxRegEx m_nonAlphaRegEx;
+};
+
+class wxPrimitiveRenderer :protected wxTagRenderer
+{
+    protected:
+
+    struct MIME
+    {
+        static const char OCTET_STREAM[];
+        static const char TEXT_PLAIN[];
+    };
+
+    struct FPREFIX
+    {
+        static const char COVER[];
+        static const char CDTEXT[];
+        static const char EAC[];
+        static const char ACCURIP[];
+        static const char CUESHEET[];
+    };
+
+    protected:
+
+    const wxConfiguration& m_cfg;
+    wxTextOutputStreamOnString m_os;
+
+    protected:
+
+    wxTagSynonimsCollection m_discCdTextSynonims;
+    wxTagSynonimsCollection m_discSynonims;
+
+    wxTagSynonimsCollection m_trackCdTextSynonims;
+    wxTagSynonimsCollection m_trackSynonims;
+
+    protected:
+
+    wxPrimitiveRenderer(const wxConfiguration&);
+    void InitTagsSynonimsCollections();
+    wxFileName GetRelativeFileName(const wxFileName&, const wxFileName&) const;
+    bool SaveCover(const wxInputFile&, wxCoverFile&) const;
+    static wxString GetCoverDescription(const wxCoverFile&);
+    void AppendCoverAttachments(wxArrayMatroskaAttachment&, const wxInputFile&, const wxArrayCoverFile&) const;
+    void AppendCdTextFilesAttachments(wxArrayMatroskaAttachment&, const wxInputFile&, const wxArrayFileName&) const;
+    void AppendLogFilesAttachments(wxArrayMatroskaAttachment&, const wxInputFile&, const wxArrayFileName&) const;
+    void AppendSourceEacFilesAttachments(wxArrayMatroskaAttachment&, const wxInputFile&, const wxArrayCueSheetContent&) const;
+    void AppendDecodedEacFilesAttachments(wxArrayMatroskaAttachment&, const wxInputFile&, const wxArrayCueSheetContent&) const;
+    void AppendRenderedEacFilesAttachments(wxArrayMatroskaAttachment&, const wxInputFile&, const wxCueSheet&) const;
+    void AppendEacFilesAttachments(wxArrayMatroskaAttachment&, const wxInputFile&, const wxCueSheet&) const;
+    void AppendAccuripLogAttachments(wxArrayMatroskaAttachment&, const wxArrayFileName&) const;
+    void MakeRelativePaths(wxArrayMatroskaAttachment&, const wxFileName&, wxPathFormat = wxPATH_NATIVE) const;
+    void MakeRelativePaths(wxArrayMatroskaAttachment&, const wxInputFile&, wxPathFormat = wxPATH_NATIVE) const;
+    bool SaveCueSheet(const wxInputFile&, const wxString&, const wxString&, wxFileName&) const;
+    bool RenderCueSheet(const wxInputFile&, const wxString&, const wxCueSheet&, wxFileName&) const;
+    wxString GetTrackName(const wxCueSheet&) const;
+    bool IsLanguageAgnostic(const wxCueTag&) const;
+
+    public:
+
+    static void InitTagsSynonimsCollections(
+        wxTagSynonimsCollection&, wxTagSynonimsCollection&,
+        wxTagSynonimsCollection&, wxTagSynonimsCollection&);
 };
 
 #endif

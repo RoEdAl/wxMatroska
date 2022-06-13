@@ -17,4 +17,4 @@ ADD_LIBRARY(wxEncodingDetection
 )
 
 TARGET_PRECOMPILE_HEADERS(wxEncodingDetection PRIVATE StdWx.h)
-SET_PROPERTY(TARGET wxEncodingDetection PROPERTY FOLDER "cli")
+SET_PROPERTY(TARGET wxEncodingDetection PROPERTY FOLDER "tool")

@@ -21,5 +21,8 @@
 #include <wx/stdpaths.h>
 #include <wx/wfstream.h>
 #include <wx/txtstrm.h>
+
+#include <optional>
+
 #endif  // _STD_WX_H
 

@@ -10,24 +10,24 @@
 #endif
 
 class wxTrailingSpacesRemover:
-	public wxStringProcessor
+    public wxStringProcessor
 {
-	wxDECLARE_DYNAMIC_CLASS( wxTrailingSpacesRemover );
+    wxDECLARE_DYNAMIC_CLASS(wxTrailingSpacesRemover);
 
-	public:
+    public:
 
-		static const char REG_EX[];
+    static const char REG_EX[];
 
-		wxTrailingSpacesRemover( void );
+    wxTrailingSpacesRemover(void);
 
-		virtual wxStringProcessor* const Clone() const;
-		virtual bool Process( const wxString&, wxString& ) const;
+    virtual wxStringProcessor* const Clone() const;
+    virtual bool Process(const wxString&, wxString&) const;
 
-		const wxRegEx& GetRegEx() const;
+    const wxRegEx& GetRegEx() const;
 
-	protected:
+    protected:
 
-		wxRegEx m_reTrailingSpaces;
+    wxRegEx m_reTrailingSpaces;
 };
 
 #endif

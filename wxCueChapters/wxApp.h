@@ -29,54 +29,70 @@ class wxXmlCueSheetRenderer;
 class wxMkvmergeOptsRenderer;
 #endif
 
+#ifndef _WX_CMD_TOOL_H_
+#include <wxCmdTools/wxCmdTool.h>
+#endif
+
 class wxMyApp:
-	public MyAppConsole
+    public MyAppConsole
 {
-	protected:
+    protected:
 
-		wxConfiguration m_cfg;
-		wxScopedPtr< wxMkvmergeOptsRenderer > m_pMkvmergeOptsRenderer;
-		wxScopedPtr< wxCueSheet > m_pMergedCueSheet;
+    bool m_calcRg2Loudness;
+    wxDouble m_rg2Value;
 
-	protected:
+    wxDateTime m_dt;
+    wxConfiguration m_cfg;
+    wxScopedPtr< wxCueSheet > m_pMergedCueSheet;
 
-		bool ShowInfo() const;
+    protected:
 
-		int ProcessCueFile( const wxInputFile&, const wxTagSynonimsCollection&, const wxTagSynonimsCollection& );
-		int ConvertCueSheet( const wxInputFile&, const wxCueSheet& );
-		int AppendCueSheet( wxCueSheet& );
+    bool ShowInfo() const;
 
-		static void InfoVersion( wxMessageOutput& );
-		static void InfoUsage( wxMessageOutput& );
-		static void InfoFormatDescription( wxMessageOutput& );
+    int ProcessCueFile(const wxInputFile&, const wxTagSynonimsCollection&, const wxTagSynonimsCollection&);
+    int ConvertCueSheet(const wxInputFile&, const wxCueSheet&);
+    int AppendCueSheet(wxCueSheet&);
 
-		wxSharedPtr< wxXmlCueSheetRenderer > GetXmlRenderer( const wxInputFile& );
-		wxMkvmergeOptsRenderer& GetMkvmergeOptsRenderer( bool = true );
-		wxCueSheet& GetMergedCueSheet();
+    static void InfoVersion(wxMessageOutput&);
+    static void InfoUsage(wxMessageOutput&);
+    void InfoTools(wxMessageOutput&) const;
+    static void InfoAsciiToUnicode(wxMessageOutput&);
+    static void InfoFormatDescription(wxMessageOutput&);
 
-		bool HasMkvmergeOptsRenderer() const;
-		bool HasMergedCueSheet() const;
+    wxXmlCueSheetRenderer* GetXmlRenderer(const wxInputFile&) const;
+    wxCueSheet& GetMergedCueSheet();
+    const wxCueSheet& GetMergedCueSheet() const;
 
-		bool RunMkvmerge( const wxFileName& );
+    bool HasMergedCueSheet() const;
 
-	protected:
+    void InfoTool(wxMessageOutput&, wxCmdTool::TOOL) const;
+    void GetCmd(const wxFileName&, const wxString&, wxString&, wxString&) const;
+    void GetCmd(const wxFileName&, const wxArrayString&, wxString&, wxString&) const;
+    bool RunMkvmerge(const wxFileName&);
+    bool RunCMakeScript(const wxFileName&);
+    bool RunReplayGainScanner(const wxFileName&);
 
-		virtual bool OnInit();
-		virtual void OnInitCmdLine( wxCmdLineParser& );
-		virtual bool OnCmdLineParsed( wxCmdLineParser& );
-		virtual int OnRun();
-		virtual int OnExit();
+    bool PrepareExecuteEnv(wxExecuteEnv&) const;
 
-	public:
+    protected:
 
-		static const char APP_NAME[];
-		static const char APP_VERSION[];
+    virtual bool OnInit();
+    virtual void OnInitCmdLine(wxCmdLineParser&);
+    virtual bool OnCmdLineParsed(wxCmdLineParser&);
+    virtual int OnRun();
+    virtual int OnExit();
 
-	public:
+    public:
 
-		wxMyApp( void );
+    static const char APP_NAME[];
+    static const char APP_VERSION[];
+
+    public:
+
+    wxMyApp(void);
+    const wxDateTime& GetNow() const;
 };
 
-wxDECLARE_APP( wxMyApp );
+wxDECLARE_APP(wxMyApp);
 #endif
 

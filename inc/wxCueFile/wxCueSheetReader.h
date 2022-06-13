@@ -32,206 +32,206 @@ class wxCueSheetContent;
 #ifndef NDEBUG
 
 class TagLibDebugListener:
-	public TagLib::DebugListener
+    public TagLib::DebugListener
 {
-	public:
+    public:
 
-		virtual void printMessage( const TagLib::String& );
+    virtual void printMessage(const TagLib::String&);
 };
 
 #endif
 
-class wxCueSheetReader:
-	public wxObject
+class wxCueSheetReader
 {
-	wxDECLARE_DYNAMIC_CLASS( wxCueSheetReader );
+    public:
 
-	public:
+    struct eac_log
+    {
+        static const char EXT[];
+        static const char MASK[];
+    };
 
-		struct eac_log
-		{
-			static const char EXT[];
-			static const char MASK[];
-		};
+    struct accurip_log
+    {
+        static const char EXT[];
+        static const char MASK[];
+    };
 
-		struct accurip_log
-		{
-			static const char EXT[];
-			static const char MASK[];
-		};
+    typedef wxUint32 ReadFlags;
 
-		typedef wxUint32 ReadFlags;
+    enum
+    {
+        EC_PARSE_COMMENTS = 1,
+        EC_ELLIPSIZE_TAGS = 2,
+        EC_REMOVE_EXTRA_SPACES = 4,
+        EC_MEDIA_READ_TAGS = 8,
+        EC_SINGLE_MEDIA_FILE = 16,
+        EC_FIND_COVER = 32,
+        EC_FIND_LOG = 64,
+        EC_CONVERT_UPPER_ROMAN_NUMERALS = 128,
+        EC_CONVERT_LOWER_ROMAN_NUMERALS = 256,
+        EC_CONVERT_COVER_TO_JPEG = 512,
+        EC_CORRECT_DASHES = 1024,
+        EC_FIND_ACCURIP_LOG = 2048,
+        EC_SMALL_EM_DASH = 4096,
+        EC_NUMBER_FULL_STOP = 8192,
+        EC_SMALL_LETTER_PARENTHESIZED = 16384,
+        EC_ASCII_TO_UNICODE = 32768
+    };
 
-		enum
-		{
-			EC_PARSE_COMMENTS               = 1,
-			EC_ELLIPSIZE_TAGS               = 2,
-			EC_REMOVE_EXTRA_SPACES          = 4,
-			EC_MEDIA_READ_TAGS              = 8,
-			EC_SINGLE_MEDIA_FILE            = 16,
-			EC_FIND_COVER                   = 32,
-			EC_FIND_LOG                     = 64,
-			EC_CONVERT_UPPER_ROMAN_NUMERALS = 128,
-			EC_CONVERT_LOWER_ROMAN_NUMERALS = 256,
-			EC_CONVERT_COVER_TO_JPEG        = 512,
-			EC_CORRECT_DASHES               = 1024,
-			EC_FIND_ACCURIP_LOG             = 2048,
-			EC_SMALL_EM_DASH                = 4096,
-			EC_NUMBER_FULL_STOP             = 8192,
-			EC_SMALL_LETTER_PARENTHESIZED   = 16384
-		};
+    static bool TestReadFlags(ReadFlags, ReadFlags);
+    bool TestReadFlags(ReadFlags) const;
 
-		static bool TestReadFlags( ReadFlags, ReadFlags );
-		bool TestReadFlags( ReadFlags ) const;
+    static wxStringProcessor* const CreateStringProcessor(ReadFlags);
 
-		static wxStringProcessor* const CreateStringProcessor( ReadFlags );
+    protected:
 
-	protected:
+    // regex
+    wxRegEx m_reKeywords;
+    wxRegEx m_reCdTextInfo;
+    wxRegEx m_reEmpty;
+    wxRegEx m_reIndex;
+    wxRegEx m_reMsf;
+    wxUnquoter m_unquoter;
+    wxQuoteCorrector m_genericQuoteCorrector;
+    wxQuoteCorrector m_quoteCorrector;
+    wxRegEx m_reFlags;
+    wxRegEx m_reDataMode;
+    wxRegEx m_reDataFile;
+    wxRegEx m_reCatalog;
+    wxRegEx m_reIsrc;
+    wxRegEx m_reTrackComment;
+    wxRegEx m_reCommentMeta;
+    wxScopedPtr< wxStringProcessor > m_pStringProcessor;
+    wxString m_sOneTrackCue;
 
-		// regex
-		wxRegEx m_reKeywords;
-		wxRegEx m_reCdTextInfo;
-		wxRegEx m_reEmpty;
-		wxRegEx m_reIndex;
-		wxRegEx m_reMsf;
-		wxUnquoter m_unquoter;
-		wxQuoteCorrector m_genericQuoteCorrector;
-		wxQuoteCorrector m_quoteCorrector;
-		wxRegEx m_reFlags;
-		wxRegEx m_reDataMode;
-		wxRegEx m_reDataFile;
-		wxRegEx m_reCatalog;
-		wxRegEx m_reIsrc;
-		wxRegEx m_reTrackComment;
-		wxRegEx m_reCommentMeta;
-		wxScopedPtr< wxStringProcessor > m_pStringProcessor;
-		wxString m_sOneTrackCue;
+    // settings
+    bool m_bErrorsAsWarnings;
+    wxString m_sLang;
+    wxString m_sAlternateExt;
+    ReadFlags m_nReadFlags;
 
-		// settings
-		bool m_bErrorsAsWarnings;
-		wxString m_sLang;
-		wxString m_sAlternateExt;
-		ReadFlags m_nReadFlags;
+    // work
+    wxCueSheetContent m_cueSheetContent;
+    wxArrayString m_errors;
+    wxCueSheet m_cueSheet;
 
-		// work
-		wxCueSheetContent m_cueSheetContent;
-		wxArrayString m_errors;
-		wxCueSheet m_cueSheet;
-
-		// TagLib debug listener
+    // TagLib debug listener
 #ifndef NDEBUG
-		TagLibDebugListener m_debugListener;
+    TagLibDebugListener m_debugListener;
 #endif
 
-	protected:
+    protected:
 
-		static wxString GetOneTrackCue();
+    static wxString GetOneTrackCue();
 
-		template< typename T >
-		static bool GetLogFile( const wxFileName&, bool, wxFileName& );
+    template< typename T >
+    static bool GetLogFile(const wxFileName&, bool, wxFileName&);
 
-		void AddError0( const wxString& );
+    void AddError0(const wxString&);
 
-		void AddError( wxString, ... );
+    void AddError(wxString, ...);
 
-		void DumpErrors( size_t ) const;
+    void DumpErrors(size_t) const;
 
-		bool CheckEntryType( wxCueComponent::ENTRY_TYPE ) const;
+    bool CheckEntryType(wxCueComponent::ENTRY_TYPE) const;
 
-	protected:
+    protected:
 
-		typedef void ( wxCueSheetReader::* PARSE_METHOD )( const wxString&, const wxString& );
-		struct PARSE_STRUCT
-		{
-			const char* const token;
-			PARSE_METHOD method;
-		};
+    typedef void (wxCueSheetReader::* PARSE_METHOD)(const wxString&, const wxString&);
+    struct PARSE_STRUCT
+    {
+        const char* const token;
+        PARSE_METHOD method;
+    };
 
-		static const PARSE_STRUCT parseArray[];
+    static const PARSE_STRUCT parseArray[];
 
-	protected:
+    protected:
 
-		wxString internalReadCueSheet( wxInputStream& stream, wxMBConv& conv );
+    wxString internalReadCueSheet(wxInputStream& stream, wxMBConv& conv);
 
-		bool ParseCue( const wxCueSheetContent& );
+    bool ParseCue(const wxCueSheetContent&);
 
-		bool ParseCueLine( const wxString&, size_t );
+    bool ParseCueLine(const wxString&, size_t);
 
-		template< size_t SIZE >
-		bool ParseLine( const wxString&, const wxString&, const PARSE_STRUCT ( & )[ SIZE ] );
+    template< size_t SIZE >
+    bool ParseLine(const wxString&, const wxString&, const PARSE_STRUCT(&)[SIZE]);
 
-		void ParseLine( size_t, const wxString&, const wxString& );
-		void ParseCdTextInfo( size_t, const wxString&, const wxString& );
+    void ParseLine(size_t, const wxString&, const wxString&);
+    void ParseCdTextInfo(size_t, const wxString&, const wxString&);
 
-		void ParseGarbage( const wxString& );
-		void ParseComment( const wxString&, const wxString& );
-		void ParseComment( wxCueComponent&, const wxString& );
-		bool ParseMsf( const wxString&, wxIndex&, bool = false );
-		wxString Unquote( const wxString& );
+    void ParseGarbage(const wxString&);
+    void ParseComment(const wxString&, const wxString&);
+    void ParseComment(wxCueComponent&, const wxString&);
+    bool ParseMsf(const wxString&, wxIndex&, bool = false);
 
-		void ParsePreGap( const wxString&, const wxString& );
-		void ParsePostGap( const wxString&, const wxString& );
-		void ParseIndex( const wxString&, const wxString& );
-		void ParseFile( const wxString&, const wxString& );
-		void ParseFlags( const wxString&, const wxString& );
-		void ParseTrack( const wxString&, const wxString& );
-		void ParseCatalog( const wxString&, const wxString& );
-		void ParseCdTextFile( const wxString&, const wxString& );
+    wxString Unquote(const wxString&) const;
+    wxString UnquoteFs(const wxString&) const;
 
-		void CorrectTag( wxCueTag& ) const;
-		void CorrectString( wxString& ) const;
+    void ParsePreGap(const wxString&, const wxString&);
+    void ParsePostGap(const wxString&, const wxString&);
+    void ParseIndex(const wxString&, const wxString&);
+    void ParseFile(const wxString&, const wxString&);
+    void ParseFlags(const wxString&, const wxString&);
+    void ParseTrack(const wxString&, const wxString&);
+    void ParseCatalog(const wxString&, const wxString&);
+    void ParseCdTextFile(const wxString&, const wxString&);
 
-		bool AddCdTextInfo( const wxString&, const wxString& );
-		void AppendTags( const wxArrayCueTag&, bool );
+    void CorrectTag(wxCueTag&) const;
+    void CorrectString(wxString&) const;
 
-		void AppendTags( const wxArrayCueTag&, size_t, size_t );
+    bool AddCdTextInfo(const wxString&, const wxString&);
+    void AppendTags(const wxArrayCueTag&, bool);
 
-		void AddCover( const wxFileName& );
-		void AddCovers( const wxArrayCoverFile& );
+    void AppendTags(const wxArrayCueTag&, size_t, size_t);
 
-	protected:
+    void AddCover(const wxFileName&);
+    void AddCovers(const wxArrayCoverFile&);
 
-		bool BuildFromSingleMediaFile( const wxDataFile& );
-		bool ReadTagsFromRelatedFiles();
+    protected:
 
-		bool ReadTagsFromMediaFile( const wxDataFile&, size_t, size_t );
+    bool BuildFromSingleMediaFile(const wxDataFile&);
+    bool ReadTagsFromRelatedFiles();
 
-		bool FindLog( const wxCueSheetContent& );
-		bool FindAccurateRipLog( const wxCueSheetContent& );
+    bool ReadTagsFromMediaFile(const wxDataFile&, size_t, size_t);
 
-		void FindCoversInRelatedFiles();
-		bool FindCover( const wxCueSheetContent& );
-		void ExtractCoversFromDataFile( const wxDataFile& );
+    bool FindLog(const wxCueSheetContent&);
+    bool FindAccurateRipLog(const wxCueSheetContent&);
 
-	public:
+    void FindCoversInRelatedFiles();
+    bool FindCover(const wxCueSheetContent&);
+    void ExtractCoversFromDataFile(const wxDataFile&);
 
-		wxCueSheetReader( void );
+    public:
+
+    wxCueSheetReader(void);
 
 #ifndef NDEBUG
-		virtual ~wxCueSheetReader( void );
+    virtual ~wxCueSheetReader(void);
 #endif
 
-		static wxString GetTagLibVersion();
+    static wxString GetTagLibVersion();
 
-		// settings
-		bool ErrorsAsWarnings() const;
-		wxCueSheetReader& SetErrorsAsWarnings( bool = true );
-		wxCueSheetReader& CorrectQuotationMarks( bool, const wxString& );
-		const wxString& GetAlternateExt() const;
-		wxCueSheetReader& SetAlternateExt( const wxString& );
-		ReadFlags GetReadFlags() const;
+    // settings
+    bool ErrorsAsWarnings() const;
+    wxCueSheetReader& SetErrorsAsWarnings(bool = true);
+    wxCueSheetReader& CorrectQuotationMarks(bool, const wxString&);
+    const wxString& GetAlternateExt() const;
+    wxCueSheetReader& SetAlternateExt(const wxString&);
+    ReadFlags GetReadFlags() const;
 
-		wxCueSheetReader& SetReadFlags( ReadFlags );
+    wxCueSheetReader& SetReadFlags(ReadFlags);
 
-		// parsing
-		bool ReadCueSheet( const wxString&, bool = true );
-		bool ReadCueSheet( const wxString&, wxMBConv& );
-		bool ReadCueSheet( wxInputStream& );
-		bool ReadCueSheet( wxInputStream&, wxMBConv& );
-		bool ReadCueSheetEx( const wxString&, bool );
+    // parsing
+    bool ReadCueSheet(const wxString&, bool = true);
+    bool ReadCueSheet(const wxString&, wxMBConv&);
+    bool ReadCueSheet(wxInputStream&);
+    bool ReadCueSheet(wxInputStream&, wxMBConv&);
+    bool ReadCueSheetEx(const wxString&, bool);
 
-		// reading
-		const wxCueSheet& GetCueSheet() const;
+    // reading
+    const wxCueSheet& GetCueSheet() const;
 };
 
 #endif

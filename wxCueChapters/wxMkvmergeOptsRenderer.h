@@ -30,52 +30,36 @@ class wxArrayFileName;
 #endif
 
 class wxMkvmergeOptsRenderer:
-	public wxPrimitiveRenderer
+    public wxPrimitiveRenderer
 {
-	public:
+    public:
 
-		wxFileName m_matroskaOptsFile;
-		typedef nlohmann::basic_json<
-				std::map,
-				std::vector,
-				std::string,
-				bool,
-				wxInt64,
-				wxUint64,
-				wxDouble,
-				std::allocator,
-				nlohmann::adl_serializer,
-				std::vector< wxByte >
-				> json;
+    wxFileName m_matroskaOptsFile;
+    typedef nlohmann::basic_json<
+        std::map ,
+        std::vector ,
+        std::string ,
+        bool ,
+        wxInt64 ,
+        wxUint64 ,
+        wxDouble ,
+        std::allocator ,
+        nlohmann::adl_serializer ,
+        std::vector< wxByte >
+    > json;
 
-	protected:
+    protected:
 
-		void append_cover( json&, const wxCoverFile& );
+    void render_attachments(json& opts, const wxArrayMatroskaAttachment&) const;
+    static wxString get_mapping_str( const wxCueSheet& );
 
-		wxString GetEscapedFile( const wxFileName& );
+    public:
 
-		void write_cover_attachments( json&, const wxInputFile&, const wxArrayCoverFile& );
-		void write_cdtextfiles_attachments( json&, const wxArrayFileName& );
-		void write_log_attachments( json&, const wxArrayFileName& );
-		void write_accurip_log_attachments( json&, const wxArrayFileName& );
-		void write_eac_attachments( json&, const wxInputFile&, const wxCueSheet& );
-		void write_source_eac_attachments( json&, const wxInputFile&, const wxArrayCueSheetContent& );
-		void write_decoded_eac_attachments( json&, const wxInputFile&, const wxArrayCueSheetContent& );
-		void write_rendered_eac_attachments( json&, const wxInputFile&, const wxCueSheet& );
-		bool save_cover( const wxInputFile&, wxCoverFile& ) const;
-		bool save_cuesheet( const wxInputFile&, const wxString&, const wxString&, wxFileName& ) const;
-		bool render_cuesheet( const wxInputFile&, const wxString&, const wxCueSheet&, wxFileName& );
+    wxMkvmergeOptsRenderer( const wxConfiguration& );
 
-		static wxString get_mapping_str( const wxCueSheet& );
-		wxString get_track_name( const wxCueSheet& ) const;
-
-	public:
-
-		wxMkvmergeOptsRenderer( const wxConfiguration& );
-
-		void RenderDisc( const wxInputFile&, const wxCueSheet& );
-		bool Save();
-		const wxFileName& GetMkvmergeOptsFile() const;
+    void RenderDisc( const wxInputFile& , const wxCueSheet& );
+    bool Save();
+    const wxFileName& GetMkvmergeOptsFile() const;
 };
 
 #endif

@@ -3,58 +3,112 @@
  */
 #include <wxConsoleApp/MyConfiguration.h>
 
-MyConfiguration::MyConfiguration( void )
-{}
-
-wxString MyConfiguration::BoolToStr( bool b )
+MyConfiguration::MyConfiguration(void)
 {
-	return b ? "yes" : "no";
 }
 
-wxString MyConfiguration::ToString( bool b )
+wxString MyConfiguration::BoolToStr(bool b)
 {
-	return b ? _( "on" ) : _( "off" );
+    return b ? "yes" : "no";
 }
 
-bool MyConfiguration::ReadNegatableSwitchValue( const wxCmdLineParser& cmdLine, const wxString& name, bool& switchVal )
+wxString MyConfiguration::BoolToStr(const std::optional<bool>& b)
 {
-	wxCmdLineSwitchState state = cmdLine.FoundSwitch( name );
-	bool                 res   = true;
-
-	switch ( state )
-	{
-		case wxCMD_SWITCH_ON:
-		{
-			switchVal = true;
-			break;
-		}
-
-		case wxCMD_SWITCH_OFF:
-		{
-			switchVal = false;
-			break;
-		}
-
-		default:
-		{
-			res = false;
-			break;
-		}
-	}
-
-	return res;
+    if (b.has_value())
+    {
+        return BoolToStr(b.value());
+    }
+    else
+    {
+        return "<none>";
+    }
 }
 
-bool MyConfiguration::ReadNegatableSwitchValueAndNegate( const wxCmdLineParser& cmdLine, const wxString& name, bool& switchVal )
+wxString MyConfiguration::ToString(bool b)
 {
-	if ( ReadNegatableSwitchValue( cmdLine, name, switchVal ) )
-	{
-		switchVal = !switchVal;
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+    return b ? _("on") : _("off");
 }
 
+bool MyConfiguration::ReadNegatableSwitchValue(const wxCmdLineParser& cmdLine, const wxString& name, bool& switchVal)
+{
+    wxCmdLineSwitchState state = cmdLine.FoundSwitch(name);
+    bool                 res = true;
+
+    switch (state)
+    {
+        case wxCMD_SWITCH_ON:
+        {
+            switchVal = true;
+            break;
+        }
+
+        case wxCMD_SWITCH_OFF:
+        {
+            switchVal = false;
+            break;
+        }
+
+        default:
+        {
+            res = false;
+            break;
+        }
+    }
+
+    return res;
+}
+
+bool MyConfiguration::ReadNegatableSwitchValue(const wxCmdLineParser& cmdLine, const wxString& name, std::optional<bool>& switchVal)
+{
+    wxCmdLineSwitchState state = cmdLine.FoundSwitch(name);
+    bool                 res = true;
+
+    switch (state)
+    {
+        case wxCMD_SWITCH_ON:
+        {
+            switchVal = true;
+            break;
+        }
+
+        case wxCMD_SWITCH_OFF:
+        {
+            switchVal = false;
+            break;
+        }
+
+        default:
+        {
+            res = false;
+            break;
+        }
+    }
+
+    return res;
+}
+
+bool MyConfiguration::ReadNegatableSwitchValueAndNegate(const wxCmdLineParser& cmdLine, const wxString& name, bool& switchVal)
+{
+    if (ReadNegatableSwitchValue(cmdLine, name, switchVal))
+    {
+        switchVal = !switchVal;
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool MyConfiguration::ReadNegatableSwitchValueAndNegate(const wxCmdLineParser& cmdLine, const wxString& name, std::optional<bool>& switchVal)
+{
+    if (ReadNegatableSwitchValue(cmdLine, name, switchVal))
+    {
+        switchVal = !switchVal.value();
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}

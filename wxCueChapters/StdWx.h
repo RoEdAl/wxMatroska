@@ -8,17 +8,17 @@
 #ifdef WIN32
 #include <targetver.h>
 
-/*
- * When Winuser.h is defined GetClassInfo is is a macro defined as:
- *
- * #define GetClassInfo GetClassInfoW
- *
- * wxWidgets macros such as:
- *
- * wxDECLARE_..._CLASS
- *
- * declares method GetClassInfo so when Winuser.h is included method GetClassInfo is renamed to GetClassInfoW. That's why we define NOUSER.
- */
+ /*
+  * When Winuser.h is defined GetClassInfo is is a macro defined as:
+  *
+  * #define GetClassInfo GetClassInfoW
+  *
+  * wxWidgets macros such as:
+  *
+  * wxDECLARE_..._CLASS
+  *
+  * declares method GetClassInfo so when Winuser.h is included method GetClassInfo is renamed to GetClassInfoW. That's why we define NOUSER.
+  */
 #define WIN32_LEAN_AND_MEAN
 
 #define NOUSER
@@ -26,15 +26,16 @@
 #define NOMB
 #define NOCOMM
 
-/*
- * Dummy definition of MSG (LPMSG) to make
- *
- * oleidl.h ole2.h
- *
- * happy.
- */
+  /*
+   * Dummy definition of MSG (LPMSG) to make
+   *
+   * oleidl.h ole2.h
+   *
+   * happy.
+   */
 typedef struct tagMSG
-{} MSG, *LPMSG;
+{
+} MSG, * LPMSG;
 #endif
 
 #ifdef NDEBUG
@@ -64,7 +65,6 @@ typedef struct tagMSG
 #include <wx/dir.h>
 #include <wx/stdpaths.h>
 #include <wx/tokenzr.h>
-#include <wx/sharedptr.h>
 
 #ifndef NDEBUG
 #include <taglib/tdebuglistener.h>
@@ -74,21 +74,21 @@ typedef struct tagMSG
 #define wxSizeTFmtSpec wxLongLongFmtSpec
 namespace
 {
-	inline wxTextOutputStream& WriteSizeT( wxTextOutputStream& stream, size_t c )
-	{
-		stream.Write64( c );
-		return stream;
-	}
+    inline wxTextOutputStream& WriteSizeT(wxTextOutputStream& stream, size_t c)
+    {
+        stream.Write64(c);
+        return stream;
+    }
 }
 #else
 #define wxSizeTFmtSpec
 namespace
 {
-	inline wxTextOutputStream& WriteSizeT( wxTextOutputStream& stream, size_t c )
-	{
-		stream.Write32( c );
-		return stream;
-	}
+    inline wxTextOutputStream& WriteSizeT(wxTextOutputStream& stream, size_t c)
+    {
+        stream.Write32(c);
+        return stream;
+    }
 }
 #endif
 
@@ -96,6 +96,7 @@ namespace
 #include <objbase.h>
 #endif
 
+#include <optional>
 #include <nlohmann/json.hpp>
 
 #endif  // _STD_WX_H

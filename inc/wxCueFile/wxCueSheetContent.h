@@ -10,36 +10,36 @@
 #endif
 
 class wxCueSheetContent:
-	public wxObject
+    public wxObject
 {
-	wxDECLARE_DYNAMIC_CLASS( wxCueSheetContent );
+    wxDECLARE_DYNAMIC_CLASS(wxCueSheetContent);
 
-	protected:
+    protected:
 
-		wxString m_sValue;
-		wxDataFile m_source;
-		bool m_bEmbedded;
+    wxString m_sValue;
+    wxDataFile m_source;
+    bool m_bEmbedded;
 
-	public:
+    public:
 
-		wxCueSheetContent( void );
-		wxCueSheetContent( const wxString& );
-		wxCueSheetContent( const wxDataFile& );
-		wxCueSheetContent( const wxString&, const wxDataFile&, bool );
-		wxCueSheetContent( const wxCueSheetContent& );
+    wxCueSheetContent(void);
+    wxCueSheetContent(const wxString&);
+    wxCueSheetContent(const wxDataFile&);
+    wxCueSheetContent(const wxString&, const wxDataFile&, bool);
+    wxCueSheetContent(const wxCueSheetContent&);
 
-		wxCueSheetContent& operator =( const wxCueSheetContent& );
+    wxCueSheetContent& operator =(const wxCueSheetContent&);
 
-		bool HasSource() const;
-		const wxDataFile& GetSource() const;
-		const wxString& GetValue() const;
-		bool IsEmbedded() const;
+    bool HasSource() const;
+    const wxDataFile& GetSource() const;
+    const wxString& GetValue() const;
+    bool IsEmbedded() const;
 
-	protected:
+    protected:
 
-		void copy( const wxCueSheetContent& );
+    void copy(const wxCueSheetContent&);
 };
 
-WX_DECLARE_OBJARRAY( wxCueSheetContent, wxArrayCueSheetContent );
+WX_DECLARE_OBJARRAY(wxCueSheetContent, wxArrayCueSheetContent);
 #endif  // _WX_CUE_SHEET_CONTENT_H_
 

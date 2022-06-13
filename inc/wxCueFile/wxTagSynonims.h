@@ -10,51 +10,51 @@ class wxCueTag;
 #endif
 
 class wxTagSynonims:
-	public wxObject
+    public wxObject
 {
-	wxDECLARE_DYNAMIC_CLASS( wxTagSynonims );
+    wxDECLARE_DYNAMIC_CLASS(wxTagSynonims);
 
-	protected:
+    protected:
 
-		wxString m_sName;
-		wxArrayString m_asSynonims;
+    wxString m_sName;
+    wxArrayString m_asSynonims;
 
-	protected:
+    protected:
 
-		void copy( const wxTagSynonims& );
+    void copy(const wxTagSynonims&);
 
-	public:
+    public:
 
-		wxTagSynonims( void );
-		wxTagSynonims( const wxString& );
-		wxTagSynonims( const wxString&, const wxArrayString& );
-		wxTagSynonims( const wxTagSynonims& );
-		wxTagSynonims& operator =( const wxTagSynonims& );
+    wxTagSynonims(void);
+    wxTagSynonims(const wxString&);
+    wxTagSynonims(const wxString&, const wxArrayString&);
+    wxTagSynonims(const wxTagSynonims&);
+    wxTagSynonims& operator =(const wxTagSynonims&);
 
-		const wxString& GetName() const;
-		bool GetName( const wxString&, wxString& ) const;
-		bool GetName( const wxCueTag&, wxCueTag& ) const;
-		const wxArrayString& GetSynonims() const;
+    const wxString& GetName() const;
+    bool GetName(const wxString&, wxString&) const;
+    bool GetName(const wxCueTag&, wxCueTag&) const;
+    const wxArrayString& GetSynonims() const;
 
-		wxTagSynonims& SetName( const wxString& );
-		wxTagSynonims& SetSynonims( const wxArrayString& );
+    wxTagSynonims& SetName(const wxString&);
+    wxTagSynonims& SetSynonims(const wxArrayString&);
 };
 
-WX_DECLARE_OBJARRAY( wxTagSynonims, _wxArrayTagSynonims );
+WX_DECLARE_OBJARRAY(wxTagSynonims, _wxArrayTagSynonims);
 
 class wxTagSynonimsCollection:
-	public _wxArrayTagSynonims
+    public _wxArrayTagSynonims
 {
-	public:
+    public:
 
-		wxTagSynonimsCollection( void );
-		wxTagSynonimsCollection( const wxTagSynonimsCollection& );
-		wxTagSynonimsCollection& operator =( const wxTagSynonimsCollection& );
+    wxTagSynonimsCollection(void);
+    wxTagSynonimsCollection(const wxTagSynonimsCollection&);
+    wxTagSynonimsCollection& operator =(const wxTagSynonimsCollection&);
 
-	public:
+    public:
 
-		bool GetName( const wxString&, wxString& ) const;
-		bool GetName( const wxCueTag&, wxCueTag& ) const;
+    bool GetName(const wxString&, wxString&) const;
+    bool GetName(const wxCueTag&, wxCueTag&) const;
 };
 
 #endif

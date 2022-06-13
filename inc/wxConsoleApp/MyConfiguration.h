@@ -5,19 +5,22 @@
 #define _MY_CONFIGURATION_H_
 
 class MyConfiguration:
-	public wxObject
+    public wxObject
 {
-	public:
+    public:
 
-		MyConfiguration( void );
+    MyConfiguration(void);
 
-	protected:
+    static bool ReadNegatableSwitchValue(const wxCmdLineParser&, const wxString&, bool&);
+    static bool ReadNegatableSwitchValue(const wxCmdLineParser&, const wxString&, std::optional<bool>&);
+    static bool ReadNegatableSwitchValueAndNegate(const wxCmdLineParser&, const wxString&, bool&);
+    static bool ReadNegatableSwitchValueAndNegate(const wxCmdLineParser&, const wxString&, std::optional<bool>&);
 
-		static wxString BoolToStr( bool );
-		static wxString ToString( bool );
+    protected:
 
-		static bool ReadNegatableSwitchValue( const wxCmdLineParser&, const wxString&, bool& );
-		static bool ReadNegatableSwitchValueAndNegate( const wxCmdLineParser&, const wxString&, bool& );
+    static wxString BoolToStr(bool);
+    static wxString BoolToStr(const std::optional<bool>&);
+    static wxString ToString(bool);
 };
 
 #endif

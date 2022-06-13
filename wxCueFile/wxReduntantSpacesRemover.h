@@ -10,30 +10,30 @@
 #endif
 
 class wxReduntantSpacesRemover:
-	public wxStringProcessor
+    public wxStringProcessor
 {
-	wxDECLARE_DYNAMIC_CLASS( wxReduntantSpacesRemover );
+    wxDECLARE_DYNAMIC_CLASS(wxReduntantSpacesRemover);
 
-	public:
+    public:
 
-		static const char NORMAL_REG_EX[];
-		static const char EN_REG_EX[];
-		static const char EM_REG_EX[];
+    static const char NORMAL_REG_EX[];
+    static const char EN_REG_EX[];
+    static const char EM_REG_EX[];
 
-		wxReduntantSpacesRemover( void );
+    wxReduntantSpacesRemover(void);
 
-		virtual wxStringProcessor* const Clone() const;
-		virtual bool Process( const wxString&, wxString& ) const;
+    virtual wxStringProcessor* const Clone() const;
+    virtual bool Process(const wxString&, wxString&) const;
 
-	protected:
+    protected:
 
-		wxRegEx m_re;
-		wxRegEx m_reEn;
-		wxRegEx m_reEm;
+    wxRegEx m_re;
+    wxRegEx m_reEn;
+    wxRegEx m_reEm;
 
-		wxString m_replacementNormal;
-		wxString m_replacementEn;
-		wxString m_replacementEm;
+    wxString m_replacementNormal;
+    wxString m_replacementEn;
+    wxString m_replacementEm;
 };
 
 #endif

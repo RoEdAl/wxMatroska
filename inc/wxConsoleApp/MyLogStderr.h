@@ -6,17 +6,17 @@
 #define _MY_LOG_STDERR_H_
 
 class MyLogStderr:
-	public wxLog
+    public wxLog
 {
-	public:
+    public:
 
-		MyLogStderr( FILE* = NULL );
-		virtual void DoLogText( const wxString& );
+    MyLogStderr(FILE* = NULL);
+    virtual void DoLogText(const wxString&);
 
-	protected:
+    protected:
 
-		FILE* m_fp;
-		wxScopedPtr< wxMessageOutput > m_pAdditionalMessageOutput;
+    FILE* m_fp;
+    wxScopedPtr< wxMessageOutput > m_pAdditionalMessageOutput;
 };
 
 #endif

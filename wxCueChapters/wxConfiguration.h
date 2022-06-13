@@ -14,7 +14,7 @@
 #endif
 
 #ifndef _WX_CUE_COMPONENT_H
-#include <wxCueComponent.h>
+#include <wxCueFile/wxCueComponent.h>
 #endif
 
 #ifndef _WX_CUE_SHEET_READER_H_
@@ -27,225 +27,262 @@
 
 #include <enum2str.h>
 
-WX_DECLARE_OBJARRAY( wxInputFile, wxArrayInputFile );
+WX_DECLARE_OBJARRAY(wxInputFile, wxArrayInputFile);
 
 class wxConfiguration:
-	public MyConfiguration
+    public MyConfiguration
 {
-	public:
+    public:
 
-		enum RENDER_MODE
-		{
-			RENDER_CUE_SHEET,
-			RENDER_MATROSKA_CHAPTERS,
-			RENDER_WAV2IMG_CUE_POINTS
-		};
+    typedef wxCharTypeBuffer< char > CharBufferType;
 
-		enum INFO_SUBJECT
-		{
-			INFO_NONE,
-			INFO_VERSION,
-			INFO_USAGE,
-			INFO_FORMATTING_DIRECTIVES,
-			INFO_LICENSE
-		};
+    enum RENDER_MODE
+    {
+        RENDER_CUESHEET,
+        RENDER_MKVMERGE_CHAPTERS,
+        RENDER_MKVMERGE,
+        RENDER_FFMPEG_CHAPTERS,
+        RENDER_FFMPEG,
+        RENDER_WAV2IMG_CUE_POINTS
+    };
 
-		static wxString GetRenderingModes();
+    enum INFO_SUBJECT
+    {
+        INFO_NONE,
+        INFO_VERSION,
+        INFO_USAGE,
+        INFO_TOOLS,
+        INFO_ASCII_TO_UNICODE,
+        INFO_FORMATTING_DIRECTIVES,
+        INFO_LICENSE
+    };
 
-		static wxString ToString( RENDER_MODE );
-		static bool FromString( const wxString&, RENDER_MODE& );
+    static wxString GetRenderingModes();
 
-		enum FILE_ENCODING
-		{
-			ENCODING_LOCAL,
-			ENCODING_UTF8,
-			ENCODING_UTF8_WITH_BOM,
-			ENCODING_UTF16_LE,
-			ENCODING_UTF16_LE_WITH_BOM,
-			ENCODING_UTF16_BE,
-			ENCODING_UTF16_BE_WITH_BOM,
-		};
+    static wxString ToString(RENDER_MODE);
+    static bool FromString(const wxString&, RENDER_MODE&);
 
-		static wxString ToString( FILE_ENCODING );
-		static bool FromString( const wxString&, FILE_ENCODING& );
+    enum FILE_ENCODING
+    {
+        ENCODING_LOCAL,
+        ENCODING_UTF8,
+        ENCODING_UTF8_WITH_BOM,
+        ENCODING_UTF16_LE,
+        ENCODING_UTF16_LE_WITH_BOM,
+        ENCODING_UTF16_BE,
+        ENCODING_UTF16_BE_WITH_BOM,
+    };
 
-		enum CUESHEET_ATTACH_MODE
-		{
-			CUESHEET_ATTACH_NONE,
-			CUESHEET_ATTACH_SOURCE,
-			CUESHEET_ATTACH_DECODED,
-			CUESHEET_ATTACH_RENDERED
-		};
+    static wxString ToString(FILE_ENCODING);
+    static bool FromString(const wxString&, FILE_ENCODING&);
 
-		static wxString ToString( CUESHEET_ATTACH_MODE );
-		static bool FromString( const wxString&, CUESHEET_ATTACH_MODE&, bool& );
+    enum CUESHEET_ATTACH_MODE
+    {
+        CUESHEET_ATTACH_NONE,
+        CUESHEET_ATTACH_SOURCE,
+        CUESHEET_ATTACH_DECODED,
+        CUESHEET_ATTACH_RENDERED
+    };
 
-	protected:
+    static wxString ToString(CUESHEET_ATTACH_MODE);
+    static bool FromString(const wxString&, CUESHEET_ATTACH_MODE&, bool&);
 
-		typedef VALUE_NAME_PAIR< CUESHEET_ATTACH_MODE > CuesheetAttachModeName;
-		typedef VALUE_NAME_PAIR< RENDER_MODE > RenderModeName;
-		typedef VALUE_NAME_PAIR< INFO_SUBJECT > INFO_SUBJECT_DESC;
+    enum FFMPEG_CODEC
+    {
+        CODEC_DEFAULT, // copy or flac for joined stream
+        CODEC_PCM_LE,
+        CODEC_PCM_BE,
+        CODEC_FLAC,
+        CODEC_WAVPACK
+    };
 
-		static const CuesheetAttachModeName AttachModeNames[];
-		static const RenderModeName RenderModeNames[];
-		static const INFO_SUBJECT_DESC InfoSubjectDesc[];
+    static wxString ToString(FFMPEG_CODEC);
+    static bool FromString(const wxString&, FFMPEG_CODEC&);
 
-	protected:
+    protected:
 
-		INFO_SUBJECT m_infoSubject;
-		bool m_bChapterTimeEnd;	// default=true
-		bool m_bUnknownChapterTimeEndToNextChapter;	// default=false
-		unsigned long m_nChapterOffset;	// in frames
-		bool m_bUseDataFiles;	// default=true
-		bool m_bCorrectQuotationMarks;
-		RENDER_MODE m_eRenderMode;
-		bool m_bGenerateTags;
-		bool m_bGenerateMkvmergeOpts;
-		bool m_bRunMkvmerge;
-		bool m_bGenerateEditionUID;
-		FILE_ENCODING m_eFileEncoding;
-		bool m_bTrackOneIndexOne;	// or zero
-		bool m_bAbortOnError;
-		bool m_bHiddenIndexes;
-		bool m_bMerge;
-		bool m_bIncludeDiscNumberTag;
-		wxCueSheetReader::ReadFlags m_nReadFlags;
-		wxCueTag::TagSources m_nTagSources;
-		bool m_bUseMLang;
-		bool m_bUseFullPaths;
-		CUESHEET_ATTACH_MODE m_eCsAttachMode;
+    typedef VALUE_NAME_PAIR< CUESHEET_ATTACH_MODE > CuesheetAttachModeName;
+    typedef VALUE_NAME_PAIR< RENDER_MODE > RenderModeName;
+    typedef VALUE_NAME_PAIR< INFO_SUBJECT > INFO_SUBJECT_DESC;
+    typedef VALUE_NAME_PAIR< FFMPEG_CODEC > FfmpegCodecName;
 
-		wxString m_sAlternateExtensions;
-		wxString m_sLang;
-		wxString m_sTrackNameFormat;
-		wxString m_sMatroskaNameFormat;
+    static const CuesheetAttachModeName AttachModeNames[];
+    static const RenderModeName RenderModeNames[];
+    static const INFO_SUBJECT_DESC InfoSubjectDesc[];
+    static const FfmpegCodecName FfmpegCodecNames[];
 
-		wxArrayInputFile m_inputFile;
-		wxFileName m_outputFile;
+    protected:
 
-		wxString m_sCueSheetExt;
-		wxString m_sMatroskaChaptersXmlExt;
-		wxString m_sMatroskaTagsXmlExt;
-		wxString m_sMatroskaOptsExt;
+    INFO_SUBJECT m_infoSubject;
+    std::optional<bool> m_chapterTimeEnd;	// default=true
+    std::optional<bool> m_chapterEndTimeFromNextChapter;	// default=false
+    std::optional<unsigned long> m_chapterOffset; // in frames
+    std::optional<bool> m_useDataFiles;	// default=true
+    bool m_bCorrectQuotationMarks;
+    RENDER_MODE m_eRenderMode;
+    bool m_bRunTool;
+    bool m_bGenerateEditionUID;
+    FILE_ENCODING m_eFileEncoding;
+    bool m_bTrackOneIndexOne;	// or zero
+    bool m_bAbortOnError;
+    bool m_bHiddenIndexes;
+    bool m_bJoinMode;
+    bool m_bIncludeDiscNumberTag;
+    wxCueSheetReader::ReadFlags m_nReadFlags;
+    wxCueTag::TagSources m_nTagSources;
+    bool m_bUseMLang;
+    bool m_bUseFullPaths;
+    CUESHEET_ATTACH_MODE m_eCsAttachMode;
 
-		wxSortedArrayString m_asLang;
+    wxString m_sAlternateExtensions;
+    std::optional<wxString> m_lang;
+    wxString m_sTrackNameFormat;
+    wxString m_sMatroskaNameFormat;
 
-		bool m_bRenderMultilineTags;
-		bool m_bRenderReplayGainTags;
-		bool m_bRenderArtistForTrack;
-		int m_nJpegImageQuality;
+    wxArrayInputFile m_inputFile;
+    wxFileName m_outputFile;
 
-	protected:
+    wxSortedArrayString m_asLang;
 
-		wxImageHandler* m_imageHandler;
+    bool m_bRenderMultilineTags;
+    bool m_bRenderReplayGainTags;
+    bool m_bRenderArtistForTrack;
+    int m_nJpegImageQuality;
+    FFMPEG_CODEC m_eFfmpegCodec;
+    bool m_bSingleAudioChannel;
+    bool m_bRunReplayGainScanner;
 
-	protected:
+    protected:
 
-		static bool ReadLanguagesStrings( wxSortedArrayString& );
-		static bool check_ext( const wxString& );
-		static wxString BoolToIdx( bool );
-		static wxString GetReadFlagsDesc( wxCueSheetReader::ReadFlags );
-		static void AddFlag( wxArrayString&, wxCueSheetReader::ReadFlags, wxCueSheetReader::ReadFlags, const wxString& );
+    wxImageHandler* m_imageHandler;
 
-		static bool FromString( const wxString&, INFO_SUBJECT& );
+    protected:
 
-		static wxString ToString( INFO_SUBJECT );
-		static wxString GetInfoSubjectTexts();
+    static bool ReadLanguagesStrings(wxSortedArrayString&);
+    static bool check_ext(const wxString&);
+    static wxString BoolToIdx(bool);
+    static wxString GetReadFlagsDesc(wxCueSheetReader::ReadFlags);
+    static void AddFlag(wxArrayString&, wxCueSheetReader::ReadFlags, wxCueSheetReader::ReadFlags, const wxString&);
 
-		wxString ReadFlagTestStr( wxCueSheetReader::ReadFlags ) const;
-		wxString TagSourcesTestStr( wxCueTag::TagSources ) const;
+    static bool FromString(const wxString&, INFO_SUBJECT&);
 
-		bool CheckLang( const wxString& ) const;
-		void FillArray( wxArrayString& as ) const;
-		bool ReadReadFlags( const wxCmdLineParser&, const wxString&, wxCueSheetReader::ReadFlags );
-		bool ReadTagSources( const wxCmdLineParser&, const wxString&, wxCueTag::TagSources );
+    static wxString ToString(INFO_SUBJECT);
+    static wxString GetInfoSubjectTexts();
 
-	public:
+    wxString ReadFlagTestStr(wxCueSheetReader::ReadFlags) const;
+    wxString TagSourcesTestStr(wxCueTag::TagSources) const;
 
-		INFO_SUBJECT GetInfoSubject() const;
-		bool GetChapterTimeEnd() const;
-		bool GetUnknownChapterTimeEndToNextChapter() const;
-		unsigned long GetChapterOffset() const;
-		bool GetUseDataFiles() const;
-		const wxString& GetAlternateExtensions() const;
-		bool HasAlternateExtensions() const;
-		bool IsUnkLang() const;
-		const wxString& GetLang() const;
-		const wxString& GetTrackNameFormat() const;
-		const wxString& GetMatroskaNameFormat() const;
-		const wxArrayInputFile& GetInputFiles() const;
-		bool CorrectQuotationMarks() const;
-		RENDER_MODE GetRenderMode() const;
-		bool TrackOneIndexOne() const;
-		bool AbortOnError() const;
-		bool HiddenIndexes() const;
-		const wxString& CueSheetExt() const;
-		const wxString& MatroskaChaptersXmlExt() const;
-		const wxString& MatroskaTagsXmlExt() const;
-		const wxString& MatroskaOptsExt() const;
-		bool GenerateTags() const;
-		bool GenerateMkvmergeOpts() const;
-		bool RunMkvmerge() const;
-		bool GenerateEditionUID() const;
-		FILE_ENCODING GetFileEncoding() const;
-		wxString GetXmlFileEncoding() const;
-		bool RenderArtistForTrack() const;
-		bool RenderMultilineTags() const;
-		bool RenderReplayGainTags() const;
-		bool ConvertCoversToJpeg() const;
-		int GetJpegImageQuality() const;
+    bool CheckLang(const wxString&) const;
+    void FillArray(wxArrayString& as) const;
+    bool ReadReadFlags(const wxCmdLineParser&, const wxString&, wxCueSheetReader::ReadFlags);
+    bool ReadTagSources(const wxCmdLineParser&, const wxString&, wxCueTag::TagSources);
 
-		wxSharedPtr< wxMBConv > GetXmlEncoding() const;
+    public:
 
-		wxSharedPtr< wxTextOutputStream > GetOutputTextStream( wxOutputStream& ) const;
-		bool MergeMode() const;
-		bool IncludeDiscNumberTag() const;
-		wxCueSheetReader::ReadFlags GetReadFlags() const;
-		wxCueTag::TagSources GetTagSources() const;
-		bool UseMLang() const;
-		bool UseFullPaths() const;
-		bool AttachEacLog() const;
-		bool AttachAccurateRipLog() const;
-		CUESHEET_ATTACH_MODE GetCueSheetAttachMode() const;
-		bool AttachCover() const;
-		wxString GetExt() const;
-		wxString GetOutputFile( const wxInputFile& ) const;
-		void GetOutputFile( const wxInputFile&, wxFileName&, wxFileName& ) const;
-		void GetOutputMatroskaFile( const wxInputFile&, wxFileName&, wxFileName& ) const;
-		bool GetOutputCueSheetFile( const wxInputFile&, const wxString&, wxFileName& ) const;
-		bool GetOutputFile( const wxInputFile&, const wxString&, const wxString&, wxFileName& ) const;
+    INFO_SUBJECT GetInfoSubject() const;
+    bool GetChapterTimeEnd() const;
+    bool GetChapterEndTimeFromNextChapter() const;
+    unsigned long GetChapterOffset() const;
+    bool UseDataFiles() const;
+    const wxString& GetAlternateExtensions() const;
+    bool HasAlternateExtensions() const;
+    bool IsUnkLang() const;
+    wxString GetLang() const;
+    const wxString& GetTrackNameFormat() const;
+    const wxString& GetMatroskaNameFormat() const;
+    const wxArrayInputFile& GetInputFiles() const;
+    bool CorrectQuotationMarks() const;
+    RENDER_MODE GetRenderMode() const;
+    bool TrackOneIndexOne() const;
+    bool AbortOnError() const;
+    bool HiddenIndexes() const;
+    bool GenerateTags() const;
+    bool RunTool() const;
+    bool GenerateEditionUID() const;
+    FILE_ENCODING GetFileEncoding() const;
+    wxString GetXmlFileEncoding() const;
+    bool RenderArtistForTrack() const;
+    bool RenderMultilineTags() const;
+    bool RenderReplayGainTags() const;
+    bool ConvertCoversToJpeg() const;
+    int GetJpegImageQuality() const;
+    FFMPEG_CODEC GetFfmpegCodec() const;
+    bool IsDualMono() const;
+    bool RunReplayGainScanner() const;
 
-		wxImageHandler* const GetImageHandler() const;
+    wxSharedPtr< wxMBConv > GetXmlEncoding() const;
 
-		wxStringProcessor* const CreateStringProcessor() const;
+    wxSharedPtr< wxTextOutputStream > GetOutputTextStream(wxOutputStream&) const;
+    bool JoinMode() const;
+    bool IncludeDiscNumberTag() const;
+    wxCueSheetReader::ReadFlags GetReadFlags() const;
+    wxCueTag::TagSources GetTagSources() const;
+    bool UseMLang() const;
+    bool UseFullPaths() const;
+    bool AttachEacLog() const;
+    bool AttachAccurateRipLog() const;
+    CUESHEET_ATTACH_MODE GetCueSheetAttachMode() const;
+    bool AttachCover() const;
+    CharBufferType GetExt() const;
+    wxFileName GetOutputDir(const wxInputFile&) const;
+    wxFileName GetOutputFile(const wxInputFile&) const;
+    wxFileName GetOutputFile(const wxInputFile&, const wxString&) const;
+    bool GetOutputFile(const wxInputFile&, const wxString&, const wxString&, wxFileName&) const;
+    bool GetOutputCueSheetFile(const wxInputFile&, const wxString&, wxFileName&) const;
 
-	public:
 
-		static const char CUE_SHEET_EXT[];
-		static const char MATROSKA_CHAPTERS_EXT[];
-		static const char MATROSKA_TAGS_EXT[];
-		static const char MATROSKA_OPTS_EXT[];
-		static const char MATROSKA_AUDIO_EXT[];
-		static const char CUESHEET_EXT[];
-		static const char MATROSKA_NAME_FORMAT[];
-		static const char TRACK_NAME_FORMAT[];
-		static const size_t MAX_EXT_LEN;
-		static const char LANG_FILE_URL[];
-		static const char LANG_FILE_NAME[];
-		static const char LANG_UND[];
+    wxImageHandler* const GetImageHandler() const;
 
-	public:
+    wxStringProcessor* const CreateStringProcessor() const;
 
-		wxConfiguration( void );
-		bool ReadLanguagesStrings();
+    public:
 
-		void AddCmdLineParams( wxCmdLineParser& ) const;
-		bool Read( const wxCmdLineParser& );
+    struct EXT
+    {
+        static const size_t MAX_LEN;
 
-		void Dump() const;
-		void BuildXmlComments( const wxFileName&, wxXmlNode* ) const;
+        static const char MATROSKA_AUDIO[];
+        static const char MATROSKA_CHAPTERS[];
+        static const char MATROSKA_TAGS[];
+        static const char MKVMERGE_OPTIONS[];
 
-		bool InitJpegHandler();
+        static const char CMAKE_SCRIPT[];
+        static const char FFMPEG_METADATA[];
+
+        static const char CUESHEET[];
+        static const char TXT[];
+        static const char UNK[];
+    };
+
+    struct FMT
+    {
+        static const char MKA_CONTAINER[];
+        static const char MKA_CHAPTER[];
+    };
+
+    struct LANG
+    {
+        static const char FILE_URL[];
+        static const char FILE_NAME[];
+        static const char UND[];
+    };
+
+    static const unsigned long  DEF_CHAPTER_OFFSET_MKVMERGE;
+    static const unsigned long  DEF_CHAPTER_OFFSET_FFMPEG;
+
+    public:
+
+    wxConfiguration(void);
+    bool ReadLanguagesStrings();
+
+    void AddCmdLineParams(wxCmdLineParser&) const;
+    bool Read(const wxCmdLineParser&);
+
+    void Dump() const;
+    void BuildXmlComments(const wxFileName&, wxXmlNode*) const;
+    void ToArray(wxArrayString&) const;
+
+    bool InitJpegHandler();
 };
 
 #endif  // _WX_CONFIGURATION_H

@@ -30,15 +30,15 @@ class wxArrayFileName;
 #endif
 
 class wxCuePointsRenderer:
-	public wxPrimitiveRenderer
+    public wxPrimitiveRenderer
 {
-	public:
+    public:
 
-		wxCuePointsRenderer( const wxConfiguration& );
+    wxCuePointsRenderer(const wxConfiguration&);
 
-		void RenderDisc( const wxCueSheet& );
-		bool Save( const wxFileName& );
-		const wxFileName& GetFileName() const;
+    void RenderDisc(const wxCueSheet&);
+    bool Save(const wxFileName&);
+    const wxFileName& GetFileName() const;
 };
 
 #endif

@@ -4,28 +4,29 @@
 
 #include <wxCueFile/wxStringProcessor.h>
 
-wxIMPLEMENT_ABSTRACT_CLASS( wxStringProcessor, wxObject )
+wxIMPLEMENT_ABSTRACT_CLASS(wxStringProcessor, wxObject)
 
 wxStringProcessor::wxStringProcessor()
-{}
-
-bool wxStringProcessor::operator ()( wxString& s ) const
 {
-	wxString res;
-
-	if ( Process( s, res ) )
-	{
-		s = res;
-		return true;
-	}
-	return false;
 }
 
-wxString wxStringProcessor::operator ()( const wxString& s ) const
+bool wxStringProcessor::operator ()(wxString& s) const
 {
-	wxString res;
+    wxString res;
 
-	return Process( s, res ) ? res : s;
+    if (Process(s, res))
+    {
+        s = res;
+        return true;
+    }
+    return false;
+}
+
+wxString wxStringProcessor::operator ()(const wxString& s) const
+{
+    wxString res;
+
+    return Process(s, res) ? res : s;
 }
 
 // #include <wx/arrimpl.cpp>
@@ -41,5 +42,5 @@ wxString wxStringProcessor::operator ()( const wxString& s ) const
 		delete p;														   \
 	}
 
-WX_DEFINE_OBJARRAY_EX( wxArrayStringProcessor );
+WX_DEFINE_OBJARRAY_EX(wxArrayStringProcessor);
 

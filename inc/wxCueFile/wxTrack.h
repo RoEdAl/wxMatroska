@@ -32,119 +32,120 @@ class wxSamplingInfo;
 #include <enum2str.h>
 
 class wxTrack:
-	public wxCueComponent
+    public wxCueComponent
 {
-	wxDECLARE_DYNAMIC_CLASS( wxTrack );
+    wxDECLARE_DYNAMIC_CLASS(wxTrack);
 
-	public:
+    public:
 
-		enum Flag
-		{
-			DCP, CH4, PRE, SCMS, DATA, NONE
-		};
+    enum Flag
+    {
+        DCP, CH4, PRE, SCMS, DATA, NONE
+    };
 
-		WX_DEFINE_ARRAY_INT( Flag, wxArrayFlag );
+    WX_DEFINE_ARRAY_INT(Flag, wxArrayFlag);
 
-		enum DataMode
-		{
-			AUDIO, CDG, MODE1_2048, MODE1_2352, MODE2_2336, MODE2_2352, CDI_2336,
-			CDI_2352
-		};
+    enum DataMode
+    {
+        AUDIO, CDG, MODE1_2048, MODE1_2352, MODE2_2336, MODE2_2352, CDI_2336,
+        CDI_2352
+    };
 
-	protected:
+    protected:
 
-		size_t m_number;
-		DataMode m_dataMode;
-		wxArrayIndex m_indexes;
-		wxScopedPtr< wxIndex > m_pPreGap;
-		wxScopedPtr< wxIndex > m_pPostGap;
-		wxArrayFlag m_flags;
+    size_t m_number;
+    DataMode m_dataMode;
+    wxArrayIndex m_indexes;
+    wxScopedPtr< wxIndex > m_pPreGap;
+    wxScopedPtr< wxIndex > m_pPostGap;
+    wxArrayFlag m_flags;
 
-	protected:
+    protected:
 
-		typedef VALUE_NAME_PAIR< Flag > FLAG_STR;
-		typedef VALUE_NAME_PAIR< DataMode > DATA_MODE_STR;
+    typedef VALUE_NAME_PAIR< Flag > FLAG_STR;
+    typedef VALUE_NAME_PAIR< DataMode > DATA_MODE_STR;
 
-		static const FLAG_STR FlagString[];
-		static const DATA_MODE_STR DataModeString[];
+    static const FLAG_STR FlagString[];
+    static const DATA_MODE_STR DataModeString[];
 
-	protected:
+    protected:
 
-		void copy( const wxTrack& );
+    void copy(const wxTrack&);
 
-	public:
+    public:
 
-		static int CompareFn( wxTrack**, wxTrack** );
+    static int CompareFn(wxTrack**, wxTrack**);
 
-		size_t GetNumber() const;
+    size_t GetNumber() const;
 
-		wxTrack& SetNumber( size_t );
+    wxTrack& SetNumber(size_t);
 
-		DataMode GetMode() const;
-		wxString GetModeAsString() const;
+    DataMode GetMode() const;
+    wxString GetModeAsString() const;
 
-		wxTrack& SetMode( DataMode );
-		bool SetMode( const wxString& );
+    wxTrack& SetMode(DataMode);
+    bool SetMode(const wxString&);
 
-		bool HasIndexes() const;
-		size_t GetIndexesCount() const;
-		const wxArrayIndex& GetIndexes() const;
-		const wxIndex& GetFirstIndex() const;
-		void AddIndex( const wxIndex& );
+    bool HasIndexes() const;
+    size_t GetIndexesCount() const;
+    const wxArrayIndex& GetIndexes() const;
+    const wxIndex& GetZeroIndex() const;
+    const wxIndex& GetFirstIndex() const;
+    void AddIndex(const wxIndex&);
 
-		bool HasPreGap() const;
-		bool HasZeroIndex() const;
-		bool HasPostGap() const;
+    bool HasPreGap() const;
+    bool HasZeroIndex() const;
+    bool HasPostGap() const;
 
-		const wxIndex& GetPreGap() const;
-		const wxIndex& GetPostGap() const;
+    const wxIndex& GetPreGap() const;
+    const wxIndex& GetPostGap() const;
 
-		wxArrayIndex& SortIndicies();
+    wxArrayIndex& SortIndicies();
 
-		void ClearPreGap();
-		void ClearPostGap();
+    void ClearPreGap();
+    void ClearPostGap();
 
-		void SetPreGap( const wxIndex& );
-		void SetPostGap( const wxIndex& );
+    void SetPreGap(const wxIndex&);
+    void SetPostGap(const wxIndex&);
 
-		const wxArrayFlag& GetFlags() const;
-		wxString GetFlagsAsString() const;
+    const wxArrayFlag& GetFlags() const;
+    wxString GetFlagsAsString() const;
 
-		wxTrack& AddFlag( Flag );
-		bool AddFlag( const wxString& );
-		void ClearFlags();
-		bool HasFlags() const;
+    wxTrack& AddFlag(Flag);
+    bool AddFlag(const wxString&);
+    void ClearFlags();
+    bool HasFlags() const;
 
-		bool HasFlag( Flag ) const;
+    bool HasFlag(Flag) const;
 
-		bool IsRelatedToDataFileIdx( size_t, bool = true ) const;
-		size_t GetMaxDataFileIdx( bool            = true ) const;
-		size_t GetMinDataFileIdx( bool            = true ) const;
+    bool IsRelatedToDataFileIdx(size_t, bool = true) const;
+    size_t GetMaxDataFileIdx(bool = true) const;
+    size_t GetMinDataFileIdx(bool = true) const;
 
-		void SetDataFileIdx( size_t );
-		void ShiftDataFileIdx( size_t );
+    void SetDataFileIdx(size_t);
+    void ShiftDataFileIdx(size_t);
 
-		virtual void GetReplacements( wxCueTag::TagSources, wxHashString& ) const;
+    virtual void GetReplacements(wxCueTag::TagSources, wxHashString&) const;
 
-	public:
+    public:
 
-		wxTrack( void );
-		wxTrack( unsigned long );
-		wxTrack( const wxTrack& );
-		wxTrack& operator =( const wxTrack& );
+    wxTrack(void);
+    wxTrack(unsigned long);
+    wxTrack(const wxTrack&);
+    wxTrack& operator =(const wxTrack&);
 
-		bool IsValid() const;
+    bool IsValid() const;
 
-		static wxString FlagToString( Flag );
-		static bool StringToFlag( const wxString&, Flag& );
-		static wxString GetFlagRegExp();
+    static wxString FlagToString(Flag);
+    static bool StringToFlag(const wxString&, Flag&);
+    static wxString GetFlagRegExp();
 
-		static wxString DataModeToString( DataMode );
-		static bool StringToDataMode( const wxString&, DataMode& );
-		static wxString GetDataModeRegExp();
+    static wxString DataModeToString(DataMode);
+    static bool StringToDataMode(const wxString&, DataMode&);
+    static wxString GetDataModeRegExp();
 };
 
-WX_DECLARE_OBJARRAY( wxTrack, wxArrayTrack );
+WX_DECLARE_OBJARRAY(wxTrack, wxArrayTrack);
 
 #endif
 

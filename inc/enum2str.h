@@ -55,7 +55,7 @@ static inline wxString get_texts( const VALUE_NAME_PAIR< T >( &desc )[ SIZE ] )
 template< typename T, size_t SIZE >
 static wxString get_texts_regexp( const VALUE_NAME_PAIR< T >( &arr )[ SIZE ] )
 {
-	return get_texts< T, SIZE >( arr ).RemoveLast().Prepend( '(' ).Append( ')' );
+	return get_texts< T, SIZE >( arr ).Prepend( '(' ).Append( ')' );
 }
 
 #endif

@@ -6,38 +6,39 @@
 #define _LOG_LIST_BOX_H_
 
 class ListBox:
-	public wxListBox
+    public wxListBox
 {
-	public:
+    public:
 
-		ListBox( wxWindow* );
-		void ShowLastItem();
+    ListBox(wxWindow*);
+    void ShowLastItem();
+    wxString GetItemsAsText() const;
 };
 
 class LogListBox:
-	public wxLog
+    public wxLog
 {
-	public:
+    public:
 
-		LogListBox( ListBox* );
-		virtual void DoLogText( const wxString& );
+    LogListBox(ListBox*);
+    virtual void DoLogText(const wxString&);
 
-	protected:
+    protected:
 
-		ListBox* m_listBox;
+    ListBox* m_listBox;
 };
 
 class SimpleLogListBox:
-	public wxLog
+    public wxLog
 {
-	public:
+    public:
 
-		SimpleLogListBox( ListBox* );
-		virtual void DoLogText( const wxString& );
+    SimpleLogListBox(ListBox*);
+    virtual void DoLogText(const wxString&);
 
-	protected:
+    protected:
 
-		ListBox* m_listBox;
+    ListBox* m_listBox;
 };
 
 #endif
