@@ -21,14 +21,18 @@ class wxFfMetadataRenderer:
     wxFfMetadataRenderer(const wxConfiguration&);
 
     void RenderDisc(const wxCueSheet&);
-    bool Save(const wxFileName&);
+    wxJson RenderChapters(const wxCueSheet&) const;
+
+    bool Save(const wxFileName&) const;
+    bool SaveChapters(const wxJson&, const wxFileName&) const;
 
     private:
 
     wxString get_matroska_title(const wxCueSheet&, const wxStringProcessor&) const;
     void render_tags(const wxArrayCueTag&, bool) const;
     const wxIndex& get_idx_from_first_track(const wxTrack&) const;
-    const wxIndex& get_idx_from_second_track(const wxTrack&) const;
+    static const wxIndex& get_idx_from_first_track_no_conf(const wxTrack&);
+    static const wxIndex& get_idx_from_second_track(const wxTrack&);
 
 };
 

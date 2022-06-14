@@ -35,22 +35,10 @@ class wxMkvmergeOptsRenderer:
     public:
 
     wxFileName m_matroskaOptsFile;
-    typedef nlohmann::basic_json<
-        std::map ,
-        std::vector ,
-        std::string ,
-        bool ,
-        wxInt64 ,
-        wxUint64 ,
-        wxDouble ,
-        std::allocator ,
-        nlohmann::adl_serializer ,
-        std::vector< wxByte >
-    > json;
 
     protected:
 
-    void render_attachments(json& opts, const wxArrayMatroskaAttachment&) const;
+    void render_attachments(wxJson&, const wxArrayMatroskaAttachment&) const;
     static wxString get_mapping_str( const wxCueSheet& );
 
     public:

@@ -106,6 +106,15 @@ namespace
         return os;
     }
 
+    wxTextOutputStream& flac0_codec(wxTextOutputStream& os, const wxArrayDataFile& dataFiles)
+    {
+        put_audio_sample_fmt(os << "        ", dataFiles, false) << endl;
+        os << "        -compression_level 0 " << endl;
+        os << "        -c:a flac" << endl << endl;
+
+        return os;
+    }
+
     wxTextOutputStream& wavpack_codec(wxTextOutputStream& os, const wxArrayDataFile& dataFiles)
     {
         put_audio_sample_fmt(os << "        ", dataFiles, true) << endl;
@@ -114,6 +123,83 @@ namespace
 
         return os;
     }
+}
+
+
+wxString wxFfmpegCMakeScriptRenderer::RenderDiscDraft(const wxCueSheet& cueSheet, const wxFileName& workDir, const wxString& tmpStem) const
+{
+    wxFileName relDir;
+    if (!m_cfg.UseFullPaths())
+    {
+        relDir = workDir;
+    }
+
+    wxTextOutputStreamOnString os;
+
+    *os << "CMAKE_MINIMUM_REQUIRED(VERSION 3.21)" << endl;
+    *os << "SET(FFSTEM \"" << tmpStem << "\")" << endl;
+    *os << "CMAKE_PATH(SET CUE2MKC_WORKDIR \"" << GetCMakePath(workDir) << "\")" << endl;
+
+    const wxArrayDataFile& dataFiles = cueSheet.GetDataFiles();
+    for (size_t i = 0, cnt = dataFiles.GetCount(); i < cnt; ++i)
+    {
+        const wxDataFile& dataFile = dataFiles[i];
+        wxASSERT(dataFile.HasRealFileName());
+        const wxFileName fn = dataFile.GetRealFileName();
+        WriteSizeT(*os << "CMAKE_PATH(SET CUE2MKC_AUDIO_", i) << " \"" << GetCMakePath(GetRelativeFileName(fn, relDir)) << "\")" << endl;
+    }
+
+    *os << "CMAKE_PATH(SET CUE2MKC_CHAPTERS \"${FFSTEM}-chapters.json\")" << endl;
+    *os << "CMAKE_PATH(SET CUE2MKC_MKA \"${FFSTEM}.mka\")" << endl;
+    *os << "CMAKE_PATH(SET CUE2MKC_DST \"${FFSTEM}-rg.json\")" << endl;
+    *os << "MESSAGE(STATUS \"Creating temporary MKA container\")" << endl;
+    *os << "EXECUTE_PROCESS(" << endl;
+    *os << "    COMMAND ${FFMPEG}" << endl;
+    *os << "        -y" << endl;
+    *os << "        -hide_banner -nostdin -nostats" << endl;
+    *os << "        -loglevel repeat+level+warning" << endl;
+    *os << "        -threads 1" << endl;
+
+    for (size_t i = 0, cnt = dataFiles.GetCount(); i < cnt; ++i)
+    {
+        WriteSizeT(*os << "        -i ${CUE2MKC_AUDIO_", i) << '}' << endl;
+    }
+
+    if (m_cfg.JoinMode() || m_cfg.IsDualMono())
+    {
+        *os << "        -filter_complex_threads 1" << endl;
+        *os << "        -filter_complex " << make_ffmpeg_concat_filter(dataFiles.GetCount(), m_cfg.IsDualMono()) << endl;
+        *os << "        -map [outa]" << endl;
+    }
+    else
+    {
+        *os << "        -map 0:a:0" << endl;
+    }
+
+    *os << "        -map_metadata -1" << endl;
+    *os << "        -map_chapters -1" << endl;
+    flac0_codec(*os, dataFiles);
+    *os << "        ${CUE2MKC_MKA}" << endl;
+    *os << "    ENCODING UTF-8" << endl;
+    *os << "    COMMAND_ECHO NONE" << endl;
+    *os << "    COMMAND_ERROR_IS_FATAL ANY" << endl;
+    if (!m_cfg.UseFullPaths())
+    {
+        *os << "    WORKING_DIRECTORY ${CUE2MKC_WORKDIR}" << endl;
+    }
+    *os << ')' << endl;
+
+    {
+        wxFileName ffScan(wxStandardPaths::Get().GetExecutablePath());
+        ffScan.SetFullName("ff-scan.cmake");
+        *os << "INCLUDE(\"" << GetCMakePath(ffScan) << "\")" << endl;
+    }
+    *os << "CMAKE_PATH(APPEND CUE2MKC_WORKDIR ${CUE2MKC_MKA} OUTPUT_VARIABLE CUE2MKC_MKA_PATH)" << endl;
+    *os << "CMAKE_PATH(APPEND CUE2MKC_WORKDIR ${CUE2MKC_CHAPTERS} OUTPUT_VARIABLE CUE2MKC_CHAPTERS_PATH)" << endl;
+    *os << "FILE(REMOVE ${CUE2MKC_MKA_PATH} ${CUE2MKC_CHAPTERS_PATH})" << endl;
+
+    os->Flush();
+    return os.GetString();
 }
 
 void wxFfmpegCMakeScriptRenderer::RenderDisc(const wxCueSheet& cueSheet, const wxInputFile& inputFile, const wxFileName& metadataFile)
@@ -320,6 +406,37 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(const wxCueSheet& cueSheet, const w
         *m_os << "    WORKING_DIRECTORY ${CUE2MKC_WORKDIR}" << endl;
     }
     *m_os << ')' << endl;
+}
+
+bool wxFfmpegCMakeScriptRenderer::SaveDraft(const wxString& script, const wxFileName& workDir, const wxString& tmpStem, wxFileName& scriptFile, wxFileName& scanFile) const
+{
+    scriptFile = workDir;
+    scriptFile.SetName(tmpStem);
+    scriptFile.SetExt("cmake");
+
+    scanFile = workDir;
+
+    wxString scanFileName(tmpStem);
+    scanFileName += "-rg";
+
+    scanFile.SetName(scanFileName);
+    scanFile.SetExt("json");
+
+    wxFileOutputStream os(scriptFile.GetFullPath());
+    if (os.IsOk())
+    {
+        wxLogInfo(_("Creating temporary CMake script \u201C%s\u201D"), scriptFile.GetFullName());
+        wxSharedPtr< wxTextOutputStream > pStream(wxTextOutputStreamWithBOMFactory::CreateUTF8(os, wxEOL_NATIVE, true, false));
+        pStream->WriteString(script);
+        pStream->Flush();
+
+        return true;
+    }
+    else
+    {
+        wxLogError(_("Fail to save temporary CMake script to \u201C%s\u201D"), scriptFile.GetFullName());
+        return false;
+    }
 }
 
 bool wxFfmpegCMakeScriptRenderer::Save(const wxFileName& outputFile)

@@ -66,6 +66,8 @@ class wxCueTag:
         static const char COMMENT[];
         static const char RIPPER[];
         static const char PREPARER[];
+        static const char DR14[];
+        static const char DR14_ALBUM[];
     };
 
     public:

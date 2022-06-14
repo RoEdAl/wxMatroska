@@ -129,9 +129,123 @@ const wxIndex& wxFfMetadataRenderer::get_idx_from_first_track(const wxTrack& tra
     }
 }
 
-const wxIndex& wxFfMetadataRenderer::get_idx_from_second_track(const wxTrack& track) const
+const wxIndex& wxFfMetadataRenderer::get_idx_from_first_track_no_conf(const wxTrack& track)
+{
+    if (track.HasPreGap() && track.GetPreGap().HasDataFileIdx())
+    {
+        return track.GetPreGap();
+    }
+    else if (track.HasZeroIndex())
+    {
+        return track.GetZeroIndex();
+    }
+    else
+    {
+        return track.GetFirstIndex();
+    }
+}
+
+const wxIndex& wxFfMetadataRenderer::get_idx_from_second_track(const wxTrack& track)
 {
     return track.GetFirstIndex();
+}
+
+wxJson wxFfMetadataRenderer::RenderChapters(const wxCueSheet& cueSheet) const
+{
+    wxJson chapters = wxJson::array();
+    const wxArrayTrack& tracks = cueSheet.GetTracks();
+    
+    for (size_t i = 0, nCount = tracks.GetCount(); i < nCount; ++i)
+    {
+        const wxTrack& track = tracks[i];
+        wxDuration posStart, posEnd;
+
+        posStart.Invalidate();
+        posEnd.Invalidate();
+
+        {
+            // start position - easy
+            const wxIndex& idx = (track.GetNumber() == 1u) ? get_idx_from_first_track(track) : get_idx_from_second_track(track);
+            if (idx.HasDataFileIdx())
+            {
+                posStart = cueSheet.GetDuration(idx.GetDataFileIdx());
+                const wxULongLong offset(posStart.GetSamplingInfo().GetIndexOffset(idx));
+                posStart.Add(offset);
+            }
+        }
+
+        // end position - more complex
+        if (track.HasPostGap() && track.GetPostGap().HasDataFileIdx())
+        { // from post-gap
+            const wxIndex& idx = track.GetPostGap();
+            posEnd = cueSheet.GetDuration(idx.GetDataFileIdx());
+            const wxULongLong offset(posEnd.GetSamplingInfo().GetIndexOffset(idx));
+            posEnd.Add(offset);
+        }
+
+        if (!posEnd.IsValid())
+        { // from media file
+            const size_t nDataFileIdx = cueSheet.GetDataFileIdxIfLastForTrack(i);
+
+            if (nDataFileIdx != wxIndex::UnknownDataFileIdx)
+            {
+                posEnd = cueSheet.GetDuration(nDataFileIdx + 1u);
+            }
+        }
+
+        if (!posEnd.IsValid() && ((i + 1u) < nCount))
+        { // from next track (with offset)
+            const wxTrack& nextTrack = cueSheet.GetTrack(i + 1u);
+            if (nextTrack.HasZeroIndex())
+            { // idx 00 - no offset
+                const wxIndex& idx = nextTrack.GetZeroIndex();
+                wxASSERT(idx.HasDataFileIdx());
+                posEnd = cueSheet.GetDuration(idx.GetDataFileIdx());
+                const wxULongLong offset(posEnd.GetSamplingInfo().GetIndexOffset(idx));
+                posEnd.Add(offset);
+            }
+            else
+            { // idx 01 - use offset from configuration
+                const wxIndex& idx = nextTrack.GetFirstIndex();
+                posEnd = cueSheet.GetDuration(idx.GetDataFileIdx());
+                wxASSERT(idx.HasDataFileIdx());
+                const wxULongLong offset1(posEnd.GetSamplingInfo().GetIndexOffset(idx));
+                const wxULongLong offset2(posEnd.GetSamplingInfo().GetFramesFromCdFrames(m_cfg.GetChapterOffset()));
+                posEnd.Add(offset1 - offset2);
+            }
+        }
+
+        if (!posStart.IsValid())
+        {
+            wxLogWarning(_("Track/chapter %" wxSizeTFmtSpec "d without start time"), i);
+            continue;
+        }
+
+        if (!posEnd.IsValid())
+        {
+            wxLogWarning(_("Track/chapter %" wxSizeTFmtSpec "d without end time"), i);
+            continue;
+        }
+
+
+        wxJson chapter;
+        chapter["id"] = i;
+        {
+            const wxDouble ts = posStart.GetSamplingInfo().ToSeconds(posStart.GetNumberOfSamples());
+            chapter["start_time"] = wxString::FromCDouble(ts).ToUTF8();
+        }
+
+        {
+            const wxDouble ts = posEnd.GetSamplingInfo().ToSeconds(posEnd.GetNumberOfSamples());
+            chapter["end_time"] = wxString::FromCDouble(ts).ToUTF8();
+        }
+
+        chapters.push_back(chapter);
+    }
+
+    wxJson result;
+    result["chapters"] = chapters;
+    return result;
 }
 
 void wxFfMetadataRenderer::RenderDisc(const wxCueSheet& cueSheet)
@@ -273,7 +387,26 @@ void wxFfMetadataRenderer::RenderDisc(const wxCueSheet& cueSheet)
     }
 }
 
-bool wxFfMetadataRenderer::Save(const wxFileName& outputFile)
+bool wxFfMetadataRenderer::SaveChapters(const wxJson& chapters, const wxFileName& outputFile) const
+{
+    wxFileOutputStream os(outputFile.GetFullPath());
+
+    if (os.IsOk())
+    {
+        wxLogInfo(_("Creating chapters file \u201C%s\u201D"), outputFile.GetFullName());
+        wxTextOutputStream stream(os, wxEOL_NATIVE, wxConvUTF8);
+        stream.WriteString(wxString::FromUTF8Unchecked(chapters.dump(2)));
+        stream.Flush();
+        return true;
+    }
+    else
+    {
+        wxLogError(_("Fail to save chapters to \u201C%s\u201D"), outputFile.GetFullName());
+        return false;
+    }
+}
+
+bool wxFfMetadataRenderer::Save(const wxFileName& outputFile) const
 {
     wxFileOutputStream os(outputFile.GetFullPath());
 

@@ -50,7 +50,7 @@ class wxMyApp:
     bool ShowInfo() const;
 
     int ProcessCueFile(const wxInputFile&, const wxTagSynonimsCollection&, const wxTagSynonimsCollection&);
-    int ConvertCueSheet(const wxInputFile&, const wxCueSheet&);
+    int ConvertCueSheet(const wxInputFile&, wxCueSheet&);
     int AppendCueSheet(wxCueSheet&);
 
     static void InfoVersion(wxMessageOutput&);
@@ -70,7 +70,9 @@ class wxMyApp:
     void GetCmd(const wxFileName&, const wxArrayString&, wxString&, wxString&) const;
     bool RunMkvmerge(const wxFileName&);
     bool RunCMakeScript(const wxFileName&);
-    bool RunReplayGainScanner(const wxFileName&);
+    bool RunReplayGainScanner(const wxInputFile&, wxCueSheet&) const;
+    bool RunReplayGainScanner(const wxFileName&) const;
+    void ApplyTagsFromJson(wxCueSheet&, const wxJson&) const;
 
     bool PrepareExecuteEnv(wxExecuteEnv&) const;
 

@@ -35,12 +35,12 @@ namespace
     const char attachment::file[] = "--attach-file";
 
     template< size_t N >
-    void add_string(wxMkvmergeOptsRenderer::json& j, const char(&s)[N])
+    void add_string(wxJson& j, const char(&s)[N])
     {
         j.push_back(s);
     }
 
-    void add_string(wxMkvmergeOptsRenderer::json& j, const wxString& s)
+    void add_string(wxJson& j, const wxString& s)
     {
         j.push_back(s.utf8_string());
     }
@@ -72,7 +72,7 @@ wxString wxMkvmergeOptsRenderer::get_mapping_str(const wxCueSheet& cueSheet)
 }
 
 void wxMkvmergeOptsRenderer::render_attachments(
-    wxMkvmergeOptsRenderer::json& opts,
+    wxJson& opts,
     const wxArrayMatroskaAttachment& attachments) const
 {
     for(size_t i=0, cnt = attachments.GetCount(); i < cnt; ++i)
@@ -100,7 +100,7 @@ void wxMkvmergeOptsRenderer::RenderDisc(const wxInputFile& inputFile,
         const wxCueSheet& cueSheet)
 {
     wxFileName chaptersFile, tagsFile, mkaFile;
-    json       opts;
+    wxJson opts;
 
     chaptersFile = m_cfg.GetOutputFile(inputFile);
     if (m_cfg.GenerateTags())

@@ -38,6 +38,8 @@ const char wxCueTag::Name::RELEASECOUNTRY[] = "RELEASECOUNTRY";
 const char wxCueTag::Name::COMMENT[] = "COMMENT";
 const char wxCueTag::Name::RIPPER[] = "RIPPER";
 const char wxCueTag::Name::PREPARER[] = "PREPARER";
+const char wxCueTag::Name::DR14[] = "DR14";
+const char wxCueTag::Name::DR14_ALBUM[] = "DR14_ALBUM";
 
 // ===============================================================================
 
@@ -560,7 +562,7 @@ wxString wxCueTag::GetFlattenValues(const wxArrayCueTag& tags, const wxString& s
 
 bool wxCueTag::IsReplayGain() const
 {
-    return m_sName.StartsWith("REPLAYGAIN_");
+    return !TestSource(TAG_AUTO_GENERATED) && (m_sName.StartsWith("REPLAYGAIN_") || (m_sName.CmpNoCase(Name::DR14) == 0) || (m_sName.CmpNoCase(Name::DR14_ALBUM) == 0));
 }
 
 bool wxCueTag::IsRipperComment() const

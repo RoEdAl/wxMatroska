@@ -244,7 +244,25 @@ int wxMyApp::AppendCueSheet(wxCueSheet& cueSheet)
     return 0;
 }
 
-int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, const wxCueSheet& cueSheet)
+namespace
+{
+    wxString random_string(size_t length)
+    {
+        auto randchar = []() -> char {
+            const char charset[] =
+                "0123456789"
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                "abcdefghijklmnopqrstuvwxyz";
+            const size_t max_index = (sizeof(charset) - 1);
+            return charset[rand() % max_index];
+        };
+        wxString str(length, '\000');
+        std::generate_n(str.begin(), length, randchar);
+        return str;
+    }
+}
+
+int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
 {
     if (cueSheet.GetDataFilesCount() > 1u)
     {
@@ -291,6 +309,11 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, const wxCueSheet& cue
         case wxConfiguration::RENDER_MKVMERGE_CHAPTERS:
         case wxConfiguration::RENDER_MKVMERGE:
         {
+            if (m_cfg.RunReplayGainScanner())
+            {
+                RunReplayGainScanner(inputFile, cueSheet);
+            }
+
             wxLogInfo(_("Converting cue scheet to XML format"));
             wxScopedPtr<wxXmlCueSheetRenderer> pXmlRenderer(GetXmlRenderer(inputFile));
 
@@ -308,16 +331,6 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, const wxCueSheet& cue
                     {
                         return 1;
                     }
-
-                    // TODO: Fix RG scanner
-                    if (m_cfg.RunReplayGainScanner())
-                    {
-                        wxFileName mka = m_cfg.GetOutputFile(inputFile, wxConfiguration::EXT::MATROSKA_AUDIO);
-                        if (!RunReplayGainScanner(mka))
-                        {
-                            return 1;
-                        }
-                    }
                 }
             }
             else
@@ -331,6 +344,11 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, const wxCueSheet& cue
         case wxConfiguration::RENDER_FFMPEG_CHAPTERS:
         case wxConfiguration::RENDER_FFMPEG:
         {
+            if (m_cfg.RunReplayGainScanner())
+            {
+                RunReplayGainScanner(inputFile, cueSheet);
+            }
+
             wxLogInfo(_("Converting cue scheet to ffmetadata format"));
             const wxFileName ffmetaPath = m_cfg.GetOutputFile(inputFile, wxConfiguration::EXT::FFMPEG_METADATA);
             const wxFileName scriptPath = m_cfg.GetOutputFile(inputFile, wxConfiguration::EXT::CMAKE_SCRIPT);
@@ -350,15 +368,6 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, const wxCueSheet& cue
                     if (!RunCMakeScript(scriptPath))
                     {
                         return 1;
-                    }
-
-                    if (m_cfg.RunReplayGainScanner())
-                    {
-                        wxFileName mka = m_cfg.GetOutputFile(inputFile, wxConfiguration::EXT::MATROSKA_AUDIO);
-                        if (!RunReplayGainScanner(mka))
-                        {
-                            return 1;
-                        }
                     }
                 }
             }
@@ -744,7 +753,132 @@ bool wxMyApp::RunCMakeScript(const wxFileName& scriptFile)
     }
 }
 
-bool wxMyApp::RunReplayGainScanner(const wxFileName& mka)
+bool wxMyApp::RunReplayGainScanner(const wxInputFile& inputFile, wxCueSheet& cueSheet) const
+{
+    wxFileName workDir;
+    if (m_cfg.UseFullPaths())
+    {
+        workDir = wxFileName::DirName(wxStandardPaths::Get().GetTempDir());
+    }
+    else
+    {
+        workDir = m_cfg.GetOutputDir(inputFile);
+    }
+
+    wxString tmpStem(random_string(10));
+    tmpStem.Prepend("ffscan-");
+
+    wxFileName chaptersFile(workDir);
+
+    wxString chaptersFileName(tmpStem);
+    chaptersFileName += "-chapters";
+
+    chaptersFile.SetName(chaptersFileName);
+    chaptersFile.SetExt("json");
+
+    {
+        wxScopedPtr< wxFfMetadataRenderer > metadataRenderer(new wxFfMetadataRenderer(m_cfg));
+        const wxJson chapters = metadataRenderer->RenderChapters(cueSheet);
+        if (!metadataRenderer->SaveChapters(chapters, chaptersFile))
+        {
+            return false;
+        }
+    }
+
+    wxFileName scriptFile;
+    wxFileName scanFile;
+    {
+        wxScopedPtr< wxFfmpegCMakeScriptRenderer > scriptRenderer(new wxFfmpegCMakeScriptRenderer(m_cfg));
+        const wxString draftScript = scriptRenderer->RenderDiscDraft(cueSheet, workDir, tmpStem);
+        if (!scriptRenderer->SaveDraft(draftScript, workDir, tmpStem, scriptFile, scanFile))
+        {
+            return false;
+        }
+    }
+
+    bool res = RunReplayGainScanner(scriptFile);
+    wxRemoveFile(scriptFile.GetFullPath());
+
+    if (!res)
+    {
+        wxRemoveFile(scanFile.GetFullPath());
+        return false;
+    }
+
+    if (!scanFile.IsFileReadable())
+    {
+        wxRemoveFile(scanFile.GetFullPath());
+        return false;
+    }
+
+    wxTextOutputStreamOnString tos;
+
+    {
+        wxFileInputStream is(scanFile.GetFullPath());
+        if (!is.IsOk())
+        {
+            return false;
+        }
+
+        wxTextInputStream tis(is, wxEmptyString, wxConvUTF8);
+        while (!tis.GetInputStream().Eof())
+        {
+            *tos << tis.ReadLine() << endl;
+        }
+    }
+    tos->Flush();
+    wxRemoveFile(scanFile.GetFullPath());
+
+    const wxJson rgScan = wxJson::parse(tos.GetString().utf8_string());
+    ApplyTagsFromJson(cueSheet, rgScan);
+    return false;
+}
+
+void wxMyApp::ApplyTagsFromJson(wxCueSheet& cueSheet, const wxJson& rgScan) const
+{
+    if (rgScan.contains("album"))
+    {
+        const wxJson& album = rgScan["album"];
+        if (album.is_object())
+        {
+            for (auto i = album.cbegin(), end = album.cend(); i != end; ++i)
+            {
+                const wxCueTag tag(wxCueTag::TAG_AUTO_GENERATED, wxString::FromUTF8(i.key()), wxString::FromUTF8(i.value()));
+                cueSheet.RemoveTag(tag.GetName());
+                cueSheet.AddTag(tag);
+
+                if (tag == wxCueTag::Name::DR14)
+                {
+                    const wxCueTag albumTag = tag.Rename(wxCueTag::Name::DR14_ALBUM);
+                    cueSheet.RemoveTag(albumTag.GetName());
+                    cueSheet.AddTag(albumTag);
+                }
+            }
+        }
+    }
+
+    if (rgScan.contains("chapters"))
+    {
+        const wxJson& chapters = rgScan["chapters"];
+        if (chapters.is_array())
+        {
+            size_t chapterNo = 0;
+            for (auto i = chapters.cbegin(), end = chapters.cend(); i != end; ++i,++chapterNo)
+            {
+                if (!i->is_object()) continue;
+                wxTrack& track = cueSheet.GetTrack(chapterNo);
+                for (auto j = i->cbegin(), jend = i->cend(); j != jend; ++j)
+                {
+                    const wxCueTag tag(wxCueTag::TAG_AUTO_GENERATED, wxString::FromUTF8(j.key()), wxString::FromUTF8(j.value()));
+                    track.RemoveTag(tag.GetName());
+                    track.AddTag(tag);
+                }
+            }
+        }
+    }
+}
+
+bool wxMyApp::RunReplayGainScanner(const wxFileName& cmakeScriptFile) const
 {
     wxASSERT(m_cfg.RunReplayGainScanner());
 
@@ -770,10 +904,7 @@ bool wxMyApp::RunReplayGainScanner(const wxFileName& mka)
         return false;
     }
 
-    wxFileName fnScanner(wxStandardPaths::Get().GetExecutablePath());
-    fnScanner.SetFullName("ff-scan.cmake");
-
-    wxFileName outDir(mka);
+    wxFileName outDir(cmakeScriptFile);
     outDir.SetFullName(wxEmptyString);
 
     wxArrayString params;
@@ -800,22 +931,8 @@ bool wxMyApp::RunReplayGainScanner(const wxFileName& mka)
     params.Add("-D");
     params.Add(wxString::Format("CUE2MKC=%s", wxStandardPaths::Get().GetExecutablePath()));
 
-    if (m_cfg.UseFullPaths())
-    {
-        params.Add("-D");
-        params.Add(wxString::Format("CUE2MKC_MKA=%s", mka.GetFullPath()));
-    }
-    else
-    {
-        params.Add("-D");
-        params.Add(wxString::Format("CUE2MKC_MKA=%s", mka.GetFullName()));
-
-        params.Add("-D");
-        params.Add(wxString::Format("CUE2MKC_WORKDIR=%s", outDir.GetFullPath().RemoveLast()));
-    }
-
     params.Add("-P");
-    params.Add(fnScanner.GetFullPath());
+    params.Add(cmakeScriptFile.GetFullPath());
 
     wxString cmd, cmdDesc;
     GetCmd(cmake, params, cmd, cmdDesc);

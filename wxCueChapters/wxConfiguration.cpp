@@ -520,16 +520,12 @@ bool wxConfiguration::Read(const wxCmdLineParser& cmdLine)
         {
             case RENDER_MKVMERGE_CHAPTERS:
             case RENDER_MKVMERGE:
-            wxLogError(_("RG scanner not supported in this rendering mode"));
-            bRes = false;
-            break;
-
             case RENDER_FFMPEG_CHAPTERS:
             case RENDER_FFMPEG:
             break;
 
             default:
-            wxLogWarning(_("RG scanner works only in ffmpeg rendering mode"));
+            wxLogWarning(_("RG scanner works only in ffmpeg and mkvmerge rendering mode"));
             break;
         }
     }
@@ -1322,7 +1318,15 @@ wxConfiguration::FFMPEG_CODEC wxConfiguration::GetFfmpegCodec() const
 
 bool wxConfiguration::IsDualMono() const
 {
-    return m_bSingleAudioChannel;
+    switch (m_eRenderMode)
+    {
+        case RENDER_FFMPEG_CHAPTERS:
+        case RENDER_FFMPEG:
+        return m_bSingleAudioChannel;
+
+        default:
+        return false;
+    }
 }
 
 bool wxConfiguration::RunReplayGainScanner() const

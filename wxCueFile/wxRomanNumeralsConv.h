@@ -155,9 +155,7 @@ class wxRomanNumeralsConv:
             const wxString m2 = get_match(w, 2);
             const wxString m3 = get_match(w, 3);
 
-            wxASSERT(!m1.IsEmpty());
-            wxASSERT(!m2.IsEmpty());
-            wxASSERT(!m3.IsEmpty());
+            wxASSERT(!(m1.IsEmpty() && m2.IsEmpty() && m3.IsEmpty()));
 
             res += roman_utils::convert(m1, m2, m3, numeral_traits::CINFO);
             replaced = true;
