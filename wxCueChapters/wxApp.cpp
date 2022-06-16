@@ -18,6 +18,7 @@
 #include "wxXmlCueSheetRenderer.h"
 #include "wxFfMetadataRenderer.h"
 #include "wxFfmpegCMakeScriptRenderer.h"
+#include <wxWEBPHandler/imagwebp.h>
 #include "wxApp.h"
 
  // ===============================================================================
@@ -205,8 +206,7 @@ bool wxMyApp::OnInit()
     if (!MyAppConsole::OnInit()) return false;
 
     wxInitAllImageHandlers();
-
-    if (!m_cfg.InitJpegHandler()) wxLogWarning(_("Unable to initialize JPEG image handler."));
+    wxImage::AddHandler(new wxWEBPHandler);
 
     return true;
 }

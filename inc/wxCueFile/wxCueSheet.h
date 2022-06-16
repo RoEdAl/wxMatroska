@@ -84,7 +84,6 @@ class wxCueSheet:
     const wxArrayFileName& GetAccurateRipLogs() const;
     size_t GetCoversCount() const;
     const wxArrayCoverFile& GetCovers() const;
-    void GetSortedCovers(wxArrayCoverFile&, wxImageHandler* const, int) const;
     size_t GetCatalogsCount() const;
     const wxArrayCueTag& GetCatalogs() const;
     size_t GetCdTextFilesCount() const;

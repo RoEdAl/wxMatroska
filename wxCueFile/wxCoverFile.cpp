@@ -3,6 +3,7 @@
  */
 
 #include <wxCueFile/wxCoverFile.h>
+#include <wxWEBPHandler/imagwebp.h>
 #include "wxMd5.h"
 
  // ===============================================================================
@@ -19,6 +20,7 @@ const char* const wxCoverFile::CoverNames[] =
 
 const wxBitmapType wxCoverFile::CoverFileTypes[] =
 {
+    wxBITMAP_TYPE_WEBP,
     wxBITMAP_TYPE_JPEG,
     wxBITMAP_TYPE_PNG,
     wxBITMAP_TYPE_GIF,
@@ -83,20 +85,18 @@ wxCoverFile::wxCoverFile(const wxCoverFile& cf):
 
 bool wxCoverFile::GetMimeFromExt(const wxFileName& fn, wxString& mimeType)
 {
-    const wxScopedPtr< wxFileType > fileType(wxTheMimeTypesManager->GetFileTypeFromExtension(fn.GetExt()));
-    if (!fileType) return false;
-
-    wxString s;
-    if (fileType->GetMimeType(&s))
+    const wxString ext = fn.GetExt();
+    wxList& imgHandlers = wxImage::GetHandlers();
+    for (wxList::iterator i = imgHandlers.begin(), end = imgHandlers.end(); i != end; ++i)
     {
-        mimeType = s;
-        return true;
+        wxImageHandler* const imgHandler = static_cast<wxImageHandler*>(*i);
+        if (imgHandler->GetExtension().CmpNoCase(ext) == 0)
+        {
+            mimeType = imgHandler->GetMimeType();
+            return true;
+        }
     }
-    else
-    {
-        wxLogWarning(_("CoverFile: Could not find mime type for extension %s"), fn.GetExt());
-        return false;
-    }
+    return false;
 }
 
 wxCoverFile::wxCoverFile(const wxFileName& fn, wxCoverFile::Type type):
@@ -150,22 +150,16 @@ wxString wxCoverFile::GetExt() const
     }
     else if (HasMimeType())
     {
-        wxScopedPtr< wxFileType > pFileType(wxTheMimeTypesManager->GetFileTypeFromMimeType(m_mimeType));
-
-        if (pFileType.get() != nullptr)
+        wxList& imgHandlers = wxImage::GetHandlers();
+        for (wxList::iterator i = imgHandlers.begin(), end = imgHandlers.end(); i != end; ++i)
         {
-            wxArrayString exts;
-
-            if (pFileType->GetExtensions(exts) && !exts.IsEmpty())
+            wxImageHandler* const imgHandler = static_cast<wxImageHandler*>(*i);
+            if (imgHandler->GetMimeType().CmpNoCase(m_mimeType) == 0)
             {
-                wxString ext;
-
-                if (exts[0].StartsWith('.', &ext)) return ext;
-                else return exts[0];
+                return imgHandler->GetExtension();
             }
         }
     }
-
     return wxEmptyString;
 }
 
@@ -255,28 +249,29 @@ bool wxCoverFile::Save(const wxFileName& fn)
     }
 }
 
-void wxCoverFile::Append(wxArrayCoverFile& ar, const wxCoverFile& cover)
+bool wxCoverFile::Append(wxArrayCoverFile& ar, const wxCoverFile& cover)
 {
-    bool bAdd = true;
-
     for (size_t i = 0, cnt = ar.GetCount(); i < cnt; ++i)
     {
         if (wxMD5::AreEqual(cover.GetChecksum(), ar[i].GetChecksum()))
         {
-            bAdd = false;
-            break;
+            return false;
         }
     }
 
-    if (bAdd) ar.Add(cover);
+    ar.Add(cover);
+    return true;
 }
 
-void wxCoverFile::Append(wxArrayCoverFile& ar, const wxArrayCoverFile& covers)
+size_t wxCoverFile::Append(wxArrayCoverFile& ar, const wxArrayCoverFile& covers)
 {
+    size_t res = 0;
     for (size_t i = 0, cnt = covers.GetCount(); i < cnt; ++i)
     {
-        Append(ar, covers[i]);
+        if (Append(ar, covers[i])) res += 1;
     }
+
+    return res;
 }
 
 template< size_t SIZE >
@@ -381,8 +376,9 @@ bool wxCoverFile::Find(const wxFileName& inputFile, wxFileName& coverFile)
 
 namespace
 {
-    void extract_flac_pictures(TagLib::FLAC::File& flac, wxArrayCoverFile& covers)
+    size_t extract_flac_pictures(TagLib::FLAC::File& flac, wxArrayCoverFile& covers)
     {
+        size_t res = 0;
         const TagLib::List< TagLib::FLAC::Picture* >& pictures = flac.pictureList();
 
         for (auto i = pictures.begin(); i != pictures.end(); ++i)
@@ -406,11 +402,14 @@ namespace
             }
 
             covers.Add(cover);
+            res += 1;
         }
+        return res;
     }
 
-    void extract_ape_pictures(const TagLib::APE::Tag& tag, wxArrayCoverFile& covers)
+    size_t extract_ape_pictures(const TagLib::APE::Tag& tag, wxArrayCoverFile& covers)
     {
+        size_t res = 0;
         for (auto i = tag.itemListMap().begin(), end = tag.itemListMap().end(); i != end; ++i)
         {
             if (i->second.type() != TagLib::APE::Item::Binary) continue;
@@ -446,18 +445,20 @@ namespace
             if (pictureType != wxCoverFile::Other) sDesc.Empty();
 
             covers.Add(wxCoverFile(buffer, pictureType, mimeType, sDesc));
+            res += 1;
         }
+        return res;
     }
 }
 
-void wxCoverFile::Extract(const wxFileName& fileName, wxArrayCoverFile& covers)
+size_t wxCoverFile::Extract(const wxFileName& fileName, wxArrayCoverFile& covers)
 {
     TagLib::FileRef fileRef(fileName.GetFullPath().t_str(), true, TagLib::AudioProperties::Accurate);
 
     if (fileRef.isNull())
     {
         wxLogWarning(_("Fail to extract cover file - TagLib library not initialized."));
-        return;
+        return 0;
     }
 
     TagLib::File* pFile = fileRef.file();
@@ -465,14 +466,18 @@ void wxCoverFile::Extract(const wxFileName& fileName, wxArrayCoverFile& covers)
     if (dynamic_cast<TagLib::FLAC::File*>(pFile) != nullptr)
     {
         TagLib::FLAC::File* pFlac = dynamic_cast<TagLib::FLAC::File*>(pFile);
-        extract_flac_pictures(*pFlac, covers);
+        return extract_flac_pictures(*pFlac, covers);
     }
     else if (dynamic_cast<TagLib::WavPack::File*>(pFile) != nullptr)
     {
         TagLib::WavPack::File* pWv = dynamic_cast<TagLib::WavPack::File*>(pFile);
 
-        if (pWv->hasAPETag()) extract_ape_pictures(*(pWv->APETag()), covers);
+        if (pWv->hasAPETag())
+        {
+            return extract_ape_pictures(*(pWv->APETag()), covers);
+        }
     }
+    return 0;
 }
 
 template< size_t SIZE >

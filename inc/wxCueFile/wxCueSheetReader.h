@@ -70,7 +70,7 @@ class wxCueSheetReader
         EC_FIND_LOG = 64,
         EC_CONVERT_UPPER_ROMAN_NUMERALS = 128,
         EC_CONVERT_LOWER_ROMAN_NUMERALS = 256,
-        EC_CONVERT_COVER_TO_JPEG = 512,
+        UNUSED_EC_CONVERT_COVER_TO_JPEG = 512,
         EC_CORRECT_DASHES = 1024,
         EC_FIND_ACCURIP_LOG = 2048,
         EC_SMALL_EM_DASH = 4096,
@@ -186,9 +186,6 @@ class wxCueSheetReader
 
     void AppendTags(const wxArrayCueTag&, size_t, size_t);
 
-    void AddCover(const wxFileName&);
-    void AddCovers(const wxArrayCoverFile&);
-
     protected:
 
     bool BuildFromSingleMediaFile(const wxDataFile&);
@@ -199,9 +196,9 @@ class wxCueSheetReader
     bool FindLog(const wxCueSheetContent&);
     bool FindAccurateRipLog(const wxCueSheetContent&);
 
-    void FindCoversInRelatedFiles();
+    bool FindCoversInRelatedFiles();
     bool FindCover(const wxCueSheetContent&);
-    void ExtractCoversFromDataFile(const wxDataFile&);
+    size_t ExtractCoversFromDataFile(const wxDataFile&, wxArrayCoverFile&) const;
 
     public:
 

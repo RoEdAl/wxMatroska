@@ -144,14 +144,14 @@ class wxCoverFile
 
     wxString GetInfo() const;
 
-    static void Append(wxArrayCoverFile&, const wxCoverFile&);
-    static void Append(wxArrayCoverFile&, const wxArrayCoverFile&);
+    static bool Append(wxArrayCoverFile&, const wxCoverFile&);
+    static size_t Append(wxArrayCoverFile&, const wxArrayCoverFile&);
 
     static bool IsCoverFile(const wxFileName&);
     static bool Find(const wxDir&, const wxString&, wxFileName&);
     static bool Find(const wxFileName&, wxFileName&);
 
-    static void Extract(const wxFileName&, wxArrayCoverFile&);
+    static size_t Extract(const wxFileName&, wxArrayCoverFile&);
 
     static Type GetTypeFromStr(const wxString&);
 

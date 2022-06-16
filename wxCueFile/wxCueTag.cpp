@@ -569,7 +569,9 @@ bool wxCueTag::IsRipperComment() const
 {
     if (m_sName != Name::COMMENT) return false;
     if (IsMultiline()) return false;
-    return m_sValue.StartsWith("ExactAudioCopy") || m_sValue.StartsWith("Exact Audio Copy");
+    return m_sValue.StartsWith("ExactAudioCopy") ||
+        m_sValue.StartsWith("Exact Audio Copy") ||
+        m_sValue.StartsWith("CUERipper");
 }
 
 bool wxCueTag::Split(const wxCueTag& tag, wxArrayCueTag& tags)

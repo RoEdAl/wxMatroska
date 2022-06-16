@@ -1125,24 +1125,11 @@ wxPanel* wxMainFrame::create_adv_panel(wxNotebook* notebook, const wxSizerFlags&
             m_checkBoxAttachCover = create_3state_checkbox(sizer, _("Attach cover image(s)"), wxCHK_CHECKED);
             innerSizer->Add(m_checkBoxAttachCover, wxGBPosition(1, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
 
-            m_checkBoxCoverJpeg = create_3state_checkbox(sizer, _("Convert covers to JPEG format"));
-            innerSizer->Add(m_checkBoxCoverJpeg, wxGBPosition(2, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
-
-            const CheckBoxUiUpdater uiUpdater(m_checkBoxCoverJpeg);
-
-            wxStaticText* const staticText = create_static_text(sizer, _("JPEG quality"));
-            staticText->Bind(wxEVT_UPDATE_UI, uiUpdater);
-            innerSizer->Add(staticText, wxGBPosition(3, 0), wxDefaultSpan, wxLEFT | wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT, btnLeft.GetBorderInPixels());
-
-            m_textCtrlJpegQuality = create_text_ctrl(sizer, "75", 3);
-            m_textCtrlJpegQuality->Bind(wxEVT_UPDATE_UI, uiUpdater);
-            innerSizer->Add(m_textCtrlJpegQuality, wxGBPosition(3, 1), wxDefaultSpan, wxEXPAND | wxTOP | wxBOTTOM, btnLeft.GetBorderInPixels());
-
             m_checkBoxAttachLogs = create_3state_checkbox(sizer, _("Attach EAC log(s)"), wxCHK_CHECKED);
-            innerSizer->Add(m_checkBoxAttachLogs, wxGBPosition(4, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+            innerSizer->Add(m_checkBoxAttachLogs, wxGBPosition(2, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
 
             m_checkBoxAttachAccuRip = create_3state_checkbox(sizer, _("Attach AccurateRip log(s)"));
-            innerSizer->Add(m_checkBoxAttachAccuRip, wxGBPosition(5, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+            innerSizer->Add(m_checkBoxAttachAccuRip, wxGBPosition(3, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
 
 
             sizer->Add(innerSizer, wxSizerFlags().Expand());
@@ -1903,33 +1890,6 @@ bool wxMainFrame::read_options(wxArrayString& options) const
     {
         options.Add("--cue-sheet-attach-mode");
         options.Add(m_choiceCueSheetAttachMode->GetStringSelection());
-    }
-
-    if (negatable_long_switch_option(options, m_checkBoxCoverJpeg, "convert-cover-to-jpeg"))
-    {
-        if (!m_textCtrlJpegQuality->IsEmpty())
-        {
-            int quality;
-
-            if (m_textCtrlJpegQuality->GetValue().ToInt(&quality))
-            {
-                if (quality >= 0 && quality <= 100)
-                {
-                    options.Add("--jpeg-image-quality");
-                    options.Add(m_textCtrlJpegQuality->GetValue());
-                }
-                else
-                {
-                    wxLogError("Wrong JPEG quality value - not in range");
-                    return false;
-                }
-            }
-            else
-            {
-                wxLogError("Wrong JPEG quality value");
-                return false;
-            }
-        }
     }
 
     if (m_choiceFfmpegCodec->GetSelection() > 0)

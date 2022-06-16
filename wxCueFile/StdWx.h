@@ -33,7 +33,6 @@
 #include <wx/filename.h>
 #include <wx/sharedptr.h>
 #include <wx/dir.h>
-#include <wx/mimetype.h>
 #include <wx/base64.h>
 
 #if defined( __WIN64__ )

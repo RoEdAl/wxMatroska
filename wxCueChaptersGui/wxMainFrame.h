@@ -63,8 +63,6 @@ class wxMainFrame:
     wxCheckBox* m_checkBoxAttachAccuRip;
     wxCheckBox* m_checkBoxAttachCover;
     wxChoice* m_choiceCueSheetAttachMode;
-    wxCheckBox* m_checkBoxCoverJpeg;
-    wxTextCtrl* m_textCtrlJpegQuality;
     wxCheckBox* m_checkBoxFullPathInOptions;
     wxCheckBox* m_checkBoxSmallEmDash;
     wxCheckBox* m_checkBoxRenderMultilineTags;

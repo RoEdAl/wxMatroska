@@ -27,13 +27,13 @@ ADD_EXECUTABLE(cue2mkc
 )
 
 TARGET_PRECOMPILE_HEADERS(cue2mkc PRIVATE StdWx.h)
-ADD_DEPENDENCIES(cue2mkc wxConsoleApp wxEncodingDetection wxCmdTools, wxCueFile TagLib)
 TARGET_LINK_LIBRARIES(cue2mkc PRIVATE ${wxWidgets_LIBRARIES} Shlwapi.lib
 	wxConsoleApp
 	wxEncodingDetection
 	wxCmdTools
 	wxCueFile
 	TagLib
+	wxWEBPHandler
 	nlohmann_json::nlohmann_json
 )
 

@@ -176,9 +176,7 @@ void wxMkvmergeOptsRenderer::RenderDisc(const wxInputFile& inputFile,
     // cover - must be a first attachment
     if (m_cfg.AttachCover())
     {
-        wxArrayCoverFile covers;
-        cueSheet.GetSortedCovers(covers, m_cfg.GetImageHandler(), m_cfg.GetJpegImageQuality());
-        AppendCoverAttachments(attachments, inputFile, covers);
+        AppendCoverAttachments(attachments, inputFile, cueSheet.GetCovers());
     }
 
     AppendCdTextFilesAttachments(attachments, inputFile, cueSheet.GetCdTextFiles());

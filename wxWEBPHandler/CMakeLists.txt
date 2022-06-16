@@ -1,0 +1,15 @@
+#
+# wxWEBPHandler
+#
+SET(PROJECT_NAME wxWEBPHandler)
+
+ADD_LIBRARY(wxWEBPHandler STATIC
+    imagwebp.cpp
+    StdWx.h
+    ../inc/wxWEBPHandler/imagwebp.h
+)
+
+TARGET_PRECOMPILE_HEADERS(wxWEBPHandler PRIVATE StdWx.h)
+TARGET_COMPILE_DEFINITIONS(wxWEBPHandler PUBLIC wxUSE_WEBP)
+TARGET_LINK_LIBRARIES(wxWEBPHandler PUBLIC ${wxWidgets_LIBRARIES} WebP WebPDecoder WebPDemux)
+SET_PROPERTY(TARGET wxWEBPHandler PROPERTY FOLDER "tool")

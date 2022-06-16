@@ -147,14 +147,9 @@ class wxConfiguration:
     bool m_bRenderMultilineTags;
     bool m_bRenderReplayGainTags;
     bool m_bRenderArtistForTrack;
-    int m_nJpegImageQuality;
     FFMPEG_CODEC m_eFfmpegCodec;
     bool m_bSingleAudioChannel;
     bool m_bRunReplayGainScanner;
-
-    protected:
-
-    wxImageHandler* m_imageHandler;
 
     protected:
 
@@ -204,8 +199,6 @@ class wxConfiguration:
     bool RenderArtistForTrack() const;
     bool RenderMultilineTags() const;
     bool RenderReplayGainTags() const;
-    bool ConvertCoversToJpeg() const;
-    int GetJpegImageQuality() const;
     FFMPEG_CODEC GetFfmpegCodec() const;
     bool IsDualMono() const;
     bool RunReplayGainScanner() const;
@@ -229,10 +222,6 @@ class wxConfiguration:
     wxFileName GetOutputFile(const wxInputFile&, const wxString&) const;
     bool GetOutputFile(const wxInputFile&, const wxString&, const wxString&, wxFileName&) const;
     bool GetOutputCueSheetFile(const wxInputFile&, const wxString&, wxFileName&) const;
-
-
-    wxImageHandler* const GetImageHandler() const;
-
     wxStringProcessor* const CreateStringProcessor() const;
 
     public:
@@ -281,8 +270,6 @@ class wxConfiguration:
     void Dump() const;
     void BuildXmlComments(const wxFileName&, wxXmlNode*) const;
     void ToArray(wxArrayString&) const;
-
-    bool InitJpegHandler();
 };
 
 #endif  // _WX_CONFIGURATION_H

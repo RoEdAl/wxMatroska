@@ -324,7 +324,7 @@ wxConfiguration::wxConfiguration(void):
     m_bHiddenIndexes(false),
     m_bJoinMode(false),
     m_bIncludeDiscNumberTag(false),
-    m_nReadFlags(wxCueSheetReader::EC_PARSE_COMMENTS | wxCueSheetReader::EC_ELLIPSIZE_TAGS | wxCueSheetReader::EC_REMOVE_EXTRA_SPACES | wxCueSheetReader::EC_MEDIA_READ_TAGS | wxCueSheetReader::EC_FIND_COVER | wxCueSheetReader::EC_FIND_LOG | wxCueSheetReader::EC_FIND_ACCURIP_LOG | wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG | wxCueSheetReader::EC_CORRECT_DASHES),
+    m_nReadFlags(wxCueSheetReader::EC_PARSE_COMMENTS | wxCueSheetReader::EC_ELLIPSIZE_TAGS | wxCueSheetReader::EC_REMOVE_EXTRA_SPACES | wxCueSheetReader::EC_MEDIA_READ_TAGS | wxCueSheetReader::EC_FIND_COVER | wxCueSheetReader::EC_FIND_LOG | wxCueSheetReader::EC_FIND_ACCURIP_LOG | wxCueSheetReader::EC_CORRECT_DASHES),
     m_nTagSources(wxCueTag::TAG_CD_TEXT | wxCueTag::TAG_CUE_COMMENT | wxCueTag::TAG_MEDIA_METADATA | wxCueTag::TAG_AUTO_GENERATED),
     m_bUseMLang(false),
     m_bUseFullPaths(false),
@@ -332,11 +332,9 @@ wxConfiguration::wxConfiguration(void):
     m_bRenderArtistForTrack(false),
     m_bRenderMultilineTags(false),
     m_bRenderReplayGainTags(true),
-    m_nJpegImageQuality(75),
     m_eFfmpegCodec(CODEC_DEFAULT),
     m_bSingleAudioChannel(false),
-    m_bRunReplayGainScanner(false),
-    m_imageHandler(nullptr)
+    m_bRunReplayGainScanner(false)
 {
 }
 
@@ -402,8 +400,6 @@ void wxConfiguration::AddCmdLineParams(wxCmdLineParser& cmdLine) const
     cmdLine.AddSwitch(wxEmptyString, "use-cue-comments-tags", wxString::Format(_("Use tags from cuesheet comments (default: %s)"), TagSourcesTestStr(wxCueTag::TAG_CUE_COMMENT)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
     cmdLine.AddSwitch(wxEmptyString, "use-media-tags", wxString::Format(_("Use tags from media file(s) (default: %s)"), TagSourcesTestStr(wxCueTag::TAG_MEDIA_METADATA)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
 
-    cmdLine.AddSwitch("jp", "convert-cover-to-jpeg", wxString::Format(_("Convert cover files to JPEG (default: %s)"), ReadFlagTestStr(wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
-    cmdLine.AddOption(wxEmptyString, "jpeg-image-quality", wxString::Format(_("JPEG image quality (default %d)"), m_nJpegImageQuality), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL);
     cmdLine.AddOption(wxEmptyString, "ffmpeg-codec", wxString::Format(_("Use specific FFMPEG codec - possible values are: default, pcmle, pcmbe (default: %s)"), ToString(m_eFfmpegCodec)), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
     cmdLine.AddSwitch(wxEmptyString, "mono", wxString::Format(_("Assume input audio as dual mono, use only left channel (default: %s"), BoolToStr(m_bSingleAudioChannel)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
 
@@ -635,21 +631,6 @@ bool wxConfiguration::Read(const wxCmdLineParser& cmdLine)
         }
     }
 
-    ReadReadFlags(cmdLine, "convert-cover-to-jpeg", wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG);
-
-    if (cmdLine.Found("jpeg-image-quality", &v))
-    {
-        if ((v < 0) || (v > 1000))
-        {
-            wxLogWarning(_("Wrong JPEG image quality - %d"), v);
-            bRes = false;
-        }
-        else
-        {
-            m_nJpegImageQuality = (unsigned long)v;
-        }
-    }
-
     if (cmdLine.Found("ffmpeg-codec", &s))
     {
         if (!FromString(s, m_eFfmpegCodec))
@@ -660,17 +641,6 @@ bool wxConfiguration::Read(const wxCmdLineParser& cmdLine)
     }
 
     return bRes;
-}
-
-bool wxConfiguration::InitJpegHandler()
-{
-    if (ConvertCoversToJpeg())
-    {
-        m_imageHandler = wxImage::FindHandler(wxBITMAP_TYPE_JPEG);
-        return m_imageHandler != nullptr;
-    }
-
-    return true;
 }
 
 wxString wxConfiguration::BoolToIdx(bool b)
@@ -707,7 +677,7 @@ wxString wxConfiguration::GetReadFlagsDesc(wxCueSheetReader::ReadFlags flags)
     AddFlag(as, flags, wxCueSheetReader::EC_FIND_ACCURIP_LOG, "find-accurip-log");
     AddFlag(as, flags, wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS, "upper-roman-numerals");
     AddFlag(as, flags, wxCueSheetReader::EC_CONVERT_LOWER_ROMAN_NUMERALS, "lower-roman-numerals");
-    AddFlag(as, flags, wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG, "convert-cover-to-jpeg");
+    AddFlag(as, flags, wxCueSheetReader::UNUSED_EC_CONVERT_COVER_TO_JPEG, "convert-cover-to-jpeg");
     AddFlag(as, flags, wxCueSheetReader::EC_CORRECT_DASHES, "correct-dashes");
     AddFlag(as, flags, wxCueSheetReader::EC_SMALL_EM_DASH, "small-em-dash");
     AddFlag(as, flags, wxCueSheetReader::EC_NUMBER_FULL_STOP, "number-full-stop");
@@ -751,7 +721,6 @@ void wxConfiguration::FillArray(wxArrayString& as) const
     as.Add(wxString::Format("Run ReplayGain scanner: %s", BoolToStr(m_bRunReplayGainScanner)));
     as.Add(wxString::Format("Read flags: %s", GetReadFlagsDesc(m_nReadFlags)));
     as.Add(wxString::Format("Use MLang library: %s", BoolToStr(m_bUseMLang)));
-    as.Add(wxString::Format("JPEG image quality: %d", m_nJpegImageQuality));
     as.Add(wxString::Format("ffmpeg codec: %s", ToString(m_eFfmpegCodec)));
 }
 
@@ -1301,16 +1270,6 @@ bool wxConfiguration::AttachCover() const
     return (m_nReadFlags & wxCueSheetReader::EC_FIND_COVER) != 0;
 }
 
-bool wxConfiguration::ConvertCoversToJpeg() const
-{
-    return (m_nReadFlags & wxCueSheetReader::EC_CONVERT_COVER_TO_JPEG) != 0;
-}
-
-int wxConfiguration::GetJpegImageQuality() const
-{
-    return m_nJpegImageQuality;
-}
-
 wxConfiguration::FFMPEG_CODEC wxConfiguration::GetFfmpegCodec() const
 {
     return m_eFfmpegCodec;
@@ -1332,11 +1291,6 @@ bool wxConfiguration::IsDualMono() const
 bool wxConfiguration::RunReplayGainScanner() const
 {
     return m_bRunReplayGainScanner;
-}
-
-wxImageHandler* const wxConfiguration::GetImageHandler() const
-{
-    return m_imageHandler;
 }
 
 wxConfiguration::CUESHEET_ATTACH_MODE wxConfiguration::GetCueSheetAttachMode() const

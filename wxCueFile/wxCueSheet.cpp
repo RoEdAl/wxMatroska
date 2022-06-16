@@ -163,15 +163,6 @@ const wxArrayCoverFile& wxCueSheet::GetCovers() const
     return m_covers;
 }
 
-void wxCueSheet::GetSortedCovers(wxArrayCoverFile& covers, wxImageHandler* const handler, int nJpegQuality) const
-{
-    covers.Clear();
-
-    if (handler != nullptr) wxCoverFile::Convert(m_covers, covers, handler, nJpegQuality);
-    else WX_APPEND_ARRAY(covers, m_covers);
-    wxCoverFile::Sort(covers);
-}
-
 wxCueSheet& wxCueSheet::AddLog(const wxFileName& logFile)
 {
     m_logs.Add(logFile);
