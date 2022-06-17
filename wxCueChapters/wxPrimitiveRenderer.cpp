@@ -614,7 +614,7 @@ void wxPrimitiveRenderer::AppendDecodedEacFilesAttachments(
         {
             for (size_t i = 0; i < nContents; ++i)
             {
-                if (SaveCueSheet(inputFile, wxString::Format("embedded%02" wxSizeTFmtSpec "u", i + 1), contents[i].GetValue(), cueSheetPath))
+                if (SaveCueSheet(inputFile, wxString::Format("embedded%02" wxSizeTFmtSpec "u", i+1), contents[i].GetValue(), cueSheetPath))
                 {
                     wxMatroskaAttachment a(
                         cueSheetPath,
@@ -631,13 +631,18 @@ void wxPrimitiveRenderer::AppendDecodedEacFilesAttachments(
     }
 }
 
-bool wxPrimitiveRenderer::RenderCueSheet(const wxInputFile& inputFile,
-        const wxString& sPostfix, const wxCueSheet& cueSheet,
-        wxFileName& fn) const
+bool wxPrimitiveRenderer::RenderCueSheet(
+    const wxInputFile& inputFile,
+    const wxString& postFix,
+    const wxCueSheet& cueSheet,
+    wxFileName& fn) const
 {
     wxTextOutputStreamOnString tos;
-    if (!wxTextCueSheetRenderer::ToString(*tos, cueSheet)) return false;
-    return SaveCueSheet(inputFile, sPostfix, tos.GetString(), fn);
+    if (!wxTextCueSheetRenderer::ToString(*tos, cueSheet))
+    {
+        return false;
+    }
+    return SaveCueSheet(inputFile, postFix, tos.GetString(), fn);
 }
 
 void wxPrimitiveRenderer::AppendRenderedEacFilesAttachments(
