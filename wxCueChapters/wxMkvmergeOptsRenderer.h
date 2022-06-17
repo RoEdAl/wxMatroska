@@ -34,20 +34,10 @@ class wxMkvmergeOptsRenderer:
 {
     public:
 
-    wxFileName m_matroskaOptsFile;
+    wxMkvmergeOptsRenderer(const wxConfiguration&);
 
-    protected:
-
-    void render_attachments(wxJson&, const wxArrayMatroskaAttachment&) const;
-    static wxString get_mapping_str( const wxCueSheet& );
-
-    public:
-
-    wxMkvmergeOptsRenderer( const wxConfiguration& );
-
-    void RenderDisc( const wxInputFile& , const wxCueSheet& );
-    bool Save();
-    const wxFileName& GetMkvmergeOptsFile() const;
+    void RenderDisc(const wxInputFile&, const wxCueSheet&) const;
+    bool Save(const wxFileName&) const;
 };
 
 #endif

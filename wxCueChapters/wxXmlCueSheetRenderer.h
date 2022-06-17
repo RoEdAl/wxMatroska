@@ -50,7 +50,7 @@ class wxXmlCueSheetRenderer:
 
     protected:
 
-    wxScopedPtr< wxXmlDocument > m_pXmlDoc;
+    wxScopedPtr< wxXmlDocument > m_pXmlChapters;
     wxXmlNode* m_pChapterAtom;
     wxXmlNode* m_pFirstChapterAtom;
     wxXmlNode* m_pPrevChapterAtom;
@@ -63,7 +63,7 @@ class wxXmlCueSheetRenderer:
     wxScopedPtr< wxStringProcessor > m_pStringProcessor;
 
     wxInputFile m_inputFile;
-    wxFileName m_outputFile;
+    wxFileName m_chaptersFile;
     wxFileName m_tagsFile;
 
     wxTagSynonimsCollection m_discCdTextSynonims;
@@ -182,16 +182,16 @@ class wxXmlCueSheetRenderer:
 
     void SetInputFile(const wxInputFile&);
 
-    bool HasXmlDoc() const;
+    bool HasXmlChapters() const;
     bool HasXmlTags() const;
 
-    wxXmlDocument& GetXmlDoc() const;
+    wxXmlDocument& GetXmlChapters() const;
     wxXmlDocument& GetXmlTags() const;
 
-    const wxFileName& GetOutputFile() const;
+    const wxFileName& GetChaptersFile() const;
     const wxFileName& GetTagsFile() const;
 
-    bool SaveXmlDoc();
+    bool Save() const;
 };
 
 #endif

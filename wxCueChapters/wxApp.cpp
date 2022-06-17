@@ -246,7 +246,7 @@ int wxMyApp::AppendCueSheet(wxCueSheet& cueSheet)
 
 namespace
 {
-    wxString random_string(size_t length)
+    wxString get_random_string(size_t length)
     {
         auto randchar = []() -> char {
             const char charset[] =
@@ -259,6 +259,23 @@ namespace
         wxString str(length, '\000');
         std::generate_n(str.begin(), length, randchar);
         return str;
+    }
+
+    bool render_mkvmergeopts(
+        const wxInputFile& inputFile,
+        const wxConfiguration& cfg,
+        const wxCueSheet& cueSheet,
+        const wxFileName& optsFile
+    )
+    {
+        // JSON with options
+        wxScopedPtr<wxMkvmergeOptsRenderer> optsRenderer(new wxMkvmergeOptsRenderer(cfg));
+        optsRenderer->RenderDisc(inputFile, cueSheet);
+        if (!optsRenderer->Save(optsFile))
+        {
+            return false;
+        }
+        return true;
     }
 }
 
@@ -315,28 +332,37 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
             }
 
             wxLogInfo(_("Converting cue scheet to XML format"));
-            wxScopedPtr<wxXmlCueSheetRenderer> pXmlRenderer(GetXmlRenderer(inputFile));
-
-            if (pXmlRenderer->Render(cueSheet))
             {
-                if (!pXmlRenderer->SaveXmlDoc()) return 1;
+                // chapters & tags
+                wxScopedPtr<wxXmlCueSheetRenderer> xmlRenderer(GetXmlRenderer(inputFile));
 
-                wxScopedPtr<wxMkvmergeOptsRenderer> optsRenderer( new wxMkvmergeOptsRenderer(m_cfg));
-                optsRenderer->RenderDisc(inputFile, cueSheet);
-                if (!optsRenderer->Save()) return 1;
+                if (!xmlRenderer->Render(cueSheet))
+                {
+                    wxLogError(_("Fail to export cue sheet to Matroska chapters"));
+                }
+
+                if (!xmlRenderer->Save())
+                {
+                    return 1;
+                }
+            }
+
+            {
+                const wxFileName optsFile = m_cfg.GetOutputFile(inputFile, wxConfiguration::EXT::MKVMERGE_OPTIONS);
+
+                if (!render_mkvmergeopts(inputFile, m_cfg, cueSheet, optsFile))
+                {
+                    return 1;
+                }
 
                 if (m_cfg.RunTool())
                 {
-                    if (!RunMkvmerge(optsRenderer->GetMkvmergeOptsFile()))
+                    wxASSERT(optsFile.IsOk());
+                    if (!RunMkvmerge(optsFile))
                     {
                         return 1;
                     }
                 }
-            }
-            else
-            {
-                wxLogError(_("Fail to export cue sheet to Matroska chapters"));
-                return 1;
             }
             break;
         }
@@ -356,19 +382,26 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
                 // metadata
                 wxScopedPtr< wxFfMetadataRenderer > metadataRenderer(new wxFfMetadataRenderer(m_cfg));
                 metadataRenderer->RenderDisc(cueSheet);
-                if (!metadataRenderer->Save(ffmetaPath)) return 1;
+                if (!metadataRenderer->Save(ffmetaPath))
+                {
+                    return 1;
+                }
             }
 
             {
-                wxScopedPtr< wxFfmpegCMakeScriptRenderer > scriptRenderer( new wxFfmpegCMakeScriptRenderer(m_cfg) );
+                wxScopedPtr< wxFfmpegCMakeScriptRenderer > scriptRenderer(new wxFfmpegCMakeScriptRenderer(m_cfg));
                 scriptRenderer->RenderDisc(cueSheet, inputFile, ffmetaPath);
-                if (!scriptRenderer->Save(scriptPath)) return 1;
-                if (m_cfg.RunTool())
+                if (!scriptRenderer->Save(scriptPath))
                 {
-                    if (!RunCMakeScript(scriptPath))
-                    {
-                        return 1;
-                    }
+                    return 1;
+                }
+            }
+
+            if (m_cfg.RunTool())
+            {
+                if (!RunCMakeScript(scriptPath))
+                {
+                    return 1;
                 }
             }
             break;
@@ -383,7 +416,10 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
 
             wxLogInfo(_("Saving cue points to \u201C%s\u201D"), outputFile.GetFullName());
 
-            if (!renderer.Save(outputFile)) return 1;
+            if (!renderer.Save(outputFile))
+            {
+                return 1;
+            }
 
             break;
         }
@@ -765,8 +801,8 @@ bool wxMyApp::RunReplayGainScanner(const wxInputFile& inputFile, wxCueSheet& cue
         workDir = m_cfg.GetOutputDir(inputFile);
     }
 
-    wxString tmpStem(random_string(10));
-    tmpStem.Prepend("ffscan-");
+    wxString tmpStem(get_random_string(10));
+    tmpStem.Prepend('-').Prepend(GetAppName());
 
     wxFileName chaptersFile(workDir);
 

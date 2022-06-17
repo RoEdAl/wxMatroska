@@ -770,9 +770,14 @@ void wxConfiguration::BuildXmlComments(const wxFileName& outputFile, wxXmlNode* 
     wxArrayString as;
     ToArray(as);
 
-    for(wxArrayString::iterator i = as.begin(), end = as.end(); i != end; ++i)
+    for (wxArrayString::iterator i = as.begin(), end = as.end(); i != end; ++i)
     {
-        wxXmlNode* pComment = new wxXmlNode(nullptr, wxXML_COMMENT_NODE, wxEmptyString, *i);
+        i->Prepend("CFG ");
+    }
+
+    for(wxArrayString::const_iterator i = as.begin(), end = as.end(); i != end; ++i)
+    {
+        wxXmlNode* const pComment = new wxXmlNode(nullptr, wxXML_COMMENT_NODE, wxEmptyString, *i);
         pNode->AddChild(pComment);
     }
 }

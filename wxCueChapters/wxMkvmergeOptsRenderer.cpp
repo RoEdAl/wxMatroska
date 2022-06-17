@@ -44,6 +44,42 @@ namespace
     {
         j.push_back(s.utf8_string());
     }
+
+    wxString get_mapping_str(const wxCueSheet& cueSheet)
+    {
+        wxASSERT(cueSheet.GetDataFilesCount() > 1u);
+        wxString sRes;
+
+        for (size_t i = 1u, nCount = cueSheet.GetDataFilesCount(); i < nCount; ++i)
+        {
+            sRes += wxString::Format("%" wxSizeTFmtSpec "u:0:%" wxSizeTFmtSpec "u:0,", i, i - 1);
+        }
+
+        return sRes.RemoveLast();
+    }
+
+    void render_attachments(wxJson& opts, const wxArrayMatroskaAttachment& attachments)
+    {
+        for (size_t i = 0, cnt = attachments.GetCount(); i < cnt; ++i)
+        {
+            const wxMatroskaAttachment& a = attachments[i];
+
+            add_string(opts, attachment::name);
+            add_string(opts, a.GetName());
+            if (a.HasDescription())
+            {
+                add_string(opts, attachment::desc);
+                add_string(opts, a.GetDescription());
+            }
+            if (a.HasMimeType())
+            {
+                add_string(opts, attachment::mime);
+                add_string(opts, a.GetMimeType());
+            }
+            add_string(opts, attachment::file);
+            add_string(opts, a.GetFileName().GetFullPath());
+        }
+    }
 }
 
 // ===============================================================================
@@ -53,62 +89,19 @@ wxMkvmergeOptsRenderer::wxMkvmergeOptsRenderer(const wxConfiguration& cfg):
 {
 }
 
-const wxFileName& wxMkvmergeOptsRenderer::GetMkvmergeOptsFile() const
-{
-    return m_matroskaOptsFile;
-}
-
-wxString wxMkvmergeOptsRenderer::get_mapping_str(const wxCueSheet& cueSheet)
-{
-    wxASSERT(cueSheet.GetDataFilesCount() > 1u);
-    wxString sRes;
-
-    for (size_t i = 1u, nCount = cueSheet.GetDataFilesCount(); i < nCount; ++i)
-    {
-        sRes += wxString::Format("%" wxSizeTFmtSpec "u:0:%" wxSizeTFmtSpec "u:0,", i, i - 1);
-    }
-
-    return sRes.RemoveLast();
-}
-
-void wxMkvmergeOptsRenderer::render_attachments(
-    wxJson& opts,
-    const wxArrayMatroskaAttachment& attachments) const
-{
-    for(size_t i=0, cnt = attachments.GetCount(); i < cnt; ++i)
-    {
-        const wxMatroskaAttachment& a = attachments[i];
-
-        add_string(opts, attachment::name);
-        add_string(opts, a.GetName());
-        if (a.HasDescription())
-        {
-            add_string(opts, attachment::desc);
-            add_string(opts, a.GetDescription());
-        }
-        if (a.HasMimeType())
-        {
-            add_string(opts, attachment::mime);
-            add_string(opts, a.GetMimeType());
-        }
-        add_string(opts, attachment::file);
-        add_string(opts, a.GetFileName().GetFullPath());
-    }
-}
-
 void wxMkvmergeOptsRenderer::RenderDisc(const wxInputFile& inputFile,
-        const wxCueSheet& cueSheet)
+        const wxCueSheet& cueSheet) const
 {
-    wxFileName chaptersFile, tagsFile, mkaFile;
+    wxFileName chaptersFile, tagsFile, mkaFile, matroskaOptsFile;
     wxJson opts;
 
-    chaptersFile = m_cfg.GetOutputFile(inputFile);
+    chaptersFile = m_cfg.GetOutputFile(inputFile, wxConfiguration::EXT::MATROSKA_CHAPTERS);
     if (m_cfg.GenerateTags())
     {
         tagsFile = m_cfg.GetOutputFile(inputFile, wxConfiguration::EXT::MATROSKA_TAGS);
     }
     mkaFile = m_cfg.GetOutputFile(inputFile, wxConfiguration::EXT::MATROSKA_AUDIO);
-    m_matroskaOptsFile = m_cfg.GetOutputFile(inputFile, wxConfiguration::EXT::MKVMERGE_OPTIONS);
+    matroskaOptsFile = m_cfg.GetOutputFile(inputFile, wxConfiguration::EXT::MKVMERGE_OPTIONS);
 
     const wxString trackName = GetTrackName(cueSheet);
     wxFileName outDir;
@@ -226,20 +219,20 @@ void wxMkvmergeOptsRenderer::RenderDisc(const wxInputFile& inputFile,
     *m_os << j << endl;
 }
 
-bool wxMkvmergeOptsRenderer::Save()
+bool wxMkvmergeOptsRenderer::Save(const wxFileName& matroskaOptsFile) const
 {
-    wxFileOutputStream os(m_matroskaOptsFile.GetFullPath());
+    wxFileOutputStream os(matroskaOptsFile.GetFullPath());
 
     if (os.IsOk())
     {
-        wxLogInfo(_("Creating mkvmerge options file \u201C%s\u201D"), m_matroskaOptsFile.GetFullName());
+        wxLogInfo(_("Creating mkvmerge options file \u201C%s\u201D"), matroskaOptsFile.GetFullName());
         wxTextOutputStream stream(os, wxEOL_NATIVE, wxConvUTF8);
         m_os.SaveTo(stream);
         return true;
     }
     else
     {
-        wxLogError(_("Fail to save options to \u201C%s\u201D"), m_matroskaOptsFile.GetFullName());
+        wxLogError(_("Fail to save options to \u201C%s\u201D"), matroskaOptsFile.GetFullName());
         return false;
     }
 }

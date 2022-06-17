@@ -305,7 +305,7 @@ void wxXmlCueSheetRenderer::SetConfiguration(const wxConfiguration& cfg)
 void wxXmlCueSheetRenderer::SetInputFile(const wxInputFile& inputFile)
 {
     m_inputFile = inputFile;
-    m_outputFile = GetConfig().GetOutputFile(inputFile, wxConfiguration::EXT::MATROSKA_CHAPTERS);
+    m_chaptersFile = GetConfig().GetOutputFile(inputFile, wxConfiguration::EXT::MATROSKA_CHAPTERS);
     m_tagsFile = GetConfig().GetOutputFile(inputFile, wxConfiguration::EXT::MATROSKA_TAGS);
 }
 
@@ -315,15 +315,15 @@ const wxConfiguration& wxXmlCueSheetRenderer::GetConfig() const
     return *m_pCfg;
 }
 
-bool wxXmlCueSheetRenderer::HasXmlDoc() const
+bool wxXmlCueSheetRenderer::HasXmlChapters() const
 {
-    return m_pXmlDoc;
+    return m_pXmlChapters;
 }
 
-wxXmlDocument& wxXmlCueSheetRenderer::GetXmlDoc() const
+wxXmlDocument& wxXmlCueSheetRenderer::GetXmlChapters() const
 {
-    wxASSERT(HasXmlDoc());
-    return *m_pXmlDoc;
+    wxASSERT(HasXmlChapters());
+    return *m_pXmlChapters;
 }
 
 bool wxXmlCueSheetRenderer::HasXmlTags() const
@@ -337,9 +337,9 @@ wxXmlDocument& wxXmlCueSheetRenderer::GetXmlTags() const
     return *m_pXmlTags;
 }
 
-const wxFileName& wxXmlCueSheetRenderer::GetOutputFile() const
+const wxFileName& wxXmlCueSheetRenderer::GetChaptersFile() const
 {
-    return m_outputFile;
+    return m_chaptersFile;
 }
 
 const wxFileName& wxXmlCueSheetRenderer::GetTagsFile() const
@@ -373,14 +373,14 @@ bool wxXmlCueSheetRenderer::SaveXmlDoc(const wxScopedPtr< wxXmlDocument >& pXmlD
     }
 }
 
-bool wxXmlCueSheetRenderer::SaveXmlDoc()
+bool wxXmlCueSheetRenderer::Save() const
 {
-    wxASSERT(HasXmlDoc());
+    wxASSERT(HasXmlChapters());
     wxASSERT(HasXmlTags());
 
-    if (!SaveXmlDoc(m_pXmlDoc, m_outputFile))
+    if (!SaveXmlDoc(m_pXmlChapters, m_chaptersFile))
     {
-        wxLogError(_("Fail to save chapters to \u201C%s\u201D"), m_outputFile.GetFullName());
+        wxLogError(_("Fail to save chapters to \u201C%s\u201D"), m_chaptersFile.GetFullName());
         return false;
     }
 
@@ -825,17 +825,17 @@ wxXmlNode* wxXmlCueSheetRenderer::AddTrackTags(
 
 bool wxXmlCueSheetRenderer::OnPreRenderDisc(const wxCueSheet& cueSheet)
 {
-    wxASSERT(!HasXmlDoc());
+    wxASSERT(!HasXmlChapters());
     wxASSERT(!HasXmlTags());
 
     m_pFirstChapterAtom = nullptr;
     const wxULongLong editionUID(GenerateUID());
 
     wxLogInfo(_("Creating XML document"));
-    m_pXmlDoc.reset(create_xml_document(Xml::CHAPTERS));
-    wxXmlNode* const pChapters = m_pXmlDoc->GetRoot();
+    m_pXmlChapters.reset(create_xml_document(Xml::CHAPTERS));
+    wxXmlNode* const pChapters = m_pXmlChapters->GetRoot();
 
-    GetConfig().BuildXmlComments(m_outputFile, pChapters);
+    GetConfig().BuildXmlComments(m_chaptersFile, pChapters);
     m_pEditionEntry = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, Xml::EDITION_ENTRY);
     pChapters->AddChild(m_pEditionEntry);
 
