@@ -885,12 +885,12 @@ wxPanel* wxMainFrame::create_general_panel(wxNotebook* notebook, const wxSizerFl
 
             {
                 wxArrayString choices;
-                choices.Add("unk");
+                choices.Add("und");
                 choices.Add("eng");
                 choices.Add("ger");
                 choices.Add("pol");
 
-                m_textCtrlLang = create_combobox(sizer, choices, 0);
+                m_textCtrlLang = create_combobox(sizer, choices);
             }
             m_textCtrlLang->SetToolTip(_("Default language for chapters and tags"));
             innerSizer->Add(m_textCtrlLang, wxGBPosition(2, 1), wxDefaultSpan, wxEXPAND | wxBOTTOM, btnLeft.GetBorderInPixels());
