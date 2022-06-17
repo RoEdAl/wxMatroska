@@ -1023,59 +1023,41 @@ wxFileName wxConfiguration::GetOutputFile(const wxInputFile& inputFile) const
     return res;
 }
 
-bool wxConfiguration::GetOutputFile(const wxInputFile& inputFile, const wxString& postFix, const wxString& ext, wxFileName& fn) const
+bool wxConfiguration::GetOutputFile(
+    const wxInputFile& inputFile,
+    const wxString& postFix,
+    const wxString& ext,
+    wxFileName& fn) const
 {
     wxFileName res(inputFile.GetInputFile());
-
-    if (!res.IsOk()) return false;
-
-    if (!m_outputFile.IsOk())
+    if (!res.IsOk())
     {
-        res.SetName(wxString::Format("%s.%s", res.GetName(), postFix));
-        res.SetExt(ext);
-        res.MakeAbsolute();
-        fn = res;
-        return true;
+        return false;
     }
-    else
-    {
-        if (m_outputFile.IsDir()) res.SetPath(m_outputFile.GetPath());
-        else res = m_outputFile;
 
-        res.SetName(wxString::Format("%s.%s", res.GetName(), postFix));
-        res.SetExt(ext);
-        res.MakeAbsolute();
-        fn = res;
-        return true;
+    if (m_outputFile.IsOk())
+    {
+        if (m_outputFile.IsDir())
+        {
+            res.SetPath(m_outputFile.GetPath());
+        }
+        else
+        {
+            res = m_outputFile;
+        }
     }
+
+    res.SetName(wxString::Format("%s.%s", res.GetName(), postFix));
+    res.SetExt(ext);
+    res.MakeAbsolute();
+    fn = res;
+    return true;
 }
 
 bool wxConfiguration::GetOutputCueSheetFile(
     const wxInputFile& inputFile, const wxString& postFix, wxFileName& cueFile) const
 {
-    wxFileName res(inputFile.GetInputFile());
-
-    if (!res.IsOk()) return false;
-
-    if (!m_outputFile.IsOk())
-    {
-        res.SetName(wxString::Format("%s.%s", res.GetName(), postFix));
-        res.SetExt(EXT::CUESHEET);
-        res.MakeAbsolute();
-        cueFile = res;
-        return true;
-    }
-    else
-    {
-        if (m_outputFile.IsDir()) res.SetPath(m_outputFile.GetPath());
-        else res = m_outputFile;
-
-        res.SetName(wxString::Format("%s.%s", res.GetName(), postFix));
-        res.SetExt(EXT::CUESHEET);
-        res.MakeAbsolute();
-        cueFile = res;
-        return true;
-    }
+    return GetOutputFile(inputFile, postFix, EXT::CUESHEET, cueFile);
 }
 
 bool wxConfiguration::CorrectQuotationMarks() const

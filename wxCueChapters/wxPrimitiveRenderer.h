@@ -123,6 +123,7 @@ class wxPrimitiveRenderer :protected wxTagRenderer
     void InitTagsSynonimsCollections();
     wxFileName GetRelativeFileName(const wxFileName&, const wxFileName&) const;
     bool SaveCover(const wxInputFile&, wxCoverFile&) const;
+    bool SaveCover(const wxInputFile&, size_t, wxCoverFile&) const;
     static wxString GetCoverDescription(const wxCoverFile&);
     void AppendCoverAttachments(wxArrayMatroskaAttachment&, const wxInputFile&, const wxArrayCoverFile&) const;
     void AppendCdTextFilesAttachments(wxArrayMatroskaAttachment&, const wxInputFile&, const wxArrayFileName&) const;

@@ -321,14 +321,30 @@ bool wxPrimitiveRenderer::SaveCover(const wxInputFile& inputFile, wxCoverFile& c
     }
 }
 
+bool wxPrimitiveRenderer::SaveCover(const wxInputFile& inputFile, size_t coverNo, wxCoverFile& cover) const
+{
+    if (cover.HasFileName()) return true;
+
+    wxASSERT(cover.HasData());
+    const wxString postFix = wxString::Format("img%" wxSizeTFmtSpec "u" , coverNo);
+    wxFileName fn;
+
+    if (m_cfg.GetOutputFile(inputFile, postFix, cover.GetExt(), fn))
+    {
+        return cover.Save(fn);
+    }
+    else
+    {
+        return false;
+    }
+}
+
 wxString wxPrimitiveRenderer::GetCoverDescription(const wxCoverFile& coverFile)
 {
     wxString stype;
-
     wxCoverFile::GetStrFromType(coverFile.GetType(), stype);
 
     wxString res;
-
     if (coverFile.HasDescription())
     {
         res = coverFile.GetDescription();
@@ -390,7 +406,7 @@ void wxPrimitiveRenderer::AppendCoverAttachments(
             // rest
             for (size_t i = 1; i < nAttachments; ++i)
             {
-                if (SaveCover(inputFile, coverFiles[i]))
+                if (SaveCover(inputFile, i, coverFiles[i]))
                 {
                     const wxMatroskaAttachment coverAttachment(
                         coverFiles[i].GetFileName(),
@@ -751,15 +767,18 @@ bool wxPrimitiveRenderer::SaveCueSheet(
     const wxString& content,
     wxFileName& cueSheet) const
 {
-    if (!m_cfg.GetOutputCueSheetFile(inputFile, postFix, cueSheet)) return false;
+    if (!m_cfg.GetOutputCueSheetFile(inputFile, postFix, cueSheet))
+    {
+        return false;
+    }
 
     wxFileOutputStream os(cueSheet.GetFullPath());
 
     if (os.IsOk())
     {
         wxLogInfo(_("Creating cue sheet file \u201C%s\u201D"), cueSheet.GetFullName());
-        wxSharedPtr< wxTextOutputStream > pStream(m_cfg.GetOutputTextStream(os));
-        wxTextOutputStreamOnString::SaveTo(*pStream, content);
+        wxSharedPtr< wxTextOutputStream > stream(m_cfg.GetOutputTextStream(os));
+        wxTextOutputStreamOnString::SaveTo(*stream, content);
         return true;
     }
     else
@@ -771,11 +790,10 @@ bool wxPrimitiveRenderer::SaveCueSheet(
 
 wxString wxPrimitiveRenderer::GetTrackName(const wxCueSheet& cueSheet) const
 {
-    wxScopedPtr< wxStringProcessor > stringProcessor(m_cfg.CreateStringProcessor());
-    wxString                         matroskaNameFormat = m_cfg.GetMatroskaNameFormat();
-
-    (*stringProcessor)(matroskaNameFormat);
-    return cueSheet.Format(m_cfg.GetTagSources(), matroskaNameFormat);
+    const wxScopedPtr< wxStringProcessor > stringProcessor(m_cfg.CreateStringProcessor());
+    wxString trackName = m_cfg.GetMatroskaNameFormat();
+    (*stringProcessor)(trackName);
+    return cueSheet.Format(m_cfg.GetTagSources(), trackName);
 }
 
 bool wxPrimitiveRenderer::IsLanguageAgnostic(const wxCueTag& tag) const
