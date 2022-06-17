@@ -8,8 +8,6 @@
 
 const char wxInputFile::SEPARATOR = ';';
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxInputFile, wxObject);
-
 // ===============================================================================
 
 void wxInputFile::copy(const wxInputFile& inputFile)

@@ -21,6 +21,10 @@ class wxInputFile;
 #include <wxCueFile/wxCueSheet.h>
 #endif
 
+#ifndef _WX_TEMPORARY_FILES_PROVIDER_H_
+class wxTemporaryFilesCleaner;
+#endif
+
 #ifndef _WX_XML_CUE_SHEET_RENDERER_H_
 class wxXmlCueSheetRenderer;
 #endif;
@@ -70,8 +74,9 @@ class wxMyApp:
     void GetCmd(const wxFileName&, const wxArrayString&, wxString&, wxString&) const;
     bool RunMkvmerge(const wxFileName&);
     bool RunCMakeScript(const wxFileName&);
-    bool RunReplayGainScanner(const wxInputFile&, wxCueSheet&) const;
+    bool RunReplayGainScanner(const wxInputFile&, wxCueSheet&, wxTemporaryFilesCleaner&) const;
     bool RunReplayGainScanner(const wxFileName&) const;
+    bool ApplyTagsFromJson(wxCueSheet&, const wxFileName&) const;
     void ApplyTagsFromJson(wxCueSheet&, const wxJson&) const;
 
     bool PrepareExecuteEnv(wxExecuteEnv&) const;

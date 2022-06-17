@@ -2,13 +2,10 @@
  * wxTagSynonims.cpp
  */
 
+#include <wxCueFile/wxCueTag.h>
 #include <wxCueFile/wxTagSynonims.h>
 #include <wxCueFile/wxCueComponent.h>
-
- // ===============================================================================
-
-IMPLEMENT_DYNAMIC_CLASS(wxTagSynonims, wxObject)
-
+ 
 // ===============================================================================
 
 wxTagSynonims::wxTagSynonims(void)

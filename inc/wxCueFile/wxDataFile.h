@@ -10,7 +10,7 @@
 #endif
 
 #ifndef _WX_CUE_TAG_H_
-#include <wxCueFile/wxCueTag.h>
+#include "wxCueTag.h"
 #endif
 
 #include <enum2str.h>

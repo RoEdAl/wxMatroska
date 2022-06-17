@@ -12,6 +12,7 @@
 #include <wxCueFile/wxTextCueSheetRenderer.h>
 #include <wxCueFile/wxAsciiToUnicode.h>
 #include "wxConfiguration.h"
+#include "wxTemporaryFilesProvider.h"
 #include "wxPrimitiveRenderer.h"
 #include "wxMkvmergeOptsRenderer.h"
 #include "wxCuePointsRenderer.h"
@@ -265,6 +266,7 @@ namespace
         const wxInputFile& inputFile,
         const wxConfiguration& cfg,
         const wxCueSheet& cueSheet,
+        wxTemporaryFilesCleaner& temporaryFilesCleaner,
         const wxFileName& optsFile
     )
     {
@@ -275,6 +277,7 @@ namespace
         {
             return false;
         }
+        temporaryFilesCleaner.Feed(*optsRenderer);
         return true;
     }
 }
@@ -326,9 +329,11 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
         case wxConfiguration::RENDER_MKVMERGE_CHAPTERS:
         case wxConfiguration::RENDER_MKVMERGE:
         {
+            wxTemporaryFilesCleaner temporaryFilesCleaner(m_cfg.RunTool());
+
             if (m_cfg.RunReplayGainScanner())
             {
-                RunReplayGainScanner(inputFile, cueSheet);
+                RunReplayGainScanner(inputFile, cueSheet, temporaryFilesCleaner);
             }
 
             wxLogInfo(_("Converting cue scheet to XML format"));
@@ -345,12 +350,13 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
                 {
                     return 1;
                 }
+                temporaryFilesCleaner.Feed(*xmlRenderer);
             }
 
             {
                 const wxFileName optsFile = m_cfg.GetOutputFile(inputFile, wxConfiguration::EXT::MKVMERGE_OPTIONS);
 
-                if (!render_mkvmergeopts(inputFile, m_cfg, cueSheet, optsFile))
+                if (!render_mkvmergeopts(inputFile, m_cfg, cueSheet, temporaryFilesCleaner, optsFile))
                 {
                     return 1;
                 }
@@ -370,9 +376,11 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
         case wxConfiguration::RENDER_FFMPEG_CHAPTERS:
         case wxConfiguration::RENDER_FFMPEG:
         {
+            wxTemporaryFilesCleaner temporaryFilesCleaner(m_cfg.RunTool());
+
             if (m_cfg.RunReplayGainScanner())
             {
-                RunReplayGainScanner(inputFile, cueSheet);
+                RunReplayGainScanner(inputFile, cueSheet, temporaryFilesCleaner);
             }
 
             wxLogInfo(_("Converting cue scheet to ffmetadata format"));
@@ -395,6 +403,7 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
                 {
                     return 1;
                 }
+                temporaryFilesCleaner.Feed(*scriptRenderer);
             }
 
             if (m_cfg.RunTool())
@@ -789,7 +798,7 @@ bool wxMyApp::RunCMakeScript(const wxFileName& scriptFile)
     }
 }
 
-bool wxMyApp::RunReplayGainScanner(const wxInputFile& inputFile, wxCueSheet& cueSheet) const
+bool wxMyApp::RunReplayGainScanner(const wxInputFile& inputFile, wxCueSheet& cueSheet, wxTemporaryFilesCleaner& temporaryFilesCleaner) const
 {
     wxFileName workDir;
     if (m_cfg.UseFullPaths())
@@ -832,25 +841,35 @@ bool wxMyApp::RunReplayGainScanner(const wxInputFile& inputFile, wxCueSheet& cue
         }
     }
 
+    temporaryFilesCleaner.Add(scriptFile);
+    temporaryFilesCleaner.Add(scanFile);
+
     bool res = RunReplayGainScanner(scriptFile);
-    wxRemoveFile(scriptFile.GetFullPath());
 
     if (!res)
     {
-        wxRemoveFile(scanFile.GetFullPath());
         return false;
     }
 
     if (!scanFile.IsFileReadable())
     {
-        wxRemoveFile(scanFile.GetFullPath());
         return false;
     }
 
+    if (!ApplyTagsFromJson(cueSheet, scanFile))
+    {
+        return false;
+    }
+
+    return true;
+}
+
+bool wxMyApp::ApplyTagsFromJson(wxCueSheet& cueSheet, const wxFileName& jsonFile) const
+{
     wxTextOutputStreamOnString tos;
 
     {
-        wxFileInputStream is(scanFile.GetFullPath());
+        wxFileInputStream is(jsonFile.GetFullPath());
         if (!is.IsOk())
         {
             return false;
@@ -863,11 +882,9 @@ bool wxMyApp::RunReplayGainScanner(const wxInputFile& inputFile, wxCueSheet& cue
         }
     }
     tos->Flush();
-    wxRemoveFile(scanFile.GetFullPath());
 
-    const wxJson rgScan = wxJson::parse(tos.GetString().utf8_string());
-    ApplyTagsFromJson(cueSheet, rgScan);
-    return false;
+    ApplyTagsFromJson(cueSheet, wxJson::parse(tos.GetString().utf8_string()));
+    return true;
 }
 
 void wxMyApp::ApplyTagsFromJson(wxCueSheet& cueSheet, const wxJson& rgScan) const

@@ -33,8 +33,10 @@ class wxConfiguration;
 class wxStringProcessor;
 #endif
 
+#include "wxTemporaryFilesProvider.h"
+
 class wxXmlCueSheetRenderer:
-    public wxCueSheetRenderer, protected wxTagRenderer
+    public wxCueSheetRenderer, protected wxTagRenderer, public wxTemporaryFilesProvider
 {
     protected:
 
@@ -72,6 +74,7 @@ class wxXmlCueSheetRenderer:
     wxTagSynonimsCollection m_trackSynonims;
 
     wxArrayCueTag m_artistTags;
+    wxArrayFileName m_temporaryFiles;
 
     public:
 
@@ -175,6 +178,7 @@ class wxXmlCueSheetRenderer:
     protected:
 
     wxXmlCueSheetRenderer();
+    virtual void GetTemporaryFiles(wxArrayFileName&) const;
 
     public:
 
@@ -191,7 +195,7 @@ class wxXmlCueSheetRenderer:
     const wxFileName& GetChaptersFile() const;
     const wxFileName& GetTagsFile() const;
 
-    bool Save() const;
+    bool Save();
 };
 
 #endif

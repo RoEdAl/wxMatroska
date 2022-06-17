@@ -373,7 +373,7 @@ bool wxXmlCueSheetRenderer::SaveXmlDoc(const wxScopedPtr< wxXmlDocument >& pXmlD
     }
 }
 
-bool wxXmlCueSheetRenderer::Save() const
+bool wxXmlCueSheetRenderer::Save()
 {
     wxASSERT(HasXmlChapters());
     wxASSERT(HasXmlTags());
@@ -383,6 +383,7 @@ bool wxXmlCueSheetRenderer::Save() const
         wxLogError(_("Fail to save chapters to \u201C%s\u201D"), m_chaptersFile.GetFullName());
         return false;
     }
+    m_temporaryFiles.Add(m_chaptersFile);
 
     if (GetConfig().GenerateTags())
     {
@@ -394,7 +395,7 @@ bool wxXmlCueSheetRenderer::Save() const
             return false;
         }
     }
-
+    m_temporaryFiles.Add(m_tagsFile);
     return true;
 }
 
@@ -1039,3 +1040,7 @@ bool wxXmlCueSheetRenderer::OnPostRenderDisc(const wxCueSheet& cueSheet)
     return wxCueSheetRenderer::OnPostRenderDisc(cueSheet);
 }
 
+void wxXmlCueSheetRenderer::GetTemporaryFiles(wxArrayFileName& tmpFiles) const
+{
+    WX_APPEND_ARRAY(tmpFiles, m_temporaryFiles);
+}

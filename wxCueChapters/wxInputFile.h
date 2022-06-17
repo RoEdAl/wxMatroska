@@ -9,11 +9,8 @@
 #include <wxCueFile/wxDataFile.h>
 #endif
 
-class wxInputFile:
-    public wxObject
+class wxInputFile
 {
-    wxDECLARE_DYNAMIC_CLASS(wxInputFile);
-
     protected:
 
     wxFileName m_inputFile;

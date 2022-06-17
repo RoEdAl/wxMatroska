@@ -305,7 +305,7 @@ wxFileName wxPrimitiveRenderer::GetRelativeFileName(const wxFileName& fn, const 
     return fn;
 }
 
-bool wxPrimitiveRenderer::SaveCover(const wxInputFile& inputFile, wxCoverFile& cover) const
+bool wxPrimitiveRenderer::SaveCover(const wxInputFile& inputFile, wxCoverFile& cover)
 {
     if (cover.HasFileName()) return true;
 
@@ -313,7 +313,12 @@ bool wxPrimitiveRenderer::SaveCover(const wxInputFile& inputFile, wxCoverFile& c
     wxFileName fn;
     if (m_cfg.GetOutputFile(inputFile, "img", cover.GetExt(), fn))
     {
-        return cover.Save(fn);
+        bool res = cover.Save(fn);
+        if (res)
+        {
+            m_temporaryFiles.Add(fn);
+        }
+        return res;
     }
     else
     {
@@ -321,7 +326,7 @@ bool wxPrimitiveRenderer::SaveCover(const wxInputFile& inputFile, wxCoverFile& c
     }
 }
 
-bool wxPrimitiveRenderer::SaveCover(const wxInputFile& inputFile, size_t coverNo, wxCoverFile& cover) const
+bool wxPrimitiveRenderer::SaveCover(const wxInputFile& inputFile, size_t coverNo, wxCoverFile& cover)
 {
     if (cover.HasFileName()) return true;
 
@@ -331,7 +336,12 @@ bool wxPrimitiveRenderer::SaveCover(const wxInputFile& inputFile, size_t coverNo
 
     if (m_cfg.GetOutputFile(inputFile, postFix, cover.GetExt(), fn))
     {
-        return cover.Save(fn);
+        bool res = cover.Save(fn);
+        if (res)
+        {
+            m_temporaryFiles.Add(fn);
+        }
+        return res;
     }
     else
     {
@@ -362,7 +372,7 @@ void wxPrimitiveRenderer::AppendCoverAttachments(
     wxArrayMatroskaAttachment& attachments,
     const wxInputFile& inputFile,
     const wxArrayCoverFile& coverFiles
-) const
+)
 {
     size_t nAttachments = coverFiles.GetCount();
 
@@ -582,7 +592,7 @@ void wxPrimitiveRenderer::AppendSourceEacFilesAttachments(
 void wxPrimitiveRenderer::AppendDecodedEacFilesAttachments(
     wxArrayMatroskaAttachment& attachments,
     const wxInputFile& inputFile,
-    const wxArrayCueSheetContent& contents) const
+    const wxArrayCueSheetContent& contents)
 {
     size_t     nContents = contents.GetCount();
     wxFileName cueSheetPath;
@@ -635,7 +645,7 @@ bool wxPrimitiveRenderer::RenderCueSheet(
     const wxInputFile& inputFile,
     const wxString& postFix,
     const wxCueSheet& cueSheet,
-    wxFileName& fn) const
+    wxFileName& fn)
 {
     wxTextOutputStreamOnString tos;
     if (!wxTextCueSheetRenderer::ToString(*tos, cueSheet))
@@ -648,8 +658,7 @@ bool wxPrimitiveRenderer::RenderCueSheet(
 void wxPrimitiveRenderer::AppendRenderedEacFilesAttachments(
     wxArrayMatroskaAttachment& attachments,
     const wxInputFile& inputFile,
-    const wxCueSheet& cueSheet
-) const
+    const wxCueSheet& cueSheet)
 {
     wxFileName cueSheetPath;
 
@@ -713,8 +722,7 @@ void wxPrimitiveRenderer::AppendAccuripLogAttachments(
 void wxPrimitiveRenderer::AppendEacFilesAttachments(
     wxArrayMatroskaAttachment& attachments,
     const wxInputFile& inputFile,
-    const wxCueSheet& cueSheet
-) const
+    const wxCueSheet& cueSheet)
 {
     switch (m_cfg.GetCueSheetAttachMode())
     {
@@ -770,7 +778,7 @@ bool wxPrimitiveRenderer::SaveCueSheet(
     const wxInputFile& inputFile,
     const wxString& postFix,
     const wxString& content,
-    wxFileName& cueSheet) const
+    wxFileName& cueSheet)
 {
     if (!m_cfg.GetOutputCueSheetFile(inputFile, postFix, cueSheet))
     {
@@ -784,6 +792,7 @@ bool wxPrimitiveRenderer::SaveCueSheet(
         wxLogInfo(_("Creating cue sheet file \u201C%s\u201D"), cueSheet.GetFullName());
         wxSharedPtr< wxTextOutputStream > stream(m_cfg.GetOutputTextStream(os));
         wxTextOutputStreamOnString::SaveTo(*stream, content);
+        m_temporaryFiles.Add(cueSheet);
         return true;
     }
     else
@@ -804,4 +813,9 @@ wxString wxPrimitiveRenderer::GetTrackName(const wxCueSheet& cueSheet) const
 bool wxPrimitiveRenderer::IsLanguageAgnostic(const wxCueTag& tag) const
 {
     return wxTagRenderer::IsLanguageAgnostic(m_cfg, tag);
+}
+
+void wxPrimitiveRenderer::GetTemporaryFiles(wxArrayFileName& tmpFiles) const
+{
+    WX_APPEND_ARRAY(tmpFiles, m_temporaryFiles);
 }

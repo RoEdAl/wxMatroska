@@ -446,6 +446,7 @@ bool wxFfmpegCMakeScriptRenderer::Save(const wxFileName& outputFile)
         wxLogInfo(_("Creating CMake script \u201C%s\u201D"), outputFile.GetFullName());
         wxSharedPtr< wxTextOutputStream > pStream(wxTextOutputStreamWithBOMFactory::CreateUTF8(os, wxEOL_NATIVE, true, false));
         m_os.SaveTo(*pStream);
+        m_temporaryFiles.Add(outputFile);
         return true;
     }
     else

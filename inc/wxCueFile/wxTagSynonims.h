@@ -5,15 +5,12 @@
 #ifndef _WX_TAG_SYNONIMS_H_
 #define _WX_TAG_SYNONIMS_H_
 
-#ifndef _WX_CUE_COMPONENT_H
+#ifndef _WX_CUE_TAG_H_
 class wxCueTag;
 #endif
 
-class wxTagSynonims:
-    public wxObject
+class wxTagSynonims
 {
-    wxDECLARE_DYNAMIC_CLASS(wxTagSynonims);
-
     protected:
 
     wxString m_sName;

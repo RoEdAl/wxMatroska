@@ -28,9 +28,7 @@ class wxCoverFile;
 class wxArrayCoverFile;
 #endif
 
-#ifndef _WX_DATA_FILE_H_
-class wxArrayFileName;
-#endif
+#include "wxTemporaryFilesProvider.h"
 
 #ifndef _WX_TEXT_OUTPUT_STREAM_ON_STRING_H_
 #include <wxEncodingDetection/wxTextOutputStreamOnString.h>
@@ -85,7 +83,7 @@ class wxTagRenderer
     wxRegEx m_nonAlphaRegEx;
 };
 
-class wxPrimitiveRenderer :protected wxTagRenderer
+class wxPrimitiveRenderer :protected wxTagRenderer, public wxTemporaryFilesProvider
 {
     protected:
 
@@ -108,6 +106,7 @@ class wxPrimitiveRenderer :protected wxTagRenderer
 
     const wxConfiguration& m_cfg;
     wxTextOutputStreamOnString m_os;
+    wxArrayFileName m_temporaryFiles;
 
     protected:
 
@@ -122,23 +121,24 @@ class wxPrimitiveRenderer :protected wxTagRenderer
     wxPrimitiveRenderer(const wxConfiguration&);
     void InitTagsSynonimsCollections();
     wxFileName GetRelativeFileName(const wxFileName&, const wxFileName&) const;
-    bool SaveCover(const wxInputFile&, wxCoverFile&) const;
-    bool SaveCover(const wxInputFile&, size_t, wxCoverFile&) const;
+    bool SaveCover(const wxInputFile&, wxCoverFile&);
+    bool SaveCover(const wxInputFile&, size_t, wxCoverFile&);
     static wxString GetCoverDescription(const wxCoverFile&);
-    void AppendCoverAttachments(wxArrayMatroskaAttachment&, const wxInputFile&, const wxArrayCoverFile&) const;
+    void AppendCoverAttachments(wxArrayMatroskaAttachment&, const wxInputFile&, const wxArrayCoverFile&);
     void AppendCdTextFilesAttachments(wxArrayMatroskaAttachment&, const wxInputFile&, const wxArrayFileName&) const;
     void AppendLogFilesAttachments(wxArrayMatroskaAttachment&, const wxInputFile&, const wxArrayFileName&) const;
     void AppendSourceEacFilesAttachments(wxArrayMatroskaAttachment&, const wxInputFile&, const wxArrayCueSheetContent&) const;
-    void AppendDecodedEacFilesAttachments(wxArrayMatroskaAttachment&, const wxInputFile&, const wxArrayCueSheetContent&) const;
-    void AppendRenderedEacFilesAttachments(wxArrayMatroskaAttachment&, const wxInputFile&, const wxCueSheet&) const;
-    void AppendEacFilesAttachments(wxArrayMatroskaAttachment&, const wxInputFile&, const wxCueSheet&) const;
+    void AppendDecodedEacFilesAttachments(wxArrayMatroskaAttachment&, const wxInputFile&, const wxArrayCueSheetContent&);
+    void AppendRenderedEacFilesAttachments(wxArrayMatroskaAttachment&, const wxInputFile&, const wxCueSheet&);
+    void AppendEacFilesAttachments(wxArrayMatroskaAttachment&, const wxInputFile&, const wxCueSheet&);
     void AppendAccuripLogAttachments(wxArrayMatroskaAttachment&, const wxArrayFileName&) const;
     void MakeRelativePaths(wxArrayMatroskaAttachment&, const wxFileName&, wxPathFormat = wxPATH_NATIVE) const;
     void MakeRelativePaths(wxArrayMatroskaAttachment&, const wxInputFile&, wxPathFormat = wxPATH_NATIVE) const;
-    bool SaveCueSheet(const wxInputFile&, const wxString&, const wxString&, wxFileName&) const;
-    bool RenderCueSheet(const wxInputFile&, const wxString&, const wxCueSheet&, wxFileName&) const;
+    bool SaveCueSheet(const wxInputFile&, const wxString&, const wxString&, wxFileName&);
+    bool RenderCueSheet(const wxInputFile&, const wxString&, const wxCueSheet&, wxFileName&);
     wxString GetTrackName(const wxCueSheet&) const;
     bool IsLanguageAgnostic(const wxCueTag&) const;
+    virtual void GetTemporaryFiles(wxArrayFileName&) const;
 
     public:
 

@@ -89,8 +89,9 @@ wxMkvmergeOptsRenderer::wxMkvmergeOptsRenderer(const wxConfiguration& cfg):
 {
 }
 
-void wxMkvmergeOptsRenderer::RenderDisc(const wxInputFile& inputFile,
-        const wxCueSheet& cueSheet) const
+void wxMkvmergeOptsRenderer::RenderDisc(
+    const wxInputFile& inputFile,
+    const wxCueSheet& cueSheet)
 {
     wxFileName chaptersFile, tagsFile, mkaFile, matroskaOptsFile;
     wxJson opts;
@@ -219,7 +220,7 @@ void wxMkvmergeOptsRenderer::RenderDisc(const wxInputFile& inputFile,
     *m_os << j << endl;
 }
 
-bool wxMkvmergeOptsRenderer::Save(const wxFileName& matroskaOptsFile) const
+bool wxMkvmergeOptsRenderer::Save(const wxFileName& matroskaOptsFile)
 {
     wxFileOutputStream os(matroskaOptsFile.GetFullPath());
 
@@ -228,6 +229,7 @@ bool wxMkvmergeOptsRenderer::Save(const wxFileName& matroskaOptsFile) const
         wxLogInfo(_("Creating mkvmerge options file \u201C%s\u201D"), matroskaOptsFile.GetFullName());
         wxTextOutputStream stream(os, wxEOL_NATIVE, wxConvUTF8);
         m_os.SaveTo(stream);
+        m_temporaryFiles.Add(matroskaOptsFile);
         return true;
     }
     else
