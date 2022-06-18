@@ -262,17 +262,23 @@ namespace
         return str;
     }
 
+    wxString get_stem()
+    {
+        return get_random_string(10).Prepend('-').Prepend(wxGetApp().GetAppName());
+    }
+
     bool render_mkvmergeopts(
         const wxInputFile& inputFile,
         const wxConfiguration& cfg,
         const wxCueSheet& cueSheet,
+        const wxFileName& fnTmpMka,
         wxTemporaryFilesCleaner& temporaryFilesCleaner,
         const wxFileName& optsFile
     )
     {
         // JSON with options
         wxScopedPtr<wxMkvmergeOptsRenderer> optsRenderer(new wxMkvmergeOptsRenderer(cfg));
-        optsRenderer->RenderDisc(inputFile, cueSheet);
+        optsRenderer->RenderDisc(inputFile, cueSheet, fnTmpMka);
         if (!optsRenderer->Save(optsFile))
         {
             return false;
@@ -329,11 +335,24 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
         case wxConfiguration::RENDER_MKVMERGE_CHAPTERS:
         case wxConfiguration::RENDER_MKVMERGE:
         {
-            wxTemporaryFilesCleaner temporaryFilesCleaner(m_cfg.RunTool());
+            const wxScopedPtr<wxTemporaryFilesCleaner> temporaryFilesCleaner(new wxTemporaryFilesCleaner(m_cfg.RunTool()));
 
-            if (m_cfg.RunReplayGainScanner())
+            const wxString tmpStem(get_stem());
+            const bool rgScan = m_cfg.RunReplayGainScanner();
+            const bool tmpMka = cueSheet.HasFlacDataFile() || (cueSheet.GetDataFilesCount() > 1u);
+            wxFileName fnTmpMka;
+
+            if (rgScan || tmpMka)
             {
-                RunReplayGainScanner(inputFile, cueSheet, temporaryFilesCleaner);
+                if (!PreProcessAudio(
+                    inputFile,
+                    tmpStem, rgScan, tmpMka,
+                    cueSheet,
+                    fnTmpMka,
+                    *temporaryFilesCleaner))
+                {
+                    return 1;
+                }
             }
 
             wxLogInfo(_("Converting cue scheet to XML format"));
@@ -350,13 +369,13 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
                 {
                     return 1;
                 }
-                temporaryFilesCleaner.Feed(*xmlRenderer);
+                temporaryFilesCleaner->Feed(*xmlRenderer);
             }
 
             {
                 const wxFileName optsFile = m_cfg.GetOutputFile(inputFile, wxConfiguration::EXT::MKVMERGE_OPTIONS);
 
-                if (!render_mkvmergeopts(inputFile, m_cfg, cueSheet, temporaryFilesCleaner, optsFile))
+                if (!render_mkvmergeopts(inputFile, m_cfg, cueSheet, fnTmpMka, *temporaryFilesCleaner, optsFile))
                 {
                     return 1;
                 }
@@ -376,11 +395,24 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
         case wxConfiguration::RENDER_FFMPEG_CHAPTERS:
         case wxConfiguration::RENDER_FFMPEG:
         {
-            wxTemporaryFilesCleaner temporaryFilesCleaner(m_cfg.RunTool());
+            const wxScopedPtr<wxTemporaryFilesCleaner> temporaryFilesCleaner(new wxTemporaryFilesCleaner(m_cfg.RunTool()));
 
-            if (m_cfg.RunReplayGainScanner())
+            const wxString tmpStem(get_stem());
+            const bool rgScan = m_cfg.RunReplayGainScanner();
+            const bool tmpMka = cueSheet.GetDataFilesCount() > 1u;
+            wxFileName fnTmpMka;
+
+            if (rgScan || tmpMka)
             {
-                RunReplayGainScanner(inputFile, cueSheet, temporaryFilesCleaner);
+                if (!PreProcessAudio(
+                    inputFile,
+                    tmpStem, rgScan, tmpMka,
+                    cueSheet,
+                    fnTmpMka,
+                    *temporaryFilesCleaner))
+                {
+                    return 1;
+                }
             }
 
             wxLogInfo(_("Converting cue scheet to ffmetadata format"));
@@ -394,16 +426,17 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
                 {
                     return 1;
                 }
+                temporaryFilesCleaner->Feed(*metadataRenderer);
             }
 
             {
                 wxScopedPtr< wxFfmpegCMakeScriptRenderer > scriptRenderer(new wxFfmpegCMakeScriptRenderer(m_cfg));
-                scriptRenderer->RenderDisc(cueSheet, inputFile, ffmetaPath);
+                scriptRenderer->RenderDisc(cueSheet, fnTmpMka, inputFile, ffmetaPath);
                 if (!scriptRenderer->Save(scriptPath))
                 {
                     return 1;
                 }
-                temporaryFilesCleaner.Feed(*scriptRenderer);
+                temporaryFilesCleaner->Feed(*scriptRenderer);
             }
 
             if (m_cfg.RunTool())
@@ -798,8 +831,17 @@ bool wxMyApp::RunCMakeScript(const wxFileName& scriptFile)
     }
 }
 
-bool wxMyApp::RunReplayGainScanner(const wxInputFile& inputFile, wxCueSheet& cueSheet, wxTemporaryFilesCleaner& temporaryFilesCleaner) const
+bool wxMyApp::PreProcessAudio(
+    const wxInputFile& inputFile,
+    const wxString& tmpStem,
+    bool rgScan,
+    bool tmpMka,
+    wxCueSheet& cueSheet,
+    wxFileName& fnTmpMka,
+    wxTemporaryFilesCleaner& temporaryFilesCleaner) const
 {
+    wxASSERT(rgScan || tmpMka);
+
     wxFileName workDir;
     if (m_cfg.UseFullPaths())
     {
@@ -810,19 +852,34 @@ bool wxMyApp::RunReplayGainScanner(const wxInputFile& inputFile, wxCueSheet& cue
         workDir = m_cfg.GetOutputDir(inputFile);
     }
 
-    wxString tmpStem(get_random_string(10));
-    tmpStem.Prepend('-').Prepend(GetAppName());
+    /*
+    const wxString tmpStem(get_stem());
+    const bool rgScan = m_cfg.RunReplayGainScanner();
+    const bool tmpMka = (m_cfg.UseMkvmerge() && cueSheet.HasFlacDataFile()) || (cueSheet.GetDataFilesCount() > 1u);
+    */
 
-    wxFileName chaptersFile(workDir);
-
-    wxString chaptersFileName(tmpStem);
-    chaptersFileName += "-chapters";
-
-    chaptersFile.SetName(chaptersFileName);
-    chaptersFile.SetExt("json");
-
+    if (tmpMka)
     {
-        wxScopedPtr< wxFfMetadataRenderer > metadataRenderer(new wxFfMetadataRenderer(m_cfg));
+        fnTmpMka = workDir;
+        fnTmpMka.SetName(tmpStem);
+        fnTmpMka.SetExt("mka");
+        temporaryFilesCleaner.Add(fnTmpMka);
+    }
+    else
+    {
+        fnTmpMka.Clear();
+    }
+
+    if (rgScan)
+    {
+        wxFileName chaptersFile(workDir);
+        wxString chaptersFileName(tmpStem);
+        chaptersFileName += "-chapters";
+
+        chaptersFile.SetName(chaptersFileName);
+        chaptersFile.SetExt("json");
+
+        wxScopedPtr<wxFfMetadataRenderer> metadataRenderer(new wxFfMetadataRenderer(m_cfg));
         const wxJson chapters = metadataRenderer->RenderChapters(cueSheet);
         if (!metadataRenderer->SaveChapters(chapters, chaptersFile))
         {
@@ -833,16 +890,14 @@ bool wxMyApp::RunReplayGainScanner(const wxInputFile& inputFile, wxCueSheet& cue
     wxFileName scriptFile;
     wxFileName scanFile;
     {
-        wxScopedPtr< wxFfmpegCMakeScriptRenderer > scriptRenderer(new wxFfmpegCMakeScriptRenderer(m_cfg));
-        const wxString draftScript = scriptRenderer->RenderDiscDraft(cueSheet, workDir, tmpStem);
-        if (!scriptRenderer->SaveDraft(draftScript, workDir, tmpStem, scriptFile, scanFile))
+        wxScopedPtr<wxFfmpegCMakeScriptRenderer> scriptRenderer(new wxFfmpegCMakeScriptRenderer(m_cfg));
+        scriptRenderer->RenderDiscDraft(cueSheet, workDir, tmpStem, rgScan, tmpMka);
+        if (!scriptRenderer->SaveDraft(workDir, tmpStem, scriptFile, scanFile))
         {
             return false;
         }
+        temporaryFilesCleaner.Feed(*scriptRenderer);
     }
-
-    temporaryFilesCleaner.Add(scriptFile);
-    temporaryFilesCleaner.Add(scanFile);
 
     bool res = RunReplayGainScanner(scriptFile);
 
@@ -851,14 +906,17 @@ bool wxMyApp::RunReplayGainScanner(const wxInputFile& inputFile, wxCueSheet& cue
         return false;
     }
 
-    if (!scanFile.IsFileReadable())
+    if (rgScan)
     {
-        return false;
-    }
+        if (!scanFile.IsFileReadable())
+        {
+            return false;
+        }
 
-    if (!ApplyTagsFromJson(cueSheet, scanFile))
-    {
-        return false;
+        if (!ApplyTagsFromJson(cueSheet, scanFile))
+        {
+            return false;
+        }
     }
 
     return true;

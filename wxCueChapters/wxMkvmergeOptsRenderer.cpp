@@ -91,7 +91,8 @@ wxMkvmergeOptsRenderer::wxMkvmergeOptsRenderer(const wxConfiguration& cfg):
 
 void wxMkvmergeOptsRenderer::RenderDisc(
     const wxInputFile& inputFile,
-    const wxCueSheet& cueSheet)
+    const wxCueSheet& cueSheet,
+    const wxFileName& fnTmpMka)
 {
     wxFileName chaptersFile, tagsFile, mkaFile, matroskaOptsFile;
     wxJson opts;
@@ -128,12 +129,9 @@ void wxMkvmergeOptsRenderer::RenderDisc(
     add_string(opts, "--track-name");
     add_string(opts, wxString::Format("0:%s", trackName));
 
-    // tracks
-    const wxArrayDataFile& dataFiles = cueSheet.GetDataFiles();
-    bool                   bFirst = true;
-
-    for (size_t nTracks = dataFiles.GetCount(), i = 0; i < nTracks; ++i)
+    if (fnTmpMka.IsOk())
     {
+        // single temporary audio file
         add_string(opts, "-a");
         add_string(opts, '0');
         add_string(opts, "-D");
@@ -144,24 +142,51 @@ void wxMkvmergeOptsRenderer::RenderDisc(
         add_string(opts, "--no-global-tags");
         add_string(opts, "--no-chapters");
 
-        const wxDataFile& dataFile = dataFiles[i];
-        wxASSERT(dataFile.HasRealFileName());
-
-        wxFileName fn = dataFile.GetRealFileName();
+        wxFileName fn(fnTmpMka);
         if (outDir.IsOk())
         {
             fn.MakeRelativeTo(outDir.GetFullPath());
         }
         const wxString dataFilePath = fn.GetFullPath();
+        add_string(opts, wxString::Format("=%s", dataFilePath));
+    }
+    else
+    {
+        // tracks
+        const wxArrayDataFile& dataFiles = cueSheet.GetDataFiles();
+        bool                   bFirst = true;
 
-        if (!bFirst)
+        for (size_t nTracks = dataFiles.GetCount(), i = 0; i < nTracks; ++i)
         {
-            add_string(opts, wxString::Format("+%s", dataFilePath));
-        }
-        else
-        {
-            add_string(opts, wxString::Format("=%s", dataFilePath));
-            bFirst = false;
+            add_string(opts, "-a");
+            add_string(opts, '0');
+            add_string(opts, "-D");
+            add_string(opts, "-S");
+            add_string(opts, "-B");
+            add_string(opts, "-T");
+            add_string(opts, "-M");
+            add_string(opts, "--no-global-tags");
+            add_string(opts, "--no-chapters");
+
+            const wxDataFile& dataFile = dataFiles[i];
+            wxASSERT(dataFile.HasRealFileName());
+
+            wxFileName fn = dataFile.GetRealFileName();
+            if (outDir.IsOk())
+            {
+                fn.MakeRelativeTo(outDir.GetFullPath());
+            }
+            const wxString dataFilePath = fn.GetFullPath();
+
+            if (!bFirst)
+            {
+                add_string(opts, wxString::Format("+%s", dataFilePath));
+            }
+            else
+            {
+                add_string(opts, wxString::Format("=%s", dataFilePath));
+                bFirst = false;
+            }
         }
     }
 
@@ -209,7 +234,7 @@ void wxMkvmergeOptsRenderer::RenderDisc(
         add_string(opts, GetRelativeFileName(tagsFile, outDir).GetFullPath());
     }
 
-    if (dataFiles.GetCount() > 1u)
+    if (!fnTmpMka.IsOk() && (cueSheet.GetDataFilesCount() > 1u))
     {
         add_string(opts, "--append-to");
         add_string(opts, get_mapping_str(cueSheet));

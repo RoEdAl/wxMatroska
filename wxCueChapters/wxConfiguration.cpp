@@ -1070,6 +1070,19 @@ wxConfiguration::RENDER_MODE wxConfiguration::GetRenderMode() const
     return m_eRenderMode;
 }
 
+bool wxConfiguration::UseMkvmerge() const
+{
+    switch (m_eRenderMode)
+    {
+        case RENDER_MKVMERGE_CHAPTERS:
+        case RENDER_MKVMERGE:
+        return true;
+
+        default:
+        return false;
+    }
+}
+
 bool wxConfiguration::TrackOneIndexOne() const
 {
     return m_bTrackOneIndexOne;

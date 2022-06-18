@@ -303,6 +303,17 @@ size_t wxCueSheet::GetDataFilesCount() const
     return m_dataFiles.GetCount();
 }
 
+bool wxCueSheet::HasFlacDataFile() const
+{
+    for (size_t i = 0, cnt = m_dataFiles.GetCount(); i < cnt; ++i)
+    {
+        const wxDataFile& dataFile = m_dataFiles[i];
+        // if (!dataFile.HasRealFileName()) continue;
+        if (dataFile.GetMediaType() == wxDataFile::MEDIA_TYPE_FLAC) return true;
+    }
+    return false;
+}
+
 size_t wxCueSheet::GetLastDataFileIdx() const
 {
     if (m_dataFiles.IsEmpty()) return wxIndex::UnknownDataFileIdx;

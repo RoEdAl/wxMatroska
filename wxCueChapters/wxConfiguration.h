@@ -188,6 +188,7 @@ class wxConfiguration:
     const wxArrayInputFile& GetInputFiles() const;
     bool CorrectQuotationMarks() const;
     RENDER_MODE GetRenderMode() const;
+    bool UseMkvmerge() const;
     bool TrackOneIndexOne() const;
     bool AbortOnError() const;
     bool HiddenIndexes() const;

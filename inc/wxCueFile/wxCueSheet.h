@@ -95,6 +95,7 @@ class wxCueSheet:
     size_t GetDataFilesCount() const;
     const wxArrayDataFile& GetDataFiles() const;
     size_t GetLastDataFileIdx() const;
+    bool HasFlacDataFile() const;
 
     bool GetRelatedTracks(size_t, size_t&, size_t&) const;
 

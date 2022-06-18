@@ -16,13 +16,15 @@ class wxFfmpegCMakeScriptRenderer:
 
     wxFfmpegCMakeScriptRenderer(const wxConfiguration&);
 
-    void RenderDisc(const wxCueSheet&, const wxInputFile&, const wxFileName&);
-    wxString RenderDiscDraft(const wxCueSheet&, const wxFileName&, const wxString&) const;
+    void RenderDisc(const wxCueSheet&, const wxFileName&, const wxInputFile&, const wxFileName&);
+    void RenderDiscDraft(const wxCueSheet&, const wxFileName&, const wxString&, bool, bool) const;
 
     bool Save(const wxFileName&);
-    bool SaveDraft(const wxString&, const wxFileName&, const wxString&, wxFileName&, wxFileName&) const;
+    bool SaveDraft(const wxFileName&, const wxString&, wxFileName&, wxFileName&);
 
     protected:
+
+    void render_ffmpeg_codec(const wxArrayDataFile&) const;
 
 };
 

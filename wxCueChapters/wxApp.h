@@ -74,7 +74,7 @@ class wxMyApp:
     void GetCmd(const wxFileName&, const wxArrayString&, wxString&, wxString&) const;
     bool RunMkvmerge(const wxFileName&);
     bool RunCMakeScript(const wxFileName&);
-    bool RunReplayGainScanner(const wxInputFile&, wxCueSheet&, wxTemporaryFilesCleaner&) const;
+    bool PreProcessAudio(const wxInputFile&, const wxString&, bool, bool, wxCueSheet&, wxFileName&, wxTemporaryFilesCleaner&) const;
     bool RunReplayGainScanner(const wxFileName&) const;
     bool ApplyTagsFromJson(wxCueSheet&, const wxFileName&) const;
     void ApplyTagsFromJson(wxCueSheet&, const wxJson&) const;
