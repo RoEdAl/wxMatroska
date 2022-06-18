@@ -25,7 +25,18 @@ const char wxConfiguration::EXT::CUESHEET[] = "cue";
 const char wxConfiguration::EXT::CMAKE_SCRIPT[] = "cmd.cmake";
 const char wxConfiguration::EXT::FFMPEG_METADATA[] = "ffm.txt";
 const char wxConfiguration::EXT::TXT[] = "txt";
+const char wxConfiguration::EXT::XML[] = "xml";
+const char wxConfiguration::EXT::JSON[] = "json";
+const char wxConfiguration::EXT::CMAKE[] = "json";
+const char wxConfiguration::EXT::MKA[] = "mka";
 const char wxConfiguration::EXT::UNK[] = "unk";
+const char wxConfiguration::TMP::CMD[] = "cmd";
+const char wxConfiguration::TMP::MKC[] = "mkc";
+const char wxConfiguration::TMP::MKT[] = "mkt";
+const char wxConfiguration::TMP::FFM[] = "ffm";
+const char wxConfiguration::TMP::PRE[] = "pre";
+const char wxConfiguration::TMP::CHAPTERS[] = "chp";
+const char wxConfiguration::TMP::RGSCAN[] = "rg2";
 
 const char wxConfiguration::FMT::MKA_CHAPTER[] = "%dp% - %dt% - %tt%";
 const char wxConfiguration::FMT::MKA_CONTAINER[] = "%dp% - %dt%";
@@ -994,6 +1005,43 @@ wxFileName wxConfiguration::GetOutputFile(const wxInputFile& inputFile, const wx
         }
     }
 
+    res.SetExt(ext);
+    return res;
+}
+
+wxFileName wxConfiguration::GetTemporaryFile(const wxFileName& dir, const wxString& tmpStem, const wxString& tmpPostFix, const wxString& ext)
+{
+    wxASSERT(dir.IsDir());
+    wxFileName res(dir);
+
+    wxString fileName(tmpStem);
+    fileName.Append('-').Append(tmpPostFix);
+
+    res.SetName(fileName);
+    res.SetExt(ext);
+    return res;
+}
+
+wxFileName wxConfiguration::GetTemporaryFile(const wxInputFile& inputFile, const wxString& tmpStem, const wxString& tmpPostFix, const wxString& ext) const
+{
+    wxFileName res(inputFile.GetInputFile());
+
+    if (m_outputFile.IsOk())
+    {
+        if (m_outputFile.IsDir())
+        {
+            res.SetPath(m_outputFile.GetPath());
+        }
+        else
+        {
+            res = m_outputFile;
+        }
+    }
+
+    wxString fileName(tmpStem);
+    fileName.Append('-').Append(tmpPostFix);
+
+    res.SetName(fileName);
     res.SetExt(ext);
     return res;
 }

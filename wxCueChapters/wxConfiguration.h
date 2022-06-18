@@ -221,6 +221,8 @@ class wxConfiguration:
     wxFileName GetOutputDir(const wxInputFile&) const;
     wxFileName GetOutputFile(const wxInputFile&) const;
     wxFileName GetOutputFile(const wxInputFile&, const wxString&) const;
+    wxFileName GetTemporaryFile(const wxInputFile&, const wxString&, const wxString&, const wxString&) const;
+    static wxFileName GetTemporaryFile(const wxFileName&, const wxString&, const wxString&, const wxString&);
     bool GetOutputFile(const wxInputFile&, const wxString&, const wxString&, wxFileName&) const;
     bool GetOutputCueSheetFile(const wxInputFile&, const wxString&, wxFileName&) const;
     wxStringProcessor* const CreateStringProcessor() const;
@@ -241,7 +243,22 @@ class wxConfiguration:
 
         static const char CUESHEET[];
         static const char TXT[];
+        static const char XML[];
+        static const char JSON[];
+        static const char CMAKE[];
+        static const char MKA[];
         static const char UNK[];
+    };
+
+    struct TMP
+    {
+        static const char CMD[];
+        static const char MKC[];
+        static const char MKT[];
+        static const char FFM[];
+        static const char PRE[];
+        static const char CHAPTERS[];
+        static const char RGSCAN[];
     };
 
     struct FMT

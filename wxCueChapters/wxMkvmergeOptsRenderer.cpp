@@ -84,34 +84,29 @@ namespace
 
 // ===============================================================================
 
-wxMkvmergeOptsRenderer::wxMkvmergeOptsRenderer(const wxConfiguration& cfg):
-    wxPrimitiveRenderer(cfg)
+wxMkvmergeOptsRenderer::wxMkvmergeOptsRenderer(const wxConfiguration& cfg)
+    :wxPrimitiveRenderer(cfg)
 {
 }
 
 void wxMkvmergeOptsRenderer::RenderDisc(
     const wxInputFile& inputFile,
     const wxCueSheet& cueSheet,
-    const wxFileName& fnTmpMka)
+    const wxFileName& fnTmpMka,
+    const wxFileName& chaptersFile,
+    const wxFileName& tagsFile)
 {
-    wxFileName chaptersFile, tagsFile, mkaFile, matroskaOptsFile;
-    wxJson opts;
-
-    chaptersFile = m_cfg.GetOutputFile(inputFile, wxConfiguration::EXT::MATROSKA_CHAPTERS);
-    if (m_cfg.GenerateTags())
-    {
-        tagsFile = m_cfg.GetOutputFile(inputFile, wxConfiguration::EXT::MATROSKA_TAGS);
-    }
-    mkaFile = m_cfg.GetOutputFile(inputFile, wxConfiguration::EXT::MATROSKA_AUDIO);
-    matroskaOptsFile = m_cfg.GetOutputFile(inputFile, wxConfiguration::EXT::MKVMERGE_OPTIONS);
-
+    const wxFileName mkaFile = m_cfg.GetOutputFile(inputFile, wxConfiguration::EXT::MATROSKA_AUDIO);
     const wxString trackName = GetTrackName(cueSheet);
+
     wxFileName outDir;
 
     if (!m_cfg.UseFullPaths())
     {
         outDir = m_cfg.GetOutputDir(inputFile);
     }
+
+    wxJson opts;
 
     // pre
     add_string(opts, "--deterministic");

@@ -64,6 +64,7 @@ class wxMyApp:
     static void InfoFormatDescription(wxMessageOutput&);
 
     wxXmlCueSheetRenderer* GetXmlRenderer(const wxInputFile&) const;
+    wxXmlCueSheetRenderer* GetXmlRenderer(const wxInputFile&, const wxString&) const;
     wxCueSheet& GetMergedCueSheet();
     const wxCueSheet& GetMergedCueSheet() const;
 

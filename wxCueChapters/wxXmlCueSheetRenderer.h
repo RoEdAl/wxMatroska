@@ -61,10 +61,10 @@ class wxXmlCueSheetRenderer:
     wxScopedPtr< wxXmlDocument > m_pXmlTags;
     wxXmlNode* m_pTags;
 
-    const wxConfiguration* m_pCfg;
-    wxScopedPtr< wxStringProcessor > m_pStringProcessor;
+    const wxConfiguration& m_cfg;
+    const wxInputFile& m_inputFile;
 
-    wxInputFile m_inputFile;
+    wxScopedPtr< wxStringProcessor > m_pStringProcessor;
     wxFileName m_chaptersFile;
     wxFileName m_tagsFile;
 
@@ -138,34 +138,30 @@ class wxXmlCueSheetRenderer:
     wxXmlNode* AddIdxChapterAtom(wxXmlNode*, const wxCueSheet&, const wxIndex&) const;
 
     void init_synonims();
-
-    void SetConfiguration(const wxConfiguration&);
-    const wxConfiguration& GetConfig() const;
-
     bool SaveXmlDoc(const wxScopedPtr< wxXmlDocument >&, const wxFileName&) const;
 
     protected:
 
-    static wxXmlNode* get_last_child(wxXmlNode*);
+    static const wxXmlNode* get_last_child(const wxXmlNode* const);
     static wxXmlNode* add_chapter_uid(wxXmlNode*, const wxULongLong& uid);
     static wxXmlNode* add_chapter_time_start(wxXmlNode*, const wxString&, const wxString&);
     static wxXmlNode* add_chapter_time_start(wxXmlNode*, const wxDuration&, const wxString&);
     static wxXmlNode* find_chapter_time_start(wxXmlNode*);
-    static bool is_album_tag(wxXmlNode*, long);
-    static wxXmlNode* find_disc_tag_node(wxXmlNode*, long);
+    static bool is_album_tag(const wxXmlNode* const, long);
+    static wxXmlNode* find_disc_tag_node(const wxXmlNode* const, long);
 
     static bool set_total_parts(wxXmlNode*, size_t);
     static wxXmlNode* add_chapter_time_end(wxXmlNode*, const wxString&, const wxString&);
     static wxXmlNode* add_chapter_time_end(wxXmlNode*, const wxDuration&, const wxString&);
-    static bool has_chapter_time_end(wxXmlNode*);
+    static bool has_chapter_time_end(const wxXmlNode* const);
     static wxXmlNode* add_chapter_display(wxXmlNode*, const wxString&, const wxString&);
     static wxXmlNode* add_hidden_flag(wxXmlNode*, bool);
 
     static wxXmlNode* add_idx_chapter_atom(wxXmlNode*, const wxDuration&, size_t, const wxString&, const wxString&, bool);
     wxXmlNode* create_simple_tag(const wxCueTag&) const;
     wxXmlDocument* create_xml_document(const wxString&);
-    static bool is_simple(wxXmlNode*, const wxCueTag&);
-    static wxXmlNode* find_simple_tag(wxXmlNode*, const wxCueTag&);
+    static bool is_simple(const wxXmlNode* const, const wxCueTag&);
+    static wxXmlNode* find_simple_tag(const wxXmlNode* const, const wxCueTag&);
     void add_simple_tag(wxXmlNode*, const wxString&, const wxString&) const;
 
     void add_simple_tag(wxXmlNode*, const wxString&, size_t) const;
@@ -175,16 +171,11 @@ class wxXmlCueSheetRenderer:
     static void add_comment_node(wxXmlNode*, const wxString&);
     static wxULongLong GenerateUID();
 
-    protected:
-
-    wxXmlCueSheetRenderer();
-    virtual void GetTemporaryFiles(wxArrayFileName&) const;
-
     public:
 
-    static wxXmlCueSheetRenderer* CreateObject(const wxConfiguration&, const wxInputFile&);
-
-    void SetInputFile(const wxInputFile&);
+    wxXmlCueSheetRenderer(const wxConfiguration&, const wxInputFile&);
+    wxXmlCueSheetRenderer(const wxConfiguration&, const wxInputFile&, const wxString&);
+    virtual void GetTemporaryFiles(wxArrayFileName&) const;
 
     bool HasXmlChapters() const;
     bool HasXmlTags() const;

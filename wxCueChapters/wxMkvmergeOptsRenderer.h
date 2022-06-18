@@ -36,7 +36,7 @@ class wxMkvmergeOptsRenderer:
 
     wxMkvmergeOptsRenderer(const wxConfiguration&);
 
-    void RenderDisc(const wxInputFile&, const wxCueSheet&, const wxFileName&);
+    void RenderDisc(const wxInputFile&, const wxCueSheet&, const wxFileName&, const wxFileName&, const wxFileName&);
     bool Save(const wxFileName&);
 };
 

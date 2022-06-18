@@ -186,8 +186,8 @@ void wxFfmpegCMakeScriptRenderer::RenderDiscDraft(
 
     if (rgScan)
     {
-        *m_os << "CMAKE_PATH(SET CUE2MKC_CHAPTERS \"${FFSTEM}-chapters.json\")" << endl;
-        *m_os << "CMAKE_PATH(SET CUE2MKC_DST \"${FFSTEM}-rg.json\")" << endl;
+        *m_os << "CMAKE_PATH(SET CUE2MKC_CHAPTERS \"${FFSTEM}-" << wxConfiguration::TMP::CHAPTERS << '.' << wxConfiguration::EXT::JSON << "\")" << endl;
+        *m_os << "CMAKE_PATH(SET CUE2MKC_DST \"${FFSTEM}-" << wxConfiguration::TMP::RGSCAN << '.' << wxConfiguration::EXT::JSON << "\")" << endl;
     }
     else
     {
@@ -196,7 +196,7 @@ void wxFfmpegCMakeScriptRenderer::RenderDiscDraft(
 
     if (tmpMka)
     {
-        *m_os << "CMAKE_PATH(SET CUE2MKC_MKA \"${FFSTEM}.mka\")" << endl;
+        *m_os << "CMAKE_PATH(SET CUE2MKC_MKA \"${FFSTEM}-" << wxConfiguration::TMP::PRE << '.' << wxConfiguration::EXT::MKA << "\")" << endl;
 
         *m_os << "MESSAGE(STATUS \"Creating temporary MKA container\")" << endl;
         *m_os << "EXECUTE_PROCESS(" << endl;
@@ -208,6 +208,7 @@ void wxFfmpegCMakeScriptRenderer::RenderDiscDraft(
 
         for (size_t i = 0, cnt = dataFiles.GetCount(); i < cnt; ++i)
         {
+            *m_os << "        -bitexact" << endl;
             WriteSizeT(*m_os << "        -i ${CUE2MKC_AUDIO_", i) << '}' << endl;
         }
 
@@ -225,11 +226,12 @@ void wxFfmpegCMakeScriptRenderer::RenderDiscDraft(
         *m_os << "        -map_metadata -1" << endl;
         *m_os << "        -map_chapters -1" << endl;
         render_ffmpeg_codec(dataFiles);
+        *m_os << "        -bitexact" << endl;
         *m_os << "        ${CUE2MKC_MKA}" << endl;
         *m_os << "    ENCODING UTF-8" << endl;
         *m_os << "    COMMAND_ECHO NONE" << endl;
         *m_os << "    COMMAND_ERROR_IS_FATAL ANY" << endl;
-        if (!m_cfg.UseFullPaths())
+        if (relDir.IsOk())
         {
             *m_os << "    WORKING_DIRECTORY ${CUE2MKC_WORKDIR}" << endl;
         }
@@ -253,9 +255,9 @@ void wxFfmpegCMakeScriptRenderer::RenderDiscDraft(
 }
 
 void wxFfmpegCMakeScriptRenderer::RenderDisc(
+    const wxInputFile& inputFile,
     const wxCueSheet& cueSheet,
     const wxFileName& fnTmpMka,
-    const wxInputFile& inputFile,
     const wxFileName& metadataFile)
 {
     RenderHeader(inputFile);
@@ -463,19 +465,8 @@ bool wxFfmpegCMakeScriptRenderer::SaveDraft(
     wxFileName& scriptFile,
     wxFileName& scanFile)
 {
-    scriptFile = workDir;
-    scriptFile.SetName(tmpStem);
-    scriptFile.SetExt("cmake");
-
-    {
-        scanFile = workDir;
-
-        wxString scanFileName(tmpStem);
-        scanFileName += "-rg";
-
-        scanFile.SetName(scanFileName);
-        scanFile.SetExt("json");
-    }
+    scriptFile = wxConfiguration::GetTemporaryFile(workDir, tmpStem, wxConfiguration::TMP::PRE, wxConfiguration::EXT::CMAKE);
+    scanFile = wxConfiguration::GetTemporaryFile(workDir, tmpStem, wxConfiguration::TMP::RGSCAN, wxConfiguration::EXT::JSON);
 
     wxFileOutputStream os(scriptFile.GetFullPath());
     if (os.IsOk())

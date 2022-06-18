@@ -272,13 +272,15 @@ namespace
         const wxConfiguration& cfg,
         const wxCueSheet& cueSheet,
         const wxFileName& fnTmpMka,
+        const wxFileName& fnChaptersFile,
+        const wxFileName& fnTagsFile,
         wxTemporaryFilesCleaner& temporaryFilesCleaner,
         const wxFileName& optsFile
     )
     {
         // JSON with options
         wxScopedPtr<wxMkvmergeOptsRenderer> optsRenderer(new wxMkvmergeOptsRenderer(cfg));
-        optsRenderer->RenderDisc(inputFile, cueSheet, fnTmpMka);
+        optsRenderer->RenderDisc(inputFile, cueSheet, fnTmpMka, fnChaptersFile, fnTagsFile);
         if (!optsRenderer->Save(optsFile))
         {
             return false;
@@ -339,7 +341,7 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
 
             const wxString tmpStem(get_stem());
             const bool rgScan = m_cfg.RunReplayGainScanner();
-            const bool tmpMka = cueSheet.HasFlacDataFile() || (cueSheet.GetDataFilesCount() > 1u);
+            const bool tmpMka = cueSheet.HasFlacDataFile() || m_cfg.RunReplayGainScanner() || (cueSheet.GetDataFilesCount() > 1u);
             wxFileName fnTmpMka;
 
             if (rgScan || tmpMka)
@@ -356,9 +358,11 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
             }
 
             wxLogInfo(_("Converting cue scheet to XML format"));
+            wxFileName fnXmlChapters;
+            wxFileName fnXmlTags;
             {
                 // chapters & tags
-                wxScopedPtr<wxXmlCueSheetRenderer> xmlRenderer(GetXmlRenderer(inputFile));
+                wxScopedPtr<wxXmlCueSheetRenderer> xmlRenderer(GetXmlRenderer(inputFile, tmpStem));
 
                 if (!xmlRenderer->Render(cueSheet))
                 {
@@ -370,12 +374,18 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
                     return 1;
                 }
                 temporaryFilesCleaner->Feed(*xmlRenderer);
+                fnXmlChapters = xmlRenderer->GetChaptersFile();
+                fnXmlTags = xmlRenderer->GetTagsFile();
             }
 
             {
-                const wxFileName optsFile = m_cfg.GetOutputFile(inputFile, wxConfiguration::EXT::MKVMERGE_OPTIONS);
+                const wxFileName optsFile = m_cfg.GetTemporaryFile(inputFile, tmpStem, wxConfiguration::TMP::CMD, wxConfiguration::EXT::JSON);
 
-                if (!render_mkvmergeopts(inputFile, m_cfg, cueSheet, fnTmpMka, *temporaryFilesCleaner, optsFile))
+                if (!render_mkvmergeopts(inputFile, m_cfg, cueSheet, 
+                    fnTmpMka,
+                    fnXmlChapters, fnXmlTags,
+                    *temporaryFilesCleaner,
+                    optsFile))
                 {
                     return 1;
                 }
@@ -399,7 +409,7 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
 
             const wxString tmpStem(get_stem());
             const bool rgScan = m_cfg.RunReplayGainScanner();
-            const bool tmpMka = cueSheet.GetDataFilesCount() > 1u;
+            const bool tmpMka = m_cfg.RunReplayGainScanner() || (cueSheet.GetDataFilesCount() > 1u);
             wxFileName fnTmpMka;
 
             if (rgScan || tmpMka)
@@ -416,8 +426,9 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
             }
 
             wxLogInfo(_("Converting cue scheet to ffmetadata format"));
-            const wxFileName ffmetaPath = m_cfg.GetOutputFile(inputFile, wxConfiguration::EXT::FFMPEG_METADATA);
-            const wxFileName scriptPath = m_cfg.GetOutputFile(inputFile, wxConfiguration::EXT::CMAKE_SCRIPT);
+            const wxFileName ffmetaPath = m_cfg.GetTemporaryFile(inputFile, tmpStem, wxConfiguration::TMP::FFM, wxConfiguration::EXT::TXT);
+            const wxFileName scriptPath = m_cfg.GetTemporaryFile(inputFile, tmpStem, wxConfiguration::TMP::CMD, wxConfiguration::EXT::CMAKE);
+
             {
                 // metadata
                 wxScopedPtr< wxFfMetadataRenderer > metadataRenderer(new wxFfMetadataRenderer(m_cfg));
@@ -431,7 +442,7 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
 
             {
                 wxScopedPtr< wxFfmpegCMakeScriptRenderer > scriptRenderer(new wxFfmpegCMakeScriptRenderer(m_cfg));
-                scriptRenderer->RenderDisc(cueSheet, fnTmpMka, inputFile, ffmetaPath);
+                scriptRenderer->RenderDisc(inputFile, cueSheet, fnTmpMka, ffmetaPath);
                 if (!scriptRenderer->Save(scriptPath))
                 {
                     return 1;
@@ -610,7 +621,12 @@ int wxMyApp::OnExit()
 
 wxXmlCueSheetRenderer* wxMyApp::GetXmlRenderer(const wxInputFile& inputFile) const
 {
-    return wxXmlCueSheetRenderer::CreateObject(m_cfg, inputFile);
+    return new wxXmlCueSheetRenderer(m_cfg, inputFile);
+}
+
+wxXmlCueSheetRenderer* wxMyApp::GetXmlRenderer(const wxInputFile& inputFile, const wxString& tmpStem) const
+{
+    return new wxXmlCueSheetRenderer(m_cfg, inputFile, tmpStem);
 }
 
 bool wxMyApp::HasMergedCueSheet() const
@@ -842,17 +858,14 @@ bool wxMyApp::PreProcessAudio(
 {
     wxASSERT(rgScan || tmpMka);
 
-    wxFileName workDir;
+    const wxFileName workDir = m_cfg.GetOutputDir(inputFile);
+
+    /*
     if (m_cfg.UseFullPaths())
     {
         workDir = wxFileName::DirName(wxStandardPaths::Get().GetTempDir());
     }
-    else
-    {
-        workDir = m_cfg.GetOutputDir(inputFile);
-    }
 
-    /*
     const wxString tmpStem(get_stem());
     const bool rgScan = m_cfg.RunReplayGainScanner();
     const bool tmpMka = (m_cfg.UseMkvmerge() && cueSheet.HasFlacDataFile()) || (cueSheet.GetDataFilesCount() > 1u);
@@ -860,9 +873,7 @@ bool wxMyApp::PreProcessAudio(
 
     if (tmpMka)
     {
-        fnTmpMka = workDir;
-        fnTmpMka.SetName(tmpStem);
-        fnTmpMka.SetExt("mka");
+        fnTmpMka = wxConfiguration::GetTemporaryFile(workDir, tmpStem, wxConfiguration::TMP::PRE, wxConfiguration::EXT::MKA);
         temporaryFilesCleaner.Add(fnTmpMka);
     }
     else
@@ -872,12 +883,7 @@ bool wxMyApp::PreProcessAudio(
 
     if (rgScan)
     {
-        wxFileName chaptersFile(workDir);
-        wxString chaptersFileName(tmpStem);
-        chaptersFileName += "-chapters";
-
-        chaptersFile.SetName(chaptersFileName);
-        chaptersFile.SetExt("json");
+        const wxFileName chaptersFile = wxConfiguration::GetTemporaryFile(workDir, tmpStem, wxConfiguration::TMP::CHAPTERS, wxConfiguration::EXT::JSON);
 
         wxScopedPtr<wxFfMetadataRenderer> metadataRenderer(new wxFfMetadataRenderer(m_cfg));
         const wxJson chapters = metadataRenderer->RenderChapters(cueSheet);
