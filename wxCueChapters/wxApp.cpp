@@ -755,7 +755,8 @@ bool wxMyApp::RunMkvmerge(const wxFileName& optionsFile)
     wxString cmd, cmdDesc;
     GetCmd(exe, params, cmd, cmdDesc);
 
-    wxLogMessage(cmdDesc);
+    wxLogMessage(_("Invoking mkvmerge"));
+    wxLogInfo(cmdDesc);
 
     wxExecuteEnv env;
     PrepareExecuteEnv(env);
@@ -790,14 +791,19 @@ bool wxMyApp::RunMkvmerge(const wxFileName& optionsFile)
 bool wxMyApp::RunCMakeScript(const wxFileName& scriptFile)
 {
     wxASSERT(m_cfg.RunTool());
-
-    wxString params;
     wxString scriptPath;
-    wxFileName exe;
 
-    if (!wxCmdTool::FindExecutable("cmake", "CMake/bin", exe))
+    wxFileName cmake;
+    if (!wxCmdTool::FindTool(wxCmdTool::TOOL_CMAKE, cmake))
     {
         wxLogError(_("Unable to find cmake tool"));
+        return false;
+    }
+
+    wxFileName ffmpeg;
+    if (!wxCmdTool::FindTool(wxCmdTool::TOOL_FFMPEG, ffmpeg))
+    {
+        wxLogError(_("Unable to find ffmpeg tool"));
         return false;
     }
 
@@ -810,12 +816,28 @@ bool wxMyApp::RunCMakeScript(const wxFileName& scriptFile)
         scriptPath = scriptFile.GetFullName();
     }
 
-    params.Printf("-P \"%s\"", scriptPath);
+    wxArrayString params;
+
+    {
+        const wxString logLevel(wxLog::GetVerbose() ? "STATUS" : "WARNING");
+        params.Add(wxString::Format("--log-level=%s", logLevel));
+    }
+
+    params.Add("--log-context");
+    params.Add("-D");
+    params.Add("CMAKE_MESSAGE_CONTEXT=pre");
+
+    params.Add("-D");
+    params.Add(wxString::Format("FFMPEG=%s", ffmpeg.GetFullPath()));
+
+    params.Add("-P");
+    params.Add(scriptPath);
 
     wxString cmd, cmdDesc;
-    GetCmd(exe, params, cmd, cmdDesc);
+    GetCmd(cmake, params, cmd, cmdDesc);
 
-    wxLogMessage(cmdDesc);
+    wxLogMessage(_("Invoking ffmpeg"));
+    wxLogInfo(cmdDesc);
 
     wxExecuteEnv env;
     PrepareExecuteEnv(env);
@@ -834,7 +856,7 @@ bool wxMyApp::RunCMakeScript(const wxFileName& scriptFile)
     }
     else
     {
-        if (nRes <= 1)
+        if (nRes == 0)
         {
             wxLogInfo(_("cmake exit code: %ld (%08lX)"), nRes, nRes);
             return true;
@@ -960,16 +982,17 @@ void wxMyApp::ApplyTagsFromJson(wxCueSheet& cueSheet, const wxJson& rgScan) cons
         {
             for (auto i = album.cbegin(), end = album.cend(); i != end; ++i)
             {
-                const wxCueTag tag(wxCueTag::TAG_AUTO_GENERATED, wxString::FromUTF8(i.key()), wxString::FromUTF8(i.value()));
-                cueSheet.RemoveTag(tag.GetName());
-                cueSheet.AddTag(tag);
-
-                if (tag == wxCueTag::Name::DR14)
+                const wxString tagName = wxString::FromUTF8(i.key());
+                if (!i.value().is_string())
                 {
-                    const wxCueTag albumTag = tag.Rename(wxCueTag::Name::DR14_ALBUM);
-                    cueSheet.RemoveTag(albumTag.GetName());
-                    cueSheet.AddTag(albumTag);
+                    wxLogWarning(_("json[album]: expecting string value for %s"), tagName);
+                    continue;
                 }
+
+                const wxString tagVal = wxString::FromUTF8(i.value());
+                const wxCueTag tag(wxCueTag::TAG_AUTO_GENERATED, tagName, tagVal);
+                cueSheet.RemoveTag(tagName);
+                cueSheet.AddTag(tag);
             }
         }
     }
@@ -986,8 +1009,15 @@ void wxMyApp::ApplyTagsFromJson(wxCueSheet& cueSheet, const wxJson& rgScan) cons
                 wxTrack& track = cueSheet.GetTrack(chapterNo);
                 for (auto j = i->cbegin(), jend = i->cend(); j != jend; ++j)
                 {
-                    const wxCueTag tag(wxCueTag::TAG_AUTO_GENERATED, wxString::FromUTF8(j.key()), wxString::FromUTF8(j.value()));
-                    track.RemoveTag(tag.GetName());
+                    const wxString tagName = wxString::FromUTF8(j.key());
+                    if (!j.value().is_string())
+                    {
+                        wxLogWarning(_("json[chapter]: expecting string value for %s"), tagName);
+                        continue;
+                    }
+                    const wxString tagVal = wxString::FromUTF8(j.value());
+                    const wxCueTag tag(wxCueTag::TAG_AUTO_GENERATED, tagName, tagVal);
+                    track.RemoveTag(tagName);
                     track.AddTag(tag);
                 }
             }
@@ -1054,7 +1084,8 @@ bool wxMyApp::RunReplayGainScanner(const wxFileName& cmakeScriptFile) const
     wxString cmd, cmdDesc;
     GetCmd(cmake, params, cmd, cmdDesc);
 
-    wxLogMessage(cmdDesc);
+    wxLogMessage(_("Invoking pre-process script"));
+    wxLogInfo(cmdDesc);
 
     wxExecuteEnv env;
     PrepareExecuteEnv(env);
@@ -1073,7 +1104,7 @@ bool wxMyApp::RunReplayGainScanner(const wxFileName& cmakeScriptFile) const
     }
     else
     {
-        if (nRes <= 1)
+        if (nRes == 0)
         {
             wxLogInfo(_("cmake exit code: %ld (%08lX)"), nRes, nRes);
             return true;
