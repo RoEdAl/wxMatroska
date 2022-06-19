@@ -107,14 +107,14 @@ bool wxCuePointsRenderer::Save(const wxFileName& outputFile)
 
     if (os.IsOk())
     {
-        wxLogInfo(_("Creating cue points file \u201C%s\u201D"), outputFile.GetFullName());
+        wxLogInfo(_("Creating cue points file " ENQUOTED_STR_FMT), outputFile.GetFullName());
         wxSharedPtr< wxTextOutputStream > pStream(m_cfg.GetOutputTextStream(os));
         m_os.SaveTo(*pStream);
         return true;
     }
     else
     {
-        wxLogError(_("Fail to save cue points to \u201C%s\u201D"), outputFile.GetFullName());
+        wxLogError(_("Fail to save cue points to " ENQUOTED_STR_FMT), outputFile.GetFullName());
         return false;
     }
 }

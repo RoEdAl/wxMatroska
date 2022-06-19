@@ -92,6 +92,12 @@ namespace
 }
 #endif
 
+#ifdef NDEBUG
+#define ENQUOTED_STR_FMT "\u201C%s\u201D"
+#else
+#define ENQUOTED_STR_FMT "\"%s\""
+#endif
+
 #ifdef WIN32
 #include <objbase.h>
 #endif

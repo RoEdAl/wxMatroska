@@ -27,7 +27,7 @@ const char wxConfiguration::EXT::FFMPEG_METADATA[] = "ffm.txt";
 const char wxConfiguration::EXT::TXT[] = "txt";
 const char wxConfiguration::EXT::XML[] = "xml";
 const char wxConfiguration::EXT::JSON[] = "json";
-const char wxConfiguration::EXT::CMAKE[] = "json";
+const char wxConfiguration::EXT::CMAKE[] = "cmake";
 const char wxConfiguration::EXT::MKA[] = "mka";
 const char wxConfiguration::EXT::UNK[] = "unk";
 const char wxConfiguration::TMP::CMD[] = "cmd";
@@ -276,7 +276,7 @@ bool wxConfiguration::ReadLanguagesStrings(wxSortedArrayString& as)
 
     if (!fn.IsFileReadable())
     {
-        wxLogWarning(_("Cannot find language file \u201C%s\u201D"), fn.GetFullPath());
+        wxLogWarning(_("Cannot find language file " ENQUOTED_STR_FMT), fn.GetFullPath());
         wxLogWarning(_("You can find this file at %s"), LANG::FILE_URL);
         return false;
     }
@@ -285,7 +285,7 @@ bool wxConfiguration::ReadLanguagesStrings(wxSortedArrayString& as)
 
     if (!fis.IsOk())
     {
-        wxLogDebug(wxS("Cannot open language file \u201C%s\u201D"), fn.GetFullPath());
+        wxLogDebug(wxS("Cannot open language file " ENQUOTED_STR_FMT), fn.GetFullPath());
         return false;
     }
 
@@ -311,7 +311,7 @@ bool wxConfiguration::ReadLanguagesStrings(wxSortedArrayString& as)
 
         if (n++ > 5000)
         {
-            wxLogError(_("Too many languages. File \u201C%s\u201D is corrupt"), fn.GetFullName());
+            wxLogError(_("Too many languages. File " ENQUOTED_STR_FMT " is corrupt"), fn.GetFullName());
             as.Clear();
             return false;
         }
@@ -567,7 +567,7 @@ bool wxConfiguration::Read(const wxCmdLineParser& cmdLine)
             }
             else
             {
-                wxLogWarning(_("Invalid input file \u201C%s\u201D"), cmdLine.GetParam(i));
+                wxLogWarning(_("Invalid input file " ENQUOTED_STR_FMT), cmdLine.GetParam(i));
                 bRes = false;
             }
         }
@@ -593,7 +593,7 @@ bool wxConfiguration::Read(const wxCmdLineParser& cmdLine)
 
         if (!m_outputFile.MakeAbsolute())
         {
-            wxLogInfo(_("Fail to normalize path \u201C%s\u201D"), s);
+            wxLogInfo(_("Fail to normalize path " ENQUOTED_STR_FMT), s);
             bRes = false;
         }
     }
@@ -604,7 +604,7 @@ bool wxConfiguration::Read(const wxCmdLineParser& cmdLine)
 
         if (!m_outputFile.MakeAbsolute())
         {
-            wxLogInfo(_("Fail to normalize path \u201C%s\u201D"), s);
+            wxLogInfo(_("Fail to normalize path " ENQUOTED_STR_FMT), s);
             bRes = false;
         }
     }
@@ -744,7 +744,7 @@ void wxConfiguration::Dump() const
         as.Add(sSeparator);
         as.Add(_("Configuration:"));
         FillArray(as);
-        as.Add(wxString::Format(_("Output path: \u201C%s\u201D"), m_outputFile.GetFullPath()));
+        as.Add(wxString::Format(_("Output path: " ENQUOTED_STR_FMT), m_outputFile.GetFullPath()));
         as.Add(sSeparator);
         size_t     strings = as.GetCount();
         wxDateTime dt(wxDateTime::Now());
@@ -975,13 +975,9 @@ wxFileName wxConfiguration::GetOutputDir(const wxInputFile& inputFile) const
 
     if (m_outputFile.IsOk())
     {
-        if (m_outputFile.IsDir())
+        res = m_outputFile;
+        if (!m_outputFile.IsDir())
         {
-            res = wxFileName::DirName(m_outputFile.GetFullPath());
-        }
-        else
-        {
-            res = m_outputFile;
             res.SetFullName(wxEmptyString);
         }
     }

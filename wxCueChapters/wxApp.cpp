@@ -317,12 +317,12 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
         case wxConfiguration::RENDER_CUESHEET:
         {
             wxString sOutputFile(m_cfg.GetOutputFile(inputFile).GetFullPath());
-            wxLogInfo(_("Saving cue scheet to \u201C%s\u201D"), sOutputFile);
+            wxLogInfo(_("Saving cue scheet to " ENQUOTED_STR_FMT), sOutputFile);
             wxFileOutputStream fos(sOutputFile);
 
             if (!fos.IsOk())
             {
-                wxLogError(_("Fail to open \u201C%s\u201D"), sOutputFile);
+                wxLogError(_("Fail to open " ENQUOTED_STR_FMT), sOutputFile);
                 return 1;
             }
 
@@ -467,7 +467,7 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
             wxCuePointsRenderer renderer(m_cfg);
             renderer.RenderDisc(cueSheet);
 
-            wxLogInfo(_("Saving cue points to \u201C%s\u201D"), outputFile.GetFullName());
+            wxLogInfo(_("Saving cue points to " ENQUOTED_STR_FMT), outputFile.GetFullName());
 
             if (!renderer.Save(outputFile))
             {
@@ -492,11 +492,11 @@ int wxMyApp::ProcessCueFile(const wxInputFile& inputFile, const wxTagSynonimsCol
 
     wxString sInputFile(inputFile.GetInputFile().GetFullPath());
 
-    wxLogMessage(_("Processing \u201C%s\u201D"), sInputFile);
+    wxLogMessage(_("Processing " ENQUOTED_STR_FMT), sInputFile);
 
     if (!reader.ReadCueSheetEx(sInputFile, m_cfg.UseMLang()))
     {
-        wxLogError(_("Fail to read or parse input cue file \u201C%s\u201D"), sInputFile);
+        wxLogError(_("Fail to read or parse input cue file " ENQUOTED_STR_FMT), sInputFile);
         return 1;
     }
 
@@ -557,7 +557,7 @@ int wxMyApp::OnRun()
 
         if (!wxDir::Exists(fn.GetPath()))
         {
-            wxLogMessage(_("Directory \u201C%s\u201D doesn't exists"), fn.GetPath());
+            wxLogMessage(_("Directory " ENQUOTED_STR_FMT " doesn't exists"), fn.GetPath());
             res = 1;
 
             if (m_cfg.AbortOnError()) break;
@@ -568,7 +568,7 @@ int wxMyApp::OnRun()
 
         if (!dir.IsOpened())
         {
-            wxLogError(_("Cannot open directory \u201C%s\u201D"), fn.GetPath());
+            wxLogError(_("Cannot open directory " ENQUOTED_STR_FMT), fn.GetPath());
             res = 1;
 
             if (m_cfg.AbortOnError()) break;
@@ -706,11 +706,11 @@ bool wxMyApp::RunMkvmerge(const wxFileName& optionsFile)
 {
     wxASSERT(m_cfg.RunTool());
 
-    wxString params;
+    wxArrayString params;
     wxString optionsPath;
     wxFileName exe;
 
-    if (!wxCmdTool::FindExecutable("mkvmerge", "MKVToolNix", exe))
+    if (!wxCmdTool::FindTool(wxCmdTool::TOOL_MKVMERGE, exe))
     {
         wxLogError(_("Unable to find mkvmerge tool"));
         return false;
@@ -724,33 +724,32 @@ bool wxMyApp::RunMkvmerge(const wxFileName& optionsFile)
     {
         optionsPath = optionsFile.GetFullName();
     }
+    optionsPath.Prepend('@');
 
-    wxString outputCharset;
+    if (!wxLog::GetVerbose())
+    {
+        params.Add("--quiet");
+    }
+
+    params.Add("--ui-language");
+    params.Add("en");
+
 #if defined( __WXMSW__ ) && defined( __VISUALC__ ) && defined( UNICODE )
     switch (GetTranslationMode())
     {
         case _O_U8TEXT:
-        outputCharset = "--output-charset utf-8";
+        params.Add("--output-charset");
+        params.Add("utf-8");
         break;
 
         case _O_U16TEXT:
-        outputCharset = "--output-charset utf-16";
+        params.Add("--output-charset");
+        params.Add("utf-16");
         break;
     }
 #endif
-    if (!outputCharset.IsEmpty())
-    {
-        outputCharset.Prepend(' ').Append(' ');
-    }
 
-    if (wxLog::GetVerbose())
-    {
-        params.Printf("--ui-language en %s\"@%s\"", outputCharset, optionsPath);
-    }
-    else
-    {
-        params.Printf("--quiet --ui-language en %s\"@%s\"", outputCharset, optionsPath);
-    }
+    params.Add(optionsPath);
 
     wxString cmd, cmdDesc;
     GetCmd(exe, params, cmd, cmdDesc);
@@ -825,7 +824,7 @@ bool wxMyApp::RunCMakeScript(const wxFileName& scriptFile)
 
     params.Add("--log-context");
     params.Add("-D");
-    params.Add("CMAKE_MESSAGE_CONTEXT=pre");
+    params.Add("CMAKE_MESSAGE_CONTEXT=ff");
 
     params.Add("-D");
     params.Add(wxString::Format("FFMPEG=%s", ffmpeg.GetFullPath()));
@@ -952,12 +951,14 @@ bool wxMyApp::PreProcessAudio(
 
 bool wxMyApp::ApplyTagsFromJson(wxCueSheet& cueSheet, const wxFileName& jsonFile) const
 {
+    wxLogInfo(_("Applying tags from " ENQUOTED_STR_FMT), jsonFile.GetFullName());
     wxTextOutputStreamOnString tos;
 
     {
         wxFileInputStream is(jsonFile.GetFullPath());
         if (!is.IsOk())
         {
+            wxLogError(_("Fail to open " ENQUOTED_STR_FMT), jsonFile.GetFullName());
             return false;
         }
 
@@ -1006,6 +1007,8 @@ void wxMyApp::ApplyTagsFromJson(wxCueSheet& cueSheet, const wxJson& rgScan) cons
             for (auto i = chapters.cbegin(), end = chapters.cend(); i != end; ++i,++chapterNo)
             {
                 if (!i->is_object()) continue;
+                if (chapterNo >= cueSheet.GetTracksCount()) continue;
+
                 wxTrack& track = cueSheet.GetTrack(chapterNo);
                 for (auto j = i->cbegin(), jend = i->cend(); j != jend; ++j)
                 {
@@ -1021,6 +1024,10 @@ void wxMyApp::ApplyTagsFromJson(wxCueSheet& cueSheet, const wxJson& rgScan) cons
                     track.AddTag(tag);
                 }
             }
+        }
+        else
+        {
+            wxLogWarning(_("json: expecting array value for 'chapters' key"));
         }
     }
 }
@@ -1067,7 +1074,7 @@ bool wxMyApp::RunReplayGainScanner(const wxFileName& cmakeScriptFile) const
 
     params.Add("--log-context");
     params.Add("-D");
-    params.Add("CMAKE_MESSAGE_CONTEXT=ffscan");
+    params.Add("CMAKE_MESSAGE_CONTEXT=pre");
 
     params.Add("-D");
     params.Add(wxString::Format("FFMPEG=%s", ffmpeg.GetFullPath()));

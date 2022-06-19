@@ -356,7 +356,7 @@ bool wxXmlCueSheetRenderer::SaveXmlDoc(const wxScopedPtr< wxXmlDocument >& pXmlD
     }
     else
     {
-        wxLogDebug(wxS("Fail to save XML document to file \u201C%s\u201D"), fileName.GetFullName());
+        wxLogDebug(wxS("Fail to save XML document to file " ENQUOTED_STR_FMT), fileName.GetFullName());
         return false;
     }
 }
@@ -368,7 +368,7 @@ bool wxXmlCueSheetRenderer::Save()
 
     if (!SaveXmlDoc(m_pXmlChapters, m_chaptersFile))
     {
-        wxLogError(_("Fail to save chapters to \u201C%s\u201D"), m_chaptersFile.GetFullName());
+        wxLogError(_("Fail to save chapters to " ENQUOTED_STR_FMT), m_chaptersFile.GetFullName());
         return false;
     }
     m_temporaryFiles.Add(m_chaptersFile);
@@ -379,7 +379,7 @@ bool wxXmlCueSheetRenderer::Save()
 
         if (!SaveXmlDoc(m_pXmlTags, m_tagsFile))
         {
-            wxLogError(_("Fail to save tags to \u201C%s\u201D"), m_tagsFile.GetFullName());
+            wxLogError(_("Fail to save tags to " ENQUOTED_STR_FMT), m_tagsFile.GetFullName());
             return false;
         }
     }
@@ -402,7 +402,7 @@ wxXmlNode* wxXmlCueSheetRenderer::AddChapterTimeStart(wxXmlNode* pChapterAtom, c
     else
     {
         const wxDataFile& dataFile = cueSheet.GetDataFiles().Item(idx.GetDataFileIdx());
-        wxLogError(_("Cannot calulate duration of data file \u201C%s\u201D (index %d)"), dataFile.GetRealFileName().GetFullName(), idx.GetDataFileIdx());
+        wxLogError(_("Cannot calulate duration of data file " ENQUOTED_STR_FMT " (index %d)"), dataFile.GetRealFileName().GetFullName(), idx.GetDataFileIdx());
         return nullptr;
     }
 }
@@ -429,7 +429,7 @@ wxXmlNode* wxXmlCueSheetRenderer::AddChapterTimeEnd(wxXmlNode* pChapterAtom, con
     else
     {
         const wxDataFile& dataFile = cueSheet.GetDataFiles().Item(idx.GetDataFileIdx());
-        wxLogError(_("Cannot calulate duration of data file \u201C%s\u201D (index %" wxSizeTFmtSpec "u)"), dataFile.GetRealFileName().GetFullName(), idx.GetDataFileIdx());
+        wxLogError(_("Cannot calulate duration of data file " ENQUOTED_STR_FMT " (index %" wxSizeTFmtSpec "u)"), dataFile.GetRealFileName().GetFullName(), idx.GetDataFileIdx());
         return nullptr;
     }
 }
@@ -461,7 +461,7 @@ wxXmlNode* wxXmlCueSheetRenderer::AddIdxChapterAtom(wxXmlNode* pChapterAtom, con
     else
     {
         const wxDataFile& dataFile = cueSheet.GetDataFiles().Item(idx.GetDataFileIdx());
-        wxLogError(_("Cannot calulate duration of data file \u201C%s\u201D (index %" wxSizeTFmtSpec "u)"), dataFile.GetRealFileName().GetFullName(), idx.GetDataFileIdx());
+        wxLogError(_("Cannot calulate duration of data file " ENQUOTED_STR_FMT " (index %" wxSizeTFmtSpec "u)"), dataFile.GetRealFileName().GetFullName(), idx.GetDataFileIdx());
         return nullptr;
     }
 }
@@ -742,7 +742,7 @@ wxXmlNode* wxXmlCueSheetRenderer::AppendDiscTags(
 
     wxASSERT(pTag != nullptr);
 
-    add_comment_node(pTag, wxString::Format(wxS("CUE file: \u201C%s\u201D"), m_inputFile.ToString(false)));
+    add_comment_node(pTag, wxString::Format(wxS("CUE file: " ENQUOTED_STR_FMT), m_inputFile.ToString(false)));
 
     AddCdTextInfo(cueSheet, pTag);
 
@@ -820,7 +820,7 @@ bool wxXmlCueSheetRenderer::OnPreRenderDisc(const wxCueSheet& cueSheet)
     m_pFirstChapterAtom = nullptr;
     const wxULongLong editionUID(GenerateUID());
 
-    wxLogInfo(_("Creating XML document"));
+    wxLogDebug(_("Creating XML document"));
     m_pXmlChapters.reset(create_xml_document(Xml::CHAPTERS));
     wxXmlNode* const pChapters = m_pXmlChapters->GetRoot();
 
@@ -839,7 +839,7 @@ bool wxXmlCueSheetRenderer::OnPreRenderDisc(const wxCueSheet& cueSheet)
     m_pPrevChapterAtom = nullptr;
 
     wxASSERT(m_pEditionEntry != nullptr);
-    add_comment_node(m_pEditionEntry, wxString::Format(wxS("CUE file: \u201C%s\u201D"), m_inputFile.ToString(false)));
+    add_comment_node(m_pEditionEntry, wxString::Format(wxS("CUE file: " ENQUOTED_STR_FMT), m_inputFile.ToString(false)));
 
     m_pXmlTags.reset(create_xml_document(Xml::TAGS));
     m_pTags = m_pXmlTags->GetRoot();
@@ -847,7 +847,7 @@ bool wxXmlCueSheetRenderer::OnPreRenderDisc(const wxCueSheet& cueSheet)
     m_artistTags.Empty();
     AddDiscTags(cueSheet, m_pTags, editionUID);
 
-    add_comment_node(m_pTags, wxString::Format(wxS("CUE file: \u201C%s\u201D"), m_inputFile.ToString(false)));
+    add_comment_node(m_pTags, wxString::Format(wxS("CUE file: " ENQUOTED_STR_FMT), m_inputFile.ToString(false)));
     add_comment_node(m_pTags, wxString::Format("Number of tracks: %" wxSizeTFmtSpec "u", cueSheet.GetTracksCount()));
 
     return wxCueSheetRenderer::OnPreRenderDisc(cueSheet);
@@ -856,7 +856,7 @@ bool wxXmlCueSheetRenderer::OnPreRenderDisc(const wxCueSheet& cueSheet)
 bool wxXmlCueSheetRenderer::OnPreRenderTrack(const wxCueSheet& cueSheet, const wxTrack& track)
 {
     wxASSERT(m_pEditionEntry != nullptr);
-    wxLogInfo(_("Converting track %" wxSizeTFmtSpec "u"), track.GetNumber());
+    wxLogDebug(_("Converting track %" wxSizeTFmtSpec "u"), track.GetNumber());
 
     m_pChapterAtom = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, Xml::CHAPTER_ATOM);
 
@@ -892,7 +892,7 @@ bool wxXmlCueSheetRenderer::OnPostRenderTrack(const wxCueSheet& cueSheet, const 
 
 bool wxXmlCueSheetRenderer::OnRenderPreGap(const wxCueSheet& cueSheet, const wxTrack& track, const wxIndex& preGap)
 {
-    wxLogInfo(_("Converting pre-gap of track %" wxSizeTFmtSpec "u"), track.GetNumber());
+    wxLogDebug(_("Converting pre-gap of track %" wxSizeTFmtSpec "u"), track.GetNumber());
 
     if (track.GetNumber() == 1u)
     {
@@ -910,7 +910,7 @@ bool wxXmlCueSheetRenderer::OnRenderPreGap(const wxCueSheet& cueSheet, const wxT
 
 bool wxXmlCueSheetRenderer::OnRenderPostGap(const wxCueSheet& cueSheet, const wxTrack& track, const wxIndex& postGap)
 {
-    wxLogInfo(_("Converting post-gap of track %" wxSizeTFmtSpec "u"), track.GetNumber());
+    wxLogDebug(_("Converting post-gap of track %" wxSizeTFmtSpec "u"), track.GetNumber());
 
     if (m_cfg.GetChapterTimeEnd())
     {
@@ -922,7 +922,7 @@ bool wxXmlCueSheetRenderer::OnRenderPostGap(const wxCueSheet& cueSheet, const wx
 
 bool wxXmlCueSheetRenderer::OnRenderIndex(const wxCueSheet& cueSheet, const wxTrack& track, const wxIndex& idx)
 {
-    wxLogInfo(_("Converting index %" wxSizeTFmtSpec "d of track %" wxSizeTFmtSpec "d"), idx.GetNumber(), track.GetNumber());
+    wxLogDebug(_("Converting index %" wxSizeTFmtSpec "d of track %" wxSizeTFmtSpec "d"), idx.GetNumber(), track.GetNumber());
 
     switch (idx.GetNumber())
     {
@@ -970,7 +970,7 @@ bool wxXmlCueSheetRenderer::OnRenderIndex(const wxCueSheet& cueSheet, const wxTr
 
 bool wxXmlCueSheetRenderer::OnPostRenderDisc(const wxCueSheet& cueSheet)
 {
-    wxLogInfo(_("Calculating chapter names and end time from data file(s)"));
+    wxLogDebug(_("Calculating chapter names and end time from data file(s)"));
 
     const size_t nTracksCount = cueSheet.GetTracksCount();
 
@@ -1026,7 +1026,7 @@ bool wxXmlCueSheetRenderer::OnPostRenderDisc(const wxCueSheet& cueSheet)
         }
     }
 
-    wxLogInfo(_("XML document created"));
+    wxLogDebug(_("XML document created"));
     return wxCueSheetRenderer::OnPostRenderDisc(cueSheet);
 }
 

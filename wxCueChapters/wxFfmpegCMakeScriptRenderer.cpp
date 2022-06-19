@@ -203,7 +203,7 @@ void wxFfmpegCMakeScriptRenderer::RenderDiscDraft(
         *m_os << "    COMMAND ${FFMPEG}" << endl;
         *m_os << "        -y" << endl;
         *m_os << "        -hide_banner -nostdin -nostats" << endl;
-        *m_os << "        -loglevel repeat+level+warning" << endl;
+        *m_os << "        -loglevel repeat+level+fatal" << endl;
         *m_os << "        -threads 1" << endl;
 
         for (size_t i = 0, cnt = dataFiles.GetCount(); i < cnt; ++i)
@@ -340,6 +340,7 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
         *m_os << endl << "CMAKE_PATH(SET MKA_FNAME \"" << GetCMakePath(GetRelativeFileName(mkaFile, outDir)) << "\")" << endl << endl;
     }
 
+    *m_os << "MESSAGE(STATUS \"Creating MKA container\")" << endl;
     *m_os << "EXECUTE_PROCESS(" << endl;
     *m_os << "    # ffmpeg" << endl;
     *m_os << "    COMMAND ${FFMPEG}" << endl;
@@ -471,7 +472,7 @@ bool wxFfmpegCMakeScriptRenderer::SaveDraft(
     wxFileOutputStream os(scriptFile.GetFullPath());
     if (os.IsOk())
     {
-        wxLogInfo(_("Creating temporary CMake script \u201C%s\u201D"), scriptFile.GetFullName());
+        wxLogInfo(_("Creating temporary CMake script " ENQUOTED_STR_FMT), scriptFile.GetFullName());
         wxSharedPtr< wxTextOutputStream > stream(wxTextOutputStreamWithBOMFactory::CreateUTF8(os, wxEOL_NATIVE, true, false));
         m_os.SaveTo(*stream);
         m_temporaryFiles.Add(scriptFile);
@@ -480,7 +481,7 @@ bool wxFfmpegCMakeScriptRenderer::SaveDraft(
     }
     else
     {
-        wxLogError(_("Fail to save temporary CMake script to \u201C%s\u201D"), scriptFile.GetFullName());
+        wxLogError(_("Fail to save temporary CMake script to " ENQUOTED_STR_FMT), scriptFile.GetFullName());
         return false;
     }
 }
@@ -491,7 +492,7 @@ bool wxFfmpegCMakeScriptRenderer::Save(const wxFileName& outputFile)
 
     if (os.IsOk())
     {
-        wxLogInfo(_("Creating CMake script \u201C%s\u201D"), outputFile.GetFullName());
+        wxLogInfo(_("Creating CMake script " ENQUOTED_STR_FMT), outputFile.GetFullName());
         wxSharedPtr< wxTextOutputStream > stream(wxTextOutputStreamWithBOMFactory::CreateUTF8(os, wxEOL_NATIVE, true, false));
         m_os.SaveTo(*stream);
         m_temporaryFiles.Add(outputFile);
@@ -499,7 +500,7 @@ bool wxFfmpegCMakeScriptRenderer::Save(const wxFileName& outputFile)
     }
     else
     {
-        wxLogError(_("Fail to save CMake script to \u201C%s\u201D"), outputFile.GetFullName());
+        wxLogError(_("Fail to save CMake script to " ENQUOTED_STR_FMT), outputFile.GetFullName());
         return false;
     }
 }

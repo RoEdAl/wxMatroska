@@ -759,7 +759,7 @@ void wxPrimitiveRenderer::MakeRelativePaths(
         wxMatroskaAttachment& a = attachments[i];
         if (!a.MakeRelative(relDir, pathFormat))
         {
-            wxLogWarning(_("Unable to relativize attachment path \u201C%s\u201D"), a.GetFileName().GetFullName());
+            wxLogWarning(_("Unable to relativize attachment path " ENQUOTED_STR_FMT), a.GetFileName().GetFullName());
         }
     }
 }
@@ -789,7 +789,7 @@ bool wxPrimitiveRenderer::SaveCueSheet(
 
     if (os.IsOk())
     {
-        wxLogInfo(_("Creating cue sheet file \u201C%s\u201D"), cueSheet.GetFullName());
+        wxLogInfo(_("Creating cue sheet file " ENQUOTED_STR_FMT), cueSheet.GetFullName());
         wxSharedPtr< wxTextOutputStream > stream(m_cfg.GetOutputTextStream(os));
         wxTextOutputStreamOnString::SaveTo(*stream, content);
         m_temporaryFiles.Add(cueSheet);
@@ -797,7 +797,7 @@ bool wxPrimitiveRenderer::SaveCueSheet(
     }
     else
     {
-        wxLogError(_("Fail to create cue sheet file \u201C%s\u201D"), cueSheet.GetFullName());
+        wxLogError(_("Fail to create cue sheet file " ENQUOTED_STR_FMT), cueSheet.GetFullName());
         return false;
     }
 }
