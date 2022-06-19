@@ -57,6 +57,12 @@ class wxCueSheetReader
         static const char MASK[];
     };
 
+    struct tags_file
+    {
+        static const char EXT[];
+        static const char MASK[];
+    };
+
     typedef wxUint32 ReadFlags;
 
     enum
@@ -76,7 +82,8 @@ class wxCueSheetReader
         EC_SMALL_EM_DASH = 4096,
         EC_NUMBER_FULL_STOP = 8192,
         EC_SMALL_LETTER_PARENTHESIZED = 16384,
-        EC_ASCII_TO_UNICODE = 32768
+        EC_ASCII_TO_UNICODE = 32768,
+        EC_APPLY_TAGS_FROM_FILE = 65536
     };
 
     static bool TestReadFlags(ReadFlags, ReadFlags);
@@ -199,6 +206,8 @@ class wxCueSheetReader
     bool FindCoversInRelatedFiles();
     bool FindCover(const wxCueSheetContent&);
     size_t ExtractCoversFromDataFile(const wxDataFile&, wxArrayCoverFile&) const;
+
+    bool ApplyTagsFromFile(const wxCueSheetContent&);
 
     public:
 

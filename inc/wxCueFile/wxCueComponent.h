@@ -15,11 +15,8 @@ class wxTagSynonimsCollection;
 
 #include <enum2str.h>
 
-class wxCueComponent:
-    public wxObject
+class wxCueComponent
 {
-    wxDECLARE_ABSTRACT_CLASS(wxCueComponent);
-
     public:
 
     enum ENTRY_FORMAT

@@ -339,6 +339,8 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
         {
             const wxScopedPtr<wxTemporaryFilesCleaner> temporaryFilesCleaner(new wxTemporaryFilesCleaner(m_cfg.RunTool()));
 
+            ApplyApplicationTags(cueSheet);
+
             const wxString tmpStem(get_stem());
             const bool rgScan = m_cfg.RunReplayGainScanner();
             const bool tmpMka = cueSheet.HasFlacDataFile() || m_cfg.RunReplayGainScanner() || (cueSheet.GetDataFilesCount() > 1u);
@@ -406,6 +408,8 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
         case wxConfiguration::RENDER_FFMPEG:
         {
             const wxScopedPtr<wxTemporaryFilesCleaner> temporaryFilesCleaner(new wxTemporaryFilesCleaner(m_cfg.RunTool()));
+
+            ApplyApplicationTags(cueSheet);
 
             const wxString tmpStem(get_stem());
             const bool rgScan = m_cfg.RunReplayGainScanner();
@@ -940,96 +944,13 @@ bool wxMyApp::PreProcessAudio(
             return false;
         }
 
-        if (!ApplyTagsFromJson(cueSheet, scanFile))
+        if (!cueSheet.ApplyTagsFromJson(scanFile))
         {
             return false;
         }
     }
 
     return true;
-}
-
-bool wxMyApp::ApplyTagsFromJson(wxCueSheet& cueSheet, const wxFileName& jsonFile) const
-{
-    wxLogInfo(_("Applying tags from " ENQUOTED_STR_FMT), jsonFile.GetFullName());
-    wxTextOutputStreamOnString tos;
-
-    {
-        wxFileInputStream is(jsonFile.GetFullPath());
-        if (!is.IsOk())
-        {
-            wxLogError(_("Fail to open " ENQUOTED_STR_FMT), jsonFile.GetFullName());
-            return false;
-        }
-
-        wxTextInputStream tis(is, wxEmptyString, wxConvUTF8);
-        while (!tis.GetInputStream().Eof())
-        {
-            *tos << tis.ReadLine() << endl;
-        }
-    }
-    tos->Flush();
-
-    ApplyTagsFromJson(cueSheet, wxJson::parse(tos.GetString().utf8_string()));
-    return true;
-}
-
-void wxMyApp::ApplyTagsFromJson(wxCueSheet& cueSheet, const wxJson& rgScan) const
-{
-    if (rgScan.contains("album"))
-    {
-        const wxJson& album = rgScan["album"];
-        if (album.is_object())
-        {
-            for (auto i = album.cbegin(), end = album.cend(); i != end; ++i)
-            {
-                const wxString tagName = wxString::FromUTF8(i.key());
-                if (!i.value().is_string())
-                {
-                    wxLogWarning(_("json[album]: expecting string value for %s"), tagName);
-                    continue;
-                }
-
-                const wxString tagVal = wxString::FromUTF8(i.value());
-                const wxCueTag tag(wxCueTag::TAG_AUTO_GENERATED, tagName, tagVal);
-                cueSheet.RemoveTag(tagName);
-                cueSheet.AddTag(tag);
-            }
-        }
-    }
-
-    if (rgScan.contains("chapters"))
-    {
-        const wxJson& chapters = rgScan["chapters"];
-        if (chapters.is_array())
-        {
-            size_t chapterNo = 0;
-            for (auto i = chapters.cbegin(), end = chapters.cend(); i != end; ++i,++chapterNo)
-            {
-                if (!i->is_object()) continue;
-                if (chapterNo >= cueSheet.GetTracksCount()) continue;
-
-                wxTrack& track = cueSheet.GetTrack(chapterNo);
-                for (auto j = i->cbegin(), jend = i->cend(); j != jend; ++j)
-                {
-                    const wxString tagName = wxString::FromUTF8(j.key());
-                    if (!j.value().is_string())
-                    {
-                        wxLogWarning(_("json[chapter]: expecting string value for %s"), tagName);
-                        continue;
-                    }
-                    const wxString tagVal = wxString::FromUTF8(j.value());
-                    const wxCueTag tag(wxCueTag::TAG_AUTO_GENERATED, tagName, tagVal);
-                    track.RemoveTag(tagName);
-                    track.AddTag(tag);
-                }
-            }
-        }
-        else
-        {
-            wxLogWarning(_("json: expecting array value for 'chapters' key"));
-        }
-    }
 }
 
 bool wxMyApp::RunReplayGainScanner(const wxFileName& cmakeScriptFile) const
@@ -1121,5 +1042,20 @@ bool wxMyApp::RunReplayGainScanner(const wxFileName& cmakeScriptFile) const
             wxLogError(_("cmake exit code: %ld (%08lX)"), nRes, nRes);
             return false;
         }
+    }
+}
+
+void wxMyApp::ApplyApplicationTags(wxCueSheet& cueSheet) const
+{
+    wxFileName tagsFile = wxFileName::FileName(wxStandardPaths::Get().GetExecutablePath());
+    tagsFile.SetExt("tags.json");
+
+    if (tagsFile.IsFileReadable())
+    {
+        cueSheet.ApplyTagsFromJson(tagsFile);
+    }
+    else
+    {
+        wxLogDebug(wxS("Tags file not found"));
     }
 }

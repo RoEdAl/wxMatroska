@@ -586,7 +586,7 @@ ENDFOREACH()
 
 # ---------------------------------------------------------------
 
-MESSAGE(STATUS "Scanning whole track")
+MESSAGE(STATUS "Scanning album")
 EXECUTE_PROCESS(
     COMMAND ${FFMPEG}
         -hide_banner -nostdin -nostats

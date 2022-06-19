@@ -40,7 +40,7 @@ TARGET_LINK_LIBRARIES(cue2mkc PRIVATE ${wxWidgets_LIBRARIES} Shlwapi.lib
 
 add_custom_command( TARGET cue2mkc POST_BUILD 
 	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/ff-scan.cmake $<TARGET_FILE_DIR:cue2mkc>
-	COMMENT "Copying ff-scan.cmake script"
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/app.tags.json $<TARGET_FILE_DIR:cue2mkc>/$<TARGET_FILE_BASE_NAME:cue2mkc>.tags.json
 )
 
 SET_PROPERTY(TARGET cue2mkc PROPERTY FOLDER "cli")

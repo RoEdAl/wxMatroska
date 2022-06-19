@@ -10,10 +10,6 @@
 
  // ===============================================================================
 
-wxIMPLEMENT_ABSTRACT_CLASS(wxCueComponent, wxObject);
-
-// ===============================================================================
-
 const wxCueComponent::CDTEXT_ENTRY wxCueComponent::CdTextFields[] =
 {
     { wxCueTag::Name::ARRANGER, wxCueComponent::ANY, wxCueComponent::CHARACTER, 'a' },

@@ -32,8 +32,6 @@
 class wxCueSheet:
     public wxCueComponent, public wxAbstractDurationHolder
 {
-    wxDECLARE_DYNAMIC_CLASS(wxCueSheet);
-
     public:
 
     static wxString GetCdAliasesRegExp();
@@ -101,7 +99,6 @@ class wxCueSheet:
 
     void SanitizeTags(const wxTagSynonimsCollection&, const wxTagSynonimsCollection&, bool, bool);
 
-    void AddPreparerTag();
     wxCueSheet& AddCatalog(const wxString&);
     wxCueSheet& AddCdTextFile(const wxFileName&);
     wxCueSheet& AddContent(const wxCueSheetContent&);
@@ -136,8 +133,10 @@ class wxCueSheet:
     void Clear(void);
 
     wxString Format(wxCueTag::TagSources, const wxString&) const;
-
     wxString FormatTrack(wxCueTag::TagSources, size_t, const wxString&) const;
+
+    bool ApplyTagsFromJson(const wxFileName&);
+    void ApplyTagsFromJson(const wxJson&);
 };
 
 #endif  // _WX_CUE_SHEET_H_

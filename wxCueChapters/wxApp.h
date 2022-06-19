@@ -77,8 +77,7 @@ class wxMyApp:
     bool RunCMakeScript(const wxFileName&);
     bool PreProcessAudio(const wxInputFile&, const wxString&, bool, bool, wxCueSheet&, wxFileName&, wxTemporaryFilesCleaner&) const;
     bool RunReplayGainScanner(const wxFileName&) const;
-    bool ApplyTagsFromJson(wxCueSheet&, const wxFileName&) const;
-    void ApplyTagsFromJson(wxCueSheet&, const wxJson&) const;
+    void ApplyApplicationTags(wxCueSheet&) const;
 
     bool PrepareExecuteEnv(wxExecuteEnv&) const;
 

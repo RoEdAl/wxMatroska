@@ -47,9 +47,10 @@ Source: {#Cue2MkcGuiExe}; DestDir: {app}; Flags: comparetimestamp; Components: g
 Source: {#WXWidgetsLibDir}\wxbase{#WXVerCompact}u{#WXDebug}_{#WXDllSuffix}; DestDir: {app}; Flags: comparetimestamp; Components: cli gui;
 Source: {#WXWidgetsLibDir}\wxbase{#WXVerCompact}u{#WXDebug}_xml_{#WXDllSuffix}; DestDir: {app}; Flags: comparetimestamp; Components: cli;
 Source: {#WXWidgetsLibDir}\wxmsw{#WXVerCompact}u{#WXDebug}_core_{#WXDllSuffix}; DestDir: {app}; Flags: comparetimestamp; Components: cli gui;
-Source: {#LicenseFileTxt}; DestDir: {app}; Flags: comparetimestamp; 
-Source: ..\cue\ISO-639-2_utf-8.txt; DestDir: {app}; Flags: comparetimestamp;
-Source: ..\wxCueChapters\ff-scan.cmake; DestDir: {app}; Flags: comparetimestamp;
+Source: {#LicenseFileTxt}; DestDir: {app}; Flags: comparetimestamp; Components: cli gui; Attribs: readonly;
+Source: ..\cue\ISO-639-2_utf-8.txt; DestDir: {app}; Flags: comparetimestamp; Components: cli; Attribs: readonly;
+Source: ..\wxCueChapters\ff-scan.cmake; DestDir: {app}; Flags: comparetimestamp; Components: cli; Attribs: readonly;
+Source: ..\wxCueChapters\app.tags.json; DestDir: {app}; DestName: {#Cue2MkcBase}.tags.json; Flags: comparetimestamp; Components: cli; Attribs: readonly;
 
 [Icons]
 Name: {group}\{cm:cue2mkc} {cm:gui}; Filename: {app}\cue2mkc-frontend.exe; IconFilename: {app}\cue2mkc-frontend.exe; Comment: {cm:gui_comment}; Components: gui; 

@@ -41,6 +41,12 @@
 #define wxSizeTFmtSpec
 #endif
 
+#ifdef NDEBUG
+#define ENQUOTED_STR_FMT "\u201C%s\u201D"
+#else
+#define ENQUOTED_STR_FMT "\"%s\""
+#endif
+
 // TagLib
 #ifndef NDEBUG
 #include <taglib/tdebuglistener.h>
@@ -55,7 +61,9 @@
 #include <taglib/flacproperties.h>
 #include <taglib/flacpicture.h>
 #include <taglib/flacfile.h>
-
 // #include <mpegproperties.h>
+
+#include <wxJson.h>
+
 #endif  // _STD_WX_H
 

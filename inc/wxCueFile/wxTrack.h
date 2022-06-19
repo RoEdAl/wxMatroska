@@ -34,8 +34,6 @@ class wxSamplingInfo;
 class wxTrack:
     public wxCueComponent
 {
-    wxDECLARE_DYNAMIC_CLASS(wxTrack);
-
     public:
 
     enum Flag

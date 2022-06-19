@@ -103,20 +103,7 @@ namespace
 #endif
 
 #include <optional>
-#include <nlohmann/json.hpp>
-
-typedef nlohmann::basic_json<
-    std::map,
-    std::vector,
-    std::string,
-    bool,
-    wxInt64,
-    wxUint64,
-    wxDouble,
-    std::allocator,
-    nlohmann::adl_serializer,
-    std::vector< wxByte >
-> wxJson;
+#include <wxJson.h>
 
 #endif  // _STD_WX_H
 

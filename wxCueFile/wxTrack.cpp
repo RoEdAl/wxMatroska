@@ -7,11 +7,7 @@
 #include <wxCueFile/wxTrack.h>
 #include <wxCueFile/wxSamplingInfo.h>
 #include <wxCueFile/wxDuration.h>
-
- // ===============================================================================
-
-wxIMPLEMENT_DYNAMIC_CLASS(wxTrack, wxCueComponent);
-
+ 
 // ===============================================================================
 
 const wxTrack::FLAG_STR wxTrack::FlagString[] =

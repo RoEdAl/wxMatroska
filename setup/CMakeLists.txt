@@ -61,6 +61,7 @@ add_custom_command(
 		/o${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>
 		/f${ISETUP_NAME}
 		/dCue2MkcExe=$<TARGET_FILE:cue2mkc>
+		/dCue2MkcBase=$<TARGET_FILE_BASE_NAME:cue2mkc>
 		/dCue2MkcGuiExe=$<TARGET_FILE:cue2mkc-frontend>
 		/dCue2MkcExeArch=${EX_PLATFORM_NAME}
 		/dLicenseFileRtf=${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/license.rtf

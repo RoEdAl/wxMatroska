@@ -21,6 +21,9 @@ const char wxCueSheetReader::eac_log::MASK[] = "*.log";
 const char wxCueSheetReader::accurip_log::EXT[] = "accurip";
 const char wxCueSheetReader::accurip_log::MASK[] = "*.accurip";
 
+const char wxCueSheetReader::tags_file::EXT[] = "tags.json";
+const char wxCueSheetReader::tags_file::MASK[] = "*.tags.json";
+
 // ===============================================================================
 
 const wxCueSheetReader::PARSE_STRUCT wxCueSheetReader::parseArray[] =
@@ -277,6 +280,21 @@ bool wxCueSheetReader::FindAccurateRipLog(const wxCueSheetContent& content)
     {
         m_cueSheet.AddAccuripLog(logFile);
         return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool wxCueSheetReader::ApplyTagsFromFile(const wxCueSheetContent& content)
+{
+    wxASSERT(TestReadFlags(EC_APPLY_TAGS_FROM_FILE));
+    wxFileName tagsFile;
+
+    if (GetLogFile< tags_file >(content.GetSource().GetFileName(), TestReadFlags(EC_SINGLE_MEDIA_FILE), tagsFile))
+    {
+        return m_cueSheet.ApplyTagsFromJson(tagsFile);
     }
     else
     {
@@ -757,9 +775,13 @@ bool wxCueSheetReader::ParseCue(const wxCueSheetContent& content)
         {
             FindAccurateRipLog(content);
         }
+
+        if (TestReadFlags(EC_APPLY_TAGS_FROM_FILE))
+        {
+            ApplyTagsFromFile(content);
+        }
     }
 
-    m_cueSheet.AddPreparerTag();
     return true;
 }
 

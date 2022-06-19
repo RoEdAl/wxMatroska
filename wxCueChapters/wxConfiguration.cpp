@@ -383,6 +383,7 @@ void wxConfiguration::AddCmdLineParams(wxCmdLineParser& cmdLine) const
     cmdLine.AddSwitch(wxEmptyString, "attach-eac-log", wxString::Format(_("Attach EAC log file to mkvmerge options file (default: %s)"), ReadFlagTestStr(wxCueSheetReader::EC_FIND_LOG)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
     cmdLine.AddSwitch(wxEmptyString, "attach-cover", wxString::Format(_("Attach cover image (cover.*;front.*;album.*) to mkvmerge options file (default: %s)"), ReadFlagTestStr(wxCueSheetReader::EC_FIND_COVER)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
     cmdLine.AddSwitch(wxEmptyString, "attach-accurip-log", wxString::Format(_("Attach AccurateRip log (default: %s)"), ReadFlagTestStr(wxCueSheetReader::EC_FIND_ACCURIP_LOG)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
+    cmdLine.AddSwitch(wxEmptyString, "apply-tags", wxString::Format(_("Apply tags from related JSON files (default: %s)"), ReadFlagTestStr(wxCueSheetReader::EC_APPLY_TAGS_FROM_FILE)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
 
     cmdLine.AddSwitch("et", "ellipsize-tags", wxString::Format(_("Tags processing - ellipsize tags - convert last three dots to ellipsis (U+2026) character' (default: %s)"), ReadFlagTestStr(wxCueSheetReader::EC_ELLIPSIZE_TAGS)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
     cmdLine.AddSwitch("rs", "remove-extra-spaces", wxString::Format(_("Tags processing - remove extra spaces (default: %s)"), ReadFlagTestStr(wxCueSheetReader::EC_REMOVE_EXTRA_SPACES)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
@@ -621,6 +622,7 @@ bool wxConfiguration::Read(const wxCmdLineParser& cmdLine)
     ReadReadFlags(cmdLine, "attach-eac-log", wxCueSheetReader::EC_FIND_LOG);
     ReadReadFlags(cmdLine, "attach-accurip-log", wxCueSheetReader::EC_FIND_ACCURIP_LOG);
     ReadReadFlags(cmdLine, "attach-cover", wxCueSheetReader::EC_FIND_COVER);
+    ReadReadFlags(cmdLine, "apply-tags", wxCueSheetReader::EC_APPLY_TAGS_FROM_FILE);
     ReadReadFlags(cmdLine, "ru", wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS);
     ReadReadFlags(cmdLine, "rl", wxCueSheetReader::EC_CONVERT_LOWER_ROMAN_NUMERALS);
     ReadReadFlags(cmdLine, "correct-dashes", wxCueSheetReader::EC_CORRECT_DASHES);
@@ -686,6 +688,7 @@ wxString wxConfiguration::GetReadFlagsDesc(wxCueSheetReader::ReadFlags flags)
     AddFlag(as, flags, wxCueSheetReader::EC_FIND_COVER, "find-cover");
     AddFlag(as, flags, wxCueSheetReader::EC_FIND_LOG, "find-log");
     AddFlag(as, flags, wxCueSheetReader::EC_FIND_ACCURIP_LOG, "find-accurip-log");
+    AddFlag(as, flags, wxCueSheetReader::EC_APPLY_TAGS_FROM_FILE, "apply-tags-from-file");
     AddFlag(as, flags, wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS, "upper-roman-numerals");
     AddFlag(as, flags, wxCueSheetReader::EC_CONVERT_LOWER_ROMAN_NUMERALS, "lower-roman-numerals");
     AddFlag(as, flags, wxCueSheetReader::UNUSED_EC_CONVERT_COVER_TO_JPEG, "convert-cover-to-jpeg");

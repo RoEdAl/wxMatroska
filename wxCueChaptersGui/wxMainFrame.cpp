@@ -1131,6 +1131,9 @@ wxPanel* wxMainFrame::create_adv_panel(wxNotebook* notebook, const wxSizerFlags&
             m_checkBoxAttachAccuRip = create_3state_checkbox(sizer, _("Attach AccurateRip log(s)"));
             innerSizer->Add(m_checkBoxAttachAccuRip, wxGBPosition(3, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
 
+            m_checkBoxApplyTags = create_3state_checkbox(sizer, _("Apply tags from related JSON files"));
+            m_checkBoxApplyTags->SetToolTip(_("File mask: *.tags.json"));
+            innerSizer->Add(m_checkBoxApplyTags, wxGBPosition(4, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
 
             sizer->Add(innerSizer, wxSizerFlags().Expand());
         }
@@ -1885,6 +1888,7 @@ bool wxMainFrame::read_options(wxArrayString& options) const
     negatable_long_switch_option(options, m_checkBoxAttachLogs, "attach-eac-log");
     negatable_long_switch_option(options, m_checkBoxAttachAccuRip, "attach-accurip-log");
     negatable_long_switch_option(options, m_checkBoxAttachCover, "attach-cover");
+    negatable_long_switch_option(options, m_checkBoxApplyTags, "apply-tags");
 
     if (m_choiceCueSheetAttachMode->GetSelection() > 0)
     {
