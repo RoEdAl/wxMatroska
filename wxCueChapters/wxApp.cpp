@@ -72,7 +72,7 @@ void wxMyApp::InfoTool(wxMessageOutput& out, wxCmdTool::TOOL tool) const
     }
     else
     {
-        out.Printf(_("\t%s\t<not found>"), exe.GetName());
+        out.Printf(_("\t%-15s : <not found>"), exe.GetName());
     }
 }
 
@@ -82,6 +82,7 @@ void wxMyApp::InfoTools(wxMessageOutput& out) const
 
     InfoTool(out, wxCmdTool::TOOL_MKVMERGE);
     InfoTool(out, wxCmdTool::TOOL_FFMPEG);
+    InfoTool(out, wxCmdTool::TOOL_FFPROBE);
     InfoTool(out, wxCmdTool::TOOL_CMAKE);
 }
 

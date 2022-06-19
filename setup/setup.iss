@@ -25,6 +25,7 @@ ShowLanguageDialog=no
 Compression=lzma2/Max
 DefaultGroupName=cue2mkc
 ArchitecturesAllowed={#Cue2MkcExeArch}
+ArchitecturesInstallIn64BitMode={#Cue2MkcExeArch}
 
 [Languages]
 Name: en; MessagesFile: compiler:Default.isl; LicenseFile: {#LicenseFileRtf}
@@ -76,3 +77,37 @@ en.compact_installation=Compact instalation
 en.custom_installation=Custom instalation
 en.gui_run=Run cue2mkc GUI frontend
  
+[Code]
+
+const
+    VC_REG_KEY = 'SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\{#Cue2MkcExeArch}';
+
+function IsVCRedistInstalled: Boolean;
+var 
+  major, minor, bld, rbld: Cardinal;
+  packedVersion, minPackedVersion : int64;
+begin
+  if
+    RegQueryDWordValue(HKEY_LOCAL_MACHINE, VC_REG_KEY, 'Major', major) and
+    RegQueryDWordValue(HKEY_LOCAL_MACHINE, VC_REG_KEY, 'Minor', minor) and
+    RegQueryDWordValue(HKEY_LOCAL_MACHINE, VC_REG_KEY, 'Bld', bld) and
+    RegQueryDWordValue(HKEY_LOCAL_MACHINE, VC_REG_KEY, 'Rbld', rbld)
+  then
+  begin
+    packedVersion := PackVersionComponents(major, minor, bld, rbld);
+    minPackedVersion := PackVersionComponents(14, 0, 0, 0);
+    Result := packedVersion >= minPackedVersion;
+  end
+  else
+    Result := False;
+end;
+
+function InitializeSetup: Boolean;
+begin
+  Result := IsVCRedistInstalled
+  if not Result then
+    SuppressibleMsgBox(
+        FmtMessage(SetupMessage(msgWinVersionTooLowError), ['Visual C++ 2015-2022 Redistributable ({#Cue2MkcExeArch})', '14.0']),
+        mbCriticalError, MB_OK, IDOK
+    );
+end;
