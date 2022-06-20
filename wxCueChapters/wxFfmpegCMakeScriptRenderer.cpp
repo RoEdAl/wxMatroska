@@ -116,40 +116,58 @@ namespace
     }
 }
 
-void wxFfmpegCMakeScriptRenderer::render_ffmpeg_codec(const wxArrayDataFile& dataFiles) const
+void wxFfmpegCMakeScriptRenderer::render_ffmpeg_codec(const wxArrayDataFile& dataFiles, bool includeComments) const
 {
     switch (m_cfg.GetFfmpegCodec())
     {
         case wxConfiguration::CODEC_PCM_LE:
-        *m_os << "        # uncompressed audio" << endl;
+        if (includeComments)
+        {
+            *m_os << "        # uncompressed audio" << endl;
+        }
         *m_os << "        -c:a " << get_uncompressed_audio_codec(dataFiles, false) << endl << endl;
         break;
 
         case wxConfiguration::CODEC_PCM_BE:
-        *m_os << "        # uncompressed audio" << endl;
+        if (includeComments)
+        {
+            *m_os << "        # uncompressed audio" << endl;
+        }
         *m_os << "        -c:a " << get_uncompressed_audio_codec(dataFiles, true) << endl << endl;
         break;
 
         case wxConfiguration::CODEC_FLAC:
-        *m_os << "        # use FLAC codec" << endl;
+        if (includeComments)
+        {
+            *m_os << "        # use FLAC codec" << endl;
+        }
         flac_codec(*m_os, dataFiles);
         break;
 
         case wxConfiguration::CODEC_WAVPACK:
-        *m_os << "        # use WavPack codec" << endl;
+        if (includeComments)
+        {
+            *m_os << "        # use WavPack codec" << endl;
+        }
         wavpack_codec(*m_os, dataFiles);
         break;
 
         case wxConfiguration::CODEC_DEFAULT:
         default:
-        if (m_cfg.JoinMode() || m_cfg.IsDualMono())
+        if ((dataFiles.GetCount() > 1u) || m_cfg.IsDualMono())
         {
-            *m_os << "        # reencode audio" << endl;
+            if (includeComments)
+            {
+                *m_os << "        # reencode audio" << endl;
+            }
             flac_codec(*m_os, dataFiles);
         }
         else
         {
-            *m_os << "        # copy audio stream" << endl;
+            if (includeComments)
+            {
+                *m_os << "        # copy audio stream" << endl;
+            }
             *m_os << "        -c:a copy" << endl;
         }
         break;
@@ -212,7 +230,7 @@ void wxFfmpegCMakeScriptRenderer::RenderPre(
             WriteSizeT(*m_os << "        -i ${CUE2MKC_AUDIO_", i) << '}' << endl;
         }
 
-        if (m_cfg.JoinMode() || m_cfg.IsDualMono())
+        if (!cueSheet.HasSingleDataFile() || m_cfg.IsDualMono())
         {
             *m_os << "        -filter_complex_threads 1" << endl;
             *m_os << "        -filter_complex " << make_ffmpeg_concat_filter(dataFiles.GetCount(), m_cfg.IsDualMono()) << endl;
@@ -225,7 +243,7 @@ void wxFfmpegCMakeScriptRenderer::RenderPre(
 
         *m_os << "        -map_metadata -1" << endl;
         *m_os << "        -map_chapters -1" << endl;
-        render_ffmpeg_codec(dataFiles);
+        render_ffmpeg_codec(dataFiles, false);
         *m_os << "        -bitexact" << endl;
         *m_os << "        ${CUE2MKC_MKA}" << endl;
         *m_os << "    ENCODING UTF-8" << endl;
@@ -370,7 +388,7 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
     *m_os << "        -bitexact" << endl;
     *m_os << "        -i ${CUE2MKC_METADATA}" << endl << endl;
 
-    if (!fnTmpMka.IsOk() && (m_cfg.JoinMode() || m_cfg.IsDualMono()))
+    if (!fnTmpMka.IsOk() && (!cueSheet.HasSingleDataFile() || m_cfg.IsDualMono()))
     {
         *m_os << "        # concatenating audio sources" << endl;
         *m_os << "        -filter_complex_threads 1" << endl;
@@ -384,7 +402,7 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
     }
     *m_os << endl;
 
-    if (!fnTmpMka.IsOk() && (m_cfg.JoinMode() || m_cfg.IsDualMono()))
+    if (!fnTmpMka.IsOk() && (!cueSheet.HasSingleDataFile() || m_cfg.IsDualMono()))
     {
         *m_os << "        # copy processed autio stream" << endl;
         *m_os << "        -map [outa]" << endl << endl;
@@ -439,7 +457,7 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
     }
     else
     {
-        render_ffmpeg_codec(cueSheet.GetDataFiles());
+        render_ffmpeg_codec(cueSheet.GetDataFiles(), true);
     }
 
     *m_os << "        # output opitons" << endl;

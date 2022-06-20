@@ -24,7 +24,7 @@ class wxFfmpegCMakeScriptRenderer:
 
     protected:
 
-    void render_ffmpeg_codec(const wxArrayDataFile&) const;
+    void render_ffmpeg_codec(const wxArrayDataFile&, bool) const;
 
 };
 

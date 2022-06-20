@@ -344,7 +344,7 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
 
             const wxString tmpStem(get_stem());
             const bool rgScan = m_cfg.RunReplayGainScanner();
-            const bool tmpMka = cueSheet.HasFlacDataFile() || m_cfg.RunReplayGainScanner() || (cueSheet.GetDataFilesCount() > 1u) || m_cfg.IsDualMono();
+            const bool tmpMka = cueSheet.HasFlacDataFile() || m_cfg.RunReplayGainScanner() || !cueSheet.HasSingleDataFile() || m_cfg.IsDualMono();
             wxFileName fnTmpMka;
 
             if (rgScan || tmpMka)
@@ -414,7 +414,7 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
 
             const wxString tmpStem(get_stem());
             const bool rgScan = m_cfg.RunReplayGainScanner();
-            const bool tmpMka = m_cfg.RunReplayGainScanner() || (cueSheet.GetDataFilesCount() > 1u) || m_cfg.IsDualMono() || !m_cfg.IsDefaultFfmpegCodec();
+            const bool tmpMka = m_cfg.RunReplayGainScanner() || !cueSheet.HasSingleDataFile() || m_cfg.IsDualMono() || !m_cfg.IsDefaultFfmpegCodec();
             wxFileName fnTmpMka;
 
             if (rgScan || tmpMka)
