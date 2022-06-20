@@ -31,10 +31,10 @@ VS_VERSION_INFO VERSIONINFO
  FILEVERSION WXMATROSKA_VERSION_MAJOR, WXMATROSKA_VERSION_MINOR, WXMATROSKA_VERSION_PATCH, WXMATROSKA_VERSION_TWEAK
  PRODUCTVERSION WXMATROSKA_VERSION_MAJOR, WXMATROSKA_VERSION_MINOR, WXMATROSKA_VERSION_PATCH, WXMATROSKA_VERSION_TWEAK
  FILEFLAGSMASK 0x17L
-#ifdef _DEBUG
- FILEFLAGS 0x1L
-#else
+#ifdef NDEBUG
  FILEFLAGS 0x0L
+#else
+ FILEFLAGS 0x1L
 #endif
  FILEOS 0x4L
  FILETYPE 0x1L
@@ -46,12 +46,12 @@ BEGIN
         BEGIN
             VALUE "Comments", "Frontend to cue2mkc utility."
             VALUE "CompanyName", "Edmunt Pienkowsky - roed@onet.eu"
-            VALUE "FileDescription", "Frontend to cue2mkc utility."
+            VALUE "FileDescription", "CUE sheet to Matroska container convereter [GUI]"
             VALUE "FileVersion", WXMATROSKA_VERSION_STR4
             VALUE "InternalName", "wxCueChaptersGui"
             VALUE "LegalCopyright", "Simplified BSD License - http://www.opensource.org/licenses/bsd-license.html"
             VALUE "OriginalFilename", "cue2mkc-frontend.exe"
-            VALUE "ProductName", "cue2mkc-frontend"
+            VALUE "ProductName", "cue2mkc"
             VALUE "ProductVersion", WXMATROSKA_VERSION_STR4
         END
     END
