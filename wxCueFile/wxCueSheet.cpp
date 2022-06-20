@@ -952,7 +952,15 @@ bool wxCueSheet::ApplyTagsFromJson(const wxFileName& jsonFile)
         wxTextInputStream tis(is, wxEmptyString, wxConvUTF8);
         while (!tis.GetInputStream().Eof())
         {
-            *tos << tis.ReadLine() << endl;
+            const wxString line(tis.ReadLine());
+            if (line.IsEmpty())
+            {
+                *tos << endl;
+            }
+            else
+            {
+                *tos << line << endl;
+            }
         }
     }
     tos->Flush();

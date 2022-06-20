@@ -23,8 +23,8 @@ class wxFfMetadataRenderer:
     void RenderDisc(const wxCueSheet&);
     wxJson RenderChapters(const wxCueSheet&) const;
 
-    bool Save(const wxFileName&) const;
-    bool SaveChapters(const wxJson&, const wxFileName&) const;
+    bool Save(const wxFileName&);
+    bool SaveChapters(const wxJson&, const wxFileName&);
 
     private:
 
