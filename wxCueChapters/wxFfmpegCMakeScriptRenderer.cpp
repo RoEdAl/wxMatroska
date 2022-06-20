@@ -150,7 +150,7 @@ void wxFfmpegCMakeScriptRenderer::render_ffmpeg_codec(const wxArrayDataFile& dat
         else
         {
             *m_os << "        # copy audio stream" << endl;
-            *m_os << "        -c:a copy" << endl << endl;
+            *m_os << "        -c:a copy" << endl;
         }
         break;
     }
