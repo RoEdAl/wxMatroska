@@ -35,14 +35,12 @@ CONFIGURE_FILE(
 	${PROJECT_CONFIG_FILE}
 )
 
-INCLUDE_DIRECTORIES( ${PROJECT_BINARY_DIR} )
+INCLUDE_DIRECTORIES(${PROJECT_BINARY_DIR})
 
-# installation directory of external libraries
+# external libraries
 
 SET(EXT_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/extlib")
-# set_property(DIRECTORY PROPERTY EP_STEP_TARGETS configure build)
 SET_PROPERTY( DIRECTORY PROPERTY EP_BASE "extlib" )
-
 MESSAGE( External projects dir: ${EXT_INSTALL_PREFIX} )
 
 ExternalProject_Add(
@@ -110,8 +108,6 @@ ExternalProject_Add (
 
 SET_PROPERTY(TARGET project_libwebp PROPERTY FOLDER "extlib")
 
-ADD_DEFINITIONS(-DTAGLIB_STATIC)
-
 ADD_LIBRARY(ZLib STATIC IMPORTED)
 ADD_DEPENDENCIES(ZLib project_zlib) 
 
@@ -139,6 +135,7 @@ FOREACH(CFG ${CMAKE_CONFIGURATION_TYPES})
 	)
 ENDFOREACH()
 
+TARGET_COMPILE_DEFINITIONS(TagLib INTERFACE TAGLIB_STATIC)
 TARGET_INCLUDE_DIRECTORIES(TagLib INTERFACE ${EXT_INSTALL_PREFIX}/Install/project_taglib/include)
 
 ADD_LIBRARY(WebP STATIC IMPORTED)
@@ -169,10 +166,13 @@ TARGET_INCLUDE_DIRECTORIES(WebP INTERFACE ${EXT_INSTALL_PREFIX}/Install/project_
 TARGET_INCLUDE_DIRECTORIES(WebPDemux INTERFACE ${EXT_INSTALL_PREFIX}/Install/project_libwebp/include)
 TARGET_INCLUDE_DIRECTORIES(WebPDecoder INTERFACE ${EXT_INSTALL_PREFIX}/Install/project_libwebp/include)
 
+FetchContent_Declare(json URL http://github.com/nlohmann/json/releases/download/v3.10.5/json.tar.xz)
+FetchContent_MakeAvailable(json)
+
 # wxWidgets
 
 IF(MSVC)
-SET(wxWidgets_CONFIGURATION mswu)
+	SET(wxWidgets_CONFIGURATION mswu)
 ENDIF()
 
 FIND_PACKAGE(wxWidgets COMPONENTS core base zlib png xml REQUIRED)
@@ -180,12 +180,10 @@ MESSAGE( wxWidgets at ${wxWidgets_ROOT_DIR} )
 INCLUDE(${wxWidgets_USE_FILE})
 SET(WXWIDGETS_VER_COMPACT "316")
 
-FetchContent_Declare(json URL http://github.com/nlohmann/json/releases/download/v3.10.5/json.tar.xz)
-FetchContent_MakeAvailable(json)
+# -------------------------------------------------------------
 
 SET(WXMATROSKA_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/inc)
-
-INCLUDE_DIRECTORIES( ${WXMATROSKA_INCLUDE_DIR} )
+INCLUDE_DIRECTORIES(${WXMATROSKA_INCLUDE_DIR})
 
 ADD_SUBDIRECTORY(wxConsoleApp)
 ADD_SUBDIRECTORY(wxEncodingDetection)
