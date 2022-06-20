@@ -63,7 +63,7 @@ void wxMyApp::InfoUsage(wxMessageOutput& out)
     out.Output(_("This allow you to override data file specification in cue sheet file."));
 }
 
-void wxMyApp::InfoTool(wxMessageOutput& out, wxCmdTool::TOOL tool) const
+void wxMyApp::InfoTool(wxMessageOutput& out, wxCmdTool::TOOL tool)
 {
     wxFileName exe;
     if (wxCmdTool::FindTool(tool, exe))
@@ -76,7 +76,7 @@ void wxMyApp::InfoTool(wxMessageOutput& out, wxCmdTool::TOOL tool) const
     }
 }
 
-void wxMyApp::InfoTools(wxMessageOutput& out) const
+void wxMyApp::InfoTools(wxMessageOutput& out)
 {
     wxFileName exe;
 
@@ -170,7 +170,7 @@ void wxMyApp::OnInitCmdLine(wxCmdLineParser& cmdline)
     MyAppConsole::OnInitCmdLine(cmdline);
     cmdline.AddOption(wxEmptyString, "calc-rg2-loudness", wxEmptyString, wxCMD_LINE_VAL_DOUBLE, wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_HIDDEN);
     m_cfg.AddCmdLineParams(cmdline);
-    cmdline.SetLogo(_("This application converts cue sheet files to Matroska XML chapter files in a more advanced way than standard Matroska tools."));
+    cmdline.SetLogo(_("This application converts cue sheet file to Matroska container in a more advanced way than standard Matroska tools."));
 }
 
 bool wxMyApp::OnCmdLineParsed(wxCmdLineParser& cmdline)
@@ -313,6 +313,11 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
         }
     }
 
+    if (!ApplyApplicationTags(cueSheet))
+    {
+        wxLogWarning(_("Unable to apply application tags"));
+    }
+
     switch (m_cfg.GetRenderMode())
     {
         case wxConfiguration::RENDER_CUESHEET:
@@ -339,9 +344,6 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
         case wxConfiguration::RENDER_MKVMERGE:
         {
             const wxScopedPtr<wxTemporaryFilesCleaner> temporaryFilesCleaner(new wxTemporaryFilesCleaner(m_cfg.RunTool()));
-
-            ApplyApplicationTags(cueSheet);
-
             const wxString tmpStem(get_stem());
             const bool tmpMka = cueSheet.HasFlacDataFile() || m_cfg.RunReplayGainScanner() || !cueSheet.HasSingleDataFile() || m_cfg.IsDualMono() || !m_cfg.IsDefaultFfmpegCodec();
             wxFileName fnTmpMka;
@@ -350,8 +352,8 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
             {
                 if (!PreProcessAudio(
                     inputFile,
-                    tmpStem,
                     cueSheet,
+                    tmpStem,
                     fnTmpMka,
                     *temporaryFilesCleaner))
                 {
@@ -408,9 +410,6 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
         case wxConfiguration::RENDER_FFMPEG:
         {
             const wxScopedPtr<wxTemporaryFilesCleaner> temporaryFilesCleaner(new wxTemporaryFilesCleaner(m_cfg.RunTool()));
-
-            ApplyApplicationTags(cueSheet);
-
             const wxString tmpStem(get_stem());
             const bool tmpMka = m_cfg.RunReplayGainScanner() || !cueSheet.HasSingleDataFile() || m_cfg.IsDualMono() || !m_cfg.IsDefaultFfmpegCodec();
             wxFileName fnTmpMka;
@@ -419,8 +418,8 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
             {
                 if (!PreProcessAudio(
                     inputFile,
-                    tmpStem,
                     cueSheet,
+                    tmpStem,
                     fnTmpMka,
                     *temporaryFilesCleaner))
                 {
@@ -622,11 +621,6 @@ int wxMyApp::OnExit()
     return res;
 }
 
-wxXmlCueSheetRenderer* wxMyApp::GetXmlRenderer(const wxInputFile& inputFile) const
-{
-    return new wxXmlCueSheetRenderer(m_cfg, inputFile);
-}
-
 wxXmlCueSheetRenderer* wxMyApp::GetXmlRenderer(const wxInputFile& inputFile, const wxString& tmpStem) const
 {
     return new wxXmlCueSheetRenderer(m_cfg, inputFile, tmpStem);
@@ -686,8 +680,7 @@ namespace
             }
         }
 
-        res.RemoveLast();
-        return res;
+        return res.RemoveLast();
     }
 }
 
@@ -761,7 +754,10 @@ bool wxMyApp::RunMkvmerge(const wxFileName& optionsFile)
     wxLogInfo(cmdDesc);
 
     wxExecuteEnv env;
-    PrepareExecuteEnv(env);
+    if (!PrepareExecuteEnv(env))
+    {
+        return false;
+    }
 
     if (!m_cfg.UseFullPaths())
     {
@@ -842,7 +838,10 @@ bool wxMyApp::RunCMakeScript(const wxFileName& scriptFile)
     wxLogInfo(cmdDesc);
 
     wxExecuteEnv env;
-    PrepareExecuteEnv(env);
+    if (!PrepareExecuteEnv(env))
+    {
+        return false;
+    }
 
     if (!m_cfg.UseFullPaths())
     {
@@ -873,8 +872,8 @@ bool wxMyApp::RunCMakeScript(const wxFileName& scriptFile)
 
 bool wxMyApp::PreProcessAudio(
     const wxInputFile& inputFile,
-    const wxString& tmpStem,
     wxCueSheet& cueSheet,
+    const wxString& tmpStem,
     wxFileName& fnTmpMka,
     wxTemporaryFilesCleaner& temporaryFilesCleaner) const
 {
@@ -918,7 +917,7 @@ bool wxMyApp::PreProcessAudio(
         temporaryFilesCleaner.Feed(*scriptRenderer);
     }
 
-    bool res = RunReplayGainScanner(scriptFile);
+    bool res = RunPreScript(scriptFile);
 
     if (!res)
     {
@@ -941,7 +940,7 @@ bool wxMyApp::PreProcessAudio(
     return true;
 }
 
-bool wxMyApp::RunReplayGainScanner(const wxFileName& cmakeScriptFile) const
+bool wxMyApp::RunPreScript(const wxFileName& cmakeScriptFile) const
 {
     wxASSERT(m_cfg.RunReplayGainScanner());
 
@@ -1004,7 +1003,10 @@ bool wxMyApp::RunReplayGainScanner(const wxFileName& cmakeScriptFile) const
     wxLogInfo(cmdDesc);
 
     wxExecuteEnv env;
-    PrepareExecuteEnv(env);
+    if (!PrepareExecuteEnv(env))
+    {
+        return false;
+    }
 
     if (!m_cfg.UseFullPaths())
     {
@@ -1033,17 +1035,18 @@ bool wxMyApp::RunReplayGainScanner(const wxFileName& cmakeScriptFile) const
     }
 }
 
-void wxMyApp::ApplyApplicationTags(wxCueSheet& cueSheet) const
+bool wxMyApp::ApplyApplicationTags(wxCueSheet& cueSheet) const
 {
     wxFileName tagsFile = wxFileName::FileName(wxStandardPaths::Get().GetExecutablePath());
     tagsFile.SetExt("tags.json");
 
     if (tagsFile.IsFileReadable())
     {
-        cueSheet.ApplyTagsFromJson(tagsFile);
+        return cueSheet.ApplyTagsFromJson(tagsFile);
     }
     else
     {
         wxLogDebug("Tags file not found");
+        return false;
     }
 }

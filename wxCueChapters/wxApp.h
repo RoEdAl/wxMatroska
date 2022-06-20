@@ -51,35 +51,32 @@ class wxMyApp:
 
     protected:
 
-    bool ShowInfo() const;
-
     int ProcessCueFile(const wxInputFile&, const wxTagSynonimsCollection&, const wxTagSynonimsCollection&);
     int ConvertCueSheet(const wxInputFile&, wxCueSheet&);
     int AppendCueSheet(wxCueSheet&);
 
+    bool ShowInfo() const;
     static void InfoVersion(wxMessageOutput&);
     static void InfoUsage(wxMessageOutput&);
-    void InfoTools(wxMessageOutput&) const;
     static void InfoAsciiToUnicode(wxMessageOutput&);
     static void InfoFormatDescription(wxMessageOutput&);
+    static void InfoTools(wxMessageOutput&);
+    static void InfoTool(wxMessageOutput&, wxCmdTool::TOOL);
 
-    wxXmlCueSheetRenderer* GetXmlRenderer(const wxInputFile&) const;
     wxXmlCueSheetRenderer* GetXmlRenderer(const wxInputFile&, const wxString&) const;
     wxCueSheet& GetMergedCueSheet();
     const wxCueSheet& GetMergedCueSheet() const;
-
     bool HasMergedCueSheet() const;
 
-    void InfoTool(wxMessageOutput&, wxCmdTool::TOOL) const;
     void GetCmd(const wxFileName&, const wxString&, wxString&, wxString&) const;
     void GetCmd(const wxFileName&, const wxArrayString&, wxString&, wxString&) const;
+    bool PrepareExecuteEnv(wxExecuteEnv&) const;
     bool RunMkvmerge(const wxFileName&);
     bool RunCMakeScript(const wxFileName&);
-    bool PreProcessAudio(const wxInputFile&, const wxString&, wxCueSheet&, wxFileName&, wxTemporaryFilesCleaner&) const;
-    bool RunReplayGainScanner(const wxFileName&) const;
-    void ApplyApplicationTags(wxCueSheet&) const;
+    bool RunPreScript(const wxFileName&) const;
 
-    bool PrepareExecuteEnv(wxExecuteEnv&) const;
+    bool PreProcessAudio(const wxInputFile&, wxCueSheet&, const wxString&, wxFileName&, wxTemporaryFilesCleaner&) const;
+    bool ApplyApplicationTags(wxCueSheet&) const;
 
     protected:
 
