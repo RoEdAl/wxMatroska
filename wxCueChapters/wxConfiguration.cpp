@@ -1322,6 +1322,11 @@ wxConfiguration::FFMPEG_CODEC wxConfiguration::GetFfmpegCodec() const
     return m_eFfmpegCodec;
 }
 
+bool wxConfiguration::IsDefaultFfmpegCodec() const
+{
+    return m_eFfmpegCodec == CODEC_DEFAULT;
+}
+
 bool wxConfiguration::IsDualMono() const
 {
     switch (m_eRenderMode)

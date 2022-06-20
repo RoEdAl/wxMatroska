@@ -414,7 +414,7 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
 
             const wxString tmpStem(get_stem());
             const bool rgScan = m_cfg.RunReplayGainScanner();
-            const bool tmpMka = m_cfg.RunReplayGainScanner() || (cueSheet.GetDataFilesCount() > 1u) || m_cfg.IsDualMono();
+            const bool tmpMka = m_cfg.RunReplayGainScanner() || (cueSheet.GetDataFilesCount() > 1u) || m_cfg.IsDualMono() || !m_cfg.IsDefaultFfmpegCodec();
             wxFileName fnTmpMka;
 
             if (rgScan || tmpMka)

@@ -201,6 +201,7 @@ class wxConfiguration:
     bool RenderMultilineTags() const;
     bool RenderReplayGainTags() const;
     FFMPEG_CODEC GetFfmpegCodec() const;
+    bool IsDefaultFfmpegCodec() const;
     bool IsDualMono() const;
     bool RunReplayGainScanner() const;
 
