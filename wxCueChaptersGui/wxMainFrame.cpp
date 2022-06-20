@@ -1062,7 +1062,7 @@ wxPanel* wxMainFrame::create_chapter_panel(wxNotebook* notebook, const wxSizerFl
 
         {
             const wxString trackTitleFmt(_("%dp% - %dt% - %tt%"));
-            const wxSize editMinSize = calc_text_size(trackTitleFmt.Length() + 4);
+            const wxSize editMinSize = calc_text_size(trackTitleFmt.Length() * 3);
             const wxSizerFlags txtSizerFlags = wxSizerFlags().Expand().Proportion(1);
 
             wxFlexGridSizer* const innerSizer = new wxFlexGridSizer(0, 2, btnLeft.GetBorderInPixels(), 0);
