@@ -156,7 +156,7 @@ void wxFfmpegCMakeScriptRenderer::render_ffmpeg_codec(const wxArrayDataFile& dat
     }
 }
 
-void wxFfmpegCMakeScriptRenderer::RenderDiscDraft(
+void wxFfmpegCMakeScriptRenderer::RenderPre(
     const wxCueSheet& cueSheet,
     const wxFileName& workDir,
     const wxString& tmpStem,
