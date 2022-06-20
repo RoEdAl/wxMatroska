@@ -5,6 +5,8 @@
 #ifndef _STD_WX_H
 #define _STD_WX_H
 
+#include <StdWx.h>
+
 #ifdef WIN32
 #include <targetver.h>
 #define WIN32_LEAN_AND_MEAN

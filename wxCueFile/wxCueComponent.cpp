@@ -324,7 +324,7 @@ void wxCueComponent::remove_duplicates(const wxRegEx& reEmptyValue, wxArrayCueTa
 
         if (bRemove)
         {
-            wxLogInfo(_(wxS("Removing tag \u201C%s\u201D - duplicated value \u201C%s\u201D")), tags[i].GetName(), tags[i].GetValue());
+            wxLogInfo(_wxS("Removing tag \u201C%s\u201D - duplicated value \u201C%s\u201D"), tags[i].GetName(), tags[i].GetValue());
             tags.RemoveAt(i);
             i -= 1;
             nTags -= 1;

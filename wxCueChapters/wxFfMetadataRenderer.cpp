@@ -393,7 +393,7 @@ bool wxFfMetadataRenderer::SaveChapters(const wxJson& chapters, const wxFileName
 
     if (os.IsOk())
     {
-        wxLogInfo(_(wxS("Creating chapters file " ENQUOTED_STR_FMT)), outputFile.GetFullName());
+        wxLogInfo(_wxS("Creating chapters file " ENQUOTED_STR_FMT), outputFile.GetFullName());
         wxTextOutputStream stream(os, wxEOL_NATIVE, wxConvUTF8);
         stream.WriteString(wxString::FromUTF8Unchecked(chapters.dump(2)));
         stream.Flush();
@@ -401,7 +401,7 @@ bool wxFfMetadataRenderer::SaveChapters(const wxJson& chapters, const wxFileName
     }
     else
     {
-        wxLogError(_(wxS("Fail to save chapters to " ENQUOTED_STR_FMT)), outputFile.GetFullName());
+        wxLogError(_wxS("Fail to save chapters to " ENQUOTED_STR_FMT), outputFile.GetFullName());
         return false;
     }
 }
@@ -412,7 +412,7 @@ bool wxFfMetadataRenderer::Save(const wxFileName& outputFile) const
 
     if (os.IsOk())
     {
-        wxLogInfo(_(wxS("Creating ffmpeg metadata file " ENQUOTED_STR_FMT)), outputFile.GetFullName());
+        wxLogInfo(_wxS("Creating ffmpeg metadata file " ENQUOTED_STR_FMT), outputFile.GetFullName());
         // ENC:UTF-8 EOL:UNIX BOM:no
         wxSharedPtr< wxTextOutputStream > pStream(wxTextOutputStreamWithBOMFactory::CreateUTF8(os, wxEOL_UNIX, false, false));
         m_os.SaveTo(*pStream);
@@ -420,7 +420,7 @@ bool wxFfMetadataRenderer::Save(const wxFileName& outputFile) const
     }
     else
     {
-        wxLogError(_(wxS("Fail to save ffmpeg metadata to " ENQUOTED_STR_FMT)), outputFile.GetFullName());
+        wxLogError(_wxS("Fail to save ffmpeg metadata to " ENQUOTED_STR_FMT), outputFile.GetFullName());
         return false;
     }
 }

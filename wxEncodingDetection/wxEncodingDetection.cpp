@@ -492,7 +492,7 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncodingFromB
 
         if ( !fis.IsOk() )
         {
-            wxLogError( _(wxS("Cannot open file \u201C%s\u201D")), fn.GetName());
+            wxLogError(_wxS("Cannot open file \u201C%s\u201D"), fn.GetName());
             return pRes;
         }
 
@@ -535,7 +535,7 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncodingFromB
         case 0:
         case 1:
         {
-            wxLogError( _(wxS("Cannot read BOM - file \u201C%s\u201D is too small")), fn.GetName());
+            wxLogError(_wxS("Cannot read BOM - file \u201C%s\u201D is too small"), fn.GetName());
             break;
         }
     }
@@ -550,13 +550,13 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 
     if ( nFileSize == wxInvalidSize )
     {
-        wxLogError( _(wxS("Cannot determine size of file \u201C%s\u201D")) , fn.GetName() );
+        wxLogError(_wxS("Cannot determine size of file \u201C%s\u201D") , fn.GetName() );
         return pRes;
     }
 
     if ( nFileSize == wxULL( 0 ) )
     {
-        wxLogError( _(wxS("Cannot determine encoding of empty file \u201C%s\u201D")) , fn.GetName() );
+        wxLogError(_wxS("Cannot determine encoding of empty file \u201C%s\u201D") , fn.GetName() );
         return pRes;
     }
 
@@ -590,7 +590,7 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 
                 if ( !fis.IsOk() )
                 {
-                    wxLogError( _(wxS("Cannot open file \u201C%s\u201D")) , fn.GetName() );
+                    wxLogError(_wxS("Cannot open file \u201C%s\u201D") , fn.GetName() );
                     pRes.reset();
                     return pRes;
                 }
@@ -616,14 +616,14 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 
             if ( hRes != S_OK )
             {
-                wxLogError( _(wxS("Cannot determine encoding of file \u201C%s\u201D")) , fn.GetName() );
+                wxLogError(_wxS("Cannot determine encoding of file \u201C%s\u201D") , fn.GetName() );
                 pRes.reset();
                 return pRes;
             }
         }
         else if ( nFileSize > wxULL( 102400 ) )	// > 100k
         {	// read only first 4k
-            wxLogWarning( _(wxS("File \u201C%s\u201D is really big - trying first 4kb only")) , fn.GetName() );
+            wxLogWarning(_wxS("File \u201C%s\u201D is really big - trying first 4kb only") , fn.GetName() );
             wxCharBuffer buffer( 4 * 1024 );
             size_t       nLastRead;
 
@@ -632,7 +632,7 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 
                 if ( !fis.IsOk() )
                 {
-                    wxLogError( _(wxS("Cannot open file \u201C%s\u201D")) , fn.GetName() );
+                    wxLogError(_wxS("Cannot open file \u201C%s\u201D") , fn.GetName() );
                     pRes.reset();
                     return pRes;
                 }
@@ -651,7 +651,7 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 
             if ( hRes != S_OK )
             {
-                wxLogError( _(wxS("Cannot determine encoding of file \u201C%s\u201D")) , fn.GetName() );
+                wxLogError(_wxS("Cannot determine encoding of file \u201C%s\u201D") , fn.GetName());
                 pRes.reset();
                 return pRes;
             }
@@ -663,7 +663,7 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 
             if ( hRes != S_OK )
             {
-                wxLogError( _(wxS("Cannot determine encoding of file \u201C%s\u201D")) , fn.GetName() );
+                wxLogError(_wxS("Cannot determine encoding of file \u201C%s\u201D") , fn.GetName());
                 pRes.reset();
                 return pRes;
             }

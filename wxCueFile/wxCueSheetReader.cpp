@@ -100,7 +100,7 @@ bool wxCueSheetReader::GetLogFile(const wxFileName& inputFile, bool bAnyLog, wxF
 
         if (!sourceDir.IsOpened())
         {
-            wxLogError(_(wxS("Fail to open directory \u201C%s\u201D")), sourceDirFn.GetPath());
+            wxLogError(_wxS("Fail to open directory \u201C%s\u201D"), sourceDirFn.GetPath());
             return false;
         }
 
@@ -326,7 +326,7 @@ bool wxCueSheetReader::ReadCueSheet(const wxString& sCueFile, bool bUseMLang)
 
     if (pConv)
     {
-        wxLogInfo(_(wxS("Detected encoding of file \u201C%s\u201D file is \u201C%s\u201D")), sCueFile, sCPDescription);
+        wxLogInfo(_wxS("Detected encoding of file \u201C%s\u201D file is \u201C%s\u201D"), sCueFile, sCPDescription);
         return ReadCueSheet(sCueFile, *pConv);
     }
     else
@@ -343,7 +343,7 @@ bool wxCueSheetReader::ReadCueSheet(const wxString& sCueFile, wxMBConv& conv)
 
     if (!cueFileName.IsFileReadable() || cueFileName.IsDir())
     {
-        wxLogError(_(wxS("Invalid path to CUE file \u201C%s\u201D")), sCueFile);
+        wxLogError(_wxS("Invalid path to CUE file \u201C%s\u201D"), sCueFile);
         return false;
     }
 
@@ -351,7 +351,7 @@ bool wxCueSheetReader::ReadCueSheet(const wxString& sCueFile, wxMBConv& conv)
 
     if (!fis.IsOk())
     {
-        wxLogError(_(wxS("Unable to open CUE file \u201C%s\u201D")), cueFileName.GetFullPath());
+        wxLogError(_wxS("Unable to open CUE file \u201C%s\u201D"), cueFileName.GetFullPath());
         return false;
     }
 
@@ -1057,7 +1057,7 @@ bool wxCueSheetReader::ReadTagsFromRelatedFiles()
         }
         else
         {
-            wxLogWarning(_(wxS("Data file \u201C%s\u201D is not related to any track")), dataFiles[i].GetRealFileName().GetName());
+            wxLogWarning(_wxS("Data file \u201C%s\u201D is not related to any track"), dataFiles[i].GetRealFileName().GetName());
         }
     }
 
@@ -1103,7 +1103,7 @@ bool wxCueSheetReader::ReadTagsFromMediaFile(const wxDataFile& _dataFile, size_t
         }
         else
         {
-            wxLogError(_(wxS("Cannot read metadata from \u201C%s\u201D")), dataFile.GetFileName().GetFullName());
+            wxLogError(_wxS("Cannot read metadata from \u201C%s\u201D"), dataFile.GetFileName().GetFullName());
             return false;
         }
     }
