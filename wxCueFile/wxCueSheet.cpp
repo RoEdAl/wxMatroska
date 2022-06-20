@@ -904,7 +904,7 @@ void wxCueSheet::SanitizeTags(const wxTagSynonimsCollection& discSynonims, const
 
             if (bIsCommon)
             {
-                wxLogInfo(_("Album name: \u201C%s\u201D"), sCommonAlbum);
+                wxLogInfo(_(wxS("Album name: " ENQUOTED_STR_FMT)), sCommonAlbum);
 
                 RemoveCdTextInfoTag(wxCueTag::Name::TITLE);
                 const wxCueTag albumNameTag(wxCueTag::TAG_AUTO_GENERATED, wxCueTag::Name::TITLE, sCommonAlbum);
@@ -938,14 +938,14 @@ void wxCueSheet::SanitizeTags(const wxTagSynonimsCollection& discSynonims, const
 
 bool wxCueSheet::ApplyTagsFromJson(const wxFileName& jsonFile)
 {
-    wxLogInfo(_("Applying tags from " ENQUOTED_STR_FMT), jsonFile.GetFullName());
+    wxLogInfo(_(wxS("Applying tags from " ENQUOTED_STR_FMT)), jsonFile.GetFullName());
     wxTextOutputStreamOnString tos;
 
     {
         wxFileInputStream is(jsonFile.GetFullPath());
         if (!is.IsOk())
         {
-            wxLogError(_("Fail to open " ENQUOTED_STR_FMT), jsonFile.GetFullName());
+            wxLogError(_(wxS("Fail to open " ENQUOTED_STR_FMT)), jsonFile.GetFullName());
             return false;
         }
 

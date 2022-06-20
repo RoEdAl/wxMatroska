@@ -87,7 +87,6 @@ typedef struct tagMSG
 #include <wx/regex.h>
 #include <wx/mstream.h>
 #include <wx/dcscreen.h>
-#include <wx/uilocale.h>
 #include <wx/wupdlock.h>
 
 #include <wxEncodingDetection/wxTextOutputStreamOnString.h>

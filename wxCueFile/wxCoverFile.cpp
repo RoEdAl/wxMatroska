@@ -235,7 +235,7 @@ bool wxCoverFile::Save(const wxFileName& fn)
 
     if (fos.IsOk())
     {
-        wxLogInfo(_("Creating image file \u201C%s\u201D"), fn.GetFullName());
+        wxLogInfo(_(wxS("Creating image file \u201C%s\u201D")), fn.GetFullName());
         fos.Write(m_data.GetData(), m_data.GetDataLen());
         fos.Close();
         m_fileName = fn;
@@ -244,7 +244,7 @@ bool wxCoverFile::Save(const wxFileName& fn)
     }
     else
     {
-        wxLogError(_("Fail to save image to \u201C%s\u201D"), fn.GetFullName());
+        wxLogError(_(wxS("Fail to save image to \u201C%s\u201D")), fn.GetFullName());
         return false;
     }
 }
@@ -357,7 +357,7 @@ bool wxCoverFile::Find(const wxFileName& inputFile, wxFileName& coverFile, const
 
     if (!sourceDir.IsOpened())
     {
-        wxLogError(_("Fail to open directory \u201C%s\u201D"), sourceDirFn.GetPath());
+        wxLogError(_(wxS("Fail to open directory \u201C%s\u201D")), sourceDirFn.GetPath());
         return false;
     }
 
@@ -571,7 +571,7 @@ wxImage wxCoverFile::ToImage() const
         wxImage img;
 
         if (img.LoadFile(m_fileName.GetFullPath(), m_mimeType)) return img;
-        else wxLogWarning(_("Fail to load image \u201C%s\u201D"), m_fileName.GetFullName());
+        else wxLogWarning(_(wxS("Fail to load image \u201C%s\u201D")), m_fileName.GetFullName());
     }
 
     return wxNullImage;

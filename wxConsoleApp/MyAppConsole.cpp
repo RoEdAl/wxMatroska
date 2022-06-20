@@ -207,7 +207,7 @@ bool MyAppConsole::CheckLicense()
 
     if (fs == wxInvalidSize)
     {
-        wxLogInfo(_("Unable to read license \u201C%s\u201D"), fn.GetFullPath());
+        wxLogInfo(_(wxS("Unable to read license \u201C%s\u201D")), fn.GetFullPath());
         return false;
     }
 
@@ -215,7 +215,7 @@ bool MyAppConsole::CheckLicense()
 
     if (fs > maxSize)
     {
-        wxLogInfo(_("License file \u201C%s\u201D is too big"), fn.GetFullPath());
+        wxLogInfo(_(wxS("License file \u201C%s\u201D is too big")), fn.GetFullPath());
         return false;
     }
     return true;
@@ -231,7 +231,7 @@ void MyAppConsole::ShowLicense(wxMessageOutput& out)
 
     if (!fn.IsFileReadable())
     {
-        wxLogError(_("Cannot find license file \u201C%s\u201D"), fn.GetFullPath());
+        wxLogError(_(wxS("Cannot find license file \u201C%s\u201D")), fn.GetFullPath());
         return;
     }
 
@@ -239,7 +239,7 @@ void MyAppConsole::ShowLicense(wxMessageOutput& out)
 
     if (fs == wxInvalidSize)
     {
-        wxLogError(_("Unable to read license \u201C%s\u201D"), fn.GetFullPath());
+        wxLogError(_(wxS("Unable to read license \u201C%s\u201D")), fn.GetFullPath());
         return;
     }
 
@@ -247,7 +247,7 @@ void MyAppConsole::ShowLicense(wxMessageOutput& out)
 
     if (fs > maxSize)
     {
-        wxLogError(_("License file \u201C%s\u201D is too big"), fn.GetFullPath());
+        wxLogError(_(wxS("License file \u201C%s\u201D is too big")), fn.GetFullPath());
         return;
     }
 
@@ -255,7 +255,7 @@ void MyAppConsole::ShowLicense(wxMessageOutput& out)
 
     if (!fis.IsOk())
     {
-        wxLogError(_("Cannot open license file \u201C%s\u201D"), fn.GetFullPath());
+        wxLogError(_(wxS("Cannot open license file \u201C%s\u201D")), fn.GetFullPath());
         return;
     }
 

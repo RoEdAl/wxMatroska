@@ -767,7 +767,7 @@ wxPanel* wxMainFrame::create_src_dst_pannel(wxNotebook* notebook, const wxFont& 
         sizer->Add(m_textCtrlDst, btnMiddleExp);
 
         {
-            wxButton* const button = create_button(sizer, _("\u2026"));
+            wxButton* const button = create_button(sizer, wxS("\u2026"));
             button->Bind(wxEVT_UPDATE_UI, &wxMainFrame::OnUpdateCtrlDst, this);
             button->Bind(wxEVT_BUTTON, &wxMainFrame::OnChooseDst, this);
             sizer->Add(button, btnRight);
@@ -1002,7 +1002,7 @@ wxPanel* wxMainFrame::create_chapter_panel(wxNotebook* notebook, const wxSizerFl
         }
 
         m_checkBoxIdxToHiddenChapters = create_3state_checkbox(sizer, _("Convert indexes to hidden chapters"));
-        m_checkBoxIdxToHiddenChapters->SetToolTip(_("Convert CD indexes greater than 01 to hidden Matroska\u2122 chapters"));
+        m_checkBoxIdxToHiddenChapters->SetToolTip(_(wxS("Convert CD indexes greater than 01 to hidden Matroska\u2122 chapters")));
         sizer->Add(m_checkBoxIdxToHiddenChapters, 0, wxTOP, btnLeft.GetBorderInPixels());
 
         panelSizer->Add(sizer, sflags);
@@ -1016,41 +1016,41 @@ wxPanel* wxMainFrame::create_chapter_panel(wxNotebook* notebook, const wxSizerFl
         sizer->Add(m_checkBoxRemoveExtraSpaces);
 
         m_checkBoxEllipsizeTags = create_3state_checkbox(sizer, _("Ellipsize"));
-        m_checkBoxEllipsizeTags->SetToolTip(_("Replace last three dots with \u2026 (ellipsis: U+2026) character"));
+        m_checkBoxEllipsizeTags->SetToolTip(_(wxS("Replace last three dots with \u2026 (ellipsis: U+2026) character")));
         sizer->Add(m_checkBoxEllipsizeTags);
 
         m_checkBoxCorrectDashes = create_3state_checkbox(sizer, _("Correct dashes"));
-        m_checkBoxCorrectDashes->SetToolTip(_("-\u2009\u2192\u2009\u2013 (en dash: U+2013)\n--\u2009\u2192\u2009\u2014 (em dash: U+2014)\n---\u2009\u2192\u2009\u2E3A (two-em dash: U+2E3A"));
+        m_checkBoxCorrectDashes->SetToolTip(_(wxS("-\u2009\u2192\u2009\u2013 (en dash: U+2013)\n--\u2009\u2192\u2009\u2014 (em dash: U+2014)\n---\u2009\u2192\u2009\u2E3A (two-em dash: U+2E3A")));
         sizer->Add(m_checkBoxCorrectDashes);
 
         m_checkBoxCorrectSimpleQuotationMarks = create_3state_checkbox(sizer, _("Correct quotation marks"));
-        m_checkBoxCorrectSimpleQuotationMarks->SetToolTip(_("Try to \"correct 'quotation' marks\"\nExamples:\n\u201EPolish \u201Aquotation\u2019 marks\u201D\n\u201CEnglish (US) \u2018quotation\u2019 marks\u201D\n\u00AB\u2005French \u2039\u2005angle\u2005\u203A marks\u2005\u00BB\n\u201EGerman \u201Aquotation\u2018 marks\u201C"));
+        m_checkBoxCorrectSimpleQuotationMarks->SetToolTip(_(wxS("Try to \"correct 'quotation' marks\"\nExamples:\n\u201EPolish \u201Aquotation\u2019 marks\u201D\n\u201CEnglish (US) \u2018quotation\u2019 marks\u201D\n\u00AB\u2005French \u2039\u2005angle\u2005\u203A marks\u2005\u00BB\n\u201EGerman \u201Aquotation\u2018 marks\u201C")));
         sizer->Add(m_checkBoxCorrectSimpleQuotationMarks);
 
         m_checkBoxCapitalizedRomanLiterals = create_3state_checkbox(sizer, _("Use capitalized Roman Numerals"));
-        m_checkBoxCapitalizedRomanLiterals->SetToolTip(_("Examples:\nIII\u2009\u2192\u2009\u2162 (roman numeral three: U+2162)\nXII\u2009\u2192\u2009\u216B (roman numeral twelve: U+216B)"));
+        m_checkBoxCapitalizedRomanLiterals->SetToolTip(_(wxS("Examples:\nIII\u2009\u2192\u2009\u2162 (roman numeral three: U+2162)\nXII\u2009\u2192\u2009\u216B (roman numeral twelve: U+216B)")));
         sizer->Add(m_checkBoxCapitalizedRomanLiterals);
 
         m_checkBoxLowercaseRomanLiterals = create_3state_checkbox(sizer, _("Use lowercase Roman Numerals"));
-        m_checkBoxLowercaseRomanLiterals->SetToolTip(_("Examples:\niii\u2009\u2192\u2009\u2172 (small roman numeral three: U+2172)\nxii\u2009\u2192\u2009\u217B (small roman numeral twelve: U+217B"));
+        m_checkBoxLowercaseRomanLiterals->SetToolTip(_(wxS("Examples:\niii\u2009\u2192\u2009\u2172 (small roman numeral three: U+2172)\nxii\u2009\u2192\u2009\u217B (small roman numeral twelve: U+217B")));
         sizer->Add(m_checkBoxLowercaseRomanLiterals);
 
         m_checkBoxNumberFullStop = create_3state_checkbox(sizer, _("Use '<number> full stop' characters"));
-        m_checkBoxNumberFullStop->SetToolTip(_("Use Unicode characters from \u2488 (digit one full stop: U+2488) to \u249B (number twenty full stop: U+249B)"));
+        m_checkBoxNumberFullStop->SetToolTip(_(wxS("Use Unicode characters from \u2488 (digit one full stop: U+2488) to \u249B (number twenty full stop: U+249B)")));
         sizer->Add(m_checkBoxNumberFullStop);
 
         m_checkBoxSmallLetterParenthesized = create_3state_checkbox(sizer, _("use '<small letter> parenthesized' characters"));
-        m_checkBoxSmallLetterParenthesized->SetToolTip(_("Use Unicode characters from \u249C (parenthesized latin small letter a: U-249C) to \u24B5 (parenthesized latin small letter z: U-24B5)"));
+        m_checkBoxSmallLetterParenthesized->SetToolTip(_(wxS("Use Unicode characters from \u249C (parenthesized latin small letter a: U-249C) to \u24B5 (parenthesized latin small letter z: U-24B5)")));
         sizer->Add(m_checkBoxSmallLetterParenthesized);
 
         m_checkBoxAsciiToUnicode = create_3state_checkbox(sizer, _("ASCII to Unicode"));
-        m_checkBoxAsciiToUnicode->SetToolTip(_("Convert some ASCII sequences to single Unicode character\n\nExamples:\n(C)\u2009\u2192\u2009\u00A9\nae\u2009\u2192\u2009\u00E6\n!!\u2009\u2192\u2009\u2016\n3/5\u2009\u2192\u2009\u2157\n==\u2009\u2192\u2009\u2261\n\nRun 'cue2mkc -info ascii-to-unicode' to see complete list"));
+        m_checkBoxAsciiToUnicode->SetToolTip(_(wxS("Convert some ASCII sequences to single Unicode character\n\nExamples:\n(C)\u2009\u2192\u2009\u00A9\nae\u2009\u2192\u2009\u00E6\n!!\u2009\u2192\u2009\u2016\n3/5\u2009\u2192\u2009\u2157\n==\u2009\u2192\u2009\u2261\n\nRun 'cue2mkc -info ascii-to-unicode' to see complete list")));
         sizer->Add(m_checkBoxAsciiToUnicode);
 
         sizer->Add(create_horizontal_static_line(sizer), get_horizontal_static_line_sizer_flags(panel));
 
         m_checkBoxSmallEmDash = create_3state_checkbox(sizer, _("Use small em dash"));
-        m_checkBoxSmallEmDash->SetToolTip(_("When correcting dashes use '\uFE58' (U+FE58 : small em dash) character instead of '\u2014' (U+2014 : em dash) one"));
+        m_checkBoxSmallEmDash->SetToolTip(_(wxS("When correcting dashes use '\uFE58' (U+FE58 : small em dash) character instead of '\u2014' (U+2014 : em dash) one")));
         m_checkBoxSmallEmDash->Bind(wxEVT_UPDATE_UI, CheckBoxUiUpdater(m_checkBoxCorrectDashes));
         sizer->Add(m_checkBoxSmallEmDash);
 
@@ -1058,7 +1058,7 @@ wxPanel* wxMainFrame::create_chapter_panel(wxNotebook* notebook, const wxSizerFl
     }
 
     {
-        wxStaticBoxSizer* const sizer = create_static_box_sizer(panel, _("Matroska\u2122 titles formatting"), wxVERTICAL);
+        wxStaticBoxSizer* const sizer = create_static_box_sizer(panel, _(wxS("Matroska\u2122 titles formatting")), wxVERTICAL);
 
         {
             const wxString trackTitleFmt(_("%dp% - %dt% - %tt%"));
@@ -1102,7 +1102,7 @@ wxPanel* wxMainFrame::create_adv_panel(wxNotebook* notebook, const wxSizerFlags&
     const wxSizerFlags sflags = wxSizerFlags().Expand().Border(wxLEFT);
 
     {
-        wxStaticBoxSizer* const sizer = create_static_box_sizer(panel, _("Matroska\u2122 container attachments"), wxVERTICAL);
+        wxStaticBoxSizer* const sizer = create_static_box_sizer(panel, _(wxS("Matroska\u2122 container attachments")), wxVERTICAL);
 
         {
             wxGridBagSizer* const innerSizer = new wxGridBagSizer();
@@ -1155,15 +1155,15 @@ wxPanel* wxMainFrame::create_adv_panel(wxNotebook* notebook, const wxSizerFlags&
         sizer->Add(m_checkBoxIncludeDiscNumberTag);
 
         m_checkBoxRenderMultilineTags = create_3state_checkbox(sizer, _("Copy multiline tags"));
-        m_checkBoxRenderMultilineTags->SetToolTip(_("Copy multiline tags to Matroska\u2122 container"));
+        m_checkBoxRenderMultilineTags->SetToolTip(_(wxS("Copy multiline tags to Matroska\u2122 container")));
         sizer->Add(m_checkBoxRenderMultilineTags);
 
         m_checkBoxRenderReplayGainTags = create_3state_checkbox(sizer, _("Copy ReplayGain tags"));
-        m_checkBoxRenderReplayGainTags->SetToolTip(_("Copy ReplayGain tags to Matroska\u2122 container"));
+        m_checkBoxRenderReplayGainTags->SetToolTip(_(wxS("Copy ReplayGain tags to Matroska\u2122 container")));
         sizer->Add(m_checkBoxRenderReplayGainTags);
 
         m_checkBoxRunReplayGainScanner = create_3state_checkbox(sizer, _("Generate ReplayGain tags"));
-        m_checkBoxRunReplayGainScanner->SetToolTip(_("Run ReplayGain/DR14 scanner on created Matroska\u2122 container"));
+        m_checkBoxRunReplayGainScanner->SetToolTip(_(wxS("Run ReplayGain/DR14 scanner on created Matroska\u2122 container")));
         sizer->Add(m_checkBoxRunReplayGainScanner);
 
         m_checkBoxGenerateArtistTagsForTracks = create_3state_checkbox(sizer, _("Generate ARTIST tag for every track"), wxCHK_CHECKED);
@@ -2255,14 +2255,14 @@ void wxMainFrame::OnUpdateMsgCnt(wxUpdateUIEvent& event)
     #ifdef __WXMSW__
         if (m_pTaskKillProcess)
         {
-            txt = wxString::Format("pid:\u2009%ld [killed],\u2009", m_pProcess->GetPid());
+            txt = wxString::Format(_(wxS("pid:\u2009%ld [killed],\u2009")), m_pProcess->GetPid());
         }
         else
         {
-            txt = wxString::Format("pid:\u2009%ld,\u2009", m_pProcess->GetPid());
+            txt = wxString::Format(_(wxS("pid:\u2009%ld,\u2009")), m_pProcess->GetPid());
         }
     #else
-        txt = wxString::Format("pid:\u2009%ld,\u2009", m_pProcess->GetPid());
+        txt = wxString::Format(_(wxS("pid:\u2009%ld,\u2009")), m_pProcess->GetPid());
     #endif
     }
 
@@ -2281,7 +2281,7 @@ void wxMainFrame::OnUpdateMsgCnt(wxUpdateUIEvent& event)
 
     if (cnt >= 1000)
     {
-        txt << "\u2009\u203C";
+        txt << wxS("\u2009\u203C");
     }
 
     event.SetText(txt);

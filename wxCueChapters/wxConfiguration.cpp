@@ -276,7 +276,7 @@ bool wxConfiguration::ReadLanguagesStrings(wxSortedArrayString& as)
 
     if (!fn.IsFileReadable())
     {
-        wxLogWarning(_("Cannot find language file " ENQUOTED_STR_FMT), fn.GetFullPath());
+        wxLogWarning(_(wxS("Cannot find language file " ENQUOTED_STR_FMT)), fn.GetFullPath());
         wxLogWarning(_("You can find this file at %s"), LANG::FILE_URL);
         return false;
     }
@@ -311,7 +311,7 @@ bool wxConfiguration::ReadLanguagesStrings(wxSortedArrayString& as)
 
         if (n++ > 5000)
         {
-            wxLogError(_("Too many languages. File " ENQUOTED_STR_FMT " is corrupt"), fn.GetFullName());
+            wxLogError(_(wxS("Too many languages. File " ENQUOTED_STR_FMT " is corrupt")), fn.GetFullName());
             as.Clear();
             return false;
         }
@@ -568,7 +568,7 @@ bool wxConfiguration::Read(const wxCmdLineParser& cmdLine)
             }
             else
             {
-                wxLogWarning(_("Invalid input file " ENQUOTED_STR_FMT), cmdLine.GetParam(i));
+                wxLogWarning(_(wxS("Invalid input file " ENQUOTED_STR_FMT)), cmdLine.GetParam(i));
                 bRes = false;
             }
         }
@@ -594,7 +594,7 @@ bool wxConfiguration::Read(const wxCmdLineParser& cmdLine)
 
         if (!m_outputFile.MakeAbsolute())
         {
-            wxLogInfo(_("Fail to normalize path " ENQUOTED_STR_FMT), s);
+            wxLogInfo(_(wxS("Fail to normalize path " ENQUOTED_STR_FMT)), s);
             bRes = false;
         }
     }
@@ -605,7 +605,7 @@ bool wxConfiguration::Read(const wxCmdLineParser& cmdLine)
 
         if (!m_outputFile.MakeAbsolute())
         {
-            wxLogInfo(_("Fail to normalize path " ENQUOTED_STR_FMT), s);
+            wxLogInfo(_(wxS("Fail to normalize path " ENQUOTED_STR_FMT)), s);
             bRes = false;
         }
     }
@@ -747,7 +747,7 @@ void wxConfiguration::Dump() const
         as.Add(sSeparator);
         as.Add(_("Configuration:"));
         FillArray(as);
-        as.Add(wxString::Format(_("Output path: " ENQUOTED_STR_FMT), m_outputFile.GetFullPath()));
+        as.Add(wxString::Format(_(wxS("Output path: " ENQUOTED_STR_FMT)), m_outputFile.GetFullPath()));
         as.Add(sSeparator);
         size_t     strings = as.GetCount();
         wxDateTime dt(wxDateTime::Now());

@@ -368,7 +368,7 @@ bool wxXmlCueSheetRenderer::Save()
 
     if (!SaveXmlDoc(m_pXmlChapters, m_chaptersFile))
     {
-        wxLogError(_("Fail to save chapters to " ENQUOTED_STR_FMT), m_chaptersFile.GetFullName());
+        wxLogError(_(wxS("Fail to save chapters to " ENQUOTED_STR_FMT)), m_chaptersFile.GetFullName());
         return false;
     }
     m_temporaryFiles.Add(m_chaptersFile);
@@ -379,7 +379,7 @@ bool wxXmlCueSheetRenderer::Save()
 
         if (!SaveXmlDoc(m_pXmlTags, m_tagsFile))
         {
-            wxLogError(_("Fail to save tags to " ENQUOTED_STR_FMT), m_tagsFile.GetFullName());
+            wxLogError(_(wxS("Fail to save tags to " ENQUOTED_STR_FMT)), m_tagsFile.GetFullName());
             return false;
         }
     }
@@ -402,7 +402,7 @@ wxXmlNode* wxXmlCueSheetRenderer::AddChapterTimeStart(wxXmlNode* pChapterAtom, c
     else
     {
         const wxDataFile& dataFile = cueSheet.GetDataFiles().Item(idx.GetDataFileIdx());
-        wxLogError(_("Cannot calulate duration of data file " ENQUOTED_STR_FMT " (index %d)"), dataFile.GetRealFileName().GetFullName(), idx.GetDataFileIdx());
+        wxLogError(_(wxS("Cannot calulate duration of data file " ENQUOTED_STR_FMT " (index %d)")), dataFile.GetRealFileName().GetFullName(), idx.GetDataFileIdx());
         return nullptr;
     }
 }
@@ -429,7 +429,7 @@ wxXmlNode* wxXmlCueSheetRenderer::AddChapterTimeEnd(wxXmlNode* pChapterAtom, con
     else
     {
         const wxDataFile& dataFile = cueSheet.GetDataFiles().Item(idx.GetDataFileIdx());
-        wxLogError(_("Cannot calulate duration of data file " ENQUOTED_STR_FMT " (index %" wxSizeTFmtSpec "u)"), dataFile.GetRealFileName().GetFullName(), idx.GetDataFileIdx());
+        wxLogError(_(wxS("Cannot calulate duration of data file " ENQUOTED_STR_FMT " (index %" wxSizeTFmtSpec "u)")), dataFile.GetRealFileName().GetFullName(), idx.GetDataFileIdx());
         return nullptr;
     }
 }
@@ -461,7 +461,7 @@ wxXmlNode* wxXmlCueSheetRenderer::AddIdxChapterAtom(wxXmlNode* pChapterAtom, con
     else
     {
         const wxDataFile& dataFile = cueSheet.GetDataFiles().Item(idx.GetDataFileIdx());
-        wxLogError(_("Cannot calulate duration of data file " ENQUOTED_STR_FMT " (index %" wxSizeTFmtSpec "u)"), dataFile.GetRealFileName().GetFullName(), idx.GetDataFileIdx());
+        wxLogError(_(wxS("Cannot calulate duration of data file " ENQUOTED_STR_FMT " (index %" wxSizeTFmtSpec "u)")), dataFile.GetRealFileName().GetFullName(), idx.GetDataFileIdx());
         return nullptr;
     }
 }
@@ -997,9 +997,9 @@ bool wxXmlCueSheetRenderer::OnPostRenderDisc(const wxCueSheet& cueSheet)
                         if (!duration.IsValid())
                         {
                             wxString s;
-                            s << _("Cannot calulate duration for data file \u201C") <<
+                            s << _(wxS("Cannot calulate duration for data file \u201C")) <<
                                 dataFile.GetRealFileName().GetFullName() <<
-                                _("\u201D (index ") << nDataFileIdx << ')';
+                                _(wxS("\u201D (index ")) << nDataFileIdx << ')';
                             wxLogError(s);
                             return false;
                         }

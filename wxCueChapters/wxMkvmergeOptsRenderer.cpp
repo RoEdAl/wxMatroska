@@ -246,7 +246,7 @@ bool wxMkvmergeOptsRenderer::Save(const wxFileName& matroskaOptsFile)
 
     if (os.IsOk())
     {
-        wxLogInfo(_("Creating mkvmerge options file " ENQUOTED_STR_FMT), matroskaOptsFile.GetFullName());
+        wxLogInfo(_(wxS("Creating mkvmerge options file " ENQUOTED_STR_FMT)), matroskaOptsFile.GetFullName());
         wxTextOutputStream stream(os, wxEOL_NATIVE, wxConvUTF8);
         m_os.SaveTo(stream);
         m_temporaryFiles.Add(matroskaOptsFile);
@@ -254,7 +254,7 @@ bool wxMkvmergeOptsRenderer::Save(const wxFileName& matroskaOptsFile)
     }
     else
     {
-        wxLogError(_("Fail to save options to " ENQUOTED_STR_FMT), matroskaOptsFile.GetFullName());
+        wxLogError(_(wxS("Fail to save options to " ENQUOTED_STR_FMT)), matroskaOptsFile.GetFullName());
         return false;
     }
 }

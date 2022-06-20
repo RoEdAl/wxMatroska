@@ -318,12 +318,12 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
         case wxConfiguration::RENDER_CUESHEET:
         {
             wxString sOutputFile(m_cfg.GetOutputFile(inputFile).GetFullPath());
-            wxLogInfo(_("Saving cue scheet to " ENQUOTED_STR_FMT), sOutputFile);
+            wxLogInfo(_(wxS("Saving cue scheet to " ENQUOTED_STR_FMT)), sOutputFile);
             wxFileOutputStream fos(sOutputFile);
 
             if (!fos.IsOk())
             {
-                wxLogError(_("Fail to open " ENQUOTED_STR_FMT), sOutputFile);
+                wxLogError(_(wxS("Fail to open " ENQUOTED_STR_FMT)), sOutputFile);
                 return 1;
             }
 
@@ -472,7 +472,7 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
             wxCuePointsRenderer renderer(m_cfg);
             renderer.RenderDisc(cueSheet);
 
-            wxLogInfo(_("Saving cue points to " ENQUOTED_STR_FMT), outputFile.GetFullName());
+            wxLogInfo(_(wxS("Saving cue points to " ENQUOTED_STR_FMT)), outputFile.GetFullName());
 
             if (!renderer.Save(outputFile))
             {
@@ -497,11 +497,11 @@ int wxMyApp::ProcessCueFile(const wxInputFile& inputFile, const wxTagSynonimsCol
 
     wxString sInputFile(inputFile.GetInputFile().GetFullPath());
 
-    wxLogMessage(_("Processing " ENQUOTED_STR_FMT), sInputFile);
+    wxLogMessage(_(wxS("Processing " ENQUOTED_STR_FMT)), sInputFile);
 
     if (!reader.ReadCueSheetEx(sInputFile, m_cfg.UseMLang()))
     {
-        wxLogError(_("Fail to read or parse input cue file " ENQUOTED_STR_FMT), sInputFile);
+        wxLogError(_(wxS("Fail to read or parse input cue file " ENQUOTED_STR_FMT)), sInputFile);
         return 1;
     }
 
@@ -562,7 +562,7 @@ int wxMyApp::OnRun()
 
         if (!wxDir::Exists(fn.GetPath()))
         {
-            wxLogMessage(_("Directory " ENQUOTED_STR_FMT " doesn't exists"), fn.GetPath());
+            wxLogMessage(_(wxS("Directory " ENQUOTED_STR_FMT " doesn't exists")), fn.GetPath());
             res = 1;
 
             if (m_cfg.AbortOnError()) break;
@@ -573,7 +573,7 @@ int wxMyApp::OnRun()
 
         if (!dir.IsOpened())
         {
-            wxLogError(_("Cannot open directory " ENQUOTED_STR_FMT), fn.GetPath());
+            wxLogError(_(wxS("Cannot open directory " ENQUOTED_STR_FMT)), fn.GetPath());
             res = 1;
 
             if (m_cfg.AbortOnError()) break;

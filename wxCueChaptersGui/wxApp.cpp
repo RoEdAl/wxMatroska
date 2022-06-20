@@ -64,8 +64,6 @@ bool wxMyApp::OnCmdLineParsed(wxCmdLineParser& parser)
 
 bool wxMyApp::OnInit()
 {
-    wxUILocale::UseDefault();
-
     SetAppName(APP_NAME);
     SetVendorName(APP_VENDOR_NAME);
     SetVendorDisplayName(APP_AUTHOR);
