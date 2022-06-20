@@ -45,9 +45,9 @@ Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:Ad
 [Files]
 Source: {#Cue2MkcExe}; DestDir: {app}; Flags: comparetimestamp; Components: cli; 
 Source: {#Cue2MkcGuiExe}; DestDir: {app}; Flags: comparetimestamp; Components: gui; 
-Source: {#WXWidgetsLibDir}\wxbase{#WXVerCompact}u{#WXDebug}_{#WXDllSuffix}; DestDir: {app}; Flags: comparetimestamp; Components: cli gui;
-Source: {#WXWidgetsLibDir}\wxbase{#WXVerCompact}u{#WXDebug}_xml_{#WXDllSuffix}; DestDir: {app}; Flags: comparetimestamp; Components: cli;
-Source: {#WXWidgetsLibDir}\wxmsw{#WXVerCompact}u{#WXDebug}_core_{#WXDllSuffix}; DestDir: {app}; Flags: comparetimestamp; Components: cli gui;
+Source: {#WXWidgetsLibDir}\wxbase{#WXVerCompact}u{#WXDebug}_{#WXDllSuffix}; DestDir: {app}; Flags: comparetimestamp; Components: cli gui; Attribs: notcontentindexed;
+Source: {#WXWidgetsLibDir}\wxbase{#WXVerCompact}u{#WXDebug}_xml_{#WXDllSuffix}; DestDir: {app}; Flags: comparetimestamp; Components: cli; Attribs: notcontentindexed;
+Source: {#WXWidgetsLibDir}\wxmsw{#WXVerCompact}u{#WXDebug}_core_{#WXDllSuffix}; DestDir: {app}; Flags: comparetimestamp; Components: cli gui; Attribs: notcontentindexed;
 Source: {#LicenseFileTxt}; DestDir: {app}; Flags: comparetimestamp setntfscompression uninsremovereadonly; Components: cli gui; Attribs: readonly notcontentindexed;
 Source: ..\cue\ISO-639-2_utf-8.txt; DestDir: {app}; Flags: comparetimestamp setntfscompression uninsremovereadonly; Components: cli; Attribs: readonly notcontentindexed;
 Source: ..\wxCueChapters\ff-scan.cmake; DestDir: {app}; Flags: comparetimestamp setntfscompression uninsremovereadonly; Components: cli; Attribs: readonly notcontentindexed;
