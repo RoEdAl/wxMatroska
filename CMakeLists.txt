@@ -183,7 +183,6 @@ SET(WXWIDGETS_VER_COMPACT "316")
 # -------------------------------------------------------------
 
 SET(WXMATROSKA_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/inc)
-INCLUDE_DIRECTORIES(${WXMATROSKA_INCLUDE_DIR})
 
 ADD_SUBDIRECTORY(wxConsoleApp)
 ADD_SUBDIRECTORY(wxEncodingDetection)
