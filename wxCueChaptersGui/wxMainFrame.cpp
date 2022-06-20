@@ -1509,7 +1509,7 @@ void wxMainFrame::OnTaskKillProcessTerminated(wxProcessEvent& event)
 {
     if (m_pTaskKillProcess->GetPid() != event.GetPid())
     {
-        wxLogError(wxT("kill[unk]: pid: %d, exit code: %d [%08x]"), event.GetPid(), event.GetExitCode(), event.GetExitCode());
+        wxLogError(_("kill[unk]: pid: %d, exit code: %d [%08x]"), event.GetPid(), event.GetExitCode(), event.GetExitCode());
         return;
     }
 
@@ -2030,7 +2030,7 @@ void wxMainFrame::OnButtonAdd(wxCommandEvent& WXUNUSED(event))
     wxFileDialog openFileDialog(this,
                                  _("Specify input file"),
                                  wxEmptyString, wxEmptyString,
-                                 "CUE files|*.cue|Text files|*.txt|Audio files|*.flac;*.ape;*.wv;*.wav;*.aiff;*.tta|All files|*",
+                                 _("CUE files|*.cue|Text files|*.txt|Audio files|*.flac;*.ape;*.wv;*.wav;*.aiff;*.tta|All files|*"),
                                  wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
 
     if (openFileDialog.ShowModal() != wxID_OK) return;
@@ -2136,7 +2136,7 @@ void wxMainFrame::OnButtonAddMediaFile(wxCommandEvent& WXUNUSED(event))
                                  _("Specify media file"),
                                  fileName.GetPath(),
                                  wxEmptyString,
-                                 "Audio files|*.flac;*.ape;*.wv;*.wav;*.aiff;*.tta|All files|*",
+                                 _("Audio files|*.flac;*.ape;*.wv;*.wav;*.aiff;*.tta|All files|*"),
                                  wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
 
     if (openFileDialog.ShowModal() != wxID_OK) return;
