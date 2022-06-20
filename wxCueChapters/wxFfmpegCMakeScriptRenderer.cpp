@@ -177,12 +177,8 @@ void wxFfmpegCMakeScriptRenderer::render_ffmpeg_codec(const wxArrayDataFile& dat
 void wxFfmpegCMakeScriptRenderer::RenderPre(
     const wxCueSheet& cueSheet,
     const wxFileName& workDir,
-    const wxString& tmpStem,
-    bool rgScan,
-    bool tmpMka) const
+    const wxString& tmpStem) const
 {
-    wxASSERT(tmpMka || rgScan);
-
     wxFileName relDir;
     if (!m_cfg.UseFullPaths())
     {
@@ -202,7 +198,7 @@ void wxFfmpegCMakeScriptRenderer::RenderPre(
         WriteSizeT(*m_os << "CMAKE_PATH(SET CUE2MKC_AUDIO_", i) << " \"" << GetCMakePath(GetRelativeFileName(fn, relDir)) << "\")" << endl;
     }
 
-    if (rgScan)
+    if (m_cfg.RunReplayGainScanner())
     {
         *m_os << "CMAKE_PATH(SET CUE2MKC_CHAPTERS \"${FFSTEM}-" << wxConfiguration::TMP::CHAPTERS << '.' << wxConfiguration::EXT::JSON << "\")" << endl;
         *m_os << "CMAKE_PATH(SET CUE2MKC_DST \"${FFSTEM}-" << wxConfiguration::TMP::RGSCAN << '.' << wxConfiguration::EXT::JSON << "\")" << endl;
@@ -212,55 +208,48 @@ void wxFfmpegCMakeScriptRenderer::RenderPre(
         wxASSERT(dataFiles.GetCount() == 1);
     }
 
-    if (tmpMka)
+    *m_os << "CMAKE_PATH(SET CUE2MKC_MKA \"${FFSTEM}-" << wxConfiguration::TMP::PRE << '.' << wxConfiguration::EXT::MKA << "\")" << endl;
+
+    *m_os << "MESSAGE(STATUS \"Creating temporary MKA container\")" << endl;
+    *m_os << "EXECUTE_PROCESS(" << endl;
+    *m_os << "    COMMAND ${FFMPEG}" << endl;
+    *m_os << "        -y" << endl;
+    *m_os << "        -hide_banner -nostdin -nostats" << endl;
+    *m_os << "        -loglevel repeat+level+fatal" << endl;
+    *m_os << "        -threads 1" << endl;
+
+    for (size_t i = 0, cnt = dataFiles.GetCount(); i < cnt; ++i)
     {
-        *m_os << "CMAKE_PATH(SET CUE2MKC_MKA \"${FFSTEM}-" << wxConfiguration::TMP::PRE << '.' << wxConfiguration::EXT::MKA << "\")" << endl;
-
-        *m_os << "MESSAGE(STATUS \"Creating temporary MKA container\")" << endl;
-        *m_os << "EXECUTE_PROCESS(" << endl;
-        *m_os << "    COMMAND ${FFMPEG}" << endl;
-        *m_os << "        -y" << endl;
-        *m_os << "        -hide_banner -nostdin -nostats" << endl;
-        *m_os << "        -loglevel repeat+level+fatal" << endl;
-        *m_os << "        -threads 1" << endl;
-
-        for (size_t i = 0, cnt = dataFiles.GetCount(); i < cnt; ++i)
-        {
-            *m_os << "        -bitexact" << endl;
-            WriteSizeT(*m_os << "        -i ${CUE2MKC_AUDIO_", i) << '}' << endl;
-        }
-
-        if (!cueSheet.HasSingleDataFile() || m_cfg.IsDualMono())
-        {
-            *m_os << "        -filter_complex_threads 1" << endl;
-            *m_os << "        -filter_complex " << make_ffmpeg_concat_filter(dataFiles.GetCount(), m_cfg.IsDualMono()) << endl;
-            *m_os << "        -map [outa]" << endl;
-        }
-        else
-        {
-            *m_os << "        -map 0:a:0" << endl;
-        }
-
-        *m_os << "        -map_metadata -1" << endl;
-        *m_os << "        -map_chapters -1" << endl;
-        render_ffmpeg_codec(dataFiles, false);
         *m_os << "        -bitexact" << endl;
-        *m_os << "        ${CUE2MKC_MKA}" << endl;
-        *m_os << "    ENCODING UTF-8" << endl;
-        *m_os << "    COMMAND_ECHO NONE" << endl;
-        *m_os << "    COMMAND_ERROR_IS_FATAL ANY" << endl;
-        if (relDir.IsOk())
-        {
-            *m_os << "    WORKING_DIRECTORY ${CUE2MKC_WORKDIR}" << endl;
-        }
-        *m_os << ')' << endl;
-    }
-    else if (rgScan)
-    {
-        *m_os << "SET(CUE2MKC_MKA ${CUE2MKC_AUDIO_0})" << endl;
+        WriteSizeT(*m_os << "        -i ${CUE2MKC_AUDIO_", i) << '}' << endl;
     }
 
-    if (rgScan)
+    if (!cueSheet.HasSingleDataFile() || m_cfg.IsDualMono())
+    {
+        *m_os << "        -filter_complex_threads 1" << endl;
+        *m_os << "        -filter_complex " << make_ffmpeg_concat_filter(dataFiles.GetCount(), m_cfg.IsDualMono()) << endl;
+        *m_os << "        -map [outa]" << endl;
+    }
+    else
+    {
+        *m_os << "        -map 0:a:0" << endl;
+    }
+
+    *m_os << "        -map_metadata -1" << endl;
+    *m_os << "        -map_chapters -1" << endl;
+    render_ffmpeg_codec(dataFiles, false);
+    *m_os << "        -bitexact" << endl;
+    *m_os << "        ${CUE2MKC_MKA}" << endl;
+    *m_os << "    ENCODING UTF-8" << endl;
+    *m_os << "    COMMAND_ECHO NONE" << endl;
+    *m_os << "    COMMAND_ERROR_IS_FATAL ANY" << endl;
+    if (relDir.IsOk())
+    {
+        *m_os << "    WORKING_DIRECTORY ${CUE2MKC_WORKDIR}" << endl;
+    }
+    *m_os << ')' << endl;
+
+    if (m_cfg.RunReplayGainScanner())
     {
         wxFileName ffScan(wxStandardPaths::Get().GetExecutablePath());
         ffScan.SetFullName("ff-scan.cmake");

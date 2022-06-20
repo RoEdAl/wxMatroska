@@ -17,7 +17,7 @@ class wxFfmpegCMakeScriptRenderer:
     wxFfmpegCMakeScriptRenderer(const wxConfiguration&);
 
     void RenderDisc(const wxInputFile&, const wxCueSheet&, const wxFileName&, const wxFileName&);
-    void RenderPre(const wxCueSheet&, const wxFileName&, const wxString&, bool, bool) const;
+    void RenderPre(const wxCueSheet&, const wxFileName&, const wxString&) const;
 
     bool Save(const wxFileName&);
     bool SaveDraft(const wxFileName&, const wxString&, wxFileName&, wxFileName&);

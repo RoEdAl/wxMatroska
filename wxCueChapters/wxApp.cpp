@@ -343,15 +343,14 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
             ApplyApplicationTags(cueSheet);
 
             const wxString tmpStem(get_stem());
-            const bool rgScan = m_cfg.RunReplayGainScanner();
-            const bool tmpMka = cueSheet.HasFlacDataFile() || m_cfg.RunReplayGainScanner() || !cueSheet.HasSingleDataFile() || m_cfg.IsDualMono();
+            const bool tmpMka = cueSheet.HasFlacDataFile() || m_cfg.RunReplayGainScanner() || !cueSheet.HasSingleDataFile() || m_cfg.IsDualMono() || !m_cfg.IsDefaultFfmpegCodec();
             wxFileName fnTmpMka;
 
-            if (rgScan || tmpMka)
+            if (tmpMka)
             {
                 if (!PreProcessAudio(
                     inputFile,
-                    tmpStem, rgScan, tmpMka,
+                    tmpStem,
                     cueSheet,
                     fnTmpMka,
                     *temporaryFilesCleaner))
@@ -413,15 +412,14 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
             ApplyApplicationTags(cueSheet);
 
             const wxString tmpStem(get_stem());
-            const bool rgScan = m_cfg.RunReplayGainScanner();
             const bool tmpMka = m_cfg.RunReplayGainScanner() || !cueSheet.HasSingleDataFile() || m_cfg.IsDualMono() || !m_cfg.IsDefaultFfmpegCodec();
             wxFileName fnTmpMka;
 
-            if (rgScan || tmpMka)
+            if (tmpMka)
             {
                 if (!PreProcessAudio(
                     inputFile,
-                    tmpStem, rgScan, tmpMka,
+                    tmpStem,
                     cueSheet,
                     fnTmpMka,
                     *temporaryFilesCleaner))
@@ -876,14 +874,10 @@ bool wxMyApp::RunCMakeScript(const wxFileName& scriptFile)
 bool wxMyApp::PreProcessAudio(
     const wxInputFile& inputFile,
     const wxString& tmpStem,
-    bool rgScan,
-    bool tmpMka,
     wxCueSheet& cueSheet,
     wxFileName& fnTmpMka,
     wxTemporaryFilesCleaner& temporaryFilesCleaner) const
 {
-    wxASSERT(rgScan || tmpMka);
-
     const wxFileName workDir = m_cfg.GetOutputDir(inputFile);
 
     /*
@@ -897,17 +891,10 @@ bool wxMyApp::PreProcessAudio(
     const bool tmpMka = (m_cfg.UseMkvmerge() && cueSheet.HasFlacDataFile()) || (cueSheet.GetDataFilesCount() > 1u);
     */
 
-    if (tmpMka)
-    {
-        fnTmpMka = wxConfiguration::GetTemporaryFile(workDir, tmpStem, wxConfiguration::TMP::PRE, wxConfiguration::EXT::MKA);
-        temporaryFilesCleaner.Add(fnTmpMka);
-    }
-    else
-    {
-        fnTmpMka.Clear();
-    }
+    fnTmpMka = wxConfiguration::GetTemporaryFile(workDir, tmpStem, wxConfiguration::TMP::PRE, wxConfiguration::EXT::MKA);
+    temporaryFilesCleaner.Add(fnTmpMka);
 
-    if (rgScan)
+    if (m_cfg.RunReplayGainScanner())
     {
         const wxFileName chaptersFile = wxConfiguration::GetTemporaryFile(workDir, tmpStem, wxConfiguration::TMP::CHAPTERS, wxConfiguration::EXT::JSON);
 
@@ -923,7 +910,7 @@ bool wxMyApp::PreProcessAudio(
     wxFileName scanFile;
     {
         wxScopedPtr<wxFfmpegCMakeScriptRenderer> scriptRenderer(new wxFfmpegCMakeScriptRenderer(m_cfg));
-        scriptRenderer->RenderPre(cueSheet, workDir, tmpStem, rgScan, tmpMka);
+        scriptRenderer->RenderPre(cueSheet, workDir, tmpStem);
         if (!scriptRenderer->SaveDraft(workDir, tmpStem, scriptFile, scanFile))
         {
             return false;
@@ -938,7 +925,7 @@ bool wxMyApp::PreProcessAudio(
         return false;
     }
 
-    if (rgScan)
+    if (m_cfg.RunReplayGainScanner())
     {
         if (!scanFile.IsFileReadable())
         {
