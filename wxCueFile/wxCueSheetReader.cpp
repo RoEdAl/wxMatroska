@@ -458,7 +458,7 @@ void wxCueSheetReader::AppendTags(const wxArrayCueTag& tags, size_t nTrackFrom, 
             }
             else
             {
-                wxLogDebug(wxS("Invalid track comment regular expression"));
+                wxLogDebug("Invalid track comment regular expression");
             }
         }
         else

@@ -15,7 +15,7 @@ MyMessageOutputStderr::MyMessageOutputStderr(FILE* fp)
 
 void MyMessageOutputStderr::Output(const wxString& str)
 {
-    if (AppendLineFeedIfNeeded(str)) wxFputs(str + '\n', m_fp);
+    if (AppendLineFeedIfNeeded(str)) wxFputs(str + wxS('\n'), m_fp);
     else wxFputs(str, m_fp);
     fflush(m_fp);
 }
@@ -41,7 +41,7 @@ MyLogStderr::MyLogStderr(FILE* fp)
 
 void MyLogStderr::DoLogText(const wxString& msg)
 {
-    wxFputs(msg + '\n', m_fp);
+    wxFputs(msg + wxS('\n'), m_fp);
     fflush(m_fp);
 
     if (m_pAdditionalMessageOutput) m_pAdditionalMessageOutput->Output(msg + wxS('\n'));

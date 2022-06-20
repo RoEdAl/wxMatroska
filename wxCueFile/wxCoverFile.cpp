@@ -396,7 +396,7 @@ namespace
             {
                 if (!cover.GuessMimeTypeFromData())
                 {
-                    wxLogWarning(_T("Cover file: unknown cover type - skipping"));
+                    wxLogWarning(_(wxS("Cover file: unknown cover type - skipping")));
                     continue;
                 }
             }
