@@ -240,6 +240,25 @@ size_t wxCueComponent::MoveTags(const wxString& sTagName, wxArrayCueTag& tags)
     return wxCueTag::MoveTags(m_tags, sTagName, tags);
 }
 
+void wxCueComponent::ReplaceTag(const wxCueTag& tag)
+{
+    wxArrayCueTag tags;
+
+    if (tag.Split(tags))
+    {
+        for (size_t i = 0, cnt = tags.GetCount(); i < cnt; ++i)
+        {
+            wxCueTag::RemoveTag(m_tags, tags[i].GetName());
+            wxCueTag::AddTag(m_tags, tags[i]);
+        }
+    }
+    else
+    {
+        wxCueTag::RemoveTag(m_tags, tag.GetName());
+        wxCueTag::AddTag(m_tags, tag);
+    }
+}
+
 void wxCueComponent::GetTags(
         wxCueTag::TagSources nTagSources,
         const wxTagSynonimsCollection& cdTagsSynonims,

@@ -102,6 +102,7 @@ class wxCueComponent
     size_t RemoveTag(const wxCueTag&);
     size_t RemoveTag(const wxString&);
     size_t RemoveTags(const wxArrayCueTag&);
+    void ReplaceTag(const wxCueTag&);
 
     bool CheckEntryType(ENTRY_TYPE) const;
 

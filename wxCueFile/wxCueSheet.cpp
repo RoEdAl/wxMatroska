@@ -986,17 +986,16 @@ void wxCueSheet::ApplyTagsFromJson(const wxJson& tags)
         {
             for (auto i = album.cbegin(), end = album.cend(); i != end; ++i)
             {
-                const wxString tagName = wxString::FromUTF8(i.key());
+                const wxString tagName = wxString::FromUTF8Unchecked(i.key());
                 if (!i.value().is_string())
                 {
                     wxLogWarning(_("json[album]: expecting string value for %s"), tagName);
                     continue;
                 }
 
-                const wxString tagVal = wxString::FromUTF8(i.value());
+                const wxString tagVal = wxString::FromUTF8Unchecked(i.value());
                 const wxCueTag tag(wxCueTag::TAG_AUTO_GENERATED, tagName, tagVal);
-                RemoveTag(tagName);
-                AddTag(tag);
+                ReplaceTag(tag);
             }
         }
     }
@@ -1015,16 +1014,15 @@ void wxCueSheet::ApplyTagsFromJson(const wxJson& tags)
                 wxTrack& track = GetTrack(chapterNo);
                 for (auto j = i->cbegin(), jend = i->cend(); j != jend; ++j)
                 {
-                    const wxString tagName = wxString::FromUTF8(j.key());
+                    const wxString tagName = wxString::FromUTF8Unchecked(j.key());
                     if (!j.value().is_string())
                     {
                         wxLogWarning(_("json[chapter]: expecting string value for %s"), tagName);
                         continue;
                     }
-                    const wxString tagVal = wxString::FromUTF8(j.value());
+                    const wxString tagVal = wxString::FromUTF8Unchecked(j.value());
                     const wxCueTag tag(wxCueTag::TAG_AUTO_GENERATED, tagName, tagVal);
-                    RemoveTag(tagName);
-                    AddTag(tag);
+                    track.ReplaceTag(tag);
                 }
             }
         }
