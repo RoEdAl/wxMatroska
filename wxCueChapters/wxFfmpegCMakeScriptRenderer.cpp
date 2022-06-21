@@ -16,42 +16,67 @@ wxFfmpegCMakeScriptRenderer::wxFfmpegCMakeScriptRenderer(const wxConfiguration& 
 
 namespace
 {
-    wxString make_ffmpeg_concat_filter(size_t cnt, bool mono)
+    wxString make_ffmpeg_filter(size_t cnt, bool opus, bool mono)
     {
-        if (cnt == 1 && mono)
-        {
-            return "[0:a:0]pan=mono|c0=FL[outa]";
-        }
+        wxArrayString filters;
 
         wxString res;
+
         for (size_t i = 0; i < cnt; ++i)
         {
             res << wxString::Format("[%" wxSizeTFmtSpec "d:a:0]", i);
         }
-        res << wxString::Format("concat=n=%" wxSizeTFmtSpec "d:v=0:a=1", cnt);
-        if (mono)
+
+        if (cnt > 1)
         {
-            res << ",pan=mono|c0=FL"; // left channel
+            filters.Add(wxString::Format("concat=n=%" wxSizeTFmtSpec "d:v=0:a=1", cnt));
         }
-        res << "[outa]";
+
+        if (mono)
+        { // pan - left channel
+            filters.Add("pan=mono|c0=FL");
+        }
+
+        if (opus)
+        { // resample
+            filters.Add("aresample=48000:resampler=soxr:dither_method=shibata:precision=24:cutoff=0.91");
+        }
+
+        wxASSERT(!filters.IsEmpty());
+        for(wxArrayString::const_iterator i = filters.begin(), end = filters.end() - 1; i != end; ++i)
+        {
+            res << *i << ',';
+        }
+        res << filters.Last() << "[outa]";
         return res;
     }
 
-    unsigned short get_audio_sample_depth(const wxArrayDataFile& dataFiles)
+    wxUint16 get_audio_sample_depth(wxInt16 audioSampleWidth, const wxArrayDataFile& dataFiles)
     {
-        unsigned short bitsPerSample = 16;
-        for (size_t i = 0, cnt = dataFiles.GetCount(); i < cnt; ++i)
+        if (audioSampleWidth == wxConfiguration::DEF_AUDIO_SAMPLE_WIDTH)
         {
-            if (!dataFiles[i].HasDuration()) continue;
-            const unsigned short bps = dataFiles[i].GetDuration().GetSamplingInfo().GetBitsPerSample();
-            if (bps > bitsPerSample) bitsPerSample = bps;
+            unsigned short bitsPerSample = 16;
+            for (size_t i = 0, cnt = dataFiles.GetCount(); i < cnt; ++i)
+            {
+                if (!dataFiles[i].HasDuration()) continue;
+                const unsigned short bps = dataFiles[i].GetDuration().GetSamplingInfo().GetBitsPerSample();
+                if (bps > bitsPerSample) bitsPerSample = bps;
+            }
+            return bitsPerSample;
         }
-        return bitsPerSample;
+        else
+        {
+            return static_cast<wxUint16>(audioSampleWidth);
+        }
     }
 
-    wxTextOutputStream& put_audio_sample_fmt(wxTextOutputStream& os, const wxArrayDataFile& dataFiles, bool p)
+    wxTextOutputStream& put_audio_sample_fmt(
+        wxTextOutputStream& os,
+        wxInt16 audioSampleWidth,
+        const wxArrayDataFile& dataFiles,
+        bool p)
     {
-        unsigned short bitsPerSample = get_audio_sample_depth(dataFiles);
+        wxUint16 bitsPerSample = get_audio_sample_depth(audioSampleWidth, dataFiles);
         os << "-sample_fmt:a ";
         if (bitsPerSample <= 16)
         {
@@ -83,11 +108,11 @@ namespace
         return os;
     }
 
-    wxString get_uncompressed_audio_codec(const wxArrayDataFile& dataFiles, bool bigEndian)
+    wxString get_uncompressed_audio_codec(wxInt16 audioSampleWidth, const wxArrayDataFile& dataFiles, bool bigEndian)
     {
         wxString res;
 
-        res << "pcm_s" << get_audio_sample_depth(dataFiles);
+        res << "pcm_s" << get_audio_sample_depth(audioSampleWidth, dataFiles);
         if (bigEndian)
             res << "be";
         else
@@ -95,22 +120,34 @@ namespace
         return res;
     }
 
-    wxTextOutputStream& flac_codec(wxTextOutputStream& os, const wxArrayDataFile& dataFiles)
+    wxTextOutputStream& flac_codec(wxTextOutputStream& os, wxInt16 audioSampleWidth, const wxArrayDataFile& dataFiles)
     {
-        put_audio_sample_fmt(os << "        ", dataFiles, false) << endl;
+        put_audio_sample_fmt(os << "        ", audioSampleWidth, dataFiles, false) << endl;
         os << "        -lpc_type levinson " << endl;
         os << "        -ch_mode indep" << endl;
         os << "        -exact_rice_parameters 1" << endl;
-        os << "        -c:a flac" << endl << endl;
+        os << "        -c:a flac" << endl;
 
         return os;
     }
 
-    wxTextOutputStream& wavpack_codec(wxTextOutputStream& os, const wxArrayDataFile& dataFiles)
+    wxTextOutputStream& wavpack_codec(wxTextOutputStream& os, wxInt16 audioSampleWidth, const wxArrayDataFile& dataFiles)
     {
-        put_audio_sample_fmt(os << "        ", dataFiles, true) << endl;
+        put_audio_sample_fmt(os << "        ", audioSampleWidth, dataFiles, true) << endl;
         os << "        -joint_stereo 0" << endl;
-        os << "        -c:a wavpack" << endl << endl;
+        os << "        -c:a wavpack" << endl;
+
+        return os;
+    }
+
+    wxTextOutputStream& opus_codec(wxTextOutputStream& os, bool mono)
+    {
+        os << "        -b:a " << (mono? 64 : 96) << 'K' << endl;
+        os << "        -vbr on" << endl;
+        os << "        -packet_loss 1 -fec 1" << endl;
+        os << "        -apply_phase_inv " << (mono? 0 : 1) << endl;
+        os << "        -application audio" << endl;
+        os << "        -c:a libopus" << endl;
 
         return os;
     }
@@ -125,7 +162,7 @@ void wxFfmpegCMakeScriptRenderer::render_ffmpeg_codec(const wxArrayDataFile& dat
         {
             *m_os << "        # uncompressed audio" << endl;
         }
-        *m_os << "        -c:a " << get_uncompressed_audio_codec(dataFiles, false) << endl << endl;
+        *m_os << "        -c:a " << get_uncompressed_audio_codec(m_cfg.GetAudioSampleWidth(), dataFiles, false) << endl;
         break;
 
         case wxConfiguration::CODEC_PCM_BE:
@@ -133,7 +170,7 @@ void wxFfmpegCMakeScriptRenderer::render_ffmpeg_codec(const wxArrayDataFile& dat
         {
             *m_os << "        # uncompressed audio" << endl;
         }
-        *m_os << "        -c:a " << get_uncompressed_audio_codec(dataFiles, true) << endl << endl;
+        *m_os << "        -c:a " << get_uncompressed_audio_codec(m_cfg.GetAudioSampleWidth(), dataFiles, true) << endl;
         break;
 
         case wxConfiguration::CODEC_FLAC:
@@ -141,7 +178,7 @@ void wxFfmpegCMakeScriptRenderer::render_ffmpeg_codec(const wxArrayDataFile& dat
         {
             *m_os << "        # use FLAC codec" << endl;
         }
-        flac_codec(*m_os, dataFiles);
+        flac_codec(*m_os, m_cfg.GetAudioSampleWidth(), dataFiles);
         break;
 
         case wxConfiguration::CODEC_WAVPACK:
@@ -149,18 +186,26 @@ void wxFfmpegCMakeScriptRenderer::render_ffmpeg_codec(const wxArrayDataFile& dat
         {
             *m_os << "        # use WavPack codec" << endl;
         }
-        wavpack_codec(*m_os, dataFiles);
+        wavpack_codec(*m_os, m_cfg.GetAudioSampleWidth(), dataFiles);
+        break;
+
+        case wxConfiguration::CODEC_OPUS:
+        if (includeComments)
+        {
+            *m_os << "        # use Opus (lossy!) codec" << endl;
+        }
+        opus_codec(*m_os, m_cfg.IsDualMono());
         break;
 
         case wxConfiguration::CODEC_DEFAULT:
         default:
-        if ((dataFiles.GetCount() > 1u) || m_cfg.IsDualMono())
+        if ((dataFiles.GetCount() > 1u) || m_cfg.IsDualMono() || !m_cfg.UseDefaultAudioSampleWidth())
         {
             if (includeComments)
             {
                 *m_os << "        # reencode audio" << endl;
             }
-            flac_codec(*m_os, dataFiles);
+            flac_codec(*m_os, m_cfg.GetAudioSampleWidth(), dataFiles);
         }
         else
         {
@@ -215,7 +260,11 @@ void wxFfmpegCMakeScriptRenderer::RenderPre(
     *m_os << "    COMMAND ${FFMPEG}" << endl;
     *m_os << "        -y" << endl;
     *m_os << "        -hide_banner -nostdin -nostats" << endl;
+#ifdef NDEBUG
     *m_os << "        -loglevel repeat+level+fatal" << endl;
+#else
+    *m_os << "        -loglevel repeat+level+" << (wxLog::GetVerbose() ? "info" : "warning") << endl;
+#endif
     *m_os << "        -threads 1" << endl;
 
     for (size_t i = 0, cnt = dataFiles.GetCount(); i < cnt; ++i)
@@ -224,10 +273,12 @@ void wxFfmpegCMakeScriptRenderer::RenderPre(
         WriteSizeT(*m_os << "        -i ${CUE2MKC_AUDIO_", i) << '}' << endl;
     }
 
-    if (!cueSheet.HasSingleDataFile() || m_cfg.IsDualMono())
+    if (!cueSheet.HasSingleDataFile() || m_cfg.AudioFilteringRequired())
     {
+        const bool opus = m_cfg.GetFfmpegCodec() == wxConfiguration::CODEC_OPUS;
+
         *m_os << "        -filter_complex_threads 1" << endl;
-        *m_os << "        -filter_complex " << make_ffmpeg_concat_filter(dataFiles.GetCount(), m_cfg.IsDualMono()) << endl;
+        *m_os << "        -filter_complex " << make_ffmpeg_filter(dataFiles.GetCount(), opus, m_cfg.IsDualMono()) << endl;
         *m_os << "        -map [outa]" << endl;
     }
     else
@@ -377,11 +428,13 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
     *m_os << "        -bitexact" << endl;
     *m_os << "        -i ${CUE2MKC_METADATA}" << endl << endl;
 
-    if (!fnTmpMka.IsOk() && (!cueSheet.HasSingleDataFile() || m_cfg.IsDualMono()))
+    if (!fnTmpMka.IsOk() && (!cueSheet.HasSingleDataFile() || m_cfg.AudioFilteringRequired()))
     {
+        const bool opus = m_cfg.GetFfmpegCodec() == wxConfiguration::CODEC_OPUS;
+
         *m_os << "        # concatenating audio sources" << endl;
         *m_os << "        -filter_complex_threads 1" << endl;
-        *m_os << "        -filter_complex " << make_ffmpeg_concat_filter(cueSheet.GetDataFilesCount(), m_cfg.IsDualMono()) << endl << endl;
+        *m_os << "        -filter_complex " << make_ffmpeg_filter(cueSheet.GetDataFilesCount(), opus, m_cfg.IsDualMono()) << endl << endl;
     }
 
     *m_os << "        # attachment(s)" << endl;

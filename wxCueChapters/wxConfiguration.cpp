@@ -16,6 +16,8 @@
 const unsigned long wxConfiguration::DEF_CHAPTER_OFFSET_FFMPEG = 0u;
 const unsigned long wxConfiguration::DEF_CHAPTER_OFFSET_MKVMERGE = 150u;
 
+const wxInt16 wxConfiguration::DEF_AUDIO_SAMPLE_WIDTH = -1;
+
 const size_t wxConfiguration::EXT::MAX_LEN = 20;
 const char wxConfiguration::EXT::MATROSKA_CHAPTERS[] = "mkc.xml";
 const char wxConfiguration::EXT::MATROSKA_TAGS[] = "mkt.xml";
@@ -74,7 +76,8 @@ const wxConfiguration::FfmpegCodecName wxConfiguration::FfmpegCodecNames[] = {
     { CODEC_PCM_LE, "pcmle" },
     { CODEC_PCM_BE, "pcmbe" },
     { CODEC_FLAC, "flac" },
-    { CODEC_WAVPACK, "wavpack" }
+    { CODEC_WAVPACK, "wavpack" },
+    { CODEC_OPUS, "opus" },
 };
 
 // ===============================================================================
@@ -345,7 +348,8 @@ wxConfiguration::wxConfiguration(void):
     m_bRenderReplayGainTags(true),
     m_eFfmpegCodec(CODEC_DEFAULT),
     m_bSingleAudioChannel(false),
-    m_bRunReplayGainScanner(false)
+    m_bRunReplayGainScanner(false),
+    m_nAudioSampleWidth(DEF_AUDIO_SAMPLE_WIDTH)
 {
 }
 
@@ -384,6 +388,7 @@ void wxConfiguration::AddCmdLineParams(wxCmdLineParser& cmdLine) const
     cmdLine.AddSwitch(wxEmptyString, "attach-cover", wxString::Format(_("Attach cover image (cover.*;front.*;album.*) to mkvmerge options file (default: %s)"), ReadFlagTestStr(wxCueSheetReader::EC_FIND_COVER)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
     cmdLine.AddSwitch(wxEmptyString, "attach-accurip-log", wxString::Format(_("Attach AccurateRip log (default: %s)"), ReadFlagTestStr(wxCueSheetReader::EC_FIND_ACCURIP_LOG)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
     cmdLine.AddSwitch(wxEmptyString, "apply-tags", wxString::Format(_("Apply tags from related JSON files (default: %s)"), ReadFlagTestStr(wxCueSheetReader::EC_APPLY_TAGS_FROM_FILE)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
+    cmdLine.AddOption(wxEmptyString, "audio-sample-width", _("Set audio sample width (default: auto, accepted values: 16, 24)"), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL);
 
     cmdLine.AddSwitch("et", "ellipsize-tags", wxString::Format(_("Tags processing - ellipsize tags - convert last three dots to ellipsis (U+2026) character (default: %s)"), ReadFlagTestStr(wxCueSheetReader::EC_ELLIPSIZE_TAGS)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
     cmdLine.AddSwitch("rs", "remove-extra-spaces", wxString::Format(_("Tags processing - remove extra spaces (default: %s)"), ReadFlagTestStr(wxCueSheetReader::EC_REMOVE_EXTRA_SPACES)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
@@ -650,6 +655,29 @@ bool wxConfiguration::Read(const wxCmdLineParser& cmdLine)
         {
             wxLogWarning(_("Wrong ffmpeg codec %s"), s);
             bRes = false;
+        }
+    }
+
+    if (cmdLine.Found("audio-sample-width", &v))
+    {
+        switch (v)
+        {
+            case 16:
+            m_nAudioSampleWidth = 16;
+            break;
+
+            case 24:
+            m_nAudioSampleWidth = 24;
+            break;
+
+            case -1:
+            m_nAudioSampleWidth = DEF_AUDIO_SAMPLE_WIDTH;
+            break;
+
+            default:
+            wxLogWarning(_("Invalid audio sample width: %ld"), v);
+            bRes = false;
+            break;
         }
     }
 
@@ -1322,7 +1350,7 @@ wxConfiguration::FFMPEG_CODEC wxConfiguration::GetFfmpegCodec() const
     return m_eFfmpegCodec;
 }
 
-bool wxConfiguration::IsDefaultFfmpegCodec() const
+bool wxConfiguration::UseDefaultFfmpegCodec() const
 {
     return m_eFfmpegCodec == CODEC_DEFAULT;
 }
@@ -1343,6 +1371,35 @@ bool wxConfiguration::IsDualMono() const
 bool wxConfiguration::RunReplayGainScanner() const
 {
     return m_bRunReplayGainScanner;
+}
+
+bool wxConfiguration::UseDefaultAudioSampleWidth() const
+{
+    switch (m_eFfmpegCodec)
+    {
+        case CODEC_DEFAULT:
+        return true;
+
+        default:
+        return m_nAudioSampleWidth == DEF_AUDIO_SAMPLE_WIDTH;
+    }
+}
+
+wxInt16 wxConfiguration::GetAudioSampleWidth() const
+{
+    switch (m_eFfmpegCodec)
+    {
+        case CODEC_DEFAULT:
+        return DEF_AUDIO_SAMPLE_WIDTH;
+
+        default:
+        return m_nAudioSampleWidth;
+    }    
+}
+
+bool wxConfiguration::AudioFilteringRequired() const
+{
+    return IsDualMono() || !UseDefaultAudioSampleWidth() || !UseDefaultFfmpegCodec();
 }
 
 wxConfiguration::CUESHEET_ATTACH_MODE wxConfiguration::GetCueSheetAttachMode() const

@@ -858,7 +858,6 @@ wxPanel* wxMainFrame::create_general_panel(wxNotebook* notebook, const wxSizerFl
 
             // col 1
             {
-
                 {
                     wxStaticText* const staticText = create_static_text(sizer, _("Codec"));
                     innerSizer->Add(staticText, wxGBPosition(1, 0), wxDefaultSpan, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
@@ -871,9 +870,10 @@ wxPanel* wxMainFrame::create_general_panel(wxNotebook* notebook, const wxSizerFl
                     choices.Add("pcmbe");
                     choices.Add("flac");
                     choices.Add("wavpack");
+                    choices.Add("opus");
 
                     m_choiceFfmpegCodec = create_choice(sizer, choices);
-                    m_choiceFfmpegCodec->SetToolTip(_("Audio codec used by ffmpeg.\nmkvmerge do not perform any audio compression at all."));
+                    m_choiceFfmpegCodec->SetToolTip(_("Audio codec"));
 
                     const wxSizerFlags choiceSizer = wxSizerFlags().Expand().Proportion(1).Border(wxLEFT, btnLeft.GetBorderInPixels());
                     innerSizer->Add(m_choiceFfmpegCodec, wxGBPosition(1, 1), wxDefaultSpan, wxEXPAND | wxBOTTOM, btnLeft.GetBorderInPixels());
@@ -881,7 +881,29 @@ wxPanel* wxMainFrame::create_general_panel(wxNotebook* notebook, const wxSizerFl
             }
 
             // col 2
-            innerSizer->Add(create_static_text(sizer, _("Language")), wxGBPosition(2, 0), wxDefaultSpan, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+            {
+                {
+                    wxStaticText* const staticText = create_static_text(sizer, _("Bit depth"));
+                    innerSizer->Add(staticText, wxGBPosition(2, 0), wxDefaultSpan, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+                }
+
+                {
+                    wxArrayString choices;
+                    choices.Add("auto");
+                    choices.Add("16");
+                    choices.Add("24");
+
+                    m_choiceAudioSampleWidth = create_choice(sizer, choices);
+                    m_choiceAudioSampleWidth->SetToolTip(_("Audio sample width"));
+
+                    const wxSizerFlags choiceSizer = wxSizerFlags().Expand().Proportion(1).Border(wxLEFT, btnLeft.GetBorderInPixels());
+                    innerSizer->Add(m_choiceAudioSampleWidth, wxGBPosition(2, 1), wxDefaultSpan, wxEXPAND | wxBOTTOM, btnLeft.GetBorderInPixels());
+                }
+            }
+
+
+            // col 3
+            innerSizer->Add(create_static_text(sizer, _("Language")), wxGBPosition(3, 0), wxDefaultSpan, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
 
             {
                 wxArrayString choices;
@@ -893,10 +915,10 @@ wxPanel* wxMainFrame::create_general_panel(wxNotebook* notebook, const wxSizerFl
                 m_textCtrlLang = create_combobox(sizer, choices);
             }
             m_textCtrlLang->SetToolTip(_("Default language for chapters and tags"));
-            innerSizer->Add(m_textCtrlLang, wxGBPosition(2, 1), wxDefaultSpan, wxEXPAND | wxBOTTOM, btnLeft.GetBorderInPixels());
+            innerSizer->Add(m_textCtrlLang, wxGBPosition(3, 1), wxDefaultSpan, wxEXPAND | wxBOTTOM, btnLeft.GetBorderInPixels());
 
-            // col 3
-            innerSizer->Add(create_static_text(sizer, _("Text encoding")), wxGBPosition(3, 0), wxDefaultSpan, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+            // col 4
+            innerSizer->Add(create_static_text(sizer, _("Text encoding")), wxGBPosition(4, 0), wxDefaultSpan, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
 
             {
                 wxArrayString choices;
@@ -911,12 +933,12 @@ wxPanel* wxMainFrame::create_general_panel(wxNotebook* notebook, const wxSizerFl
                 m_choiceEncoding = create_choice(sizer->GetStaticBox(), choices, 2);
                 m_choiceEncoding->SetToolTip(_("Text encoding of generated CUE and XML files"));
             }
-            innerSizer->Add(m_choiceEncoding, wxGBPosition(3, 1), wxDefaultSpan, wxEXPAND | wxBOTTOM, btnLeft.GetBorderInPixels());
+            innerSizer->Add(m_choiceEncoding, wxGBPosition(4, 1), wxDefaultSpan, wxEXPAND | wxBOTTOM, btnLeft.GetBorderInPixels());
 
-            // col 4
+            // col 5
             m_checkBoxRunTool = create_checkbox(sizer, _("Run selected tool"), true);
             m_checkBoxRunTool->Bind(wxEVT_UPDATE_UI, ChoiceFormatUiUpdater(m_choiceFormat));
-            innerSizer->Add(m_checkBoxRunTool, wxGBPosition(4, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+            innerSizer->Add(m_checkBoxRunTool, wxGBPosition(5, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
 
             sizer->Add(innerSizer, wxSizerFlags().Expand());
         }
@@ -1901,6 +1923,22 @@ bool wxMainFrame::read_options(wxArrayString& options) const
         const wxString val = m_choiceFfmpegCodec->GetStringSelection();
         options.Add("--ffmpeg-codec");
         options.Add(val);
+    }
+
+    if (m_choiceAudioSampleWidth->GetSelection() > 0)
+    {
+        switch (m_choiceAudioSampleWidth->GetSelection())
+        {
+            case 1:
+            options.Add("--audio-sample-width");
+            options.Add("16");
+            break;
+
+            case 2:
+            options.Add("--audio-sample-width");
+            options.Add("24");
+            break;
+        }
     }
 
     negatable_long_switch_option(options, m_checkBoxFullPathInOptions, "use-full-paths");

@@ -93,7 +93,8 @@ class wxConfiguration:
         CODEC_PCM_LE,
         CODEC_PCM_BE,
         CODEC_FLAC,
-        CODEC_WAVPACK
+        CODEC_WAVPACK,
+        CODEC_OPUS,
     };
 
     static wxString ToString(FFMPEG_CODEC);
@@ -150,6 +151,7 @@ class wxConfiguration:
     FFMPEG_CODEC m_eFfmpegCodec;
     bool m_bSingleAudioChannel;
     bool m_bRunReplayGainScanner;
+    wxInt16 m_nAudioSampleWidth;
 
     protected:
 
@@ -201,9 +203,12 @@ class wxConfiguration:
     bool RenderMultilineTags() const;
     bool RenderReplayGainTags() const;
     FFMPEG_CODEC GetFfmpegCodec() const;
-    bool IsDefaultFfmpegCodec() const;
+    bool UseDefaultFfmpegCodec() const;
     bool IsDualMono() const;
     bool RunReplayGainScanner() const;
+    bool UseDefaultAudioSampleWidth() const;
+    wxInt16 GetAudioSampleWidth() const;
+    bool AudioFilteringRequired() const;
 
     wxSharedPtr< wxMBConv > GetXmlEncoding() const;
 
@@ -277,6 +282,8 @@ class wxConfiguration:
 
     static const unsigned long  DEF_CHAPTER_OFFSET_MKVMERGE;
     static const unsigned long  DEF_CHAPTER_OFFSET_FFMPEG;
+
+    static const wxInt16 DEF_AUDIO_SAMPLE_WIDTH;
 
     public:
 
