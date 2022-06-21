@@ -2429,6 +2429,7 @@ void wxMainFrame::get_cmd_choices(int choice, wxArrayString& choices)
         choices.Add("codecs");
         choices.Add("wavpack encoder");
         choices.Add("flac encoder");
+        choices.Add("opus encoder");
         choices.Add("muxers");
         choices.Add("matroska muxer");
         choices.Add("filters");
@@ -2437,6 +2438,7 @@ void wxMainFrame::get_cmd_choices(int choice, wxArrayString& choices)
         choices.Add("replaygain filter");
         choices.Add("drmeter filter");
         choices.Add("ebur128 filter");
+        choices.Add("aresample filter");
         break;
 
         default:
@@ -2535,41 +2537,51 @@ void wxMainFrame::OnToolExec(wxCommandEvent& evt)
                 break;
 
                 case 9:
-                args.Add("-muxers");
+                args.Add("-h");
+                args.Add("encoder=libopus");
                 break;
 
                 case 10:
+                args.Add("-muxers");
+                break;
+
+                case 11:
                 args.Add("-h");
                 args.Add("muxer=matroska");
                 break;
 
-                case 11:
-                args.Add("-filters");
-                break;
-
                 case 12:
-                args.Add("-h");
-                args.Add("filter=pan");
+                args.Add("-filters");
                 break;
 
                 case 13:
                 args.Add("-h");
-                args.Add("filter=concat");
+                args.Add("filter=pan");
                 break;
 
                 case 14:
                 args.Add("-h");
-                args.Add("filter=replaygain");
+                args.Add("filter=concat");
                 break;
 
                 case 15:
                 args.Add("-h");
-                args.Add("filter=drmeter");
+                args.Add("filter=replaygain");
                 break;
 
                 case 16:
                 args.Add("-h");
+                args.Add("filter=drmeter");
+                break;
+
+                case 17:
+                args.Add("-h");
                 args.Add("filter=ebur128");
+                break;
+
+                case 18:
+                args.Add("-h");
+                args.Add("filter=aresample");
                 break;
 
                 default:
