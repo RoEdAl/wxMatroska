@@ -20,6 +20,7 @@
 
  void wxTemporaryFilesCleaner::Add(const wxFileName& tmpFile)
  {
+     wxASSERT(tmpFile.IsOk() && tmpFile.IsAbsolute());
      m_temporaryFiles.Add(tmpFile);
  }
 

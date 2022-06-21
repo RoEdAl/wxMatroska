@@ -39,15 +39,22 @@ namespace
 
         if (opus)
         { // resample
-            filters.Add("aresample=48000:resampler=soxr:dither_method=shibata:precision=24:cutoff=0.91");
+            filters.Add("aresample=48000:resampler=soxr:dither_method=shibata:precision=24:cutoff=0.91:osf=flt");
         }
 
-        wxASSERT(!filters.IsEmpty());
-        for(wxArrayString::const_iterator i = filters.begin(), end = filters.end() - 1; i != end; ++i)
+        if (filters.IsEmpty())
         {
-            res << *i << ',';
+            wxLogWarning(_("Empty ffmpeg filter - using anull"));
+            res << "anull[outa]";
         }
-        res << filters.Last() << "[outa]";
+        else
+        {
+            for (wxArrayString::const_iterator i = filters.begin(), end = filters.end() - 1; i != end; ++i)
+            {
+                res << *i << ',';
+            }
+            res << filters.Last() << "[outa]";
+        }
         return res;
     }
 
@@ -55,11 +62,11 @@ namespace
     {
         if (audioSampleWidth == wxConfiguration::DEF_AUDIO_SAMPLE_WIDTH)
         {
-            unsigned short bitsPerSample = 16;
+            wxUint16 bitsPerSample = 16;
             for (size_t i = 0, cnt = dataFiles.GetCount(); i < cnt; ++i)
             {
                 if (!dataFiles[i].HasDuration()) continue;
-                const unsigned short bps = dataFiles[i].GetDuration().GetSamplingInfo().GetBitsPerSample();
+                const wxUint16 bps = dataFiles[i].GetDuration().GetSamplingInfo().GetBitsPerSample();
                 if (bps > bitsPerSample) bitsPerSample = bps;
             }
             return bitsPerSample;

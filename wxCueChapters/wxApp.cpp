@@ -903,6 +903,7 @@ bool wxMyApp::PreProcessAudio(
         {
             return false;
         }
+        temporaryFilesCleaner.Feed(*metadataRenderer);
     }
 
     wxFileName scriptFile;

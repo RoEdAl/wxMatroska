@@ -37,7 +37,7 @@ const char wxConfiguration::TMP::MKC[] = "mkc";
 const char wxConfiguration::TMP::MKT[] = "mkt";
 const char wxConfiguration::TMP::FFM[] = "ffm";
 const char wxConfiguration::TMP::PRE[] = "pre";
-const char wxConfiguration::TMP::CHAPTERS[] = "chp";
+const char wxConfiguration::TMP::CHAPTERS[] = "ctr";
 const char wxConfiguration::TMP::RGSCAN[] = "rg2";
 
 const char wxConfiguration::FMT::MKA_CHAPTER[] = "%dp% - %dt% - %tt%";
