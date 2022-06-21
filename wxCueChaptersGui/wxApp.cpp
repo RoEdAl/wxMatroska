@@ -71,6 +71,9 @@ bool wxMyApp::OnInit()
     if (!wxApp::OnInit()) return false;
 
     wxLog::EnableLogging(false);
+#ifdef NDEBUG
+    wxDisableAsserts();
+#endif
 
     // cue2mkc tool
 
