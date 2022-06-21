@@ -943,8 +943,6 @@ bool wxMyApp::PreProcessAudio(
 
 bool wxMyApp::RunPreScript(const wxFileName& cmakeScriptFile) const
 {
-    wxASSERT(m_cfg.RunReplayGainScanner());
-
     wxFileName cmake;
 
     if (!wxCmdTool::FindTool(wxCmdTool::TOOL_CMAKE, cmake))

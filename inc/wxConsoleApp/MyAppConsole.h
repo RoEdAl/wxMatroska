@@ -34,6 +34,8 @@ class MyAppConsole:
     virtual bool OnCmdLineHelp(wxCmdLineParser& parser);
 #endif
     virtual bool OnCmdLineParsed(wxCmdLineParser&);
+
+    virtual void OnAssertFailure(const wxChar*, int, const wxChar*, const wxChar*, const wxChar*);
     virtual int OnExit();
 
     void AddSeparator(wxCmdLineParser&);

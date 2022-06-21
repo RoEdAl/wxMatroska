@@ -149,6 +149,32 @@ int MyAppConsole::GetTranslationMode() const
 }
 #endif
 
+void MyAppConsole::OnAssertFailure(
+    const wxChar* file,
+    int line,
+    const wxChar* func,
+    const wxChar* cond,
+    const wxChar* msg
+)
+{
+    wxMessageOutput* const msgOut = wxMessageOutput::Get();
+    msgOut->Output(wxEmptyString);
+    msgOut->Output("======== <ASSERT> =======");
+    msgOut->Printf("ASSERT - file: %s", file);
+    msgOut->Printf("ASSERT - line: %d", line);
+    msgOut->Printf("ASSERT - fn  : %s", func);
+    msgOut->Printf("ASSERT - cond: %s", cond);
+    if (msg != nullptr || wxStrlen(msg) > 0)
+    {
+        msgOut->Printf("ASSERT - msg : %s", msg);
+    }
+    else
+    {
+        msgOut->Output("ASSERT - msg: <none>");
+    }
+    msgOut->Output("======== <ASSERT> =======");
+}
+
 bool MyAppConsole::OnInit()
 {
     SetVendorName(APP_VENDOR_NAME);
