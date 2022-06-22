@@ -3,6 +3,7 @@ get_filename_component(CUECHAPTERS_DIR_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME )
 file(GLOB CUECHAPTERS_PUBLIC_HEADER_FILES "${WXMATROSKA_INCLUDE_DIR}/${CUECHAPTERS_DIR_NAME}/*.h")
 
 source_group("Resource Files" FILES wxCueChapters.rc)
+source_group("CMake Files" FILES ff-scan.cmake mkcover.cmake)
 
 set(CUECHAPTERS_SOURCE_FILES
 	wxApp.cpp
@@ -17,6 +18,7 @@ set(CUECHAPTERS_SOURCE_FILES
 	wxXmlCueSheetRenderer.cpp
 	wxTemporaryFilesProvider.cpp
 	ff-scan.cmake
+	mkcover.cmake
 )
 
 ADD_EXECUTABLE(cue2mkc
