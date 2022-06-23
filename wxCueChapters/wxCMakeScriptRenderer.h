@@ -25,8 +25,7 @@ class wxCMakeScriptRenderer:
 
     void RenderToolFinder(const wxString&, const wxString&) const;
     void RenderFfmpegFinder() const;
-
-    void RenderWorkingDirectoryVariable(const wxFileName&) const;
+    void RenderToolEnvCheck(const wxString&) const;
 };
 
 #endif

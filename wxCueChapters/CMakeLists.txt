@@ -3,7 +3,7 @@ get_filename_component(CUECHAPTERS_DIR_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME )
 file(GLOB CUECHAPTERS_PUBLIC_HEADER_FILES "${WXMATROSKA_INCLUDE_DIR}/${CUECHAPTERS_DIR_NAME}/*.h")
 
 source_group("Resource Files" FILES wxCueChapters.rc)
-source_group("CMake Files" FILES cmake/ff-scan.cmake cmake/mkcover.cmake)
+source_group("CMake Files" FILES cmake/ff-scan.cmake cmake/dr-scan.cmake cmake/mkcover.cmake)
 
 set(CUECHAPTERS_SOURCE_FILES
 	wxApp.cpp
@@ -18,6 +18,7 @@ set(CUECHAPTERS_SOURCE_FILES
 	wxXmlCueSheetRenderer.cpp
 	wxTemporaryFilesProvider.cpp
 	cmake/ff-scan.cmake
+	cmake/dr-scan.cmake
 	cmake/mkcover.cmake
 )
 
@@ -42,7 +43,7 @@ TARGET_LINK_LIBRARIES(cue2mkc PRIVATE ${wxWidgets_LIBRARIES} Shlwapi.lib
 )
 
 add_custom_command( TARGET cue2mkc POST_BUILD 
-	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/cmake/ff-scan.cmake $<TARGET_FILE_DIR:cue2mkc>
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/cmake/dr-scan.cmake $<TARGET_FILE_DIR:cue2mkc>
 	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/app.tags.json $<TARGET_FILE_DIR:cue2mkc>/$<TARGET_FILE_BASE_NAME:cue2mkc>.tags.json
 )
 

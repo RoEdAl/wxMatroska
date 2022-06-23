@@ -89,10 +89,16 @@ void wxCMakeScriptRenderer::RenderFfmpegFinder() const
 	RenderToolFinder("ffmpeg", "ffmpeg/bin");
 }
 
-void wxCMakeScriptRenderer::RenderWorkingDirectoryVariable(const wxFileName& dir) const
+void wxCMakeScriptRenderer::RenderToolEnvCheck(const wxString& toolName) const
 {
-	wxASSERT(dir.IsOk() && dir.IsDir());
+	const wxString toolNameUpper = toolName.Upper();
 
-	*m_os << "# working directory" << endl;
-	*m_os << "CMAKE_PATH(SET CUE2MKC_WORKDIR \"" << GetCMakePath( dir ) << "\")" << endl;
+	*m_os << "IF(DEFINED " << toolNameUpper << ')' << endl;
+	*m_os << "    MESSAGE(DEBUG \"" << toolNameUpper << " set to ${" << toolNameUpper << "}\")" << endl;
+	*m_os << "ELSEIF(DEFINED ENV{" << toolNameUpper << "})" << endl;
+	*m_os << "    CMAKE_PATH(SET " << toolNameUpper << " $ENV{" << toolNameUpper << "})" << endl;
+	*m_os << "    MESSAGE(DEBUG \"" << toolNameUpper << " set to ${" << toolNameUpper << "} via environment variable\")" << endl;
+	*m_os << "ELSE()" << endl;
+	*m_os << "    MESSAGE(FATAL_ERROR \"Required variable " << toolNameUpper << " is not defined\")" << endl;
+	*m_os << "ENDIF()" << endl;
 }

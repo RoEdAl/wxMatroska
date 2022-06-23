@@ -825,9 +825,6 @@ bool wxMyApp::RunCMakeScript(const wxFileName& scriptFile)
     params.Add("-D");
     params.Add("CMAKE_MESSAGE_CONTEXT=ff");
 
-    params.Add("-D");
-    params.Add(wxString::Format("FFMPEG=%s", ffmpeg.GetFullPath()));
-
     params.Add("-P");
     params.Add(scriptPath);
 
@@ -842,6 +839,8 @@ bool wxMyApp::RunCMakeScript(const wxFileName& scriptFile)
     {
         return false;
     }
+
+    env.env["FFMPEG"] = ffmpeg.GetFullPath();
 
     if (!m_cfg.UseFullPaths())
     {
@@ -958,13 +957,6 @@ bool wxMyApp::RunPreScript(const wxFileName& cmakeScriptFile) const
         return false;
     }
 
-    wxFileName ffprobe;
-    if (!wxCmdTool::FindTool(wxCmdTool::TOOL_FFPROBE, ffprobe))
-    {
-        wxLogError(_("Unable to find ffprobe tool"));
-        return false;
-    }
-
     wxFileName outDir(cmakeScriptFile);
     outDir.SetFullName(wxEmptyString);
 
@@ -972,28 +964,18 @@ bool wxMyApp::RunPreScript(const wxFileName& cmakeScriptFile) const
 
     {
         const wxString logLevel(wxLog::GetVerbose() ? "STATUS" : "WARNING");
-
         params.Add(wxString::Format("--log-level=%s", logLevel));
-
-        params.Add("-D");
-        params.Add(wxString::Format("CUE2MKC_MESSAGE_LOG_LEVEL=%s", logLevel));
     }
 
     params.Add("--log-context");
     params.Add("-D");
     params.Add("CMAKE_MESSAGE_CONTEXT=pre");
 
-    params.Add("-D");
-    params.Add(wxString::Format("FFMPEG=%s", ffmpeg.GetFullPath()));
-
-    params.Add("-D");
-    params.Add(wxString::Format("FFPROBE=%s", ffprobe.GetFullPath()));
-
-    params.Add("-D");
-    params.Add(wxString::Format("CUE2MKC=%s", wxStandardPaths::Get().GetExecutablePath()));
-
     params.Add("-P");
-    params.Add(cmakeScriptFile.GetFullPath());
+    if (m_cfg.UseFullPaths())
+        params.Add(cmakeScriptFile.GetFullPath());
+    else
+        params.Add(cmakeScriptFile.GetFullName());
 
     wxString cmd, cmdDesc;
     GetCmd(cmake, params, cmd, cmdDesc);
@@ -1006,6 +988,9 @@ bool wxMyApp::RunPreScript(const wxFileName& cmakeScriptFile) const
     {
         return false;
     }
+
+    env.env["CUE2MKC"] = wxStandardPaths::Get().GetExecutablePath();
+    env.env["FFMPEG"] = ffmpeg.GetFullPath();
 
     if (!m_cfg.UseFullPaths())
     {

@@ -901,9 +901,16 @@ wxPanel* wxMainFrame::create_general_panel(wxNotebook* notebook, const wxSizerFl
                 }
             }
 
-
             // col 3
-            innerSizer->Add(create_static_text(sizer, _("Language")), wxGBPosition(3, 0), wxDefaultSpan, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+            {
+                const wxSizerFlags lineFlags = get_horizontal_static_line_sizer_flags(panel);
+                innerSizer->Add(create_horizontal_static_line(sizer),
+                           wxGBPosition(3, 0), oneCol,
+                           lineFlags.GetFlags(), btnLeft.GetBorderInPixels());
+            }
+
+            // col 4
+            innerSizer->Add(create_static_text(sizer, _("Language")), wxGBPosition(4, 0), wxDefaultSpan, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
 
             {
                 wxArrayString choices;
@@ -915,10 +922,10 @@ wxPanel* wxMainFrame::create_general_panel(wxNotebook* notebook, const wxSizerFl
                 m_textCtrlLang = create_combobox(sizer, choices);
             }
             m_textCtrlLang->SetToolTip(_("Default language for chapters and tags"));
-            innerSizer->Add(m_textCtrlLang, wxGBPosition(3, 1), wxDefaultSpan, wxEXPAND | wxBOTTOM, btnLeft.GetBorderInPixels());
+            innerSizer->Add(m_textCtrlLang, wxGBPosition(4, 1), wxDefaultSpan, wxEXPAND | wxBOTTOM, btnLeft.GetBorderInPixels());
 
-            // col 4
-            innerSizer->Add(create_static_text(sizer, _("Text encoding")), wxGBPosition(4, 0), wxDefaultSpan, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+            // col 5
+            innerSizer->Add(create_static_text(sizer, _("Text encoding")), wxGBPosition(5, 0), wxDefaultSpan, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
 
             {
                 wxArrayString choices;
@@ -933,12 +940,21 @@ wxPanel* wxMainFrame::create_general_panel(wxNotebook* notebook, const wxSizerFl
                 m_choiceEncoding = create_choice(sizer->GetStaticBox(), choices, 2);
                 m_choiceEncoding->SetToolTip(_("Text encoding of generated CUE and XML files"));
             }
-            innerSizer->Add(m_choiceEncoding, wxGBPosition(4, 1), wxDefaultSpan, wxEXPAND | wxBOTTOM, btnLeft.GetBorderInPixels());
+            innerSizer->Add(m_choiceEncoding, wxGBPosition(5, 1), wxDefaultSpan, wxEXPAND | wxBOTTOM, btnLeft.GetBorderInPixels());
 
-            // col 5
+            // col 6
+            {
+                const wxSizerFlags lineFlags = get_horizontal_static_line_sizer_flags(panel);
+                innerSizer->Add(create_horizontal_static_line(sizer),
+                           wxGBPosition(6, 0), oneCol,
+                           lineFlags.GetFlags(), btnLeft.GetBorderInPixels());
+            }
+
+
+            // col 7
             m_checkBoxRunTool = create_checkbox(sizer, _("Run selected tool"), true);
             m_checkBoxRunTool->Bind(wxEVT_UPDATE_UI, ChoiceFormatUiUpdater(m_choiceFormat));
-            innerSizer->Add(m_checkBoxRunTool, wxGBPosition(5, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+            innerSizer->Add(m_checkBoxRunTool, wxGBPosition(7, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
 
             sizer->Add(innerSizer, wxSizerFlags().Expand());
         }

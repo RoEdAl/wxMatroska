@@ -238,8 +238,8 @@ void wxFfmpegCMakeScriptRenderer::RenderPre(
     }
 
     *m_os << "CMAKE_MINIMUM_REQUIRED(VERSION 3.21)" << endl;
-    *m_os << "SET(FFSTEM \"" << tmpStem << "\")" << endl;
-    *m_os << "CMAKE_PATH(SET CUE2MKC_WORKDIR \"" << GetCMakePath(workDir) << "\")" << endl;
+    RenderToolEnvCheck("ffmpeg");
+    *m_os << "SET(DRSTEM \"" << tmpStem << "\")" << endl;
 
     const wxArrayDataFile& dataFiles = cueSheet.GetDataFiles();
     for (size_t i = 0, cnt = dataFiles.GetCount(); i < cnt; ++i)
@@ -252,15 +252,15 @@ void wxFfmpegCMakeScriptRenderer::RenderPre(
 
     if (m_cfg.RunReplayGainScanner())
     {
-        *m_os << "CMAKE_PATH(SET CUE2MKC_CHAPTERS \"${FFSTEM}-" << wxConfiguration::TMP::CHAPTERS << '.' << wxConfiguration::EXT::JSON << "\")" << endl;
-        *m_os << "CMAKE_PATH(SET CUE2MKC_DST \"${FFSTEM}-" << wxConfiguration::TMP::RGSCAN << '.' << wxConfiguration::EXT::JSON << "\")" << endl;
+        *m_os << "CMAKE_PATH(SET CUE2MKC_CHAPTERS \"${DRSTEM}-" << wxConfiguration::TMP::CHAPTERS << '.' << wxConfiguration::EXT::JSON << "\")" << endl;
+        *m_os << "CMAKE_PATH(SET CUE2MKC_DST \"${DRSTEM}-" << wxConfiguration::TMP::RGSCAN << '.' << wxConfiguration::EXT::JSON << "\")" << endl;
     }
     else
     {
         wxASSERT(dataFiles.GetCount() == 1);
     }
 
-    *m_os << "CMAKE_PATH(SET CUE2MKC_MKA \"${FFSTEM}-" << wxConfiguration::TMP::PRE << '.' << wxConfiguration::EXT::MKA << "\")" << endl;
+    *m_os << "CMAKE_PATH(SET CUE2MKC_MKA \"${DRSTEM}-" << wxConfiguration::TMP::PRE << '.' << wxConfiguration::EXT::MKA << "\")" << endl;
 
     *m_os << "MESSAGE(STATUS \"Creating temporary MKA container\")" << endl;
     *m_os << "EXECUTE_PROCESS(" << endl;
@@ -303,16 +303,16 @@ void wxFfmpegCMakeScriptRenderer::RenderPre(
     *m_os << "    COMMAND_ERROR_IS_FATAL ANY" << endl;
     if (relDir.IsOk())
     {
-        *m_os << "    WORKING_DIRECTORY ${CUE2MKC_WORKDIR}" << endl;
+        *m_os << "    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}" << endl;
     }
     *m_os << ')' << endl;
 
     if (m_cfg.RunReplayGainScanner())
     {
         wxFileName ffScan(wxStandardPaths::Get().GetExecutablePath());
-        ffScan.SetFullName("ff-scan.cmake");
+        ffScan.SetFullName("dr-scan.cmake");
         *m_os << "INCLUDE(\"" << GetCMakePath(ffScan) << "\")" << endl;
-        *m_os << "CMAKE_PATH(APPEND CUE2MKC_WORKDIR ${CUE2MKC_CHAPTERS} OUTPUT_VARIABLE CUE2MKC_CHAPTERS_PATH)" << endl;
+        *m_os << "CMAKE_PATH(APPEND CMAKE_CURRENT_BINARY_DIR ${CUE2MKC_CHAPTERS} OUTPUT_VARIABLE CUE2MKC_CHAPTERS_PATH)" << endl;
         *m_os << "FILE(REMOVE ${CUE2MKC_CHAPTERS_PATH})" << endl;
     }
 
@@ -327,11 +327,9 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
 {
     RenderHeader(inputFile);
     RenderMinimumVersion();
-    RenderFfmpegFinder();
+    RenderToolEnvCheck("ffmpeg");
 
     const wxFileName outputDir = m_cfg.GetOutputDir(inputFile);
-    RenderWorkingDirectoryVariable(outputDir);
-
     wxFileName outDir;
 
     if (!m_cfg.UseFullPaths())
@@ -522,7 +520,7 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
     *m_os << "    COMMAND_ERROR_IS_FATAL ANY" << endl;
     if (!m_cfg.UseFullPaths())
     {
-        *m_os << "    WORKING_DIRECTORY ${CUE2MKC_WORKDIR}" << endl;
+        *m_os << "    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}" << endl;
     }
     *m_os << ')' << endl;
 }
