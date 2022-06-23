@@ -79,6 +79,6 @@ add_custom_target( isetup SOURCES ${ISETUP_SOURCES} DEPENDS ${CMAKE_CURRENT_BINA
 SET_PROPERTY(TARGET isetup PROPERTY FOLDER "setup")
 
 add_custom_command( TARGET isetup POST_BUILD 
-	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/license.txt $<TARGET_FILE_DIR:cue2mkc>
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/license.txt $<TARGET_FILE_DIR:cue2mkc>
 	COMMENT "Copying license file"
 )
