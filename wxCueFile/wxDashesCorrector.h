@@ -9,11 +9,8 @@
 #include <wxCueFile/wxStringProcessor.h>
 #endif
 
-class wxDashesCorrector:
-    public wxStringProcessor
+class wxDashesCorrector: public wxStringProcessor
 {
-    wxDECLARE_DYNAMIC_CLASS(wxDashesCorrector);
-
     public:
 
     typedef wxUniChar::value_type uvalue_type;
@@ -51,9 +48,9 @@ class wxDashesCorrector:
     wxRegEx m_reEm;
     wxRegEx m_reEm2;
 
-    wxString m_sEnReplacement;
-    wxString m_sEmReplacement;
-    wxString m_sEm2Replacement;
+    wxString m_enReplacement;
+    wxString m_emReplacement;
+    wxString m_em2Replacement;
 };
 
 #endif

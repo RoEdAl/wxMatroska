@@ -9,11 +9,8 @@
 #include <wxCueFile/wxStringProcessor.h>
 #endif
 
-class wxReduntantSpacesRemover:
-    public wxStringProcessor
+class wxReduntantSpacesRemover: public wxStringProcessor
 {
-    wxDECLARE_DYNAMIC_CLASS(wxReduntantSpacesRemover);
-
     public:
 
     static const char NORMAL_REG_EX[];

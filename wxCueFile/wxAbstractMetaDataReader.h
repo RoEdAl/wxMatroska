@@ -5,8 +5,7 @@
 #ifndef _WX_ABSTRACT_META_DATA_READER_H_
 #define _WX_ABSTRACT_META_DATA_READER_H_
 
-class wxAbstractMetaDataReader:
-    public wxObject
+class wxAbstractMetaDataReader
 {
     public:
 

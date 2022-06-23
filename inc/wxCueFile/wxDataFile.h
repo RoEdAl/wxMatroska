@@ -21,11 +21,8 @@ class wxArrayCoverFile;
 WX_DECLARE_OBJARRAY(wxFileName, wxArrayFileName);
 WX_DECLARE_OBJARRAY(wxDataFile, wxArrayDataFile);
 
-class wxDataFile:
-    public wxObject, public wxDurationHolder
+class wxDataFile: public wxDurationHolder
 {
-    wxDECLARE_DYNAMIC_CLASS(wxDataFile);
-
     public:
 
     enum FileType
@@ -54,7 +51,7 @@ class wxDataFile:
     FileType m_ftype;
     MediaType m_mediaType;
     wxArrayCueTag m_tags;
-    wxString m_sCueSheet;
+    wxString m_cueSheet;
 
     protected:
 

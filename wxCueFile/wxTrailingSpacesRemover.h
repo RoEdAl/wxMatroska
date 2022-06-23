@@ -9,11 +9,8 @@
 #include <wxCueFile/wxStringProcessor.h>
 #endif
 
-class wxTrailingSpacesRemover:
-    public wxStringProcessor
+class wxTrailingSpacesRemover: public wxStringProcessor
 {
-    wxDECLARE_DYNAMIC_CLASS(wxTrailingSpacesRemover);
-
     public:
 
     static const char REG_EX[];

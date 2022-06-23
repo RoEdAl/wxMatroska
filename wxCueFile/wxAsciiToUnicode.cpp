@@ -4,8 +4,6 @@
 
 #include <wxCueFile/wxAsciiToUnicode.h>
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxAsciiToUnicode, wxStringProcessor)
-
 const wxAsciiToUnicode::ASCII2UNI wxAsciiToUnicode::REPL_TABLE[] = {
     { "(C)", "\\(C\\)", 0xA9 },
     { "(P)", "\\(P\\)", 0x2117 },

@@ -4,8 +4,6 @@
 
 #include "wxEllipsizer.h"
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxEllipsizer, wxStringProcessor)
-
 // ===============================================================================
 
 const char wxEllipsizer::REG_EX[] = "(\\p{Xps}*\\.\\.\\.)\\p{Xps}*$";
@@ -24,15 +22,15 @@ wxStringProcessor* const wxEllipsizer::Clone() const
     return new wxEllipsizer();
 }
 
-bool wxEllipsizer::Process(const wxString& sIn, wxString& sOut) const
+bool wxEllipsizer::Process(const wxString& in, wxString& out) const
 {
-    sOut = sIn;
-    wxString res(sIn);
-    int      nRes = m_reEllipsis.ReplaceAll(&res, ELLIPSIS);
+    out = in;
+    wxString res(in);
+    int      repl = m_reEllipsis.ReplaceAll(&res, ELLIPSIS);
 
-    if (nRes > 0)
+    if (repl > 0)
     {
-        sOut = res;
+        out = res;
         return true;
     }
 

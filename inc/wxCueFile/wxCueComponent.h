@@ -60,7 +60,7 @@ class wxCueComponent
 
     protected:
 
-    bool m_bTrack;
+    bool m_isTrack;
     wxArrayString m_comments;
     wxArrayString m_garbage;
     wxArrayCueTag m_cdTextTags;

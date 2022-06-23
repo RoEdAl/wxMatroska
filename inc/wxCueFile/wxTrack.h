@@ -31,8 +31,7 @@ class wxSamplingInfo;
 
 #include <enum2str.h>
 
-class wxTrack:
-    public wxCueComponent
+class wxTrack: public wxCueComponent
 {
     public:
 
@@ -54,8 +53,8 @@ class wxTrack:
     size_t m_number;
     DataMode m_dataMode;
     wxArrayIndex m_indexes;
-    wxScopedPtr< wxIndex > m_pPreGap;
-    wxScopedPtr< wxIndex > m_pPostGap;
+    std::optional<wxIndex> m_preGap;
+    std::optional<wxIndex> m_postGap;
     wxArrayFlag m_flags;
 
     protected:

@@ -472,7 +472,7 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
     *m_os << "        -metadata:g \"creation_time=${MKA_TS}\"" << endl << endl;
 
     *m_os << "        # audio track metadata" << endl;
-    if (!m_cfg.IsUnkLang())
+    if (m_cfg.IsLangDefined())
     {
         *m_os << "        -metadata:s:a:0 language=" << m_cfg.GetLang() << endl;
     }

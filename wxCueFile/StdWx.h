@@ -65,6 +65,7 @@
 #include <taglib/flacfile.h>
 // #include <mpegproperties.h>
 
+#include <optional>
 #include <wxJson.h>
 
 #endif  // _STD_WX_H

@@ -135,21 +135,13 @@ wxStringProcessor* const wxStringCorrector::Configurator::Create() const
     wxStringCorrector* res = new wxStringCorrector(*this);
 
     res->AddStringProcessor(new wxTrailingSpacesRemover());
-
     if (m_numberFullStop) res->AddStringProcessor(new wxNumberFullStopCorrector());
-
     if (m_removeExtraSpaces) res->AddStringProcessor(new wxReduntantSpacesRemover());
-
     if (m_ellipsize) res->AddStringProcessor(new wxEllipsizer());
-
     if (m_romanNumeralsUpper) res->AddStringProcessor(new wxRomanNumeralsConv< true >());
-
     if (m_romanNumeralsLower) res->AddStringProcessor(new wxRomanNumeralsConv< false >());
-
     if (m_dashes) res->AddStringProcessor(new wxDashesCorrector(m_smallEmDash));
-
     if (m_smallLetterParenthesized) res->AddStringProcessor(new wxSmallLetterParenthesizedCorrector());
-
     if (m_asciiToUnicode) res->AddStringProcessor(new wxAsciiToUnicode());
     return res;
 }
@@ -176,9 +168,9 @@ void wxStringCorrector::AddStringProcessor(wxStringProcessor* const processor)
     m_processors.Add(processor);
 }
 
-bool wxStringCorrector::Process(const wxString& sIn, wxString& sOut) const
+bool wxStringCorrector::Process(const wxString& in, wxString& out) const
 {
-    wxString w(sIn);
+    wxString w(in);
     wxString wo;
     bool     processed = false;
 
@@ -191,11 +183,8 @@ bool wxStringCorrector::Process(const wxString& sIn, wxString& sOut) const
         }
     }
 
-    if (!processed)
-        return false;
-
-
-    sOut = w;
+    if (!processed) return false;
+    out = w;
     return true;
 }
 

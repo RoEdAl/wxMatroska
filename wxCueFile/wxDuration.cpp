@@ -5,11 +5,7 @@
 #include <wxCueFile/wxSamplingInfo.h>
 #include <wxCueFile/wxIndex.h>
 #include <wxCueFile/wxDuration.h>
-
- // ===============================================================================
-
-wxIMPLEMENT_ABSTRACT_CLASS(wxDuration, wxObject)
-
+ 
 // ===============================================================================
 
 wxDuration::wxDuration(void)
@@ -112,28 +108,34 @@ wxDurationHolder::wxDurationHolder()
 
 bool wxDurationHolder::HasDuration() const
 {
-    return m_pDuration;
+    return m_duration.has_value();
 }
 
 wxDuration wxDurationHolder::GetDuration() const
 {
     wxASSERT(HasDuration());
-    return *m_pDuration;
+    return *m_duration;
 }
 
 void wxDurationHolder::SetDuration(const wxDuration& duration)
 {
-    m_pDuration.reset(new wxDuration(duration));
+    m_duration = duration;
 }
 
 void wxDurationHolder::ClearDuration()
 {
-    m_pDuration.reset();
+    m_duration.reset();
 }
 
 void wxDurationHolder::Copy(const wxAbstractDurationHolder& durationHolder)
 {
-    if (durationHolder.HasDuration()) SetDuration(durationHolder.GetDuration());
-    else ClearDuration();
+    if (durationHolder.HasDuration())
+    {
+        SetDuration(durationHolder.GetDuration());
+    }
+    else
+    {
+        ClearDuration();
+    }
 }
 

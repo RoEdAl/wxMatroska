@@ -112,8 +112,7 @@ struct roman_numeral_traits< false >
 };
 
 template< bool UPPER >
-class wxRomanNumeralsConv:
-    public wxStringProcessor
+class wxRomanNumeralsConv: public wxStringProcessor
 {
     public:
 

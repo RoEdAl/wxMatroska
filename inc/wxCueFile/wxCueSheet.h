@@ -29,8 +29,7 @@
 #include "wxCoverFile.h"
 #endif
 
-class wxCueSheet:
-    public wxCueComponent, public wxAbstractDurationHolder
+class wxCueSheet: public wxCueComponent, public wxAbstractDurationHolder
 {
     public:
 

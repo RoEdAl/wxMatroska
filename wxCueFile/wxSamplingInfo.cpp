@@ -7,17 +7,13 @@
 
  // ===============================================================================
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxSamplingInfo, wxObject);
-
-// ===============================================================================
-
 const wxTimeSpan wxSamplingInfo::wxInvalidDuration = wxTimeSpan::Hours(-1);
 const wxUint64   wxSamplingInfo::wxInvalidNumberOfFrames = wxUINT64_MAX;
 
 // ===============================================================================
 
 wxSamplingInfo::wxSamplingInfo(void):
-    m_nSamplingRate(44100), m_nNumChannels(2), m_nBitsPerSample(16)
+    m_samplingRate(44100), m_numChannels(2), m_bitsPerSample(16)
 {
 }
 
@@ -26,25 +22,25 @@ wxSamplingInfo::wxSamplingInfo(const wxSamplingInfo& si)
     copy(si);
 }
 
-wxSamplingInfo::wxSamplingInfo(unsigned long nSamplingRate, unsigned short nNumChannels, unsigned short nBitsPerSample):
-    m_nSamplingRate(nSamplingRate), m_nNumChannels(nNumChannels),
-    m_nBitsPerSample(nBitsPerSample)
+wxSamplingInfo::wxSamplingInfo(unsigned long samplingRate, unsigned short numChannels, unsigned short bitsPerSample):
+    m_samplingRate(samplingRate), m_numChannels(numChannels),
+    m_bitsPerSample(bitsPerSample)
 {
 }
 
-wxSamplingInfo& wxSamplingInfo::Assign(unsigned long nSamplingRate, unsigned short nNumChannels, unsigned short nBitsPerSample)
+wxSamplingInfo& wxSamplingInfo::Assign(unsigned long samplingRate, unsigned short numChannels, unsigned short bitsPerSample)
 {
-    m_nSamplingRate = nSamplingRate;
-    m_nNumChannels = nNumChannels;
-    m_nBitsPerSample = nBitsPerSample;
+    m_samplingRate = samplingRate;
+    m_numChannels = numChannels;
+    m_bitsPerSample = bitsPerSample;
     return *this;
 }
 
 wxSamplingInfo& wxSamplingInfo::SetDefault()
 {
-    m_nSamplingRate = 44100;
-    m_nNumChannels = 2;
-    m_nBitsPerSample = 16;
+    m_samplingRate = 44100;
+    m_numChannels = 2;
+    m_bitsPerSample = 16;
     return *this;
 }
 
@@ -56,69 +52,68 @@ wxSamplingInfo& wxSamplingInfo::operator =(const wxSamplingInfo& si)
 
 void wxSamplingInfo::copy(const wxSamplingInfo& si)
 {
-    m_nSamplingRate = si.m_nSamplingRate;
-    m_nNumChannels = si.m_nNumChannels;
-    m_nBitsPerSample = si.m_nBitsPerSample;
+    m_samplingRate = si.m_samplingRate;
+    m_numChannels = si.m_numChannels;
+    m_bitsPerSample = si.m_bitsPerSample;
 }
 
 unsigned long wxSamplingInfo::GetSamplingRate() const
 {
-    return m_nSamplingRate;
+    return m_samplingRate;
 }
 
 unsigned short wxSamplingInfo::GetNumberOfChannels() const
 {
-    return m_nNumChannels;
+    return m_numChannels;
 }
 
 unsigned short wxSamplingInfo::GetBitsPerSample() const
 {
-    return m_nBitsPerSample;
+    return m_bitsPerSample;
 }
 
-wxSamplingInfo& wxSamplingInfo::SetSamplingRate(unsigned long nSamplingRate)
+wxSamplingInfo& wxSamplingInfo::SetSamplingRate(unsigned long samplingRate)
 {
-    m_nSamplingRate = nSamplingRate;
+    m_samplingRate = samplingRate;
     return *this;
 }
 
-wxSamplingInfo& wxSamplingInfo::SetNumberOfChannels(unsigned short nNumChannels)
+wxSamplingInfo& wxSamplingInfo::SetNumberOfChannels(unsigned short numChannels)
 {
-    m_nNumChannels = nNumChannels;
+    m_numChannels = numChannels;
     return *this;
 }
 
-wxSamplingInfo& wxSamplingInfo::SetBitsPerSample(unsigned short nBitsPerSample)
+wxSamplingInfo& wxSamplingInfo::SetBitsPerSample(unsigned short bitsPerSample)
 {
-    m_nBitsPerSample = nBitsPerSample;
+    m_bitsPerSample = bitsPerSample;
     return *this;
 }
 
-bool wxSamplingInfo::IsOK(bool bIgnoreBitsPerSample) const
+bool wxSamplingInfo::IsOK(bool ignoreBitsPerSample) const
 {
     return
-        (m_nSamplingRate > 0) &&
-        (m_nNumChannels > 0) &&
-        (bIgnoreBitsPerSample ? true : (m_nBitsPerSample > 0)) &&
-        ((m_nBitsPerSample % 8) == 0);
+        (m_samplingRate > 0) &&
+        (m_numChannels > 0) &&
+        (ignoreBitsPerSample ? true : (m_bitsPerSample > 0)) &&
+        ((m_bitsPerSample % 8) == 0);
 }
 
-bool wxSamplingInfo::Equals(const wxSamplingInfo& si, bool bIgnoreBitsPerSample) const
+bool wxSamplingInfo::Equals(const wxSamplingInfo& si, bool ignoreBitsPerSample) const
 {
-    if (!(IsOK(bIgnoreBitsPerSample) || si.IsOK(bIgnoreBitsPerSample))) return true;
-    else if (IsOK(bIgnoreBitsPerSample) && si.IsOK(bIgnoreBitsPerSample))
+    if (!(IsOK(ignoreBitsPerSample) || si.IsOK(ignoreBitsPerSample))) return true;
+    else if (IsOK(ignoreBitsPerSample) && si.IsOK(ignoreBitsPerSample))
         return
-        (m_nSamplingRate == si.m_nSamplingRate) &&
-        (m_nNumChannels == si.m_nNumChannels) &&
-        (bIgnoreBitsPerSample ? true : (m_nBitsPerSample == si.m_nBitsPerSample));
+        (m_samplingRate == si.m_samplingRate) &&
+        (m_numChannels == si.m_numChannels) &&
+        (ignoreBitsPerSample ? true : (m_bitsPerSample == si.m_bitsPerSample));
     else return false;
 }
 
 wxULongLong wxSamplingInfo::GetNumberOfFramesFromBytes(const wxULongLong& bytes) const
 {
     wxASSERT(IsOK());
-    wxULongLong bytesPerFrame(0, m_nBitsPerSample * m_nNumChannels / 8);
-
+    wxULongLong bytesPerFrame(0, m_bitsPerSample * m_numChannels / 8);
     wxULongLong frames(bytes);
 
     frames /= bytesPerFrame;
@@ -136,7 +131,7 @@ wxTimeSpan wxSamplingInfo::GetDuration(wxULongLong frames) const
     wxULongLong duration(frames);
 
     duration *= wxULL(1000);
-    wxULongLong longSamplesRate(0, m_nSamplingRate);
+    wxULongLong longSamplesRate(0, m_samplingRate);
 
     duration /= longSamplesRate;
     return wxTimeSpan::Milliseconds(duration.GetValue());
@@ -146,7 +141,7 @@ void wxSamplingInfo::GetNumberOfCdFrames(wxULongLong frames, wxULongLong& cdFram
 {
     cdFrames = frames;
     cdFrames *= wxULL(75);
-    wxULongLong samplingRate(0, m_nSamplingRate);
+    wxULongLong samplingRate(0, m_samplingRate);
     wxULongLong urest(cdFrames % samplingRate);
 
     cdFrames /= samplingRate;
@@ -165,7 +160,7 @@ wxULongLong wxSamplingInfo::GetNumberOfCdFrames(wxULongLong frames) const
 wxDouble wxSamplingInfo::ToSeconds(wxULongLong frames) const
 {
     const wxULongLong s(frames);
-    const wxULongLong samplingRate(0, m_nSamplingRate);
+    const wxULongLong samplingRate(0, m_samplingRate);
 
     return s.ToDouble() / samplingRate.ToDouble();
 }
@@ -181,9 +176,9 @@ wxString wxSamplingInfo::GetSamplesStr(wxULongLong frames) const
 {
     // 1.0 = sampling rate
     wxULongLong s(frames);
-    wxULongLong samplingRate(0, m_nSamplingRate);
+    wxULongLong samplingRate(0, m_samplingRate);
     wxULongLong sr(frames % samplingRate);
-    double      rest = sr.ToDouble() / m_nSamplingRate;
+    double      rest = sr.ToDouble() / m_samplingRate;
 
     s -= sr;
     s /= samplingRate;
@@ -228,7 +223,7 @@ wxString wxSamplingInfo::GetCdFramesStr(wxULongLong frames) const
 
 wxULongLong wxSamplingInfo::GetFramesFromCdFrames(wxULongLong cdFrames) const
 {
-    wxULongLong samplingRate(0, m_nSamplingRate);
+    wxULongLong samplingRate(0, m_samplingRate);
     wxULongLong res(cdFrames);
 
     res *= samplingRate;
@@ -246,21 +241,39 @@ wxIndex wxSamplingInfo::ConvertIndex(const wxIndex& idx) const
 {
     wxIndex res;
 
-    if (idx.HasCdFrames()) res.SetNumber(idx.GetNumber()).SetOffset(GetFramesFromCdFrames(idx.GetOffset()));
-    else res = idx;
+    if (idx.HasCdFrames())
+    {
+        res.SetNumber(idx.GetNumber()).SetOffset(GetFramesFromCdFrames(idx.GetOffset()));
+    }
+    else
+    {
+        res = idx;
+    }
 
     return res;
 }
 
-wxIndex wxSamplingInfo::ConvertIndex(const wxIndex& idx, wxULongLong offset, bool bAdd) const
+wxIndex wxSamplingInfo::ConvertIndex(const wxIndex& idx, wxULongLong offset, bool addOrSubtract) const
 {
     wxIndex res;
 
-    if (idx.HasCdFrames()) res.SetNumber(idx.GetNumber()).SetOffset(GetFramesFromCdFrames(idx.GetOffset())).SetDataFileIdx(idx.GetDataFileIdx());
-    else res = idx;
+    if (idx.HasCdFrames())
+    {
+        res.SetNumber(idx.GetNumber()).SetOffset(GetFramesFromCdFrames(idx.GetOffset())).SetDataFileIdx(idx.GetDataFileIdx());
+    }
+    else
+    {
+        res = idx;
+    }
 
-    if (bAdd) res += offset;
-    else res -= offset;
+    if (addOrSubtract)
+    {
+        res += offset;
+    }
+    else
+    {
+        res -= offset;
+    }
 
     return res;
 }

@@ -13,11 +13,8 @@
 #include "wxIndex.h"
 #endif
 
-class wxDuration:
-    public wxObject
+class wxDuration
 {
-    wxDECLARE_DYNAMIC_CLASS(wxCueSheet);
-
     protected:
 
     wxSamplingInfo m_si;
@@ -61,12 +58,11 @@ class wxAbstractDurationHolder
     virtual wxDuration GetDuration() const = 0;
 };
 
-class wxDurationHolder:
-    public wxAbstractDurationHolder
+class wxDurationHolder: public wxAbstractDurationHolder
 {
     protected:
 
-    wxScopedPtr< wxDuration > m_pDuration;
+    std::optional<wxDuration> m_duration;
 
     public:
 

@@ -12,16 +12,16 @@ wxTagSynonims::wxTagSynonims(void)
 {
 }
 
-wxTagSynonims::wxTagSynonims(const wxString& sName):
-    m_sName(sName)
+wxTagSynonims::wxTagSynonims(const wxString& name):
+    m_name(name)
 {
-    wxASSERT(!sName.IsEmpty());
+    wxASSERT(!name.IsEmpty());
 }
 
-wxTagSynonims::wxTagSynonims(const wxString& sName, const wxArrayString& asSynonims):
-    m_sName(sName), m_asSynonims(asSynonims)
+wxTagSynonims::wxTagSynonims(const wxString& name, const wxArrayString& synonims):
+    m_name(name), m_synonims(synonims)
 {
-    wxASSERT(!sName.IsEmpty());
+    wxASSERT(!name.IsEmpty());
 }
 
 wxTagSynonims::wxTagSynonims(const wxTagSynonims& synonims)
@@ -37,74 +37,70 @@ wxTagSynonims& wxTagSynonims::operator =(const wxTagSynonims& synonims)
 
 void wxTagSynonims::copy(const wxTagSynonims& synonims)
 {
-    m_sName = synonims.m_sName;
-    m_asSynonims = synonims.m_asSynonims;
+    m_name = synonims.m_name;
+    m_synonims = synonims.m_synonims;
 }
 
-wxTagSynonims& wxTagSynonims::SetName(const wxString& sName)
+wxTagSynonims& wxTagSynonims::SetName(const wxString& name)
 {
-    wxASSERT(!sName.IsEmpty());
-    m_sName = sName;
+    wxASSERT(!name.IsEmpty());
+    m_name = name;
     return *this;
 }
 
 wxTagSynonims& wxTagSynonims::SetSynonims(const wxArrayString& synonims)
 {
-    m_asSynonims = synonims;
+    m_synonims = synonims;
     return *this;
 }
 
 const wxString& wxTagSynonims::GetName() const
 {
-    return m_sName;
+    return m_name;
 }
 
 const wxArrayString& wxTagSynonims::GetSynonims() const
 {
-    return m_asSynonims;
+    return m_synonims;
 }
 
-bool wxTagSynonims::GetName(const wxString& sSynonim, wxString& sName) const
+bool wxTagSynonims::GetName(const wxString& synonim, wxString& name) const
 {
-    if (m_sName.CmpNoCase(sSynonim) == 0)
+    if (m_name.CmpNoCase(synonim) == 0)
     {
-        sName = m_sName;
+        name = m_name;
         return true;
     }
 
-    size_t nSynonims = m_asSynonims.GetCount();
-
-    for (size_t i = 0; i < nSynonims; i++)
+    for (size_t i = 0, cnt = m_synonims.GetCount(); i < cnt; ++i)
     {
-        if (m_asSynonims[i].CmpNoCase(sSynonim) == 0)
+        if (m_synonims[i].CmpNoCase(synonim) == 0)
         {
-            sName = m_asSynonims[i];
+            name = m_synonims[i];
             return true;
         }
     }
 
-    sName = sSynonim;
+    name = synonim;
     return false;
 }
 
 bool wxTagSynonims::GetName(const wxCueTag& synonim, wxCueTag& cueTag) const
 {
-    if (m_sName.CmpNoCase(synonim.GetName()) == 0)
+    if (m_name.CmpNoCase(synonim.GetName()) == 0)
     {
         cueTag.SetSource(synonim.GetSource());
-        cueTag.SetName(m_sName);
+        cueTag.SetName(m_name);
         cueTag.SetValue(synonim.GetValue());
         return true;
     }
 
-    size_t nSynonims = m_asSynonims.GetCount();
-
-    for (size_t i = 0; i < nSynonims; i++)
+    for (size_t i = 0, cnt = m_synonims.GetCount(); i < cnt; ++i)
     {
-        if (m_asSynonims[i].CmpNoCase(synonim.GetName()) == 0)
+        if (m_synonims[i].CmpNoCase(synonim.GetName()) == 0)
         {
             cueTag.SetSource(synonim.GetSource());
-            cueTag.SetName(m_sName);
+            cueTag.SetName(m_name);
             cueTag.SetValue(synonim.GetValue());
             return true;
         }
@@ -132,22 +128,20 @@ wxTagSynonimsCollection& wxTagSynonimsCollection::operator =(const wxTagSynonims
     return *this;
 }
 
-bool wxTagSynonimsCollection::GetName(const wxString& sSynonim, wxString& sName) const
+bool wxTagSynonimsCollection::GetName(const wxString& synonim, wxString& name) const
 {
-    size_t nSynonims = GetCount();
-
-    for (size_t i = 0; i < nSynonims; i++)
+    for (size_t i = 0, cnt = GetCount(); i < cnt; ++i)
     {
-        if (Item(i).GetName(sSynonim, sName)) return true;
+        if (Item(i).GetName(synonim, name)) return true;
     }
 
-    sName = sSynonim;
+    name = synonim;
     return false;
 }
 
 bool wxTagSynonimsCollection::GetName(const wxCueTag& synonim, wxCueTag& cueTag) const
 {
-    for (size_t i = 0, nSynonims = GetCount(); i < nSynonims; i++)
+    for (size_t i = 0, cnt = GetCount(); i < cnt; ++i)
     {
         if (Item(i).GetName(synonim, cueTag)) return true;
     }

@@ -4,8 +4,6 @@
 
 #include "wxSmallLetterParenthesizedCorrector.h"
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxSmallLetterParenthesizedCorrector, wxStringProcessor)
-
 // ===============================================================================
 
 const char wxSmallLetterParenthesizedCorrector::REG_EX[] = "\\([a-z]\\)";
@@ -23,11 +21,11 @@ wxStringProcessor* const wxSmallLetterParenthesizedCorrector::Clone() const
     return new wxSmallLetterParenthesizedCorrector();
 }
 
-bool wxSmallLetterParenthesizedCorrector::Process(const wxString& sIn, wxString& sOut) const
+bool wxSmallLetterParenthesizedCorrector::Process(const wxString& in, wxString& out) const
 {
-    sOut = wxEmptyString;
+    out = wxEmptyString;
 
-    wxString        w(sIn);
+    wxString        w(in);
     const wxUniChar smallA('a');
     bool            replaced = false;
 
@@ -41,12 +39,12 @@ bool wxSmallLetterParenthesizedCorrector::Process(const wxString& sIn, wxString&
             break;
         }
 
-        sOut += w.Mid(0, idx);
+        out += w.Mid(0, idx);
 
         const wxUniChar letter = w[idx + 1];
         const int       sh = (int)letter - (int)smallA;
         const wxUniChar parenthesized(0x249C + sh);
-        sOut += parenthesized;
+        out += parenthesized;
         replaced = true;
 
         w.Remove(0, idx + len);
@@ -54,7 +52,7 @@ bool wxSmallLetterParenthesizedCorrector::Process(const wxString& sIn, wxString&
 
     if (replaced)
     {
-        sOut += w;
+        out += w;
         return true;
     }
 

@@ -4,8 +4,6 @@
 
 #include "wxTrailingSpacesRemover.h"
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxTrailingSpacesRemover, wxStringProcessor)
-
 // ===============================================================================
 
 const char wxTrailingSpacesRemover::REG_EX[] =

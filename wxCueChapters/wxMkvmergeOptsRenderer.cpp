@@ -213,7 +213,7 @@ void wxMkvmergeOptsRenderer::RenderDisc(
     render_attachments(opts, attachments);
 
     // post
-    if (!m_cfg.IsUnkLang())
+    if (m_cfg.IsLangDefined())
     {
         add_string(opts, "--default-language");
         add_string(opts, m_cfg.GetLang());

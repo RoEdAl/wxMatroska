@@ -9,11 +9,8 @@
 #include <wxCueFile/wxStringProcessor.h>
 #endif
 
-class wxAsciiToUnicode:
-    public wxStringProcessor
+class wxAsciiToUnicode: public wxStringProcessor
 {
-    wxDECLARE_DYNAMIC_CLASS(wxAsciiToUnicode);
-
     public:
 
     struct ASCII2UNI

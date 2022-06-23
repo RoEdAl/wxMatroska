@@ -4,8 +4,6 @@
 
 #include "wxNumberFullStopCorrector.h"
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxNumberFullStopCorrector, wxStringProcessor)
-
 // ===============================================================================
 
 const char wxNumberFullStopCorrector::REG_EX[] = "\\b(?=\\d)(\\d{1,2}\\.\\p{Xps}+)";
@@ -37,11 +35,11 @@ namespace
     }
 }
 
-bool wxNumberFullStopCorrector::Process(const wxString& sIn, wxString& sOut) const
+bool wxNumberFullStopCorrector::Process(const wxString& in, wxString& out) const
 {
-    sOut = wxEmptyString;
+    out = wxEmptyString;
 
-    wxString        w(sIn);
+    wxString        w(in);
     const wxUniChar thinSpace(0x2009);
     bool            replaced = false;
 
@@ -55,7 +53,7 @@ bool wxNumberFullStopCorrector::Process(const wxString& sIn, wxString& sOut) con
             break;
         }
 
-        sOut += w.Mid(0, idx);
+        out += w.Mid(0, idx);
 
         const wxString num = w.Mid(idx, len);
         unsigned int   n;
@@ -63,13 +61,13 @@ bool wxNumberFullStopCorrector::Process(const wxString& sIn, wxString& sOut) con
         if (get_num(num, n))
         {
             const wxUniChar c(0x2487 + n);
-            sOut += c;
-            sOut += thinSpace;
+            out += c;
+            out += thinSpace;
             replaced = true;
         }
         else
         {
-            sOut += num;
+            out += num;
         }
 
         w.Remove(0, idx + len);
@@ -77,7 +75,7 @@ bool wxNumberFullStopCorrector::Process(const wxString& sIn, wxString& sOut) con
 
     if (replaced)
     {
-        sOut += w;
+        out += w;
         return true;
     }
 

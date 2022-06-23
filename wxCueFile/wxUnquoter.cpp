@@ -3,11 +3,7 @@
  */
 
 #include <wxCueFile/wxUnquoter.h>
-
- // ===============================================================================
-
-wxIMPLEMENT_DYNAMIC_CLASS(wxUnquoter, wxStringProcessor);
-
+ 
 // ===============================================================================
 
 const char wxUnquoter::RE_SINGLE_QUOTES[] = "^\\p{Xps}*'(.*)'\\p{Xps}*$";
@@ -61,10 +57,6 @@ bool wxUnquoter::IsQuoted(const wxString& s) const
 {
     return m_reSingleQuotes.Matches(s) || m_reDoubleQuotes.Matches(s);
 }
-
-// ===============================================================================
-
-wxIMPLEMENT_DYNAMIC_CLASS(wxQuoteCorrector, wxStringProcessor);
 
 // ===============================================================================
 
@@ -123,7 +115,7 @@ const wxQuoteCorrector::QUOTATION_MARKS wxQuoteCorrector::FRENCH_QUOTES[] =
 };
 
 wxQuoteCorrector::wxQuoteCorrector(void):
-    m_sGenericReplacement(GENERIC_REPLACEMENT),
+    m_genericReplacement(GENERIC_REPLACEMENT),
     m_reSingleQuotes(RE_SINGLE_QUOTES),
     m_reDoubleQuotes(RE_DOUBLE_QUOTES),
     m_rePseudoDoubleQuotes(RE_PSEUDO_DOUUBLE_QUOTES),
@@ -135,7 +127,7 @@ wxQuoteCorrector::wxQuoteCorrector(void):
 }
 
 wxQuoteCorrector::wxQuoteCorrector(const wxQuoteCorrector& corrector):
-    m_sGenericReplacement(GENERIC_REPLACEMENT),
+    m_genericReplacement(GENERIC_REPLACEMENT),
     m_reSingleQuotes(RE_SINGLE_QUOTES),
     m_reDoubleQuotes(RE_DOUBLE_QUOTES),
     m_rePseudoDoubleQuotes(RE_PSEUDO_DOUUBLE_QUOTES),
@@ -198,9 +190,9 @@ bool wxQuoteCorrector::Process(const wxString& s, wxString& res) const
     int      nRes = 0;
     wxString w(s);
 
-    nRes += m_rePseudoDoubleQuotes.ReplaceAll(&w, m_sGenericReplacement);
-    nRes += m_reSingleQuotes.ReplaceAll(&w, m_sGenericReplacement);
-    nRes += m_reDoubleQuotes.ReplaceAll(&w, m_sGenericReplacement);
+    nRes += m_rePseudoDoubleQuotes.ReplaceAll(&w, m_genericReplacement);
+    nRes += m_reSingleQuotes.ReplaceAll(&w, m_genericReplacement);
+    nRes += m_reDoubleQuotes.ReplaceAll(&w, m_genericReplacement);
 
     if (nRes > 0)
     {

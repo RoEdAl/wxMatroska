@@ -31,8 +31,7 @@ class wxCueSheetContent;
 
 #ifndef NDEBUG
 
-class TagLibDebugListener:
-    public TagLib::DebugListener
+class TagLibDebugListener: public TagLib::DebugListener
 {
     public:
 
@@ -109,14 +108,14 @@ class wxCueSheetReader
     wxRegEx m_reIsrc;
     wxRegEx m_reTrackComment;
     wxRegEx m_reCommentMeta;
-    wxScopedPtr< wxStringProcessor > m_pStringProcessor;
-    wxString m_sOneTrackCue;
+    wxScopedPtr< wxStringProcessor > m_stringProcessor;
+    wxString m_oneTrackCue;
 
     // settings
-    bool m_bErrorsAsWarnings;
-    wxString m_sLang;
-    wxString m_sAlternateExt;
-    ReadFlags m_nReadFlags;
+    bool m_errorsAsWarnings;
+    wxString m_lang;
+    wxString m_alternateExt;
+    ReadFlags m_readFlags;
 
     // work
     wxCueSheetContent m_cueSheetContent;
@@ -137,7 +136,7 @@ class wxCueSheetReader
 
     void AddError0(const wxString&);
 
-    void AddError(wxString, ...);
+    void AddError(const wxString, ...);
 
     void DumpErrors(size_t) const;
 

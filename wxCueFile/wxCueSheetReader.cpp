@@ -146,9 +146,9 @@ bool wxCueSheetReader::TestReadFlags(ReadFlags flags, ReadFlags mask)
     return (flags & mask) == mask;
 }
 
-bool wxCueSheetReader::TestReadFlags(ReadFlags nMask) const
+bool wxCueSheetReader::TestReadFlags(ReadFlags mask) const
 {
-    return TestReadFlags(m_nReadFlags, nMask);
+    return TestReadFlags(m_readFlags, mask);
 }
 
 wxString wxCueSheetReader::GetTagLibVersion()
@@ -178,9 +178,9 @@ wxCueSheetReader::wxCueSheetReader(void):
     m_reIsrc("^(\\p{Lu}{2}|00)-?[\\p{Lu}\\p{Nd}]{3}\\-?[\\p{Nd}]{2}\\-?[\\p{Nd}]{5}$", wxRE_NOSUB),
     m_reTrackComment("cue[\\-_]track(\\p{Nd}{1,2})_([\\pL\\-_\\p{Xps}]+)", wxRE_ICASE),
     m_reCommentMeta("^(\"?)([\\p{Lu}\\-_\\p{Xps}]+)\\1\\p{Xps}+(\\P{Xps}.+)$"),
-    m_bErrorsAsWarnings(true),
-    m_nReadFlags(EC_PARSE_COMMENTS | EC_ELLIPSIZE_TAGS | EC_REMOVE_EXTRA_SPACES | EC_MEDIA_READ_TAGS | EC_FIND_COVER | EC_FIND_LOG | EC_FIND_ACCURIP_LOG | EC_CONVERT_UPPER_ROMAN_NUMERALS),
-    m_sOneTrackCue(GetOneTrackCue())
+    m_errorsAsWarnings(true),
+    m_readFlags(EC_PARSE_COMMENTS | EC_ELLIPSIZE_TAGS | EC_REMOVE_EXTRA_SPACES | EC_MEDIA_READ_TAGS | EC_FIND_COVER | EC_FIND_LOG | EC_FIND_ACCURIP_LOG | EC_CONVERT_UPPER_ROMAN_NUMERALS),
+    m_oneTrackCue(GetOneTrackCue())
 {
     wxASSERT(m_reKeywords.IsValid());
     wxASSERT(m_reCdTextInfo.IsValid());
@@ -195,7 +195,7 @@ wxCueSheetReader::wxCueSheetReader(void):
     wxASSERT(m_reTrackComment.IsValid());
     wxASSERT(m_reCommentMeta.IsValid());
 
-    m_pStringProcessor.reset(CreateStringProcessor(m_nReadFlags));
+    m_stringProcessor.reset(CreateStringProcessor(m_readFlags));
 
 #ifndef NDEBUG
     TagLib::setDebugListener(&m_debugListener);
@@ -217,41 +217,41 @@ const wxCueSheet& wxCueSheetReader::GetCueSheet() const
 
 bool wxCueSheetReader::ErrorsAsWarnings() const
 {
-    return m_bErrorsAsWarnings;
+    return m_errorsAsWarnings;
 }
 
-wxCueSheetReader& wxCueSheetReader::SetErrorsAsWarnings(bool bErrorsAsWarnings)
+wxCueSheetReader& wxCueSheetReader::SetErrorsAsWarnings(bool errorsAsWarnings)
 {
-    m_bErrorsAsWarnings = bErrorsAsWarnings;
+    m_errorsAsWarnings = errorsAsWarnings;
     return *this;
 }
 
-wxCueSheetReader& wxCueSheetReader::CorrectQuotationMarks(bool bCorrectQuotationMarks, const wxString& sLang)
+wxCueSheetReader& wxCueSheetReader::CorrectQuotationMarks(bool correctQuotationMarks, const wxString& lang)
 {
-    m_quoteCorrector.SetLang(bCorrectQuotationMarks ? sLang : wxEmptyString);
+    m_quoteCorrector.SetLang(correctQuotationMarks ? lang : wxEmptyString);
     return *this;
 }
 
 const wxString& wxCueSheetReader::GetAlternateExt() const
 {
-    return m_sAlternateExt;
+    return m_alternateExt;
 }
 
-wxCueSheetReader& wxCueSheetReader::SetAlternateExt(const wxString& sAlternateExt)
+wxCueSheetReader& wxCueSheetReader::SetAlternateExt(const wxString& alternateExt)
 {
-    m_sAlternateExt = sAlternateExt;
+    m_alternateExt = alternateExt;
     return *this;
 }
 
 wxCueSheetReader::ReadFlags wxCueSheetReader::GetReadFlags() const
 {
-    return m_nReadFlags;
+    return m_readFlags;
 }
 
-wxCueSheetReader& wxCueSheetReader::SetReadFlags(wxCueSheetReader::ReadFlags nReadFlags)
+wxCueSheetReader& wxCueSheetReader::SetReadFlags(wxCueSheetReader::ReadFlags readFlags)
 {
-    m_nReadFlags = nReadFlags;
-    m_pStringProcessor.reset(CreateStringProcessor(nReadFlags));
+    m_readFlags = readFlags;
+    m_stringProcessor.reset(CreateStringProcessor(readFlags));
     return *this;
 }
 
@@ -318,16 +318,16 @@ bool wxCueSheetReader::FindCover(const wxCueSheetContent& content)
     }
 }
 
-bool wxCueSheetReader::ReadCueSheet(const wxString& sCueFile, bool bUseMLang)
+bool wxCueSheetReader::ReadCueSheet(const wxString& cueFile, bool useMLang)
 {
-    wxString sCPDescription;
+    wxString cpDescription;
 
-    wxEncodingDetection::wxMBConvSharedPtr pConv(wxEncodingDetection::GetFileEncoding(sCueFile, bUseMLang, sCPDescription));
+    wxEncodingDetection::wxMBConvSharedPtr pConv(wxEncodingDetection::GetFileEncoding(cueFile, useMLang, cpDescription));
 
     if (pConv)
     {
-        wxLogInfo(_wxS("Detected encoding of file \u201C%s\u201D file is \u201C%s\u201D"), sCueFile, sCPDescription);
-        return ReadCueSheet(sCueFile, *pConv);
+        wxLogInfo(_wxS("Detected encoding of file \u201C%s\u201D file is \u201C%s\u201D"), cueFile, cpDescription);
+        return ReadCueSheet(cueFile, *pConv);
     }
     else
     {
@@ -335,15 +335,15 @@ bool wxCueSheetReader::ReadCueSheet(const wxString& sCueFile, bool bUseMLang)
     }
 }
 
-bool wxCueSheetReader::ReadCueSheet(const wxString& sCueFile, wxMBConv& conv)
+bool wxCueSheetReader::ReadCueSheet(const wxString& cueFile, wxMBConv& conv)
 {
-    wxFileName cueFileName(sCueFile);
+    wxFileName cueFileName(cueFile);
 
     cueFileName.MakeAbsolute();
 
     if (!cueFileName.IsFileReadable() || cueFileName.IsDir())
     {
-        wxLogError(_wxS("Invalid path to CUE file \u201C%s\u201D"), sCueFile);
+        wxLogError(_wxS("Invalid path to CUE file \u201C%s\u201D"), cueFile);
         return false;
     }
 
@@ -372,7 +372,7 @@ bool wxCueSheetReader::ReadCueSheet(wxInputStream& stream, wxMBConv& conv)
     return ParseCue(wxCueSheetContent(internalReadCueSheet(stream, conv)));
 }
 
-void wxCueSheetReader::AppendTags(const wxArrayCueTag& comments, bool bSingleMediaFile)
+void wxCueSheetReader::AppendTags(const wxArrayCueTag& comments, bool singleMediaFile)
 {
     for (size_t i = 0, nComments = comments.GetCount(); i < nComments; ++i)
     {
@@ -381,7 +381,7 @@ void wxCueSheetReader::AppendTags(const wxArrayCueTag& comments, bool bSingleMed
         tag.Correct(m_unquoter);
         CorrectTag(tag);
 
-        if (bSingleMediaFile)	// just add to first track
+        if (singleMediaFile)	// just add to first track
         {
             if (tag == wxCueTag::Name::TRACKNUMBER) continue;
 
@@ -425,9 +425,9 @@ void wxCueSheetReader::AppendTags(const wxArrayCueTag& comments, bool bSingleMed
     }
 }
 
-void wxCueSheetReader::AppendTags(const wxArrayCueTag& tags, size_t nTrackFrom, size_t nTrackTo)
+void wxCueSheetReader::AppendTags(const wxArrayCueTag& tags, size_t trackFrom, size_t trackTo)
 {
-    for (size_t i = 0, nTags = tags.GetCount(); i < nTags; ++i)
+    for (size_t i = 0, cnt = tags.GetCount(); i < cnt; ++i)
     {
         wxCueTag tag(tags[i]);
 
@@ -439,8 +439,8 @@ void wxCueSheetReader::AppendTags(const wxArrayCueTag& tags, size_t nTrackFrom, 
 
         if (m_reTrackComment.Matches(tag.GetName()))
         {
-            const wxString      tagNumber(m_reTrackComment.GetMatch(tag.GetName(), 1));
-            const wxString      tagName(m_reTrackComment.GetMatch(tag.GetName(), 2));
+            const wxString tagNumber(m_reTrackComment.GetMatch(tag.GetName(), 1));
+            const wxString tagName(m_reTrackComment.GetMatch(tag.GetName(), 2));
             unsigned long trackNumber;
 
             if (tagNumber.ToULong(&trackNumber))
@@ -463,7 +463,7 @@ void wxCueSheetReader::AppendTags(const wxArrayCueTag& tags, size_t nTrackFrom, 
         }
         else
         {
-            for (size_t j = nTrackFrom; j <= nTrackTo; ++j)
+            for (size_t j = trackFrom; j <= trackTo; ++j)
             {
                 m_cueSheet.GetTrack(j).AddTag(tag);
             }
@@ -471,22 +471,22 @@ void wxCueSheetReader::AppendTags(const wxArrayCueTag& tags, size_t nTrackFrom, 
     }
 }
 
-bool wxCueSheetReader::ReadCueSheetEx(const wxString& sFile, bool bUseMLang)
+bool wxCueSheetReader::ReadCueSheetEx(const wxString& fileName, bool useMLang)
 {
-    wxDataFile dataFile(sFile, wxDataFile::WAVE);
+    wxDataFile dataFile(fileName, wxDataFile::WAVE);
 
-    if (dataFile.GetInfo(m_sAlternateExt))
+    if (dataFile.GetInfo(m_alternateExt))
     {	// embedded or single
-        const bool bSingleMediaFile = TestReadFlags(EC_SINGLE_MEDIA_FILE);
-        const bool bCueSheet = dataFile.HasCueSheet();
+        const bool singleMediaFile = TestReadFlags(EC_SINGLE_MEDIA_FILE);
+        const bool cueSheetPresent = dataFile.HasCueSheet();
 
-        if (bSingleMediaFile)
+        if (singleMediaFile)
         {
             return BuildFromSingleMediaFile(dataFile);
         }
         else
         {
-            if (bCueSheet)
+            if (cueSheetPresent)
             {
                 return ParseCue(wxCueSheetContent(dataFile));
             }
@@ -499,7 +499,7 @@ bool wxCueSheetReader::ReadCueSheetEx(const wxString& sFile, bool bUseMLang)
     }
     else
     {	// assuming normal text file
-        return ReadCueSheet(sFile, bUseMLang);
+        return ReadCueSheet(fileName, useMLang);
     }
 }
 
@@ -507,7 +507,7 @@ bool wxCueSheetReader::ReadCueSheetEx(const wxString& sFile, bool bUseMLang)
 bool wxCueSheetReader::BuildFromSingleMediaFile(const wxDataFile& mediaFile)
 {
     m_cueSheet.Clear();
-    wxString     sOneTrackCue(m_sOneTrackCue);
+    wxString     sOneTrackCue(m_oneTrackCue);
     const size_t nRepl = sOneTrackCue.Replace("%source%", mediaFile.GetRealFileName().GetFullPath());
 
     wxASSERT(nRepl > 0);
@@ -531,51 +531,50 @@ wxString wxCueSheetReader::internalReadCueSheet(wxInputStream& stream, wxMBConv&
 
     m_cueSheet.Clear();
 
-    wxString sLine;
+    wxString line;
 
     while (!stream.Eof())
     {
-        sLine = tis.ReadLine();
+        line = tis.ReadLine();
 
-        if (sLine.IsEmpty()) *tos << endl;
-        else *tos << sLine << endl;
+        if (line.IsEmpty()) *tos << endl;
+        else *tos << line << endl;
     }
 
     tos->Flush();
     return tos.GetString();
 }
 
-void wxCueSheetReader::AddError0(const wxString& sMsg)
+void wxCueSheetReader::AddError0(const wxString& msg)
 {
-    m_errors.Add(sMsg);
+    m_errors.Add(msg);
 }
 
-void wxCueSheetReader::AddError(wxString sFormat, ...)
+void wxCueSheetReader::AddError(const wxString format, ...)
 {
     va_list  argptr;
     wxString s;
-    int      nRes;
 
-    va_start(argptr, sFormat);
-    nRes = s.PrintfV(sFormat, argptr);
+    va_start(argptr, format);
+    const int res = s.PrintfV(format, argptr);
     va_end(argptr);
 
-    if (nRes > 0) AddError0(s);
+    if (res > 0) AddError0(s);
 }
 
-void wxCueSheetReader::DumpErrors(size_t nLine) const
+void wxCueSheetReader::DumpErrors(size_t lineNo) const
 {
     if (!m_errors.IsEmpty())
     {
         for (wxArrayString::const_iterator i = m_errors.begin(), end = m_errors.end(); i != end; ++i)
         {
-            if (m_bErrorsAsWarnings)
+            if (m_errorsAsWarnings)
             {
-                wxLogWarning(_("Line %" wxSizeTFmtSpec "d: %s"), nLine, i->GetData());
+                wxLogWarning(_("Line %" wxSizeTFmtSpec "d: %s"), lineNo, i->GetData());
             }
             else
             {
-                wxLogError(_("Line %" wxSizeTFmtSpec "d: %s"), nLine, i->GetData());
+                wxLogError(_("Line %" wxSizeTFmtSpec "d: %s"), lineNo, i->GetData());
             }
         }
     }
@@ -604,11 +603,11 @@ wxString wxCueSheetReader::UnquoteFs(const wxString& qs) const
 }
 
 template< size_t SIZE >
-bool wxCueSheetReader::ParseLine(const wxString& sToken, const wxString& sRest, const PARSE_STRUCT(&pa)[SIZE])
+bool wxCueSheetReader::ParseLine(const wxString& token, const wxString& rest, const PARSE_STRUCT(&pa)[SIZE])
 {
     for (size_t i = 0; i < SIZE; ++i)
     {
-        if (sToken.CmpNoCase(pa[i].token) == 0)
+        if (token.CmpNoCase(pa[i].token) == 0)
         {
             wxCueComponent::ENTRY_TYPE et;
             wxCueComponent::GetEntryType(pa[i].token, et);
@@ -617,11 +616,11 @@ bool wxCueSheetReader::ParseLine(const wxString& sToken, const wxString& sRest, 
             if (CheckEntryType(et))
             {
                 PARSE_METHOD method = pa[i].method;
-                (this->*method)(sToken, sRest);
+                (this->*method)(token, rest);
             }
             else
             {
-                AddError(_("Keyword %s is not allowed here"), sToken);
+                AddError(_("Keyword %s is not allowed here"), token);
             }
 
             return true;
@@ -631,30 +630,30 @@ bool wxCueSheetReader::ParseLine(const wxString& sToken, const wxString& sRest, 
     return false;
 }
 
-void wxCueSheetReader::ParseLine(size_t WXUNUSED(nLine), const wxString& sToken, const wxString& sRest)
+void wxCueSheetReader::ParseLine(size_t WXUNUSED(lineNo), const wxString& token, const wxString& rest)
 {
-    if (!ParseLine(sToken, sRest, parseArray))
+    if (!ParseLine(token, rest, parseArray))
     {
         m_errors.Clear();
-        AddError(_("Unknown token %s"), sToken);
+        AddError(_("Unknown token %s"), token);
     }
 }
 
-void wxCueSheetReader::ParseCdTextInfo(size_t WXUNUSED(nLine), const wxString& sToken, const wxString& sBody)
+void wxCueSheetReader::ParseCdTextInfo(size_t WXUNUSED(lineNo), const wxString& token, const wxString& body)
 {
     wxCueComponent::ENTRY_FORMAT fmt;
 
-    wxCueComponent::GetCdTextInfoFormat(sToken, fmt);
+    wxCueComponent::GetCdTextInfoFormat(token, fmt);
     wxString s;
 
-    if (fmt == wxCueComponent::CHARACTER) s = Unquote(sBody);
-    else s = sBody;
+    if (fmt == wxCueComponent::CHARACTER) s = Unquote(body);
+    else s = body;
 
     bool add = true;
 
-    if (sToken.CmpNoCase(wxCueTag::Name::ISRC) == 0)
+    if (token.CmpNoCase(wxCueTag::Name::ISRC) == 0)
     {
-        if (!m_reIsrc.Matches(sBody))
+        if (!m_reIsrc.Matches(body))
         {
             AddError0(_("Invalid ISRC code"));
             add = false;
@@ -662,43 +661,43 @@ void wxCueSheetReader::ParseCdTextInfo(size_t WXUNUSED(nLine), const wxString& s
     }
 
     if (add)
-        if (!AddCdTextInfo(sToken, s)) AddError(_("Keyword %s is not allowed here"), sToken);
+        if (!AddCdTextInfo(token, s)) AddError(_("Keyword %s is not allowed here"), token);
 }
 
-void wxCueSheetReader::ParseGarbage(const wxString& sLine)
+void wxCueSheetReader::ParseGarbage(const wxString& line)
 {
     if (m_cueSheet.HasTracks())
     {
-        m_cueSheet.GetLastTrack().AddGarbage(sLine);
+        m_cueSheet.GetLastTrack().AddGarbage(line);
     }
     else
     {
-        m_cueSheet.AddGarbage(sLine);
+        m_cueSheet.AddGarbage(line);
     }
 }
 
 void wxCueSheetReader::CorrectTag(wxCueTag& tag) const
 {
-    tag.Correct(*m_pStringProcessor);
+    tag.Correct(*m_stringProcessor);
 }
 
 void wxCueSheetReader::CorrectString(wxString& str) const
 {
-    (*m_pStringProcessor)(str);
+    (*m_stringProcessor)(str);
 }
 
-void wxCueSheetReader::ParseComment(wxCueComponent& component, const wxString& sComment)
+void wxCueSheetReader::ParseComment(wxCueComponent& component, const wxString& comment)
 {
     if (!TestReadFlags(EC_PARSE_COMMENTS))
     {
-        component.AddComment(sComment);
+        component.AddComment(comment);
         return;
     }
 
-    if (m_reCommentMeta.Matches(sComment))
+    if (m_reCommentMeta.Matches(comment))
     {
-        const wxString tagName(m_reCommentMeta.GetMatch(sComment, 2));
-        const wxString rawTagValue(m_reCommentMeta.GetMatch(sComment, 3));
+        const wxString tagName(m_reCommentMeta.GetMatch(comment, 2));
+        const wxString rawTagValue(m_reCommentMeta.GetMatch(comment, 3));
         const wxString tagValue(m_genericQuoteCorrector(m_unquoter(rawTagValue)));
 
         wxCueTag tag(wxCueTag::TAG_CUE_COMMENT, tagName, tagValue);
@@ -713,36 +712,36 @@ void wxCueSheetReader::ParseComment(wxCueComponent& component, const wxString& s
     }
     else
     {
-        component.AddComment(sComment);
+        component.AddComment(comment);
     }
 }
 
-void wxCueSheetReader::ParseComment(const wxString& WXUNUSED(sToken), const wxString& sComment)
+void wxCueSheetReader::ParseComment(const wxString& WXUNUSED(token), const wxString& comment)
 {
-    if (m_cueSheet.HasTracks()) ParseComment(m_cueSheet.GetLastTrack(), sComment);
-    else ParseComment(m_cueSheet, sComment);
+    if (m_cueSheet.HasTracks()) ParseComment(m_cueSheet.GetLastTrack(), comment);
+    else ParseComment(m_cueSheet, comment);
 }
 
 bool wxCueSheetReader::ParseCue(const wxCueSheetContent& content)
 {
     m_cueSheetContent = content;
-    size_t   nLine = 1;
-    wxString sLine;
+    size_t   lineNo = 1;
+    wxString line;
 
     wxTextInputStreamOnString tis(content.GetValue());
 
     while (!tis.Eof())
     {
-        sLine = (*tis).ReadLine();
+        line = (*tis).ReadLine();
 
-        if (m_reEmpty.Matches(sLine))
+        if (m_reEmpty.Matches(line))
         {
-            wxLogDebug("Skipping empty line %" wxSizeTFmtSpec "u", nLine);
+            wxLogDebug("Skipping empty line %" wxSizeTFmtSpec "u", lineNo);
             continue;
         }
 
-        if (!ParseCueLine(sLine, nLine)) return false;
-        nLine += 1;
+        if (!ParseCueLine(line, lineNo)) return false;
+        lineNo += 1;
     }
 
     m_cueSheet.SortTracks();
@@ -785,86 +784,86 @@ bool wxCueSheetReader::ParseCue(const wxCueSheetContent& content)
     return true;
 }
 
-bool wxCueSheetReader::ParseCueLine(const wxString& sLine, size_t nLine)
+bool wxCueSheetReader::ParseCueLine(const wxString& line, size_t lineNo)
 {
     bool res = true;
 
-    if (m_reKeywords.Matches(sLine))
+    if (m_reKeywords.Matches(line))
     {
         wxASSERT(m_reKeywords.GetMatchCount() == 3);
-        wxString sToken = m_reKeywords.GetMatch(sLine, 1);
-        wxString sRest = m_reKeywords.GetMatch(sLine, 2);
+        wxString token = m_reKeywords.GetMatch(line, 1);
+        wxString rest = m_reKeywords.GetMatch(line, 2);
         m_errors.Clear();
-        ParseLine(nLine, sToken, sRest);
+        ParseLine(lineNo, token, rest);
 
         if (m_errors.GetCount() > 0)
         {
-            DumpErrors(nLine);
-            ParseGarbage(sLine);
+            DumpErrors(lineNo);
+            ParseGarbage(line);
             res = false;
         }
     }
-    else if (m_reCdTextInfo.Matches(sLine))
+    else if (m_reCdTextInfo.Matches(line))
     {
         wxASSERT(m_reCdTextInfo.GetMatchCount() == 3);
-        const wxString sToken = m_reCdTextInfo.GetMatch(sLine, 1);
-        const wxString sRest = m_reCdTextInfo.GetMatch(sLine, 2);
+        const wxString token = m_reCdTextInfo.GetMatch(line, 1);
+        const wxString rest = m_reCdTextInfo.GetMatch(line, 2);
         m_errors.Clear();
-        ParseCdTextInfo(nLine, sToken, sRest);
+        ParseCdTextInfo(lineNo, token, rest);
 
         if (m_errors.GetCount() > 0)
         {
-            DumpErrors(nLine);
-            ParseGarbage(sLine);
+            DumpErrors(lineNo);
+            ParseGarbage(line);
             res = false;
         }
     }
     else
     {
-        wxLogWarning(_("Incorrect line %" wxSizeTFmtSpec "d: %s"), nLine, sLine);
-        ParseGarbage(sLine);
+        wxLogWarning(_("Incorrect line %" wxSizeTFmtSpec "d: %s"), lineNo, line);
+        ParseGarbage(line);
         res = false;
     }
 
     return res;
 }
 
-bool wxCueSheetReader::AddCdTextInfo(const wxString& sToken, const wxString& sBody)
+bool wxCueSheetReader::AddCdTextInfo(const wxString& token, const wxString& body)
 {
-    wxString sModifiedBody(sBody);
+    wxString modifiedBody(body);
 
-    CorrectString(sModifiedBody);
+    CorrectString(modifiedBody);
 
-    if (m_cueSheet.HasTracks()) return m_cueSheet.GetLastTrack().AddCdTextInfoTag(sToken, sModifiedBody);
-    else return m_cueSheet.AddCdTextInfoTag(sToken, sModifiedBody);
+    if (m_cueSheet.HasTracks()) return m_cueSheet.GetLastTrack().AddCdTextInfoTag(token, modifiedBody);
+    else return m_cueSheet.AddCdTextInfoTag(token, modifiedBody);
 }
 
-bool wxCueSheetReader::ParseMsf(const wxString& sBody, wxIndex& idx, bool bPrePost)
+bool wxCueSheetReader::ParseMsf(const wxString& body, wxIndex& idx, bool preOrPost)
 {
     bool          res = true;
     unsigned long min, sec, frames;
 
-    if (m_reMsf.Matches(sBody))
+    if (m_reMsf.Matches(body))
     {
-        if (!m_reMsf.GetMatch(sBody, 1).ToULong(&min)) res = false;
-        if (!m_reMsf.GetMatch(sBody, 2).ToULong(&sec)) res = false;
-        if (!m_reMsf.GetMatch(sBody, 3).ToULong(&frames)) res = false;
+        if (!m_reMsf.GetMatch(body, 1).ToULong(&min)) res = false;
+        if (!m_reMsf.GetMatch(body, 2).ToULong(&sec)) res = false;
+        if (!m_reMsf.GetMatch(body, 3).ToULong(&frames)) res = false;
     }
     else
     {
         res = false;
     }
 
-    if (res) res = idx.Assign(0, min, sec, frames).IsValid(bPrePost);
+    if (res) res = idx.Assign(0, min, sec, frames).IsValid(preOrPost);
 
     return res;
 }
 
-void wxCueSheetReader::ParsePreGap(const wxString& WXUNUSED(sToken), const wxString& sBody)
+void wxCueSheetReader::ParsePreGap(const wxString& WXUNUSED(token), const wxString& body)
 {
     wxIndex idx;
 
-    if (ParseMsf(sBody, idx, true))
+    if (ParseMsf(body, idx, true))
     {
         if (m_cueSheet.GetTracksCount() > 1u)
         {
@@ -882,11 +881,11 @@ void wxCueSheetReader::ParsePreGap(const wxString& WXUNUSED(sToken), const wxStr
     }
 }
 
-void wxCueSheetReader::ParsePostGap(const wxString& WXUNUSED(sToken), const wxString& sBody)
+void wxCueSheetReader::ParsePostGap(const wxString& WXUNUSED(token), const wxString& body)
 {
     wxIndex idx;
 
-    if (ParseMsf(sBody, idx, true))
+    if (ParseMsf(body, idx, true))
     {
         if (m_cueSheet.HasDataFiles())
         {
@@ -904,22 +903,22 @@ void wxCueSheetReader::ParsePostGap(const wxString& WXUNUSED(sToken), const wxSt
     }
 }
 
-void wxCueSheetReader::ParseIndex(const wxString& WXUNUSED(sToken), const wxString& sBody)
+void wxCueSheetReader::ParseIndex(const wxString& WXUNUSED(token), const wxString& body)
 {
-    if (m_reIndex.Matches(sBody))
+    if (m_reIndex.Matches(body))
     {
         unsigned long number;
 
-        if (!m_reIndex.GetMatch(sBody, 1).ToULong(&number))
+        if (!m_reIndex.GetMatch(body, 1).ToULong(&number))
         {
             AddError0(_("Invalid index specification"));
         }
         else
         {
-            const wxString sMsf = m_reIndex.GetMatch(sBody, 2);
+            const wxString msf = m_reIndex.GetMatch(body, 2);
             wxIndex        idx;
 
-            if (ParseMsf(sMsf, idx))
+            if (ParseMsf(msf, idx))
             {
                 idx.SetNumber(number);
 
@@ -952,17 +951,17 @@ void wxCueSheetReader::ParseIndex(const wxString& WXUNUSED(sToken), const wxStri
     }
 }
 
-void wxCueSheetReader::ParseFile(const wxString& WXUNUSED(sToken), const wxString& sBody)
+void wxCueSheetReader::ParseFile(const wxString& WXUNUSED(token), const wxString& body)
 {
-    if (m_reDataFile.Matches(sBody))
+    if (m_reDataFile.Matches(body))
     {
-        const wxString sFile(m_reDataFile.GetMatch(sBody, 1));
-        const wxString sType(m_reDataFile.GetMatch(sBody, 2));
+        const wxString file(m_reDataFile.GetMatch(body, 1));
+        const wxString strType(m_reDataFile.GetMatch(body, 2));
         wxDataFile::FileType ftype = wxDataFile::BINARY;
 
-        if (!sType.IsEmpty()) wxDataFile::FromString(sType, ftype);
+        if (!strType.IsEmpty()) wxDataFile::FromString(strType, ftype);
 
-        wxFileName fn(UnquoteFs(sFile));
+        wxFileName fn(UnquoteFs(file));
 
         if (m_cueSheetContent.HasSource())
         {
@@ -983,35 +982,34 @@ void wxCueSheetReader::ParseFile(const wxString& WXUNUSED(sToken), const wxStrin
     }
 }
 
-void wxCueSheetReader::ParseFlags(const wxString& WXUNUSED(sToken), const wxString& sBody)
+void wxCueSheetReader::ParseFlags(const wxString& WXUNUSED(token), const wxString& body)
 {
-    wxString sFlags(sBody);
+    wxString strFlags(body);
 
-    m_reFlags.ReplaceAll(&sFlags, '|');
-    wxStringTokenizer tokenizer(sFlags, '|');
+    m_reFlags.ReplaceAll(&strFlags, '|');
+    wxStringTokenizer tokenizer(strFlags, '|');
 
     while (tokenizer.HasMoreTokens())
     {
-        const wxString sFlag(tokenizer.GetNextToken());
-
-        if (!m_cueSheet.GetLastTrack().AddFlag(sFlag)) AddError(_("Invalid flag %s"), sFlag);
+        const wxString flagStr(tokenizer.GetNextToken());
+        if (!m_cueSheet.GetLastTrack().AddFlag(flagStr)) AddError(_("Invalid flag %s"), flagStr);
     }
 }
 
-void wxCueSheetReader::ParseTrack(const wxString& sToken, const wxString& sBody)
+void wxCueSheetReader::ParseTrack(const wxString& token, const wxString& body)
 {
-    if (m_reDataMode.Matches(sBody))
+    if (m_reDataMode.Matches(body))
     {
         unsigned long trackNo;
 
-        if (!m_reDataMode.GetMatch(sBody, 1).ToULong(&trackNo))
+        if (!m_reDataMode.GetMatch(body, 1).ToULong(&trackNo))
         {
             AddError(_("Invalid track number %s"),
-                    m_reDataMode.GetMatch(sBody, 1));
+                    m_reDataMode.GetMatch(body, 1));
         }
         else
         {
-            const wxString sMode(m_reDataMode.GetMatch(sBody, 2));
+            const wxString sMode(m_reDataMode.GetMatch(body, 2));
             wxTrack        newTrack(trackNo);
 
             if (newTrack.IsValid() && newTrack.SetMode(sMode)) m_cueSheet.AddTrack(newTrack);
@@ -1024,15 +1022,15 @@ void wxCueSheetReader::ParseTrack(const wxString& sToken, const wxString& sBody)
     }
 }
 
-void wxCueSheetReader::ParseCatalog(const wxString& WXUNUSED(sToken), const wxString& sBody)
+void wxCueSheetReader::ParseCatalog(const wxString& WXUNUSED(token), const wxString& body)
 {
-    if (m_reCatalog.Matches(sBody)) m_cueSheet.AddCatalog(sBody);
+    if (m_reCatalog.Matches(body)) m_cueSheet.AddCatalog(body);
     else AddError0(_("Invalid catalog number"));
 }
 
-void wxCueSheetReader::ParseCdTextFile(const wxString& WXUNUSED(sToken), const wxString& sBody)
+void wxCueSheetReader::ParseCdTextFile(const wxString& WXUNUSED(token), const wxString& body)
 {
-    wxFileName cdTextFile(UnquoteFs(sBody));
+    wxFileName cdTextFile(UnquoteFs(body));
 
     if (cdTextFile.GetPath().IsEmpty() && m_cueSheetContent.HasSource()) cdTextFile.SetPath(m_cueSheetContent.GetSource().GetFileName().GetPath());
 
@@ -1041,19 +1039,19 @@ void wxCueSheetReader::ParseCdTextFile(const wxString& WXUNUSED(sToken), const w
 
 bool wxCueSheetReader::ReadTagsFromRelatedFiles()
 {
-    if (!m_cueSheet.CalculateDuration(m_sAlternateExt)) return false;
+    if (!m_cueSheet.CalculateDuration(m_alternateExt)) return false;
 
     const wxArrayDataFile& dataFiles = m_cueSheet.GetDataFiles();
-    size_t                 nTrackFrom, nTrackTo;
-    bool                   bRes = true;
+    size_t                 trackFrom, trackTo;
+    bool                   res = true;
 
-    for (size_t i = 0, nCount = dataFiles.GetCount(); i < nCount; ++i)
+    for (size_t i = 0, cnt = dataFiles.GetCount(); i < cnt; ++i)
     {
         wxASSERT(dataFiles[i].HasRealFileName());
 
-        if (m_cueSheet.GetRelatedTracks(i, nTrackFrom, nTrackTo))
+        if (m_cueSheet.GetRelatedTracks(i, trackFrom, trackTo))
         {
-            if (!ReadTagsFromMediaFile(dataFiles[i], nTrackFrom, nTrackTo)) bRes = false;
+            if (!ReadTagsFromMediaFile(dataFiles[i], trackFrom, trackTo)) res = false;
         }
         else
         {
@@ -1061,12 +1059,12 @@ bool wxCueSheetReader::ReadTagsFromRelatedFiles()
         }
     }
 
-    return bRes;
+    return res;
 }
 
 bool wxCueSheetReader::FindCoversInRelatedFiles()
 {
-    if (!m_cueSheet.CalculateDuration(m_sAlternateExt)) return false;
+    if (!m_cueSheet.CalculateDuration(m_alternateExt)) return false;
 
     const wxArrayDataFile& dataFiles = m_cueSheet.GetDataFiles();
     wxArrayCoverFile covers;
@@ -1085,11 +1083,11 @@ bool wxCueSheetReader::FindCoversInRelatedFiles()
     return true;
 }
 
-bool wxCueSheetReader::ReadTagsFromMediaFile(const wxDataFile& _dataFile, size_t nTrackFrom, size_t nTrackTo)
+bool wxCueSheetReader::ReadTagsFromMediaFile(const wxDataFile& _dataFile, size_t trackFrom, size_t trackTo)
 {
     if (_dataFile.HasRealFileName())
     {
-        AppendTags(_dataFile.GetTags(), nTrackFrom, nTrackTo);
+        AppendTags(_dataFile.GetTags(), trackFrom, trackTo);
         return true;
     }
     else
@@ -1098,7 +1096,7 @@ bool wxCueSheetReader::ReadTagsFromMediaFile(const wxDataFile& _dataFile, size_t
 
         if (dataFile.GetInfo())
         {
-            AppendTags(dataFile.GetTags(), nTrackFrom, nTrackTo);
+            AppendTags(dataFile.GetTags(), trackFrom, trackTo);
             return true;
         }
         else

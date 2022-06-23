@@ -5,18 +5,16 @@
 #ifndef _WX_INDEX_H_
 #define _WX_INDEX_H_
 
-class wxIndex:
-    public wxObject
+class wxIndex
 {
-    wxDECLARE_DYNAMIC_CLASS(wxIndex);
     friend class wxSamplingInfo;
 
     protected:
 
     size_t m_number;
     wxULongLong m_offset;
-    bool m_bCdFrames;
-    size_t m_nDataFileIdx;
+    bool m_cdFrames;
+    size_t m_dataFileIdx;
 
     protected:
 

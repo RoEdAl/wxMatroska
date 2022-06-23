@@ -13,17 +13,16 @@
 #include "wxSamplingInfo.h"
 #endif
 
-class wxTextCueSheetRenderer:
-    public wxCueSheetRenderer
+class wxTextCueSheetRenderer: public wxCueSheetRenderer
 {
     protected:
 
-    wxTextOutputStream* m_pTextOutputStream;
-    int m_nDumpFlags;
+    wxTextOutputStream* m_textOutputStream;
+    int m_dumpFlags;
     wxSamplingInfo m_si;
     wxRegEx m_reSpace;
 
-    size_t m_nDataFileIdx;
+    size_t m_dataFileIdx;
 
     protected:
 

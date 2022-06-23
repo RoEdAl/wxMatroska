@@ -9,16 +9,13 @@
 #include "wxDataFile.h"
 #endif
 
-class wxCueSheetContent:
-    public wxObject
+class wxCueSheetContent
 {
-    wxDECLARE_DYNAMIC_CLASS(wxCueSheetContent);
-
     protected:
 
     wxString m_sValue;
     wxDataFile m_source;
-    bool m_bEmbedded;
+    bool m_embedded;
 
     public:
 

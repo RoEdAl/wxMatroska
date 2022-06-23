@@ -8,11 +8,8 @@
 class wxStringProcessor;
 WX_DECLARE_OBJARRAY(wxStringProcessor, wxArrayStringProcessor);
 
-class wxStringProcessor:
-    public wxObject
+class wxStringProcessor
 {
-    wxDECLARE_ABSTRACT_CLASS(wxStringProcessor);
-
     public:
 
     virtual wxStringProcessor* const Clone() const = 0;

@@ -9,11 +9,8 @@
 #include "wxIndex.h"
 #endif
 
-class wxSamplingInfo:
-    public wxObject
+class wxSamplingInfo
 {
-    wxDECLARE_DYNAMIC_CLASS(wxSamplingInfo);
-
     public:
 
     static const wxTimeSpan wxInvalidDuration;
@@ -64,9 +61,9 @@ class wxSamplingInfo:
 
     protected:
 
-    unsigned long m_nSamplingRate;
-    unsigned short m_nNumChannels;
-    unsigned short m_nBitsPerSample;
+    unsigned long m_samplingRate;
+    unsigned short m_numChannels;
+    unsigned short m_bitsPerSample;
 
     protected:
 

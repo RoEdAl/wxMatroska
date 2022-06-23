@@ -4,8 +4,6 @@
 
 #include "wxReduntantSpacesRemover.h"
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxReduntantSpacesRemover, wxStringProcessor)
-
 // ===============================================================================
 
 const char wxReduntantSpacesRemover::NORMAL_REG_EX[] = "\\p{Xps}{2}"; // two spaces -> simple space
@@ -32,9 +30,9 @@ wxStringProcessor* const wxReduntantSpacesRemover::Clone() const
     return new wxReduntantSpacesRemover();
 }
 
-bool wxReduntantSpacesRemover::Process(const wxString& sIn, wxString& sOut) const
+bool wxReduntantSpacesRemover::Process(const wxString& in, wxString& out) const
 {
-    wxString w(sIn);
+    wxString w(in);
     int      res = 0;
 
     res += m_re.ReplaceAll(&w, m_replacementNormal);
@@ -43,7 +41,7 @@ bool wxReduntantSpacesRemover::Process(const wxString& sIn, wxString& sOut) cons
 
     if (res > 0)
     {
-        sOut = w;
+        out = w;
         return true;
     }
     else

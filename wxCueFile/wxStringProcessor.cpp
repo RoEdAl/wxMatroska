@@ -4,8 +4,6 @@
 
 #include <wxCueFile/wxStringProcessor.h>
 
-wxIMPLEMENT_ABSTRACT_CLASS(wxStringProcessor, wxObject)
-
 wxStringProcessor::wxStringProcessor()
 {
 }

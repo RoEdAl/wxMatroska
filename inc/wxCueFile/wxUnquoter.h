@@ -9,11 +9,8 @@
 #include <wxCueFile/wxStringProcessor.h>
 #endif
 
-class wxUnquoter:
-    public wxStringProcessor
+class wxUnquoter: public wxStringProcessor
 {
-    wxDECLARE_DYNAMIC_CLASS(wxUnquoter);
-
     protected:
 
     wxRegEx m_reSingleQuotes;
@@ -36,18 +33,15 @@ class wxUnquoter:
     const wxRegEx& GetReDoubleQuotes() const;
 };
 
-class wxQuoteCorrector:
-    public wxStringProcessor
+class wxQuoteCorrector: public wxStringProcessor
 {
-    wxDECLARE_DYNAMIC_CLASS(wxQuoteCorrector);
-
     protected:
 
     wxRegEx m_reSingleQuotes;
     wxRegEx m_reDoubleQuotes;
     wxRegEx m_rePseudoDoubleQuotes;
 
-    wxString m_sGenericReplacement;
+    wxString m_genericReplacement;
 
     public:
 

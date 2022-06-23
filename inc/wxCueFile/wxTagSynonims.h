@@ -13,8 +13,8 @@ class wxTagSynonims
 {
     protected:
 
-    wxString m_sName;
-    wxArrayString m_asSynonims;
+    wxString m_name;
+    wxArrayString m_synonims;
 
     protected:
 

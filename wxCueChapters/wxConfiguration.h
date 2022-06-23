@@ -183,7 +183,8 @@ class wxConfiguration:
     bool UseDataFiles() const;
     const wxString& GetAlternateExtensions() const;
     bool HasAlternateExtensions() const;
-    bool IsUnkLang() const;
+    bool IsLangUndefined() const;
+    bool IsLangDefined() const;
     wxString GetLang() const;
     const wxString& GetTrackNameFormat() const;
     const wxString& GetMatroskaNameFormat() const;

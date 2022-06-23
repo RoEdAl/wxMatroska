@@ -9,11 +9,8 @@
 #include <wxCueFile/wxStringProcessor.h>
 #endif
 
-class wxEllipsizer:
-    public wxStringProcessor
+class wxEllipsizer: public wxStringProcessor
 {
-    wxDECLARE_DYNAMIC_CLASS(wxEllipsizer);
-
     public:
 
     wxEllipsizer(void);

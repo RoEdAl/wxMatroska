@@ -9,11 +9,8 @@
 #include <wxCueFile/wxStringProcessor.h>
 #endif
 
-class wxNumberFullStopCorrector:
-    public wxStringProcessor
+class wxNumberFullStopCorrector: public wxStringProcessor
 {
-    wxDECLARE_DYNAMIC_CLASS(wxNumberFullStopCorrector);
-
     public:
 
     static const char REG_EX[];

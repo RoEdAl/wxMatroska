@@ -937,9 +937,14 @@ const wxString& wxConfiguration::GetMatroskaNameFormat() const
     return m_sMatroskaNameFormat;
 }
 
-bool wxConfiguration::IsUnkLang() const
+bool wxConfiguration::IsLangUndefined() const
 {
     return !m_lang.has_value();
+}
+
+bool wxConfiguration::IsLangDefined() const
+{
+    return m_lang.has_value();
 }
 
 wxString wxConfiguration::GetLang() const

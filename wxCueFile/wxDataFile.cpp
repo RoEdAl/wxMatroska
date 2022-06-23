@@ -10,10 +10,6 @@
 
  // ===============================================================================
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxDataFile, wxObject);
-
-// ===============================================================================
-
 const wxDataFile::FILE_TYPE_STR wxDataFile::FileTypeString[] =
 {
     { BINARY, "BINARY" },
@@ -60,7 +56,7 @@ void wxDataFile::copy(const wxDataFile& df)
     m_ftype = df.m_ftype;
     m_mediaType = df.m_mediaType;
     m_tags = df.m_tags;
-    m_sCueSheet = df.m_sCueSheet;
+    m_cueSheet = df.m_cueSheet;
     wxDurationHolder::Copy(df);
 }
 
@@ -116,12 +112,12 @@ const wxArrayCueTag& wxDataFile::GetTags() const
 
 bool wxDataFile::HasCueSheet() const
 {
-    return !m_sCueSheet.IsEmpty();
+    return !m_cueSheet.IsEmpty();
 }
 
 const wxString& wxDataFile::GetCueSheet() const
 {
-    return m_sCueSheet;
+    return m_cueSheet;
 }
 
 wxString wxDataFile::GetFileTypeAsString() const
@@ -146,7 +142,7 @@ void wxDataFile::Clear()
     m_ftype = BINARY;
     m_mediaType = MEDIA_TYPE_UNKNOWN;
     m_tags.Clear();
-    m_sCueSheet.Empty();
+    m_cueSheet.Empty();
     ClearDuration();
 }
 
@@ -157,7 +153,7 @@ wxDataFile& wxDataFile::Assign(const wxString& sFilePath, wxDataFile::FileType f
     m_ftype = ftype;
     m_mediaType = MEDIA_TYPE_UNKNOWN;
     m_tags.Clear();
-    m_sCueSheet.Empty();
+    m_cueSheet.Empty();
     ClearDuration();
 
     return *this;
@@ -170,7 +166,7 @@ wxDataFile& wxDataFile::Assign(const wxFileName& fileName, wxDataFile::FileType 
     m_ftype = ftype;
     m_mediaType = MEDIA_TYPE_UNKNOWN;
     m_tags.Clear();
-    m_sCueSheet.Empty();
+    m_cueSheet.Empty();
     ClearDuration();
 
     return *this;
@@ -228,9 +224,9 @@ bool wxDataFile::GetMediaInfo(
         const wxFileName& fileName,
         wxULongLong& frames,
         wxSamplingInfo& si,
-        wxDataFile::MediaType& eMediaType,
+        wxDataFile::MediaType& mediaType,
         wxArrayCueTag& tags,
-        wxString& sCueSheet)
+        wxString& cueSheet)
 {
     TagLib::FileRef fileRef(fileName.GetFullPath().t_str(), true, TagLib::AudioProperties::Accurate);
 
@@ -246,40 +242,40 @@ bool wxDataFile::GetMediaInfo(
     si.SetSamplingRate(pAprops->sampleRate());
     si.SetNumberOfChannels(pAprops->channels());
 
-    eMediaType = MEDIA_TYPE_UNKNOWN;
+    mediaType = MEDIA_TYPE_UNKNOWN;
 
     if (dynamic_cast<TagLib::RIFF::WAV::Properties const*>(pAprops))
     {
-        eMediaType = MEDIA_TYPE_WAV;
+        mediaType = MEDIA_TYPE_WAV;
         TagLib::RIFF::WAV::Properties const* pProps = dynamic_cast<TagLib::RIFF::WAV::Properties const*>(pAprops);
         frames = pProps->sampleFrames();
         si.SetBitsPerSample(pProps->sampleWidth());
     }
     else if (dynamic_cast<TagLib::RIFF::AIFF::Properties const*>(pAprops))
     {
-        eMediaType = MEDIA_TYPE_AIFF;
+        mediaType = MEDIA_TYPE_AIFF;
         TagLib::RIFF::AIFF::Properties const* pProps = dynamic_cast<TagLib::RIFF::AIFF::Properties const*>(pAprops);
         frames = pProps->sampleFrames();
         si.SetBitsPerSample(pProps->sampleWidth());
     }
     else if (dynamic_cast<TagLib::FLAC::Properties const*>(pAprops))
     {
-        eMediaType = MEDIA_TYPE_FLAC;
+        mediaType = MEDIA_TYPE_FLAC;
         TagLib::FLAC::Properties const* pProps = dynamic_cast<TagLib::FLAC::Properties const*>(pAprops);
         frames = pProps->sampleFrames();
         si.SetBitsPerSample(pProps->sampleWidth());
     }
     else if (dynamic_cast<TagLib::WavPack::Properties const*>(pAprops))
     {
-        eMediaType = MEDIA_TYPE_WAVPACK;
+        mediaType = MEDIA_TYPE_WAVPACK;
         TagLib::WavPack::Properties const* pProps = dynamic_cast<TagLib::WavPack::Properties const*>(pAprops);
         frames = pProps->sampleFrames();
         si.SetBitsPerSample(pProps->bitsPerSample());
     }
 
-    if (eMediaType == MEDIA_TYPE_UNKNOWN) return false;
+    if (mediaType == MEDIA_TYPE_UNKNOWN) return false;
 
-    sCueSheet.Empty();
+    cueSheet.Empty();
     tags.Empty();
     TagLib::PropertyMap props(pFile->properties());
 
@@ -289,7 +285,7 @@ bool wxDataFile::GetMediaInfo(
 
         if (propName.CmpNoCase(wxCueTag::Name::CUESHEET) == 0)
         {
-            sCueSheet = i->second[0].toWString();
+            cueSheet = i->second[0].toWString();
         }
         else
         {
@@ -303,10 +299,12 @@ bool wxDataFile::GetMediaInfo(
     return true;
 }
 
-bool wxDataFile::GetInfo(const wxString& sAlternateExt)
+bool wxDataFile::GetInfo(const wxString& alternateExt)
 {
     if (!HasRealFileName())
-        if (!FindFile(sAlternateExt)) return false;
+    {
+        if (!FindFile(alternateExt)) return false;
+    }
 
     wxSamplingInfo si;
     wxULongLong    frames;
@@ -317,13 +315,13 @@ bool wxDataFile::GetInfo(const wxString& sAlternateExt)
         si.SetDefault();
         m_mediaType = MEDIA_TYPE_UNKNOWN;
         m_tags.Clear();
-        m_sCueSheet.Empty();
+        m_cueSheet.Empty();
         frames = GetNumberOfFramesFromBinary(m_realFileName, si);
         res = (frames != wxSamplingInfo::wxInvalidNumberOfFrames);
     }
     else
     {
-        res = GetMediaInfo(m_realFileName, frames, si, m_mediaType, m_tags, m_sCueSheet);
+        res = GetMediaInfo(m_realFileName, frames, si, m_mediaType, m_tags, m_cueSheet);
     }
 
     if (res) SetDuration(wxDuration(si, frames));

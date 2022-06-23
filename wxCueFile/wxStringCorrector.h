@@ -9,8 +9,7 @@
 #include <wxCueFile/wxStringProcessor.h>
 #endif
 
-class wxStringCorrector:
-    public wxStringProcessor
+class wxStringCorrector: public wxStringProcessor
 {
     public:
 

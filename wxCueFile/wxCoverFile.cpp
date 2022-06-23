@@ -570,8 +570,14 @@ wxImage wxCoverFile::ToImage() const
     {
         wxImage img;
 
-        if (img.LoadFile(m_fileName.GetFullPath(), m_mimeType)) return img;
-        else wxLogWarning(_wxS("Fail to load image \u201C%s\u201D"), m_fileName.GetFullName());
+        if (img.LoadFile(m_fileName.GetFullPath(), m_mimeType))
+        {
+            return img;
+        }
+        else
+        {
+            wxLogWarning(_wxS("Fail to load image \u201C%s\u201D"), m_fileName.GetFullName());
+        }
     }
 
     return wxNullImage;
@@ -598,7 +604,7 @@ size_t wxCoverFile::Convert(const wxArrayCoverFile& covers, wxArrayCoverFile& nc
 {
     size_t nCounter = 0;
 
-    for (size_t i = 0, nSize = covers.GetCount(); i < nSize; ++i)
+    for (size_t i = 0, cnt = covers.GetCount(); i < cnt; ++i)
     {
         if (covers[i].IsTypeOf(handler))
         {	// do not convert
