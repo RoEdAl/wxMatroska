@@ -9,6 +9,7 @@
 #include <wxCueFile/wxCueSheetContent.h>
 #include <wxCueFile/wxCueSheetReader.h>
 #include <wxEncodingDetection/wxEncodingDetection.h>
+#include <wxEncodingDetection/wxTextStreamUtils.h>
 #include <wxEncodingDetection/wxTextInputStreamOnString.h>
 #include <wxCueFile/wxTextCueSheetRenderer.h>
 #include "wxStringCorrector.h"
@@ -84,11 +85,11 @@ namespace
 }
 
 template< typename T >
-bool wxCueSheetReader::GetLogFile(const wxFileName& inputFile, bool bAnyLog, wxFileName& logFile)
+bool wxCueSheetReader::GetLogFile(const wxFileName& inputFile, bool anyLog, wxFileName& logFile)
 {
     wxASSERT(inputFile.IsOk());
 
-    if (bAnyLog)	// any log file in the same directory
+    if (anyLog)	// any log file in the same directory
     {
         wxFileName sourceDirFn(inputFile);
 
@@ -104,14 +105,14 @@ bool wxCueSheetReader::GetLogFile(const wxFileName& inputFile, bool bAnyLog, wxF
             return false;
         }
 
-        wxString sFileName;
+        wxString fileName;
 
-        if (sourceDir.GetFirst(&sFileName, T::MASK, wxDIR_FILES))
+        if (sourceDir.GetFirst(&fileName, T::MASK, wxDIR_FILES))
         {
             while (true)
             {
-                const wxFileName fileName(sourceDir.GetName(), sFileName);
-                logFile = fileName;
+                const wxFileName fn(sourceDir.GetName(), fileName);
+                logFile = fn;
                 return true;
             }
         }
@@ -507,12 +508,12 @@ bool wxCueSheetReader::ReadCueSheetEx(const wxString& fileName, bool useMLang)
 bool wxCueSheetReader::BuildFromSingleMediaFile(const wxDataFile& mediaFile)
 {
     m_cueSheet.Clear();
-    wxString     sOneTrackCue(m_oneTrackCue);
-    const size_t nRepl = sOneTrackCue.Replace("%source%", mediaFile.GetRealFileName().GetFullPath());
+    wxString     oneTrackCue(m_oneTrackCue);
+    const size_t nRepl = oneTrackCue.Replace("%source%", mediaFile.GetRealFileName().GetFullPath());
 
     wxASSERT(nRepl > 0);
 
-    if (ParseCue(wxCueSheetContent(sOneTrackCue, mediaFile, true)))
+    if (ParseCue(wxCueSheetContent(oneTrackCue, mediaFile, true)))
     {
         wxASSERT(m_cueSheet.GetTracksCount() == 1u);
         wxASSERT(m_cueSheet.HasSingleDataFile());
@@ -530,18 +531,7 @@ wxString wxCueSheetReader::internalReadCueSheet(wxInputStream& stream, wxMBConv&
     wxTextOutputStreamOnString tos;
 
     m_cueSheet.Clear();
-
-    wxString line;
-
-    while (!stream.Eof())
-    {
-        line = tis.ReadLine();
-
-        if (line.IsEmpty()) *tos << endl;
-        else *tos << line << endl;
-    }
-
-    tos->Flush();
+    wxTextStreamUtils::Copy(tis, tos.GetStream());
     return tos.GetString();
 }
 

@@ -139,10 +139,7 @@ class wxCoverFile
         return !m_description.IsEmpty();
     }
 
-    bool IsTypeOf(const wxImageHandler* const) const;
     bool GuessMimeTypeFromData();
-
-    wxString GetInfo() const;
 
     static bool Append(wxArrayCoverFile&, const wxCoverFile&);
     static size_t Append(wxArrayCoverFile&, const wxArrayCoverFile&);
@@ -162,10 +159,6 @@ class wxCoverFile
 
     wxCoverFile Load() const;
     bool Save(const wxFileName&);
-
-    wxImage ToImage() const;
-    wxCoverFile Convert(wxImageHandler* const, int) const;
-    static size_t Convert(const wxArrayCoverFile&, wxArrayCoverFile&, wxImageHandler* const, int);
 
     protected:
 

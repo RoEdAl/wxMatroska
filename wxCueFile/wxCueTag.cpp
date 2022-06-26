@@ -4,6 +4,7 @@
 #include <wxCueFile/wxCueTag.h>
 #include <wxCueFile/wxStringProcessor.h>
 #include <wxCueFile/wxTagSynonims.h>
+#include <wxEncodingDetection/wxTextStreamUtils.h>
 #include <wxEncodingDetection/wxTextOutputStreamOnString.h>
 #include <wxEncodingDetection/wxTextInputStreamOnString.h>
 
@@ -198,25 +199,7 @@ wxString wxCueTag::GetFlattenValue(const wxString& separator) const
     {
         wxTextInputStreamOnString  tis(m_value);
         wxTextOutputStreamOnString tos;
-
-        wxString line;
-
-        while (!tis.Eof())
-        {
-            line = (*tis).ReadLine();
-
-            if (line.IsEmpty())
-            {
-                *tos << separator;
-            }
-            else
-            {
-                *tos << line << separator;
-            }
-        }
-
-        (*tos).Flush();
-
+        wxTextStreamUtils::Copy(tis.GetStream(), tos.GetStream(), separator);
         wxString out(tos.GetString());
         return out.Truncate(out.Length() - separator.Length());
     }
@@ -238,28 +221,11 @@ wxCueTag& wxCueTag::SetName(const wxString& name)
     return *this;
 }
 
-wxCueTag& wxCueTag::SetValue(const wxString& sValue)
+wxCueTag& wxCueTag::SetValue(const wxString& value)
 {
-    size_t                     linesNo = 0;
-    wxTextInputStreamOnString  tis(sValue);
+    wxTextInputStreamOnString  tis(value);
     wxTextOutputStreamOnString tos;
-
-    wxString line;
-
-    while (!tis.Eof())
-    {
-        line = (*tis).ReadLine();
-
-        if (line.IsEmpty())
-        {
-            *tos << endl;
-        }
-        else
-        {
-            *tos << line << endl;
-        }
-        linesNo += 1;
-    }
+    const size_t linesNo = wxTextStreamUtils::Copy(tis.GetStream(), tos.GetStream());
 
     if (linesNo > 1)
     {
@@ -268,7 +234,7 @@ wxCueTag& wxCueTag::SetValue(const wxString& sValue)
     }
     else
     {
-        m_value = sValue;
+        m_value = value;
         m_multiline = false;
     }
 
@@ -439,8 +405,14 @@ bool wxCueTag::AddTag(wxArrayCueTag& tags, const wxCueTag& cueTag)
 
 bool wxCueTag::AddTagIf(wxArrayCueTag& tags, const wxCueTag& tagToAdd, const wxCueTag& tagToCheck)
 {
-    if (FindTag(tags, tagToCheck)) return AddTag(tags, tagToAdd);
-    else return false;
+    if (FindTag(tags, tagToCheck))
+    {
+        return AddTag(tags, tagToAdd);
+    }
+    else
+    {
+        return false;
+    }
 }
 
 bool wxCueTag::AddTagIfAndRemove(wxArrayCueTag& tags, const wxCueTag& tagToAdd, const wxCueTag& tagToCheck)
@@ -458,7 +430,7 @@ bool wxCueTag::AddTagIfAndRemove(wxArrayCueTag& tags, const wxCueTag& tagToAdd, 
 
 size_t wxCueTag::RemoveTag(wxArrayCueTag& tags, const wxCueTag& cueTag)
 {
-    size_t nCounter = 0;
+    size_t counter = 0;
 
     for (size_t i = 0, cnt = tags.GetCount(); i < cnt; ++i)
     {
@@ -466,18 +438,18 @@ size_t wxCueTag::RemoveTag(wxArrayCueTag& tags, const wxCueTag& cueTag)
         {
             tags.RemoveAt(i);
 
-            nCounter += 1;
+            counter += 1;
             cnt -= 1;
             i -= 1;
         }
     }
 
-    return nCounter;
+    return counter;
 }
 
 size_t wxCueTag::RemoveTag(wxArrayCueTag& tags, const wxString& tagName)
 {
-    size_t nCounter = 0;
+    size_t counter = 0;
 
     for (size_t i = 0, cnt = tags.GetCount(); i < cnt; ++i)
     {
@@ -485,13 +457,13 @@ size_t wxCueTag::RemoveTag(wxArrayCueTag& tags, const wxString& tagName)
         {
             tags.RemoveAt(i);
 
-            nCounter += 1;
+            counter += 1;
             cnt -= 1;
             i -= 1;
         }
     }
 
-    return nCounter;
+    return counter;
 }
 
 void wxCueTag::AddTags(wxArrayCueTag& tags, const wxArrayCueTag& newTags)
@@ -512,14 +484,14 @@ void wxCueTag::AddTags(wxArrayCueTag& tags, const wxHashArrayCueTag& tagsHash)
 
 size_t wxCueTag::RemoveTags(wxArrayCueTag& tags, const wxArrayCueTag& tagsToDelete)
 {
-    size_t nCounter = 0;
+    size_t counter = 0;
 
     for (size_t i = 0, cnt = tagsToDelete.GetCount(); i < cnt; ++i)
     {
-        nCounter += RemoveTag(tags, tagsToDelete[i]);
+        counter += RemoveTag(tags, tagsToDelete[i]);
     }
 
-    return nCounter;
+    return counter;
 }
 
 void wxCueTag::CommonTags(wxArrayCueTag& commonTags, const wxArrayCueTag& group1, const wxArrayCueTag& group2)
@@ -527,7 +499,10 @@ void wxCueTag::CommonTags(wxArrayCueTag& commonTags, const wxArrayCueTag& group1
     commonTags.Clear();
     for (size_t i = 0, cnt = group1.GetCount(); i < cnt; ++i)
     {
-        if (FindTag(group2, group1[i])) commonTags.Add(group1[i]);
+        if (FindTag(group2, group1[i]))
+        {
+            commonTags.Add(group1[i]);
+        }
     }
 }
 
@@ -537,15 +512,14 @@ bool wxCueTag::FindCommonPart(wxCueTag& commonTag, const wxCueTag& tag1, const w
 
     wxString value1(tag1.GetValue()), value2(tag2.GetValue());
 
-    size_t nLen = value1.Length();
+    size_t len = value1.Length();
 
-    if (value2.Length() < nLen) nLen = value2.Length();
+    if (value2.Length() < len) len = value2.Length();
+    if (len == 0u) return false;
 
-    if (nLen == 0u) return false;
-
-    value1.Truncate(nLen);
-    value2.Truncate(nLen);
-    for (size_t i = nLen; i > 0; i--, value1.RemoveLast(), value2.RemoveLast())
+    value1.Truncate(len);
+    value2.Truncate(len);
+    for (size_t i = len; i > 0; i--, value1.RemoveLast(), value2.RemoveLast())
     {
         if (value1.CmpNoCase(value2) == 0)
         {

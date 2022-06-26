@@ -37,7 +37,7 @@ const wxTrack::DATA_MODE_STR wxTrack::DataModeString[] =
 // ===============================================================================
 
 wxTrack::wxTrack(void):
-    wxCueComponent(true), m_number(0)
+    wxCueComponent(true), m_number(0), m_dataMode(AUDIO)
 {
 }
 
@@ -52,7 +52,7 @@ wxTrack::wxTrack(unsigned long number):
 {
 }
 
-wxTrack& wxTrack::operator =(const wxTrack& track)
+wxTrack& wxTrack::operator=(const wxTrack& track)
 {
     copy(track);
     return *this;
@@ -62,17 +62,12 @@ void wxTrack::copy(const wxTrack& track)
 {
     wxCueComponent::copy(track);
 
-    ClearPreGap();
-    ClearPostGap();
-
     m_number = track.m_number;
     m_dataMode = track.m_dataMode;
     m_indexes = track.m_indexes;
     m_flags = track.m_flags;
-
-    if (track.HasPreGap()) SetPreGap(track.GetPreGap());
-
-    if (track.HasPostGap()) SetPreGap(track.GetPostGap());
+    m_preGap = track.m_preGap;
+    m_postGap = track.m_postGap;
 }
 
 size_t wxTrack::GetNumber() const
@@ -139,28 +134,14 @@ bool wxTrack::HasPostGap() const
 
 const wxIndex& wxTrack::GetPreGap() const
 {
-    if (HasPreGap())
-    {
-        return *m_preGap;
-    }
-    else
-    {
-        wxFAIL_MSG("Trying to access nonexistient pre-gap");
-        return *m_preGap;	// to make compiler happy
-    }
+    wxASSERT(HasPreGap());
+    return *m_preGap;
 }
 
 const wxIndex& wxTrack::GetPostGap() const
 {
-    if (HasPostGap())
-    {
-        return *m_postGap;
-    }
-    else
-    {
-        wxFAIL_MSG("Trying to access nonexistient post-gap");
-        return *m_postGap;	// to make compiler happy
-    }
+    wxASSERT(HasPostGap());
+    return *m_postGap;
 }
 
 void wxTrack::ClearPreGap()
@@ -190,16 +171,19 @@ bool wxTrack::IsRelatedToDataFileIdx(size_t dataFileIdx, bool preOrPost) const
     if (preOrPost)
     {
         if (HasPreGap())
+        {
             if (m_preGap->HasDataFileIdx() && (m_preGap->GetDataFileIdx() == dataFileIdx)) return true;
+        }
 
         if (HasPostGap())
+        {
             if (m_postGap->HasDataFileIdx() && (m_postGap->GetDataFileIdx() == dataFileIdx)) return true;
+        }
     }
 
     for (size_t i = 0, cnt = m_indexes.GetCount(); i < cnt; ++i)
     {
         if (!preOrPost && m_indexes[i].IsZero()) continue;
-
         if (m_indexes[i].HasDataFileIdx() && (m_indexes[i].GetDataFileIdx() == dataFileIdx)) return true;
     }
 
@@ -212,8 +196,14 @@ static void MaxDataFile(size_t& dataFileIdx, const wxIndex& idx, bool preOrPost)
 
     if (idx.HasDataFileIdx())
     {
-        if (dataFileIdx == wxIndex::UnknownDataFileIdx) dataFileIdx = idx.GetDataFileIdx();
-        else if (idx.GetDataFileIdx() > dataFileIdx) dataFileIdx = idx.GetDataFileIdx();
+        if (dataFileIdx == wxIndex::UnknownDataFileIdx)
+        {
+            dataFileIdx = idx.GetDataFileIdx();
+        }
+        else if (idx.GetDataFileIdx() > dataFileIdx)
+        {
+            dataFileIdx = idx.GetDataFileIdx();
+        }
     }
 }
 
@@ -241,8 +231,14 @@ static void MinDataFile(size_t& dataFileIdx, const wxIndex& idx, bool preOrPost)
 
     if (idx.HasDataFileIdx())
     {
-        if (dataFileIdx == wxIndex::UnknownDataFileIdx) dataFileIdx = idx.GetDataFileIdx();
-        else if (idx.GetDataFileIdx() < dataFileIdx) dataFileIdx = idx.GetDataFileIdx();
+        if (dataFileIdx == wxIndex::UnknownDataFileIdx)
+        {
+            dataFileIdx = idx.GetDataFileIdx();
+        }
+        else if (idx.GetDataFileIdx() < dataFileIdx)
+        {
+            dataFileIdx = idx.GetDataFileIdx();
+        }
     }
 }
 
@@ -326,8 +322,7 @@ wxString wxTrack::GetFlagsAsString() const
         res << FlagToString(m_flags[i]) << ' ';
     }
 
-    res = res.RemoveLast();
-    return res;
+    return res.RemoveLast();
 }
 
 bool wxTrack::HasFlags() const
@@ -379,8 +374,14 @@ bool wxTrack::SetMode(const wxString& strMode)
 {
     DataMode mode;
 
-    if (strMode.IsEmpty()) mode = AUDIO;
-    else if (!StringToDataMode(strMode, mode)) return false;
+    if (strMode.IsEmpty())
+    {
+        mode = AUDIO;
+    }
+    else if (!StringToDataMode(strMode, mode))
+    {
+        return false;
+    }
 
     m_dataMode = mode;
     return true;
@@ -424,9 +425,8 @@ const wxIndex& wxTrack::GetFirstIndex() const
 void wxTrack::GetReplacements(wxCueTag::TagSources sources, wxHashString& replacements) const
 {
     wxCueComponent::GetReplacements(sources, replacements);
-    wxString value;
 
-    value.Printf("%02" wxSizeTFmtSpec "d", m_number);
+    const wxString value = wxString::Format("%02" wxSizeTFmtSpec "d", m_number);
     replacements["tn"] = value;
 }
 

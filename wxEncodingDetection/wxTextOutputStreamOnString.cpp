@@ -2,6 +2,7 @@
  * wxTextOutputStreamOnString.cpp
  */
 
+#include <wxEncodingDetection/wxTextStreamUtils.h>
 #include <wxEncodingDetection/wxTextOutputStreamOnString.h>
 #include <wxEncodingDetection/wxTextInputStreamOnString.h>
 
@@ -44,17 +45,7 @@ wxTextOutputStream* wxTextOutputStreamOnString::operator ->() const
 void wxTextOutputStreamOnString::SaveTo( wxTextOutputStream& tos , const wxString& s )
 {
     wxTextInputStreamOnString tis( s );
-    wxString                  sLine;
-
-    while ( !tis.Eof() )
-    {
-        sLine = ( *tis ).ReadLine();
-
-        if ( sLine.IsEmpty() ) tos << endl;
-        else tos << sLine << endl;
-    }
-
-    tos.Flush();
+    wxTextStreamUtils::Copy(tis.GetStream(), tos);
 }
 
 void wxTextOutputStreamOnString::SaveTo( wxTextOutputStream& tos ) const
