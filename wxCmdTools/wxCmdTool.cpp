@@ -77,9 +77,28 @@ bool wxCmdTool::FindExecutable(const wxFileName& dir, const wxString& name, cons
     }
 }
 
+bool wxCmdTool::CheckExecutable(const wxString& name, wxFileName& exe)
+{
+    wxString envVal;
+    if (!wxGetEnv(name.Upper(), &envVal))
+    {
+        return false;
+    }
+
+    const wxFileName fn = wxFileName::FileName(envVal);
+    if (fn.IsFileExecutable())
+    {
+        exe = fn;
+        return true;
+    }
+
+    return false;
+}
+
 bool wxCmdTool::FindExecutable(const wxString& name, const wxString& postFix, wxFileName& exe)
 {
     return
+        CheckExecutable(name, exe) ||
         FindExecutable(get_exe_sub_dir(), name, postFix, exe) ||
         FindExecutable(get_exe_local_sub_dir(), name, postFix, exe) ||
         FindExecutableEnv("LocalAppData", name, postFix, exe) ||
@@ -103,6 +122,12 @@ bool wxCmdTool::FindTool(wxCmdTool::TOOL tool, wxFileName& exe)
 
         case TOOL_CMAKE:
         return FindExecutable("cmake", "CMake/bin", exe);
+
+        case TOOL_IMAGE_MAGICK:
+        return FindExecutable("magick", "ImageMagick", exe);
+
+        case TOOL_MUTOOL:
+        return FindExecutable("mutool", "mupdf", exe);
 
         default:
         return false;

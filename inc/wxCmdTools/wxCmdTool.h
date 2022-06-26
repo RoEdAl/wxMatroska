@@ -15,7 +15,9 @@ class wxCmdTool
 		TOOL_MKVMERGE,
 		TOOL_FFMPEG,
 		TOOL_CMAKE,
-		TOOL_FFPROBE
+		TOOL_FFPROBE,
+		TOOL_IMAGE_MAGICK,
+		TOOL_MUTOOL
 	};
 	
 	static bool FindExecutable(const wxString&, const wxString&, wxFileName&);
@@ -24,6 +26,7 @@ class wxCmdTool
 
 	protected:
 
+	static bool CheckExecutable(const wxString&, wxFileName&);
 	static bool FindExecutableEnv(const wxString&, const wxString&, const wxString&, wxFileName&);
 	static bool FindExecutable(const wxFileName&, const wxString&, const wxString&, wxFileName&);
 
