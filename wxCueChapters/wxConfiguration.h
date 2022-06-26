@@ -266,6 +266,9 @@ class wxConfiguration:
         static const char PRE[];
         static const char CHAPTERS[];
         static const char RGSCAN[];
+        static const char IMG[];
+        static const char EMBEDDED[];
+        static const char RENDERED[];
     };
 
     struct FMT

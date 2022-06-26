@@ -92,6 +92,7 @@ wxMkvmergeOptsRenderer::wxMkvmergeOptsRenderer(const wxConfiguration& cfg)
 void wxMkvmergeOptsRenderer::RenderDisc(
     const wxInputFile& inputFile,
     const wxCueSheet& cueSheet,
+    const wxString& tmpStem,
     const wxFileName& fnTmpMka,
     const wxFileName& chaptersFile,
     const wxFileName& tagsFile)
@@ -190,7 +191,7 @@ void wxMkvmergeOptsRenderer::RenderDisc(
     // cover - must be a first attachment
     if (m_cfg.AttachCover())
     {
-        AppendCoverAttachments(attachments, inputFile, cueSheet.GetCovers());
+        AppendCoverAttachments(attachments, inputFile, tmpStem, cueSheet.GetCovers());
     }
 
     AppendCdTextFilesAttachments(attachments, inputFile, cueSheet.GetCdTextFiles());
@@ -201,7 +202,7 @@ void wxMkvmergeOptsRenderer::RenderDisc(
         AppendLogFilesAttachments(attachments, inputFile, cueSheet.GetLogs());
     }
 
-    AppendEacFilesAttachments(attachments, inputFile, cueSheet);
+    AppendEacFilesAttachments(attachments, inputFile, tmpStem, cueSheet);
 
     // accurip
     if (m_cfg.AttachAccurateRipLog())

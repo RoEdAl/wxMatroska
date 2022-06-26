@@ -305,48 +305,35 @@ wxFileName wxPrimitiveRenderer::GetRelativeFileName(const wxFileName& fn, const 
     return fn;
 }
 
-bool wxPrimitiveRenderer::SaveCover(const wxInputFile& inputFile, wxCoverFile& cover)
+bool wxPrimitiveRenderer::SaveCover(const wxInputFile& inputFile, const wxString& tmpStem, wxCoverFile& cover)
 {
     if (cover.HasFileName()) return true;
 
     wxASSERT(cover.HasData());
-    wxFileName fn;
-    if (m_cfg.GetOutputFile(inputFile, "img", cover.GetExt(), fn))
+    const wxFileName fn = m_cfg.GetTemporaryFile(inputFile, tmpStem, wxConfiguration::TMP::IMG, cover.GetExt());
+    const bool res = cover.Save(fn);
+    if (res)
     {
-        bool res = cover.Save(fn);
-        if (res)
-        {
-            m_temporaryFiles.Add(fn);
-        }
-        return res;
+        m_temporaryFiles.Add(fn);
     }
-    else
-    {
-        return false;
-    }
+    return res;
 }
 
-bool wxPrimitiveRenderer::SaveCover(const wxInputFile& inputFile, size_t coverNo, wxCoverFile& cover)
+bool wxPrimitiveRenderer::SaveCover(const wxInputFile& inputFile, const wxString& tmpStem, size_t coverNo, wxCoverFile& cover)
 {
     if (cover.HasFileName()) return true;
 
     wxASSERT(cover.HasData());
-    const wxString postFix = wxString::Format("img%" wxSizeTFmtSpec "u" , coverNo);
-    wxFileName fn;
-
-    if (m_cfg.GetOutputFile(inputFile, postFix, cover.GetExt(), fn))
+    wxString imgFmt(wxConfiguration::TMP::IMG);
+    imgFmt << "%02" wxSizeTFmtSpec "u";
+    const wxString postFix = wxString::Format(imgFmt , coverNo);
+    const wxFileName fn = m_cfg.GetTemporaryFile(inputFile, tmpStem, postFix, cover.GetExt());
+    const bool res = cover.Save(fn);
+    if (res)
     {
-        bool res = cover.Save(fn);
-        if (res)
-        {
-            m_temporaryFiles.Add(fn);
-        }
-        return res;
+        m_temporaryFiles.Add(fn);
     }
-    else
-    {
-        return false;
-    }
+    return res;
 }
 
 wxString wxPrimitiveRenderer::GetCoverDescription(const wxCoverFile& coverFile)
@@ -371,6 +358,7 @@ wxString wxPrimitiveRenderer::GetCoverDescription(const wxCoverFile& coverFile)
 void wxPrimitiveRenderer::AppendCoverAttachments(
     wxArrayMatroskaAttachment& attachments,
     const wxInputFile& inputFile,
+    const wxString& tmpStem,
     const wxArrayCoverFile& coverFiles
 )
 {
@@ -386,7 +374,7 @@ void wxPrimitiveRenderer::AppendCoverAttachments(
         case 1:
         {
             wxCoverFile& cover = coverFiles[0];
-            if (SaveCover(inputFile, cover))
+            if (SaveCover(inputFile, tmpStem, cover))
             {
                 const wxMatroskaAttachment coverAttachment(
                     cover.GetFileName(),
@@ -401,7 +389,7 @@ void wxPrimitiveRenderer::AppendCoverAttachments(
 
         default:
         {
-            if (SaveCover(inputFile, coverFiles[0]))
+            if (SaveCover(inputFile, tmpStem, coverFiles[0]))
             {
                 const wxMatroskaAttachment coverAttachment(
                     coverFiles[0].GetFileName(),
@@ -416,7 +404,7 @@ void wxPrimitiveRenderer::AppendCoverAttachments(
             // rest
             for (size_t i = 1; i < nAttachments; ++i)
             {
-                if (SaveCover(inputFile, i, coverFiles[i]))
+                if (SaveCover(inputFile, tmpStem, i, coverFiles[i]))
                 {
                     const wxMatroskaAttachment coverAttachment(
                         coverFiles[i].GetFileName(),
@@ -551,7 +539,6 @@ void wxPrimitiveRenderer::AppendSourceEacFilesAttachments(
             for (size_t i = 0; i < nContents; ++i)
             {
                 const wxCueSheetContent& cnt = contents[i];
-
                 if (!(cnt.HasSource() && !cnt.IsEmbedded())) continue;
 
                 const wxMatroskaAttachment a(
@@ -571,7 +558,6 @@ void wxPrimitiveRenderer::AppendSourceEacFilesAttachments(
             for (size_t i = 0, nCounter = 1; i < nContents; ++i)
             {
                 const wxCueSheetContent& cnt = contents[i];
-
                 if (!(cnt.HasSource() && !cnt.IsEmbedded())) continue;
 
                 const wxMatroskaAttachment a(
@@ -592,6 +578,7 @@ void wxPrimitiveRenderer::AppendSourceEacFilesAttachments(
 void wxPrimitiveRenderer::AppendDecodedEacFilesAttachments(
     wxArrayMatroskaAttachment& attachments,
     const wxInputFile& inputFile,
+    const wxString& tmpStem,
     const wxArrayCueSheetContent& contents)
 {
     size_t     nContents = contents.GetCount();
@@ -606,7 +593,7 @@ void wxPrimitiveRenderer::AppendDecodedEacFilesAttachments(
 
         case 1:
         {
-            if (SaveCueSheet(inputFile, "embedded", contents[0].GetValue(), cueSheetPath))
+            if (SaveCueSheet(inputFile, tmpStem, wxConfiguration::TMP::EMBEDDED, contents[0].GetValue(), cueSheetPath))
             {
                 wxMatroskaAttachment a(
                     cueSheetPath,
@@ -622,9 +609,12 @@ void wxPrimitiveRenderer::AppendDecodedEacFilesAttachments(
 
         default:
         {
+            wxString embFmt(wxConfiguration::TMP::EMBEDDED);
+            embFmt << "%02" wxSizeTFmtSpec "u";
+
             for (size_t i = 0; i < nContents; ++i)
             {
-                if (SaveCueSheet(inputFile, wxString::Format("embedded%02" wxSizeTFmtSpec "u", i+1), contents[i].GetValue(), cueSheetPath))
+                if (SaveCueSheet(inputFile, tmpStem, wxString::Format(embFmt, i+1), contents[i].GetValue(), cueSheetPath))
                 {
                     wxMatroskaAttachment a(
                         cueSheetPath,
@@ -643,6 +633,7 @@ void wxPrimitiveRenderer::AppendDecodedEacFilesAttachments(
 
 bool wxPrimitiveRenderer::RenderCueSheet(
     const wxInputFile& inputFile,
+    const wxString& tmpStem,
     const wxString& postFix,
     const wxCueSheet& cueSheet,
     wxFileName& fn)
@@ -652,17 +643,18 @@ bool wxPrimitiveRenderer::RenderCueSheet(
     {
         return false;
     }
-    return SaveCueSheet(inputFile, postFix, tos.GetString(), fn);
+    return SaveCueSheet(inputFile, tmpStem,  postFix, tos.GetString(), fn);
 }
 
 void wxPrimitiveRenderer::AppendRenderedEacFilesAttachments(
     wxArrayMatroskaAttachment& attachments,
     const wxInputFile& inputFile,
+    const wxString& tmpStem,
     const wxCueSheet& cueSheet)
 {
     wxFileName cueSheetPath;
 
-    if (RenderCueSheet(inputFile, "rendered", cueSheet, cueSheetPath))
+    if (RenderCueSheet(inputFile, tmpStem, wxConfiguration::TMP::RENDERED, cueSheet, cueSheetPath))
     {
         const wxMatroskaAttachment a(
             cueSheetPath,
@@ -722,6 +714,7 @@ void wxPrimitiveRenderer::AppendAccuripLogAttachments(
 void wxPrimitiveRenderer::AppendEacFilesAttachments(
     wxArrayMatroskaAttachment& attachments,
     const wxInputFile& inputFile,
+    const wxString& tmpStem,
     const wxCueSheet& cueSheet)
 {
     switch (m_cfg.GetCueSheetAttachMode())
@@ -734,13 +727,13 @@ void wxPrimitiveRenderer::AppendEacFilesAttachments(
 
         case wxConfiguration::CUESHEET_ATTACH_DECODED:
         {
-            AppendDecodedEacFilesAttachments(attachments, inputFile, cueSheet.GetContents());
+            AppendDecodedEacFilesAttachments(attachments, inputFile, tmpStem, cueSheet.GetContents());
             break;
         }
 
         case wxConfiguration::CUESHEET_ATTACH_RENDERED:
         {
-            AppendRenderedEacFilesAttachments(attachments, inputFile, cueSheet);
+            AppendRenderedEacFilesAttachments(attachments, inputFile, tmpStem, cueSheet);
             break;
         }
     }
@@ -776,23 +769,21 @@ void wxPrimitiveRenderer::MakeRelativePaths(
 
 bool wxPrimitiveRenderer::SaveCueSheet(
     const wxInputFile& inputFile,
+    const wxString& tmpStem,
     const wxString& postFix,
     const wxString& content,
     wxFileName& cueSheet)
 {
-    if (!m_cfg.GetOutputCueSheetFile(inputFile, postFix, cueSheet))
-    {
-        return false;
-    }
-
-    wxFileOutputStream os(cueSheet.GetFullPath());
+    const wxFileName fn = m_cfg.GetTemporaryFile(inputFile, tmpStem, postFix, wxConfiguration::EXT::CUESHEET);
+    wxFileOutputStream os(fn.GetFullPath());
 
     if (os.IsOk())
     {
         wxLogInfo(_wxS("Creating cue sheet file " ENQUOTED_STR_FMT), cueSheet.GetFullName());
         wxSharedPtr< wxTextOutputStream > stream(m_cfg.GetOutputTextStream(os));
         wxTextOutputStreamOnString::SaveTo(*stream, content);
-        m_temporaryFiles.Add(cueSheet);
+        m_temporaryFiles.Add(fn);
+        cueSheet = fn;
         return true;
     }
     else

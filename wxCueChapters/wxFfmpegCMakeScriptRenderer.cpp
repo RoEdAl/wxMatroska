@@ -322,6 +322,7 @@ void wxFfmpegCMakeScriptRenderer::RenderPre(
 void wxFfmpegCMakeScriptRenderer::RenderDisc(
     const wxInputFile& inputFile,
     const wxCueSheet& cueSheet,
+    const wxString& tmpStem,
     const wxFileName& fnTmpMka,
     const wxFileName& metadataFile)
 {
@@ -371,7 +372,7 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
 
     if (m_cfg.AttachCover())
     {
-        AppendCoverAttachments(attachments, inputFile, cueSheet.GetCovers());
+        AppendCoverAttachments(attachments, inputFile, tmpStem, cueSheet.GetCovers());
     }
 
     AppendCdTextFilesAttachments(attachments, inputFile, cueSheet.GetCdTextFiles());
@@ -381,7 +382,7 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
         AppendLogFilesAttachments(attachments, inputFile, cueSheet.GetLogs());
     }
 
-    AppendEacFilesAttachments(attachments, inputFile, cueSheet);
+    AppendEacFilesAttachments(attachments, inputFile, tmpStem, cueSheet);
 
     if (m_cfg.AttachAccurateRipLog())
     {

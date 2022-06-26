@@ -84,6 +84,8 @@ void wxMyApp::InfoTools(wxMessageOutput& out)
     InfoTool(out, wxCmdTool::TOOL_FFMPEG);
     InfoTool(out, wxCmdTool::TOOL_FFPROBE);
     InfoTool(out, wxCmdTool::TOOL_CMAKE);
+    InfoTool(out, wxCmdTool::TOOL_IMAGE_MAGICK);
+    InfoTool(out, wxCmdTool::TOOL_MUTOOL);
 }
 
 void wxMyApp::InfoAsciiToUnicode(wxMessageOutput& out)
@@ -272,6 +274,7 @@ namespace
         const wxInputFile& inputFile,
         const wxConfiguration& cfg,
         const wxCueSheet& cueSheet,
+        const wxString& tmpStem,
         const wxFileName& fnTmpMka,
         const wxFileName& fnChaptersFile,
         const wxFileName& fnTagsFile,
@@ -281,7 +284,7 @@ namespace
     {
         // JSON with options
         wxScopedPtr<wxMkvmergeOptsRenderer> optsRenderer(new wxMkvmergeOptsRenderer(cfg));
-        optsRenderer->RenderDisc(inputFile, cueSheet, fnTmpMka, fnChaptersFile, fnTagsFile);
+        optsRenderer->RenderDisc(inputFile, cueSheet, tmpStem, fnTmpMka, fnChaptersFile, fnTagsFile);
         if (!optsRenderer->Save(optsFile))
         {
             return false;
@@ -386,7 +389,7 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
                 const wxFileName optsFile = m_cfg.GetTemporaryFile(inputFile, tmpStem, wxConfiguration::TMP::CMD, wxConfiguration::EXT::JSON);
 
                 if (!render_mkvmergeopts(inputFile, m_cfg, cueSheet, 
-                    fnTmpMka,
+                    tmpStem, fnTmpMka,
                     fnXmlChapters, fnXmlTags,
                     *temporaryFilesCleaner,
                     optsFile))
@@ -444,7 +447,7 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
 
             {
                 wxScopedPtr< wxFfmpegCMakeScriptRenderer > scriptRenderer(new wxFfmpegCMakeScriptRenderer(m_cfg));
-                scriptRenderer->RenderDisc(inputFile, cueSheet, fnTmpMka, ffmetaPath);
+                scriptRenderer->RenderDisc(inputFile, cueSheet, tmpStem, fnTmpMka, ffmetaPath);
                 if (!scriptRenderer->Save(scriptPath))
                 {
                     return 1;

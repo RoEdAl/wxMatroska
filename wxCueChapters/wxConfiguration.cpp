@@ -39,6 +39,9 @@ const char wxConfiguration::TMP::FFM[] = "ffm";
 const char wxConfiguration::TMP::PRE[] = "pre";
 const char wxConfiguration::TMP::CHAPTERS[] = "ctr";
 const char wxConfiguration::TMP::RGSCAN[] = "rg2";
+const char wxConfiguration::TMP::IMG[] = "img";
+const char wxConfiguration::TMP::EMBEDDED[] = "mbd";
+const char wxConfiguration::TMP::RENDERED[] = "rnr";
 
 const char wxConfiguration::FMT::MKA_CHAPTER[] = "%dp% - %dt% - %tt%";
 const char wxConfiguration::FMT::MKA_CONTAINER[] = "%dp% - %dt%";
