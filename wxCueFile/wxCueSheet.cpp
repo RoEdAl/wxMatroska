@@ -150,6 +150,11 @@ const wxArrayFileName& wxCueSheet::GetAccurateRipLogs() const
     return m_accuripLogs;
 }
 
+bool wxCueSheet::HasCover() const
+{
+    return !m_covers.IsEmpty();
+}
+
 size_t wxCueSheet::GetCoversCount() const
 {
     return m_covers.GetCount();

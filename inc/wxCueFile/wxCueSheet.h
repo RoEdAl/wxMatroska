@@ -79,6 +79,7 @@ class wxCueSheet: public wxCueComponent, public wxAbstractDurationHolder
     const wxArrayFileName& GetLogs() const;
     size_t GetAccurateRipLogsCount() const;
     const wxArrayFileName& GetAccurateRipLogs() const;
+    bool HasCover() const;
     size_t GetCoversCount() const;
     const wxArrayCoverFile& GetCovers() const;
     size_t GetCatalogsCount() const;

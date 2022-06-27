@@ -3,8 +3,6 @@
  */
 
 #include "wxConfiguration.h"
-#include <wxEncodingDetection/wxTextOutputStreamWithBOM.h>
-#include <wxEncodingDetection/wxTextOutputStreamOnString.h>
 #include "wxFfmpegCMakeScriptRenderer.h"
 
 // ===============================================================================
@@ -58,7 +56,7 @@ namespace
         return res;
     }
 
-    wxUint16 get_audio_sample_depth(wxInt16 audioSampleWidth, const wxArrayDataFile& dataFiles)
+    wxUint16 get_audio_sample_width(wxInt16 audioSampleWidth, const wxArrayDataFile& dataFiles)
     {
         if (audioSampleWidth == wxConfiguration::DEF_AUDIO_SAMPLE_WIDTH)
         {
@@ -83,7 +81,7 @@ namespace
         const wxArrayDataFile& dataFiles,
         bool p)
     {
-        wxUint16 bitsPerSample = get_audio_sample_depth(audioSampleWidth, dataFiles);
+        wxUint16 bitsPerSample = get_audio_sample_width(audioSampleWidth, dataFiles);
         os << "-sample_fmt:a ";
         if (bitsPerSample <= 16)
         {
@@ -119,7 +117,7 @@ namespace
     {
         wxString res;
 
-        res << "pcm_s" << get_audio_sample_depth(audioSampleWidth, dataFiles);
+        res << "pcm_s" << get_audio_sample_width(audioSampleWidth, dataFiles);
         if (bigEndian)
             res << "be";
         else
@@ -255,10 +253,6 @@ void wxFfmpegCMakeScriptRenderer::RenderPre(
         *m_os << "CMAKE_PATH(SET CUE2MKC_CHAPTERS \"${DRSTEM}-" << wxConfiguration::TMP::CHAPTERS << '.' << wxConfiguration::EXT::JSON << "\")" << endl;
         *m_os << "CMAKE_PATH(SET CUE2MKC_DST \"${DRSTEM}-" << wxConfiguration::TMP::RGSCAN << '.' << wxConfiguration::EXT::JSON << "\")" << endl;
     }
-    else
-    {
-        wxASSERT(dataFiles.GetCount() == 1);
-    }
 
     *m_os << "CMAKE_PATH(SET CUE2MKC_MKA \"${DRSTEM}-" << wxConfiguration::TMP::PRE << '.' << wxConfiguration::EXT::MKA << "\")" << endl;
 
@@ -326,9 +320,10 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
     const wxFileName& fnTmpMka,
     const wxFileName& metadataFile)
 {
-    RenderHeader(inputFile);
+    RenderHeader();
     RenderMinimumVersion();
     RenderToolEnvCheck("ffmpeg");
+    *m_os << "SET(DRSTEM \"" << tmpStem << "\")" << endl;
 
     const wxFileName outputDir = m_cfg.GetOutputDir(inputFile);
     wxFileName outDir;
@@ -404,6 +399,21 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
         *m_os << endl << "CMAKE_PATH(SET MKA_FNAME \"" << GetCMakePath(GetRelativeFileName(mkaFile, outDir)) << "\")" << endl << endl;
     }
 
+    wxFileName fnImg;
+    if (m_cfg.ConvertCoverFile() && cueSheet.HasCover())
+    {
+        fnImg = m_cfg.GetTemporaryImageFile(inputFile, tmpStem);
+
+        *m_os << "SET(CUE2MKC_SRC_IMG ${CUE2MKC_ATTACHMENT_0})" << endl;
+        *m_os << "CMAKE_PATH(SET CUE2MKC_DST_IMG \"" << GetCMakePath(GetRelativeFileName(fnImg, outDir)) << "\")" << endl << endl;
+
+        wxFileName mkcover(wxStandardPaths::Get().GetExecutablePath());
+        mkcover.SetFullName("mkcover.cmake");
+        *m_os << "INCLUDE(\"" << GetCMakePath(mkcover) << "\")" << endl;
+
+        m_temporaryFiles.Add(fnImg);
+    }
+
     *m_os << "MESSAGE(STATUS \"Creating MKA container\")" << endl;
     *m_os << "EXECUTE_PROCESS(" << endl;
     *m_os << "    # ffmpeg" << endl;
@@ -444,7 +454,11 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
     }
 
     *m_os << "        # attachment(s)" << endl;
-    for (size_t i = 0, cnt = attachments.size(); i < cnt; ++i)
+    if (fnImg.IsOk())
+    {
+        *m_os << "        -attach ${CUE2MKC_DST_IMG}" << endl;
+    }
+    for (size_t i = fnImg.IsOk()? 1 : 0, cnt = attachments.size(); i < cnt; ++i)
     {
         WriteSizeT(*m_os << "        -attach ${CUE2MKC_ATTACHMENT_", i) << '}' << endl;
     }
@@ -479,7 +493,30 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
     }
     *m_os << "        -metadata:s:a:0 \"title=" << GetTrackName(cueSheet) << '\"' << endl << endl;
 
-    for (size_t i = 0, cnt = attachments.size(); i < cnt; ++i)
+    if (fnImg.IsOk())
+    {
+        const wxMatroskaAttachment& a = attachments[0];
+
+        *m_os << "        # attachment #0 metadata" << endl;
+        *m_os << "        -metadata:s:t:0 \"filename=" << a.GetName() << '\"' << endl;
+
+        wxString mimeType;
+        if (wxCoverFile::GetMimeFromExt(m_cfg.GetConvertedCoverFileExt(), mimeType))
+        {
+            *m_os << "        -metadata:s:t:0 \"mimetype=" << mimeType << '\"' << endl;
+        }
+
+        if (a.HasDescription())
+        {
+            *m_os << "        -metadata:s:t:0 \"title=" << a.GetDescription() << '\"' << endl << endl;
+        }
+        else
+        {
+            *m_os << endl << endl;
+        }
+
+    }
+    for (size_t i = fnImg.IsOk()? 1 : 0, cnt = attachments.GetCount(); i < cnt; ++i)
     {
         const wxMatroskaAttachment& a = attachments[i];
         WriteSizeT(*m_os << "        # attachment #", i) << " metadata" << endl;
@@ -535,40 +572,13 @@ bool wxFfmpegCMakeScriptRenderer::SaveDraft(
     scriptFile = wxConfiguration::GetTemporaryFile(workDir, tmpStem, wxConfiguration::TMP::PRE, wxConfiguration::EXT::CMAKE);
     scanFile = wxConfiguration::GetTemporaryFile(workDir, tmpStem, wxConfiguration::TMP::RGSCAN, wxConfiguration::EXT::JSON);
 
-    wxFileOutputStream os(scriptFile.GetFullPath());
-    if (os.IsOk())
+    if (SaveScript(scriptFile))
     {
-        wxLogInfo(_wxS("Creating temporary CMake script " ENQUOTED_STR_FMT), scriptFile.GetFullName());
-        wxSharedPtr< wxTextOutputStream > stream(wxTextOutputStreamWithBOMFactory::CreateUTF8(os, wxEOL_NATIVE, true, false));
-        m_os.SaveTo(*stream);
-        m_temporaryFiles.Add(scriptFile);
         m_temporaryFiles.Add(scanFile);
         return true;
     }
     else
     {
-        wxLogError(_wxS("Fail to save temporary CMake script to " ENQUOTED_STR_FMT), scriptFile.GetFullName());
         return false;
     }
 }
-
-bool wxFfmpegCMakeScriptRenderer::Save(const wxFileName& outputFile)
-{
-    wxFileOutputStream os(outputFile.GetFullPath());
-
-    if (os.IsOk())
-    {
-        wxLogInfo(_wxS("Creating CMake script " ENQUOTED_STR_FMT), outputFile.GetFullName());
-        wxSharedPtr< wxTextOutputStream > stream(wxTextOutputStreamWithBOMFactory::CreateUTF8(os, wxEOL_NATIVE, true, false));
-        m_os.SaveTo(*stream);
-        m_temporaryFiles.Add(outputFile);
-        return true;
-    }
-    else
-    {
-        wxLogError(_wxS("Fail to save CMake script to " ENQUOTED_STR_FMT), outputFile.GetFullName());
-        return false;
-    }
-}
-
-

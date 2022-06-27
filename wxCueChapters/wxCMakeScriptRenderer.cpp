@@ -2,6 +2,8 @@
  * wxCMakeScriptRenderer.cpp
  */
 
+#include <wxEncodingDetection/wxTextOutputStreamWithBOM.h>
+#include <wxEncodingDetection/wxTextOutputStreamOnString.h>
 #include "wxCMakeScriptRenderer.h"
 #include "wxApp.h"
 
@@ -26,14 +28,12 @@ wxString wxCMakeScriptRenderer::GetCMakePath(const wxFileName& path)
 	}
 }
 
-void wxCMakeScriptRenderer::RenderHeader(const wxInputFile& inputFile) const
+void wxCMakeScriptRenderer::RenderHeader() const
 {
-	const wxFileName scriptFn = m_cfg.GetOutputFile(inputFile, wxConfiguration::EXT::CMAKE_SCRIPT);
-
 	*m_os << '#' << endl;
     *m_os << _("# This file was created by ") << wxGetApp().GetAppDisplayName() << endl;
 	*m_os << _("# You can invoke this script manually by typing:") << endl;
-	*m_os << _("#    cmake -P ") << scriptFn.GetFullName() << endl;
+	*m_os << _("#    cmake -P <path to script file>") << endl;
 	*m_os << '#' << endl;
 
     {
@@ -101,4 +101,23 @@ void wxCMakeScriptRenderer::RenderToolEnvCheck(const wxString& toolName) const
 	*m_os << "ELSE()" << endl;
 	*m_os << "    MESSAGE(FATAL_ERROR \"Required variable " << toolNameUpper << " is not defined\")" << endl;
 	*m_os << "ENDIF()" << endl;
+}
+
+bool wxCMakeScriptRenderer::SaveScript(const wxFileName& outputFile)
+{
+	wxFileOutputStream os(outputFile.GetFullPath());
+
+	if (os.IsOk())
+	{
+		wxLogInfo(_wxS("Creating CMake script " ENQUOTED_STR_FMT), outputFile.GetFullName());
+		wxSharedPtr< wxTextOutputStream > stream(wxTextOutputStreamWithBOMFactory::CreateUTF8(os, wxEOL_NATIVE, true, false));
+		m_os.SaveTo(*stream);
+		m_temporaryFiles.Add(outputFile);
+		return true;
+	}
+	else
+	{
+		wxLogError(_wxS("Fail to save CMake script to " ENQUOTED_STR_FMT), outputFile.GetFullName());
+		return false;
+	}
 }

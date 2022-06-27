@@ -4,12 +4,9 @@
 #ifndef _MY_CONFIGURATION_H_
 #define _MY_CONFIGURATION_H_
 
-class MyConfiguration:
-    public wxObject
+class MyConfiguration
 {
     public:
-
-    MyConfiguration(void);
 
     static bool ReadNegatableSwitchValue(const wxCmdLineParser&, const wxString&, bool&);
     static bool ReadNegatableSwitchValue(const wxCmdLineParser&, const wxString&, std::optional<bool>&);

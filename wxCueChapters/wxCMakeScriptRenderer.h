@@ -20,12 +20,14 @@ class wxCMakeScriptRenderer:
 
     static wxString GetCMakePath(const wxFileName&);
 
-    void RenderHeader(const wxInputFile&) const;
+    void RenderHeader() const;
     void RenderMinimumVersion() const;
 
     void RenderToolFinder(const wxString&, const wxString&) const;
     void RenderFfmpegFinder() const;
     void RenderToolEnvCheck(const wxString&) const;
+
+    bool SaveScript(const wxFileName&);
 };
 
 #endif

@@ -104,7 +104,7 @@ SET(EBUR128_EMPTY_OBJ "{\"integrated\": {},\"range\": {}}")
 
 FUNCTION(calc_rg2_loudness val)
     EXECUTE_PROCESS(
-        COMMAND ${CUE2MKC_NORMALIZED} --calc-rg2-loudness ${val}
+        COMMAND ${CUE2MKC_NORMALIZED} --output-charset utf-8 --calc-rg2-loudness ${val}
         ENCODING UTF-8
         COMMAND_ECHO NONE
         OUTPUT_VARIABLE CUE2MKC_OUT

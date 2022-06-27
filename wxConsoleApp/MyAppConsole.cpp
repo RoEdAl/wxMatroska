@@ -1,6 +1,7 @@
 /*
  *      MyAppConsole.cpp
  */
+#include <wxConsoleApp/MyMessageOutputStderr.h>
 #include <wxConsoleApp/MyAppTraits.h>
 #include <wxConsoleApp/MyAppConsole.h>
 #include <wxConsoleApp/MyConfiguration.h>
@@ -157,22 +158,22 @@ void MyAppConsole::OnAssertFailure(
     const wxChar* msg
 )
 {
-    wxMessageOutput* const msgOut = wxMessageOutput::Get();
-    msgOut->Output(wxEmptyString);
-    msgOut->Output("======== <ASSERT> =======");
-    msgOut->Printf("ASSERT - file: %s", file);
-    msgOut->Printf("ASSERT - line: %d", line);
-    msgOut->Printf("ASSERT - fn  : %s", func);
-    msgOut->Printf("ASSERT - cond: %s", cond);
+    const wxScopedPtr<wxMessageOutput> msgErr( new MyMessageOutputStderr() );
+    msgErr->Output(wxEmptyString);
+    msgErr->Output("======== <ASSERT> =======");
+    msgErr->Printf("ASSERT - file: %s", file);
+    msgErr->Printf("ASSERT - line: %d", line);
+    msgErr->Printf("ASSERT - fn  : %s", func);
+    msgErr->Printf("ASSERT - cond: %s", cond);
     if (msg != nullptr || wxStrlen(msg) > 0)
     {
-        msgOut->Printf("ASSERT - msg : %s", msg);
+        msgErr->Printf("ASSERT - msg : %s", msg);
     }
     else
     {
-        msgOut->Output("ASSERT - msg: <none>");
+        msgErr->Output("ASSERT - msg: <none>");
     }
-    msgOut->Output("======== <ASSERT> =======");
+    msgErr->Output("======== <ASSERT> =======");
 }
 
 bool MyAppConsole::OnInit()

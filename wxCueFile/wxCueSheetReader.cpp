@@ -327,7 +327,10 @@ bool wxCueSheetReader::ReadCueSheet(const wxString& cueFile, bool useMLang)
 
     if (pConv)
     {
-        wxLogInfo(_wxS("Detected encoding of file \u201C%s\u201D file is \u201C%s\u201D"), cueFile, cpDescription);
+        if (useMLang)
+        {
+            wxLogInfo(_wxS("Detected encoding of file " ENQUOTED_STR_FMT " file is " ENQUOTED_STR_FMT), cueFile, cpDescription);
+        }
         return ReadCueSheet(cueFile, *pConv);
     }
     else
@@ -344,7 +347,7 @@ bool wxCueSheetReader::ReadCueSheet(const wxString& cueFile, wxMBConv& conv)
 
     if (!cueFileName.IsFileReadable() || cueFileName.IsDir())
     {
-        wxLogError(_wxS("Invalid path to CUE file \u201C%s\u201D"), cueFile);
+        wxLogError(_wxS("Invalid path to CUE file " ENQUOTED_STR_FMT), cueFile);
         return false;
     }
 
@@ -352,7 +355,7 @@ bool wxCueSheetReader::ReadCueSheet(const wxString& cueFile, wxMBConv& conv)
 
     if (!fis.IsOk())
     {
-        wxLogError(_wxS("Unable to open CUE file \u201C%s\u201D"), cueFileName.GetFullPath());
+        wxLogError(_wxS("Unable to open CUE file " ENQUOTED_STR_FMT), cueFileName.GetFullPath());
         return false;
     }
 

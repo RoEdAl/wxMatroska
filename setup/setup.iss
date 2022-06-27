@@ -51,6 +51,7 @@ Source: {#WXWidgetsLibDir}\wxmsw{#WXVerCompact}u{#WXDebug}_core_{#WXDllSuffix}; 
 Source: {#LicenseFileTxt}; DestDir: {app}; Flags: comparetimestamp setntfscompression uninsremovereadonly; Components: cli gui; Attribs: readonly notcontentindexed;
 Source: ..\cue\ISO-639-2_utf-8.txt; DestDir: {app}; Flags: comparetimestamp setntfscompression uninsremovereadonly; Components: cli; Attribs: readonly notcontentindexed;
 Source: ..\wxCueChapters\cmake\dr-scan.cmake; DestDir: {app}; Flags: comparetimestamp setntfscompression uninsremovereadonly; Components: cli; Attribs: readonly notcontentindexed;
+Source: ..\wxCueChapters\cmake\mkcover.cmake; DestDir: {app}; Flags: comparetimestamp setntfscompression uninsremovereadonly; Components: cli; Attribs: readonly notcontentindexed;
 Source: ..\wxCueChapters\app.tags.json; DestDir: {app}; DestName: {#Cue2MkcBase}.tags.json; Flags: comparetimestamp setntfscompression uninsremovereadonly; Components: cli; Attribs: readonly notcontentindexed;
 
 [Icons]

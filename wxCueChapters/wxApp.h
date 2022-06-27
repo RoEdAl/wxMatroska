@@ -72,7 +72,7 @@ class wxMyApp:
     void GetCmd(const wxFileName&, const wxArrayString&, wxString&, wxString&) const;
     bool PrepareExecuteEnv(wxExecuteEnv&) const;
     bool RunMkvmerge(const wxFileName&);
-    bool RunCMakeScript(const wxFileName&);
+    bool RunCMakeScript(const wxFileName&, bool);
     bool RunPreScript(const wxFileName&) const;
 
     bool PreProcessAudio(const wxInputFile&, wxCueSheet&, const wxString&, wxFileName&, wxTemporaryFilesCleaner&) const;

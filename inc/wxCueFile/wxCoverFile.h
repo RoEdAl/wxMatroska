@@ -92,7 +92,6 @@ class wxCoverFile
 
     static const TypeName TypeNames[];
 
-    wxCoverFile();
     wxCoverFile(const wxCoverFile&);
     wxCoverFile(const wxFileName&, Type);
     wxCoverFile(const wxMemoryBuffer&, Type, const wxString&, const wxString&);
@@ -113,6 +112,9 @@ class wxCoverFile
     size_t GetSize() const;
 
     static bool GetMimeFromExt(const wxFileName&, wxString&);
+    static bool GetMimeFromExt(const wxString&, wxString&);
+    static bool GetExtFromMime(const wxString&, wxString&);
+    static wxString GetMimeFromExt(const wxFileName&);
 
     bool IsOK() const
     {

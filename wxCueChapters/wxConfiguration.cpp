@@ -32,6 +32,8 @@ const char wxConfiguration::EXT::JSON[] = "json";
 const char wxConfiguration::EXT::CMAKE[] = "cmake";
 const char wxConfiguration::EXT::MKA[] = "mka";
 const char wxConfiguration::EXT::UNK[] = "unk";
+const char wxConfiguration::EXT::JPEG[] = "jpg";
+const char wxConfiguration::EXT::WEBP[] = "webp";
 const char wxConfiguration::TMP::CMD[] = "cmd";
 const char wxConfiguration::TMP::MKC[] = "mkc";
 const char wxConfiguration::TMP::MKT[] = "mkt";
@@ -42,6 +44,7 @@ const char wxConfiguration::TMP::RGSCAN[] = "rg2";
 const char wxConfiguration::TMP::IMG[] = "img";
 const char wxConfiguration::TMP::EMBEDDED[] = "mbd";
 const char wxConfiguration::TMP::RENDERED[] = "rnr";
+const char wxConfiguration::TMP::CONVERTED[] = "cnv";
 
 const char wxConfiguration::FMT::MKA_CHAPTER[] = "%dp% - %dt% - %tt%";
 const char wxConfiguration::FMT::MKA_CONTAINER[] = "%dp% - %dt%";
@@ -352,7 +355,9 @@ wxConfiguration::wxConfiguration(void):
     m_eFfmpegCodec(CODEC_DEFAULT),
     m_bSingleAudioChannel(false),
     m_bRunReplayGainScanner(false),
-    m_nAudioSampleWidth(DEF_AUDIO_SAMPLE_WIDTH)
+    m_nAudioSampleWidth(DEF_AUDIO_SAMPLE_WIDTH),
+    m_convertCoverFile(false),
+    m_convertedCoverFileExt(EXT::JPEG)
 {
 }
 
@@ -414,6 +419,8 @@ void wxConfiguration::AddCmdLineParams(wxCmdLineParser& cmdLine) const
     cmdLine.AddSwitch("rm", "render-multiline-tags", wxString::Format(_("Render multiline tags (default: %s)"), BoolToStr(m_bRenderMultilineTags)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
     cmdLine.AddSwitch("rg", "render-replaygain-tags", wxString::Format(_("Render ReplayGain tags (default: %s)"), BoolToStr(m_bRenderReplayGainTags)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
     cmdLine.AddSwitch(wxEmptyString, "run-replaygain-scanner", wxString::Format(_("Run ReplayGain scanner on created Matroska container (default: %s)"), BoolToStr(m_bRunReplayGainScanner)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
+    cmdLine.AddSwitch(wxEmptyString, "convert-cover-file", wxString::Format(_("Convert cover file (default: %s)"), BoolToStr(m_convertCoverFile)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
+    cmdLine.AddOption(wxEmptyString, "cover-file-ext", wxString::Format(_("Extension of converted cover file - possible values are: default, jpg, jpeg, webp (default: %s)"), m_convertedCoverFileExt), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
 
     // tags usage
     cmdLine.AddSwitch(wxEmptyString, "use-cdtext-tags", wxString::Format(_("Use CD-TEXT tags (default: %s)"), TagSourcesTestStr(wxCueTag::TAG_CD_TEXT)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
@@ -684,6 +691,26 @@ bool wxConfiguration::Read(const wxCmdLineParser& cmdLine)
         }
     }
 
+    if (ReadNegatableSwitchValue(cmdLine, "convert-cover-file", m_convertCoverFile))
+    {
+        if (cmdLine.Found("cover-file-ext", &s))
+        {
+            if (s.CmpNoCase("default") == 0 || s.CmpNoCase("jpg") == 0 || s.CmpNoCase("jpeg") == 0)
+            {
+                m_convertedCoverFileExt = EXT::JPEG;
+            }
+            else if (s.CmpNoCase("webp") == 0)
+            {
+                m_convertedCoverFileExt = EXT::WEBP;
+            }
+            else
+            {
+                wxLogWarning(_("Unknown cover file extension: %s"), s);
+                bRes = false;
+            }
+        }
+    }
+
     return bRes;
 }
 
@@ -767,6 +794,14 @@ void wxConfiguration::FillArray(wxArrayString& as) const
     as.Add(wxString::Format("Read flags: %s", GetReadFlagsDesc(m_nReadFlags)));
     as.Add(wxString::Format("Use MLang library: %s", BoolToStr(m_bUseMLang)));
     as.Add(wxString::Format("ffmpeg codec: %s", ToString(m_eFfmpegCodec)));
+    if (m_convertCoverFile)
+    {
+        as.Add(wxString::Format("Convert cover file: %s", m_convertedCoverFileExt));
+    }
+    else
+    {
+        as.Add(wxString::Format("Convert cover file: %s", BoolToStr(false)));
+    }
 }
 
 void wxConfiguration::Dump() const
@@ -1079,6 +1114,12 @@ wxFileName wxConfiguration::GetTemporaryFile(const wxInputFile& inputFile, const
     res.SetName(fileName);
     res.SetExt(ext);
     return res;
+}
+
+wxFileName wxConfiguration::GetTemporaryImageFile(const wxInputFile& inputFile, const wxString& tmpStem) const
+{
+    wxASSERT(m_convertCoverFile);
+    return GetTemporaryFile(inputFile, tmpStem, TMP::CONVERTED, m_convertedCoverFileExt);
 }
 
 wxFileName wxConfiguration::GetOutputFile(const wxInputFile& inputFile) const
@@ -1403,6 +1444,23 @@ wxInt16 wxConfiguration::GetAudioSampleWidth() const
         default:
         return m_nAudioSampleWidth;
     }    
+}
+
+bool wxConfiguration::ConvertCoverFile() const
+{
+    return m_convertCoverFile;
+}
+
+wxString wxConfiguration::GetConvertedCoverFileExt() const
+{
+    if (m_convertCoverFile)
+    {
+        return m_convertedCoverFileExt;
+    }
+    else
+    {
+        return wxEmptyString;
+    }
 }
 
 bool wxConfiguration::AudioFilteringRequired() const

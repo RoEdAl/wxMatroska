@@ -3,10 +3,6 @@
  */
 #include <wxConsoleApp/MyConfiguration.h>
 
-MyConfiguration::MyConfiguration(void)
-{
-}
-
 wxString MyConfiguration::BoolToStr(bool b)
 {
     return b ? "yes" : "no";

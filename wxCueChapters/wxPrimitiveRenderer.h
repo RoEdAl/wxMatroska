@@ -42,11 +42,13 @@ class wxMatroskaAttachment
 {
     public:
 
+    wxMatroskaAttachment();
     wxMatroskaAttachment(const wxFileName&, const wxString&, const wxString&, const wxString&);
     wxMatroskaAttachment(const wxMatroskaAttachment&);
 
     public:
 
+    bool IsOk() const;
     const wxFileName& GetFileName() const;
     bool MakeRelative(const wxFileName&, wxPathFormat = wxPATH_NATIVE);
     const wxString GetName() const;

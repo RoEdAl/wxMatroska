@@ -64,6 +64,8 @@ class wxMainFrame:
     wxCheckBox* m_checkBoxAttachAccuRip;
     wxCheckBox* m_checkBoxApplyTags;
     wxCheckBox* m_checkBoxAttachCover;
+    wxCheckBox* m_checkBoxConvertCover;
+    wxChoice* m_choiceConvertedImageExt;
     wxChoice* m_choiceCueSheetAttachMode;
     wxCheckBox* m_checkBoxFullPathInOptions;
     wxCheckBox* m_checkBoxSmallEmDash;

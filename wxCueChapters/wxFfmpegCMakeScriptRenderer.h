@@ -9,8 +9,7 @@
 #include "wxCMakeScriptRenderer.h"
 #endif
 
-class wxFfmpegCMakeScriptRenderer:
-    public wxCMakeScriptRenderer
+class wxFfmpegCMakeScriptRenderer: public wxCMakeScriptRenderer
 {
     public:
 
@@ -19,7 +18,6 @@ class wxFfmpegCMakeScriptRenderer:
     void RenderDisc(const wxInputFile&, const wxCueSheet&, const wxString&, const wxFileName&, const wxFileName&);
     void RenderPre(const wxCueSheet&, const wxFileName&, const wxString&) const;
 
-    bool Save(const wxFileName&);
     bool SaveDraft(const wxFileName&, const wxString&, wxFileName&, wxFileName&);
 
     protected:

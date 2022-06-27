@@ -29,14 +29,18 @@ class wxArrayFileName;
 #include "wxPrimitiveRenderer.h"
 #endif
 
-class wxMkvmergeOptsRenderer:
-    public wxPrimitiveRenderer
+#ifndef _WX_CMAKE_SCRIPT_RENDERER_H_
+#include "wxCMakeScriptRenderer.h"
+#endif
+
+class wxMkvmergeOptsRenderer: public wxCMakeScriptRenderer
 {
     public:
 
     wxMkvmergeOptsRenderer(const wxConfiguration&);
 
-    void RenderDisc(const wxInputFile&, const wxCueSheet&, const wxString&, const wxFileName&, const wxFileName&, const wxFileName&);
+    void RenderDisc(const wxInputFile&, const wxCueSheet&, const wxString&, const wxFileName&, const wxFileName&, const wxFileName&, wxMatroskaAttachment&, wxFileName&);
+    void RenderScript(const wxInputFile&, const wxCueSheet&, const wxString&, const wxFileName&, const wxMatroskaAttachment&, const wxFileName&);
     bool Save(const wxFileName&);
 };
 

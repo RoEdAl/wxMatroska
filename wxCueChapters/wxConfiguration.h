@@ -29,8 +29,7 @@
 
 WX_DECLARE_OBJARRAY(wxInputFile, wxArrayInputFile);
 
-class wxConfiguration:
-    public MyConfiguration
+class wxConfiguration: public MyConfiguration
 {
     public:
 
@@ -152,6 +151,8 @@ class wxConfiguration:
     bool m_bSingleAudioChannel;
     bool m_bRunReplayGainScanner;
     wxInt16 m_nAudioSampleWidth;
+    bool m_convertCoverFile;
+    wxString m_convertedCoverFileExt;
 
     protected:
 
@@ -210,6 +211,8 @@ class wxConfiguration:
     bool UseDefaultAudioSampleWidth() const;
     wxInt16 GetAudioSampleWidth() const;
     bool AudioFilteringRequired() const;
+    bool ConvertCoverFile() const;
+    wxString GetConvertedCoverFileExt() const;
 
     wxSharedPtr< wxMBConv > GetXmlEncoding() const;
 
@@ -229,6 +232,7 @@ class wxConfiguration:
     wxFileName GetOutputFile(const wxInputFile&) const;
     wxFileName GetOutputFile(const wxInputFile&, const wxString&) const;
     wxFileName GetTemporaryFile(const wxInputFile&, const wxString&, const wxString&, const wxString&) const;
+    wxFileName GetTemporaryImageFile(const wxInputFile&, const wxString&) const;
     static wxFileName GetTemporaryFile(const wxFileName&, const wxString&, const wxString&, const wxString&);
     bool GetOutputFile(const wxInputFile&, const wxString&, const wxString&, wxFileName&) const;
     bool GetOutputCueSheetFile(const wxInputFile&, const wxString&, wxFileName&) const;
@@ -255,6 +259,8 @@ class wxConfiguration:
         static const char CMAKE[];
         static const char MKA[];
         static const char UNK[];
+        static const char JPEG[];
+        static const char WEBP[];
     };
 
     struct TMP
@@ -269,6 +275,7 @@ class wxConfiguration:
         static const char IMG[];
         static const char EMBEDDED[];
         static const char RENDERED[];
+        static const char CONVERTED[];
     };
 
     struct FMT

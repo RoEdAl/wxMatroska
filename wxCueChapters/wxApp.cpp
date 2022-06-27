@@ -279,12 +279,13 @@ namespace
         const wxFileName& fnChaptersFile,
         const wxFileName& fnTagsFile,
         wxTemporaryFilesCleaner& temporaryFilesCleaner,
-        const wxFileName& optsFile
-    )
+        const wxFileName& optsFile,
+        wxMatroskaAttachment& coverAttachment,
+        wxFileName& fnImg)
     {
         // JSON with options
-        wxScopedPtr<wxMkvmergeOptsRenderer> optsRenderer(new wxMkvmergeOptsRenderer(cfg));
-        optsRenderer->RenderDisc(inputFile, cueSheet, tmpStem, fnTmpMka, fnChaptersFile, fnTagsFile);
+        const wxScopedPtr<wxMkvmergeOptsRenderer> optsRenderer(new wxMkvmergeOptsRenderer(cfg));
+        optsRenderer->RenderDisc(inputFile, cueSheet, tmpStem, fnTmpMka, fnChaptersFile, fnTagsFile, coverAttachment, fnImg);
         if (!optsRenderer->Save(optsFile))
         {
             return false;
@@ -369,7 +370,7 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
             wxFileName fnXmlTags;
             {
                 // chapters & tags
-                wxScopedPtr<wxXmlCueSheetRenderer> xmlRenderer(GetXmlRenderer(inputFile, tmpStem));
+                const wxScopedPtr<wxXmlCueSheetRenderer> xmlRenderer(GetXmlRenderer(inputFile, tmpStem));
 
                 if (!xmlRenderer->Render(cueSheet))
                 {
@@ -387,20 +388,34 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
 
             {
                 const wxFileName optsFile = m_cfg.GetTemporaryFile(inputFile, tmpStem, wxConfiguration::TMP::CMD, wxConfiguration::EXT::JSON);
+                wxFileName fnImg;
+                wxMatroskaAttachment coverAttachment;
 
                 if (!render_mkvmergeopts(inputFile, m_cfg, cueSheet, 
                     tmpStem, fnTmpMka,
                     fnXmlChapters, fnXmlTags,
                     *temporaryFilesCleaner,
-                    optsFile))
+                    optsFile,
+                    coverAttachment, fnImg))
                 {
                     return 1;
+                }
+
+                const wxFileName scriptPath = m_cfg.GetTemporaryFile(inputFile, tmpStem, wxConfiguration::TMP::CMD, wxConfiguration::EXT::CMAKE);
+                {
+                    const wxScopedPtr<wxMkvmergeOptsRenderer> scriptRenderer(new wxMkvmergeOptsRenderer(m_cfg));
+                    scriptRenderer->RenderScript(inputFile, cueSheet, tmpStem, optsFile, coverAttachment, fnImg);
+                    if (!scriptRenderer->SaveScript(scriptPath))
+                    {
+                        return 1;
+                    }
+                    temporaryFilesCleaner->Feed(*scriptRenderer);
                 }
 
                 if (m_cfg.RunTool())
                 {
                     wxASSERT(optsFile.IsOk());
-                    if (!RunMkvmerge(optsFile))
+                    if (!RunCMakeScript(scriptPath, fnImg.IsOk()))
                     {
                         return 1;
                     }
@@ -436,7 +451,7 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
 
             {
                 // metadata
-                wxScopedPtr< wxFfMetadataRenderer > metadataRenderer(new wxFfMetadataRenderer(m_cfg));
+                const wxScopedPtr< wxFfMetadataRenderer > metadataRenderer(new wxFfMetadataRenderer(m_cfg));
                 metadataRenderer->RenderDisc(cueSheet);
                 if (!metadataRenderer->Save(ffmetaPath))
                 {
@@ -446,9 +461,9 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
             }
 
             {
-                wxScopedPtr< wxFfmpegCMakeScriptRenderer > scriptRenderer(new wxFfmpegCMakeScriptRenderer(m_cfg));
+                const wxScopedPtr< wxFfmpegCMakeScriptRenderer > scriptRenderer(new wxFfmpegCMakeScriptRenderer(m_cfg));
                 scriptRenderer->RenderDisc(inputFile, cueSheet, tmpStem, fnTmpMka, ffmetaPath);
-                if (!scriptRenderer->Save(scriptPath))
+                if (!scriptRenderer->SaveScript(scriptPath))
                 {
                     return 1;
                 }
@@ -457,7 +472,7 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
 
             if (m_cfg.RunTool())
             {
-                if (!RunCMakeScript(scriptPath))
+                if (!RunCMakeScript(scriptPath, m_cfg.ConvertCoverFile() && cueSheet.HasCover()))
                 {
                     return 1;
                 }
@@ -495,13 +510,13 @@ int wxMyApp::ProcessCueFile(const wxInputFile& inputFile, const wxTagSynonimsCol
         .SetAlternateExt(m_cfg.GetAlternateExtensions())
         .SetReadFlags(m_cfg.GetReadFlags());
 
-    wxString sInputFile(inputFile.GetInputFile().GetFullPath());
+    const wxString inputFilePath(inputFile.GetInputFile().GetFullPath());
 
-    wxLogMessage(_wxS("Processing " ENQUOTED_STR_FMT), sInputFile);
+    wxLogMessage(_wxS("Processing " ENQUOTED_STR_FMT), inputFilePath);
 
-    if (!reader.ReadCueSheetEx(sInputFile, m_cfg.UseMLang()))
+    if (!reader.ReadCueSheetEx(inputFilePath, m_cfg.UseMLang()))
     {
-        wxLogError(_wxS("Fail to read or parse input cue file " ENQUOTED_STR_FMT), sInputFile);
+        wxLogError(_wxS("Fail to read or parse input cue file " ENQUOTED_STR_FMT), inputFilePath);
         return 1;
     }
 
@@ -789,7 +804,7 @@ bool wxMyApp::RunMkvmerge(const wxFileName& optionsFile)
     }
 }
 
-bool wxMyApp::RunCMakeScript(const wxFileName& scriptFile)
+bool wxMyApp::RunCMakeScript(const wxFileName& scriptFile, bool convertImage)
 {
     wxASSERT(m_cfg.RunTool());
     wxString scriptPath;
@@ -805,6 +820,14 @@ bool wxMyApp::RunCMakeScript(const wxFileName& scriptFile)
     if (!wxCmdTool::FindTool(wxCmdTool::TOOL_FFMPEG, ffmpeg))
     {
         wxLogError(_("Unable to find ffmpeg tool"));
+        return false;
+    }
+
+    wxFileName mkvmerge;
+
+    if (!wxCmdTool::FindTool(wxCmdTool::TOOL_MKVMERGE, mkvmerge))
+    {
+        wxLogError(_("Unable to find mkvmerge tool"));
         return false;
     }
 
@@ -826,7 +849,7 @@ bool wxMyApp::RunCMakeScript(const wxFileName& scriptFile)
 
     params.Add("--log-context");
     params.Add("-D");
-    params.Add("CMAKE_MESSAGE_CONTEXT=ff");
+    params.Add("CMAKE_MESSAGE_CONTEXT=cue2mkc");
 
     params.Add("-P");
     params.Add(scriptPath);
@@ -834,7 +857,7 @@ bool wxMyApp::RunCMakeScript(const wxFileName& scriptFile)
     wxString cmd, cmdDesc;
     GetCmd(cmake, params, cmd, cmdDesc);
 
-    wxLogMessage(_("Invoking ffmpeg"));
+    wxLogMessage(_("Invoking CMake script"));
     wxLogInfo(cmdDesc);
 
     wxExecuteEnv env;
@@ -844,6 +867,31 @@ bool wxMyApp::RunCMakeScript(const wxFileName& scriptFile)
     }
 
     env.env["FFMPEG"] = ffmpeg.GetFullPath();
+    env.env["MKVMERGE"] = mkvmerge.GetFullPath();
+
+    if (convertImage)
+    {
+        wxFileName imagick;
+        if (wxCmdTool::FindTool(wxCmdTool::TOOL_IMAGE_MAGICK, imagick))
+        {
+            env.env["IMAGICK"] = imagick.GetFullPath();
+        }
+        else
+        {
+            wxLogWarning(_("ImageMagick package not found"));
+        }
+
+        wxFileName mutool;
+
+        if (wxCmdTool::FindTool(wxCmdTool::TOOL_MUTOOL, mutool))
+        {
+            env.env["MUTOOL"] = mutool.GetFullPath();
+        }
+        else
+        {
+            wxLogWarning(_("MuPDF package not found"));
+        }
+    }
 
     if (!m_cfg.UseFullPaths())
     {
@@ -854,19 +902,19 @@ bool wxMyApp::RunCMakeScript(const wxFileName& scriptFile)
 
     if (nRes == -1)
     {
-        wxLogError(_("Fail to execute cmake tool"));
+        wxLogError(_("Fail to execute CMake script"));
         return false;
     }
     else
     {
         if (nRes == 0)
         {
-            wxLogInfo(_("cmake exit code: %ld (%08lX)"), nRes, nRes);
+            wxLogInfo(_("CMake exit code: %ld (%08lX)"), nRes, nRes);
             return true;
         }
         else
         {
-            wxLogError(_("cmake exit code: %ld (%08lX)"), nRes, nRes);
+            wxLogError(_("CMake exit code: %ld (%08lX)"), nRes, nRes);
             return false;
         }
     }

@@ -111,6 +111,10 @@ namespace
 
 // ===============================================================================
 
+wxMatroskaAttachment::wxMatroskaAttachment()
+{
+}
+
 wxMatroskaAttachment::wxMatroskaAttachment(
     const wxFileName& fileName,
     const wxString& name,
@@ -130,6 +134,11 @@ wxMatroskaAttachment::wxMatroskaAttachment(const wxMatroskaAttachment& attachmen
     m_mimeType(attachment.m_mimeType),
     m_description(attachment.m_description)
 {
+}
+
+bool wxMatroskaAttachment::IsOk() const
+{
+    return m_fileName.IsOk();
 }
 
 const wxFileName& wxMatroskaAttachment::GetFileName() const

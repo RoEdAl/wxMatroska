@@ -72,10 +72,13 @@ namespace
         data.UngetWriteBuf(nSize);
         return data;
     }
-}
 
-wxCoverFile::wxCoverFile()
-{
+    int size_cmp(size_t s1, size_t s2)
+    {
+        if (s1 < s2) return -1;
+        else if (s1 > s2) return 1;
+        else return 0;
+    }
 }
 
 wxCoverFile::wxCoverFile(const wxCoverFile& cf):
@@ -83,28 +86,9 @@ wxCoverFile::wxCoverFile(const wxCoverFile& cf):
 {
 }
 
-bool wxCoverFile::GetMimeFromExt(const wxFileName& fn, wxString& mimeType)
-{
-    const wxString ext = fn.GetExt();
-    wxList& imgHandlers = wxImage::GetHandlers();
-    for (wxList::iterator i = imgHandlers.begin(), end = imgHandlers.end(); i != end; ++i)
-    {
-        const wxImageHandler* const imgHandler = static_cast<const wxImageHandler*>(*i);
-        if (imgHandler->GetExtension().CmpNoCase(ext) == 0)
-        {
-            mimeType = imgHandler->GetMimeType();
-            return true;
-        }
-    }
-    return false;
-}
-
 wxCoverFile::wxCoverFile(const wxFileName& fn, wxCoverFile::Type type):
-    m_fileName(fn), m_type(type)
+    m_fileName(fn), m_type(type), m_mimeType(GetMimeFromExt(fn)), m_checksum(wxMD5::Get(fn)),m_fileSize(fn.GetSize())
 {
-    m_checksum = wxMD5::Get(fn);
-    GetMimeFromExt(fn, m_mimeType);
-    m_fileSize = fn.GetSize();
 }
 
 wxCoverFile::wxCoverFile(const wxMemoryBuffer& data, wxCoverFile::Type type, const wxString& mimeType, const wxString& description):
@@ -150,14 +134,10 @@ wxString wxCoverFile::GetExt() const
     }
     else if (HasMimeType())
     {
-        wxList& imgHandlers = wxImage::GetHandlers();
-        for (wxList::iterator i = imgHandlers.begin(), end = imgHandlers.end(); i != end; ++i)
+        wxString ext;
+        if (GetExtFromMime(m_mimeType, ext))
         {
-            const wxImageHandler* const imgHandler = static_cast<const wxImageHandler*>(*i);
-            if (imgHandler->GetMimeType().CmpNoCase(m_mimeType) == 0)
-            {
-                return imgHandler->GetExtension();
-            }
+            return ext;
         }
     }
     return wxEmptyString;
@@ -181,6 +161,36 @@ size_t wxCoverFile::GetSize() const
     }
 }
 
+bool wxCoverFile::GetMimeFromExt(const wxFileName& fn, wxString& mimeType)
+{
+    return GetMimeFromExt(fn.GetExt(), mimeType);
+}
+
+bool wxCoverFile::GetMimeFromExt(const wxString& ext, wxString& mimeType)
+{
+    wxList& imgHandlers = wxImage::GetHandlers();
+    for (wxList::iterator i = imgHandlers.begin(), end = imgHandlers.end(); i != end; ++i)
+    {
+        const wxImageHandler* const imgHandler = static_cast<const wxImageHandler*>(*i);
+        if (imgHandler->GetExtension().CmpNoCase(ext) == 0)
+        {
+            mimeType = imgHandler->GetMimeType();
+            return true;
+        }
+    }
+    return false;
+}
+
+wxString wxCoverFile::GetMimeFromExt(const wxFileName& fn)
+{
+    wxString mimeType;
+    if (GetMimeFromExt(fn, mimeType))
+    {
+        return mimeType;
+    }
+    return wxEmptyString;
+}
+
 bool wxCoverFile::GuessMimeTypeFromData()
 {
     wxASSERT(HasData());
@@ -201,9 +211,27 @@ bool wxCoverFile::GuessMimeTypeFromData()
     return false;
 }
 
+bool wxCoverFile::GetExtFromMime(const wxString& mimeType, wxString& ext)
+{
+    wxList& imgHandlers = wxImage::GetHandlers();
+    for (wxList::iterator i = imgHandlers.begin(), end = imgHandlers.end(); i != end; ++i)
+    {
+        const wxImageHandler* const imgHandler = static_cast<const wxImageHandler*>(*i);
+        if (imgHandler->GetMimeType().CmpNoCase(mimeType) == 0)
+        {
+            ext = imgHandler->GetExtension();
+            return true;
+        }
+    }
+    return false;
+}
+
 wxCoverFile wxCoverFile::Load() const
 {
-    if (HasData() || !HasFileName()) return wxCoverFile(*this);
+    if (HasData() || !HasFileName())
+    {
+        return wxCoverFile(*this);
+    }
 
     if (GetSize() > 0)
     {
@@ -341,17 +369,11 @@ bool wxCoverFile::Find(const wxDir& sourceDir, const wxString& fileNameBase, wxF
 template< size_t SIZE >
 bool wxCoverFile::Find(const wxFileName& inputFile, wxFileName& coverFile, const char* const (&coverNames)[SIZE])
 {
-    wxFileName sourceDirFn(inputFile);
-
-    sourceDirFn.SetName(wxEmptyString);
-    sourceDirFn.ClearExt();
-    wxASSERT(sourceDirFn.IsDirReadable());
-
-    wxDir sourceDir(sourceDirFn.GetPath());
+    wxDir sourceDir(inputFile.GetPath());
 
     if (!sourceDir.IsOpened())
     {
-        wxLogError(_wxS("Fail to open directory \u201C%s\u201D"), sourceDirFn.GetPath());
+        wxLogError(_wxS("Fail to open directory " ENQUOTED_STR_FMT), inputFile.GetPath());
         return false;
     }
 
@@ -527,20 +549,10 @@ size_t wxCoverFile::GetSortOrder(wxCoverFile::Type type)
     return GetSortOrder(type, TypeNames);
 }
 
-namespace
-{
-    inline int size_cmp(size_t s1, size_t s2)
-    {
-        if (s1 < s2) return -1;
-        else if (s1 > s2) return 1;
-        else return 0;
-    }
-}
-
 int wxCoverFile::Cmp(wxCoverFile** f1, wxCoverFile** f2)
 {
-    size_t so1 = GetSortOrder((*f1)->GetType());
-    size_t so2 = GetSortOrder((*f2)->GetType());
+    const size_t so1 = GetSortOrder((*f1)->GetType());
+    const size_t so2 = GetSortOrder((*f2)->GetType());
 
     if (so1 < so2) return -1;
     else if (so1 > so2) return 1;
