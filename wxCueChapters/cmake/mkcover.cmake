@@ -64,7 +64,7 @@ ELSEIF(NOT EXISTS ${IMAGICK})
     MESSAGE(FATAL_ERROR "MuPDF not found - ${MUTOOL}")
 ENDIF()
 
-FUNCTION(check_aspect2 SrcImgPath)
+FUNCTION(check_aspect SrcImgPath)
     EXECUTE_PROCESS(
         COMMAND ${IMAGICK} identify
             -format "%h %w"
@@ -83,10 +83,10 @@ FUNCTION(check_aspect2 SrcImgPath)
     MATH(EXPR IMG_ASPECT "${IMG_WIDTH}*100/${IMG_HEIGHT}")
     MATH(EXPR IMG_ASPECT_DIFF "${IMG_ASPECT}-200")
     MESSAGE(DEBUG "W: ${IMG_WIDTH} H: ${IMG_HEIGHT} A: ${IMG_ASPECT} D: ${IMG_ASPECT_DIFF}")
-    IF(IMG_ASPECT_DIFF GREATER_EQUAL -20 AND IMG_ASPECT_DIFF LESS_EQUAL 20)
-        SET(IMG_ASPECT2 ON PARENT_SCOPE)
+    IF(IMG_ASPECT_DIFF GREATER_EQUAL -10 AND IMG_ASPECT_DIFF LESS_EQUAL 10)
+        SET(IMG_ASPECT ON PARENT_SCOPE)
     ELSE()
-        SET(IMG_ASPECT2 OFF PARENT_SCOPE)
+        SET(IMG_ASPECT OFF PARENT_SCOPE)
     ENDIF()
     SET(IMG_HEIGHT2 ${IMG_HEIGHT} PARENT_SCOPE)
 ENDFUNCTION()
@@ -109,14 +109,12 @@ FUNCTION(render_first_pdf_page SrcPdfPath DstImgPath)
 ENDFUNCTION()
 
 FUNCTION(make_jpeg_cover SrcImgPath DstImgPath)
-    check_aspect2(${SrcImgPath})
-    IF(IMG_ASPECT2)
+    check_aspect(${SrcImgPath})
+    IF(IMG_ASPECT)
         EXECUTE_PROCESS(
             COMMAND ${IMAGICK} convert
                 -units PixelsPerCentimeter
                 ${SrcImgPath}
-                -gravity East
-				-crop "${IMG_HEIGHT2}x${IMG_HEIGHT2}+0+0" +repage
                 -adaptive-resize "646400@>"
                 -define jpeg:extent=96kb
                 -interlace JPEG
@@ -132,6 +130,8 @@ FUNCTION(make_jpeg_cover SrcImgPath DstImgPath)
             COMMAND ${IMAGICK} convert
                 -units PixelsPerCentimeter
                 ${SrcImgPath}
+                -gravity East
+				-crop "${IMG_HEIGHT2}x${IMG_HEIGHT2}+0+0" +repage
                 -adaptive-resize "646400@>"
                 -define jpeg:extent=96kb
                 -interlace JPEG
@@ -146,13 +146,11 @@ FUNCTION(make_jpeg_cover SrcImgPath DstImgPath)
 ENDFUNCTION()
 
 FUNCTION(make_webp_cover SrcImgPath DstImgPath)
-    check_aspect2(${SrcImgPath})
-    IF(IMG_ASPECT2)
+    check_aspect(${SrcImgPath})
+    IF(IMG_ASPECT)
         EXECUTE_PROCESS(
             COMMAND ${IMAGICK} convert
                 ${SrcImgPath}
-                -gravity East
-				-crop "${IMG_HEIGHT2}x${IMG_HEIGHT2}+0+0" +repage
                 -adaptive-resize "646400@>"
                 -define webp:method=6
                 -define webp:thread-level=0
@@ -167,6 +165,8 @@ FUNCTION(make_webp_cover SrcImgPath DstImgPath)
         EXECUTE_PROCESS(
             COMMAND ${IMAGICK} convert
                 ${SrcImgPath}
+                -gravity East
+				-crop "${IMG_HEIGHT2}x${IMG_HEIGHT2}+0+0" +repage
                 -adaptive-resize "646400@>"
                 -define webp:method=6
                 -define webp:thread-level=0
@@ -210,6 +210,24 @@ ENDIF()
 CMAKE_PATH(GET CUE2MKC_DST_IMG_NORMALIZED EXTENSION LAST_ONLY CUE2MKC_DST_IMG_EXT)
 STRING(TOLOWER ${CUE2MKC_DST_IMG_EXT} CUE2MKC_DST_IMG_EXT)
 
+# symlinks
+IF((CUE2MKC_SRC_IMG_EXT STREQUAL ".jpg" OR CUE2MKC_SRC_IMG_EXT STREQUAL ".jpeg") AND (CUE2MKC_DST_IMG_EXT STREQUAL ".jpg" OR CUE2MKC_DST_IMG_EXT STREQUAL ".jpeg"))
+    FILE(SIZE CUE2MKC_SRC_IMG_NORMALIZED CUE2MKC_SRC_IMG_SIZE)
+    IF(CUE2MKC_SRC_IMG_SIZE LESS_EQUAL 98304)
+        MESSAGE(STATUS "Source image too small - creating symlink")
+        FILE(CREATE_LINK ${CUE2MKC_SRC_IMG_NORMALIZED} ${CUE2MKC_DST_IMG_NORMALIZED} SYMBOLIC)
+        RETURN()
+    ENDIF()
+ELSEIF(CUE2MKC_SRC_IMG_EXT STREQUAL ".webp" AND CUE2MKC_DST_IMG_EXT STREQUAL ".webp")
+    FILE(SIZE CUE2MKC_SRC_IMG_NORMALIZED CUE2MKC_SRC_IMG_SIZE)
+    IF(CUE2MKC_SRC_IMG_SIZE LESS_EQUAL 65536)
+        MESSAGE(STATUS "Source image too small - creating symlink")
+        FILE(CREATE_LINK ${CUE2MKC_SRC_IMG_NORMALIZED} ${CUE2MKC_DST_IMG_NORMALIZED} SYMBOLIC)
+        RETURN()
+    ENDIF()
+ENDIF()
+
+# conversion
 IF(CUE2MKC_SRC_EXT STREQUAL ".pdf")
     CMAKE_PATH(SET DST_PNG_PATH "${TMP_STEM}.png")
     IF(CUE2MKC_SRC_IMG_IS_RELATIVE)
