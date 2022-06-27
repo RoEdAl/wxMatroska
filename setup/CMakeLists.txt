@@ -53,6 +53,9 @@ add_custom_command(
 	DEPENDS 
 		${ISETUP_SOURCE}
 		../cue/ISO-639-2_utf-8.txt
+		../wxCueChapters/cmake/dr-scan.cmake
+		../wxCueChapters/cmake/mkcover.cmake
+		../wxCueChapters/app.tags.json
 		${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/license.txt
 		${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/license.rtf
 		$<TARGET_FILE:cue2mkc>
