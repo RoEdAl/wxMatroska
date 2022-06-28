@@ -45,6 +45,7 @@ const char wxConfiguration::TMP::IMG[] = "img";
 const char wxConfiguration::TMP::EMBEDDED[] = "mbd";
 const char wxConfiguration::TMP::RENDERED[] = "rnr";
 const char wxConfiguration::TMP::CONVERTED[] = "cnv";
+const char wxConfiguration::TMP::MKA[] = "mka";
 
 const char wxConfiguration::FMT::MKA_CHAPTER[] = "%dp% - %dt% - %tt%";
 const char wxConfiguration::FMT::MKA_CONTAINER[] = "%dp% - %dt%";
@@ -693,23 +694,21 @@ bool wxConfiguration::Read(const wxCmdLineParser& cmdLine)
         }
     }
 
-    if (ReadNegatableSwitchValue(cmdLine, "convert-cover-file", m_convertCoverFile))
+    ReadNegatableSwitchValue(cmdLine, "convert-cover-file", m_convertCoverFile);
+    if (cmdLine.Found("cover-file-ext", &s))
     {
-        if (cmdLine.Found("cover-file-ext", &s))
+        if (s.CmpNoCase("default") == 0 || s.CmpNoCase("jpg") == 0 || s.CmpNoCase("jpeg") == 0)
         {
-            if (s.CmpNoCase("default") == 0 || s.CmpNoCase("jpg") == 0 || s.CmpNoCase("jpeg") == 0)
-            {
-                m_convertedCoverFileExt = EXT::JPEG;
-            }
-            else if (s.CmpNoCase("webp") == 0)
-            {
-                m_convertedCoverFileExt = EXT::WEBP;
-            }
-            else
-            {
-                wxLogWarning(_("Unknown cover file extension: %s"), s);
-                bRes = false;
-            }
+            m_convertedCoverFileExt = EXT::JPEG;
+        }
+        else if (s.CmpNoCase("webp") == 0)
+        {
+            m_convertedCoverFileExt = EXT::WEBP;
+        }
+        else
+        {
+            wxLogWarning(_("Unknown cover file extension: %s"), s);
+            bRes = false;
         }
     }
 
@@ -797,7 +796,7 @@ void wxConfiguration::FillArray(wxArrayString& as) const
     as.Add(wxString::Format("Read flags: %s", GetReadFlagsDesc(m_nReadFlags)));
     as.Add(wxString::Format("Use MLang library: %s", BoolToStr(m_bUseMLang)));
     as.Add(wxString::Format("ffmpeg codec: %s", ToString(m_eFfmpegCodec)));
-    if (m_convertCoverFile)
+    if (m_convertCoverFile || CoverFromPdf())
     {
         as.Add(wxString::Format("Convert cover file: %s", m_convertedCoverFileExt));
     }
@@ -819,7 +818,7 @@ void wxConfiguration::Dump() const
         as.Add(wxString::Format(_wxS("Output path: " ENQUOTED_STR_FMT), m_outputFile.GetFullPath()));
         as.Add(sSeparator);
         size_t     strings = as.GetCount();
-        wxDateTime dt(wxDateTime::Now());
+        wxDateTime dt(wxGetApp().GetNow());
         wxLog* pLog = wxLog::GetActiveTarget();
         for (size_t i = 0; i < strings; ++i)
         {
@@ -1461,7 +1460,7 @@ bool wxConfiguration::CoverFromPdf() const
 
 wxString wxConfiguration::GetConvertedCoverFileExt() const
 {
-    if (m_convertCoverFile)
+    if (m_convertCoverFile || CoverFromPdf())
     {
         return m_convertedCoverFileExt;
     }

@@ -31,6 +31,8 @@ WX_DECLARE_OBJARRAY(wxInputFile, wxArrayInputFile);
 
 class wxConfiguration: public MyConfiguration
 {
+    wxDECLARE_NO_COPY_CLASS(wxConfiguration);
+
     public:
 
     typedef wxCharTypeBuffer< char > CharBufferType;
@@ -277,6 +279,7 @@ class wxConfiguration: public MyConfiguration
         static const char EMBEDDED[];
         static const char RENDERED[];
         static const char CONVERTED[];
+        static const char MKA[];
     };
 
     struct FMT

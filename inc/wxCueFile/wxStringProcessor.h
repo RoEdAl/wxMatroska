@@ -10,6 +10,8 @@ WX_DECLARE_OBJARRAY(wxStringProcessor, wxArrayStringProcessor);
 
 class wxStringProcessor
 {
+    wxDECLARE_NO_COPY_CLASS(wxStringProcessor);
+
     public:
 
     virtual ~wxStringProcessor();

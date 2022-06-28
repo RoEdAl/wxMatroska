@@ -290,12 +290,13 @@ namespace
         const wxFileName& fnTagsFile,
         wxTemporaryFilesCleaner& temporaryFilesCleaner,
         const wxFileName& optsFile,
+        wxFileName& mkaFile,
         wxMatroskaAttachment& coverAttachment,
         wxFileName& fnImg)
     {
         // JSON with options
         const wxScopedPtr<wxMkvmergeOptsRenderer> optsRenderer(new wxMkvmergeOptsRenderer(cfg));
-        optsRenderer->RenderDisc(inputFile, cueSheet, tmpStem, fnTmpMka, fnChaptersFile, fnTagsFile, coverAttachment, fnImg);
+        optsRenderer->RenderDisc(inputFile, cueSheet, tmpStem, fnTmpMka, fnChaptersFile, fnTagsFile, mkaFile, coverAttachment, fnImg);
         if (!optsRenderer->Save(optsFile))
         {
             return false;
@@ -398,6 +399,7 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
 
             {
                 const wxFileName optsFile = m_cfg.GetTemporaryFile(inputFile, tmpStem, wxConfiguration::TMP::CMD, wxConfiguration::EXT::JSON);
+                wxFileName mkaFile;
                 wxFileName fnImg;
                 wxMatroskaAttachment coverAttachment;
 
@@ -406,6 +408,7 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
                     fnXmlChapters, fnXmlTags,
                     *temporaryFilesCleaner,
                     optsFile,
+                    mkaFile,
                     coverAttachment, fnImg))
                 {
                     return 1;
@@ -414,7 +417,7 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
                 const wxFileName scriptPath = m_cfg.GetTemporaryFile(inputFile, tmpStem, wxConfiguration::TMP::CMD, wxConfiguration::EXT::CMAKE);
                 {
                     const wxScopedPtr<wxMkvmergeOptsRenderer> scriptRenderer(new wxMkvmergeOptsRenderer(m_cfg));
-                    scriptRenderer->RenderScript(inputFile, cueSheet, tmpStem, optsFile, coverAttachment, fnImg);
+                    scriptRenderer->RenderScript(inputFile, cueSheet, tmpStem, optsFile, mkaFile, coverAttachment, fnImg);
                     if (!scriptRenderer->SaveScript(scriptPath))
                     {
                         return 1;
@@ -470,6 +473,7 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
                 temporaryFilesCleaner->Feed(*metadataRenderer);
             }
 
+            bool convertCover = false;
             {
                 const wxScopedPtr< wxFfmpegCMakeScriptRenderer > scriptRenderer(new wxFfmpegCMakeScriptRenderer(m_cfg));
                 scriptRenderer->RenderDisc(inputFile, cueSheet, tmpStem, fnTmpMka, ffmetaPath);
@@ -478,11 +482,12 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
                     return 1;
                 }
                 temporaryFilesCleaner->Feed(*scriptRenderer);
+                convertCover = scriptRenderer->ConvertCover(cueSheet);
             }
 
             if (m_cfg.RunTool())
             {
-                if (!RunCMakeScript(scriptPath, m_cfg.ConvertCoverFile() && cueSheet.HasCover()))
+                if (!RunCMakeScript(scriptPath, convertCover))
                 {
                     return 1;
                 }

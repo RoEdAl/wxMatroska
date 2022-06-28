@@ -65,7 +65,7 @@ namespace
             const wxMatroskaAttachment& a = attachments[0];
 
             add_string(opts, attachment::name);
-            add_string(opts, a.GetName());
+            add_string(opts, a.GetName(fnImg.GetExt()));
             if (a.HasDescription())
             {
                 add_string(opts, attachment::desc);
@@ -117,10 +117,13 @@ void wxMkvmergeOptsRenderer::RenderDisc(
     const wxFileName& fnTmpMka,
     const wxFileName& chaptersFile,
     const wxFileName& tagsFile,
+    wxFileName& mkaFile,
     wxMatroskaAttachment& coverAttachment,
     wxFileName& fnImg)
 {
-    const wxFileName mkaFile = m_cfg.GetOutputFile(inputFile, wxConfiguration::EXT::MATROSKA_AUDIO);
+    mkaFile = m_cfg.GetTemporaryFile(inputFile, tmpStem, wxConfiguration::TMP::MKA, wxConfiguration::EXT::MATROSKA_AUDIO);
+    m_temporaryFiles.Add(mkaFile);
+
     const wxString trackName = GetTrackName(cueSheet);
 
     wxFileName outDir;
@@ -235,7 +238,7 @@ void wxMkvmergeOptsRenderer::RenderDisc(
     
     MakeRelativePaths(attachments, outDir);
 
-    if ((m_cfg.ConvertCoverFile() && cueSheet.HasCover()) || (m_cfg.CoverFromPdf() && cueSheet.HasPdfCover()))
+    if (ConvertCover(cueSheet))
     {
         fnImg = m_cfg.GetTemporaryImageFile(inputFile, tmpStem);
         bool rendered = false;
@@ -284,7 +287,6 @@ void wxMkvmergeOptsRenderer::RenderDisc(
     }
 
     const wxString j = wxString::FromUTF8Unchecked(opts.dump(2));
-
     *m_os << j << endl;
 }
 
@@ -293,6 +295,7 @@ void wxMkvmergeOptsRenderer::RenderScript(
     const wxCueSheet& cueSheet,
     const wxString& tmpStem,
     const wxFileName& optionsFile,
+    const wxFileName& mkaFile,
     const wxMatroskaAttachment& coverAttachment,
     const wxFileName& fnImg)
 {
@@ -302,16 +305,25 @@ void wxMkvmergeOptsRenderer::RenderScript(
     if (fnImg.IsOk())
     {
         RenderToolEnvCheck("imagick");
-        RenderToolEnvCheck("mutool");
+        if (coverAttachment.IsPdf())
+        {
+            RenderToolEnvCheck("mutool");
+        }
     }
-    *m_os << "SET(CUE2MKC_STEM " << tmpStem << ')' << endl;
+    *m_os << "SET(CUE2MKC_STEM " << tmpStem << ')' << endl << endl;
 
     wxFileName outDir;
-
     if (!m_cfg.UseFullPaths())
     {
         outDir = m_cfg.GetOutputDir(inputFile);
     }
+
+    {
+        const wxFileName dstMkaFile = m_cfg.GetOutputFile(inputFile, wxConfiguration::EXT::MATROSKA_AUDIO);
+        *m_os << endl << "CMAKE_PATH(SET MKA_FNAME \"" << GetCMakePath(GetRelativeFileName(dstMkaFile, outDir)) << "\")" << endl << endl;
+    }
+
+    *m_os << endl << "CMAKE_PATH(SET TMP_MKA_FNAME \"" << GetCMakePath(GetRelativeFileName(mkaFile, outDir)) << "\")" << endl << endl;
 
     if (fnImg.IsOk())
     {
@@ -341,6 +353,8 @@ void wxMkvmergeOptsRenderer::RenderScript(
         *m_os << "    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}" << endl;
     }
     *m_os << ')' << endl;
+    *m_os << "MESSAGE(STATUS \"Replacing MKA container\")" << endl;
+    *m_os << "FILE(RENAME ${TMP_MKA_FNAME} ${MKA_FNAME})" << endl;
 }
 
 bool wxMkvmergeOptsRenderer::Save(const wxFileName& matroskaOptsFile)

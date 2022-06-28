@@ -157,6 +157,13 @@ const wxString wxMatroskaAttachment::GetName() const
     return m_name;
 }
 
+const wxString wxMatroskaAttachment::GetName(const wxString& ext) const
+{
+    wxFileName fn(m_name);
+    fn.SetExt(ext);
+    return fn.GetFullName();
+}
+
 bool wxMatroskaAttachment::HasMimeType() const
 {
     return !m_mimeType.IsEmpty();
@@ -165,6 +172,12 @@ bool wxMatroskaAttachment::HasMimeType() const
 const wxString& wxMatroskaAttachment::GetMimeType() const
 {
     return m_mimeType;
+}
+
+bool wxMatroskaAttachment::IsPdf() const
+{
+    wxASSERT(HasMimeType());
+    return m_mimeType.CmpNoCase(wxCoverFile::PDF_MIME) == 0;
 }
 
 bool wxMatroskaAttachment::HasDescription() const
@@ -818,4 +831,9 @@ bool wxPrimitiveRenderer::IsLanguageAgnostic(const wxCueTag& tag) const
 void wxPrimitiveRenderer::GetTemporaryFiles(wxArrayFileName& tmpFiles) const
 {
     WX_APPEND_ARRAY(tmpFiles, m_temporaryFiles);
+}
+
+bool wxPrimitiveRenderer::ConvertCover(const wxCueSheet& cueSheet) const
+{
+    return (m_cfg.ConvertCoverFile() && cueSheet.HasCover()) || (m_cfg.CoverFromPdf() && cueSheet.HasPdfCover());
 }

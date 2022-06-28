@@ -1948,22 +1948,20 @@ bool wxMainFrame::read_options(wxArrayString& options) const
     negatable_long_switch_option(options, m_checkBoxAttachAccuRip, "attach-accurip-log");
     negatable_long_switch_option(options, m_checkBoxAttachCover, "attach-cover");
     negatable_long_switch_option(options, m_checkBoxApplyTags, "apply-tags");
+    negatable_long_switch_option(options, m_checkBoxConvertCover, "convert-cover-file");
     negatable_long_switch_option(options, m_checkBoxCoverFromPdf, "cover-from-pdf");
 
-    if (negatable_long_switch_option(options, m_checkBoxConvertCover, "convert-cover-file"))
+    switch (m_choiceConvertedImageExt->GetSelection())
     {
-        switch (m_choiceConvertedImageExt->GetSelection())
-        {
-            case 1:
-            options.Add("--cover-file-ext");
-            options.Add("jpg");
-            break;
+        case 1:
+        options.Add("--cover-file-ext");
+        options.Add("jpg");
+        break;
 
-            case 2:
-            options.Add("--cover-file-ext");
-            options.Add("webp");
-            break;
-        }
+        case 2:
+        options.Add("--cover-file-ext");
+        options.Add("webp");
+        break;
     }
 
     if (m_choiceCueSheetAttachMode->GetSelection() > 0)

@@ -52,8 +52,10 @@ class wxMatroskaAttachment
     const wxFileName& GetFileName() const;
     bool MakeRelative(const wxFileName&, wxPathFormat = wxPATH_NATIVE);
     const wxString GetName() const;
+    const wxString GetName(const wxString&) const;
     bool HasMimeType() const;
     const wxString& GetMimeType() const;
+    bool IsPdf() const;
     bool HasDescription() const;
     const wxString& GetDescription() const;
 
@@ -144,6 +146,7 @@ class wxPrimitiveRenderer :protected wxTagRenderer, public wxTemporaryFilesProvi
 
     public:
 
+    bool ConvertCover(const wxCueSheet&) const;
     static void InitTagsSynonimsCollections(
         wxTagSynonimsCollection&, wxTagSynonimsCollection&,
         wxTagSynonimsCollection&, wxTagSynonimsCollection&);

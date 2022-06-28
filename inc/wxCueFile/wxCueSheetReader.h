@@ -42,6 +42,8 @@ class TagLibDebugListener: public TagLib::DebugListener
 
 class wxCueSheetReader
 {
+    wxDECLARE_NO_COPY_CLASS(wxCueSheetReader);
+
     public:
 
     struct eac_log

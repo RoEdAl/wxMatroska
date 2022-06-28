@@ -256,7 +256,7 @@ void wxFfmpegCMakeScriptRenderer::RenderPre(
 
     *m_os << "CMAKE_PATH(SET CUE2MKC_MKA \"${DRSTEM}-" << wxConfiguration::TMP::PRE << '.' << wxConfiguration::EXT::MKA << "\")" << endl;
 
-    *m_os << "MESSAGE(STATUS \"Creating temporary MKA container\")" << endl;
+    *m_os << "MESSAGE(STATUS \"Creating temporary MKA container (via ffmpeg)\")" << endl;
     *m_os << "EXECUTE_PROCESS(" << endl;
     *m_os << "    COMMAND ${FFMPEG}" << endl;
     *m_os << "        -y" << endl;
@@ -323,6 +323,15 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
     RenderHeader();
     RenderMinimumVersion();
     RenderToolEnvCheck("ffmpeg");
+    const bool convertCover = ConvertCover(cueSheet);
+    if (convertCover)
+    {
+        RenderToolEnvCheck("imagick");
+        if (m_cfg.CoverFromPdf())
+        {
+            RenderToolEnvCheck("mutool");
+        }
+    }
     *m_os << "SET(CUE2MKC_STEM " << tmpStem << ')' << endl;
 
     const wxFileName outputDir = m_cfg.GetOutputDir(inputFile);
@@ -399,8 +408,14 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
         *m_os << endl << "CMAKE_PATH(SET MKA_FNAME \"" << GetCMakePath(GetRelativeFileName(mkaFile, outDir)) << "\")" << endl << endl;
     }
 
+    {
+        const wxFileName mkaFile = m_cfg.GetTemporaryFile(inputFile, tmpStem, wxConfiguration::TMP::MKA, wxConfiguration::EXT::MATROSKA_AUDIO);
+        *m_os << endl << "CMAKE_PATH(SET TMP_MKA_FNAME \"" << GetCMakePath(GetRelativeFileName(mkaFile, outDir)) << "\")" << endl << endl;
+        m_temporaryFiles.Add(mkaFile);
+    }
+
     wxFileName fnImg;
-    if ((m_cfg.ConvertCoverFile() && cueSheet.HasCover()) || (m_cfg.CoverFromPdf() && cueSheet.HasPdfCover()))
+    if (convertCover)
     {
         fnImg = m_cfg.GetTemporaryImageFile(inputFile, tmpStem);
 
@@ -458,11 +473,11 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
     }
 
     *m_os << "        # attachment(s)" << endl;
-    if (fnImg.IsOk())
+    if (convertCover)
     {
         *m_os << "        -attach ${CUE2MKC_DST_IMG}" << endl;
     }
-    for (size_t i = fnImg.IsOk()? 1 : 0, cnt = attachments.size(); i < cnt; ++i)
+    for (size_t i = convertCover? 1 : 0, cnt = attachments.size(); i < cnt; ++i)
     {
         WriteSizeT(*m_os << "        -attach ${CUE2MKC_ATTACHMENT_", i) << '}' << endl;
     }
@@ -497,15 +512,15 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
     }
     *m_os << "        -metadata:s:a:0 \"title=" << GetTrackName(cueSheet) << '\"' << endl << endl;
 
-    if (fnImg.IsOk())
+    if (convertCover)
     {
         const wxMatroskaAttachment& a = attachments[0];
 
         *m_os << "        # attachment #0 metadata" << endl;
-        *m_os << "        -metadata:s:t:0 \"filename=" << a.GetName() << '\"' << endl;
+        *m_os << "        -metadata:s:t:0 \"filename=" << a.GetName(fnImg.GetExt()) << '\"' << endl;
 
         wxString mimeType;
-        if (wxCoverFile::GetMimeFromExt(m_cfg.GetConvertedCoverFileExt(), mimeType))
+        if (wxCoverFile::GetMimeFromExt(fnImg, mimeType))
         {
             *m_os << "        -metadata:s:t:0 \"mimetype=" << mimeType << '\"' << endl;
         }
@@ -520,7 +535,7 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
         }
 
     }
-    for (size_t i = fnImg.IsOk()? 1 : 0, cnt = attachments.GetCount(); i < cnt; ++i)
+    for (size_t i = convertCover? 1 : 0, cnt = attachments.GetCount(); i < cnt; ++i)
     {
         const wxMatroskaAttachment& a = attachments[i];
         WriteSizeT(*m_os << "        # attachment #", i) << " metadata" << endl;
@@ -555,7 +570,7 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
     *m_os << "        -default_mode infer_no_subs" << endl << endl;
 
     *m_os << "        # destination file" << endl;
-    *m_os << "        ${MKA_FNAME}" << endl << endl;
+    *m_os << "        ${TMP_MKA_FNAME}" << endl << endl;
 
     *m_os << "    ENCODING UTF-8" << endl;
     *m_os << "    COMMAND_ECHO NONE" << endl;
@@ -565,6 +580,8 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
         *m_os << "    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}" << endl;
     }
     *m_os << ')' << endl;
+    *m_os << "MESSAGE(STATUS \"Replacing MKA container\")" << endl;
+    *m_os << "FILE(RENAME ${TMP_MKA_FNAME} ${MKA_FNAME})" << endl;
 }
 
 bool wxFfmpegCMakeScriptRenderer::SaveDraft(
