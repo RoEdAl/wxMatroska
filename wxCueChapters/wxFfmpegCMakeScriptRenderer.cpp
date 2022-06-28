@@ -323,7 +323,7 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
     RenderHeader();
     RenderMinimumVersion();
     RenderToolEnvCheck("ffmpeg");
-    *m_os << "SET(DRSTEM \"" << tmpStem << "\")" << endl;
+    *m_os << "SET(CUE2MKC_STEM " << tmpStem << ')' << endl;
 
     const wxFileName outputDir = m_cfg.GetOutputDir(inputFile);
     wxFileName outDir;
@@ -404,7 +404,6 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
     {
         fnImg = m_cfg.GetTemporaryImageFile(inputFile, tmpStem);
 
-        *m_os << "SET(CUE2MKC_STEM " << tmpStem << ')' << endl;
         *m_os << "SET(CUE2MKC_SRC_IMG ${CUE2MKC_ATTACHMENT_0})" << endl;
         *m_os << "CMAKE_PATH(SET CUE2MKC_DST_IMG \"" << GetCMakePath(GetRelativeFileName(fnImg, outDir)) << "\")" << endl << endl;
 
@@ -415,14 +414,18 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
         m_temporaryFiles.Add(fnImg);
     }
 
-    *m_os << "MESSAGE(STATUS \"Creating MKA container\")" << endl;
+    *m_os << "MESSAGE(STATUS \"Creating MKA container (via ffmpeg)\")" << endl;
     *m_os << "EXECUTE_PROCESS(" << endl;
     *m_os << "    # ffmpeg" << endl;
     *m_os << "    COMMAND ${FFMPEG}" << endl;
     *m_os << "        # global options" << endl;
     *m_os << "        -y" << endl;
     *m_os << "        -hide_banner -nostdin -nostats" << endl;
-    *m_os << "        -loglevel repeat+level+" << (wxLog::GetVerbose() ? "info" : "warning") << endl << endl;
+#ifdef NDEBUG
+    *m_os << "        -loglevel repeat+level+fatal" << endl;
+#else
+    *m_os << "        -loglevel repeat+level+" << (wxLog::GetVerbose() ? "info" : "warning") << endl;
+#endif
     *m_os << "        -threads 1" << endl;
 
     if (fnTmpMka.IsOk())

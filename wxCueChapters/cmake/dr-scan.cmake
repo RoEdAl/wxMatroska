@@ -25,6 +25,8 @@
 # - CUE2MKC_CHAPTERS  - JSON file witch chapters, required, chapters from CUE2MKC_MKA are ignored
 # - CUE2MKC_DST       - path to output JSON file with tags, if not defined CUE2MKC_DST=CUE2MKC_MKA(ext->json)
 #
+# Environment variables:
+#
 # - CUE2MKC - (full) path to cue2mkc executable, required, may be specified via environment variable
 # - FFMPEG -  (full) path to ffmpeg executable, required, may be specified via environment variable
 #

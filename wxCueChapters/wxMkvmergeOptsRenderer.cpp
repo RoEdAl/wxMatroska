@@ -304,6 +304,7 @@ void wxMkvmergeOptsRenderer::RenderScript(
         RenderToolEnvCheck("imagick");
         RenderToolEnvCheck("mutool");
     }
+    *m_os << "SET(CUE2MKC_STEM " << tmpStem << ')' << endl;
 
     wxFileName outDir;
 
@@ -315,7 +316,6 @@ void wxMkvmergeOptsRenderer::RenderScript(
     if (fnImg.IsOk())
     {
         *m_os << endl;
-        *m_os << "SET(CUE2MKC_STEM " << tmpStem << ')' << endl;
         *m_os << "CMAKE_PATH(SET CUE2MKC_SRC_IMG \"" << GetCMakePath(coverAttachment.GetFileName()) << "\")" << endl;
         *m_os << "CMAKE_PATH(SET CUE2MKC_DST_IMG \"" << GetCMakePath(GetRelativeFileName(fnImg, outDir)) << "\")" << endl;
 

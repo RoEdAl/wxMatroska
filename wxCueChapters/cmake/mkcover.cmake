@@ -1,8 +1,15 @@
 #
 # mkcover.cmake
 #
+# Cover image converter/shrinker.
+# Also converting PDF to cover image.
+#
 # Required tools: magick (ImageMagick), mutool (MuPDF).
+#
 # This is part of cue2mkc project.
+#
+# Produced JPEG image size: ~96kb.
+# Produced WEBP image size: ~64kb.
 #
 # Input variables:
 #
@@ -10,62 +17,30 @@
 # - CUE2MKC_DST_IMG    - path to converted file (JPEG or WEBP), if not specified CUE2MKC_DST_IMG=CUE2MKC_SRC_IMG(ext->jpg)
 # - CUE2MKC_STEM       - prefix for temporary files (optional)
 #
+# Environment variables:
+#
 # - IMAGICK - (full) path to magick executable, part of ImageMagick (optional, trying to guess via FIND_PROGRAM)
 # - MUTOOL  - (full) path to mutool executable, part of MuPDF (optional, trying to guess via FIND_PROGRAM)
 #
 
 CMAKE_MINIMUM_REQUIRED(VERSION 3.21)
 
-IF (NOT DEFINED ENV{IMAGICK})
-    FIND_PROGRAM(CMAKE_IMAGICK magick
-        HINTS
-            ENV LocalAppData
-            ENV ProgramW6432
-            ENV ProgramFiles
-            ENV "ProgramFiles(x86)"
-            "$ENV{SystemDrive}/Program Files"
-            "$ENV{SystemDrive}/Program Files (x86)"
-        PATH_SUFFIXES ImageMagick
-        NO_CACHE
-        REQUIRED
-        NO_DEFAULT_PATH
-        NO_PACKAGE_ROOT_PATH
-        NO_CMAKE_PATH
-        NO_CMAKE_ENVIRONMENT_PATH
-        NO_CMAKE_SYSTEM_PATH
-        NO_CMAKE_FIND_ROOT_PATH
-    )
-    CMAKE_PATH(NATIVE_PATH CMAKE_IMAGICK IMAGICK)
-ELSEIF(NOT EXISTS $ENV{IMAGICK})
-    MESSAGE(FATAL_ERROR "ImageMagick not found - $ENV{IMAGICK}")
-ELSE()
+IF(DEFINED IMAGICK)
+    MESSAGE(DEBUG "IMAGICK set to ${IMAGICK}")
+ELSEIF(DEFINED ENV{IMAGICK})
     CMAKE_PATH(SET IMAGICK $ENV{IMAGICK})
+    MESSAGE(DEBUG "IMAGICK set to ${IMAGICK} via environment variable")
+ELSE()
+    MESSAGE(FATAL_ERROR "Required variable IMAGICK is not defined")
 ENDIF()
 
-IF (NOT DEFINED ENV{MUTOOL})
-    FIND_PROGRAM(CMAKE_MUTOOL mutool
-        HINTS
-            ENV LocalAppData
-            ENV ProgramW6432
-            ENV ProgramFiles
-            ENV "ProgramFiles(x86)"
-            "$ENV{SystemDrive}/Program Files"
-            "$ENV{SystemDrive}/Program Files (x86)"
-        PATH_SUFFIXES mupdf
-        NO_CACHE
-        REQUIRED
-        NO_DEFAULT_PATH
-        NO_PACKAGE_ROOT_PATH
-        NO_CMAKE_PATH
-        NO_CMAKE_ENVIRONMENT_PATH
-        NO_CMAKE_SYSTEM_PATH
-        NO_CMAKE_FIND_ROOT_PATH
-    )
-    CMAKE_PATH(NATIVE_PATH CMAKE_MUTOOL MUTOOL)
-ELSEIF(NOT EXISTS $ENV{MUTOOL})
-    MESSAGE(FATAL_ERROR "MuPDF not found - ${MUTOOL}")
-ELSE()
+IF(DEFINED MUTOOL)
+    MESSAGE(DEBUG "MUTOOL set to ${MUTOOL}")
+ELSEIF(DEFINED ENV{MUTOOL})
     CMAKE_PATH(SET MUTOOL $ENV{MUTOOL})
+    MESSAGE(DEBUG "MUTOOL set to ${MUTOOL} via environment variable")
+ELSE()
+    MESSAGE(FATAL_ERROR "Required variable MUTOOL is not defined")
 ENDIF()
 
 FUNCTION(check_aspect SrcImgPath)
@@ -243,7 +218,7 @@ ENDIF()
 
 # conversion
 IF(CUE2MKC_SRC_IMG_EXT STREQUAL ".pdf")
-    CMAKE_PATH(SET DST_PNG_PATH "${TMP_STEM}.png")
+    CMAKE_PATH(SET DST_PNG_PATH "${TMP_STEM}-pdf.png")
     IF(CUE2MKC_SRC_IMG_IS_RELATIVE)
         CMAKE_PATH(APPEND CMAKE_CURRENT_BINARY_DIR ${DST_PNG_PATH} OUTPUT_VARIABLE DST_PNG_PATH)
     ENDIF()
