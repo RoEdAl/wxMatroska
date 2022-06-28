@@ -25,6 +25,7 @@
 #include <wx/filename.h>
 #include <wx/tokenzr.h>
 #include <wx/stdpaths.h>
+#include <wx/dir.h>
 
 #endif  // _STD_WX_H
 

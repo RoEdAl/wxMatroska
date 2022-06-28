@@ -344,7 +344,7 @@ wxConfiguration::wxConfiguration(void):
     m_bHiddenIndexes(false),
     m_bJoinMode(false),
     m_bIncludeDiscNumberTag(false),
-    m_nReadFlags(wxCueSheetReader::EC_PARSE_COMMENTS | wxCueSheetReader::EC_ELLIPSIZE_TAGS | wxCueSheetReader::EC_REMOVE_EXTRA_SPACES | wxCueSheetReader::EC_MEDIA_READ_TAGS | wxCueSheetReader::EC_FIND_COVER | wxCueSheetReader::EC_FIND_LOG | wxCueSheetReader::EC_FIND_ACCURIP_LOG | wxCueSheetReader::EC_CORRECT_DASHES),
+    m_nReadFlags(wxCueSheetReader::DEF_READ_FLAGS),
     m_nTagSources(wxCueTag::TAG_CD_TEXT | wxCueTag::TAG_CUE_COMMENT | wxCueTag::TAG_MEDIA_METADATA | wxCueTag::TAG_AUTO_GENERATED),
     m_bUseMLang(false),
     m_bUseFullPaths(false),
@@ -421,6 +421,7 @@ void wxConfiguration::AddCmdLineParams(wxCmdLineParser& cmdLine) const
     cmdLine.AddSwitch(wxEmptyString, "run-replaygain-scanner", wxString::Format(_("Run ReplayGain scanner on created Matroska container (default: %s)"), BoolToStr(m_bRunReplayGainScanner)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
     cmdLine.AddSwitch(wxEmptyString, "convert-cover-file", wxString::Format(_("Convert cover file (default: %s)"), BoolToStr(m_convertCoverFile)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
     cmdLine.AddOption(wxEmptyString, "cover-file-ext", wxString::Format(_("Extension of converted cover file - possible values are: default, jpg, jpeg, webp (default: %s)"), m_convertedCoverFileExt), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
+    cmdLine.AddSwitch(wxEmptyString, "cover-from-pdf", wxString::Format(_("Create cover from PDF (default: %s)"), ReadFlagTestStr(wxCueSheetReader::EC_FIND_PDF)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
 
     // tags usage
     cmdLine.AddSwitch(wxEmptyString, "use-cdtext-tags", wxString::Format(_("Use CD-TEXT tags (default: %s)"), TagSourcesTestStr(wxCueTag::TAG_CD_TEXT)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
@@ -645,6 +646,7 @@ bool wxConfiguration::Read(const wxCmdLineParser& cmdLine)
     ReadReadFlags(cmdLine, "number-full-stop", wxCueSheetReader::EC_NUMBER_FULL_STOP);
     ReadReadFlags(cmdLine, "small-letter-parenthesized", wxCueSheetReader::EC_SMALL_LETTER_PARENTHESIZED);
     ReadReadFlags(cmdLine, "ascii-to-unicode", wxCueSheetReader::EC_ASCII_TO_UNICODE);
+    ReadReadFlags(cmdLine, "cover-from-pdf", wxCueSheetReader::EC_FIND_PDF);
 
     // MLang
     ReadNegatableSwitchValue(cmdLine, "use-mlang", m_bUseMLang);
@@ -755,6 +757,7 @@ wxString wxConfiguration::GetReadFlagsDesc(wxCueSheetReader::ReadFlags flags)
     AddFlag(as, flags, wxCueSheetReader::EC_NUMBER_FULL_STOP, "number-full-stop");
     AddFlag(as, flags, wxCueSheetReader::EC_SMALL_LETTER_PARENTHESIZED, "small-letter-parenthesized");
     AddFlag(as, flags, wxCueSheetReader::EC_ASCII_TO_UNICODE, "ascii-to-unicode");
+    AddFlag(as, flags, wxCueSheetReader::EC_FIND_PDF, "cover-from-pdf");
 
     wxString s;
 
@@ -1118,7 +1121,7 @@ wxFileName wxConfiguration::GetTemporaryFile(const wxInputFile& inputFile, const
 
 wxFileName wxConfiguration::GetTemporaryImageFile(const wxInputFile& inputFile, const wxString& tmpStem) const
 {
-    wxASSERT(m_convertCoverFile);
+    wxASSERT(m_convertCoverFile || CoverFromPdf());
     return GetTemporaryFile(inputFile, tmpStem, TMP::CONVERTED, m_convertedCoverFileExt);
 }
 
@@ -1449,6 +1452,11 @@ wxInt16 wxConfiguration::GetAudioSampleWidth() const
 bool wxConfiguration::ConvertCoverFile() const
 {
     return m_convertCoverFile;
+}
+
+bool wxConfiguration::CoverFromPdf() const
+{
+    return (m_nReadFlags & wxCueSheetReader::EC_FIND_PDF) != 0;
 }
 
 wxString wxConfiguration::GetConvertedCoverFileExt() const

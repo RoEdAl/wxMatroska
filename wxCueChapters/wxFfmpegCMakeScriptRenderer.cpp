@@ -400,10 +400,11 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
     }
 
     wxFileName fnImg;
-    if (m_cfg.ConvertCoverFile() && cueSheet.HasCover())
+    if ((m_cfg.ConvertCoverFile() && cueSheet.HasCover()) || (m_cfg.CoverFromPdf() && cueSheet.HasPdfCover()))
     {
         fnImg = m_cfg.GetTemporaryImageFile(inputFile, tmpStem);
 
+        *m_os << "SET(CUE2MKC_STEM " << tmpStem << ')' << endl;
         *m_os << "SET(CUE2MKC_SRC_IMG ${CUE2MKC_ATTACHMENT_0})" << endl;
         *m_os << "CMAKE_PATH(SET CUE2MKC_DST_IMG \"" << GetCMakePath(GetRelativeFileName(fnImg, outDir)) << "\")" << endl << endl;
 

@@ -16,6 +16,16 @@
  
 // ===============================================================================
 
+const wxCueSheetReader::ReadFlags wxCueSheetReader::DEF_READ_FLAGS =
+wxCueSheetReader::EC_PARSE_COMMENTS |
+wxCueSheetReader::EC_ELLIPSIZE_TAGS |
+wxCueSheetReader::EC_REMOVE_EXTRA_SPACES |
+wxCueSheetReader::EC_MEDIA_READ_TAGS |
+wxCueSheetReader::EC_FIND_COVER |
+wxCueSheetReader::EC_FIND_LOG |
+wxCueSheetReader::EC_FIND_ACCURIP_LOG |
+wxCueSheetReader::EC_CORRECT_DASHES;
+
 const char wxCueSheetReader::eac_log::EXT[] = "log";
 const char wxCueSheetReader::eac_log::MASK[] = "*.log";
 
@@ -24,6 +34,9 @@ const char wxCueSheetReader::accurip_log::MASK[] = "*.accurip";
 
 const char wxCueSheetReader::tags_file::EXT[] = "tags.json";
 const char wxCueSheetReader::tags_file::MASK[] = "*.tags.json";
+
+const char wxCueSheetReader::pdf_file::EXT[] = "pdf";
+const char wxCueSheetReader::pdf_file::MASK[] = "*.pdf";
 
 // ===============================================================================
 
@@ -180,7 +193,7 @@ wxCueSheetReader::wxCueSheetReader(void):
     m_reTrackComment("cue[\\-_]track(\\p{Nd}{1,2})_([\\pL\\-_\\p{Xps}]+)", wxRE_ICASE),
     m_reCommentMeta("^(\"?)([\\p{Lu}\\-_\\p{Xps}]+)\\1\\p{Xps}+(\\P{Xps}.+)$"),
     m_errorsAsWarnings(true),
-    m_readFlags(EC_PARSE_COMMENTS | EC_ELLIPSIZE_TAGS | EC_REMOVE_EXTRA_SPACES | EC_MEDIA_READ_TAGS | EC_FIND_COVER | EC_FIND_LOG | EC_FIND_ACCURIP_LOG | EC_CONVERT_UPPER_ROMAN_NUMERALS),
+    m_readFlags(wxCueSheetReader::DEF_READ_FLAGS),
     m_oneTrackCue(GetOneTrackCue())
 {
     wxASSERT(m_reKeywords.IsValid());
@@ -208,7 +221,6 @@ wxCueSheetReader::~wxCueSheetReader()
 {
     TagLib::setDebugListener(nullptr);
 }
-
 #endif
 
 const wxCueSheet& wxCueSheetReader::GetCueSheet() const
@@ -318,6 +330,23 @@ bool wxCueSheetReader::FindCover(const wxCueSheetContent& content)
         return false;
     }
 }
+
+bool wxCueSheetReader::FindPdfCover(const wxCueSheetContent& content)
+{
+    wxASSERT(TestReadFlags(EC_FIND_PDF));
+    wxFileName pdfFile;
+
+    if (GetLogFile< pdf_file >(content.GetSource().GetFileName(), true, pdfFile))
+    {
+        m_cueSheet.AddCover(pdfFile);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 
 bool wxCueSheetReader::ReadCueSheet(const wxString& cueFile, bool useMLang)
 {
@@ -751,10 +780,17 @@ bool wxCueSheetReader::ParseCue(const wxCueSheetContent& content)
         {
             if (!FindCover(content))
             {
+                bool coverFound = false;
                 if (TestReadFlags(EC_MEDIA_READ_TAGS))
                 {
-                    FindCoversInRelatedFiles();
+                    coverFound = FindCoversInRelatedFiles();
                 }
+
+                if (!coverFound && TestReadFlags(EC_FIND_PDF))
+                {
+                    FindPdfCover(content);
+                }
+
             }
         }
 

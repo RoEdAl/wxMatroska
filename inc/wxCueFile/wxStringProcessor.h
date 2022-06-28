@@ -12,6 +12,7 @@ class wxStringProcessor
 {
     public:
 
+    virtual ~wxStringProcessor();
     virtual wxStringProcessor* const Clone() const = 0;
     virtual bool Process(const wxString&, wxString&) const = 0;
 

@@ -68,24 +68,34 @@ void wxMyApp::InfoTool(wxMessageOutput& out, wxCmdTool::TOOL tool)
     wxFileName exe;
     if (wxCmdTool::FindTool(tool, exe))
     {
-        out.Printf(_("\t%-15s : %s"), exe.GetName(), exe.GetFullPath());
+        out.Printf("  %-15s : %s", exe.GetName(), exe.GetFullPath());
     }
     else
     {
-        out.Printf(_("\t%-15s : <not found>"), exe.GetName());
+        out.Printf(_("  %-15s : <not found>"), exe.GetName());
     }
 }
 
 void wxMyApp::InfoTools(wxMessageOutput& out)
 {
-    wxFileName exe;
-
+    out.Output(_("Tools:"));
+    out.Output(wxEmptyString);
     InfoTool(out, wxCmdTool::TOOL_MKVMERGE);
     InfoTool(out, wxCmdTool::TOOL_FFMPEG);
     InfoTool(out, wxCmdTool::TOOL_FFPROBE);
     InfoTool(out, wxCmdTool::TOOL_CMAKE);
     InfoTool(out, wxCmdTool::TOOL_IMAGE_MAGICK);
     InfoTool(out, wxCmdTool::TOOL_MUTOOL);
+
+    out.Output(wxEmptyString);
+    out.Output(_("Search directories:"));
+    out.Output(wxEmptyString);
+    wxArrayString dirs;
+    wxCmdTool::GetSearchDirectories(dirs);
+    for (wxArrayString::const_iterator i = dirs.begin(), end = dirs.end(); i != end; ++i)
+    {
+        out.Printf("  %s", *i);
+    }
 }
 
 void wxMyApp::InfoAsciiToUnicode(wxMessageOutput& out)

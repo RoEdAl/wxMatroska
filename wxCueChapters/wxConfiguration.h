@@ -212,6 +212,7 @@ class wxConfiguration: public MyConfiguration
     wxInt16 GetAudioSampleWidth() const;
     bool AudioFilteringRequired() const;
     bool ConvertCoverFile() const;
+    bool CoverFromPdf() const;
     wxString GetConvertedCoverFileExt() const;
 
     wxSharedPtr< wxMBConv > GetXmlEncoding() const;

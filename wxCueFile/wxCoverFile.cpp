@@ -30,6 +30,8 @@ const wxBitmapType wxCoverFile::CoverFileTypes[] =
 // ===============================================================================
 
 const wxULongLong wxCoverFile::MAX_FILE_SIZE = wxUINT32_MAX;
+const char wxCoverFile::PDF_EXT[] = "pdf";
+const char wxCoverFile::PDF_MIME[] = "application/pdf";
 
 // ===============================================================================
 
@@ -161,6 +163,22 @@ size_t wxCoverFile::GetSize() const
     }
 }
 
+bool wxCoverFile::IsPdf() const
+{
+    if (HasMimeType())
+    {
+        return m_mimeType.CmpNoCase(PDF_MIME) == 0;
+    }
+    else if (HasFileName())
+    {
+        return m_fileName.GetExt().CmpNoCase(PDF_EXT) == 0;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 bool wxCoverFile::GetMimeFromExt(const wxFileName& fn, wxString& mimeType)
 {
     return GetMimeFromExt(fn.GetExt(), mimeType);
@@ -168,6 +186,12 @@ bool wxCoverFile::GetMimeFromExt(const wxFileName& fn, wxString& mimeType)
 
 bool wxCoverFile::GetMimeFromExt(const wxString& ext, wxString& mimeType)
 {
+    if (ext.CmpNoCase(PDF_EXT) == 0)
+    {
+        mimeType = PDF_MIME;
+        return true;
+    }
+
     wxList& imgHandlers = wxImage::GetHandlers();
     for (wxList::iterator i = imgHandlers.begin(), end = imgHandlers.end(); i != end; ++i)
     {
@@ -213,6 +237,12 @@ bool wxCoverFile::GuessMimeTypeFromData()
 
 bool wxCoverFile::GetExtFromMime(const wxString& mimeType, wxString& ext)
 {
+    if (mimeType.CmpNoCase(PDF_MIME) == 0)
+    {
+        ext = PDF_EXT;
+        return true;
+    }
+
     wxList& imgHandlers = wxImage::GetHandlers();
     for (wxList::iterator i = imgHandlers.begin(), end = imgHandlers.end(); i != end; ++i)
     {

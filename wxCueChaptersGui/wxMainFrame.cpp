@@ -1166,10 +1166,12 @@ wxPanel* wxMainFrame::create_adv_panel(wxNotebook* notebook, const wxSizerFlags&
             m_checkBoxConvertCover = create_3state_checkbox(sizer, _("Convert cover image(s)"));
             innerSizer->Add(m_checkBoxConvertCover, wxGBPosition(2, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
 
+            m_checkBoxCoverFromPdf = create_3state_checkbox(sizer, _("Create cover from PDF"));
+            innerSizer->Add(m_checkBoxCoverFromPdf, wxGBPosition(3, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+
             {
                 wxStaticText* const staticText = create_static_text(sizer, _("Converted image type"));
-                innerSizer->Add(staticText, wxGBPosition(3, 0), wxDefaultSpan, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
-                staticText->Bind(wxEVT_UPDATE_UI, CheckBoxUiUpdater(m_checkBoxConvertCover));
+                innerSizer->Add(staticText, wxGBPosition(4, 0), wxDefaultSpan, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
             }
 
             {
@@ -1179,19 +1181,18 @@ wxPanel* wxMainFrame::create_adv_panel(wxNotebook* notebook, const wxSizerFlags&
                 choices.Add(_("webp"));
 
                 m_choiceConvertedImageExt = create_choice(sizer, choices);
-                m_choiceConvertedImageExt->Bind(wxEVT_UPDATE_UI, CheckBoxUiUpdater(m_checkBoxConvertCover));
             }
-            innerSizer->Add(m_choiceConvertedImageExt, wxGBPosition(3, 1), wxDefaultSpan, wxEXPAND | wxBOTTOM, btnLeft.GetBorderInPixels());
+            innerSizer->Add(m_choiceConvertedImageExt, wxGBPosition(4, 1), wxDefaultSpan, wxEXPAND | wxBOTTOM, btnLeft.GetBorderInPixels());
 
             m_checkBoxAttachLogs = create_3state_checkbox(sizer, _("Attach EAC log(s)"), wxCHK_CHECKED);
-            innerSizer->Add(m_checkBoxAttachLogs, wxGBPosition(4, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+            innerSizer->Add(m_checkBoxAttachLogs, wxGBPosition(5, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
 
             m_checkBoxAttachAccuRip = create_3state_checkbox(sizer, _("Attach AccurateRip log(s)"));
-            innerSizer->Add(m_checkBoxAttachAccuRip, wxGBPosition(5, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+            innerSizer->Add(m_checkBoxAttachAccuRip, wxGBPosition(6, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
 
             m_checkBoxApplyTags = create_3state_checkbox(sizer, _("Apply tags from related JSON files"));
             m_checkBoxApplyTags->SetToolTip(_("File mask: *.tags.json"));
-            innerSizer->Add(m_checkBoxApplyTags, wxGBPosition(6, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+            innerSizer->Add(m_checkBoxApplyTags, wxGBPosition(7, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
 
             sizer->Add(innerSizer, wxSizerFlags().Expand());
         }
@@ -1947,6 +1948,7 @@ bool wxMainFrame::read_options(wxArrayString& options) const
     negatable_long_switch_option(options, m_checkBoxAttachAccuRip, "attach-accurip-log");
     negatable_long_switch_option(options, m_checkBoxAttachCover, "attach-cover");
     negatable_long_switch_option(options, m_checkBoxApplyTags, "apply-tags");
+    negatable_long_switch_option(options, m_checkBoxCoverFromPdf, "cover-from-pdf");
 
     if (negatable_long_switch_option(options, m_checkBoxConvertCover, "convert-cover-file"))
     {

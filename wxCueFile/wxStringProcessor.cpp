@@ -8,6 +8,10 @@ wxStringProcessor::wxStringProcessor()
 {
 }
 
+wxStringProcessor::~wxStringProcessor()
+{
+}
+
 bool wxStringProcessor::operator ()(wxString& s) const
 {
     wxString res;
@@ -37,7 +41,7 @@ wxString wxStringProcessor::operator ()(const wxString& s) const
 																		   \
 	void wxObjectArrayTraitsFor ## name::Free( name::value_type * p )	   \
 	{																	   \
-		delete p;														   \
+		wxDELETE( p );														   \
 	}
 
 WX_DEFINE_OBJARRAY_EX(wxArrayStringProcessor);

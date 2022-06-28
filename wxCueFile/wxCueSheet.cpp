@@ -155,6 +155,21 @@ bool wxCueSheet::HasCover() const
     return !m_covers.IsEmpty();
 }
 
+bool wxCueSheet::HasPdfCover() const
+{
+    if (m_covers.IsEmpty())
+    {
+        return false;
+    }
+
+    for (size_t i = 0, cnt = m_covers.GetCount(); i < cnt; ++i)
+    {
+        if (m_covers[i].IsPdf()) return true;
+    }
+
+    return false;
+}
+
 size_t wxCueSheet::GetCoversCount() const
 {
     return m_covers.GetCount();

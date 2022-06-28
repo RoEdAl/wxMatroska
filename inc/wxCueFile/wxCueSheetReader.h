@@ -62,6 +62,12 @@ class wxCueSheetReader
         static const char MASK[];
     };
 
+    struct pdf_file
+    {
+        static const char EXT[];
+        static const char MASK[];
+    };
+
     typedef wxUint32 ReadFlags;
 
     enum
@@ -82,8 +88,11 @@ class wxCueSheetReader
         EC_NUMBER_FULL_STOP = 8192,
         EC_SMALL_LETTER_PARENTHESIZED = 16384,
         EC_ASCII_TO_UNICODE = 32768,
-        EC_APPLY_TAGS_FROM_FILE = 65536
+        EC_APPLY_TAGS_FROM_FILE = 65536,
+        EC_FIND_PDF = 131072,
     };
+
+    static const ReadFlags DEF_READ_FLAGS;
 
     static bool TestReadFlags(ReadFlags, ReadFlags);
     bool TestReadFlags(ReadFlags) const;
@@ -204,6 +213,7 @@ class wxCueSheetReader
 
     bool FindCoversInRelatedFiles();
     bool FindCover(const wxCueSheetContent&);
+    bool FindPdfCover(const wxCueSheetContent&);
     size_t ExtractCoversFromDataFile(const wxDataFile&, wxArrayCoverFile&) const;
 
     bool ApplyTagsFromFile(const wxCueSheetContent&);

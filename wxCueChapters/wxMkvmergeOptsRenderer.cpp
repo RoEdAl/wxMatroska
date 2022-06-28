@@ -235,7 +235,7 @@ void wxMkvmergeOptsRenderer::RenderDisc(
     
     MakeRelativePaths(attachments, outDir);
 
-    if (m_cfg.ConvertCoverFile() && cueSheet.HasCover())
+    if ((m_cfg.ConvertCoverFile() && cueSheet.HasCover()) || (m_cfg.CoverFromPdf() && cueSheet.HasPdfCover()))
     {
         fnImg = m_cfg.GetTemporaryImageFile(inputFile, tmpStem);
         bool rendered = false;
@@ -315,6 +315,7 @@ void wxMkvmergeOptsRenderer::RenderScript(
     if (fnImg.IsOk())
     {
         *m_os << endl;
+        *m_os << "SET(CUE2MKC_STEM " << tmpStem << ')' << endl;
         *m_os << "CMAKE_PATH(SET CUE2MKC_SRC_IMG \"" << GetCMakePath(coverAttachment.GetFileName()) << "\")" << endl;
         *m_os << "CMAKE_PATH(SET CUE2MKC_DST_IMG \"" << GetCMakePath(GetRelativeFileName(fnImg, outDir)) << "\")" << endl;
 

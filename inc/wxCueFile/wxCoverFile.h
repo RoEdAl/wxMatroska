@@ -83,6 +83,8 @@ class wxCoverFile
     static const wxBitmapType CoverFileTypes[];
 
     static const wxULongLong MAX_FILE_SIZE;
+    static const char PDF_EXT[];
+    static const char PDF_MIME[];
 
     struct TypeName
     {
@@ -140,6 +142,8 @@ class wxCoverFile
     {
         return !m_description.IsEmpty();
     }
+
+    bool IsPdf() const;
 
     bool GuessMimeTypeFromData();
 
