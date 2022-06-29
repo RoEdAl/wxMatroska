@@ -24,7 +24,6 @@ wxStringProcessor* const wxEllipsizer::Clone() const
 
 bool wxEllipsizer::Process(const wxString& in, wxString& out) const
 {
-    out = in;
     wxString res(in);
     int      repl = m_reEllipsis.ReplaceAll(&res, ELLIPSIS);
 
