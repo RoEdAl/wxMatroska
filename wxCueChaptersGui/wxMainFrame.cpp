@@ -804,12 +804,6 @@ wxPanel* wxMainFrame::create_general_panel(wxNotebook* notebook, const wxSizerFl
         m_checkBoxMono->SetToolTip(_("Assume audio as dual mono and copy single channel only"));
         sizer->Add(m_checkBoxMono);
 
-        panelSizer->Add(sizer, sflags);
-    }
-
-    {
-        wxStaticBoxSizer* const sizer = create_static_box_sizer(panel, _("Input"), wxVERTICAL);
-
         m_checkBoxUseMediaFiles = create_3state_checkbox(sizer->GetStaticBox(), _("Use media files"), wxCHK_CHECKED);
         m_checkBoxUseMediaFiles->SetToolTip(_("Use media file(s) to calculate end time of chapters"));
         sizer->Add(m_checkBoxUseMediaFiles);
@@ -821,10 +815,13 @@ wxPanel* wxMainFrame::create_general_panel(wxNotebook* notebook, const wxSizerFl
         {
             wxBoxSizer* const innerSizer = new wxBoxSizer(wxHORIZONTAL);
 
-            innerSizer->Add(create_static_text(sizer, _("Alternate media files extensions")), btnLeft);
+            const wxSize editMinSize = calc_text_size(20);
 
-            m_textCtrlExt = create_text_ctrl(sizer, wxEmptyString, 50);
-            m_textCtrlExt->SetToolTip(_("Comma separated list of alternate media extensions (without leading dot)"));
+            innerSizer->Add(create_static_text(sizer, _("Media types")), btnLeft);
+
+            m_textCtrlExt = create_text_ctrl(sizer, wxEmptyString, 40);
+            m_textCtrlExt->SetSizeHints(editMinSize);
+            m_textCtrlExt->SetToolTip(_("Comma separated list of alternate media files extensions (without leading dot)"));
             innerSizer->Add(m_textCtrlExt, centerVertical);
 
             sizer->Add(innerSizer);
@@ -963,19 +960,72 @@ wxPanel* wxMainFrame::create_general_panel(wxNotebook* notebook, const wxSizerFl
     }
 
     {
-        wxStaticBoxSizer* const sizer = create_static_box_sizer(panel, _("Tags sources"), wxVERTICAL);
+        wxStaticBoxSizer* const sizer = create_static_box_sizer(panel, _wxS("Matroska\u2122 container attachments"), wxVERTICAL);
 
-        m_checkBoxUseCdTextTags = create_3state_checkbox(sizer, _("CD-TEXT"));
-        m_checkBoxUseCdTextTags->SetToolTip(_("Copy tags from CD-TEXT"));
-        sizer->Add(m_checkBoxUseCdTextTags);
+        {
+            wxGridBagSizer* const innerSizer = new wxGridBagSizer();
+            wxGBSpan              oneCol(1, 2);
 
-        m_checkBoxUseTagsFromCuesheetComments = create_3state_checkbox(sizer, _("Cuesheet comments"));
-        m_checkBoxUseTagsFromCuesheetComments->SetToolTip(_("Copy tags extracted from cuesheet comments"));
-        sizer->Add(m_checkBoxUseTagsFromCuesheetComments);
+            innerSizer->Add(create_static_text(sizer, _("Cue scheet attach mode")), wxGBPosition(0, 0), wxDefaultSpan, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
 
-        m_checkBoxUseTagsFromMediaFiles = create_3state_checkbox(sizer, _("Media files"));
-        m_checkBoxUseTagsFromMediaFiles->SetToolTip(_("Copy tags extracted from media files"));
-        sizer->Add(m_checkBoxUseTagsFromMediaFiles);
+            {
+                wxArrayString choices;
+                choices.Add(_("default"));
+                choices.Add(_("none"));
+                choices.Add(_("source"));
+                choices.Add(_("decoded"));
+                choices.Add(_("rendered"));
+
+                m_choiceCueSheetAttachMode = create_choice(sizer, choices);
+            }
+            innerSizer->Add(m_choiceCueSheetAttachMode, wxGBPosition(0, 1), wxDefaultSpan, wxEXPAND | wxBOTTOM, btnLeft.GetBorderInPixels());
+
+            {
+                const wxSizerFlags lineFlags = get_horizontal_static_line_sizer_flags(panel);
+                innerSizer->Add(create_horizontal_static_line(sizer),
+                           wxGBPosition(1, 0), oneCol,
+                           lineFlags.GetFlags(), btnLeft.GetBorderInPixels());
+            }
+
+            m_checkBoxAttachCover = create_3state_checkbox(sizer, _("Attach cover image(s)"), wxCHK_CHECKED);
+            innerSizer->Add(m_checkBoxAttachCover, wxGBPosition(2, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+
+            m_checkBoxConvertCover = create_3state_checkbox(sizer, _("Convert cover image(s)"));
+            innerSizer->Add(m_checkBoxConvertCover, wxGBPosition(3, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+
+            m_checkBoxCoverFromPdf = create_3state_checkbox(sizer, _("Create cover from PDF"));
+            innerSizer->Add(m_checkBoxCoverFromPdf, wxGBPosition(4, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+
+            {
+                wxStaticText* const staticText = create_static_text(sizer, _("Converted image type"));
+                innerSizer->Add(staticText, wxGBPosition(5, 0), wxDefaultSpan, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+            }
+
+            {
+                wxArrayString choices;
+                choices.Add(_("default"));
+                choices.Add(_("jpeg"));
+                choices.Add(_("webp"));
+
+                m_choiceConvertedImageExt = create_choice(sizer, choices);
+            }
+            innerSizer->Add(m_choiceConvertedImageExt, wxGBPosition(5, 1), wxDefaultSpan, wxEXPAND | wxBOTTOM, btnLeft.GetBorderInPixels());
+
+            {
+                const wxSizerFlags lineFlags = get_horizontal_static_line_sizer_flags(panel);
+                innerSizer->Add(create_horizontal_static_line(sizer),
+                           wxGBPosition(6, 0), oneCol,
+                           lineFlags.GetFlags(), btnLeft.GetBorderInPixels());
+            }
+
+            m_checkBoxAttachLogs = create_3state_checkbox(sizer, _("Attach EAC log(s)"), wxCHK_CHECKED);
+            innerSizer->Add(m_checkBoxAttachLogs, wxGBPosition(7, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+
+            m_checkBoxAttachAccuRip = create_3state_checkbox(sizer, _("Attach AccurateRip log(s)"));
+            innerSizer->Add(m_checkBoxAttachAccuRip, wxGBPosition(8, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+
+            sizer->Add(innerSizer, wxSizerFlags().Expand());
+        }
 
         panelSizer->Add(sizer, sflags);
     }
@@ -1140,67 +1190,6 @@ wxPanel* wxMainFrame::create_adv_panel(wxNotebook* notebook, const wxSizerFlags&
     const wxSizerFlags sflags = wxSizerFlags().Expand().Border(wxLEFT);
 
     {
-        wxStaticBoxSizer* const sizer = create_static_box_sizer(panel, _wxS("Matroska\u2122 container attachments"), wxVERTICAL);
-
-        {
-            wxGridBagSizer* const innerSizer = new wxGridBagSizer();
-            wxGBSpan              oneCol(1, 2);
-
-            innerSizer->Add(create_static_text(sizer, _("Cue scheet attach mode")), wxGBPosition(0, 0), wxDefaultSpan, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
-
-            {
-                wxArrayString choices;
-                choices.Add(_("default"));
-                choices.Add(_("none"));
-                choices.Add(_("source"));
-                choices.Add(_("decoded"));
-                choices.Add(_("rendered"));
-
-                m_choiceCueSheetAttachMode = create_choice(sizer, choices);
-            }
-            innerSizer->Add(m_choiceCueSheetAttachMode, wxGBPosition(0, 1), wxDefaultSpan, wxEXPAND | wxBOTTOM, btnLeft.GetBorderInPixels());
-
-            m_checkBoxAttachCover = create_3state_checkbox(sizer, _("Attach cover image(s)"), wxCHK_CHECKED);
-            innerSizer->Add(m_checkBoxAttachCover, wxGBPosition(1, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
-
-            m_checkBoxConvertCover = create_3state_checkbox(sizer, _("Convert cover image(s)"));
-            innerSizer->Add(m_checkBoxConvertCover, wxGBPosition(2, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
-
-            m_checkBoxCoverFromPdf = create_3state_checkbox(sizer, _("Create cover from PDF"));
-            innerSizer->Add(m_checkBoxCoverFromPdf, wxGBPosition(3, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
-
-            {
-                wxStaticText* const staticText = create_static_text(sizer, _("Converted image type"));
-                innerSizer->Add(staticText, wxGBPosition(4, 0), wxDefaultSpan, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
-            }
-
-            {
-                wxArrayString choices;
-                choices.Add(_("default"));
-                choices.Add(_("jpeg"));
-                choices.Add(_("webp"));
-
-                m_choiceConvertedImageExt = create_choice(sizer, choices);
-            }
-            innerSizer->Add(m_choiceConvertedImageExt, wxGBPosition(4, 1), wxDefaultSpan, wxEXPAND | wxBOTTOM, btnLeft.GetBorderInPixels());
-
-            m_checkBoxAttachLogs = create_3state_checkbox(sizer, _("Attach EAC log(s)"), wxCHK_CHECKED);
-            innerSizer->Add(m_checkBoxAttachLogs, wxGBPosition(5, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
-
-            m_checkBoxAttachAccuRip = create_3state_checkbox(sizer, _("Attach AccurateRip log(s)"));
-            innerSizer->Add(m_checkBoxAttachAccuRip, wxGBPosition(6, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
-
-            m_checkBoxApplyTags = create_3state_checkbox(sizer, _("Apply tags from related JSON files"));
-            m_checkBoxApplyTags->SetToolTip(_("File mask: *.tags.json"));
-            innerSizer->Add(m_checkBoxApplyTags, wxGBPosition(7, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
-
-            sizer->Add(innerSizer, wxSizerFlags().Expand());
-        }
-
-        panelSizer->Add(sizer, sflags);
-    }
-
-    {
         wxStaticBoxSizer* const sizer = create_static_box_sizer(panel, _("Tags processing"), wxVERTICAL);
 
         m_checkBoxParseTagsFromCuesheetComments = create_3state_checkbox(sizer, _("Parse tags from cuesheet comments"));
@@ -1228,6 +1217,28 @@ wxPanel* wxMainFrame::create_adv_panel(wxNotebook* notebook, const wxSizerFlags&
         m_checkBoxGenerateArtistTagsForTracks = create_3state_checkbox(sizer, _("Generate ARTIST tag for every track"), wxCHK_CHECKED);
         m_checkBoxGenerateArtistTagsForTracks->SetToolTip(_("Some media players (e.g. Foobar2000) requires ARTIST tag for every track (chapter)."));
         sizer->Add(m_checkBoxGenerateArtistTagsForTracks);
+
+        panelSizer->Add(sizer, sflags);
+    }
+
+    {
+        wxStaticBoxSizer* const sizer = create_static_box_sizer(panel, _("Tags sources"), wxVERTICAL);
+
+        m_checkBoxUseCdTextTags = create_3state_checkbox(sizer, _("CD-TEXT"));
+        m_checkBoxUseCdTextTags->SetToolTip(_("Copy tags from CD-TEXT"));
+        sizer->Add(m_checkBoxUseCdTextTags);
+
+        m_checkBoxUseTagsFromCuesheetComments = create_3state_checkbox(sizer, _("Cuesheet comments"));
+        m_checkBoxUseTagsFromCuesheetComments->SetToolTip(_("Copy tags extracted from cuesheet comments"));
+        sizer->Add(m_checkBoxUseTagsFromCuesheetComments);
+
+        m_checkBoxUseTagsFromMediaFiles = create_3state_checkbox(sizer, _("Media files"));
+        m_checkBoxUseTagsFromMediaFiles->SetToolTip(_("Copy tags extracted from media files"));
+        sizer->Add(m_checkBoxUseTagsFromMediaFiles);
+
+        m_checkBoxApplyTags = create_3state_checkbox(sizer, _("Apply tags from related JSON files"));
+        m_checkBoxApplyTags->SetToolTip(_("File mask: *.tags.json"));
+        sizer->Add(m_checkBoxApplyTags);
 
         panelSizer->Add(sizer, sflags);
     }
