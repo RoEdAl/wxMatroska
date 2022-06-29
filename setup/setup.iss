@@ -40,7 +40,7 @@ Name: cli; Description: {cm:desc_component_cli}; Types: full compact custom;
 Name: gui; Description: {cm:desc_component_gui}; Types: full custom; 
 
 [Tasks]
-Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:AdditionalIcons}
+Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked;
 
 [Files]
 Source: {#Cue2MkcExe}; DestDir: {app}; Flags: comparetimestamp; Components: cli; 
@@ -48,11 +48,11 @@ Source: {#Cue2MkcGuiExe}; DestDir: {app}; Flags: comparetimestamp; Components: g
 Source: {#WXWidgetsLibDir}\wxbase{#WXVerCompact}u{#WXDebug}_{#WXDllSuffix}; DestDir: {app}; Flags: comparetimestamp; Components: cli gui; Attribs: notcontentindexed;
 Source: {#WXWidgetsLibDir}\wxbase{#WXVerCompact}u{#WXDebug}_xml_{#WXDllSuffix}; DestDir: {app}; Flags: comparetimestamp; Components: cli; Attribs: notcontentindexed;
 Source: {#WXWidgetsLibDir}\wxmsw{#WXVerCompact}u{#WXDebug}_core_{#WXDllSuffix}; DestDir: {app}; Flags: comparetimestamp; Components: cli gui; Attribs: notcontentindexed;
-Source: {#LicenseFileTxt}; DestDir: {app}; Flags: comparetimestamp setntfscompression uninsremovereadonly; Components: cli gui; Attribs: readonly notcontentindexed;
-Source: ..\cue\ISO-639-2_utf-8.txt; DestDir: {app}; Flags: comparetimestamp setntfscompression uninsremovereadonly; Components: cli; Attribs: readonly notcontentindexed;
-Source: ..\wxCueChapters\cmake\dr-scan.cmake; DestDir: {app}; Flags: comparetimestamp setntfscompression uninsremovereadonly; Components: cli; Attribs: readonly notcontentindexed;
-Source: ..\wxCueChapters\cmake\mkcover.cmake; DestDir: {app}; Flags: comparetimestamp setntfscompression uninsremovereadonly; Components: cli; Attribs: readonly notcontentindexed;
-Source: ..\wxCueChapters\app.tags.json; DestDir: {app}; DestName: {#Cue2MkcBase}.tags.json; Flags: comparetimestamp setntfscompression uninsremovereadonly; Components: cli; Attribs: readonly notcontentindexed;
+Source: {#LicenseFileTxt}; DestDir: {app}; Flags: comparetimestamp setntfscompression overwritereadonly uninsremovereadonly; Components: cli gui; Attribs: readonly notcontentindexed;
+Source: ..\cue\ISO-639-2_utf-8.txt; DestDir: {app}; Flags: comparetimestamp setntfscompression overwritereadonly uninsremovereadonly; Components: cli; Attribs: readonly notcontentindexed;
+Source: ..\wxCueChapters\cmake\dr-scan.cmake; DestDir: {app}; Flags: comparetimestamp setntfscompression overwritereadonly uninsremovereadonly; Components: cli; Attribs: readonly notcontentindexed;
+Source: ..\wxCueChapters\cmake\mkcover.cmake; DestDir: {app}; Flags: comparetimestamp setntfscompression overwritereadonly uninsremovereadonly; Components: cli; Attribs: readonly notcontentindexed;
+Source: ..\wxCueChapters\app.tags.json; DestDir: {app}; DestName: {#Cue2MkcBase}.tags.json; Flags: comparetimestamp setntfscompression overwritereadonly uninsremovereadonly; Components: cli; Attribs: readonly notcontentindexed;
 
 [Icons]
 Name: {group}\{cm:cue2mkc} {cm:gui}; Filename: {app}\cue2mkc-frontend.exe; IconFilename: {app}\cue2mkc-frontend.exe; Comment: {cm:gui_comment}; Components: gui; 
@@ -64,6 +64,10 @@ Name: {autodesktop}\{cm:cue2mkc} {cm:console}; Filename: {cmd}; Parameters: "/T:
 
 [Run]
 Components: gui; Filename: {app}\cue2mkc-frontend.exe; Flags: PostInstall RunAsOriginalUser NoWait; Description: {cm:gui_run}; 
+
+[Registry]
+; http://docs.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation
+Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\FileSystem"; ValueType: dword; ValueName: "LongPathsEnabled"; ValueData: 1; MinVersion: 10.0.14393; Check: IsAdminInstallMode;
 
 [CustomMessages]
 cue2mkc=cue2mkc
