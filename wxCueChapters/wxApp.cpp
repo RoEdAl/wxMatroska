@@ -296,7 +296,7 @@ namespace
     {
         // JSON with options
         const wxScopedPtr<wxMkvmergeOptsRenderer> optsRenderer(new wxMkvmergeOptsRenderer(cfg));
-        optsRenderer->RenderDisc(inputFile, cueSheet, tmpStem, fnTmpMka, fnChaptersFile, fnTagsFile, mkaFile, coverAttachment, fnImg);
+        optsRenderer->RenderOptions(inputFile, cueSheet, tmpStem, fnTmpMka, fnChaptersFile, fnTagsFile, mkaFile, coverAttachment, fnImg);
         if (!optsRenderer->Save(optsFile))
         {
             return false;

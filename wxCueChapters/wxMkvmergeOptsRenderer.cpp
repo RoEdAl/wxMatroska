@@ -110,7 +110,7 @@ wxMkvmergeOptsRenderer::wxMkvmergeOptsRenderer(const wxConfiguration& cfg)
 {
 }
 
-void wxMkvmergeOptsRenderer::RenderDisc(
+void wxMkvmergeOptsRenderer::RenderOptions(
     const wxInputFile& inputFile,
     const wxCueSheet& cueSheet,
     const wxString& tmpStem,
@@ -319,7 +319,10 @@ void wxMkvmergeOptsRenderer::RenderScript(
     }
 
     {
-        const wxFileName dstMkaFile = m_cfg.GetOutputFile(inputFile, wxConfiguration::EXT::MATROSKA_AUDIO);
+        wxFileName dstMkaFile = m_cfg.GetOutputDir(inputFile);
+        dstMkaFile.SetName(GetContainerFileName(cueSheet));
+        dstMkaFile.SetExt(wxConfiguration::EXT::MATROSKA_AUDIO);
+
         *m_os << endl << "CMAKE_PATH(SET MKA_FNAME \"" << GetCMakePath(GetRelativeFileName(dstMkaFile, outDir)) << "\")" << endl << endl;
     }
 

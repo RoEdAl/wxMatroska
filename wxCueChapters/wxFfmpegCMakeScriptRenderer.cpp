@@ -404,8 +404,11 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
     }
 
     {
-        const wxFileName mkaFile = m_cfg.GetOutputFile(inputFile, wxConfiguration::EXT::MATROSKA_AUDIO);
-        *m_os << endl << "CMAKE_PATH(SET MKA_FNAME \"" << GetCMakePath(GetRelativeFileName(mkaFile, outDir)) << "\")" << endl << endl;
+        wxFileName dstMkaFile = m_cfg.GetOutputDir(inputFile);
+        dstMkaFile.SetName(GetContainerFileName(cueSheet));
+        dstMkaFile.SetExt(wxConfiguration::EXT::MATROSKA_AUDIO);
+        
+        *m_os << endl << "CMAKE_PATH(SET MKA_FNAME \"" << GetCMakePath(GetRelativeFileName(dstMkaFile, outDir)) << "\")" << endl << endl;
     }
 
     {

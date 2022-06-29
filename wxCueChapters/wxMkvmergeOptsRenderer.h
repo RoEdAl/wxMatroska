@@ -39,7 +39,7 @@ class wxMkvmergeOptsRenderer: public wxCMakeScriptRenderer
 
     wxMkvmergeOptsRenderer(const wxConfiguration&);
 
-    void RenderDisc(const wxInputFile&, const wxCueSheet&, const wxString&, const wxFileName&, const wxFileName&, const wxFileName&, wxFileName&, wxMatroskaAttachment&, wxFileName&);
+    void RenderOptions(const wxInputFile&, const wxCueSheet&, const wxString&, const wxFileName&, const wxFileName&, const wxFileName&, wxFileName&, wxMatroskaAttachment&, wxFileName&);
     void RenderScript(const wxInputFile&, const wxCueSheet&, const wxString&, const wxFileName&, const wxFileName&, const wxMatroskaAttachment&, const wxFileName&);
     bool Save(const wxFileName&);
 };

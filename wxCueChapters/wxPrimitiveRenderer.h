@@ -141,6 +141,7 @@ class wxPrimitiveRenderer :protected wxTagRenderer, public wxTemporaryFilesProvi
     bool SaveCueSheet(const wxInputFile&, const wxString&, const wxString&, const wxString&, wxFileName&);
     bool RenderCueSheet(const wxInputFile&, const wxString&, const wxString&, const wxCueSheet&, wxFileName&);
     wxString GetTrackName(const wxCueSheet&) const;
+    wxString GetContainerFileName(const wxCueSheet&) const;
     bool IsLanguageAgnostic(const wxCueTag&) const;
     virtual void GetTemporaryFiles(wxArrayFileName&) const;
 

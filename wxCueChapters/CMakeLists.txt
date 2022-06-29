@@ -17,6 +17,7 @@ set(CUECHAPTERS_SOURCE_FILES
 	wxFfmpegCMakeScriptRenderer.cpp
 	wxXmlCueSheetRenderer.cpp
 	wxTemporaryFilesProvider.cpp
+	wxFileNameCorrector.cpp
 	cmake/ff-scan.cmake
 	cmake/dr-scan.cmake
 	cmake/mkcover.cmake

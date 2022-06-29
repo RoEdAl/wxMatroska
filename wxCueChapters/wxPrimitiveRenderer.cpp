@@ -13,6 +13,7 @@
 #include "wxConfiguration.h"
 #include "wxInputFile.h"
 #include "wxPrimitiveRenderer.h"
+#include "wxFileNameCorrector.h"
 
 namespace
 {
@@ -821,6 +822,13 @@ wxString wxPrimitiveRenderer::GetTrackName(const wxCueSheet& cueSheet) const
     wxString trackName = m_cfg.GetMatroskaNameFormat();
     (*stringProcessor)(trackName);
     return cueSheet.Format(m_cfg.GetTagSources(), trackName);
+}
+
+wxString wxPrimitiveRenderer::GetContainerFileName(const wxCueSheet& cueSheet) const
+{
+    const wxString res = GetTrackName(cueSheet);
+    const wxFileNameCorrector fnCorrector;
+    return fnCorrector(res);
 }
 
 bool wxPrimitiveRenderer::IsLanguageAgnostic(const wxCueTag& tag) const
