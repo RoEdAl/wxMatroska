@@ -137,7 +137,7 @@ class wxMainFrame:
 
     void ProcessOutErr(bool = false);
 
-    void AddMainItem(const wxString&);
+    void AddMainItem(const wxString&, bool = true);
     void AddChildItem(const wxTreeItemId&, const wxString&);
 
     void SuggestCommonDirPath();

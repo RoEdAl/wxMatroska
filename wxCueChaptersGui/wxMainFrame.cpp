@@ -215,6 +215,7 @@ namespace
 
         virtual bool OnDropFiles(wxCoord WXUNUSED(x), wxCoord WXUNUSED(y), const wxArrayString& filenames)
         {
+            wxBusyCursor busy;
             m_pMainFrame->OnDropFiles(filenames);
             return true;
         }
@@ -2098,12 +2099,14 @@ void wxMainFrame::OnCheckShowTimestamps(wxCommandEvent& event)
     else wxLog::DisableTimestamp();
 }
 
-void wxMainFrame::AddMainItem(const wxString& fileName)
+void wxMainFrame::AddMainItem(const wxString& fileName, bool selectItem)
 {
     wxTreeItemId itemId = m_treeCtrlInputFiles->AppendItem(m_treeCtrlInputFilesRoot, fileName);
-
     wxASSERT(itemId.IsOk());
-    m_treeCtrlInputFiles->SelectItem(itemId);
+    if (selectItem)
+    {
+        m_treeCtrlInputFiles->SelectItem(itemId);
+    }
 }
 
 void wxMainFrame::SuggestCommonDirPath()
@@ -2174,13 +2177,13 @@ void wxMainFrame::OnUpdateJoinMode(wxUpdateUIEvent& event)
 
 void wxMainFrame::OnDropFiles(const wxArrayString& fileNames)
 {
-    m_notebook->ChangeSelection(0);
+    wxWindowUpdateLocker locker(m_notebook);
 
+    m_notebook->ChangeSelection(0);
     for (wxArrayString::const_iterator i = fileNames.begin(); i != fileNames.end(); ++i)
     {
-        AddMainItem(*i);
+        AddMainItem(*i, false);
     }
-
     SuggestCommonDirPath();
 }
 
