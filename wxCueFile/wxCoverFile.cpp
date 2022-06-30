@@ -195,7 +195,7 @@ bool wxCoverFile::GetMimeFromExt(const wxString& ext, wxString& mimeType)
     wxList& imgHandlers = wxImage::GetHandlers();
     for (wxList::iterator i = imgHandlers.begin(), end = imgHandlers.end(); i != end; ++i)
     {
-        const wxImageHandler* const imgHandler = static_cast<const wxImageHandler*>(*i);
+        const wxImageHandler* const imgHandler = wxStaticCast(*i, wxImageHandler);
         if (imgHandler->GetExtension().CmpNoCase(ext) == 0)
         {
             mimeType = imgHandler->GetMimeType();
@@ -225,7 +225,7 @@ bool wxCoverFile::GuessMimeTypeFromData()
     wxList& imgHandlers = wxImage::GetHandlers();
     for (wxList::iterator i = imgHandlers.begin(), end = imgHandlers.end(); i != end; ++i)
     {
-        wxImageHandler* const imgHandler = static_cast<wxImageHandler*>(*i);
+        wxImageHandler* const imgHandler = wxStaticCast(*i, wxImageHandler);
         if (imgHandler->CanRead(dataStream))
         {
             m_mimeType = imgHandler->GetMimeType();
@@ -246,7 +246,7 @@ bool wxCoverFile::GetExtFromMime(const wxString& mimeType, wxString& ext)
     wxList& imgHandlers = wxImage::GetHandlers();
     for (wxList::iterator i = imgHandlers.begin(), end = imgHandlers.end(); i != end; ++i)
     {
-        const wxImageHandler* const imgHandler = static_cast<const wxImageHandler*>(*i);
+        const wxImageHandler* const imgHandler = wxStaticCast(*i, wxImageHandler);
         if (imgHandler->GetMimeType().CmpNoCase(mimeType) == 0)
         {
             ext = imgHandler->GetExtension();
@@ -288,7 +288,7 @@ bool wxCoverFile::Save(const wxFileName& fn)
 
     if (fos.IsOk())
     {
-        wxLogInfo(_wxS("Creating image file \u201C%s\u201D"), fn.GetFullName());
+        wxLogInfo(_wxS("Creating image file " ENQUOTED_STR_FMT), fn.GetFullName());
         fos.Write(m_data.GetData(), m_data.GetDataLen());
         fos.Close();
         m_fileName = fn;
@@ -297,7 +297,7 @@ bool wxCoverFile::Save(const wxFileName& fn)
     }
     else
     {
-        wxLogError(_wxS("Fail to save image to \u201C%s\u201D"), fn.GetFullName());
+        wxLogError(_wxS("Fail to save image to " ENQUOTED_STR_FMT), fn.GetFullName());
         return false;
     }
 }

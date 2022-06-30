@@ -158,14 +158,14 @@ void MyAppConsole::OnAssertFailure(
     const wxChar* msg
 )
 {
-    const wxScopedPtr<wxMessageOutput> msgErr( new MyMessageOutputStderr() );
+    const wxScopedPtr<wxMessageOutput> msgErr(new MyMessageOutputStderr());
     msgErr->Output(wxEmptyString);
     msgErr->Output("======== <ASSERT> =======");
     msgErr->Printf("ASSERT - file: %s", file);
     msgErr->Printf("ASSERT - line: %d", line);
     msgErr->Printf("ASSERT - fn  : %s", func);
     msgErr->Printf("ASSERT - cond: %s", cond);
-    if (msg != nullptr || wxStrlen(msg) > 0)
+    if (msg != nullptr && wxStrlen(msg) > 0)
     {
         msgErr->Printf("ASSERT - msg : %s", msg);
     }
@@ -234,7 +234,7 @@ bool MyAppConsole::CheckLicense()
 
     if (fs == wxInvalidSize)
     {
-        wxLogInfo(_wxS("Unable to read license \u201C%s\u201D"), fn.GetFullPath());
+        wxLogInfo(_wxS("Unable to read license " ENQUOTED_STR_FMT), fn.GetFullPath());
         return false;
     }
 
@@ -242,7 +242,7 @@ bool MyAppConsole::CheckLicense()
 
     if (fs > maxSize)
     {
-        wxLogInfo(_wxS("License file \u201C%s\u201D is too big"), fn.GetFullPath());
+        wxLogInfo(_wxS("License file " ENQUOTED_STR_FMT " is too big"), fn.GetFullPath());
         return false;
     }
     return true;
@@ -258,7 +258,7 @@ void MyAppConsole::ShowLicense(wxMessageOutput& out)
 
     if (!fn.IsFileReadable())
     {
-        wxLogError(_wxS("Cannot find license file \u201C%s\u201D"), fn.GetFullPath());
+        wxLogError(_wxS("Cannot find license file " ENQUOTED_STR_FMT), fn.GetFullPath());
         return;
     }
 
@@ -266,7 +266,7 @@ void MyAppConsole::ShowLicense(wxMessageOutput& out)
 
     if (fs == wxInvalidSize)
     {
-        wxLogError(_wxS("Unable to read license \u201C%s\u201D"), fn.GetFullPath());
+        wxLogError(_wxS("Unable to read license " ENQUOTED_STR_FMT), fn.GetFullPath());
         return;
     }
 
@@ -274,7 +274,7 @@ void MyAppConsole::ShowLicense(wxMessageOutput& out)
 
     if (fs > maxSize)
     {
-        wxLogError(_wxS("License file \u201C%s\u201D is too big"), fn.GetFullPath());
+        wxLogError(_wxS("License file " ENQUOTED_STR_FMT " is too big"), fn.GetFullPath());
         return;
     }
 
@@ -282,7 +282,7 @@ void MyAppConsole::ShowLicense(wxMessageOutput& out)
 
     if (!fis.IsOk())
     {
-        wxLogError(_wxS("Cannot open license file \u201C%s\u201D"), fn.GetFullPath());
+        wxLogError(_wxS("Cannot open license file " ENQUOTED_STR_FMT), fn.GetFullPath());
         return;
     }
 

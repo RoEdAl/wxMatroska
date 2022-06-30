@@ -238,7 +238,7 @@ bool wxMyApp::PrepareExecuteEnv(wxExecuteEnv& env) const
         return false;
     }
 
-    env.env["SOURCE_DATE_EPOCH"] = wxString::Format("%" wxSizeTFmtSpec "d", m_dt.GetTicks());
+    env.env["SOURCE_DATE_EPOCH"] = wxString::Format("%" wxTimeTFmtSpec "d", m_dt.GetTicks());
     return true;
 }
 

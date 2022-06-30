@@ -237,7 +237,7 @@ void wxFfmpegCMakeScriptRenderer::RenderPre(
 
     *m_os << "CMAKE_MINIMUM_REQUIRED(VERSION 3.21)" << endl;
     RenderToolEnvCheck("ffmpeg");
-    *m_os << "SET(DRSTEM \"" << tmpStem << "\")" << endl;
+    *m_os << "SET(CUE2MKC_STEM \"" << tmpStem << "\")" << endl;
 
     const wxArrayDataFile& dataFiles = cueSheet.GetDataFiles();
     for (size_t i = 0, cnt = dataFiles.GetCount(); i < cnt; ++i)
@@ -250,11 +250,11 @@ void wxFfmpegCMakeScriptRenderer::RenderPre(
 
     if (m_cfg.RunReplayGainScanner())
     {
-        *m_os << "CMAKE_PATH(SET CUE2MKC_CHAPTERS \"${DRSTEM}-" << wxConfiguration::TMP::CHAPTERS << '.' << wxConfiguration::EXT::JSON << "\")" << endl;
-        *m_os << "CMAKE_PATH(SET CUE2MKC_DST \"${DRSTEM}-" << wxConfiguration::TMP::RGSCAN << '.' << wxConfiguration::EXT::JSON << "\")" << endl;
+        *m_os << "CMAKE_PATH(SET CUE2MKC_CHAPTERS \"${CUE2MKC_STEM}-" << wxConfiguration::TMP::CHAPTERS << '.' << wxConfiguration::EXT::JSON << "\")" << endl;
+        *m_os << "CMAKE_PATH(SET CUE2MKC_DST \"${CUE2MKC_STEM}-" << wxConfiguration::TMP::RGSCAN << '.' << wxConfiguration::EXT::JSON << "\")" << endl;
     }
 
-    *m_os << "CMAKE_PATH(SET CUE2MKC_MKA \"${DRSTEM}-" << wxConfiguration::TMP::PRE << '.' << wxConfiguration::EXT::MKA << "\")" << endl;
+    *m_os << "CMAKE_PATH(SET CUE2MKC_MKA \"${CUE2MKC_STEM}-" << wxConfiguration::TMP::PRE << '.' << wxConfiguration::EXT::MKA << "\")" << endl;
 
     *m_os << "MESSAGE(STATUS \"Creating temporary MKA container (via ffmpeg)\")" << endl;
     *m_os << "EXECUTE_PROCESS(" << endl;
@@ -408,12 +408,12 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
         dstMkaFile.SetName(GetContainerFileName(cueSheet));
         dstMkaFile.SetExt(wxConfiguration::EXT::MATROSKA_AUDIO);
         
-        *m_os << endl << "CMAKE_PATH(SET MKA_FNAME \"" << GetCMakePath(GetRelativeFileName(dstMkaFile, outDir)) << "\")" << endl << endl;
+        *m_os << "CMAKE_PATH(SET MKA_FNAME \"" << GetCMakePath(GetRelativeFileName(dstMkaFile, outDir)) << "\")" << endl;
     }
 
     {
         const wxFileName mkaFile = m_cfg.GetTemporaryFile(inputFile, tmpStem, wxConfiguration::TMP::MKA, wxConfiguration::EXT::MATROSKA_AUDIO);
-        *m_os << endl << "CMAKE_PATH(SET TMP_MKA_FNAME \"" << GetCMakePath(GetRelativeFileName(mkaFile, outDir)) << "\")" << endl << endl;
+        *m_os << "CMAKE_PATH(SET TMP_MKA_FNAME \"" << GetCMakePath(GetRelativeFileName(mkaFile, outDir)) << "\")" << endl;
         m_temporaryFiles.Add(mkaFile);
     }
 
@@ -423,11 +423,11 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
         fnImg = m_cfg.GetTemporaryImageFile(inputFile, tmpStem);
 
         *m_os << "SET(CUE2MKC_SRC_IMG ${CUE2MKC_ATTACHMENT_0})" << endl;
-        *m_os << "CMAKE_PATH(SET CUE2MKC_DST_IMG \"" << GetCMakePath(GetRelativeFileName(fnImg, outDir)) << "\")" << endl << endl;
+        *m_os << "CMAKE_PATH(SET CUE2MKC_DST_IMG \"" << GetCMakePath(GetRelativeFileName(fnImg, outDir)) << "\")" << endl;
 
         wxFileName mkcover(wxStandardPaths::Get().GetExecutablePath());
         mkcover.SetFullName("mkcover.cmake");
-        *m_os << "INCLUDE(\"" << GetCMakePath(mkcover) << "\")" << endl;
+        *m_os << "INCLUDE(\"" << GetCMakePath(mkcover) << "\")" << endl << endl;
 
         m_temporaryFiles.Add(fnImg);
     }
@@ -582,7 +582,7 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
     {
         *m_os << "    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}" << endl;
     }
-    *m_os << ')' << endl;
+    *m_os << ')' << endl << endl;
     *m_os << "MESSAGE(STATUS \"Replacing MKA container\")" << endl;
     *m_os << "FILE(RENAME ${TMP_MKA_FNAME} ${MKA_FNAME})" << endl;
 }
