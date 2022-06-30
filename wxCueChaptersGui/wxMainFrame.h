@@ -11,6 +11,8 @@
 class wxMainFrame:
     public wxFrame
 {
+    wxDECLARE_NO_COPY_CLASS(wxMainFrame);
+
     protected:
 
     wxNotebook* m_notebook;
