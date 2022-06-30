@@ -20,20 +20,12 @@ class wxUnquoter: public wxStringProcessor
 
     public:
 
-    static const char RE_SINGLE_QUOTES[];
-    static const char RE_DOUBLE_QUOTES[];
-
-    public:
-
     wxUnquoter(void);
 
     virtual wxStringProcessor* const Clone() const wxOVERRIDE;
     virtual bool Process(const wxString&, wxString&) const wxOVERRIDE;
 
     bool IsQuoted(const wxString&) const;
-
-    const wxRegEx& GetReSingleQuotes() const;
-    const wxRegEx& GetReDoubleQuotes() const;
 };
 
 class wxQuoteCorrector: public wxStringProcessor
@@ -50,12 +42,11 @@ class wxQuoteCorrector: public wxStringProcessor
 
     public:
 
-    static const char RE_SINGLE_QUOTES[];
-    static const char RE_DOUBLE_QUOTES[];
-    static const char RE_PSEUDO_DOUUBLE_QUOTES[];
-
-    static const wxChar POLISH_DOUBLE_QUOTES[];
-    static const wxChar POLISH_SINGLE_QUOTES[];
+    struct QUOTATION_MARKS
+    {
+        const wxChar* opening;
+        const wxChar* closing;
+    };
 
     static bool correct_polish_qm(const wxString&);
     static bool correct_english_qm(const wxString&);
@@ -63,22 +54,6 @@ class wxQuoteCorrector: public wxStringProcessor
     static bool correct_french_qm(const wxString&);
 
     protected:
-
-    static const char OPENING_QOUTATION_MARK_REPLACEMENT;
-    static const char CLOSING_QOUTATION_MARK_REPLACEMENT;
-    static const char GENERIC_REPLACEMENT[];
-
-    struct QUOTATION_MARKS
-    {
-        const wxChar* opening;
-        const wxChar* closing;
-    };
-
-    static const QUOTATION_MARKS ASCII_QUOTES[];
-    static const QUOTATION_MARKS ENGLISH_QUOTES[];
-    static const QUOTATION_MARKS POLISH_QUOTES[];
-    static const QUOTATION_MARKS GERMAN_QUOTES[];
-    static const QUOTATION_MARKS FRENCH_QUOTES[];
 
     typedef wxScopedCharTypeBuffer< wxChar > wxScopedCharBuffer;
     typedef wxScopedCharBuffer(wxQuoteCorrector::* GET_REPLACEMENT_METHOD)(int, bool) const;
@@ -115,9 +90,6 @@ class wxQuoteCorrector: public wxStringProcessor
     virtual bool Process(const wxString&, wxString&) const wxOVERRIDE;
 
     bool IsQuoted(const wxString&) const;
-
-    const wxRegEx& GetReSingleQuotes() const;
-    const wxRegEx& GetReDoubleQuotes() const;
 };
 
 #endif

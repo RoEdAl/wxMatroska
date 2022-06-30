@@ -4,12 +4,11 @@
 
 #include <wxCueFile/wxUnquoter.h>
  
-// ===============================================================================
-
-const char wxUnquoter::RE_SINGLE_QUOTES[] = "^\\p{Xps}*'(.*)'\\p{Xps}*$";
-const char wxUnquoter::RE_DOUBLE_QUOTES[] = "^\\p{Xps}*\"(.*)\"\\p{Xps}*$";
-
-// ===============================================================================
+namespace
+{
+    constexpr char RE_SINGLE_QUOTES[] = "^\\p{Xps}*'(.*)'\\p{Xps}*$";
+    constexpr char RE_DOUBLE_QUOTES[] = "^\\p{Xps}*\"(.*)\"\\p{Xps}*$";
+}
 
 wxUnquoter::wxUnquoter(void):
     m_reSingleQuotes(RE_SINGLE_QUOTES),
@@ -43,82 +42,74 @@ bool wxUnquoter::Process(const wxString& qs, wxString& res) const
     return false;
 }
 
-const wxRegEx& wxUnquoter::GetReSingleQuotes() const
-{
-    return m_reSingleQuotes;
-}
-
-const wxRegEx& wxUnquoter::GetReDoubleQuotes() const
-{
-    return m_reDoubleQuotes;
-}
-
 bool wxUnquoter::IsQuoted(const wxString& s) const
 {
     return m_reSingleQuotes.Matches(s) || m_reDoubleQuotes.Matches(s);
 }
 
-// ===============================================================================
-
-// DC1=11H, DC2=12H
-const char wxQuoteCorrector::OPENING_QOUTATION_MARK_REPLACEMENT = '\x11';
-const char wxQuoteCorrector::CLOSING_QOUTATION_MARK_REPLACEMENT = '\x12';
-const char wxQuoteCorrector::GENERIC_REPLACEMENT[] = "\\1\x11\\2\x12";
-
-// ===============================================================================
-
-const char wxQuoteCorrector::RE_SINGLE_QUOTES[] = "([\\p{Xps}\\p{Xps}]|^)[']((?:[^']|\\B['])*)(?!\\B)['](?=[\\p{Xps}\\p{P}]|$)";
-const char wxQuoteCorrector::RE_DOUBLE_QUOTES[] = "([\\p{Xps}\\p{P}]|^)[\"]((?:[^\"]|\\B[\"])*)(?!\\B)[\"](?=[\\p{Xps}\\p{P}]|$)";
-const char wxQuoteCorrector::RE_PSEUDO_DOUUBLE_QUOTES[] = "([\\p{Xps}\\p{P}]|^)[']{2}(([^']|\\B['])+)(?!\\B)[']{2}(?=[\\p{Xps}\\p{P}]|$)";
-
-// ===============================================================================
-
-const wxQuoteCorrector::QUOTATION_MARKS wxQuoteCorrector::ASCII_QUOTES[] =
+namespace
 {
-    { wxS("\""), wxS("\"") },
-    { wxS("'"), wxS("'") }
-};
 
-// ===============================================================================
+    // DC1=11H, DC2=12H
+    constexpr char OPENING_QOUTATION_MARK_REPLACEMENT = '\x11';
+    constexpr char CLOSING_QOUTATION_MARK_REPLACEMENT = '\x12';
+    constexpr char GENERIC_REPLACEMENT[] = "\\1\x11\\2\x12";
 
-const wxQuoteCorrector::QUOTATION_MARKS wxQuoteCorrector::ENGLISH_QUOTES[] =
-{
-    { wxS("\u201C"), wxS("\u201D") },
-    { wxS("\u2018"), wxS("\u2019") }
-};
+    // ===============================================================================
 
-// ===============================================================================
+    constexpr char REQ_SINGLE_QUOTES[] = "([\\p{Xps}\\p{Xps}]|^)[']((?:[^']|\\B['])*)(?!\\B)['](?=[\\p{Xps}\\p{P}]|$)";
+    constexpr char REQ_DOUBLE_QUOTES[] = "([\\p{Xps}\\p{P}]|^)[\"]((?:[^\"]|\\B[\"])*)(?!\\B)[\"](?=[\\p{Xps}\\p{P}]|$)";
+    constexpr char REQ_PSEUDO_DOUUBLE_QUOTES[] = "([\\p{Xps}\\p{P}]|^)[']{2}(([^']|\\B['])+)(?!\\B)[']{2}(?=[\\p{Xps}\\p{P}]|$)";
 
-const wxQuoteCorrector::QUOTATION_MARKS wxQuoteCorrector::POLISH_QUOTES[] =
-{
-    { wxS("\u201E"), wxS("\u201D") },
-    { wxS("\u201A"), wxS("\u2019") }
-};
+    // ===============================================================================
 
-const wxChar wxQuoteCorrector::POLISH_DOUBLE_QUOTES[] = wxS("\\1\u201E\\2\u201D");
-const wxChar wxQuoteCorrector::POLISH_SINGLE_QUOTES[] = wxS("\\1\u201A\\2\u2019");
+    constexpr wxQuoteCorrector::QUOTATION_MARKS ASCII_QUOTES[] =
+    {
+        { wxS("\""), wxS("\"") },
+        { wxS("'"), wxS("'") }
+    };
 
-// ===============================================================================
+    // ===============================================================================
 
-const wxQuoteCorrector::QUOTATION_MARKS wxQuoteCorrector::GERMAN_QUOTES[] =
-{
-    { wxS("\u201E"), wxS("\u201C") },
-    { wxS("\u201A"), wxS("\u2018") }
-};
+    constexpr wxQuoteCorrector::QUOTATION_MARKS ENGLISH_QUOTES[] =
+    {
+        { wxS("\u201C"), wxS("\u201D") },
+        { wxS("\u2018"), wxS("\u2019") }
+    };
 
-// ===============================================================================
+    // ===============================================================================
 
-const wxQuoteCorrector::QUOTATION_MARKS wxQuoteCorrector::FRENCH_QUOTES[] =
-{
-    { wxS("\u00AB\u2005"), wxS("\u2005\u00BB") },
-    { wxS("\u2039\u2005"), wxS("\u2005\u203A") }
-};
+    constexpr wxQuoteCorrector::QUOTATION_MARKS POLISH_QUOTES[] =
+    {
+        { wxS("\u201E"), wxS("\u201D") },
+        { wxS("\u201A"), wxS("\u2019") }
+    };
+
+    constexpr wxChar POLISH_DOUBLE_QUOTES[] = wxS("\\1\u201E\\2\u201D");
+    constexpr wxChar POLISH_SINGLE_QUOTES[] = wxS("\\1\u201A\\2\u2019");
+
+    // ===============================================================================
+
+    constexpr wxQuoteCorrector::QUOTATION_MARKS GERMAN_QUOTES[] =
+    {
+        { wxS("\u201E"), wxS("\u201C") },
+        { wxS("\u201A"), wxS("\u2018") }
+    };
+
+    // ===============================================================================
+
+    constexpr wxQuoteCorrector::QUOTATION_MARKS FRENCH_QUOTES[] =
+    {
+        { wxS("\u00AB\u2005"), wxS("\u2005\u00BB") },
+        { wxS("\u2039\u2005"), wxS("\u2005\u203A") }
+    };
+}
 
 wxQuoteCorrector::wxQuoteCorrector(void):
     m_genericReplacement(GENERIC_REPLACEMENT),
-    m_reSingleQuotes(RE_SINGLE_QUOTES),
-    m_reDoubleQuotes(RE_DOUBLE_QUOTES),
-    m_rePseudoDoubleQuotes(RE_PSEUDO_DOUUBLE_QUOTES),
+    m_reSingleQuotes(REQ_SINGLE_QUOTES),
+    m_reDoubleQuotes(REQ_DOUBLE_QUOTES),
+    m_rePseudoDoubleQuotes(REQ_PSEUDO_DOUUBLE_QUOTES),
     m_replacement_method(&wxQuoteCorrector::get_standard_replacement)
 {
     wxASSERT(m_reSingleQuotes.IsValid());
@@ -128,9 +119,9 @@ wxQuoteCorrector::wxQuoteCorrector(void):
 
 wxQuoteCorrector::wxQuoteCorrector(const wxQuoteCorrector& corrector):
     m_genericReplacement(GENERIC_REPLACEMENT),
-    m_reSingleQuotes(RE_SINGLE_QUOTES),
-    m_reDoubleQuotes(RE_DOUBLE_QUOTES),
-    m_rePseudoDoubleQuotes(RE_PSEUDO_DOUUBLE_QUOTES),
+    m_reSingleQuotes(REQ_SINGLE_QUOTES),
+    m_reDoubleQuotes(REQ_DOUBLE_QUOTES),
+    m_rePseudoDoubleQuotes(REQ_PSEUDO_DOUUBLE_QUOTES),
     m_replacement_method(corrector.m_replacement_method)
 {
     wxASSERT(m_reSingleQuotes.IsValid());
@@ -264,16 +255,6 @@ bool wxQuoteCorrector::InternalCorrectQuotes(const wxString& s, wxString& res) c
     }
 
     return false;
-}
-
-const wxRegEx& wxQuoteCorrector::GetReSingleQuotes() const
-{
-    return m_reSingleQuotes;
-}
-
-const wxRegEx& wxQuoteCorrector::GetReDoubleQuotes() const
-{
-    return m_reDoubleQuotes;
 }
 
 bool wxQuoteCorrector::IsQuoted(const wxString& s) const
