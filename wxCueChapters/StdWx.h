@@ -7,45 +7,6 @@
 
 #include <StdWx.h>
 
-#ifdef WIN32
-#include <targetver.h>
-
- /*
-  * When Winuser.h is defined GetClassInfo is is a macro defined as:
-  *
-  * #define GetClassInfo GetClassInfoW
-  *
-  * wxWidgets macros such as:
-  *
-  * wxDECLARE_..._CLASS
-  *
-  * declares method GetClassInfo so when Winuser.h is included method GetClassInfo is renamed to GetClassInfoW. That's why we define NOUSER.
-  */
-#define WIN32_LEAN_AND_MEAN
-
-#define NOUSER
-#define NOGDI
-#define NOMB
-#define NOCOMM
-
-  /*
-   * Dummy definition of MSG (LPMSG) to make
-   *
-   * oleidl.h ole2.h
-   *
-   * happy.
-   */
-typedef struct tagMSG
-{
-} MSG, * LPMSG;
-#endif
-
-#ifdef NDEBUG
-#define wxDEBUG_LEVEL 0
-#else
-#define wxDEBUG_LEVEL 1
-#endif
-
 #include <wx/wx.h>
 #include <wx/defs.h>
 #include <wx/string.h>
@@ -72,33 +33,7 @@ typedef struct tagMSG
 #include <taglib/tdebuglistener.h>
 #endif
 
-#if defined( __WIN64__ )
-#define wxSizeTFmtSpec wxLongLongFmtSpec
-namespace
-{
-    inline wxTextOutputStream& WriteSizeT(wxTextOutputStream& stream, size_t c)
-    {
-        stream.Write64(c);
-        return stream;
-    }
-}
-#else
-#define wxSizeTFmtSpec
-namespace
-{
-    inline wxTextOutputStream& WriteSizeT(wxTextOutputStream& stream, size_t c)
-    {
-        stream.Write32(c);
-        return stream;
-    }
-}
-#endif
-
-#ifdef NDEBUG
-#define ENQUOTED_STR_FMT "\u201C%s\u201D"
-#else
-#define ENQUOTED_STR_FMT "\"%s\""
-#endif
+#include <FmtSpec.h>
 
 #ifdef WIN32
 #include <objbase.h>
@@ -106,7 +41,6 @@ namespace
 
 #include <optional>
 #include <wxJson.h>
-//#include <icu.h>
 
 #endif  // _STD_WX_H
 

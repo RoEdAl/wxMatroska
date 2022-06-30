@@ -6,12 +6,9 @@
 #define _STD_WX_H
 
 #include <StdWx.h>
-
 #ifdef WIN32
-#include <targetver.h>
+#include <Objbase.h>
 #endif
-
-#define wxDEBUG_LEVEL 0
 
 #include <wx/wx.h>
 #include <wx/defs.h>
@@ -25,6 +22,8 @@
 #include <wx/txtstrm.h>
 
 #include <optional>
+
+#include <FmtSpec.h>
 
 #endif  // _STD_WX_H
 

@@ -323,10 +323,10 @@ void wxMkvmergeOptsRenderer::RenderScript(
         dstMkaFile.SetName(GetContainerFileName(cueSheet));
         dstMkaFile.SetExt(wxConfiguration::EXT::MATROSKA_AUDIO);
 
-        *m_os << endl << "CMAKE_PATH(SET MKA_FNAME \"" << GetCMakePath(GetRelativeFileName(dstMkaFile, outDir)) << "\")" << endl << endl;
+        *m_os << "CMAKE_PATH(SET MKA_FNAME \"" << GetCMakePath(GetRelativeFileName(dstMkaFile, outDir)) << "\")" << endl;
     }
 
-    *m_os << endl << "CMAKE_PATH(SET TMP_MKA_FNAME \"" << GetCMakePath(GetRelativeFileName(mkaFile, outDir)) << "\")" << endl << endl;
+    *m_os << "CMAKE_PATH(SET TMP_MKA_FNAME \"" << GetCMakePath(GetRelativeFileName(mkaFile, outDir)) << "\")" << endl;
 
     if (fnImg.IsOk())
     {
@@ -355,7 +355,7 @@ void wxMkvmergeOptsRenderer::RenderScript(
     {
         *m_os << "    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}" << endl;
     }
-    *m_os << ')' << endl;
+    *m_os << ')' << endl << endl;
     *m_os << "MESSAGE(STATUS \"Replacing MKA container\")" << endl;
     *m_os << "FILE(RENAME ${TMP_MKA_FNAME} ${MKA_FNAME})" << endl;
 }

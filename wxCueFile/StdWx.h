@@ -7,17 +7,6 @@
 
 #include <StdWx.h>
 
-#ifdef WIN32
-#include <targetver.h>
-#define WIN32_LEAN_AND_MEAN	//
-#endif
-
-#ifdef NDEBUG
-#define wxDEBUG_LEVEL 0
-#else
-#define wxDEBUG_LEVEL 1
-#endif
-
 #include <wx/object.h>
 #include <wx/wx.h>
 #include <wx/defs.h>
@@ -37,18 +26,6 @@
 #include <wx/dir.h>
 #include <wx/base64.h>
 
-#if defined( __WIN64__ )
-#define wxSizeTFmtSpec wxLongLongFmtSpec
-#else
-#define wxSizeTFmtSpec
-#endif
-
-#ifdef NDEBUG
-#define ENQUOTED_STR_FMT "\u201C%s\u201D"
-#else
-#define ENQUOTED_STR_FMT "\"%s\""
-#endif
-
 // TagLib
 #ifndef NDEBUG
 #include <taglib/tdebuglistener.h>
@@ -67,6 +44,8 @@
 
 #include <optional>
 #include <wxJson.h>
+
+#include <FmtSpec.h>
 
 #endif  // _STD_WX_H
 
