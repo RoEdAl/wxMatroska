@@ -21,6 +21,8 @@ class wxCueSheet;
 
 class wxCueSheetRenderer
 {
+    wxDECLARE_NO_COPY_CLASS(wxCueSheetRenderer);
+
     protected:
 
     virtual bool RenderDisc(const wxCueSheet&);

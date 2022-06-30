@@ -11,6 +11,8 @@
 
 class wxDashesCorrector: public wxStringProcessor
 {
+    wxDECLARE_NO_ASSIGN_DEF_COPY(wxDashesCorrector);
+
     public:
 
     typedef wxUniChar::value_type uvalue_type;
@@ -25,8 +27,8 @@ class wxDashesCorrector: public wxStringProcessor
 
     wxDashesCorrector& SmallEmDash(bool = true);
 
-    wxStringProcessor* const Clone() const;
-    virtual bool Process(const wxString&, wxString&) const;
+    virtual wxStringProcessor* const Clone() const wxOVERRIDE;
+    virtual bool Process(const wxString&, wxString&) const wxOVERRIDE;
 
     const wxRegEx& GetEnRegEx() const;
     const wxRegEx& GetEmRegEx() const;

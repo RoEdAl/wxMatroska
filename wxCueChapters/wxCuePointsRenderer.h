@@ -32,6 +32,8 @@ class wxArrayFileName;
 class wxCuePointsRenderer:
     public wxPrimitiveRenderer
 {
+    wxDECLARE_NO_COPY_CLASS(wxCuePointsRenderer);
+
     public:
 
     wxCuePointsRenderer(const wxConfiguration&);

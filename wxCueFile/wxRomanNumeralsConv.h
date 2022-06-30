@@ -114,6 +114,8 @@ struct roman_numeral_traits< false >
 template< bool UPPER >
 class wxRomanNumeralsConv: public wxStringProcessor
 {
+    wxDECLARE_NO_COPY_TEMPLATE_CLASS(wxRomanNumeralsConv, UPPER);
+
     public:
 
     typedef wxRomanNumeralsConv< UPPER > ThisClass;
@@ -127,12 +129,12 @@ class wxRomanNumeralsConv: public wxStringProcessor
         wxASSERT(m_re.IsValid());
     }
 
-    virtual wxStringProcessor* const Clone() const
+    virtual wxStringProcessor* const Clone() const wxOVERRIDE
     {
         return new ThisClass();
     }
 
-    virtual bool Process(const wxString& text, wxString& out) const
+    virtual bool Process(const wxString& text, wxString& out) const wxOVERRIDE
     {
         wxString w(text);
         wxString res;

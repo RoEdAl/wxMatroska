@@ -59,8 +59,8 @@ class wxStringCorrector: public wxStringProcessor
         bool m_asciiToUnicode;
     };
 
-    wxStringProcessor* const Clone() const;
-    virtual bool Process(const wxString&, wxString&) const;
+    virtual wxStringProcessor* const Clone() const wxOVERRIDE;
+    virtual bool Process(const wxString&, wxString&) const wxOVERRIDE;
 
     protected:
 

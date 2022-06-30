@@ -88,7 +88,7 @@ class wxMBConv_MLang:
 
     virtual size_t ToWChar(
         wchar_t* dst , size_t dstLen ,
-        const char* src , size_t srcLen = wxNO_LEN ) const
+        const char* src , size_t srcLen = wxNO_LEN ) const wxOVERRIDE
     {
         wxASSERT( !NoConversion() );
 
@@ -137,7 +137,7 @@ class wxMBConv_MLang:
     }
 
     virtual size_t FromWChar( char* dst , size_t dstLen , const wchar_t* src ,
-        size_t srcLen = wxNO_LEN ) const
+        size_t srcLen = wxNO_LEN ) const wxOVERRIDE
     {
         wxASSERT( !NoConversion() );
 
@@ -167,7 +167,7 @@ class wxMBConv_MLang:
         }
     }
 
-    virtual size_t GetMBNulLen() const
+    virtual size_t GetMBNulLen() const wxOVERRIDE
     {
         wxMBConv_MLang* const        self = wxConstCast( this , wxMBConv_MLang );
         const wxMLangConvertCharset& fromUnicode = self->GetFromUnicode();
@@ -220,7 +220,7 @@ class wxMBConv_MLang:
         return m_minMBCharWidth;
     }
 
-    virtual wxMBConv* Clone() const
+    virtual wxMBConv* Clone() const wxOVERRIDE
     {
         return new wxMBConv_MLang( *this );
     }
@@ -321,9 +321,9 @@ class wxMBConv_BOM:
 
     public:
 
-    virtual wxMBConv* Clone() const { return new wxMBConv_BOM( *this ); }
+    virtual wxMBConv* Clone() const wxOVERRIDE { return new wxMBConv_BOM( *this ); }
 
-    virtual size_t ToWChar( wchar_t* dst , size_t dstLen , const char* src , size_t srcLen ) const
+    virtual size_t ToWChar( wchar_t* dst , size_t dstLen , const char* src , size_t srcLen ) const wxOVERRIDE
     {
         wxMBConv_BOM* self = const_cast<wxMBConv_BOM*>( this );
 
@@ -341,12 +341,12 @@ class wxMBConv_BOM:
         return rc;
     }
 
-    virtual size_t FromWChar( char* dst , size_t dstLen , const wchar_t* src , size_t srcLen ) const
+    virtual size_t FromWChar( char* dst , size_t dstLen , const wchar_t* src , size_t srcLen ) const wxOVERRIDE
     {
         return m_pConv->FromWChar( dst , dstLen , src , srcLen );
     }
 
-    virtual size_t GetMBNulLen() const
+    virtual size_t GetMBNulLen() const wxOVERRIDE
     {
         return m_pConv->GetMBNulLen();
     }

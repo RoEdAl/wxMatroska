@@ -31,14 +31,15 @@ public:
     }
 
 #if wxUSE_STREAMS
-    virtual bool LoadFile(wxImage *image, wxInputStream& stream, bool verbose=true, int index=-1) wxOVERRIDE;
-    virtual bool SaveFile(wxImage *image, wxOutputStream& stream, bool verbose=true) wxOVERRIDE;
+    virtual bool LoadFile(wxImage*, wxInputStream&, bool = true, int = -1) wxOVERRIDE;
+    virtual bool SaveFile(wxImage*, wxOutputStream&, bool = true) wxOVERRIDE;
 protected:
-    virtual bool DoCanRead(wxInputStream& stream) wxOVERRIDE;
+    virtual bool DoCanRead(wxInputStream&) wxOVERRIDE;
 #endif // wxUSE_STREAMS
 
 private:
     wxDECLARE_DYNAMIC_CLASS(wxWEBPHandler);
+    wxDECLARE_NO_COPY_CLASS(wxWEBPHandler);
 };
 
 #endif // wxUSE_WEBP

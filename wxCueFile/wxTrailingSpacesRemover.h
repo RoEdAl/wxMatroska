@@ -11,14 +11,16 @@
 
 class wxTrailingSpacesRemover: public wxStringProcessor
 {
+    wxDECLARE_NO_ASSIGN_DEF_COPY(wxTrailingSpacesRemover);
+
     public:
 
     static const char REG_EX[];
 
     wxTrailingSpacesRemover(void);
 
-    virtual wxStringProcessor* const Clone() const;
-    virtual bool Process(const wxString&, wxString&) const;
+    virtual wxStringProcessor* const Clone() const wxOVERRIDE;
+    virtual bool Process(const wxString&, wxString&) const wxOVERRIDE;
 
     const wxRegEx& GetRegEx() const;
 

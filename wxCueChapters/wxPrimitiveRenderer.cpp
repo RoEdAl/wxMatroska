@@ -827,6 +827,7 @@ wxString wxPrimitiveRenderer::GetTrackName(const wxCueSheet& cueSheet) const
 wxString wxPrimitiveRenderer::GetContainerFileName(const wxCueSheet& cueSheet) const
 {
     const wxString res = GetTrackName(cueSheet);
+
     const wxFileNameCorrector fnCorrector;
     return fnCorrector(res);
 }

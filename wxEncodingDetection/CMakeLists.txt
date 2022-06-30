@@ -9,6 +9,7 @@ SET(ENCODING_DETECTION_SOURCE_FILES
 	wxTextOutputStreamOnString.cpp
 	wxTextOutputStreamWithBOM.cpp
 	wxTextStreamUtils.cpp
+	wxMBConvUnaccent.hpp
 )
 
 ADD_LIBRARY(wxEncodingDetection 

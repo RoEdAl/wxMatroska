@@ -16,8 +16,6 @@ class wxTemporaryFilesProvider
 
 class wxTemporaryFilesCleaner
 {
-    private:
-
     wxDECLARE_NO_COPY_CLASS(wxTemporaryFilesCleaner);
 
     public:

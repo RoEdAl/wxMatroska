@@ -19,15 +19,17 @@ namespace
     };
 
     const char_replacement replacements[] = {
-        {'/', wxS('\uFF0F')},
-        {'\\', wxS('\uFF3C')},
-        {'?', wxS('\uFF1F')},
-        {'*', wxS('\uFF0A')},
-        {':', wxS('\uFF1A')},
-        {'|', wxS('\uFF5C')},
-        {'^', wxS('\uFF3E')},
-        {'<', wxS('\uFF1C')},
-        {'>', wxS('\uFF1E')}
+        {'/',  wxS('\u2215')},  // DIVISION SLASH
+        {'\\', wxS('\uFE68')},  // SMALL REVERSE SOLIDUS
+        {'?',  wxS('\uFE56')},  // SMALL QUESTION MARK
+        {'*',  wxS('\uFE61')},  // SMALL ASTERISK
+        {':',  wxS('\uFE55')},  // SMALL COLON
+        {';',  wxS('\uFE54')},  // SMALL SEMICOLON
+        {'|',  wxS('\uFF5C')},  // FULLWIDTH VERTICAL LINE
+        {'^',  wxS('\uFF3E')},  // FULLWIDTH CIRCUMFLEX ACCENT
+        {'<',  wxS('\uFE64')},  // SMALL LESS-THAN SIGN
+        {'>',  wxS('\uFE65')},  // SMALL GREATER-THAN SIGN
+        {'.',  wxS('\uFE52')}   // SMALL FULL STOP
     };
 
     template<size_t SIZE>

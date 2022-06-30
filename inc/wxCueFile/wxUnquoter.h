@@ -11,6 +11,8 @@
 
 class wxUnquoter: public wxStringProcessor
 {
+    wxDECLARE_NO_ASSIGN_DEF_COPY(wxUnquoter);
+
     protected:
 
     wxRegEx m_reSingleQuotes;
@@ -25,8 +27,9 @@ class wxUnquoter: public wxStringProcessor
 
     wxUnquoter(void);
 
-    virtual wxStringProcessor* const Clone() const;
-    virtual bool Process(const wxString&, wxString&) const;
+    virtual wxStringProcessor* const Clone() const wxOVERRIDE;
+    virtual bool Process(const wxString&, wxString&) const wxOVERRIDE;
+
     bool IsQuoted(const wxString&) const;
 
     const wxRegEx& GetReSingleQuotes() const;
@@ -35,6 +38,8 @@ class wxUnquoter: public wxStringProcessor
 
 class wxQuoteCorrector: public wxStringProcessor
 {
+    wxDECLARE_NO_ASSIGN_CLASS(wxQuoteCorrector);
+
     protected:
 
     wxRegEx m_reSingleQuotes;
@@ -106,8 +111,9 @@ class wxQuoteCorrector: public wxStringProcessor
 
     void SetLang(const wxString&);
 
-    virtual wxStringProcessor* const Clone() const;
-    virtual bool Process(const wxString&, wxString&) const;
+    virtual wxStringProcessor* const Clone() const wxOVERRIDE;
+    virtual bool Process(const wxString&, wxString&) const wxOVERRIDE;
+
     bool IsQuoted(const wxString&) const;
 
     const wxRegEx& GetReSingleQuotes() const;

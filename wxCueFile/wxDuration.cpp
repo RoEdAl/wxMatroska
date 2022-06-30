@@ -106,6 +106,10 @@ wxDurationHolder::wxDurationHolder()
 {
 }
 
+wxDurationHolder::wxDurationHolder(const wxDurationHolder& durationHolder)
+    :m_duration(durationHolder.m_duration)
+{}
+
 bool wxDurationHolder::HasDuration() const
 {
     return m_duration.has_value();
@@ -138,4 +142,5 @@ void wxDurationHolder::Copy(const wxAbstractDurationHolder& durationHolder)
         ClearDuration();
     }
 }
+
 

@@ -7,6 +7,8 @@
 
 class wxTextOutputStreamWithBOMFactory
 {
+    wxDECLARE_NO_COPY_CLASS(wxTextOutputStreamWithBOMFactory);
+
     public:
 
     typedef wxCharTypeBuffer< wxByte > wxByteBuffer;

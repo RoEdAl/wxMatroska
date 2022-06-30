@@ -111,8 +111,8 @@ class wxCueSheet: public wxCueComponent, public wxAbstractDurationHolder
     void AddCovers(const wxArrayCoverFile&);
     wxCueSheet& AddDataFile(const wxDataFile&);
 
-    virtual bool HasDuration() const;
-    virtual wxDuration GetDuration() const;
+    virtual bool HasDuration() const wxOVERRIDE;
+    virtual wxDuration GetDuration() const wxOVERRIDE;
 
     wxDuration GetDuration(size_t) const;
     bool CalculateDuration(const wxString & = wxEmptyString);

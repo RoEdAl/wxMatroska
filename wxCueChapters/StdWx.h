@@ -106,6 +106,7 @@ namespace
 
 #include <optional>
 #include <wxJson.h>
+//#include <icu.h>
 
 #endif  // _STD_WX_H
 

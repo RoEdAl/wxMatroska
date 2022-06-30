@@ -9,9 +9,10 @@
 #include "wxNoConv.h"
 #endif
 
-class wxTextInputStreamOnString:
-    public wxObject
+class wxTextInputStreamOnString
 {
+    wxDECLARE_NO_COPY_CLASS(wxTextInputStreamOnString);
+
     public:
 
     typedef wxCharTypeBuffer< wxChar > CharBufferType;

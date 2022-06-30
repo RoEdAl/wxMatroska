@@ -11,6 +11,8 @@
 
 class wxFfmpegCMakeScriptRenderer: public wxCMakeScriptRenderer
 {
+    wxDECLARE_NO_COPY_CLASS(wxFfmpegCMakeScriptRenderer);
+
     public:
 
     wxFfmpegCMakeScriptRenderer(const wxConfiguration&);

@@ -9,6 +9,8 @@
 class wxNoConv:
     public wxMBConv
 {
+    wxDECLARE_NO_COPY_CLASS(wxNoConv);
+
     public:
 
     wxNoConv()
@@ -18,7 +20,7 @@ class wxNoConv:
 
     virtual size_t ToWChar(
         wchar_t* dst , size_t dstLen ,
-        const char* src , size_t srcLen = wxNO_LEN ) const
+        const char* src , size_t srcLen = wxNO_LEN ) const wxOVERRIDE
     {
         size_t nLen = srcLen;
 
@@ -29,7 +31,6 @@ class wxNoConv:
         }
 
         if ( dst != NULL && ( dstLen * sizeof( wchar_t ) ) < nLen ) nLen = dstLen * sizeof( wchar_t );
-
         if ( dst != NULL && nLen >= sizeof( wchar_t ) ) memcpy( dst , src , nLen );
 
         return ( nLen >= sizeof( wchar_t ) ) ? nLen / sizeof( wchar_t ) : wxCONV_FAILED;
@@ -37,14 +38,12 @@ class wxNoConv:
 
     virtual size_t FromWChar(
         char* dst , size_t dstLen ,
-        const wchar_t* src , size_t srcLen = wxNO_LEN ) const
+        const wchar_t* src , size_t srcLen = wxNO_LEN ) const wxOVERRIDE
     {
         size_t nLen = srcLen * sizeof( wchar_t );
 
         if ( srcLen == wxNO_LEN ) nLen = wxStrlen( src ) * sizeof( wchar_t );
-
         if ( dst != NULL && dstLen < nLen ) nLen = srcLen;
-
         if ( dst != NULL && nLen > 0u ) memcpy( dst , src , nLen );
 
         return ( nLen == 0 ) ? wxCONV_FAILED : nLen;

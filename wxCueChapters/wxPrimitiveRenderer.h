@@ -71,6 +71,8 @@ WX_DECLARE_OBJARRAY(wxMatroskaAttachment, wxArrayMatroskaAttachment);
 
 class wxTagRenderer
 {
+    wxDECLARE_NO_ASSIGN_CLASS(wxTagRenderer);
+
     protected:
 
     wxTagRenderer();
@@ -89,6 +91,8 @@ class wxTagRenderer
 
 class wxPrimitiveRenderer :protected wxTagRenderer, public wxTemporaryFilesProvider
 {
+    wxDECLARE_NO_COPY_CLASS(wxPrimitiveRenderer);
+
     protected:
 
     struct MIME

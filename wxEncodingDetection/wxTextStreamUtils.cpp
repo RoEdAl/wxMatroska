@@ -5,6 +5,11 @@
 #include "StdWx.h"
 #include <wxEncodingDetection/wxTextStreamUtils.h>
 
+namespace
+{
+#include "wxMBConvUnaccent.hpp"
+}
+
 size_t wxTextStreamUtils::Copy(wxTextInputStream& inStream, wxTextOutputStream& outStream)
 {
     wxString line;
@@ -47,4 +52,9 @@ size_t wxTextStreamUtils::Copy(wxTextInputStream& inStream, wxTextOutputStream& 
     }
     outStream.Flush();
     return cnt;
+}
+
+wxMBConv* wxTextStreamUtils::GetUnaccentMBConv()
+{
+    return new wxMBConvUnaccent();
 }

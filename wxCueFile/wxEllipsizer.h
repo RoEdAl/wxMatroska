@@ -11,6 +11,8 @@
 
 class wxEllipsizer: public wxStringProcessor
 {
+    wxDECLARE_NO_COPY_CLASS(wxEllipsizer);
+
     public:
 
     wxEllipsizer(void);

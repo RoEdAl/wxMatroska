@@ -35,6 +35,8 @@ class wxArrayFileName;
 
 class wxMkvmergeOptsRenderer: public wxCMakeScriptRenderer
 {
+    wxDECLARE_NO_COPY_CLASS(wxMkvmergeOptsRenderer);
+
     public:
 
     wxMkvmergeOptsRenderer(const wxConfiguration&);

@@ -7,6 +7,8 @@
 
 class wxCmdTool
 {
+	wxDECLARE_NO_COPY_CLASS(wxCmdTool);
+
 	public:
 
 	enum TOOL

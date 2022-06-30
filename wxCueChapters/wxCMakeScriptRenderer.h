@@ -12,6 +12,8 @@
 class wxCMakeScriptRenderer:
     public wxPrimitiveRenderer
 {
+    wxDECLARE_NO_COPY_CLASS(wxCMakeScriptRenderer);
+
     protected:
 
     wxCMakeScriptRenderer(const wxConfiguration&);

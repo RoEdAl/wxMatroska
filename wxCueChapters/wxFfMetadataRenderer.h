@@ -16,6 +16,8 @@
 class wxFfMetadataRenderer:
     public wxPrimitiveRenderer
 {
+    wxDECLARE_NO_COPY_CLASS(wxFfMetadataRenderer);
+
     public:
 
     wxFfMetadataRenderer(const wxConfiguration&);

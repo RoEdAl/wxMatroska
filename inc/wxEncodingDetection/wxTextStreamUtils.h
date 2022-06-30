@@ -7,10 +7,13 @@
 
 class wxTextStreamUtils
 {
+    wxDECLARE_NO_COPY_CLASS(wxTextStreamUtils);
+
     public:
 
     static size_t Copy(wxTextInputStream&, wxTextOutputStream&);
     static size_t Copy(wxTextInputStream&, wxTextOutputStream&, const wxString&);
+    static wxMBConv* GetUnaccentMBConv();
 };
 
 #endif

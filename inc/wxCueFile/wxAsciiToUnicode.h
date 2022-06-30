@@ -11,6 +11,8 @@
 
 class wxAsciiToUnicode: public wxStringProcessor
 {
+    wxDECLARE_NO_COPY_CLASS(wxAsciiToUnicode);
+
     public:
 
     struct ASCII2UNI
@@ -25,8 +27,8 @@ class wxAsciiToUnicode: public wxStringProcessor
 
     wxAsciiToUnicode(void);
 
-    virtual wxStringProcessor* const Clone() const;
-    virtual bool Process(const wxString&, wxString&) const;
+    virtual wxStringProcessor* const Clone() const wxOVERRIDE;
+    virtual bool Process(const wxString&, wxString&) const wxOVERRIDE;
 
     protected:
 

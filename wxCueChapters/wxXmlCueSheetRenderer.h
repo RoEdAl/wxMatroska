@@ -38,17 +38,19 @@ class wxStringProcessor;
 class wxXmlCueSheetRenderer:
     public wxCueSheetRenderer, protected wxTagRenderer, public wxTemporaryFilesProvider
 {
+    wxDECLARE_NO_COPY_CLASS(wxXmlCueSheetRenderer);
+
     protected:
 
-    virtual bool OnPreRenderDisc(const wxCueSheet&);
-    virtual bool OnPreRenderTrack(const wxCueSheet&, const wxTrack&);
-    virtual bool OnRenderTrack(const wxCueSheet&, const wxTrack&);
-    virtual bool OnPostRenderTrack(const wxCueSheet&, const wxTrack&);
-    virtual bool OnPostRenderDisc(const wxCueSheet&);
+    virtual bool OnPreRenderDisc(const wxCueSheet&) wxOVERRIDE;
+    virtual bool OnPreRenderTrack(const wxCueSheet&, const wxTrack&) wxOVERRIDE;
+    virtual bool OnRenderTrack(const wxCueSheet&, const wxTrack&) wxOVERRIDE;
+    virtual bool OnPostRenderTrack(const wxCueSheet&, const wxTrack&) wxOVERRIDE;
+    virtual bool OnPostRenderDisc(const wxCueSheet&) wxOVERRIDE;
 
-    virtual bool OnRenderPreGap(const wxCueSheet&, const wxTrack&, const wxIndex&);
-    virtual bool OnRenderPostGap(const wxCueSheet&, const wxTrack&, const wxIndex&);
-    virtual bool OnRenderIndex(const wxCueSheet&, const wxTrack&, const wxIndex&);
+    virtual bool OnRenderPreGap(const wxCueSheet&, const wxTrack&, const wxIndex&) wxOVERRIDE;
+    virtual bool OnRenderPostGap(const wxCueSheet&, const wxTrack&, const wxIndex&) wxOVERRIDE;
+    virtual bool OnRenderIndex(const wxCueSheet&, const wxTrack&, const wxIndex&) wxOVERRIDE;
 
     protected:
 

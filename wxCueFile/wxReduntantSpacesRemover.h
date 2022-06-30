@@ -11,6 +11,8 @@
 
 class wxReduntantSpacesRemover: public wxStringProcessor
 {
+    wxDECLARE_NO_ASSIGN_DEF_COPY(wxReduntantSpacesRemover);
+
     public:
 
     static const char NORMAL_REG_EX[];
@@ -19,8 +21,8 @@ class wxReduntantSpacesRemover: public wxStringProcessor
 
     wxReduntantSpacesRemover(void);
 
-    virtual wxStringProcessor* const Clone() const;
-    virtual bool Process(const wxString&, wxString&) const;
+    virtual wxStringProcessor* const Clone() const wxOVERRIDE;
+    virtual bool Process(const wxString&, wxString&) const wxOVERRIDE;
 
     protected:
 

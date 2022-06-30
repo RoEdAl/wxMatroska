@@ -11,14 +11,16 @@
 
 class wxNumberFullStopCorrector: public wxStringProcessor
 {
+    wxDECLARE_NO_ASSIGN_DEF_COPY(wxNumberFullStopCorrector);
+
     public:
 
     static const char REG_EX[];
 
     wxNumberFullStopCorrector(void);
 
-    virtual wxStringProcessor* const Clone() const;
-    virtual bool Process(const wxString&, wxString&) const;
+    virtual wxStringProcessor* const Clone() const wxOVERRIDE;
+    virtual bool Process(const wxString&, wxString&) const wxOVERRIDE;
 
     protected:
 
