@@ -4,12 +4,10 @@
 
 #include "wxTrailingSpacesRemover.h"
 
-// ===============================================================================
-
-const char wxTrailingSpacesRemover::REG_EX[] =
-"^[\\p{Xps}\\p{Cc}]*([^\\p{Xps}\\p{Cc}].*[^\\p{Xps}\\p{Cc}])[\\p{Xps}\\p{Cc}]*$";
-
-// ===============================================================================
+namespace
+{
+    constexpr char REG_EX[] ="^[\\p{Xps}\\p{Cc}]*([^\\p{Xps}\\p{Cc}].*[^\\p{Xps}\\p{Cc}])[\\p{Xps}\\p{Cc}]*$";
+};
 
 wxTrailingSpacesRemover::wxTrailingSpacesRemover():
     m_reTrailingSpaces(REG_EX)
@@ -22,27 +20,21 @@ wxStringProcessor* const wxTrailingSpacesRemover::Clone() const
     return new wxTrailingSpacesRemover();
 }
 
-const wxRegEx& wxTrailingSpacesRemover::GetRegEx() const
+bool wxTrailingSpacesRemover::Process(const wxString& in, wxString& out) const
 {
-    return m_reTrailingSpaces;
-}
-
-bool wxTrailingSpacesRemover::Process(const wxString& sIn, wxString& sOut) const
-{
-    if (m_reTrailingSpaces.Matches(sIn))
+    if (m_reTrailingSpaces.Matches(in))
     {
         wxASSERT(m_reTrailingSpaces.GetMatchCount() >= 1);
 
         size_t start, len;
         m_reTrailingSpaces.GetMatch(&start, &len, 1);
 
-        if (len < sIn.Length())
+        if (len < in.Length())
         {
-            sOut = m_reTrailingSpaces.GetMatch(sIn, 1);
+            out = m_reTrailingSpaces.GetMatch(out, 1);
             return true;
         }
     }
 
     return false;
 }
-

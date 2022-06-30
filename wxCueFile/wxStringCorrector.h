@@ -11,6 +11,8 @@
 
 class wxStringCorrector: public wxStringProcessor
 {
+    wxDECLARE_NO_COPY_CLASS(wxStringCorrector);
+
     public:
 
     class Configurator

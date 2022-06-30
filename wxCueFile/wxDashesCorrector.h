@@ -11,15 +11,11 @@
 
 class wxDashesCorrector: public wxStringProcessor
 {
-    wxDECLARE_NO_ASSIGN_DEF_COPY(wxDashesCorrector);
+    wxDECLARE_NO_COPY_CLASS(wxDashesCorrector);
 
     public:
 
     typedef wxUniChar::value_type uvalue_type;
-
-    static const char REG_EX_EN[];
-    static const char REG_EX_EM[];
-    static const char REG_EX_EM2[];
 
     static wxString GetReplacement(uvalue_type, uvalue_type);
 
@@ -29,10 +25,6 @@ class wxDashesCorrector: public wxStringProcessor
 
     virtual wxStringProcessor* const Clone() const wxOVERRIDE;
     virtual bool Process(const wxString&, wxString&) const wxOVERRIDE;
-
-    const wxRegEx& GetEnRegEx() const;
-    const wxRegEx& GetEmRegEx() const;
-    const wxRegEx& GetEm2RegEx() const;
 
     protected:
 

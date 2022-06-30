@@ -4,13 +4,13 @@
 
 #include "wxReduntantSpacesRemover.h"
 
-// ===============================================================================
+namespace
+{
+    constexpr char NORMAL_REG_EX[] = "\\p{Xps}{2}"; // two spaces -> simple space
+    constexpr char EN_REG_EX[] = "\\p{Xps}{3}";	// three spaces -> en space
+    constexpr char EM_REG_EX[] = "\\p{Xps}{4,}";// four or more spaces -> em space
 
-const char wxReduntantSpacesRemover::NORMAL_REG_EX[] = "\\p{Xps}{2}"; // two spaces -> simple space
-const char wxReduntantSpacesRemover::EN_REG_EX[] = "\\p{Xps}{3}";	// three spaces -> en space
-const char wxReduntantSpacesRemover::EM_REG_EX[] = "\\p{Xps}{4,}";// four or more spaces -> em space
-
-// ===============================================================================
+};
 
 wxReduntantSpacesRemover::wxReduntantSpacesRemover():
     m_re(NORMAL_REG_EX),

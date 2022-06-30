@@ -4,11 +4,10 @@
 
 #include "wxSmallLetterParenthesizedCorrector.h"
 
-// ===============================================================================
-
-const char wxSmallLetterParenthesizedCorrector::REG_EX[] = "\\([a-z]\\)";
-
-// ===============================================================================
+namespace
+{
+    constexpr char REG_EX[] = "\\([a-z]\\)";
+}
 
 wxSmallLetterParenthesizedCorrector::wxSmallLetterParenthesizedCorrector():
     m_re(REG_EX)

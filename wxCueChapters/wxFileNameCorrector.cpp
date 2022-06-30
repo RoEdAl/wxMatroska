@@ -4,14 +4,10 @@
 
 #include "wxFileNameCorrector.h"
 
-// ===============================================================================
-
-const char wxFileNameCorrector::REG_EX[] = "[\\p{Cc}\\p{Cf}]+";
-
-// ===============================================================================
-
 namespace
 {
+    constexpr char REG_EX[] = "[\\p{Cc}\\p{Cf}]+";
+
     struct char_replacement
     {
         char f;
@@ -53,9 +49,8 @@ namespace
 }
 
 wxFileNameCorrector::wxFileNameCorrector():
-    m_reNonPrintable(REG_EX)
+    wxRegExStringProcessor(REG_EX, wxEmptyString)
 {
-    wxASSERT(m_reNonPrintable.IsValid());
 }
 
 wxStringProcessor* const wxFileNameCorrector::Clone() const
@@ -65,9 +60,9 @@ wxStringProcessor* const wxFileNameCorrector::Clone() const
 
 bool wxFileNameCorrector::Process(const wxString& in, wxString& out) const
 {
-    wxString res1(in);
-    int      repl = m_reNonPrintable.ReplaceAll(&res1, wxEmptyString);
-    if (repl > 0)
+    wxString res1;
+    bool res = wxRegExStringProcessor::Process(in, res1);
+    if (res)
     {
         wxString res2;
         if (replace_characters(res1, res2, replacements))

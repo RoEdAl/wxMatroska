@@ -4,13 +4,12 @@
 
 #include "wxDashesCorrector.h"
 
-// ===============================================================================
-
-const char wxDashesCorrector::REG_EX_EN[] = "\\p{Xps}+\\p{Pd}\\p{Xps}+";
-const char wxDashesCorrector::REG_EX_EM[] = "\\p{Xps}+\\p{Pd}{2}\\p{Xps}+";
-const char wxDashesCorrector::REG_EX_EM2[] = "\\p{Xps}+\\p{Pd}{3,}\\p{Xps}+";
-
-// ===============================================================================
+namespace
+{
+    constexpr char REG_EX_EN[] = "\\p{Xps}+\\p{Pd}\\p{Xps}+";
+    constexpr char REG_EX_EM[] = "\\p{Xps}+\\p{Pd}{2}\\p{Xps}+";
+    constexpr char REG_EX_EM2[] = "\\p{Xps}+\\p{Pd}{3,}\\p{Xps}+";
+};
 
 wxString wxDashesCorrector::GetReplacement(uvalue_type uniSpace, uvalue_type uniDash)
 {
@@ -66,21 +65,6 @@ wxDashesCorrector& wxDashesCorrector::Init(uvalue_type uniSpace, uvalue_type uni
     m_em2Replacement = GetReplacement(uniSpace, uniEm2Dash);
 
     return *this;
-}
-
-const wxRegEx& wxDashesCorrector::GetEnRegEx() const
-{
-    return m_reEn;
-}
-
-const wxRegEx& wxDashesCorrector::GetEmRegEx() const
-{
-    return m_reEm;
-}
-
-const wxRegEx& wxDashesCorrector::GetEm2RegEx() const
-{
-    return m_reEm2;
 }
 
 bool wxDashesCorrector::Process(const wxString& in, wxString& out) const

@@ -11,11 +11,9 @@
 
 class wxSmallLetterParenthesizedCorrector: public wxStringProcessor
 {
-    wxDECLARE_NO_ASSIGN_DEF_COPY(wxSmallLetterParenthesizedCorrector);
+    wxDECLARE_NO_COPY_CLASS(wxSmallLetterParenthesizedCorrector);
 
     public:
-
-    static const char REG_EX[];
 
     wxSmallLetterParenthesizedCorrector(void);
 

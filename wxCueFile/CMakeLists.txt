@@ -29,6 +29,7 @@ SET(CUEFILE_SOURCE_FILES
 	wxSmallLetterParenthesizedCorrector.cpp
 	wxAsciiToUnicode.cpp
 	wxStringProcessor.cpp
+	wxRegExStringProcessor.cpp
 )
 
 ADD_LIBRARY(wxCueFile

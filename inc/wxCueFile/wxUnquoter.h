@@ -11,7 +11,7 @@
 
 class wxUnquoter: public wxStringProcessor
 {
-    wxDECLARE_NO_ASSIGN_DEF_COPY(wxUnquoter);
+    wxDECLARE_NO_COPY_CLASS(wxUnquoter);
 
     protected:
 

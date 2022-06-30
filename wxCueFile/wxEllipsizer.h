@@ -5,11 +5,11 @@
 #ifndef _WX_ELLIPSIZER_H_
 #define _WX_ELLIPSIZER_H_
 
-#ifndef _WX_STRING_PROCESSOR_H_
-#include <wxCueFile/wxStringProcessor.h>
+#ifndef _WX_REGEX_STRING_PROCESSOR_H_
+#include <wxCueFile/wxRegExStringProcessor.h>
 #endif
 
-class wxEllipsizer: public wxStringProcessor
+class wxEllipsizer: public wxRegExStringProcessor
 {
     wxDECLARE_NO_COPY_CLASS(wxEllipsizer);
 
@@ -17,15 +17,7 @@ class wxEllipsizer: public wxStringProcessor
 
     wxEllipsizer(void);
 
-    static const char REG_EX[];
-    static const wxUChar ELLIPSIS;
-
-    virtual wxStringProcessor* const Clone() const;
-    virtual bool Process(const wxString&, wxString&) const;
-
-    protected:
-
-    wxRegEx m_reEllipsis;
+    virtual wxStringProcessor* const Clone() const wxOVERRIDE;
 };
 
 #endif

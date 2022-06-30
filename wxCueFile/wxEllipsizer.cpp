@@ -4,35 +4,20 @@
 
 #include "wxEllipsizer.h"
 
-// ===============================================================================
+namespace
+{
+    constexpr char REG_EX[] = "(\\p{Xps}*\\.\\.\\.)\\p{Xps}*$";
+    constexpr wxUChar ELLIPSIS = wxS('\u2026');
+}
 
-const char wxEllipsizer::REG_EX[] = "(\\p{Xps}*\\.\\.\\.)\\p{Xps}*$";
-const wxUChar wxEllipsizer::ELLIPSIS = wxS('\u2026');
-
-// ===============================================================================
 
 wxEllipsizer::wxEllipsizer():
-    m_reEllipsis(REG_EX)
+    wxRegExStringProcessor(REG_EX, ELLIPSIS)
 {
-    wxASSERT(m_reEllipsis.IsValid());
 }
 
 wxStringProcessor* const wxEllipsizer::Clone() const
 {
     return new wxEllipsizer();
-}
-
-bool wxEllipsizer::Process(const wxString& in, wxString& out) const
-{
-    wxString res(in);
-    int      repl = m_reEllipsis.ReplaceAll(&res, ELLIPSIS);
-
-    if (repl > 0)
-    {
-        out = res;
-        return true;
-    }
-
-    return false;
 }
 

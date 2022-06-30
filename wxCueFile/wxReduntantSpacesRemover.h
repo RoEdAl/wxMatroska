@@ -11,13 +11,9 @@
 
 class wxReduntantSpacesRemover: public wxStringProcessor
 {
-    wxDECLARE_NO_ASSIGN_DEF_COPY(wxReduntantSpacesRemover);
+    wxDECLARE_NO_COPY_CLASS(wxReduntantSpacesRemover);
 
     public:
-
-    static const char NORMAL_REG_EX[];
-    static const char EN_REG_EX[];
-    static const char EM_REG_EX[];
 
     wxReduntantSpacesRemover(void);
 

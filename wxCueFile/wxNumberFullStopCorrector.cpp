@@ -4,25 +4,10 @@
 
 #include "wxNumberFullStopCorrector.h"
 
-// ===============================================================================
-
-const char wxNumberFullStopCorrector::REG_EX[] = "\\b(?=\\d)(\\d{1,2}\\.\\p{Xps}+)";
-
-// ===============================================================================
-
-wxNumberFullStopCorrector::wxNumberFullStopCorrector():
-    m_re(REG_EX)
-{
-    wxASSERT(m_re.IsValid());
-}
-
-wxStringProcessor* const wxNumberFullStopCorrector::Clone() const
-{
-    return new wxNumberFullStopCorrector();
-}
-
 namespace
 {
+    constexpr char REG_EX[] = "\\b(?=\\d)(\\d{1,2}\\.\\p{Xps}+)";
+
     bool get_num(const wxString& num, unsigned int& n)
     {
         const int pos = num.First('.');
@@ -33,6 +18,17 @@ namespace
 
         return true;
     }
+};
+
+wxNumberFullStopCorrector::wxNumberFullStopCorrector():
+    m_re(REG_EX)
+{
+    wxASSERT(m_re.IsValid());
+}
+
+wxStringProcessor* const wxNumberFullStopCorrector::Clone() const
+{
+    return new wxNumberFullStopCorrector();
 }
 
 bool wxNumberFullStopCorrector::Process(const wxString& in, wxString& out) const
@@ -81,4 +77,3 @@ bool wxNumberFullStopCorrector::Process(const wxString& in, wxString& out) const
 
     return false;
 }
-

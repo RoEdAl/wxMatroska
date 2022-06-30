@@ -11,11 +11,9 @@
 
 class wxNumberFullStopCorrector: public wxStringProcessor
 {
-    wxDECLARE_NO_ASSIGN_DEF_COPY(wxNumberFullStopCorrector);
+    wxDECLARE_NO_COPY_CLASS(wxNumberFullStopCorrector);
 
     public:
-
-    static const char REG_EX[];
 
     wxNumberFullStopCorrector(void);
 
