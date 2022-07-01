@@ -360,7 +360,7 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
         {
             const wxScopedPtr<wxTemporaryFilesCleaner> temporaryFilesCleaner(new wxTemporaryFilesCleaner(m_cfg.RunTool()));
             const wxString tmpStem(get_stem());
-            const bool tmpMka = cueSheet.HasFlacDataFile() || m_cfg.RunReplayGainScanner() || !cueSheet.HasSingleDataFile() || m_cfg.AudioFilteringRequired();
+            const bool tmpMka = cueSheet.HasFlacDataFile() || m_cfg.RunReplayGainScanner() || cueSheet.HasManyDataFiles() || m_cfg.AudioFilteringRequired();
             wxFileName fnTmpMka;
 
             if (tmpMka)
@@ -442,7 +442,7 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
         {
             const wxScopedPtr<wxTemporaryFilesCleaner> temporaryFilesCleaner(new wxTemporaryFilesCleaner(m_cfg.RunTool()));
             const wxString tmpStem(get_stem());
-            const bool tmpMka = m_cfg.RunReplayGainScanner() || !cueSheet.HasSingleDataFile() || m_cfg.AudioFilteringRequired();
+            const bool tmpMka = m_cfg.RunReplayGainScanner() || cueSheet.HasManyDataFiles() || m_cfg.AudioFilteringRequired();
             wxFileName fnTmpMka;
 
             if (tmpMka)

@@ -261,7 +261,7 @@ void wxFfmpegCMakeScriptRenderer::RenderPre(
         WriteSizeT(*m_os << "        -i ${CUE2MKC_AUDIO_", i) << '}' << endl;
     }
 
-    if (!cueSheet.HasSingleDataFile() || m_cfg.AudioFilteringRequired())
+    if (cueSheet.HasManyDataFiles() || m_cfg.AudioFilteringRequired())
     {
         const bool opus = m_cfg.GetFfmpegCodec() == wxConfiguration::CODEC_OPUS;
 
@@ -453,7 +453,7 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
     *m_os << "        -bitexact" << endl;
     *m_os << "        -i ${CUE2MKC_METADATA}" << endl << endl;
 
-    if (!fnTmpMka.IsOk() && (!cueSheet.HasSingleDataFile() || m_cfg.AudioFilteringRequired()))
+    if (!fnTmpMka.IsOk() && (cueSheet.HasManyDataFiles() || m_cfg.AudioFilteringRequired()))
     {
         const bool opus = m_cfg.GetFfmpegCodec() == wxConfiguration::CODEC_OPUS;
 
@@ -473,7 +473,7 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
     }
     *m_os << endl;
 
-    if (!fnTmpMka.IsOk() && (!cueSheet.HasSingleDataFile() || m_cfg.IsDualMono()))
+    if (!fnTmpMka.IsOk() && (cueSheet.HasManyDataFiles() || m_cfg.IsDualMono()))
     {
         *m_os << "        # copy processed autio stream" << endl;
         *m_os << "        -map [outa]" << endl << endl;
