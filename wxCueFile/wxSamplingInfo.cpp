@@ -22,17 +22,25 @@ wxSamplingInfo::wxSamplingInfo(const wxSamplingInfo& si)
     copy(si);
 }
 
-wxSamplingInfo::wxSamplingInfo(unsigned long samplingRate, unsigned short numChannels, unsigned short bitsPerSample):
+wxSamplingInfo::wxSamplingInfo(wxUint32 samplingRate, wxUint16 numChannels, wxUint16 bitsPerSample):
     m_samplingRate(samplingRate), m_numChannels(numChannels),
     m_bitsPerSample(bitsPerSample)
 {
 }
 
-wxSamplingInfo& wxSamplingInfo::Assign(unsigned long samplingRate, unsigned short numChannels, unsigned short bitsPerSample)
+wxSamplingInfo& wxSamplingInfo::Assign(wxUint32 samplingRate, wxUint16 numChannels, wxUint16 bitsPerSample)
 {
     m_samplingRate = samplingRate;
     m_numChannels = numChannels;
     m_bitsPerSample = bitsPerSample;
+    return *this;
+}
+
+wxSamplingInfo& wxSamplingInfo::Invalidate()
+{
+    m_samplingRate = 0;
+    m_numChannels = 0;
+    m_bitsPerSample = 0;
     return *this;
 }
 
@@ -57,36 +65,47 @@ void wxSamplingInfo::copy(const wxSamplingInfo& si)
     m_bitsPerSample = si.m_bitsPerSample;
 }
 
-unsigned long wxSamplingInfo::GetSamplingRate() const
+wxUint32 wxSamplingInfo::GetSamplingRate() const
 {
     return m_samplingRate;
 }
 
-unsigned short wxSamplingInfo::GetNumberOfChannels() const
+wxUint16 wxSamplingInfo::GetNumberOfChannels() const
 {
     return m_numChannels;
 }
 
-unsigned short wxSamplingInfo::GetBitsPerSample() const
+bool wxSamplingInfo::HasBitsPerSample() const
+{
+    return m_bitsPerSample > 0 && ((m_bitsPerSample % 8) == 0);
+}
+
+wxUint16 wxSamplingInfo::GetBitsPerSample() const
 {
     return m_bitsPerSample;
 }
 
-wxSamplingInfo& wxSamplingInfo::SetSamplingRate(unsigned long samplingRate)
+wxSamplingInfo& wxSamplingInfo::SetSamplingRate(wxUint32 samplingRate)
 {
     m_samplingRate = samplingRate;
     return *this;
 }
 
-wxSamplingInfo& wxSamplingInfo::SetNumberOfChannels(unsigned short numChannels)
+wxSamplingInfo& wxSamplingInfo::SetNumberOfChannels(wxUint16 numChannels)
 {
     m_numChannels = numChannels;
     return *this;
 }
 
-wxSamplingInfo& wxSamplingInfo::SetBitsPerSample(unsigned short bitsPerSample)
+wxSamplingInfo& wxSamplingInfo::SetBitsPerSample(wxUint16 bitsPerSample)
 {
     m_bitsPerSample = bitsPerSample;
+    return *this;
+}
+
+wxSamplingInfo& wxSamplingInfo::ClearBitsPerSample()
+{
+    m_bitsPerSample = 0;
     return *this;
 }
 
@@ -95,8 +114,22 @@ bool wxSamplingInfo::IsOK(bool ignoreBitsPerSample) const
     return
         (m_samplingRate > 0) &&
         (m_numChannels > 0) &&
-        (ignoreBitsPerSample ? true : (m_bitsPerSample > 0)) &&
-        ((m_bitsPerSample % 8) == 0);
+        (ignoreBitsPerSample ? true : HasBitsPerSample());
+}
+
+bool wxSamplingInfo::IsDefault() const
+{
+    return
+        (m_samplingRate == 44100) &&
+        (m_numChannels == 2) &&
+        (m_bitsPerSample == 16);
+}
+
+bool wxSamplingInfo::IsDefaultAudioFormat() const
+{
+    return
+        (m_samplingRate == 44100) &&
+        (m_bitsPerSample == 16);
 }
 
 bool wxSamplingInfo::Equals(const wxSamplingInfo& si, bool ignoreBitsPerSample) const

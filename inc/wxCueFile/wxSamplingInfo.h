@@ -18,22 +18,28 @@ class wxSamplingInfo
 
     wxSamplingInfo(void);
     wxSamplingInfo(const wxSamplingInfo&);
-    wxSamplingInfo(unsigned long, unsigned short, unsigned short);
+    wxSamplingInfo(wxUint32, wxUint16, wxUint16);
 
     bool IsOK(bool = false) const;
     bool Equals(const wxSamplingInfo&, bool = false) const;
+    bool IsDefault() const;
+    bool IsDefaultAudioFormat() const;
 
     wxSamplingInfo& operator =(const wxSamplingInfo&);
 
-    unsigned long GetSamplingRate() const;
-    unsigned short GetNumberOfChannels() const;
-    unsigned short GetBitsPerSample() const;
+    wxUint32 GetSamplingRate() const;
+    wxUint16 GetNumberOfChannels() const;
 
-    wxSamplingInfo& SetSamplingRate(unsigned long);
-    wxSamplingInfo& SetNumberOfChannels(unsigned short);
-    wxSamplingInfo& SetBitsPerSample(unsigned short);
+    bool HasBitsPerSample() const;
+    wxUint16 GetBitsPerSample() const;
 
-    wxSamplingInfo& Assign(unsigned long, unsigned short, unsigned short);
+    wxSamplingInfo& SetSamplingRate(wxUint32);
+    wxSamplingInfo& SetNumberOfChannels(wxUint16);
+    wxSamplingInfo& SetBitsPerSample(wxUint16);
+    wxSamplingInfo& ClearBitsPerSample();
+
+    wxSamplingInfo& Assign(wxUint32, wxUint16, wxUint16);
+    wxSamplingInfo& Invalidate();
     wxSamplingInfo& SetDefault();
 
     wxULongLong GetNumberOfFramesFromBytes(const wxULongLong&) const;
@@ -61,9 +67,9 @@ class wxSamplingInfo
 
     protected:
 
-    unsigned long m_samplingRate;
-    unsigned short m_numChannels;
-    unsigned short m_bitsPerSample;
+    wxUint32 m_samplingRate;
+    wxUint16 m_numChannels;
+    wxUint16 m_bitsPerSample;
 
     protected:
 

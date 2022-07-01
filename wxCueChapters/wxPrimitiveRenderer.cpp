@@ -824,12 +824,48 @@ wxString wxPrimitiveRenderer::GetTrackName(const wxCueSheet& cueSheet) const
     return cueSheet.Format(m_cfg.GetTagSources(), trackName);
 }
 
+namespace
+{
+    wxString correct_fn(const wxString& s)
+    {
+        const wxFileNameCorrector fnCorrector;
+        return fnCorrector(s);
+    }
+}
+
 wxString wxPrimitiveRenderer::GetContainerFileName(const wxCueSheet& cueSheet) const
 {
-    const wxString res = GetTrackName(cueSheet);
+    wxString fileName = correct_fn(GetTrackName(cueSheet));
 
-    const wxFileNameCorrector fnCorrector;
-    return fnCorrector(res);
+    if (m_cfg.GetFfmpegCodec() == wxConfiguration::CODEC_OPUS)
+    {
+        return fileName;
+    }
+    else
+    {
+        const wxSamplingInfo si = GetSamplingInfo(cueSheet);
+        if (si.IsDefaultAudioFormat())
+        {
+            return fileName;
+        }
+        else
+        {
+            const wxUint32 sr = si.GetSamplingRate() / 1000;
+            const wxUint32 srf = si.GetSamplingRate() % 1000;
+            wxString samplingInfo;
+            if (srf != 0)
+            {
+                const wxUint32 srf1 = srf / 100;
+                samplingInfo = wxString::Format(wxS("[%hu\u2013%u.%u]"), si.GetBitsPerSample(), sr, srf1);
+            }
+            else
+            {
+                samplingInfo = wxString::Format(wxS("[%hu\u2013%u]"), si.GetBitsPerSample(), sr);
+            }
+
+            return fileName.Append(wxS('\u2009')).Append(samplingInfo);
+        }
+    }
 }
 
 bool wxPrimitiveRenderer::IsLanguageAgnostic(const wxCueTag& tag) const
@@ -845,4 +881,44 @@ void wxPrimitiveRenderer::GetTemporaryFiles(wxArrayFileName& tmpFiles) const
 bool wxPrimitiveRenderer::ConvertCover(const wxCueSheet& cueSheet) const
 {
     return (m_cfg.ConvertCoverFile() && cueSheet.HasCover()) || (m_cfg.CoverFromPdf() && cueSheet.HasPdfCover());
+}
+
+wxSamplingInfo wxPrimitiveRenderer::GetSamplingInfo(const wxCueSheet& cueSheet) const
+{
+    wxSamplingInfo si;
+    si.Invalidate();
+
+    bool updateNumberOfChannels = true;
+    bool updateBitsPerSample = true;
+
+    if (m_cfg.IsDualMono())
+    {
+        si.SetNumberOfChannels(1);
+        updateNumberOfChannels = false;
+    }
+
+    if (!m_cfg.UseDefaultAudioSampleWidth())
+    {
+        si.SetBitsPerSample(static_cast<wxUint16>(m_cfg.GetAudioSampleWidth()));
+        updateBitsPerSample = false;
+    }
+
+    const wxArrayDataFile& dataFiles = cueSheet.GetDataFiles();
+    for (size_t i = 0, cnt = dataFiles.GetCount(); i < cnt; ++i)
+    {
+        const wxDataFile& df = dataFiles[i];
+        if (!df.HasDuration()) continue;
+        const wxSamplingInfo dfSi = df.GetDuration().GetSamplingInfo();
+        if (!dfSi.IsOK()) continue;
+        if (dfSi.GetSamplingRate() > si.GetSamplingRate()) si.SetSamplingRate(dfSi.GetSamplingRate());
+        if (updateNumberOfChannels)
+        {
+            if (dfSi.GetNumberOfChannels() > si.GetNumberOfChannels()) si.SetNumberOfChannels(dfSi.GetNumberOfChannels());
+        }
+        if (updateBitsPerSample)
+        {
+            if (dfSi.GetBitsPerSample() > si.GetBitsPerSample()) si.SetBitsPerSample(dfSi.GetBitsPerSample());
+        }
+    }
+    return si;
 }

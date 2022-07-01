@@ -619,6 +619,11 @@ bool wxCueSheet::HasSingleDataFile() const
     return (m_dataFiles.GetCount() == 1u);
 }
 
+bool wxCueSheet::HasManyDataFiles() const
+{
+    return (m_dataFiles.GetCount() > 1u);
+}
+
 wxCueSheet& wxCueSheet::SetSingleDataFile(const wxDataFile& dataFile)
 {
     m_dataFiles.Clear();

@@ -67,6 +67,7 @@ class wxCueSheet: public wxCueComponent, public wxAbstractDurationHolder
     virtual bool HasGarbage() const;
 
     bool HasSingleDataFile() const;
+    bool HasManyDataFiles() const;
     bool HasSingleDataFile(wxDataFile&) const;
     wxCueSheet& SetSingleDataFile(const wxDataFile&);
     wxCueSheet& SetDataFiles(const wxArrayDataFile&);
