@@ -10,9 +10,9 @@ class wxMyApp:
 {
     protected:
 
-    virtual void OnInitCmdLine(wxCmdLineParser& parser);
-    virtual bool OnCmdLineParsed(wxCmdLineParser& parser);
-    virtual bool OnInit();
+    virtual void OnInitCmdLine(wxCmdLineParser& parser) wxOVERRIDE;
+    virtual bool OnCmdLineParsed(wxCmdLineParser& parser) wxOVERRIDE;
+    virtual bool OnInit() wxOVERRIDE;
 
     public:
 
