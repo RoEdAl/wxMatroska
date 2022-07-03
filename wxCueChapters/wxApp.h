@@ -37,14 +37,13 @@ class wxMkvmergeOptsRenderer;
 #include <wxCmdTools/wxCmdTool.h>
 #endif
 
-class wxMyApp:
-    public MyAppConsole
+class wxMyApp: public MyAppConsole
 {
     protected:
 
     wxDateTime m_dt;
     wxConfiguration m_cfg;
-    wxScopedPtr< wxCueSheet > m_pMergedCueSheet;
+    wxScopedPtr<wxCueSheet> m_mergedCueSheet;
 
     protected:
 

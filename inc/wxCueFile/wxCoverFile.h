@@ -152,7 +152,7 @@ class wxCoverFile
 
     static bool IsCoverFile(const wxFileName&);
     static bool Find(const wxDir&, const wxString&, wxFileName&);
-    static bool Find(const wxFileName&, wxFileName&);
+    static bool Find(const wxFileName&, wxFileName&, bool);
 
     static size_t Extract(const wxFileName&, wxArrayCoverFile&);
 

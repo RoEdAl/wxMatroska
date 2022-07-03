@@ -64,6 +64,7 @@ class wxMainFrame:
     wxTextCtrl* m_textCtrlMkaTitleFmt;
     wxCheckBox* m_checkBoxAttachLogs;
     wxCheckBox* m_checkBoxAttachAccuRip;
+    wxCheckBox* m_checkBoxParentDir;
     wxCheckBox* m_checkBoxApplyTags;
     wxCheckBox* m_checkBoxAttachCover;
     wxCheckBox* m_checkBoxConvertCover;

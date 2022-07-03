@@ -141,6 +141,29 @@ bool wxCueSheetReader::GetLogFile(const wxFileName& inputFile, bool anyLog, wxFi
     }
 }
 
+template< typename T >
+bool wxCueSheetReader::GetLogFile(const wxFileName& inputFile, bool anyLog, wxFileName& logFile, bool parentDir)
+{
+    if (GetLogFile<T>(inputFile, anyLog, logFile))
+    {
+        return true;
+    }
+
+    if (parentDir)
+    {
+        wxFileName parent(inputFile);
+        parent.SetName(wxEmptyString);
+        parent.ClearExt();
+        parent.RemoveLastDir();
+        if (parent.IsDirReadable())
+        {
+            return GetLogFile<T>(parent, anyLog, logFile);
+        }
+    }
+
+    return false;
+}
+
 wxString wxCueSheetReader::GetOneTrackCue()
 {
     wxTextOutputStreamOnString tos;
@@ -273,7 +296,7 @@ bool wxCueSheetReader::FindLog(const wxCueSheetContent& content)
     wxASSERT(TestReadFlags(EC_FIND_LOG));
     wxFileName logFile;
 
-    if (GetLogFile< eac_log >(content.GetSource().GetFileName(), TestReadFlags(EC_SINGLE_MEDIA_FILE), logFile))
+    if (GetLogFile<eac_log>(content.GetSource().GetFileName(), TestReadFlags(EC_SINGLE_MEDIA_FILE), logFile, TestReadFlags(EC_PARENT_DIR)))
     {
         m_cueSheet.AddLog(logFile);
         return true;
@@ -289,7 +312,7 @@ bool wxCueSheetReader::FindAccurateRipLog(const wxCueSheetContent& content)
     wxASSERT(TestReadFlags(EC_FIND_ACCURIP_LOG));
     wxFileName logFile;
 
-    if (GetLogFile< accurip_log >(content.GetSource().GetFileName(), TestReadFlags(EC_SINGLE_MEDIA_FILE), logFile))
+    if (GetLogFile<accurip_log>(content.GetSource().GetFileName(), TestReadFlags(EC_SINGLE_MEDIA_FILE), logFile, TestReadFlags(EC_PARENT_DIR)))
     {
         m_cueSheet.AddAccuripLog(logFile);
         return true;
@@ -305,7 +328,7 @@ bool wxCueSheetReader::ApplyTagsFromFile(const wxCueSheetContent& content)
     wxASSERT(TestReadFlags(EC_APPLY_TAGS_FROM_FILE));
     wxFileName tagsFile;
 
-    if (GetLogFile< tags_file >(content.GetSource().GetFileName(), TestReadFlags(EC_SINGLE_MEDIA_FILE), tagsFile))
+    if (GetLogFile<tags_file>(content.GetSource().GetFileName(), TestReadFlags(EC_SINGLE_MEDIA_FILE), tagsFile))
     {
         return m_cueSheet.ApplyTagsFromJson(tagsFile);
     }
@@ -320,7 +343,7 @@ bool wxCueSheetReader::FindCover(const wxCueSheetContent& content)
     wxASSERT(TestReadFlags(EC_FIND_COVER));
     wxFileName coverFile;
 
-    if (wxCoverFile::Find(content.GetSource().GetFileName(), coverFile))
+    if (wxCoverFile::Find(content.GetSource().GetFileName(), coverFile, TestReadFlags(EC_PARENT_DIR)))
     {
         m_cueSheet.AddCover(coverFile);
         return true;
@@ -336,7 +359,7 @@ bool wxCueSheetReader::FindPdfCover(const wxCueSheetContent& content)
     wxASSERT(TestReadFlags(EC_FIND_PDF));
     wxFileName pdfFile;
 
-    if (GetLogFile< pdf_file >(content.GetSource().GetFileName(), true, pdfFile))
+    if (GetLogFile<pdf_file>(content.GetSource().GetFileName(), true, pdfFile, TestReadFlags(EC_PARENT_DIR)))
     {
         m_cueSheet.AddCover(pdfFile);
         return true;

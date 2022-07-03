@@ -1019,11 +1019,22 @@ wxPanel* wxMainFrame::create_general_panel(wxNotebook* notebook, const wxSizerFl
                            lineFlags.GetFlags(), btnLeft.GetBorderInPixels());
             }
 
-            m_checkBoxAttachLogs = create_3state_checkbox(sizer, _("Attach EAC log(s)"), wxCHK_CHECKED);
+            m_checkBoxAttachLogs = create_3state_checkbox(sizer, _("Attach EAC log(s)"));
             innerSizer->Add(m_checkBoxAttachLogs, wxGBPosition(7, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
 
             m_checkBoxAttachAccuRip = create_3state_checkbox(sizer, _("Attach AccurateRip log(s)"));
             innerSizer->Add(m_checkBoxAttachAccuRip, wxGBPosition(8, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+
+            {
+                const wxSizerFlags lineFlags = get_horizontal_static_line_sizer_flags(panel);
+                innerSizer->Add(create_horizontal_static_line(sizer),
+                           wxGBPosition(9, 0), oneCol,
+                           lineFlags.GetFlags(), btnLeft.GetBorderInPixels());
+            }
+
+            m_checkBoxParentDir = create_3state_checkbox(sizer, _("Look for attachments in parent dir"));
+            m_checkBoxParentDir->SetToolTip(_("Look for attachments (cover and logs) also in parent dir(s)"));
+            innerSizer->Add(m_checkBoxParentDir, wxGBPosition(10, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
 
             sizer->Add(innerSizer, wxSizerFlags().Expand());
         }
@@ -1959,6 +1970,7 @@ bool wxMainFrame::read_options(wxArrayString& options) const
     negatable_long_switch_option(options, m_checkBoxAttachLogs, "attach-eac-log");
     negatable_long_switch_option(options, m_checkBoxAttachAccuRip, "attach-accurip-log");
     negatable_long_switch_option(options, m_checkBoxAttachCover, "attach-cover");
+    negatable_long_switch_option(options, m_checkBoxParentDir, "parent-dir");
     negatable_long_switch_option(options, m_checkBoxApplyTags, "apply-tags");
     negatable_long_switch_option(options, m_checkBoxConvertCover, "convert-cover-file");
     negatable_long_switch_option(options, m_checkBoxCoverFromPdf, "cover-from-pdf");

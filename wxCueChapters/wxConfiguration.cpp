@@ -396,6 +396,7 @@ void wxConfiguration::AddCmdLineParams(wxCmdLineParser& cmdLine) const
     cmdLine.AddSwitch(wxEmptyString, "attach-eac-log", wxString::Format(_("Attach EAC log file to mkvmerge options file (default: %s)"), ReadFlagTestStr(wxCueSheetReader::EC_FIND_LOG)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
     cmdLine.AddSwitch(wxEmptyString, "attach-cover", wxString::Format(_("Attach cover image (cover.*;front.*;album.*) to mkvmerge options file (default: %s)"), ReadFlagTestStr(wxCueSheetReader::EC_FIND_COVER)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
     cmdLine.AddSwitch(wxEmptyString, "attach-accurip-log", wxString::Format(_("Attach AccurateRip log (default: %s)"), ReadFlagTestStr(wxCueSheetReader::EC_FIND_ACCURIP_LOG)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
+    cmdLine.AddSwitch(wxEmptyString, "parent-dir", wxString::Format(_("Search attachments also in parent dir (default: %s)"), ReadFlagTestStr(wxCueSheetReader::EC_PARENT_DIR)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
     cmdLine.AddSwitch(wxEmptyString, "apply-tags", wxString::Format(_("Apply tags from related JSON files (default: %s)"), ReadFlagTestStr(wxCueSheetReader::EC_APPLY_TAGS_FROM_FILE)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
     cmdLine.AddOption(wxEmptyString, "audio-sample-width", _("Set audio sample width (default: auto, accepted values: 16, 24)"), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL);
 
@@ -648,6 +649,7 @@ bool wxConfiguration::Read(const wxCmdLineParser& cmdLine)
     ReadReadFlags(cmdLine, "small-letter-parenthesized", wxCueSheetReader::EC_SMALL_LETTER_PARENTHESIZED);
     ReadReadFlags(cmdLine, "ascii-to-unicode", wxCueSheetReader::EC_ASCII_TO_UNICODE);
     ReadReadFlags(cmdLine, "cover-from-pdf", wxCueSheetReader::EC_FIND_PDF);
+    ReadReadFlags(cmdLine, "parent-dir", wxCueSheetReader::EC_PARENT_DIR);
 
     // MLang
     ReadNegatableSwitchValue(cmdLine, "use-mlang", m_bUseMLang);
@@ -747,6 +749,7 @@ wxString wxConfiguration::GetReadFlagsDesc(wxCueSheetReader::ReadFlags flags)
     AddFlag(as, flags, wxCueSheetReader::EC_FIND_COVER, "find-cover");
     AddFlag(as, flags, wxCueSheetReader::EC_FIND_LOG, "find-log");
     AddFlag(as, flags, wxCueSheetReader::EC_FIND_ACCURIP_LOG, "find-accurip-log");
+    AddFlag(as, flags, wxCueSheetReader::EC_PARENT_DIR, "parent-dir");
     AddFlag(as, flags, wxCueSheetReader::EC_APPLY_TAGS_FROM_FILE, "apply-tags-from-file");
     AddFlag(as, flags, wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS, "upper-roman-numerals");
     AddFlag(as, flags, wxCueSheetReader::EC_CONVERT_LOWER_ROMAN_NUMERALS, "lower-roman-numerals");

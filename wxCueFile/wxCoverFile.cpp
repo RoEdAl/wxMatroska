@@ -415,9 +415,27 @@ bool wxCoverFile::Find(const wxFileName& inputFile, wxFileName& coverFile, const
     return false;
 }
 
-bool wxCoverFile::Find(const wxFileName& inputFile, wxFileName& coverFile)
+bool wxCoverFile::Find(const wxFileName& inputFile, wxFileName& coverFile, bool parentDir)
 {
-    return Find(inputFile, coverFile, CoverNames);
+    if (Find(inputFile, coverFile, CoverNames))
+    {
+        return true;
+    }
+
+    if (parentDir)
+    {
+        wxFileName parent(inputFile);
+        parent.SetName(wxEmptyString);
+        parent.ClearExt();
+        parent.RemoveLastDir();
+
+        if (parent.IsDirReadable())
+        {
+            return Find(parent, coverFile, CoverNames);
+        }
+    }
+
+    return false;
 }
 
 namespace

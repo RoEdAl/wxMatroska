@@ -618,7 +618,7 @@ int wxMyApp::OnExit()
 {
     int res = MyAppConsole::OnExit();
 
-    m_pMergedCueSheet.reset();
+    m_mergedCueSheet.reset();
     return res;
 }
 
@@ -629,7 +629,7 @@ wxXmlCueSheetRenderer* wxMyApp::GetXmlRenderer(const wxInputFile& inputFile, con
 
 bool wxMyApp::HasMergedCueSheet() const
 {
-    return m_pMergedCueSheet;
+    return m_mergedCueSheet;
 }
 
 wxCueSheet& wxMyApp::GetMergedCueSheet()
@@ -637,17 +637,17 @@ wxCueSheet& wxMyApp::GetMergedCueSheet()
     if (!HasMergedCueSheet())
     {
         wxLogDebug("Creating empty cue sheet for merging");
-        m_pMergedCueSheet.reset(new wxCueSheet());
+        m_mergedCueSheet.reset(new wxCueSheet());
     }
 
     wxASSERT(HasMergedCueSheet());
-    return *m_pMergedCueSheet;
+    return *m_mergedCueSheet;
 }
 
 const wxCueSheet& wxMyApp::GetMergedCueSheet() const
 {
     wxASSERT(HasMergedCueSheet());
-    return *m_pMergedCueSheet;
+    return *m_mergedCueSheet;
 }
 
 namespace
