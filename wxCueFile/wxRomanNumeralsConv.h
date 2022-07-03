@@ -100,31 +100,107 @@ struct roman_numeral_traits
 template< >
 struct roman_numeral_traits< true >
 {
-    static const char REGEX[];
+    static const char REGEX_WEAK[];
+    static const char REGEX_STRONG[];
     static const roman_utils::roman_numeral_conv CINFO;
 };
 
 template< >
 struct roman_numeral_traits< false >
 {
-    static const char REGEX[];
+    static const char REGEX_STRONG[];
+    static const char REGEX_WEAK[];
     static const roman_utils::roman_numeral_conv CINFO;
 };
 
 template< bool UPPER >
-class wxRomanNumeralsConv: public wxStringProcessor
+class wxRomanNumeralsConvWeak: public wxStringProcessor
 {
-    wxDECLARE_NO_COPY_TEMPLATE_CLASS(wxRomanNumeralsConv, UPPER);
+    wxDECLARE_NO_COPY_TEMPLATE_CLASS(wxRomanNumeralsConvWeak, UPPER);
 
     public:
 
-    typedef wxRomanNumeralsConv< UPPER > ThisClass;
+    typedef wxRomanNumeralsConvWeak< UPPER > ThisClass;
     typedef roman_numeral_traits< UPPER > numeral_traits;
 
     public:
 
-    wxRomanNumeralsConv()
-        : m_re(numeral_traits::REGEX)
+    wxRomanNumeralsConvWeak()
+        : m_re(numeral_traits::REGEX_WEAK)
+    {
+        wxASSERT(m_re.IsValid());
+    }
+
+    virtual wxStringProcessor* const Clone() const wxOVERRIDE
+    {
+        return new ThisClass();
+    }
+
+    virtual bool Process(const wxString& text, wxString& out) const wxOVERRIDE
+    {
+        wxString w(text);
+        wxString res;
+        bool     replaced = false;
+
+        while (m_re.Matches(w))
+        {
+            size_t idx, len;
+
+            if (!m_re.GetMatch(&idx, &len))
+            {
+                replaced = false;
+                break;
+            }
+
+            res += w.Mid(0, idx);
+
+            const wxString m1 = get_match(w, 1);
+            const wxString m2 = get_match(w, 2);
+
+            res += roman_utils::convert(wxEmptyString, m1, m2, numeral_traits::CINFO);
+            replaced = true;
+            w.Remove(0, idx + len);
+        }
+
+        if (replaced)
+        {
+            res += w;
+            out = res;
+            return true;
+        }
+
+        return false;
+    }
+
+    protected:
+
+    wxRegEx m_re;
+
+    protected:
+
+    wxString get_match(const wxString& s, size_t matchIdx) const
+    {
+        size_t idx, len;
+
+        if (m_re.GetMatch(&idx, &len, matchIdx)) return s.Mid(idx, len);
+        else return wxEmptyString;
+    }
+};
+
+template< bool UPPER >
+class wxRomanNumeralsConvStrong: public wxStringProcessor
+{
+    wxDECLARE_NO_COPY_TEMPLATE_CLASS(wxRomanNumeralsConvStrong, UPPER);
+
+    public:
+
+    typedef wxRomanNumeralsConvStrong< UPPER > ThisClass;
+    typedef roman_numeral_traits< UPPER > numeral_traits;
+
+    public:
+
+    wxRomanNumeralsConvStrong()
+        : m_re(numeral_traits::REGEX_STRONG)
     {
         wxASSERT(m_re.IsValid());
     }

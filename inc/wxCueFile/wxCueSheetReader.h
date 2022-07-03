@@ -92,7 +92,8 @@ class wxCueSheetReader
         EC_ASCII_TO_UNICODE = 32768,
         EC_APPLY_TAGS_FROM_FILE = 65536,
         EC_FIND_PDF = 131072,
-        EC_PARENT_DIR = 262144
+        EC_PARENT_DIR = 262144,
+        EC_STRONG_ROMAN_NUMERALS = 524288
     };
 
     static const ReadFlags DEF_READ_FLAGS;

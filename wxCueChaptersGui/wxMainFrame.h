@@ -38,6 +38,7 @@ class wxMainFrame:
     wxCheckBox* m_checkBoxCorrectDashes;
     wxCheckBox* m_checkBoxCapitalizedRomanLiterals;
     wxCheckBox* m_checkBoxLowercaseRomanLiterals;
+    wxCheckBox* m_checkBoxStrongRomanLiterals;
     wxCheckBox* m_checkBoxNumberFullStop;
     wxCheckBox* m_checkBoxSmallLetterParenthesized;
     wxCheckBox* m_checkBoxAsciiToUnicode;

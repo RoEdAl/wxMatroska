@@ -17,6 +17,7 @@ wxStringCorrector::Configurator::Configurator()
     m_ellipsize(false),
     m_romanNumeralsUpper(false),
     m_romanNumeralsLower(false),
+    m_strongRomanNumerals(false),
     m_dashes(true),
     m_numberFullStop(false),
     m_smallLetterParenthesized(false),
@@ -29,6 +30,7 @@ wxStringCorrector::Configurator::Configurator(const wxStringCorrector::Configura
     m_ellipsize(configurator.m_ellipsize),
     m_romanNumeralsUpper(configurator.m_romanNumeralsUpper),
     m_romanNumeralsLower(configurator.m_romanNumeralsLower),
+    m_strongRomanNumerals(configurator.m_strongRomanNumerals),
     m_dashes(configurator.m_dashes),
     m_numberFullStop(configurator.m_numberFullStop),
     m_smallLetterParenthesized(configurator.m_smallLetterParenthesized),
@@ -59,6 +61,13 @@ wxStringCorrector::Configurator& wxStringCorrector::Configurator::RomanNumeralsL
     m_romanNumeralsLower = romanNumeralsLower;
     return *this;
 }
+
+wxStringCorrector::Configurator& wxStringCorrector::Configurator::StrongRomanNumerals(bool strongRomanNumerals)
+{
+    m_strongRomanNumerals = strongRomanNumerals;
+    return *this;
+}
+
 
 wxStringCorrector::Configurator& wxStringCorrector::Configurator::Dashes(bool dashes)
 {
@@ -138,8 +147,16 @@ wxStringProcessor* const wxStringCorrector::Configurator::Create() const
     if (m_numberFullStop) res->AddStringProcessor(new wxNumberFullStopCorrector());
     if (m_removeExtraSpaces) res->AddStringProcessor(new wxReduntantSpacesRemover());
     if (m_ellipsize) res->AddStringProcessor(new wxEllipsizer());
-    if (m_romanNumeralsUpper) res->AddStringProcessor(new wxRomanNumeralsConv< true >());
-    if (m_romanNumeralsLower) res->AddStringProcessor(new wxRomanNumeralsConv< false >());
+    if (m_strongRomanNumerals)
+    {
+        if (m_romanNumeralsUpper) res->AddStringProcessor(new wxRomanNumeralsConvStrong<true>());
+        if (m_romanNumeralsLower) res->AddStringProcessor(new wxRomanNumeralsConvStrong<false>());
+    }
+    else
+    {
+        if (m_romanNumeralsUpper) res->AddStringProcessor(new wxRomanNumeralsConvWeak<true>());
+        if (m_romanNumeralsLower) res->AddStringProcessor(new wxRomanNumeralsConvWeak<false>());
+    }
     if (m_dashes) res->AddStringProcessor(new wxDashesCorrector(m_smallEmDash));
     if (m_smallLetterParenthesized) res->AddStringProcessor(new wxSmallLetterParenthesizedCorrector());
     if (m_asciiToUnicode) res->AddStringProcessor(new wxAsciiToUnicode());

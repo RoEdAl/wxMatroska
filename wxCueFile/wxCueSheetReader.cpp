@@ -1176,6 +1176,7 @@ wxStringProcessor* const wxCueSheetReader::CreateStringProcessor(wxCueSheetReade
         .Ellipsize(wxCueSheetReader::TestReadFlags(readFlags, wxCueSheetReader::EC_ELLIPSIZE_TAGS))
         .RomanNumeralsUpper(wxCueSheetReader::TestReadFlags(readFlags, wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS))
         .RomanNumeralsLower(wxCueSheetReader::TestReadFlags(readFlags, wxCueSheetReader::EC_CONVERT_LOWER_ROMAN_NUMERALS))
+        .StrongRomanNumerals(wxCueSheetReader::TestReadFlags(readFlags, wxCueSheetReader::EC_STRONG_ROMAN_NUMERALS))
         .Dashes(wxCueSheetReader::TestReadFlags(readFlags, wxCueSheetReader::EC_CORRECT_DASHES))
         .SmallEmDash(wxCueSheetReader::TestReadFlags(readFlags, wxCueSheetReader::EC_SMALL_EM_DASH))
         .NumberFullStop(wxCueSheetReader::TestReadFlags(readFlags, wxCueSheetReader::EC_NUMBER_FULL_STOP))

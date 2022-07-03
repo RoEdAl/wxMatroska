@@ -6,7 +6,8 @@
 
  // ===============================================================================
 
-const char roman_numeral_traits< true >::REGEX[] = "[[:<:]](?=[MDCLXVI])M*(C[MD]|D?C{0,3})(X[CL]|L?X{0,3})(I[XV]|V?I{0,3})[[:>:]]";
+const char roman_numeral_traits< true >::REGEX_WEAK[] = "\\b(?=\\w)(X{0,3})(I[XV]|V?I{0,3})\\b(?<=\\w)";
+const char roman_numeral_traits< true >::REGEX_STRONG[] = "\\b(?=\\w)M*(C[MD]|D?C{0,3})(X[CL]|L?X{0,3})(I[XV]|V?I{0,3})\\b(?<=\\w)";
 
 const roman_utils::roman_numeral_conv roman_numeral_traits< true >::CINFO = {
     {
@@ -30,7 +31,8 @@ const roman_utils::roman_numeral_conv roman_numeral_traits< true >::CINFO = {
 
 // ===============================================================================
 
-const char roman_numeral_traits< false >::REGEX[] = "\\b(?=\\w)(?=[mdclxvi])m*(c[md]|d?C{0,3})(x[cl]|l?x{0,3})(i[xv]|v?I{0,3})\\b(?<=\\w)";
+const char roman_numeral_traits< false >::REGEX_WEAK[] = "\\b(?=\\w)(x{0,3})(i[xv]|v?I{0,3})\\b(?<=\\w)";
+const char roman_numeral_traits< false >::REGEX_STRONG[] = "\\b(?=\\w)m*(c[md]|d?C{0,3})(x[cl]|l?x{0,3})(i[xv]|v?I{0,3})\\b(?<=\\w)";
 
 const roman_utils::roman_numeral_conv roman_numeral_traits< false >::CINFO = {
     {

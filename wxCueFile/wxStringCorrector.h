@@ -27,6 +27,7 @@ class wxStringCorrector: public wxStringProcessor
         Configurator& Ellipsize(bool = true);
         Configurator& RomanNumeralsUpper(bool = true);
         Configurator& RomanNumeralsLower(bool = true);
+        Configurator& StrongRomanNumerals(bool = true);
         Configurator& Dashes(bool = true);
         Configurator& SmallEmDash(bool = true);
         Configurator& NumberFullStop(bool = true);
@@ -37,6 +38,7 @@ class wxStringCorrector: public wxStringProcessor
         bool Ellipsize() const;
         bool RomanNumeralsUpper() const;
         bool RomanNumeralsLower() const;
+        bool StrongRomanNumerals() const;
         bool Dashes() const;
         bool NumberFullStop() const;
         bool SmallLetterParenthesized() const;
@@ -54,6 +56,7 @@ class wxStringCorrector: public wxStringProcessor
         bool m_ellipsize;
         bool m_romanNumeralsUpper;
         bool m_romanNumeralsLower;
+        bool m_strongRomanNumerals;
         bool m_dashes;
         bool m_smallEmDash;
         bool m_numberFullStop;

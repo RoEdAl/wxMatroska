@@ -1135,6 +1135,10 @@ wxPanel* wxMainFrame::create_chapter_panel(wxNotebook* notebook, const wxSizerFl
         m_checkBoxLowercaseRomanLiterals->SetToolTip(_wxS("Examples:\niii\u2009\u2192\u2009\u2172 (small roman numeral three: U+2172)\nxii\u2009\u2192\u2009\u217B (small roman numeral twelve: U+217B"));
         sizer->Add(m_checkBoxLowercaseRomanLiterals);
 
+        m_checkBoxStrongRomanLiterals = create_3state_checkbox(sizer, _("Strong Roman Numerals"));
+        m_checkBoxStrongRomanLiterals->SetToolTip(_wxS("Use stronger roman numerals parser - include MCDL characters (only XVI by default)"));
+        sizer->Add(m_checkBoxStrongRomanLiterals);
+
         m_checkBoxNumberFullStop = create_3state_checkbox(sizer, _("Use '<number> full stop' characters"));
         m_checkBoxNumberFullStop->SetToolTip(_wxS("Use Unicode characters from \u2488 (digit one full stop: U+2488) to \u249B (number twenty full stop: U+249B)"));
         sizer->Add(m_checkBoxNumberFullStop);
@@ -1908,6 +1912,7 @@ bool wxMainFrame::read_options(wxArrayString& options) const
 
     negatable_switch_option(options, m_checkBoxCapitalizedRomanLiterals, "ru");
     negatable_switch_option(options, m_checkBoxLowercaseRomanLiterals, "rl");
+    negatable_long_switch_option(options, m_checkBoxStrongRomanLiterals, "strong-roman-numerals");
 
     negatable_long_switch_option(options, m_checkBoxUseCdTextTags, "use-cdtext-tags");
     negatable_long_switch_option(options, m_checkBoxUseTagsFromCuesheetComments, "use-cue-comments-tags");
