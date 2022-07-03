@@ -983,7 +983,6 @@ namespace
     {
         wxASSERT(jsonFile.IsFileReadable());
 
-        wxTextOutputStreamOnString tos;
         wxFileInputStream is(jsonFile.GetFullPath());
         if (!is.IsOk())
         {
@@ -992,6 +991,8 @@ namespace
         }
 
         wxTextInputStream tis(is, wxEmptyString, wxConvUTF8);
+
+        wxTextOutputStreamOnString tos;
         wxTextStreamUtils::Copy(tis, tos.GetStream());
         s = tos.GetString();
         return true;
