@@ -844,23 +844,23 @@ wxString wxPrimitiveRenderer::GetContainerFileName(const wxCueSheet& cueSheet) c
     else
     {
         const wxSamplingInfo si = GetSamplingInfo(cueSheet);
-        if (si.IsDefaultAudioFormat())
+        if (si.IsStandardAudioFormat())
         {
             return fileName;
         }
         else
         {
-            const wxUint32 sr = si.GetSamplingRate() / 1000;
-            const wxUint32 srf = si.GetSamplingRate() % 1000;
+            const wxUint32 sr = si.GetSamplingRate() / 1000u;
+            const wxUint32 srf = si.GetSamplingRate() % 1000u;
             wxString samplingInfo;
-            if (srf != 0)
+            if (srf >= 100u)
             {
-                const wxUint32 srf1 = srf / 100;
-                samplingInfo = wxString::Format(wxS("[%hu\u2013%u.%u]"), si.GetBitsPerSample(), sr, srf1);
+                const wxUint32 srf1 = srf / 100u;
+                samplingInfo = wxString::Format(wxS("[%hu\u2011%u.%u]"), si.GetBitsPerSample(), sr, srf1);
             }
             else
             {
-                samplingInfo = wxString::Format(wxS("[%hu\u2013%u]"), si.GetBitsPerSample(), sr);
+                samplingInfo = wxString::Format(wxS("[%hu\u2011%u]"), si.GetBitsPerSample(), sr);
             }
 
             return fileName.Append(wxS('\u2009')).Append(samplingInfo);

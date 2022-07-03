@@ -125,10 +125,10 @@ bool wxSamplingInfo::IsDefault() const
         (m_bitsPerSample == 16);
 }
 
-bool wxSamplingInfo::IsDefaultAudioFormat() const
+bool wxSamplingInfo::IsStandardAudioFormat() const
 {
     return
-        (m_samplingRate == 44100) &&
+        (m_samplingRate == 44100 || m_samplingRate == 48000) &&
         (m_bitsPerSample == 16);
 }
 

@@ -23,7 +23,7 @@ class wxSamplingInfo
     bool IsOK(bool = false) const;
     bool Equals(const wxSamplingInfo&, bool = false) const;
     bool IsDefault() const;
-    bool IsDefaultAudioFormat() const;
+    bool IsStandardAudioFormat() const;
 
     wxSamplingInfo& operator =(const wxSamplingInfo&);
 
