@@ -6,6 +6,9 @@
 
 namespace
 {
+    constexpr char REG_EX_NONBREAKING_HYPHEN[] = "(?<=\\p{Xan})\\p{Pd}(?=\\p{Xan})";
+    constexpr wxUChar NONBREAKING_HYPHEN = wxS('\u2011');
+
     constexpr char REG_EX_EN[] = "\\p{Xps}+\\p{Pd}\\p{Xps}+";
     constexpr char REG_EX_EM[] = "\\p{Xps}+\\p{Pd}{2}\\p{Xps}+";
     constexpr char REG_EX_EM2[] = "\\p{Xps}+\\p{Pd}{3,}\\p{Xps}+";
@@ -43,11 +46,14 @@ wxStringProcessor* const wxDashesCorrector::Clone() const
 
 wxDashesCorrector::wxDashesCorrector(uvalue_type uniSpace, uvalue_type uniEnDash, uvalue_type uniEmDash, uvalue_type uniEm2Dash):
     m_space(uniSpace), m_enDash(uniEnDash), m_emDash(uniEmDash), m_em2Dash(uniEm2Dash),
+    m_reNonBreakingHyphen(REG_EX_NONBREAKING_HYPHEN),
+    m_nonBreakingHyphenReplacement(NONBREAKING_HYPHEN),
     m_reEn(REG_EX_EN), m_reEm(REG_EX_EM), m_reEm2(REG_EX_EM2),
     m_enReplacement(GetReplacement(uniSpace, uniEnDash)),
     m_emReplacement(GetReplacement(uniSpace, uniEmDash)),
     m_em2Replacement(GetReplacement(uniSpace, uniEm2Dash))
 {
+    wxASSERT(m_reNonBreakingHyphen.IsValid());
     wxASSERT(m_reEn.IsValid());
     wxASSERT(m_reEm.IsValid());
     wxASSERT(m_reEm2.IsValid());
@@ -72,6 +78,7 @@ bool wxDashesCorrector::Process(const wxString& in, wxString& out) const
     int      repl = 0;
     wxString w(in);
 
+    repl += m_reNonBreakingHyphen.ReplaceAll(&w, m_nonBreakingHyphenReplacement);
     repl += m_reEn.ReplaceAll(&w, m_enReplacement);
     repl += m_reEm.ReplaceAll(&w, m_emReplacement);
     repl += m_reEm2.ReplaceAll(&w, m_em2Replacement);

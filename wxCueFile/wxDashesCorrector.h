@@ -38,10 +38,12 @@ class wxDashesCorrector: public wxStringProcessor
     wxUniChar m_emDash;
     wxUniChar m_em2Dash;
 
+    wxRegEx m_reNonBreakingHyphen;
     wxRegEx m_reEn;
     wxRegEx m_reEm;
     wxRegEx m_reEm2;
 
+    wxString m_nonBreakingHyphenReplacement;
     wxString m_enReplacement;
     wxString m_emReplacement;
     wxString m_em2Replacement;
