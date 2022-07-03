@@ -27,17 +27,11 @@
 const char wxMyApp::APP_NAME[] = "cue2mkc";
 const char wxMyApp::APP_VERSION[] = WXMATROSKA_VERSION_STR;
 
-namespace
-{
-    constexpr wxDouble RG2_REF_R128_LOUDNESS_DBFS = -18;
-}
-
 // ===============================================================================
 
 wxIMPLEMENT_APP_CONSOLE(wxMyApp);
 
 wxMyApp::wxMyApp(void)
-    :m_calcRg2Loudness(false),m_rg2Value(0.0)
 {
 }
 
@@ -180,25 +174,13 @@ bool wxMyApp::ShowInfo() const
 void wxMyApp::OnInitCmdLine(wxCmdLineParser& cmdline)
 {
     MyAppConsole::OnInitCmdLine(cmdline);
-    cmdline.AddOption(wxEmptyString, "calc-rg2-loudness", wxEmptyString, wxCMD_LINE_VAL_DOUBLE, wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_HIDDEN);
-    m_cfg.AddCmdLineParams(cmdline);
     cmdline.SetLogo(_("This application converts cue sheet file to Matroska container in a more advanced way than standard Matroska tools."));
+    m_cfg.AddCmdLineParams(cmdline);
 }
 
 bool wxMyApp::OnCmdLineParsed(wxCmdLineParser& cmdline)
 {
     if (!MyAppConsole::OnCmdLineParsed(cmdline)) return false;
-
-    {
-        wxDouble val;
-        if (cmdline.Found("calc-rg2-loudness", &val))
-        {
-            m_calcRg2Loudness = true;
-            m_rg2Value = val;
-
-            return true;
-        }
-    }
 
     m_cfg.ReadLanguagesStrings();
 
@@ -558,20 +540,6 @@ int wxMyApp::ProcessCueFile(const wxInputFile& inputFile, const wxTagSynonimsCol
 
 int wxMyApp::OnRun()
 {
-    if (m_calcRg2Loudness)
-    {
-        wxMessageOutput* const out = wxMessageOutput::Get();
-        const wxDouble loudness = RG2_REF_R128_LOUDNESS_DBFS - m_rg2Value;
-        wxString loudnessStr = wxString::FromCDouble(loudness, 1);
-        if (loudness > 0.0)
-        {
-            loudnessStr.Prepend('+');
-        }
-
-        out->Output(loudnessStr);
-        return 0;
-    }
-
     if (ShowInfo()) return 0;
 
     wxInputFile firstInputFile;
@@ -997,7 +965,7 @@ bool wxMyApp::PreProcessAudio(
             return false;
         }
 
-        if (!cueSheet.ApplyTagsFromJson(scanFile))
+        if (!cueSheet.ApplyRg2TagsFromJson(scanFile))
         {
             return false;
         }

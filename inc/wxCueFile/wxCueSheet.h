@@ -138,6 +138,7 @@ class wxCueSheet: public wxCueComponent, public wxAbstractDurationHolder
     wxString FormatTrack(wxCueTag::TagSources, size_t, const wxString&) const;
 
     bool ApplyTagsFromJson(const wxFileName&);
+    bool ApplyRg2TagsFromJson(const wxFileName&);
     void ApplyTagsFromJson(const wxJson&);
 };
 

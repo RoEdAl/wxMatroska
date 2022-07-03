@@ -42,9 +42,6 @@ class wxMyApp:
 {
     protected:
 
-    bool m_calcRg2Loudness;
-    wxDouble m_rg2Value;
-
     wxDateTime m_dt;
     wxConfiguration m_cfg;
     wxScopedPtr< wxCueSheet > m_pMergedCueSheet;
@@ -80,11 +77,11 @@ class wxMyApp:
 
     protected:
 
-    virtual bool OnInit();
-    virtual void OnInitCmdLine(wxCmdLineParser&);
-    virtual bool OnCmdLineParsed(wxCmdLineParser&);
-    virtual int OnRun();
-    virtual int OnExit();
+    virtual bool OnInit() wxOVERRIDE;
+    virtual void OnInitCmdLine(wxCmdLineParser&) wxOVERRIDE;
+    virtual bool OnCmdLineParsed(wxCmdLineParser&) wxOVERRIDE;
+    virtual int OnRun() wxOVERRIDE;
+    virtual int OnExit() wxOVERRIDE;
 
     public:
 

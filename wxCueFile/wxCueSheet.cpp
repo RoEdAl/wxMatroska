@@ -974,12 +974,12 @@ void wxCueSheet::SanitizeTags(
     }
 }
 
-bool wxCueSheet::ApplyTagsFromJson(const wxFileName& jsonFile)
+namespace
 {
-    wxLogInfo(_wxS("Applying tags from " ENQUOTED_STR_FMT), jsonFile.GetFullName());
-    wxTextOutputStreamOnString tos;
-
+    bool read_json_file(const wxFileName& jsonFile, wxTextOutputStreamOnString& tos)
     {
+        wxASSERT(jsonFile.IsFileReadable());
+
         wxFileInputStream is(jsonFile.GetFullPath());
         if (!is.IsOk())
         {
@@ -989,6 +989,18 @@ bool wxCueSheet::ApplyTagsFromJson(const wxFileName& jsonFile)
 
         wxTextInputStream tis(is, wxEmptyString, wxConvUTF8);
         wxTextStreamUtils::Copy(tis, tos.GetStream());
+        return true;
+    }
+}
+
+bool wxCueSheet::ApplyTagsFromJson(const wxFileName& jsonFile)
+{
+    wxLogInfo(_wxS("Applying tags from " ENQUOTED_STR_FMT), jsonFile.GetFullName());
+    wxTextOutputStreamOnString tos;
+
+    if (!read_json_file(jsonFile, tos))
+    {
+        return false;
     }
 
     try
@@ -1003,32 +1015,167 @@ bool wxCueSheet::ApplyTagsFromJson(const wxFileName& jsonFile)
     }
 }
 
-void wxCueSheet::ApplyTagsFromJson(const wxJson& tags)
+namespace
 {
-    if (tags.contains("album"))
-    {
-        const wxJson& album = tags["album"];
-        if (album.is_object())
-        {
-            for (auto i = album.cbegin(), end = album.cend(); i != end; ++i)
-            {
-                const wxString tagName = wxString::FromUTF8Unchecked(i.key());
-                if (!i.value().is_string())
-                {
-                    wxLogWarning(_("json[album]: expecting string value for %s"), tagName);
-                    continue;
-                }
+    constexpr char TAG_ALBUM[] = "album";
+    constexpr char TAG_CHAPTERS[] = "chapters";
 
-                const wxString tagVal = wxString::FromUTF8Unchecked(i.value());
-                const wxCueTag tag(wxCueTag::TAG_AUTO_GENERATED, tagName, tagVal);
-                ReplaceTag(tag);
-            }
+    constexpr char REPLAYGAIN_GAIN[] = "REPLAYGAIN_GAIN";
+    constexpr wxDouble RG2_REF_R128_LOUDNESS_DBFS = -18;
+
+    wxString rg2_to_str(const wxDouble loudness)
+    {
+        wxString loudnessStr = wxString::FromCDouble(loudness, 1);
+        if (loudness > 0.0)
+        {
+            loudnessStr.Prepend('+');
+        }
+        loudnessStr.Append(" dB");
+        return loudnessStr;
+    }
+
+    wxString convert_rg2(const wxDouble rg2)
+    {
+        return rg2_to_str(RG2_REF_R128_LOUDNESS_DBFS - rg2);
+    }
+
+    wxString convert_rg2(const wxString& s)
+    {
+        wxDouble rg2;
+        if (!s.ToDouble(&rg2))
+        {
+            return wxEmptyString;
+        }
+
+        return convert_rg2(rg2);
+    }
+
+    bool convert_rg2(wxJson& rg)
+    {
+        if (rg.is_string())
+        {
+            const wxString rgStr = wxString::FromUTF8Unchecked(rg.get<std::string>());
+            const wxString rg2Val = convert_rg2(rgStr);
+            rg = rg2Val.utf8_string();
+            return true;
+        }
+        else if (rg.is_number())
+        {
+            const wxDouble rg2 = rg.get<wxDouble>();
+            const wxString rg2Val = convert_rg2(rg2);
+            rg = rg2Val.utf8_string();
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
-    if (tags.contains("chapters"))
+    void transform_rg2_tags(wxJson& tags)
     {
-        const wxJson& chapters = tags["chapters"];
+        if (tags.contains(TAG_ALBUM))
+        {
+            wxJson& album = tags[TAG_ALBUM];
+            if (album.is_object() && album.contains(REPLAYGAIN_GAIN))
+            {
+                wxJson& rg = album[REPLAYGAIN_GAIN];
+                convert_rg2(rg);
+            }
+        }
+
+        if (tags.contains(TAG_CHAPTERS))
+        {
+            wxJson& chapters = tags[TAG_CHAPTERS];
+            if (chapters.is_array())
+            {
+                for (auto i = chapters.begin(), end = chapters.end(); i != end; ++i)
+                {
+                    if (!(i->is_object() && i->contains(REPLAYGAIN_GAIN))) continue;
+                    wxJson& rg = i->at(REPLAYGAIN_GAIN);
+                    convert_rg2(rg);
+                }
+            }
+            else
+            {
+                wxLogWarning(_("json: expecting array value for 'chapters' key"));
+            }
+        }
+    }
+}
+
+bool wxCueSheet::ApplyRg2TagsFromJson(const wxFileName& jsonFile)
+{
+    wxLogInfo(_wxS("Applying RG2 tags from " ENQUOTED_STR_FMT), jsonFile.GetFullName());
+    wxTextOutputStreamOnString tos;
+
+    if (!read_json_file(jsonFile, tos))
+    {
+        return false;
+    }
+
+    try
+    {
+        wxJson tags = wxJson::parse(tos.GetString().utf8_string());
+        transform_rg2_tags(tags);
+        ApplyTagsFromJson(tags);
+        return true;
+    }
+    catch (nlohmann::detail::exception err)
+    {
+        wxLogError(err.what());
+        return false;
+    }
+}
+
+namespace
+{
+    template<typename T>
+    void apply_tag(wxCueComponent& component, const T& jsonProp)
+    {
+        const wxString tagName = wxString::FromUTF8Unchecked(jsonProp.key());
+        if (jsonProp.value().is_string())
+        {
+            const wxString tagVal = wxString::FromUTF8Unchecked(jsonProp.value());
+            const wxCueTag tag(wxCueTag::TAG_AUTO_GENERATED, tagName, tagVal);
+            component.ReplaceTag(tag);
+        }
+        else if (jsonProp.value().is_null())
+        {
+            component.RemoveTag(tagName);
+        }
+        else
+        {
+            wxLogWarning(_("json: expecting string or null value for %s"), tagName);
+        }
+    }
+
+    template<typename T>
+    void apply_tags(wxCueComponent& component, const T& jsonObj)
+    {
+        wxASSERT(jsonObj.is_object());
+
+        for (auto i = jsonObj.cbegin(), end = jsonObj.cend(); i != end; ++i)
+        {
+            apply_tag(component, i);
+        }
+    }
+}
+
+void wxCueSheet::ApplyTagsFromJson(const wxJson& tags)
+{
+    if (tags.contains(TAG_ALBUM))
+    {
+        const wxJson& album = tags[TAG_ALBUM];
+        if (album.is_object())
+        {
+            apply_tags(*this, album);
+        }
+    }
+
+    if (tags.contains(TAG_CHAPTERS))
+    {
+        const wxJson& chapters = tags[TAG_CHAPTERS];
         if (chapters.is_array())
         {
             size_t chapterNo = 0;
@@ -1038,18 +1185,7 @@ void wxCueSheet::ApplyTagsFromJson(const wxJson& tags)
                 if (chapterNo >= GetTracksCount()) continue;
 
                 wxTrack& track = GetTrack(chapterNo);
-                for (auto j = i->cbegin(), jend = i->cend(); j != jend; ++j)
-                {
-                    const wxString tagName = wxString::FromUTF8Unchecked(j.key());
-                    if (!j.value().is_string())
-                    {
-                        wxLogWarning(_("json[chapter]: expecting string value for %s"), tagName);
-                        continue;
-                    }
-                    const wxString tagVal = wxString::FromUTF8Unchecked(j.value());
-                    const wxCueTag tag(wxCueTag::TAG_AUTO_GENERATED, tagName, tagVal);
-                    track.ReplaceTag(tag);
-                }
+                apply_tags(track, *i);
             }
         }
         else
@@ -1058,3 +1194,4 @@ void wxCueSheet::ApplyTagsFromJson(const wxJson& tags)
         }
     }
 }
+
