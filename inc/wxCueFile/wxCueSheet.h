@@ -139,7 +139,6 @@ class wxCueSheet: public wxCueComponent, public wxAbstractDurationHolder
 
     bool ApplyTagsFromJson(const wxFileName&);
     bool ApplyRg2TagsFromJson(const wxFileName&);
-    void ApplyTagsFromJson(const wxJson&);
 };
 
 #endif  // _WX_CUE_SHEET_H_

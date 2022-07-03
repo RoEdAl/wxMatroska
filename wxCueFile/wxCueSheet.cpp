@@ -976,10 +976,14 @@ void wxCueSheet::SanitizeTags(
 
 namespace
 {
-    bool read_json_file(const wxFileName& jsonFile, wxTextOutputStreamOnString& tos)
+    constexpr char TAG_ALBUM[] = "album";
+    constexpr char TAG_CHAPTERS[] = "chapters";
+
+    bool read_json_file(const wxFileName& jsonFile, wxString& s)
     {
         wxASSERT(jsonFile.IsFileReadable());
 
+        wxTextOutputStreamOnString tos;
         wxFileInputStream is(jsonFile.GetFullPath());
         if (!is.IsOk())
         {
@@ -989,36 +993,73 @@ namespace
 
         wxTextInputStream tis(is, wxEmptyString, wxConvUTF8);
         wxTextStreamUtils::Copy(tis, tos.GetStream());
+        s = tos.GetString();
         return true;
     }
-}
 
-bool wxCueSheet::ApplyTagsFromJson(const wxFileName& jsonFile)
-{
-    wxLogInfo(_wxS("Applying tags from " ENQUOTED_STR_FMT), jsonFile.GetFullName());
-    wxTextOutputStreamOnString tos;
-
-    if (!read_json_file(jsonFile, tos))
+    template<typename T>
+    void apply_tag(wxCueComponent& component, const T& jsonProp)
     {
-        return false;
+        const wxString tagName = wxString::FromUTF8Unchecked(jsonProp.key());
+        if (jsonProp.value().is_string())
+        {
+            const wxString tagVal = wxString::FromUTF8Unchecked(jsonProp.value());
+            const wxCueTag tag(wxCueTag::TAG_AUTO_GENERATED, tagName, tagVal);
+            component.ReplaceTag(tag);
+        }
+        else if (jsonProp.value().is_null())
+        {
+            component.RemoveTag(tagName);
+        }
+        else
+        {
+            wxLogWarning(_("json: expecting string or null value for %s"), tagName);
+        }
     }
 
-    try
+    template<typename T>
+    void apply_tags(wxCueComponent& component, const T& jsonObj)
     {
-        ApplyTagsFromJson(wxJson::parse(tos.GetString().utf8_string()));
-        return true;
-    }
-    catch (nlohmann::detail::exception err)
-    {
-        wxLogError(err.what());
-        return false;
-    }
-}
+        wxASSERT(jsonObj.is_object());
 
-namespace
-{
-    constexpr char TAG_ALBUM[] = "album";
-    constexpr char TAG_CHAPTERS[] = "chapters";
+        for (auto i = jsonObj.cbegin(), end = jsonObj.cend(); i != end; ++i)
+        {
+            apply_tag(component, i);
+        }
+    }
+
+    void apply_tags(wxCueSheet& cueSheet, const wxJson& tags)
+    {
+        if (tags.contains(TAG_ALBUM))
+        {
+            const wxJson& album = tags[TAG_ALBUM];
+            if (album.is_object())
+            {
+                apply_tags(cueSheet, album);
+            }
+        }
+
+        if (tags.contains(TAG_CHAPTERS))
+        {
+            const wxJson& chapters = tags[TAG_CHAPTERS];
+            if (chapters.is_array())
+            {
+                size_t chapterNo = 0;
+                for (auto i = chapters.cbegin(), end = chapters.cend(); i != end; ++i, ++chapterNo)
+                {
+                    if (!i->is_object()) continue;
+                    if (chapterNo >= cueSheet.GetTracksCount()) continue;
+
+                    wxTrack& track = cueSheet.GetTrack(chapterNo);
+                    apply_tags(track, *i);
+                }
+            }
+            else
+            {
+                wxLogWarning(_("json: expecting array value for 'chapters' key"));
+            }
+        }
+    }
 
     constexpr char REPLAYGAIN_GAIN[] = "REPLAYGAIN_GAIN";
     constexpr wxDouble RG2_REF_R128_LOUDNESS_DBFS = -18;
@@ -1104,21 +1145,19 @@ namespace
     }
 }
 
-bool wxCueSheet::ApplyRg2TagsFromJson(const wxFileName& jsonFile)
+bool wxCueSheet::ApplyTagsFromJson(const wxFileName& jsonFile)
 {
-    wxLogInfo(_wxS("Applying RG2 tags from " ENQUOTED_STR_FMT), jsonFile.GetFullName());
-    wxTextOutputStreamOnString tos;
+    wxLogInfo(_wxS("Applying tags from " ENQUOTED_STR_FMT), jsonFile.GetFullName());
+    wxString jsonStr;
 
-    if (!read_json_file(jsonFile, tos))
+    if (!read_json_file(jsonFile, jsonStr))
     {
         return false;
     }
 
     try
     {
-        wxJson tags = wxJson::parse(tos.GetString().utf8_string());
-        transform_rg2_tags(tags);
-        ApplyTagsFromJson(tags);
+        apply_tags(*this, wxJson::parse(jsonStr.utf8_string()));
         return true;
     }
     catch (nlohmann::detail::exception err)
@@ -1128,70 +1167,26 @@ bool wxCueSheet::ApplyRg2TagsFromJson(const wxFileName& jsonFile)
     }
 }
 
-namespace
+bool wxCueSheet::ApplyRg2TagsFromJson(const wxFileName& jsonFile)
 {
-    template<typename T>
-    void apply_tag(wxCueComponent& component, const T& jsonProp)
+    wxLogInfo(_wxS("Applying RG2 tags from " ENQUOTED_STR_FMT), jsonFile.GetFullName());
+    wxString jsonStr;
+
+    if (!read_json_file(jsonFile, jsonStr))
     {
-        const wxString tagName = wxString::FromUTF8Unchecked(jsonProp.key());
-        if (jsonProp.value().is_string())
-        {
-            const wxString tagVal = wxString::FromUTF8Unchecked(jsonProp.value());
-            const wxCueTag tag(wxCueTag::TAG_AUTO_GENERATED, tagName, tagVal);
-            component.ReplaceTag(tag);
-        }
-        else if (jsonProp.value().is_null())
-        {
-            component.RemoveTag(tagName);
-        }
-        else
-        {
-            wxLogWarning(_("json: expecting string or null value for %s"), tagName);
-        }
+        return false;
     }
 
-    template<typename T>
-    void apply_tags(wxCueComponent& component, const T& jsonObj)
+    try
     {
-        wxASSERT(jsonObj.is_object());
-
-        for (auto i = jsonObj.cbegin(), end = jsonObj.cend(); i != end; ++i)
-        {
-            apply_tag(component, i);
-        }
+        wxJson tags = wxJson::parse(jsonStr.utf8_string());
+        transform_rg2_tags(tags);
+        apply_tags(*this, tags);
+        return true;
+    }
+    catch (nlohmann::detail::exception err)
+    {
+        wxLogError(err.what());
+        return false;
     }
 }
-
-void wxCueSheet::ApplyTagsFromJson(const wxJson& tags)
-{
-    if (tags.contains(TAG_ALBUM))
-    {
-        const wxJson& album = tags[TAG_ALBUM];
-        if (album.is_object())
-        {
-            apply_tags(*this, album);
-        }
-    }
-
-    if (tags.contains(TAG_CHAPTERS))
-    {
-        const wxJson& chapters = tags[TAG_CHAPTERS];
-        if (chapters.is_array())
-        {
-            size_t chapterNo = 0;
-            for (auto i = chapters.cbegin(), end = chapters.cend(); i != end; ++i, ++chapterNo)
-            {
-                if (!i->is_object()) continue;
-                if (chapterNo >= GetTracksCount()) continue;
-
-                wxTrack& track = GetTrack(chapterNo);
-                apply_tags(track, *i);
-            }
-        }
-        else
-        {
-            wxLogWarning(_("json: expecting array value for 'chapters' key"));
-        }
-    }
-}
-
