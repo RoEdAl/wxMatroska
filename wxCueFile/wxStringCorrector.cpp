@@ -119,6 +119,11 @@ bool wxStringCorrector::Configurator::RomanNumeralsLower() const
     return m_romanNumeralsLower;
 }
 
+bool wxStringCorrector::Configurator::StrongRomanNumeralsParser() const
+{
+    return m_strongRomanNumeralsParser;
+}
+
 bool wxStringCorrector::Configurator::Dashes() const
 {
     return m_dashes;

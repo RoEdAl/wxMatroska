@@ -18,6 +18,7 @@ class wxStringCorrector: public wxStringProcessor
     class Configurator
     {
         friend class wxStringCorrector;
+        wxDECLARE_NO_ASSIGN_CLASS(Configurator);
 
         public:
 
