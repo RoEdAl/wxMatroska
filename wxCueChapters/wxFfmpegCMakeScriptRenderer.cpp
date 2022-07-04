@@ -18,13 +18,6 @@ namespace
     {
         wxArrayString filters;
 
-        wxString res;
-
-        for (size_t i = 0; i < cnt; ++i)
-        {
-            res << wxString::Format("[%" wxSizeTFmtSpec "d:a:0]", i);
-        }
-
         if (cnt > 1)
         {
             filters.Add(wxString::Format("concat=n=%" wxSizeTFmtSpec "d:v=0:a=1", cnt));
@@ -43,16 +36,23 @@ namespace
         if (filters.IsEmpty())
         {
             wxLogWarning(_("Empty ffmpeg filter - using anull"));
-            res << "anull[outa]";
+            filters.Add("anull");
         }
-        else
+
+        wxString res;
+
+        for (size_t i = 0; i < cnt; ++i)
         {
-            for (wxArrayString::const_iterator i = filters.begin(), end = filters.end() - 1; i != end; ++i)
-            {
-                res << *i << ',';
-            }
-            res << filters.Last() << "[outa]";
+            res << wxString::Format("[%" wxSizeTFmtSpec "d:a:0]", i);
         }
+
+        wxASSERT(!filters.IsEmpty());
+        for (wxArrayString::const_iterator i = filters.begin(), end = filters.end() - 1; i != end; ++i)
+        {
+            res << *i << ',';
+        }
+        res << filters.Last() << "[outa]";
+
         return res;
     }
 
