@@ -17,7 +17,7 @@ wxStringCorrector::Configurator::Configurator()
     m_ellipsize(false),
     m_romanNumeralsUpper(false),
     m_romanNumeralsLower(false),
-    m_strongRomanNumerals(false),
+    m_strongRomanNumeralsParser(false),
     m_dashes(true),
     m_numberFullStop(false),
     m_smallLetterParenthesized(false),
@@ -30,7 +30,7 @@ wxStringCorrector::Configurator::Configurator(const wxStringCorrector::Configura
     m_ellipsize(configurator.m_ellipsize),
     m_romanNumeralsUpper(configurator.m_romanNumeralsUpper),
     m_romanNumeralsLower(configurator.m_romanNumeralsLower),
-    m_strongRomanNumerals(configurator.m_strongRomanNumerals),
+    m_strongRomanNumeralsParser(configurator.m_strongRomanNumeralsParser),
     m_dashes(configurator.m_dashes),
     m_numberFullStop(configurator.m_numberFullStop),
     m_smallLetterParenthesized(configurator.m_smallLetterParenthesized),
@@ -62,9 +62,9 @@ wxStringCorrector::Configurator& wxStringCorrector::Configurator::RomanNumeralsL
     return *this;
 }
 
-wxStringCorrector::Configurator& wxStringCorrector::Configurator::StrongRomanNumerals(bool strongRomanNumerals)
+wxStringCorrector::Configurator& wxStringCorrector::Configurator::StrongRomanNumeralsParser(bool strongRomanNumeralsParser)
 {
-    m_strongRomanNumerals = strongRomanNumerals;
+    m_strongRomanNumeralsParser = strongRomanNumeralsParser;
     return *this;
 }
 
@@ -147,7 +147,7 @@ wxStringProcessor* const wxStringCorrector::Configurator::Create() const
     if (m_numberFullStop) res->AddStringProcessor(new wxNumberFullStopCorrector());
     if (m_removeExtraSpaces) res->AddStringProcessor(new wxReduntantSpacesRemover());
     if (m_ellipsize) res->AddStringProcessor(new wxEllipsizer());
-    if (m_strongRomanNumerals)
+    if (m_strongRomanNumeralsParser)
     {
         if (m_romanNumeralsUpper) res->AddStringProcessor(new wxRomanNumeralsConvStrong<true>());
         if (m_romanNumeralsLower) res->AddStringProcessor(new wxRomanNumeralsConvStrong<false>());

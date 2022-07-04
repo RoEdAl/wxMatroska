@@ -1032,9 +1032,9 @@ wxPanel* wxMainFrame::create_general_panel(wxNotebook* notebook, const wxSizerFl
                            lineFlags.GetFlags(), btnLeft.GetBorderInPixels());
             }
 
-            m_checkBoxParentDir = create_3state_checkbox(sizer, _("Look for attachments in parent dir"));
-            m_checkBoxParentDir->SetToolTip(_("Look for attachments (cover and logs) also in parent dir(s)"));
-            innerSizer->Add(m_checkBoxParentDir, wxGBPosition(10, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+            m_checkBoxAttachmentsInParentDir = create_3state_checkbox(sizer, _("Attachments in parent dir"));
+            m_checkBoxAttachmentsInParentDir->SetToolTip(_("Look for attachments (cover and logs) also in parent dir(s)"));
+            innerSizer->Add(m_checkBoxAttachmentsInParentDir, wxGBPosition(10, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
 
             sizer->Add(innerSizer, wxSizerFlags().Expand());
         }
@@ -1135,9 +1135,9 @@ wxPanel* wxMainFrame::create_chapter_panel(wxNotebook* notebook, const wxSizerFl
         m_checkBoxLowercaseRomanLiterals->SetToolTip(_wxS("Examples:\niii\u2009\u2192\u2009\u2172 (small roman numeral three: U+2172)\nxii\u2009\u2192\u2009\u217B (small roman numeral twelve: U+217B"));
         sizer->Add(m_checkBoxLowercaseRomanLiterals);
 
-        m_checkBoxStrongRomanLiterals = create_3state_checkbox(sizer, _("Strong Roman Numerals"));
-        m_checkBoxStrongRomanLiterals->SetToolTip(_wxS("Use stronger roman numerals parser - include MCDL characters (only XVI by default)"));
-        sizer->Add(m_checkBoxStrongRomanLiterals);
+        m_checkBoxStrongRomanLiteralsParser = create_3state_checkbox(sizer, _("Strong Roman Numerals parser"));
+        m_checkBoxStrongRomanLiteralsParser->SetToolTip(_wxS("Use stronger roman numerals parser - include MCDL characters (XVI only by default)"));
+        sizer->Add(m_checkBoxStrongRomanLiteralsParser);
 
         m_checkBoxNumberFullStop = create_3state_checkbox(sizer, _("Use '<number> full stop' characters"));
         m_checkBoxNumberFullStop->SetToolTip(_wxS("Use Unicode characters from \u2488 (digit one full stop: U+2488) to \u249B (number twenty full stop: U+249B)"));
@@ -1912,7 +1912,7 @@ bool wxMainFrame::read_options(wxArrayString& options) const
 
     negatable_switch_option(options, m_checkBoxCapitalizedRomanLiterals, "ru");
     negatable_switch_option(options, m_checkBoxLowercaseRomanLiterals, "rl");
-    negatable_long_switch_option(options, m_checkBoxStrongRomanLiterals, "strong-roman-numerals");
+    negatable_long_switch_option(options, m_checkBoxStrongRomanLiteralsParser, "strong-roman-numerals-parser");
 
     negatable_long_switch_option(options, m_checkBoxUseCdTextTags, "use-cdtext-tags");
     negatable_long_switch_option(options, m_checkBoxUseTagsFromCuesheetComments, "use-cue-comments-tags");
@@ -1975,7 +1975,7 @@ bool wxMainFrame::read_options(wxArrayString& options) const
     negatable_long_switch_option(options, m_checkBoxAttachLogs, "attach-eac-log");
     negatable_long_switch_option(options, m_checkBoxAttachAccuRip, "attach-accurip-log");
     negatable_long_switch_option(options, m_checkBoxAttachCover, "attach-cover");
-    negatable_long_switch_option(options, m_checkBoxParentDir, "parent-dir");
+    negatable_switch_option(options, m_checkBoxAttachmentsInParentDir, "pd");
     negatable_long_switch_option(options, m_checkBoxApplyTags, "apply-tags");
     negatable_long_switch_option(options, m_checkBoxConvertCover, "convert-cover-file");
     negatable_long_switch_option(options, m_checkBoxCoverFromPdf, "cover-from-pdf");

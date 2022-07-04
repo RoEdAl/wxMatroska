@@ -415,6 +415,26 @@ bool wxCoverFile::Find(const wxFileName& inputFile, wxFileName& coverFile, const
     return false;
 }
 
+namespace
+{
+    wxFileName get_parent_dir(const wxFileName& fn)
+    {
+        wxFileName res(fn);
+        res.SetName(wxEmptyString);
+        res.ClearExt();
+        wxASSERT(res.IsDir());
+        if (res.GetDirCount() >= 2)
+        {
+            res.RemoveLastDir();
+        }
+        else
+        {
+            res.Clear();
+        }
+        return res;
+    }
+}
+
 bool wxCoverFile::Find(const wxFileName& inputFile, wxFileName& coverFile, bool parentDir)
 {
     if (Find(inputFile, coverFile, CoverNames))
@@ -424,12 +444,8 @@ bool wxCoverFile::Find(const wxFileName& inputFile, wxFileName& coverFile, bool 
 
     if (parentDir)
     {
-        wxFileName parent(inputFile);
-        parent.SetName(wxEmptyString);
-        parent.ClearExt();
-        parent.RemoveLastDir();
-
-        if (parent.IsDirReadable())
+        const wxFileName parent = get_parent_dir(inputFile);
+        if (parent.IsOk() && parent.IsDirReadable())
         {
             return Find(parent, coverFile, CoverNames);
         }

@@ -38,7 +38,7 @@ class wxMainFrame:
     wxCheckBox* m_checkBoxCorrectDashes;
     wxCheckBox* m_checkBoxCapitalizedRomanLiterals;
     wxCheckBox* m_checkBoxLowercaseRomanLiterals;
-    wxCheckBox* m_checkBoxStrongRomanLiterals;
+    wxCheckBox* m_checkBoxStrongRomanLiteralsParser;
     wxCheckBox* m_checkBoxNumberFullStop;
     wxCheckBox* m_checkBoxSmallLetterParenthesized;
     wxCheckBox* m_checkBoxAsciiToUnicode;
@@ -65,7 +65,7 @@ class wxMainFrame:
     wxTextCtrl* m_textCtrlMkaTitleFmt;
     wxCheckBox* m_checkBoxAttachLogs;
     wxCheckBox* m_checkBoxAttachAccuRip;
-    wxCheckBox* m_checkBoxParentDir;
+    wxCheckBox* m_checkBoxAttachmentsInParentDir;
     wxCheckBox* m_checkBoxApplyTags;
     wxCheckBox* m_checkBoxAttachCover;
     wxCheckBox* m_checkBoxConvertCover;

@@ -25,7 +25,8 @@ namespace
         {'^',  wxS('\uFF3E')},  // FULLWIDTH CIRCUMFLEX ACCENT
         {'<',  wxS('\uFE64')},  // SMALL LESS-THAN SIGN
         {'>',  wxS('\uFE65')},  // SMALL GREATER-THAN SIGN
-        {'.',  wxS('\uFE52')}   // SMALL FULL STOP
+        {'.',  wxS('\uFE52')},  // SMALL FULL STOP
+        {'\"', wxS('\uFF02')}   // FULLWIDTH QUOTATION MARK
     };
 
     template<size_t SIZE>
@@ -36,6 +37,26 @@ namespace
         for (size_t i = 0; i < SIZE; ++i)
         {
             cnt += res.Replace(repl[i].f, repl[i].r);
+        }
+
+        if (cnt > 0)
+        {
+            out = res;
+            return true;
+        }
+
+        return false;
+    }
+
+    bool replace_forbidden_characters(const wxString& in, wxString& out)
+    {
+        const wxString forbiddenChars = wxFileName::GetForbiddenChars();
+        wxString res(in);
+        size_t cnt = 0;
+        for (auto i = forbiddenChars.cbegin(), end = forbiddenChars.cend(); i != end; ++i)
+        {
+            const wxString c(*i);
+            cnt += res.Replace(c, wxEmptyString);
         }
 
         if (cnt > 0)

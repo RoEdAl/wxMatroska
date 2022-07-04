@@ -141,6 +141,26 @@ bool wxCueSheetReader::GetLogFile(const wxFileName& inputFile, bool anyLog, wxFi
     }
 }
 
+namespace
+{
+    wxFileName get_parent_dir(const wxFileName& fn)
+    {
+        wxFileName res(fn);
+        res.SetName(wxEmptyString);
+        res.ClearExt();
+        wxASSERT(res.IsDir());
+        if (res.GetDirCount() >= 2)
+        {
+            res.RemoveLastDir();
+        }
+        else
+        {
+            res.Clear();
+        }
+        return res;
+    }
+}
+
 template< typename T >
 bool wxCueSheetReader::GetLogFile(const wxFileName& inputFile, bool anyLog, wxFileName& logFile, bool parentDir)
 {
@@ -151,11 +171,8 @@ bool wxCueSheetReader::GetLogFile(const wxFileName& inputFile, bool anyLog, wxFi
 
     if (parentDir)
     {
-        wxFileName parent(inputFile);
-        parent.SetName(wxEmptyString);
-        parent.ClearExt();
-        parent.RemoveLastDir();
-        if (parent.IsDirReadable())
+        const wxFileName parent = get_parent_dir(inputFile);
+        if (parent.IsOk() && parent.IsDirReadable())
         {
             return GetLogFile<T>(parent, anyLog, logFile);
         }
@@ -296,7 +313,7 @@ bool wxCueSheetReader::FindLog(const wxCueSheetContent& content)
     wxASSERT(TestReadFlags(EC_FIND_LOG));
     wxFileName logFile;
 
-    if (GetLogFile<eac_log>(content.GetSource().GetFileName(), TestReadFlags(EC_SINGLE_MEDIA_FILE), logFile, TestReadFlags(EC_PARENT_DIR)))
+    if (GetLogFile<eac_log>(content.GetSource().GetFileName(), TestReadFlags(EC_SINGLE_MEDIA_FILE), logFile, TestReadFlags(EC_ATTACHMENTS_IN_PARENT_DIR)))
     {
         m_cueSheet.AddLog(logFile);
         return true;
@@ -312,7 +329,7 @@ bool wxCueSheetReader::FindAccurateRipLog(const wxCueSheetContent& content)
     wxASSERT(TestReadFlags(EC_FIND_ACCURIP_LOG));
     wxFileName logFile;
 
-    if (GetLogFile<accurip_log>(content.GetSource().GetFileName(), TestReadFlags(EC_SINGLE_MEDIA_FILE), logFile, TestReadFlags(EC_PARENT_DIR)))
+    if (GetLogFile<accurip_log>(content.GetSource().GetFileName(), TestReadFlags(EC_SINGLE_MEDIA_FILE), logFile, TestReadFlags(EC_ATTACHMENTS_IN_PARENT_DIR)))
     {
         m_cueSheet.AddAccuripLog(logFile);
         return true;
@@ -343,7 +360,7 @@ bool wxCueSheetReader::FindCover(const wxCueSheetContent& content)
     wxASSERT(TestReadFlags(EC_FIND_COVER));
     wxFileName coverFile;
 
-    if (wxCoverFile::Find(content.GetSource().GetFileName(), coverFile, TestReadFlags(EC_PARENT_DIR)))
+    if (wxCoverFile::Find(content.GetSource().GetFileName(), coverFile, TestReadFlags(EC_ATTACHMENTS_IN_PARENT_DIR)))
     {
         m_cueSheet.AddCover(coverFile);
         return true;
@@ -359,7 +376,7 @@ bool wxCueSheetReader::FindPdfCover(const wxCueSheetContent& content)
     wxASSERT(TestReadFlags(EC_FIND_PDF));
     wxFileName pdfFile;
 
-    if (GetLogFile<pdf_file>(content.GetSource().GetFileName(), true, pdfFile, TestReadFlags(EC_PARENT_DIR)))
+    if (GetLogFile<pdf_file>(content.GetSource().GetFileName(), true, pdfFile, TestReadFlags(EC_ATTACHMENTS_IN_PARENT_DIR)))
     {
         m_cueSheet.AddCover(pdfFile);
         return true;
@@ -1176,7 +1193,7 @@ wxStringProcessor* const wxCueSheetReader::CreateStringProcessor(wxCueSheetReade
         .Ellipsize(wxCueSheetReader::TestReadFlags(readFlags, wxCueSheetReader::EC_ELLIPSIZE_TAGS))
         .RomanNumeralsUpper(wxCueSheetReader::TestReadFlags(readFlags, wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS))
         .RomanNumeralsLower(wxCueSheetReader::TestReadFlags(readFlags, wxCueSheetReader::EC_CONVERT_LOWER_ROMAN_NUMERALS))
-        .StrongRomanNumerals(wxCueSheetReader::TestReadFlags(readFlags, wxCueSheetReader::EC_STRONG_ROMAN_NUMERALS))
+        .StrongRomanNumeralsParser(wxCueSheetReader::TestReadFlags(readFlags, wxCueSheetReader::EC_STRONG_ROMAN_NUMERALS_PARSER))
         .Dashes(wxCueSheetReader::TestReadFlags(readFlags, wxCueSheetReader::EC_CORRECT_DASHES))
         .SmallEmDash(wxCueSheetReader::TestReadFlags(readFlags, wxCueSheetReader::EC_SMALL_EM_DASH))
         .NumberFullStop(wxCueSheetReader::TestReadFlags(readFlags, wxCueSheetReader::EC_NUMBER_FULL_STOP))
