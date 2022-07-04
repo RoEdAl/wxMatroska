@@ -546,7 +546,7 @@ namespace
     bool is_m3u(const wxFileName& fn)
     {
         const wxString& ext = fn.GetExt();
-        return ext.CmpNoCase("m3u") == 0 || ext.CmpNoCase("m3u8") == 0;
+        return wxStricmp(ext, "m3u") == 0 || wxStricmp(ext, "m3u8") == 0;
     }
 
     wxFileName join_fn(const wxFileName& dir, const wxFileName& fn)

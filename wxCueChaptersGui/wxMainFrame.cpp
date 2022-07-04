@@ -811,6 +811,7 @@ wxPanel* wxMainFrame::create_general_panel(wxNotebook* notebook, const wxSizerFl
 
         m_checkBoxMediaFilesWithoutCue = create_3state_checkbox(sizer, _("Media files without cuesheet"));
         m_checkBoxMediaFilesWithoutCue->SetToolTip(_("Assume input file(s) as media files without cuesheet"));
+        m_checkBoxMediaFilesWithoutCue->Bind(wxEVT_UPDATE_UI, &wxMainFrame::OnUpdateUseMediaFilesWithoutCue, this);
         sizer->Add(m_checkBoxMediaFilesWithoutCue);
 
         {
@@ -2151,7 +2152,7 @@ void wxMainFrame::OnButtonAdd(wxCommandEvent& WXUNUSED(event))
     wxFileDialog openFileDialog(this,
                                  _("Specify input file"),
                                  wxEmptyString, wxEmptyString,
-                                 _("CUE files|*.cue|Text files|*.txt|M3U Playlists|*.m3u;*.m3u8|Audio files|*.flac;*.wv;*.wav;*.aiff;*.mp3|All files|*"),
+                                 _("CUE files|*.cue|Text files|*.txt|M3U Playlists|*.m3u;*.m3u8|Audio files|*.flac;*.wv;*.wav;*.aiff|All files|*"),
                                  wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
 
     if (openFileDialog.ShowModal() != wxID_OK) return;
@@ -2174,8 +2175,34 @@ void wxMainFrame::OnButtonAdd(wxCommandEvent& WXUNUSED(event))
 
 void wxMainFrame::OnSuggestJoinMode(wxCommandEvent& event)
 {
-    if (event.IsChecked()) m_checkBoxJoinMode->Bind(wxEVT_UPDATE_UI, &wxMainFrame::OnUpdateJoinMode, this);
-    else m_checkBoxJoinMode->Unbind(wxEVT_UPDATE_UI, &wxMainFrame::OnUpdateJoinMode, this);
+    if (event.IsChecked())
+    {
+        m_checkBoxJoinMode->Bind(wxEVT_UPDATE_UI, &wxMainFrame::OnUpdateJoinMode, this);
+        m_checkBoxMediaFilesWithoutCue->Bind(wxEVT_UPDATE_UI, &wxMainFrame::OnUpdateUseMediaFilesWithoutCue, this);
+    }
+    else
+    {
+        m_checkBoxJoinMode->Unbind(wxEVT_UPDATE_UI, &wxMainFrame::OnUpdateJoinMode, this);
+        m_checkBoxMediaFilesWithoutCue->Unbind(wxEVT_UPDATE_UI, &wxMainFrame::OnUpdateUseMediaFilesWithoutCue, this);
+    }
+}
+
+namespace
+{
+    bool is_m3u_ext(const wxFileName& fn)
+    {
+        const wxString& ext = fn.GetExt();
+        return wxStricmp(ext, "m3u") == 0 || wxStricmp(ext, "m3u8") == 0;
+    }
+
+    bool is_media_ext(const wxFileName& fn)
+    {
+        const wxString& ext = fn.GetExt();
+        return wxStricmp(ext, "wav") == 0 ||
+            wxStricmp(ext, "wv") == 0 ||
+            wxStricmp(ext, "flac") == 0 ||
+            wxStricmp(ext, "aiff") == 0;
+    }
 }
 
 void wxMainFrame::OnUpdateJoinMode(wxUpdateUIEvent& event)
@@ -2184,13 +2211,40 @@ void wxMainFrame::OnUpdateJoinMode(wxUpdateUIEvent& event)
 
     wxTreeItemIdValue cookie;
     int               cnt = 0;
+    bool m3u = false;
 
     for (wxTreeItemId i = m_treeCtrlInputFiles->GetFirstChild(m_treeCtrlInputFilesRoot, cookie);
-         i.IsOk() && cnt < 2;
-         i = m_treeCtrlInputFiles->GetNextChild(i, cookie), ++cnt);
+         i.IsOk() && !(m3u || (cnt >= 2));
+         i = m_treeCtrlInputFiles->GetNextChild(i, cookie), ++cnt)
+    {
+        const wxFileName fn(m_treeCtrlInputFiles->GetItemText(i));
+        m3u = is_m3u_ext(fn);
+    }
 
-    event.Check(cnt >= 2);
+    event.Check(m3u || (cnt >= 2));
 }
+
+void wxMainFrame::OnUpdateUseMediaFilesWithoutCue(wxUpdateUIEvent& event)
+{
+    wxASSERT(m_checkBoxSuggestJoin->GetValue());
+
+    wxTreeItemIdValue cookie;
+    int               cnt = 0;
+
+    for (wxTreeItemId i = m_treeCtrlInputFiles->GetFirstChild(m_treeCtrlInputFilesRoot, cookie);
+         i.IsOk() && (cnt == 0);
+         i = m_treeCtrlInputFiles->GetNextChild(i, cookie))
+    {
+        const wxFileName fn(m_treeCtrlInputFiles->GetItemText(i));
+        if (is_m3u_ext(fn) || is_media_ext(fn))
+        {
+            cnt += 1;
+        }
+    }
+
+    event.Check(cnt > 0);
+}
+
 
 void wxMainFrame::OnDropFiles(const wxArrayString& fileNames)
 {
@@ -2257,7 +2311,7 @@ void wxMainFrame::OnButtonAddMediaFile(wxCommandEvent& WXUNUSED(event))
                                  _("Specify media file"),
                                  fileName.GetPath(),
                                  wxEmptyString,
-                                 _("Audio files|*.flac;*.ape;*.wv;*.wav;*.aiff;*.tta|All files|*"),
+                                 _("Audio files|*.flac;*.wv;*.wav;*.aiff|All files|*"),
                                  wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
 
     if (openFileDialog.ShowModal() != wxID_OK) return;

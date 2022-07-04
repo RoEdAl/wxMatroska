@@ -112,6 +112,7 @@ class wxMainFrame:
     void OnChooseDst(wxCommandEvent& event);
     void OnSuggestJoinMode(wxCommandEvent& event);
     void OnUpdateJoinMode(wxUpdateUIEvent& event);
+    void OnUpdateUseMediaFilesWithoutCue(wxUpdateUIEvent& event);
     void OnUpdateMsgCnt(wxUpdateUIEvent& event);
     void OnCheckAutoScroll(wxCommandEvent& event);
     void OnToolChoice(wxCommandEvent&);
