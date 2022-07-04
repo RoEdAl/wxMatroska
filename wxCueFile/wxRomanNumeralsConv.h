@@ -113,8 +113,25 @@ struct roman_numeral_traits< false >
     static const roman_utils::roman_numeral_conv CINFO;
 };
 
+class wxRomanNumeralsConv: public wxStringProcessor
+{
+    wxDECLARE_NO_COPY_CLASS(wxRomanNumeralsConv);
+
+    protected:
+
+    wxRomanNumeralsConv(const wxString&);
+
+    protected:
+
+    wxRegEx m_re;
+
+    protected:
+
+    wxString get_match(const wxString&, size_t) const;
+};
+
 template< bool UPPER >
-class wxRomanNumeralsConvWeak: public wxStringProcessor
+class wxRomanNumeralsConvWeak: public wxRomanNumeralsConv
 {
     wxDECLARE_NO_COPY_TEMPLATE_CLASS(wxRomanNumeralsConvWeak, UPPER);
 
@@ -126,9 +143,8 @@ class wxRomanNumeralsConvWeak: public wxStringProcessor
     public:
 
     wxRomanNumeralsConvWeak()
-        : m_re(numeral_traits::REGEX_WEAK)
+        :wxRomanNumeralsConv(numeral_traits::REGEX_WEAK)
     {
-        wxASSERT(m_re.IsValid());
     }
 
     virtual wxStringProcessor* const Clone() const wxOVERRIDE
@@ -171,24 +187,10 @@ class wxRomanNumeralsConvWeak: public wxStringProcessor
 
         return false;
     }
-
-    protected:
-
-    wxRegEx m_re;
-
-    protected:
-
-    wxString get_match(const wxString& s, size_t matchIdx) const
-    {
-        size_t idx, len;
-
-        if (m_re.GetMatch(&idx, &len, matchIdx)) return s.Mid(idx, len);
-        else return wxEmptyString;
-    }
 };
 
 template< bool UPPER >
-class wxRomanNumeralsConvStrong: public wxStringProcessor
+class wxRomanNumeralsConvStrong: public wxRomanNumeralsConv
 {
     wxDECLARE_NO_COPY_TEMPLATE_CLASS(wxRomanNumeralsConvStrong, UPPER);
 
@@ -200,9 +202,8 @@ class wxRomanNumeralsConvStrong: public wxStringProcessor
     public:
 
     wxRomanNumeralsConvStrong()
-        : m_re(numeral_traits::REGEX_STRONG)
+        :wxRomanNumeralsConv(numeral_traits::REGEX_STRONG)
     {
-        wxASSERT(m_re.IsValid());
     }
 
     virtual wxStringProcessor* const Clone() const wxOVERRIDE
@@ -247,20 +248,6 @@ class wxRomanNumeralsConvStrong: public wxStringProcessor
         }
 
         return false;
-    }
-
-    protected:
-
-    wxRegEx m_re;
-
-    protected:
-
-    wxString get_match(const wxString& s, size_t matchIdx) const
-    {
-        size_t idx, len;
-
-        if (m_re.GetMatch(&idx, &len, matchIdx)) return s.Mid(idx, len);
-        else return wxEmptyString;
     }
 };
 

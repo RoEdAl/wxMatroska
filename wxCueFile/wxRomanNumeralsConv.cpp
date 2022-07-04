@@ -54,3 +54,22 @@ const roman_utils::roman_numeral_conv roman_numeral_traits< false >::CINFO = {
     { "ixv", wxS("\u2170\u2179\u2174") }
 };
 
+wxRomanNumeralsConv::wxRomanNumeralsConv(const wxString& regEx)
+    :m_re(regEx)
+{
+    wxASSERT(m_re.IsValid());
+}
+
+wxString wxRomanNumeralsConv::get_match(const wxString& s, size_t matchIdx) const
+{
+    size_t idx, len;
+
+    if (m_re.GetMatch(&idx, &len, matchIdx))
+    {
+        return s.Mid(idx, len);
+    }
+    else
+    {
+        return wxEmptyString;
+    }
+}
