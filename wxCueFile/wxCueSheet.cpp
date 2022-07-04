@@ -1019,7 +1019,7 @@ namespace
     }
 
     template<typename T>
-    void apply_tags(wxCueComponent& component, const T& jsonObj)
+    void apply_obj_tags(wxCueComponent& component, const T& jsonObj)
     {
         wxASSERT(jsonObj.is_object());
 
@@ -1036,7 +1036,7 @@ namespace
             const wxJson& album = tags[TAG_ALBUM];
             if (album.is_object())
             {
-                apply_tags(cueSheet, album);
+                apply_obj_tags(cueSheet, album);
             }
         }
 
@@ -1052,7 +1052,7 @@ namespace
                     if (chapterNo >= cueSheet.GetTracksCount()) continue;
 
                     wxTrack& track = cueSheet.GetTrack(chapterNo);
-                    apply_tags(track, *i);
+                    apply_obj_tags(track, *i);
                 }
             }
             else
