@@ -610,7 +610,10 @@ namespace
 
 int wxMyApp::OnRun()
 {
-    if (ShowInfo()) return 0;
+    if (ShowInfo())
+    {
+        return 0;
+    }
 
     wxInputFile firstInputFile;
     bool        bFirst = true;
@@ -627,82 +630,95 @@ int wxMyApp::OnRun()
     for (size_t i = 0, cnt = inputFiles.GetCount(); i < cnt; ++i)
     {
         wxFileName fn(inputFiles[i].GetInputFile());
+        const wxFileName dirPath = wxFileName::DirName(fn.GetPath());
 
-        if (!wxDir::Exists(fn.GetPath()))
+        if (!dirPath.IsDirReadable())
         {
-            wxLogMessage(_wxS("Directory " ENQUOTED_STR_FMT " doesn't exists"), fn.GetPath());
+            wxLogMessage(_wxS("Directory " ENQUOTED_STR_FMT " doesn't exists or is inaccessible"), fn.GetPath());
             res = 1;
 
-            if (m_cfg.AbortOnError()) break;
-            else continue;
-        }
-
-        wxDir dir(fn.GetPath());
-
-        if (!dir.IsOpened())
-        {
-            wxLogError(_wxS("Cannot open directory " ENQUOTED_STR_FMT), fn.GetPath());
-            res = 1;
-
-            if (m_cfg.AbortOnError()) break;
-            else continue;
-        }
-
-        wxString fileSpec(fn.GetFullName());
-        wxString inputFile;
-
-        if (dir.GetFirst(&inputFile, fileSpec, wxDIR_FILES))
-        {
-            while (true)
+            if (m_cfg.AbortOnError())
             {
-                fn.SetFullName(inputFile);
-                if (is_m3u(fn))
+                break;
+            }
+            else
+            {
+                continue;
+            }
+        }
+
+        const wxString fileSpec(fn.GetFullName());
+        wxArrayFileName fileNames;
+        bool doBreak = false;
+
+        {
+            wxDir dir(dirPath.GetFullPath());
+
+            if (!dir.IsOpened())
+            {
+                wxLogError(_wxS("Cannot open directory " ENQUOTED_STR_FMT), fn.GetPath());
+                res = 1;
+
+                if (m_cfg.AbortOnError())
                 {
-                    wxArrayFileName fileNames;
-                    bool doBreak = false;
-                    m_cfg.GetXmlEncoding();
-                    if (read_m3u(fn, fileNames, m_cfg.UseMLang()))
-                    {
-                        for (size_t j = 0, cnt = fileNames.GetCount(); j < cnt; ++j)
-                        {
-                            wxInputFile singleFile(inputFile[i]);
-                            singleFile.SetInputFile(fileNames[j]);
-
-                            if (bFirst)
-                            {
-                                firstInputFile = singleFile;
-                                bFirst = false;
-                            }
-
-                            res = ProcessCueFile(singleFile, discSynonims, trackSynonims);
-                            if ((res != 0) && (m_cfg.AbortOnError() || m_cfg.JoinMode()))
-                            {
-                                doBreak = true;
-                                break;
-                            }
-                        }
-                        if (doBreak) break;
-                    }
                     break;
                 }
                 else
                 {
-                    wxInputFile singleFile(inputFile[i]);
-                    singleFile.SetInputFile(fn);
+                    continue;
+                }
+            }
 
-                    if (bFirst)
+            wxString inputFile;
+
+            if (dir.GetFirst(&inputFile, fileSpec, wxDIR_FILES))
+            {
+                while (true)
+                {
+                    fn.SetFullName(inputFile);
+                    if (is_m3u(fn))
                     {
-                        firstInputFile = singleFile;
-                        bFirst = false;
+                        if (!read_m3u(fn, fileNames, m_cfg.UseMLang()))
+                        {
+                            if (m_cfg.AbortOnError() || m_cfg.JoinMode())
+                            {
+                                res = 2;
+                                doBreak = true;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        fileNames.Add(fn);
                     }
 
-                    res = ProcessCueFile(singleFile, discSynonims, trackSynonims);
-                    if ((res != 0) && (m_cfg.AbortOnError() || m_cfg.JoinMode())) break;
+                    if (!dir.GetNext(&inputFile)) break;
                 }
+            }
+            if (doBreak) break;
+        }
 
-                if (!dir.GetNext(&inputFile)) break;
+        wxASSERT(!doBreak);
+        for (size_t j = 0, cnt = fileNames.GetCount(); j < cnt; ++j)
+        {
+            wxInputFile singleFile(inputFiles[i]);
+            singleFile.SetInputFile(fileNames[j]);
+
+            if (bFirst)
+            {
+                firstInputFile = singleFile;
+                bFirst = false;
+            }
+
+            res = ProcessCueFile(singleFile, discSynonims, trackSynonims);
+            if ((res != 0) && (m_cfg.AbortOnError() || m_cfg.JoinMode()))
+            {
+                doBreak = true;
+                break;
             }
         }
+        if (doBreak) break;
     }
 
     if (m_cfg.JoinMode() && (res == 0))
