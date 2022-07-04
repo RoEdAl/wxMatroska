@@ -20,6 +20,7 @@
 #include "wxFfMetadataRenderer.h"
 #include "wxFfmpegCMakeScriptRenderer.h"
 #include <wxWEBPHandler/imagwebp.h>
+#include <wxEncodingDetection/wxEncodingDetection.h>
 #include "wxApp.h"
 
  // ===============================================================================
@@ -538,6 +539,75 @@ int wxMyApp::ProcessCueFile(const wxInputFile& inputFile, const wxTagSynonimsCol
     }
 }
 
+namespace
+{
+    constexpr size_t MAX_M3U_LINES = 1000;
+
+    bool is_m3u(const wxFileName& fn)
+    {
+        const wxString& ext = fn.GetExt();
+        return ext.CmpNoCase("m3u") == 0 || ext.CmpNoCase("m3u8") == 0;
+    }
+
+    wxFileName join_fn(const wxFileName& dir, const wxFileName& fn)
+    {
+        wxFileName res(dir);
+        res.SetName(fn.GetName());
+        res.SetExt(fn.GetExt());
+        return res;
+    }
+
+    bool read_m3u(const wxFileName& fn, wxArrayFileName& fileNames, bool useMLang)
+    {
+        wxASSERT(fn.IsFileReadable());
+        const wxFileName dir = wxFileName::DirName(fn.GetPath());
+
+        {
+            wxFileInputStream is(fn.GetFullPath());
+            if (!is.IsOk())
+            {
+                wxLogError(_wxS("Fail to open " ENQUOTED_STR_FMT), fn.GetFullName());
+                return false;
+            }
+
+            const bool utf8 = fn.GetExt().CmpNoCase("m3u8") == 0;
+            wxString description;
+            const wxEncodingDetection::wxMBConvSharedPtr enc = 
+                utf8? 
+                    wxEncodingDetection::GetStandardMBConv(wxEncodingDetection::CP::UTF8, useMLang, description) :
+                    wxEncodingDetection::GetFileEncoding(fn, useMLang, description);
+
+            wxLogInfo(_("File encoding of " ENQUOTED_STR_FMT " is %s"), fn.GetFullName(), description);
+            wxTextInputStream tis(is, wxEmptyString, *enc);
+
+            size_t cnt = 0;
+            while (!tis.GetInputStream().Eof() && (++cnt < MAX_M3U_LINES))
+            {
+                const wxString line = tis.ReadLine();
+                if (line.IsEmpty())
+                {
+                    continue;
+                }
+
+                if (line.StartsWith('#'))
+                {
+                    continue;
+                }
+
+                const wxFileName fn(line);
+                if (!fn.IsOk() || !fn.IsRelative() || fn.GetDirCount() > 0)
+                {
+                    continue;
+                }
+
+                fileNames.Add(join_fn(dir, fn));
+            }
+        }
+
+        return (fileNames.GetCount() > 0 && fileNames.GetCount() < MAX_M3U_LINES);
+    }
+}
+
 int wxMyApp::OnRun()
 {
     if (ShowInfo()) return 0;
@@ -552,11 +622,11 @@ int wxMyApp::OnRun()
     wxCueComponent::GetSynonims(trackSynonims, true);
 
     int                     res = 0;
-    const wxArrayInputFile& inputFile = m_cfg.GetInputFiles();
+    const wxArrayInputFile& inputFiles = m_cfg.GetInputFiles();
 
-    for (size_t i = 0, nCount = inputFile.GetCount(); i < nCount; ++i)
+    for (size_t i = 0, cnt = inputFiles.GetCount(); i < cnt; ++i)
     {
-        wxFileName fn(inputFile[i].GetInputFile());
+        wxFileName fn(inputFiles[i].GetInputFile());
 
         if (!wxDir::Exists(fn.GetPath()))
         {
@@ -578,28 +648,59 @@ int wxMyApp::OnRun()
             else continue;
         }
 
-        wxString sFileSpec(fn.GetFullName());
-        wxString sInputFile;
+        wxString fileSpec(fn.GetFullName());
+        wxString inputFile;
 
-        if (dir.GetFirst(&sInputFile, sFileSpec, wxDIR_FILES))
+        if (dir.GetFirst(&inputFile, fileSpec, wxDIR_FILES))
         {
-            wxInputFile singleFile(inputFile[i]);
             while (true)
             {
-                fn.SetFullName(sInputFile);
-                singleFile.SetInputFile(fn);
-
-                if (bFirst)
+                fn.SetFullName(inputFile);
+                if (is_m3u(fn))
                 {
-                    firstInputFile = singleFile;
-                    bFirst = false;
+                    wxArrayFileName fileNames;
+                    bool doBreak = false;
+                    m_cfg.GetXmlEncoding();
+                    if (read_m3u(fn, fileNames, m_cfg.UseMLang()))
+                    {
+                        for (size_t j = 0, cnt = fileNames.GetCount(); j < cnt; ++j)
+                        {
+                            wxInputFile singleFile(inputFile[i]);
+                            singleFile.SetInputFile(fileNames[j]);
+
+                            if (bFirst)
+                            {
+                                firstInputFile = singleFile;
+                                bFirst = false;
+                            }
+
+                            res = ProcessCueFile(singleFile, discSynonims, trackSynonims);
+                            if ((res != 0) && (m_cfg.AbortOnError() || m_cfg.JoinMode()))
+                            {
+                                doBreak = true;
+                                break;
+                            }
+                        }
+                        if (doBreak) break;
+                    }
+                    break;
+                }
+                else
+                {
+                    wxInputFile singleFile(inputFile[i]);
+                    singleFile.SetInputFile(fn);
+
+                    if (bFirst)
+                    {
+                        firstInputFile = singleFile;
+                        bFirst = false;
+                    }
+
+                    res = ProcessCueFile(singleFile, discSynonims, trackSynonims);
+                    if ((res != 0) && (m_cfg.AbortOnError() || m_cfg.JoinMode())) break;
                 }
 
-                res = ProcessCueFile(singleFile, discSynonims, trackSynonims);
-
-                if ((res != 0) && (m_cfg.AbortOnError() || m_cfg.JoinMode())) break;
-
-                if (!dir.GetNext(&sInputFile)) break;
+                if (!dir.GetNext(&inputFile)) break;
             }
         }
     }

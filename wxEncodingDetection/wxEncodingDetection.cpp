@@ -399,7 +399,7 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetDefaultEncoding( 
 
     if ( bUseMLang )
     {
-        pConv = wxMBConv_MLang::Create( CP_ACP , sDescription );
+        pConv = wxMBConv_MLang::Create(CP_THREAD_ACP, sDescription );
     }
     else
     {
@@ -492,7 +492,7 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncodingFromB
 
         if ( !fis.IsOk() )
         {
-            wxLogError(_wxS("Cannot open file \u201C%s\u201D"), fn.GetName());
+            wxLogError(_wxS("Cannot open file " ENQUOTED_STR_FMT), fn.GetName());
             return pRes;
         }
 
@@ -535,7 +535,7 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncodingFromB
         case 0:
         case 1:
         {
-            wxLogError(_wxS("Cannot read BOM - file \u201C%s\u201D is too small"), fn.GetName());
+            wxLogError(_wxS("Cannot read BOM - file " ENQUOTED_STR_FMT " is too small"), fn.GetName());
             break;
         }
     }
@@ -550,13 +550,13 @@ wxEncodingDetection::wxMBConvSharedPtr wxEncodingDetection::GetFileEncoding( con
 
     if ( nFileSize == wxInvalidSize )
     {
-        wxLogError(_wxS("Cannot determine size of file \u201C%s\u201D") , fn.GetName() );
+        wxLogError(_wxS("Cannot determine size of file " ENQUOTED_STR_FMT) , fn.GetName() );
         return pRes;
     }
 
     if ( nFileSize == wxULL( 0 ) )
     {
-        wxLogError(_wxS("Cannot determine encoding of empty file \u201C%s\u201D") , fn.GetName() );
+        wxLogError(_wxS("Cannot determine encoding of empty file " ENQUOTED_STR_FMT) , fn.GetName() );
         return pRes;
     }
 

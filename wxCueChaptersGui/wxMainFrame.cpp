@@ -2151,7 +2151,7 @@ void wxMainFrame::OnButtonAdd(wxCommandEvent& WXUNUSED(event))
     wxFileDialog openFileDialog(this,
                                  _("Specify input file"),
                                  wxEmptyString, wxEmptyString,
-                                 _("CUE files|*.cue|Text files|*.txt|Audio files|*.flac;*.ape;*.wv;*.wav;*.aiff;*.tta|All files|*"),
+                                 _("CUE files|*.cue|Text files|*.txt|M3U Playlists|*.m3u;*.m3u8|Audio files|*.flac;*.wv;*.wav;*.aiff;*.mp3|All files|*"),
                                  wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
 
     if (openFileDialog.ShowModal() != wxID_OK) return;
