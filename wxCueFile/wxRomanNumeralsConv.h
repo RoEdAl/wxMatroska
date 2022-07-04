@@ -230,8 +230,8 @@ class wxRomanNumeralsConvStrong: public wxRomanNumeralsConv
             res += w.Mid(0, idx);
 
             const wxString m1 = get_match(w, 1);
-            const wxString m2 = get_match(w, 2);
-            const wxString m3 = get_match(w, 3);
+            const wxString m2 = get_match(w, 3);
+            const wxString m3 = get_match(w, 4);
 
             wxASSERT(!(m1.IsEmpty() && m2.IsEmpty() && m3.IsEmpty()));
 
