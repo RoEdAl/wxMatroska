@@ -186,6 +186,9 @@ bool wxCmdTool::FindTool(wxCmdTool::TOOL tool, wxFileName& exe)
         case TOOL_MKVMERGE:
         return FindExecutable("mkvmerge", "MKVToolNix", exe);
 
+        case TOOL_MKVPROPEDIT:
+        return FindExecutable("mkvpropedit", "MKVToolNix", exe);
+
         case TOOL_CMAKE:
         return FindExecutable("cmake", "CMake/bin", exe);
 

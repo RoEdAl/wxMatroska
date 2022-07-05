@@ -24,6 +24,7 @@ class wxMyApp:
 
     const wxFileName& GetCue2MkcPath() const;
     const wxFileName& GetMkvmergePath() const;
+    const wxFileName& GetMkvPropEditPath() const;
     const wxFileName& GetFfmpegPath() const;
     const wxFileName& GetFfprobePath() const;
 
@@ -35,6 +36,7 @@ class wxMyApp:
 
     wxFileName m_cue2MkcPath;
     wxFileName m_mkvmergePath;
+    wxFileName m_mkvPropEditPath;
     wxFileName m_ffmpegPath;
     wxFileName m_ffprobePath;
 

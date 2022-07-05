@@ -302,6 +302,7 @@ void wxMkvmergeOptsRenderer::RenderScript(
     RenderHeader();
     RenderMinimumVersion();
     RenderToolEnvCheck("mkvmerge");
+    RenderToolEnvCheck("mkvpropedit");
     if (fnImg.IsOk())
     {
         RenderToolEnvCheck("imagick");
@@ -325,6 +326,11 @@ void wxMkvmergeOptsRenderer::RenderScript(
 
         *m_os << "CMAKE_PATH(SET MKA_FNAME \"" << GetCMakePath(GetRelativeFileName(dstMkaFile, outDir)) << "\")" << endl;
     }
+
+    *m_os << endl << "# timestamp" << endl;
+    *m_os << "IF(DEFINED ENV{SOURCE_DATE_EPOCH})" << endl;
+    *m_os << "    STRING(TIMESTAMP MKA_TS UTC)" << endl;
+    *m_os << "ENDIF()" << endl << endl;
 
     *m_os << "CMAKE_PATH(SET TMP_MKA_FNAME \"" << GetCMakePath(GetRelativeFileName(mkaFile, outDir)) << "\")" << endl;
 
@@ -355,7 +361,27 @@ void wxMkvmergeOptsRenderer::RenderScript(
     {
         *m_os << "    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}" << endl;
     }
-    *m_os << ')' << endl << endl;
+    *m_os << ')' << endl;
+    *m_os << "IF(DEFINED ENV{SOURCE_DATE_EPOCH})" << endl;
+    *m_os << "    MESSAGE(STATUS \"Updating timestamp to ${MKA_TS}\")" << endl;
+    *m_os << "    EXECUTE_PROCESS(" << endl;
+    *m_os << "        COMMAND ${MKVPROPEDIT}" << endl;
+    *m_os << "            --ui-language en --output-charset utf-8 --abort-on-warnings" << endl;
+    if (!wxLog::GetVerbose())
+    {
+        *m_os << "            --quiet" << endl;
+    }
+    *m_os << "            ${TMP_MKA_FNAME}" << endl;
+    *m_os << "            --set date=${MKA_TS}" << endl;
+    *m_os << "        ENCODING UTF-8" << endl;
+    *m_os << "        COMMAND_ECHO NONE" << endl;
+    *m_os << "        COMMAND_ERROR_IS_FATAL ANY" << endl;
+    if (!m_cfg.UseFullPaths())
+    {
+        *m_os << "        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}" << endl;
+    }
+    *m_os << ')' << endl;
+    *m_os << "ENDIF()" << endl << endl;
     *m_os << "MESSAGE(STATUS \"Replacing MKA container\")" << endl;
     *m_os << "FILE(RENAME ${TMP_MKA_FNAME} ${MKA_FNAME})" << endl;
 }

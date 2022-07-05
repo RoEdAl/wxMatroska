@@ -17,7 +17,6 @@
 # - REPLAYGAIN_PEAK [chapter, album]
 # - DR14 [chapter, album]
 # - DR14_ALBUM [album]
-# - DRSCaN_TIMESTAMP [album]
 #
 # Input variables:
 #
@@ -93,8 +92,6 @@ ELSE()
 ENDIF()
 
 # ---------------------------------------------------------------
-
-STRING(TIMESTAMP DRSCANTS UTC)
 
 SET(FFMPEG_FILTER "[0:a:0]replaygain,drmeter=length=1,ebur128[outa]")
 SET(FFMPEG_REGEXP_TRACK_GAIN "\\[info\\] track_gain = ([+-][0-9]+\.[0-9]+) +dB")
@@ -317,7 +314,6 @@ IF(NOT JSON_VALUE_ERR)
         MESSAGE(STATUS "[A] DR14: ${JSON_VALUE}")
         STRING(JSON FFMPEG_SCAN_RESULT SET ${FFMPEG_SCAN_RESULT} DR14_ALBUM "\"${JSON_VALUE}\"")
 ENDIF()
-STRING(JSON FFMPEG_SCAN_RESULT SET ${FFMPEG_SCAN_RESULT} DRSCAN_TIMESTAMP "\"${DRSCANTS}\"")
 STRING(JSON CUE2MKC_OBJ SET ${CUE2MKC_OBJ} album ${FFMPEG_SCAN_RESULT})
 
 # ---------------------------------------------------------------

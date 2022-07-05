@@ -76,6 +76,7 @@ void wxMyApp::InfoTools(wxMessageOutput& out)
     out.Output(_("Tools:"));
     out.Output(wxEmptyString);
     InfoTool(out, wxCmdTool::TOOL_MKVMERGE);
+    InfoTool(out, wxCmdTool::TOOL_MKVPROPEDIT);
     InfoTool(out, wxCmdTool::TOOL_FFMPEG);
     InfoTool(out, wxCmdTool::TOOL_FFPROBE);
     InfoTool(out, wxCmdTool::TOOL_CMAKE);
@@ -931,6 +932,14 @@ bool wxMyApp::RunCMakeScript(const wxFileName& scriptFile, bool convertImage)
         return false;
     }
 
+    wxFileName mkvPropEdit;
+
+    if (!wxCmdTool::FindTool(wxCmdTool::TOOL_MKVPROPEDIT, mkvPropEdit))
+    {
+        wxLogError(_("Unable to find mkvpropedit tool"));
+        return false;
+    }
+
     if (m_cfg.UseFullPaths())
     {
         scriptPath = scriptFile.GetFullPath();
@@ -968,6 +977,7 @@ bool wxMyApp::RunCMakeScript(const wxFileName& scriptFile, bool convertImage)
 
     env.env["FFMPEG"] = ffmpeg.GetFullPath();
     env.env["MKVMERGE"] = mkvmerge.GetFullPath();
+    env.env["MKVPROPEDIT"] = mkvPropEdit.GetFullPath();
 
     if (convertImage)
     {

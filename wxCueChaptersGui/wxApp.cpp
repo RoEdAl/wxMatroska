@@ -103,6 +103,11 @@ bool wxMyApp::OnInit()
         wxLogWarning(_("mkvmerge tool not found."));
     }
 
+    if (!wxCmdTool::FindTool(wxCmdTool::TOOL_MKVPROPEDIT, m_mkvPropEditPath))
+    {
+        wxLogWarning(_("mkvpropedit tool not found."));
+    }
+
     if (!wxCmdTool::FindTool(wxCmdTool::TOOL_FFMPEG, m_ffmpegPath))
     {
         wxLogWarning(_("ffmpeg tool not found."));
@@ -122,6 +127,11 @@ bool wxMyApp::OnInit()
 const wxFileName& wxMyApp::GetCue2MkcPath() const
 {
     return m_cue2MkcPath;
+}
+
+const wxFileName& wxMyApp::GetMkvPropEditPath() const
+{
+    return m_mkvPropEditPath;
 }
 
 const wxFileName& wxMyApp::GetMkvmergePath() const
@@ -158,6 +168,7 @@ void wxMyApp::ShowToolPaths() const
 {
     show_tool_path(m_cue2MkcPath);
     show_tool_path(m_mkvmergePath);
+    show_tool_path(m_mkvPropEditPath);
     show_tool_path(m_ffmpegPath);
     show_tool_path(m_ffprobePath);
 }
