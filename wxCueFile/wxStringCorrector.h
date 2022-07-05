@@ -26,6 +26,8 @@ class wxStringCorrector: public wxStringProcessor
 
         Configurator& RemoveExtraSpaces(bool = true);
         Configurator& Ellipsize(bool = true);
+        Configurator& QuoteCorrector(bool = true);
+        Configurator& QuoteCorrectorLang(const wxString&);
         Configurator& RomanNumeralsUpper(bool = true);
         Configurator& RomanNumeralsLower(bool = true);
         Configurator& StrongRomanNumeralsParser(bool = true);
@@ -37,6 +39,8 @@ class wxStringCorrector: public wxStringProcessor
 
         bool RemoveExtraSpaces() const;
         bool Ellipsize() const;
+        bool QuoteCorrector() const;
+        const wxString& QuoteCorrectorLang() const;
         bool RomanNumeralsUpper() const;
         bool RomanNumeralsLower() const;
         bool StrongRomanNumeralsParser() const;
@@ -55,6 +59,8 @@ class wxStringCorrector: public wxStringProcessor
 
         bool m_removeExtraSpaces;
         bool m_ellipsize;
+        bool m_quoteCorrector;
+        wxString m_quoteCorrectorLang;
         bool m_romanNumeralsUpper;
         bool m_romanNumeralsLower;
         bool m_strongRomanNumeralsParser;

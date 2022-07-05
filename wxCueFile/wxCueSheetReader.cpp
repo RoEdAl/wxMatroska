@@ -249,7 +249,7 @@ wxCueSheetReader::wxCueSheetReader(void):
     wxASSERT(m_reTrackComment.IsValid());
     wxASSERT(m_reCommentMeta.IsValid());
 
-    m_stringProcessor.reset(CreateStringProcessor(m_readFlags));
+    m_stringProcessor.reset(CreateStringProcessor(m_readFlags, false, wxEmptyString));
 
 #ifndef NDEBUG
     TagLib::setDebugListener(&m_debugListener);
@@ -304,7 +304,7 @@ wxCueSheetReader::ReadFlags wxCueSheetReader::GetReadFlags() const
 wxCueSheetReader& wxCueSheetReader::SetReadFlags(wxCueSheetReader::ReadFlags readFlags)
 {
     m_readFlags = readFlags;
-    m_stringProcessor.reset(CreateStringProcessor(readFlags));
+    m_stringProcessor.reset(CreateStringProcessor(readFlags, true, m_quoteCorrector.GetLang()));
     return *this;
 }
 
@@ -1186,11 +1186,13 @@ size_t wxCueSheetReader::ExtractCoversFromDataFile(const wxDataFile& dataFile, w
     return wxCoverFile::Extract(dataFile.GetRealFileName(), covers);
 }
 
-wxStringProcessor* const wxCueSheetReader::CreateStringProcessor(wxCueSheetReader::ReadFlags readFlags)
+wxStringProcessor* const wxCueSheetReader::CreateStringProcessor(wxCueSheetReader::ReadFlags readFlags, bool quoteCorrector, const wxString& quoteCorrectorLang)
 {
     return wxStringCorrector::Configurator()
         .RemoveExtraSpaces(wxCueSheetReader::TestReadFlags(readFlags, wxCueSheetReader::EC_REMOVE_EXTRA_SPACES))
         .Ellipsize(wxCueSheetReader::TestReadFlags(readFlags, wxCueSheetReader::EC_ELLIPSIZE_TAGS))
+        .QuoteCorrector(quoteCorrector)
+        .QuoteCorrectorLang(quoteCorrectorLang)
         .RomanNumeralsUpper(wxCueSheetReader::TestReadFlags(readFlags, wxCueSheetReader::EC_CONVERT_UPPER_ROMAN_NUMERALS))
         .RomanNumeralsLower(wxCueSheetReader::TestReadFlags(readFlags, wxCueSheetReader::EC_CONVERT_LOWER_ROMAN_NUMERALS))
         .StrongRomanNumeralsParser(wxCueSheetReader::TestReadFlags(readFlags, wxCueSheetReader::EC_STRONG_ROMAN_NUMERALS_PARSER))

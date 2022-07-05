@@ -101,7 +101,7 @@ class wxCueSheetReader
     static bool TestReadFlags(ReadFlags, ReadFlags);
     bool TestReadFlags(ReadFlags) const;
 
-    static wxStringProcessor* const CreateStringProcessor(ReadFlags);
+    static wxStringProcessor* const CreateStringProcessor(ReadFlags, bool, const wxString&);
 
     protected:
 

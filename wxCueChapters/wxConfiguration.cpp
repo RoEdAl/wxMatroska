@@ -1501,7 +1501,7 @@ wxConfiguration::CUESHEET_ATTACH_MODE wxConfiguration::GetCueSheetAttachMode() c
 
 wxStringProcessor* const wxConfiguration::CreateStringProcessor() const
 {
-    return wxCueSheetReader::CreateStringProcessor(m_nReadFlags);
+    return wxCueSheetReader::CreateStringProcessor(m_nReadFlags, m_bCorrectQuotationMarks, GetLang());
 }
 
 #include <wx/arrimpl.cpp>	// this is a magic incantation which must be done!

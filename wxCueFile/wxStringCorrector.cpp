@@ -6,6 +6,7 @@
 #include "wxTrailingSpacesRemover.h"
 #include "wxReduntantSpacesRemover.h"
 #include "wxEllipsizer.h"
+#include <wxCueFile/wxUnquoter.h>
 #include "wxRomanNumeralsConv.h"
 #include "wxDashesCorrector.h"
 #include "wxNumberFullStopCorrector.h"
@@ -15,6 +16,7 @@
 wxStringCorrector::Configurator::Configurator()
     : m_removeExtraSpaces(true),
     m_ellipsize(false),
+    m_quoteCorrector(false),
     m_romanNumeralsUpper(false),
     m_romanNumeralsLower(false),
     m_strongRomanNumeralsParser(false),
@@ -28,6 +30,8 @@ wxStringCorrector::Configurator::Configurator()
 wxStringCorrector::Configurator::Configurator(const wxStringCorrector::Configurator& configurator)
     : m_removeExtraSpaces(configurator.m_removeExtraSpaces),
     m_ellipsize(configurator.m_ellipsize),
+    m_quoteCorrector(configurator.m_quoteCorrector),
+    m_quoteCorrectorLang(configurator.m_quoteCorrectorLang),
     m_romanNumeralsUpper(configurator.m_romanNumeralsUpper),
     m_romanNumeralsLower(configurator.m_romanNumeralsLower),
     m_strongRomanNumeralsParser(configurator.m_strongRomanNumeralsParser),
@@ -47,6 +51,18 @@ wxStringCorrector::Configurator& wxStringCorrector::Configurator::RemoveExtraSpa
 wxStringCorrector::Configurator& wxStringCorrector::Configurator::Ellipsize(bool ellipsize)
 {
     m_ellipsize = ellipsize;
+    return *this;
+}
+
+wxStringCorrector::Configurator& wxStringCorrector::Configurator::QuoteCorrector(bool quoteCorrector)
+{
+    m_quoteCorrector = quoteCorrector;
+    return *this;
+}
+
+wxStringCorrector::Configurator& wxStringCorrector::Configurator::QuoteCorrectorLang(const wxString& quoteCorrectorLang)
+{
+    m_quoteCorrectorLang = quoteCorrectorLang;
     return *this;
 }
 
@@ -109,6 +125,16 @@ bool wxStringCorrector::Configurator::Ellipsize() const
     return m_ellipsize;
 }
 
+bool wxStringCorrector::Configurator::QuoteCorrector() const
+{
+    return m_quoteCorrector;
+}
+
+const wxString& wxStringCorrector::Configurator::QuoteCorrectorLang() const
+{
+    return m_quoteCorrectorLang;
+}
+
 bool wxStringCorrector::Configurator::RomanNumeralsUpper() const
 {
     return m_romanNumeralsUpper;
@@ -152,6 +178,7 @@ wxStringProcessor* const wxStringCorrector::Configurator::Create() const
     if (m_numberFullStop) res->AddStringProcessor(new wxNumberFullStopCorrector());
     if (m_removeExtraSpaces) res->AddStringProcessor(new wxReduntantSpacesRemover());
     if (m_ellipsize) res->AddStringProcessor(new wxEllipsizer());
+    if (m_quoteCorrector && !m_quoteCorrectorLang.IsEmpty()) res->AddStringProcessor(new wxQuoteCorrector(m_quoteCorrectorLang));
     if (m_strongRomanNumeralsParser)
     {
         if (m_romanNumeralsUpper) res->AddStringProcessor(new wxRomanNumeralsConvStrong<true>());

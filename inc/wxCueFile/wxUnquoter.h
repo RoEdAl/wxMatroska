@@ -48,15 +48,16 @@ class wxQuoteCorrector: public wxStringProcessor
         const wxChar* closing;
     };
 
-    static bool correct_polish_qm(const wxString&);
-    static bool correct_english_qm(const wxString&);
-    static bool correct_german_qm(const wxString&);
-    static bool correct_french_qm(const wxString&);
-
     protected:
 
     typedef wxScopedCharTypeBuffer< wxChar > wxScopedCharBuffer;
     typedef wxScopedCharBuffer(wxQuoteCorrector::* GET_REPLACEMENT_METHOD)(int, bool) const;
+
+    static bool correct_polish_qm(const wxString&);
+    static bool correct_english_qm(const wxString&);
+    static bool correct_german_qm(const wxString&);
+    static bool correct_french_qm(const wxString&);
+    static GET_REPLACEMENT_METHOD get_get_replacement_method(const wxString&);
 
     wxScopedCharBuffer get_standard_replacement(int, bool) const;
     wxScopedCharBuffer get_english_replacement(int, bool) const;
@@ -83,8 +84,12 @@ class wxQuoteCorrector: public wxStringProcessor
     public:
 
     wxQuoteCorrector();
+    wxQuoteCorrector(const wxString&);
 
     void SetLang(const wxString&);
+
+    bool IsStandard() const;
+    wxString GetLang() const;
 
     virtual wxStringProcessor* const Clone() const wxOVERRIDE;
     virtual bool Process(const wxString&, wxString&) const wxOVERRIDE;

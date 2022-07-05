@@ -117,6 +117,18 @@ wxQuoteCorrector::wxQuoteCorrector(void):
     wxASSERT(m_rePseudoDoubleQuotes.IsValid());
 }
 
+wxQuoteCorrector::wxQuoteCorrector(const wxString& lang):
+    m_genericReplacement(GENERIC_REPLACEMENT),
+    m_reSingleQuotes(REQ_SINGLE_QUOTES),
+    m_reDoubleQuotes(REQ_DOUBLE_QUOTES),
+    m_rePseudoDoubleQuotes(REQ_PSEUDO_DOUUBLE_QUOTES),
+    m_replacement_method(get_get_replacement_method(lang))
+{
+    wxASSERT(m_reSingleQuotes.IsValid());
+    wxASSERT(m_reDoubleQuotes.IsValid());
+    wxASSERT(m_rePseudoDoubleQuotes.IsValid());
+}
+
 wxQuoteCorrector::wxQuoteCorrector(const wxQuoteCorrector& corrector):
     m_genericReplacement(GENERIC_REPLACEMENT),
     m_reSingleQuotes(REQ_SINGLE_QUOTES),
@@ -137,43 +149,77 @@ wxStringProcessor* const wxQuoteCorrector::Clone() const
 /*
  *      http://en.wikipedia.org/wiki/Quotation_mark,_non-English_usage
  */
-bool wxQuoteCorrector::correct_polish_qm(const wxString& sLang)
+bool wxQuoteCorrector::correct_polish_qm(const wxString& lang)
 {
-    return sLang.CmpNoCase("pol") == 0;
+    return lang.CmpNoCase("pol") == 0;
 }
 
-bool wxQuoteCorrector::correct_english_qm(const wxString& sLang)
+bool wxQuoteCorrector::correct_english_qm(const wxString& lang)
 {
-    return sLang.CmpNoCase("eng") == 0;
+    return lang.CmpNoCase("eng") == 0;
 }
 
-bool wxQuoteCorrector::correct_german_qm(const wxString& sLang)
+bool wxQuoteCorrector::correct_german_qm(const wxString& lang)
 {
     return
-        (sLang.CmpNoCase("ger") == 0) ||
-        (sLang.CmpNoCase("gem") == 0) ||
-        (sLang.CmpNoCase("cze") == 0) ||
-        (sLang.CmpNoCase("geo") == 0) ||
-        (sLang.CmpNoCase("est") == 0) ||
-        (sLang.CmpNoCase("ice") == 0) ||
-        (sLang.CmpNoCase("bul") == 0) ||
-        (sLang.CmpNoCase("srp") == 0) ||
-        (sLang.CmpNoCase("rus") == 0)
+        (lang.CmpNoCase("ger") == 0) ||
+        (lang.CmpNoCase("gem") == 0) ||
+        (lang.CmpNoCase("cze") == 0) ||
+        (lang.CmpNoCase("geo") == 0) ||
+        (lang.CmpNoCase("est") == 0) ||
+        (lang.CmpNoCase("ice") == 0) ||
+        (lang.CmpNoCase("bul") == 0) ||
+        (lang.CmpNoCase("srp") == 0) ||
+        (lang.CmpNoCase("rus") == 0)
         ;
 }
 
-bool wxQuoteCorrector::correct_french_qm(const wxString& sLang)
+bool wxQuoteCorrector::correct_french_qm(const wxString& lang)
 {
-    return sLang.CmpNoCase("fre") == 0;
+    return lang.CmpNoCase("fre") == 0;
 }
 
-void wxQuoteCorrector::SetLang(const wxString& sLang)
+wxQuoteCorrector::GET_REPLACEMENT_METHOD wxQuoteCorrector::get_get_replacement_method(const wxString& lang)
 {
-    if (correct_polish_qm(sLang)) m_replacement_method = &wxQuoteCorrector::get_polish_replacement;
-    else if (correct_english_qm(sLang)) m_replacement_method = &wxQuoteCorrector::get_english_replacement;
-    else if (correct_german_qm(sLang)) m_replacement_method = &wxQuoteCorrector::get_german_replacement;
-    else if (correct_french_qm(sLang)) m_replacement_method = &wxQuoteCorrector::get_french_replacement;
-    else m_replacement_method = &wxQuoteCorrector::get_standard_replacement;
+    if (correct_polish_qm(lang)) return &wxQuoteCorrector::get_polish_replacement;
+    else if (correct_english_qm(lang)) return &wxQuoteCorrector::get_english_replacement;
+    else if (correct_german_qm(lang)) return &wxQuoteCorrector::get_german_replacement;
+    else if (correct_french_qm(lang)) return &wxQuoteCorrector::get_french_replacement;
+    else return &wxQuoteCorrector::get_standard_replacement;
+}
+
+void wxQuoteCorrector::SetLang(const wxString& lang)
+{
+    m_replacement_method = get_get_replacement_method(lang);
+}
+
+bool wxQuoteCorrector::IsStandard() const
+{
+    return m_replacement_method == &wxQuoteCorrector::get_standard_replacement;
+}
+
+wxString wxQuoteCorrector::GetLang() const
+{
+    if (m_replacement_method == &wxQuoteCorrector::get_polish_replacement)
+    {
+        return "pol";
+    }
+    else if (m_replacement_method == &wxQuoteCorrector::get_english_replacement)
+    {
+        return "eng";
+    }
+    else if (m_replacement_method == &wxQuoteCorrector::get_german_replacement)
+    {
+        return "ger";
+    }
+    else if (m_replacement_method == &wxQuoteCorrector::get_french_replacement)
+    {
+        return "fre";
+    }
+    else
+    {
+        return wxEmptyString;
+    }
 }
 
 bool wxQuoteCorrector::Process(const wxString& s, wxString& res) const
@@ -189,8 +235,15 @@ bool wxQuoteCorrector::Process(const wxString& s, wxString& res) const
     {
         wxString wo;
 
-        if (InternalCorrectQuotes(w, wo)) res = wo;
-        else res = w;
+        if (InternalCorrectQuotes(w, wo))
+        {
+            res = wo;
+        }
+        else
+        {
+            res = w;
+        }
+
         return true;
     }
 
