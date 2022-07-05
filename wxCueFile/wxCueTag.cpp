@@ -12,6 +12,7 @@
 
 const char wxCueTag::Name::CUESHEET[] = "CUESHEET";
 const char wxCueTag::Name::TOTALTRACKS[] = "TOTALTRACKS";
+const char wxCueTag::Name::TRACKTOTAL[] = "TRACKTOTAL";
 const char wxCueTag::Name::TRACKNUMBER[] = "TRACKNUMBER";
 const char wxCueTag::Name::ARRANGER[] = "ARRANGER";
 const char wxCueTag::Name::COMPOSER[] = "COMPOSER";
@@ -262,9 +263,21 @@ bool wxCueTag::operator ==(const wxCueTag& tag) const
         m_value.Cmp(tag.m_value) == 0;
 }
 
+bool wxCueTag::operator ==(const char* tagName) const
+{
+    wxASSERT(tagName != nullptr);
+    return wxStricmp(m_name, tagName) == 0;
+}
+
 bool wxCueTag::operator ==(const wxString& tagName) const
 {
     return m_name.CmpNoCase(tagName) == 0;
+}
+
+bool wxCueTag::operator !=(const char* tagName) const
+{
+    wxASSERT(tagName != nullptr);
+    return wxStricmp(m_name, tagName) != 0;
 }
 
 bool wxCueTag::operator !=(const wxString& tagName) const

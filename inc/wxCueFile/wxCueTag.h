@@ -36,6 +36,7 @@ class wxCueTag
     {
         static const char CUESHEET[];
         static const char TOTALTRACKS[];
+        static const char TRACKTOTAL[];
         static const char TRACKNUMBER[];
         static const char ARRANGER[];
         static const char COMPOSER[];
@@ -96,8 +97,32 @@ class wxCueTag
     wxCueTag& SetName(const wxString&);
     wxCueTag& SetValue(const wxString&);
 
+    template<size_t N>
+    bool operator ==(const char(&tagName)[N])
+    {
+        return wxStricmp(m_name, tagName) == 0;
+    }
+    template<size_t N>
+    bool operator ==(const wxUChar(&tagName)[N])
+    {
+        return wxStricmp(m_name, tagName) == 0;
+    }
+    bool operator ==(const char*) const;
     bool operator ==(const wxString&) const;
+
+    template<size_t N>
+    bool operator !=(const char(&tagName)[N])
+    {
+        return wxStricmp(m_name, tagName) != 0;
+    }
+    template<size_t N>
+    bool operator !=(const wxUChar(&tagName)[N])
+    {
+        return wxStricmp(m_name, tagName) != 0;
+    }
+    bool operator !=(const char*) const;
     bool operator !=(const wxString&) const;
+
     bool operator ==(const wxCueTag&) const;
     wxCueTag& operator =(const wxCueTag&);
 

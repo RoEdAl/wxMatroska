@@ -464,7 +464,7 @@ void wxCueSheetReader::AppendTags(const wxArrayCueTag& comments, bool singleMedi
         }
         else
         {
-            if (tag == wxCueTag::Name::TOTALTRACKS) continue;
+            if (tag == wxCueTag::Name::TOTALTRACKS || tag == wxCueTag::Name::TRACKTOTAL) continue;
 
             if (m_reTrackComment.Matches(tag.GetName()))
             {
@@ -504,7 +504,7 @@ void wxCueSheetReader::AppendTags(const wxArrayCueTag& tags, size_t trackFrom, s
     {
         wxCueTag tag(tags[i]);
 
-        if (tag == wxCueTag::Name::TOTALTRACKS) continue;
+        if (tag == wxCueTag::Name::TOTALTRACKS || tag == wxCueTag::Name::TRACKTOTAL) continue;
         if (tag == wxCueTag::Name::TRACKNUMBER) continue;
 
         tag.Correct(m_unquoter);
