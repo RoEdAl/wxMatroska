@@ -1235,6 +1235,9 @@ wxPanel* wxMainFrame::create_adv_panel(wxNotebook* notebook, const wxSizerFlags&
         m_checkBoxGenerateArtistTagsForTracks->SetToolTip(_("Some media players (e.g. Foobar2000) requires ARTIST tag for every track (chapter)."));
         sizer->Add(m_checkBoxGenerateArtistTagsForTracks);
 
+        m_checkBoxRenderITunesTags = create_3state_checkbox(sizer, _wxS("Render iTunes\u00AE tags"));
+        sizer->Add(m_checkBoxRenderITunesTags);
+
         panelSizer->Add(sizer, sflags);
     }
 
@@ -1924,7 +1927,8 @@ bool wxMainFrame::read_options(wxArrayString& options) const
     negatable_switch_option(options, m_checkBoxRenderMultilineTags, "rm");
     negatable_switch_option(options, m_checkBoxRenderReplayGainTags, "rg");
     negatable_long_switch_option(options, m_checkBoxRunReplayGainScanner, "run-replaygain-scanner");
-    negatable_long_switch_option(options, m_checkBoxUseMLang, "use-mlang");
+    negatable_long_switch_option(options, m_checkBoxRenderITunesTags, "render-itunes-tags");
+    negatable_long_switch_option(options, m_checkBoxUseMLang, "mlang");
     negatable_switch_option(options, m_checkBoxGenerateArtistTagsForTracks, "ra");
     negatable_switch_option(options, m_checkBoxChapterEndTime, "ce");
     negatable_switch_option(options, m_checkBoxChapterEndTimeFromNext, "cn");

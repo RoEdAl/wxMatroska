@@ -247,6 +247,7 @@ bool wxTagRenderer::IsLanguageAgnostic(const wxConfiguration& cfg, const wxCueTa
     return
         cfg.IsLangUndefined() ||
         tag.IsReplayGain() ||
+        tag.IsITunes() ||
         is_binary(tag) ||
         check_tag_name(tag) ||
         IsNonAlphaTag(tag);

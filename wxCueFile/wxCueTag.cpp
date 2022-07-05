@@ -573,6 +573,11 @@ bool wxCueTag::IsRipperComment() const
         m_value.StartsWith("CUERipper");
 }
 
+bool wxCueTag::IsITunes() const
+{
+    return m_name.StartsWith("ITUNES");
+}
+
 bool wxCueTag::Split(const wxCueTag& tag, wxArrayCueTag& tags)
 {
     if (tag != Name::DISCNUMBER) return false;

@@ -77,6 +77,7 @@ class wxMainFrame:
     wxCheckBox* m_checkBoxRenderMultilineTags;
     wxCheckBox* m_checkBoxRenderReplayGainTags;
     wxCheckBox* m_checkBoxRunReplayGainScanner;
+    wxCheckBox* m_checkBoxRenderITunesTags;
     ListBox* m_listBoxMessages;
     wxCheckBox* m_checkBoxShowTimestamps;
     wxCheckBox* m_checkBoxVerbose;

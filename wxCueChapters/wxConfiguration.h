@@ -148,6 +148,7 @@ class wxConfiguration: public MyConfiguration
 
     bool m_bRenderMultilineTags;
     bool m_bRenderReplayGainTags;
+    bool m_bRenderITunesTags;
     bool m_bRenderArtistForTrack;
     FFMPEG_CODEC m_eFfmpegCodec;
     bool m_bSingleAudioChannel;
@@ -206,6 +207,7 @@ class wxConfiguration: public MyConfiguration
     bool RenderArtistForTrack() const;
     bool RenderMultilineTags() const;
     bool RenderReplayGainTags() const;
+    bool RenderITunesTags() const;
     FFMPEG_CODEC GetFfmpegCodec() const;
     bool UseDefaultFfmpegCodec() const;
     bool IsDualMono() const;

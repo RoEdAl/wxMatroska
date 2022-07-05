@@ -68,6 +68,14 @@ void wxFfMetadataRenderer::render_tags(const wxArrayCueTag& tags, bool album) co
             }
         }
 
+        if (!m_cfg.RenderITunesTags())
+        {
+            if (tag.IsITunes())
+            {
+                wxLogInfo("FFM renderer: skipping iTunes tag %s", tag.GetName());
+            }
+        }
+
         wxString tagName = tag.GetName();
         if (album)
         {

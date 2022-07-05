@@ -90,6 +90,7 @@ class wxCueTag
     wxString GetFlattenValue(const wxString&) const;
     bool IsReplayGain() const;
     bool IsRipperComment() const;
+    bool IsITunes() const;
 
     wxCueTag& SetSource(TAG_SOURCE);
     wxCueTag& SetName(const wxString&);

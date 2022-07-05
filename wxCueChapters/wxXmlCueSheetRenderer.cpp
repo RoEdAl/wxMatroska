@@ -498,6 +498,15 @@ wxXmlNode* wxXmlCueSheetRenderer::create_simple_tag(const wxCueTag& tag) const
         }
     }
 
+    if (!m_cfg.RenderITunesTags())
+    {
+        if (tag.IsITunes())
+        {
+            wxLogInfo("XML renderer: skipping iTunes tag %s", tag.GetName());
+            return nullptr;
+        }
+    }
+
     wxXmlNode* const pSimple = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, Xml::SIMPLE);
     wxXmlNode* const pName = new wxXmlNode(pSimple, wxXML_ELEMENT_NODE, Xml::NAME);
     wxXmlNode* const pNameText = new wxXmlNode(pName, wxXML_TEXT_NODE, wxEmptyString, tag.GetName());
