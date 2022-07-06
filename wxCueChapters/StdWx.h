@@ -21,7 +21,6 @@
 #include <wx/txtstrm.h>
 #include <wx/mstream.h>
 #include <wx/datetime.h>
-#include <wx/dynlib.h>
 #include <wx/filename.h>
 #include <wx/xml/xml.h>
 #include <wx/sstream.h>
