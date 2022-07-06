@@ -423,7 +423,7 @@ bool wxFfMetadataRenderer::Save(const wxFileName& outputFile)
     {
         wxLogInfo(_wxS("Creating ffmpeg metadata file " ENQUOTED_STR_FMT), outputFile.GetFullName());
         // ENC:UTF-8 EOL:UNIX BOM:no
-        wxSharedPtr< wxTextOutputStream > stream(wxTextOutputStreamWithBOMFactory::CreateUTF8(os, wxEOL_UNIX, false, false));
+        const wxScopedPtr<wxTextOutputStream> stream(wxTextOutputStreamWithBOMFactory::CreateUTF8(os, wxEOL_UNIX, false, false));
         m_os.SaveTo(*stream);
         m_temporaryFiles.Add(outputFile);
         return true;

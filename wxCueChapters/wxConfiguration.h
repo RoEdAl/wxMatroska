@@ -219,9 +219,9 @@ class wxConfiguration: public MyConfiguration
     bool CoverFromPdf() const;
     wxString GetConvertedCoverFileExt() const;
 
-    wxSharedPtr< wxMBConv > GetXmlEncoding() const;
+    wxMBConv* GetXmlEncoding() const;
 
-    wxSharedPtr< wxTextOutputStream > GetOutputTextStream(wxOutputStream&) const;
+    wxTextOutputStream* GetOutputTextStream(wxOutputStream&) const;
     bool JoinMode() const;
     bool IncludeDiscNumberTag() const;
     wxCueSheetReader::ReadFlags GetReadFlags() const;

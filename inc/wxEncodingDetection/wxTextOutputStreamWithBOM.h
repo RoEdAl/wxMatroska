@@ -11,14 +11,13 @@ class wxTextOutputStreamWithBOMFactory
 
     public:
 
-    typedef wxCharTypeBuffer< wxByte > wxByteBuffer;
-    typedef wxSharedPtr< wxTextOutputStream > wxTextOutputStreamSharedPtr;
+    typedef wxCharTypeBuffer<wxByte> wxByteBuffer;
 
-    static wxTextOutputStreamSharedPtr Create( wxOutputStream& , wxEOL , bool , wxUint32 , bool );
-    static wxTextOutputStreamSharedPtr CreateUTF8( wxOutputStream& , wxEOL , bool , bool );
-    static wxTextOutputStreamSharedPtr CreateUTF16( wxOutputStream& , wxEOL , bool , bool );
+    static wxTextOutputStream* Create(wxOutputStream&, wxEOL, bool, wxUint32, bool);
+    static wxTextOutputStream* CreateUTF8(wxOutputStream&, wxEOL, bool, bool);
+    static wxTextOutputStream* CreateUTF16(wxOutputStream&, wxEOL, bool, bool);
 
-    static void WriteBOM( wxOutputStream& , const wxByteBuffer& );
+    static void WriteBOM(wxOutputStream&, const wxByteBuffer&);
 };
 
 #endif

@@ -7,9 +7,9 @@
 
  // ===============================================================================
 
-wxUint32 wxMLangConvertCharset::GetRealCodePage( wxUint32 nCodePage )
+wxUint32 wxMLangConvertCharset::GetRealCodePage(wxUint32 nCodePage)
 {
-    switch ( nCodePage )
+    switch (nCodePage)
     {
         case CP_ACP:
         case CP_THREAD_ACP:
@@ -29,63 +29,64 @@ wxUint32 wxMLangConvertCharset::GetRealCodePage( wxUint32 nCodePage )
     }
 }
 
-wxMLangConvertCharset::wxMLangConvertCharset( void ):
-    m_pMLang( nullptr )
-{}
-
-wxMLangConvertCharset::wxMLangConvertCharset( wxUint32 nCodepageFrom , wxUint32 nCodepageTo ):
-    m_pMLang( nullptr )
+wxMLangConvertCharset::wxMLangConvertCharset(void):
+    m_pMLang(nullptr)
 {
-    Initialize( nCodepageFrom , nCodepageTo );
 }
 
-wxMLangConvertCharset::wxMLangConvertCharset( const wxMultiLanguage& mlang , wxUint32 nCodepageFrom , wxUint32 nCodepageTo ):
-    m_pMLang( nullptr )
+wxMLangConvertCharset::wxMLangConvertCharset(wxUint32 codepageFrom, wxUint32 codepageTo):
+    m_pMLang(nullptr)
 {
-    HRESULT hRes = mlang->CreateConvertCharset( GetRealCodePage( nCodepageFrom ) , GetRealCodePage( nCodepageTo ) , 0 , &m_pMLang );
+    Initialize(codepageFrom, codepageTo);
+}
 
-    if ( hRes != S_OK )
+wxMLangConvertCharset::wxMLangConvertCharset(const wxMultiLanguage& mlang, wxUint32 codepageFrom, wxUint32 codepageTo):
+    m_pMLang(nullptr)
+{
+    HRESULT hRes = mlang->CreateConvertCharset(GetRealCodePage(codepageFrom), GetRealCodePage(codepageTo), 0, &m_pMLang);
+
+    if (hRes != S_OK)
     {
-        wxLogWarning( _( "Unable to create converter from codepage %u to codepage %u; error: 0x%08x" ) , nCodepageFrom , nCodepageTo , hRes );
+        wxLogWarning(_("Unable to create converter from codepage %u to codepage %u; error: 0x%08x"), codepageFrom, codepageTo, hRes);
         m_pMLang = nullptr;
     }
 }
 
-wxMLangConvertCharset::wxMLangConvertCharset( const wxMLangConvertCharset& ml ):
-    m_pMLang( ml.m_pMLang )
+wxMLangConvertCharset::wxMLangConvertCharset(const wxMLangConvertCharset& ml):
+    m_pMLang(ml.m_pMLang)
 {
-    if ( IsValid() ) m_pMLang->AddRef();
+    if (IsValid()) m_pMLang->AddRef();
 }
 
-wxMLangConvertCharset::~wxMLangConvertCharset( void )
+wxMLangConvertCharset::~wxMLangConvertCharset(void)
 {
     Close();
 }
 
-bool wxMLangConvertCharset::Initialize( wxUint32 nCodepageFrom , wxUint32 nCodepageTo )
+bool wxMLangConvertCharset::Initialize(wxUint32 codepageFrom, wxUint32 codepageTo)
 {
-    wxASSERT( !IsValid() );
+    wxASSERT(!IsValid());
 
     HRESULT hRes = CoCreateInstance(
-            CLSID_CMLangConvertCharset ,
-            NULL ,
-            CLSCTX_INPROC_SERVER ,
-            IID_IMLangConvertCharset ,
+            CLSID_CMLangConvertCharset,
+            NULL,
+            CLSCTX_INPROC_SERVER,
+            IID_IMLangConvertCharset,
             (LPVOID*)&m_pMLang
     );
 
-    if ( hRes != S_OK )
+    if (hRes != S_OK)
     {
         m_pMLang = nullptr;
-        wxLogError( _( "Fail to get CMLangConvertCharset object; error 0x%08x" ) , hRes );
+        wxLogError(_("Fail to get CMLangConvertCharset object; error 0x%08x"), hRes);
         return false;
     }
 
-    hRes = m_pMLang->Initialize( GetRealCodePage( nCodepageFrom ) , GetRealCodePage( nCodepageTo ) , 0 );
+    hRes = m_pMLang->Initialize(GetRealCodePage(codepageFrom), GetRealCodePage(codepageTo), 0);
 
-    if ( hRes != S_OK )
+    if (hRes != S_OK)
     {
-        wxLogError( _( "Fail to initialize CMLangConvertCharset object witch codepages %u and %u; error 0x%08x" ) , nCodepageFrom , nCodepageTo , hRes );
+        wxLogError(_("Fail to initialize CMLangConvertCharset object witch codepages %u and %u; error 0x%08x"), codepageFrom, codepageTo, hRes);
         m_pMLang->Release();
         m_pMLang = nullptr;
         return false;
@@ -96,12 +97,12 @@ bool wxMLangConvertCharset::Initialize( wxUint32 nCodepageFrom , wxUint32 nCodep
 
 bool wxMLangConvertCharset::IsValid() const
 {
-    return ( m_pMLang != nullptr );
+    return (m_pMLang != nullptr);
 }
 
 void wxMLangConvertCharset::Close()
 {
-    if ( IsValid() )
+    if (IsValid())
     {
         m_pMLang->Release();
         m_pMLang = nullptr;

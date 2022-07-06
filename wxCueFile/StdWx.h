@@ -22,7 +22,6 @@
 #include <wx/datetime.h>
 #include <wx/dynlib.h>
 #include <wx/filename.h>
-#include <wx/sharedptr.h>
 #include <wx/dir.h>
 #include <wx/base64.h>
 

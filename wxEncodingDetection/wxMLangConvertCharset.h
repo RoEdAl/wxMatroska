@@ -9,8 +9,7 @@
 class wxMultiLanguage;
 #endif
 
-class wxMLangConvertCharset:
-    public wxObject
+class wxMLangConvertCharset
 {
     protected:
 
@@ -18,13 +17,13 @@ class wxMLangConvertCharset:
 
     public:
 
-    wxMLangConvertCharset( void );
-    wxMLangConvertCharset( wxUint32 , wxUint32 );
-    wxMLangConvertCharset( const wxMultiLanguage& , wxUint32 , wxUint32 );
-    wxMLangConvertCharset( const wxMLangConvertCharset& );
-    ~wxMLangConvertCharset( void );
+    wxMLangConvertCharset(void);
+    wxMLangConvertCharset(wxUint32, wxUint32);
+    wxMLangConvertCharset(const wxMultiLanguage&, wxUint32, wxUint32);
+    wxMLangConvertCharset(const wxMLangConvertCharset&);
+    ~wxMLangConvertCharset(void);
 
-    bool Initialize( wxUint32 , wxUint32 );
+    bool Initialize(wxUint32, wxUint32);
     bool IsValid() const;
     void Close();
 
@@ -33,7 +32,7 @@ class wxMLangConvertCharset:
         return m_pMLang;
     }
 
-    static wxUint32 GetRealCodePage( wxUint32 );
+    static wxUint32 GetRealCodePage(wxUint32);
 };
 
 #endif

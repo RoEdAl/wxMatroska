@@ -392,7 +392,7 @@ bool wxCueSheetReader::ReadCueSheet(const wxString& cueFile, bool useMLang)
 {
     wxString cpDescription;
 
-    wxEncodingDetection::wxMBConvSharedPtr pConv(wxEncodingDetection::GetFileEncoding(cueFile, useMLang, cpDescription));
+    const wxScopedPtr<wxMBConv> pConv(wxEncodingDetection::GetFileEncoding(cueFile, useMLang, cpDescription));
 
     if (pConv)
     {

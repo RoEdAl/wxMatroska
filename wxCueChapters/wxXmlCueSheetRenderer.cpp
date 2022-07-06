@@ -337,8 +337,8 @@ const wxFileName& wxXmlCueSheetRenderer::GetTagsFile() const
 
 bool wxXmlCueSheetRenderer::SaveXmlDoc(const wxScopedPtr< wxXmlDocument >& pXmlDoc, const wxFileName& fileName) const
 {
-    wxSharedPtr< wxMBConv > pConv(m_cfg.GetXmlEncoding());
-    wxStringOutputStream    outputStream(NULL, *pConv);
+    const wxScopedPtr<wxMBConv> pConv(m_cfg.GetXmlEncoding());
+    wxStringOutputStream outputStream(NULL, *pConv);
 
     if (!pXmlDoc->Save(outputStream))
     {
@@ -350,8 +350,8 @@ bool wxXmlCueSheetRenderer::SaveXmlDoc(const wxScopedPtr< wxXmlDocument >& pXmlD
 
     if (fos.IsOk())
     {
-        wxSharedPtr< wxTextOutputStream > pStream(m_cfg.GetOutputTextStream(fos));
-        pStream->WriteString(outputStream.GetString());
+        const wxScopedPtr<wxTextOutputStream> stream(m_cfg.GetOutputTextStream(fos));
+        stream->WriteString(outputStream.GetString());
         return true;
     }
     else

@@ -331,7 +331,7 @@ int wxMyApp::ConvertCueSheet(const wxInputFile& inputFile, wxCueSheet& cueSheet)
                 return 1;
             }
 
-            wxSharedPtr< wxTextOutputStream > pTos(m_cfg.GetOutputTextStream(fos));
+            wxScopedPtr<wxTextOutputStream> pTos(m_cfg.GetOutputTextStream(fos));
             wxTextCueSheetRenderer            renderer(pTos.get());
 
             if (!renderer.Render(cueSheet)) return 1;
@@ -573,10 +573,10 @@ namespace
 
             const bool utf8 = fn.GetExt().CmpNoCase("m3u8") == 0;
             wxString description;
-            const wxEncodingDetection::wxMBConvSharedPtr enc = 
+            const wxScopedPtr<wxMBConv> enc(
                 utf8? 
                     wxEncodingDetection::GetStandardMBConv(wxEncodingDetection::CP::UTF8, useMLang, description) :
-                    wxEncodingDetection::GetFileEncoding(fn, useMLang, description);
+                    wxEncodingDetection::GetFileEncoding(fn, useMLang, description));
 
             wxLogInfo(_("File encoding of " ENQUOTED_STR_FMT " is %s"), fn.GetFullName(), description);
             wxTextInputStream tis(is, wxEmptyString, *enc);
@@ -598,6 +598,7 @@ namespace
                 const wxFileName fn(line);
                 if (!fn.IsOk() || !fn.IsRelative() || fn.GetDirCount() > 0)
                 {
+                    wxLogWarning("M3U - ignoring line: %s", line);
                     continue;
                 }
 

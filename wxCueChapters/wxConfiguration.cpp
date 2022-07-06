@@ -1365,22 +1365,20 @@ namespace
     }
 }
 
-wxSharedPtr< wxTextOutputStream > wxConfiguration::GetOutputTextStream(wxOutputStream& os) const
+wxTextOutputStream* wxConfiguration::GetOutputTextStream(wxOutputStream& os) const
 {
-    wxSharedPtr< wxTextOutputStream > pRes;
     wxUint32                          nCodePage;
     bool                              bBom;
 
     enc_2_cp(m_eFileEncoding, nCodePage, bBom);
-
     return wxTextOutputStreamWithBOMFactory::Create(os, wxEOL_NATIVE, bBom, nCodePage, m_bUseMLang);
 }
 
-wxSharedPtr< wxMBConv > wxConfiguration::GetXmlEncoding() const
+wxMBConv* wxConfiguration::GetXmlEncoding() const
 {
     wxString sDescription;
 
-    wxSharedPtr< wxMBConv > pRes;
+    wxMBConv* pRes = nullptr;
     wxUint32                nCodePage;
     bool                    bBom;
 
@@ -1388,7 +1386,10 @@ wxSharedPtr< wxMBConv > wxConfiguration::GetXmlEncoding() const
 
     pRes = wxEncodingDetection::GetStandardMBConv(nCodePage, m_bUseMLang, sDescription);
 
-    if (!pRes) pRes = wxEncodingDetection::GetDefaultEncoding(m_bUseMLang, sDescription);
+    if (pRes == nullptr)
+    {
+        pRes = wxEncodingDetection::GetDefaultEncoding(m_bUseMLang, sDescription);
+    }
 
     return pRes;
 }

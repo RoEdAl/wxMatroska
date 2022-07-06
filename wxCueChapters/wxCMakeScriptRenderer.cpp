@@ -110,7 +110,7 @@ bool wxCMakeScriptRenderer::SaveScript(const wxFileName& outputFile)
 	if (os.IsOk())
 	{
 		wxLogInfo(_wxS("Creating CMake script " ENQUOTED_STR_FMT), outputFile.GetFullName());
-		wxSharedPtr< wxTextOutputStream > stream(wxTextOutputStreamWithBOMFactory::CreateUTF8(os, wxEOL_NATIVE, true, false));
+		const wxScopedPtr<wxTextOutputStream> stream(wxTextOutputStreamWithBOMFactory::CreateUTF8(os, wxEOL_NATIVE, true, false));
 		m_os.SaveTo(*stream);
 		m_temporaryFiles.Add(outputFile);
 		return true;

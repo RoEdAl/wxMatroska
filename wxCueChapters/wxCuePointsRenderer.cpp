@@ -108,8 +108,8 @@ bool wxCuePointsRenderer::Save(const wxFileName& outputFile)
     if (os.IsOk())
     {
         wxLogInfo(_wxS("Creating cue points file " ENQUOTED_STR_FMT), outputFile.GetFullName());
-        wxSharedPtr< wxTextOutputStream > pStream(m_cfg.GetOutputTextStream(os));
-        m_os.SaveTo(*pStream);
+        wxScopedPtr<wxTextOutputStream> stream(m_cfg.GetOutputTextStream(os));
+        m_os.SaveTo(*stream);
         return true;
     }
     else

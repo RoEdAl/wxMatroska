@@ -10,26 +10,26 @@
 struct wxStringEx
 {
     template< typename C >
-    static inline int Replace( const wxRegEx& regEx , wxString& text , const C& replacer , size_t maxMatches )
+    static inline int Replace(const wxRegEx& regEx, wxString& text, const C& replacer, size_t maxMatches)
     {
-        wxCHECK_MSG( regEx.IsValid() , wxNOT_FOUND , wxT( "must successfully Compile() first" ) );
+        wxCHECK_MSG(regEx.IsValid(), wxNOT_FOUND, wxT("must successfully Compile() first"));
 
         // the input string
-#ifndef WXREGEX_CONVERT_TO_MB
+    #ifndef WXREGEX_CONVERT_TO_MB
         const wxChar* textstr = text.c_str();
         size_t        textlen = text.length();
-#else
-        const wxWX2MBbuf textstr = WXREGEX_CHAR( *text );
+    #else
+        const wxWX2MBbuf textstr = WXREGEX_CHAR(*text);
 
-        if ( !textstr )
+        if (!textstr)
         {
-            wxLogError( _( "Failed to find match for regular expression: %s" ) ,
-                    GetErrorMsg( 0 , true ).c_str() );
+            wxLogError(_("Failed to find match for regular expression: %s"),
+                    GetErrorMsg(0, true).c_str());
             return 0;
         }
-        size_t textlen = strlen( textstr );
+        size_t textlen = strlen(textstr);
         text->clear();
-#endif
+    #endif
 
         // the replacement text
         wxString textNew;
@@ -49,79 +49,79 @@ struct wxStringEx
 
         // note that "^" shouldn't match after the first call to Matches() so we
         // use wxRE_NOTBOL to prevent it from happening
-        while ( ( !maxMatches || countRepl < maxMatches ) &&
+        while ((!maxMatches || countRepl < maxMatches) &&
                 regEx.Matches(
-#ifndef WXREGEX_CONVERT_TO_MB
-                    textstr + matchStart ,
-#else
-                    textstr.data() + matchStart ,
-#endif
-                    countRepl ? wxRE_NOTBOL : 0 ,
-                    textlen - matchStart ) )
+           #ifndef WXREGEX_CONVERT_TO_MB
+               textstr + matchStart,
+           #else
+               textstr.data() + matchStart,
+           #endif
+               countRepl ? wxRE_NOTBOL : 0,
+               textlen - matchStart))
         {
             size_t matchCount = regEx.GetMatchCount();
-            matches.SetCount( matchCount );
+            matches.SetCount(matchCount);
 
-            size_t start , len;
+            size_t start, len;
 
-            for ( size_t i = 1; i < matchCount; ++i )
+            for (size_t i = 1; i < matchCount; ++i)
             {
-                if ( !regEx.GetMatch( &start , &len , i ) )
+                if (!regEx.GetMatch(&start, &len, i))
                 {
                     // we did have match as Matches() returned true above!
-                    wxFAIL_MSG( wxT( "internal logic error in wxStringEx::Replace" ) );
+                    wxFAIL_MSG(wxT("internal logic error in wxStringEx::Replace"));
 
                     return wxNOT_FOUND;
                 }
 
-                matches[ i ] = wxString(
+                matches[i] = wxString(
 #ifndef WXREGEX_CONVERT_TO_MB
-                        textstr + matchStart + start ,
+                        textstr + matchStart + start,
 #else
-                        textstr.data() + matchStart + start ,
+                        textstr.data() + matchStart + start,
 #endif
-                        len );
+                        len);
             }
 
-            if ( !regEx.GetMatch( &start , &len ) )
+            if (!regEx.GetMatch(&start, &len))
             {
                 // we did have match as Matches() returned true above!
-                wxFAIL_MSG( wxT( "internal logic error in wxStringEx::Replace" ) );
+                wxFAIL_MSG(wxT("internal logic error in wxStringEx::Replace"));
 
                 return wxNOT_FOUND;
             }
 
-            matches[ 0 ] = wxString(
+            matches[0] = wxString(
 #ifndef WXREGEX_CONVERT_TO_MB
-                    textstr + matchStart + start ,
+                    textstr + matchStart + start,
 #else
-                    textstr.data() + matchStart + start ,
+                    textstr.data() + matchStart + start,
 #endif
-                    len );
+                    len);
 
-            textNew = replacer( matches );
+            textNew = replacer(matches);
 
-            if ( start > 0 )
+            if (start > 0)
             {
-#ifndef WXREGEX_CONVERT_TO_MB
-                ( *result ) << text.Mid( matchStart , start );
-#else
-                ( *result ) << wxString( textstr.data() + matchStart , *wxConvCurrent , start );
-#endif
+            #ifndef WXREGEX_CONVERT_TO_MB
+                (*result) << text.Mid(matchStart, start);
+            #else
+                (*result) << wxString(textstr.data() + matchStart, *wxConvCurrent, start);
+            #endif
                 matchStart += start;
             }
 
-            ( *result ) << textNew;
+            (*result) << textNew;
             matchStart += len;
 
             countRepl++;
         }
 
-#ifndef WXREGEX_CONVERT_TO_MB
-        ( *result ) << text.Mid( matchStart );
-#else
-        ( *result ) << wxString( textstr.data() + matchStart , *wxConvCurrent );
-#endif
+    #ifndef WXREGEX_CONVERT_TO_MB
+        (*result) << text.Mid(matchStart);
+    #else
+        (*result) << wxString(textstr.data() + matchStart, *wxConvCurrent);
+    #endif
         result->Flush();
         text = result.GetString();
 

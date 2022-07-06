@@ -9,17 +9,18 @@
  // ===============================================================================
 
 wxTextOutputStreamOnString::wxTextOutputStreamOnString():
-    m_textOutputStream( m_outputStream , wxEOL_UNIX , m_conv )
-{}
+    m_textOutputStream(m_outputStream, wxEOL_UNIX, m_conv)
+{
+}
 
 wxString wxTextOutputStreamOnString::GetString() const
 {
     const wxStreamBuffer* const sb = m_outputStream.GetOutputStreamBuffer();
 
     return wxString(
-            static_cast<const char*>( sb->GetBufferStart() ) ,
-            m_conv ,
-            sb->GetBufferSize() - sb->GetBytesLeft() );
+            static_cast<const char*>(sb->GetBufferStart()),
+            m_conv,
+            sb->GetBufferSize() - sb->GetBytesLeft());
 }
 
 const wxMemoryOutputStream& wxTextOutputStreamOnString::GetMemoryStream() const
@@ -34,22 +35,22 @@ wxTextOutputStream& wxTextOutputStreamOnString::GetStream()
 
 wxTextOutputStream& wxTextOutputStreamOnString::operator *() const
 {
-    return const_cast<wxTextOutputStream&>( m_textOutputStream );
+    return const_cast<wxTextOutputStream&>(m_textOutputStream);
 }
 
 wxTextOutputStream* wxTextOutputStreamOnString::operator ->() const
 {
-    return const_cast<wxTextOutputStream*>( &m_textOutputStream );
+    return const_cast<wxTextOutputStream*>(&m_textOutputStream);
 }
 
-void wxTextOutputStreamOnString::SaveTo( wxTextOutputStream& tos , const wxString& s )
+void wxTextOutputStreamOnString::SaveTo(wxTextOutputStream& tos, const wxString& s)
 {
-    wxTextInputStreamOnString tis( s );
+    wxTextInputStreamOnString tis(s);
     wxTextStreamUtils::Copy(tis.GetStream(), tos);
 }
 
-void wxTextOutputStreamOnString::SaveTo( wxTextOutputStream& tos ) const
+void wxTextOutputStreamOnString::SaveTo(wxTextOutputStream& tos) const
 {
-    SaveTo( tos , GetString() );
+    SaveTo(tos, GetString());
 }
 

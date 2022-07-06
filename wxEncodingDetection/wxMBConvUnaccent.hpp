@@ -24,7 +24,7 @@ class wxMBConvUnaccent: public wxMBConv
 
     virtual size_t MB2WC(wchar_t* buf, const char* psz, size_t n) const wxOVERRIDE
     {
-        const size_t len = ::MultiByteToWideChar( US_ASCII, MB_ERR_INVALID_CHARS,
+        const size_t len = ::MultiByteToWideChar(US_ASCII, MB_ERR_INVALID_CHARS,
             psz, -1,
             buf, buf ? n : 0);
         if (len == 0)
@@ -39,8 +39,8 @@ class wxMBConvUnaccent: public wxMBConv
     {
         BOOL usedDef wxDUMMY_INITIALIZE(false);
 
-        const size_t len = ::WideCharToMultiByte( US_ASCII,
-            WC_COMPOSITECHECK| WC_DISCARDNS,
+        const size_t len = ::WideCharToMultiByte(US_ASCII,
+            WC_COMPOSITECHECK | WC_DISCARDNS,
             pwz, -1,
             buf, buf ? n : 0,
             &REPL, &usedDef
@@ -54,7 +54,7 @@ class wxMBConvUnaccent: public wxMBConv
         if (!buf)
         {
             const wxCharBuffer bufDef = wxCharBuffer(len);
-            buf = wxConstCast(bufDef.data(),char);
+            buf = wxConstCast(bufDef.data(), char);
             if (!::WideCharToMultiByte(US_ASCII,
                 WC_COMPOSITECHECK | WC_DISCARDNS,
                 pwz, -1,
@@ -74,7 +74,7 @@ class wxMBConvUnaccent: public wxMBConv
         {
             int len = ::WideCharToMultiByte(
                 US_ASCII,
-                0, 
+                0,
                 wxS(""), 1,
                 nullptr, 0,
                 nullptr,

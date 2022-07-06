@@ -804,7 +804,7 @@ bool wxPrimitiveRenderer::SaveCueSheet(
     if (os.IsOk())
     {
         wxLogInfo(_wxS("Creating cue sheet file " ENQUOTED_STR_FMT), cueSheet.GetFullName());
-        wxSharedPtr< wxTextOutputStream > stream(m_cfg.GetOutputTextStream(os));
+        wxScopedPtr< wxTextOutputStream > stream(m_cfg.GetOutputTextStream(os));
         wxTextOutputStreamOnString::SaveTo(*stream, content);
         m_temporaryFiles.Add(fn);
         cueSheet = fn;

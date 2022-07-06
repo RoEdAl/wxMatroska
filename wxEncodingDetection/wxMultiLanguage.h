@@ -5,8 +5,7 @@
 #ifndef _WX_MULTI_LANGUAGE_H_
 #define _WX_MULTI_LANGUAGE_H_
 
-class wxMultiLanguage:
-    public wxObject
+class wxMultiLanguage
 {
     protected:
 
@@ -14,9 +13,9 @@ class wxMultiLanguage:
 
     public:
 
-    wxMultiLanguage( void );
-    wxMultiLanguage( const wxMultiLanguage& );
-    ~wxMultiLanguage( void );
+    wxMultiLanguage(void);
+    wxMultiLanguage(const wxMultiLanguage&);
+    ~wxMultiLanguage(void);
 
     bool IsValid() const;
     void Close();
@@ -28,13 +27,13 @@ class wxMultiLanguage:
 
     public:
 
-    HRESULT DetectInputCodepage( DWORD , DWORD , const wxCharBuffer& , DetectEncodingInfo* , INT* );
-    HRESULT DetectCodepageInStream( DWORD , DWORD , const wxFileName& , DetectEncodingInfo* , INT* );
-    HRESULT GetCodePageDescription( UINT , wxString& ) const;
+    HRESULT DetectInputCodepage(DWORD, DWORD, const wxCharBuffer&, DetectEncodingInfo*, INT*);
+    HRESULT DetectCodepageInStream(DWORD, DWORD, const wxFileName&, DetectEncodingInfo*, INT*);
+    HRESULT GetCodePageDescription(UINT, wxString&) const;
 
     public:
 
-    static bool GetDefaultCodePage( wxUint32& );
+    static bool GetDefaultCodePage(wxUint32&);
 };
 
 #endif

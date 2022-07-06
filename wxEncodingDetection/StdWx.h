@@ -14,7 +14,6 @@
 #include <wx/txtstrm.h>
 #include <wx/mstream.h>
 #include <wx/filename.h>
-#include <wx/sharedptr.h>
 
 #include <mlang.h>
 #include <shlwapi.h>

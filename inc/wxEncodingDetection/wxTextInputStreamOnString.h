@@ -15,10 +15,10 @@ class wxTextInputStreamOnString
 
     public:
 
-    typedef wxCharTypeBuffer< wxChar > CharBufferType;
+    typedef wxCharTypeBuffer<wxChar> CharBufferType;
 
-    wxTextInputStreamOnString( const wxString& );
-    wxTextInputStreamOnString( const CharBufferType& );
+    wxTextInputStreamOnString(const wxString&);
+    wxTextInputStreamOnString(const CharBufferType&);
 
     const wxMemoryInputStream& GetMemoryStream() const;
     wxTextInputStream& GetStream();
