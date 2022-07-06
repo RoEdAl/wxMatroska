@@ -25,8 +25,7 @@ const wxUint32 wxEncodingDetection::CP::UTF8 = 65001;
 
 namespace
 {
-    class wxMBConv_MLang:
-        public wxMBConv
+    class wxMBConv_MLang: public wxMBConv
     {
         public:
 
@@ -36,33 +35,33 @@ namespace
         static const wxUint32 UNICODE_CP = wxEncodingDetection::CP::UTF16_LE;
     #endif
 
-        static wxMBConv* Create(wxUint32 nCodePage, wxString& sDescription)
+        static wxMBConv* Create(wxUint32 codePage, wxString& description)
         {
-            if (nCodePage == UNICODE_CP)
+            if (codePage == UNICODE_CP)
             {
-                if (GetDescription(UNICODE_CP, sDescription))
+                if (GetDescription(UNICODE_CP, description))
                 {
                     wxNoConv* const pConv = new wxNoConv();
                     return pConv;
                 }
                 else
                 {
-                    return NULL;
+                    return nullptr;
                 }
             }
             else
             {
-                wxMBConv_MLang* pConvMLang = new wxMBConv_MLang(nCodePage);
+                wxMBConv_MLang* convMLang = new wxMBConv_MLang(codePage);
 
-                if (pConvMLang->GetDescription(sDescription))
+                if (convMLang->GetDescription(description))
                 {
-                    return pConvMLang;
+                    return convMLang;
                 }
                 else
                 {
-                    wxLogError(_("Unable to get encoding description: %s"), sDescription);
-                    wxDELETE(pConvMLang);
-                    return NULL;
+                    wxLogError(_("Unable to get encoding description: %s"), description);
+                    wxDELETE(convMLang);
+                    return nullptr;
                 }
             }
         }
@@ -70,19 +69,19 @@ namespace
         protected:
 
         wxMBConv_MLang():
-            m_nCodePage(0),
+            m_codePage(0),
             m_minMBCharWidth(0)
         {
         }
 
-        wxMBConv_MLang(wxUint32 nCodePage):
-            m_nCodePage(nCodePage),
+        wxMBConv_MLang(wxUint32 codePage):
+            m_codePage(codePage),
             m_minMBCharWidth(0)
         {
         }
 
         wxMBConv_MLang(const wxMBConv_MLang& conv):
-            m_nCodePage(conv.m_nCodePage),
+            m_codePage(conv.m_codePage),
             m_mlangFromUnicode(conv.m_mlangFromUnicode),
             m_mlangToUnicode(conv.m_mlangToUnicode),
             m_minMBCharWidth(conv.m_minMBCharWidth)
@@ -230,54 +229,59 @@ namespace
             return new wxMBConv_MLang(*this);
         }
 
-        static bool GetDescription(wxUint32 nCodePage, wxString& sDescription)
+        static bool GetDescription(wxUint32 codePage, wxString& description)
         {
-            wxString        sCPDescription;
+            wxString cpDescription;
             wxMultiLanguage mlang;
 
             if (!mlang.IsValid()) return false;
-
-            HRESULT hRes = mlang.GetCodePageDescription(nCodePage, sCPDescription);
+            HRESULT hRes = mlang.GetCodePageDescription(codePage, cpDescription);
 
             if (hRes == S_OK)
             {
-                sDescription.Printf(_("%s [CP:%u]"), sCPDescription, nCodePage);
+                description.Printf(_("%s [CP:%u]"), cpDescription, codePage);
                 return true;
             }
             else
             {
-                sDescription.Printf(_("<ERR:%08x> [CP:%u]"), hRes, nCodePage);
+                description.Printf(_("<ERR:%08x> [CP:%u]"), hRes, codePage);
                 return false;
             }
         }
 
-        bool GetDescription(wxString& sDescription) const
+        bool GetDescription(wxString& description) const
         {
-            return GetDescription(m_nCodePage, sDescription);
+            return GetDescription(m_codePage, description);
         }
 
         protected:
 
         bool NoConversion() const
         {
-            return m_nCodePage == UNICODE_CP;
+            return m_codePage == UNICODE_CP;
         }
 
         const wxMLangConvertCharset& GetFromUnicode()
         {
-            if (!m_mlangFromUnicode.IsValid()) m_mlangFromUnicode.Initialize(UNICODE_CP, m_nCodePage);
+            if (!m_mlangFromUnicode.IsValid())
+            {
+                m_mlangFromUnicode.Initialize(UNICODE_CP, m_codePage);
+            }
             return m_mlangFromUnicode;
         }
 
         const wxMLangConvertCharset& GetToUnicode()
         {
-            if (!m_mlangToUnicode.IsValid()) m_mlangToUnicode.Initialize(m_nCodePage, UNICODE_CP);
+            if (!m_mlangToUnicode.IsValid())
+            {
+                m_mlangToUnicode.Initialize(m_codePage, UNICODE_CP);
+            }
             return m_mlangToUnicode;
         }
 
         protected:
 
-        wxUint32 m_nCodePage;
+        wxUint32 m_codePage;
         wxMLangConvertCharset m_mlangToUnicode;
         wxMLangConvertCharset m_mlangFromUnicode;
 
@@ -292,22 +296,22 @@ namespace
 
         public:
 
-        static wxMBConv_BOM* Create(const wxByte* bom, size_t nLen, wxUint32 nCodePage, bool bUseMLang, wxString& sDescription)
+        static wxMBConv_BOM* Create(const wxByte* bom, size_t len, wxUint32 codePage, bool useMLang, wxString& description)
         {
-            wxMBConv* const pConvStd = wxEncodingDetection::GetStandardMBConv(nCodePage, bUseMLang, sDescription);
-            return new wxMBConv_BOM(bom, nLen, pConvStd);
+            wxMBConv* const pConvStd = wxEncodingDetection::GetStandardMBConv(codePage, useMLang, description);
+            return new wxMBConv_BOM(bom, len, pConvStd);
         }
 
-        static wxMBConv_BOM* Create(const wxByte* bom, size_t nLen, wxUint32 nCodePage, wxString& sDescription)
+        static wxMBConv_BOM* Create(const wxByte* bom, size_t len, wxUint32 codePage, wxString& description)
         {
-            return Create(bom, nLen, nCodePage, true, sDescription);
+            return Create(bom, len, codePage, true, description);
         }
 
         protected:
 
         wxMBConv_BOM(const wxByte* const bom, size_t len, wxMBConv* const conv):
             m_bom(bom, len),
-            m_conv(conv->Clone()),
+            m_conv(conv),
             m_bomConsumed(false)
         {
             wxASSERT(m_conv);
@@ -567,7 +571,7 @@ wxMBConv* wxEncodingDetection::GetFileEncoding(const wxFileName& fn, bool useMLa
 
     pRes = GetFileEncodingFromBOM(fn, useMLang, description);
 
-    if (pRes == nullptr)
+    if (pRes != nullptr)
     {
         return pRes;
     }

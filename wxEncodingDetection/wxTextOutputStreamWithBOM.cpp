@@ -12,20 +12,27 @@ void wxTextOutputStreamWithBOMFactory::WriteBOM(wxOutputStream& s, const wxEncod
     s.Write(bom.data(), bom.length());
 }
 
-class wxTextOutputStreamWithBOM: public wxTextOutputStream
+namespace
 {
-    public:
-
-    wxTextOutputStreamWithBOM(wxOutputStream& s,
-                               wxEOL mode,
-                               bool writeBOM,
-                               const wxMBConv& conv,
-                               const wxTextOutputStreamWithBOMFactory::wxByteBuffer& bom):
-        wxTextOutputStream(s, mode, conv)
+    class wxTextOutputStreamWithBOM: public wxTextOutputStream
     {
-        if (writeBOM) wxTextOutputStreamWithBOMFactory::WriteBOM(s, bom);
-    }
-};
+        public:
+
+        wxTextOutputStreamWithBOM(wxOutputStream& s,
+                                   wxEOL mode,
+                                   bool writeBOM,
+                                   wxMBConv* const conv,
+                                   const wxTextOutputStreamWithBOMFactory::wxByteBuffer& bom):
+            wxTextOutputStream(s, mode, *conv), m_conv(conv)
+        {
+            if (writeBOM) wxTextOutputStreamWithBOMFactory::WriteBOM(s, bom);
+        }
+
+        private:
+
+        wxScopedPtr<wxMBConv> m_conv;
+    };
+}
 
 wxTextOutputStream* wxTextOutputStreamWithBOMFactory::Create(
         wxOutputStream& s,
@@ -39,8 +46,8 @@ wxTextOutputStream* wxTextOutputStreamWithBOMFactory::Create(
     if (wxEncodingDetection::GetBOM(codePage, bom))
     {
         wxString description;
-        wxMBConv* const conv(wxEncodingDetection::GetStandardMBConv(codePage, useMLang, description));
-        return new wxTextOutputStreamWithBOM(s, mode, writeBOM, *conv, bom);
+        wxMBConv* const conv = wxEncodingDetection::GetStandardMBConv(codePage, useMLang, description);
+        return new wxTextOutputStreamWithBOM(s, mode, writeBOM, conv, bom);
     }
 
     return nullptr;
