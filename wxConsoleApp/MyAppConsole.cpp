@@ -176,6 +176,35 @@ void MyAppConsole::OnAssertFailure(
     msgErr->Output("======== <ASSERT> =======");
 }
 
+#if defined( __WXMSW__ )
+namespace
+{
+    HRESULT co_initialize()
+    {
+        return CoInitializeEx(NULL, COINIT_MULTITHREADED | COINIT_DISABLE_OLE1DDE);
+    }
+
+    bool co_initialize_ex()
+    {
+        HRESULT hres = co_initialize();
+        if (hres == S_OK)
+        {
+            return true;
+        }
+        else if (hres == RPC_E_CHANGED_MODE)
+        {
+            OleUninitialize();
+            hres = co_initialize();
+            return hres == S_OK;
+        }
+        else
+        {
+            return false;
+        }
+    }
+}
+#endif
+
 bool MyAppConsole::OnInit()
 {
     SetVendorName(APP_VENDOR_NAME);
@@ -188,8 +217,7 @@ bool MyAppConsole::OnInit()
     }
 
 #if defined( __WXMSW__ )
-    HRESULT hres = CoInitializeEx(NULL, COINIT_MULTITHREADED | COINIT_DISABLE_OLE1DDE);
-    wxASSERT(hres == S_OK);
+    wxCHECK(co_initialize_ex(), false);
 #endif
 
     if (!wxAppConsole::OnInit()) return false;
