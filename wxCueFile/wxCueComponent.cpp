@@ -417,6 +417,13 @@ void wxCueComponent::RemoveCdTextInfoTags(const wxArrayCueTag& cueTags)
     wxCueTag::RemoveTags(m_cdTextTags, cueTags);
 }
 
+void wxCueComponent::RemoveDiscInfoTags()
+{
+    RemoveTag(wxCueTag::Name::DISCNUMBER);
+    RemoveTag(wxCueTag::Name::DISCTOTAL);
+    RemoveTag(wxCueTag::Name::TOTALDISCS);
+}
+
 void wxCueComponent::AddTag(wxCueTag::TAG_SOURCE source, const wxString& keyword, const wxString& body)
 {
     const wxCueTag tag(source, keyword, body);
@@ -485,9 +492,10 @@ void wxCueComponent::GetSynonims(wxTagSynonimsCollection& synonimCollections, bo
             }
             else if (wxStricmp(CdTextFields[i].keyword, wxCueTag::Name::PERFORMER) == 0 && !bTrack)
             {
-                // PERFORMER = ARTIST, ALBUM_ARTIST
+                // PERFORMER = ARTIST, ALBUM_ARTIST, ALBUMARTIST
                 synonims.Clear();
                 synonims.Add(wxCueTag::Name::ARTIST);
+                synonims.Add(wxCueTag::Name::ALBUMARTIST);
                 synonims.Add(wxCueTag::Name::ALBUM_ARTIST);
                 synonimCollections.Add(wxTagSynonims(cdTextFields[i].keyword, synonims));
             }

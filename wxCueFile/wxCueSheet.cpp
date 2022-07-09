@@ -797,12 +797,6 @@ void wxCueSheet::SanitizeTags(
 {
     const size_t nTracks = m_tracks.GetCount();
 
-    MoveCdTextInfoTags(discSynonims);
-    for (size_t i = 0; i < nTracks; ++i)
-    {
-        m_tracks[i].MoveCdTextInfoTags(trackSynonims);
-    }
-
     if (nTracks > 1)
     {
         wxArrayCueTag commonTags;
@@ -840,25 +834,19 @@ void wxCueSheet::SanitizeTags(
         }
     }
 
-    // ALBUM -> TITLE
+    MoveCdTextInfoTags(discSynonims);
+    for (size_t i = 0; i < nTracks; ++i)
     {
-        wxArrayCueTag albumTags;
-        MoveTags(wxCueTag::Name::ALBUM, albumTags);
-        for (size_t i = 0, nCount = albumTags.GetCount(); i < nCount; ++i)
-        {
-            AddCdTextInfoTag(albumTags[i].Rename(wxCueTag::Name::TITLE));
-        }
+        m_tracks[i].MoveCdTextInfoTags(trackSynonims);
     }
 
     if (!includeDiscNumber)
     {
-        RemoveTag(wxCueTag::Name::DISCNUMBER);
-        RemoveTag(wxCueTag::Name::TOTALDISCS);
+        RemoveDiscInfoTags();
 
         for (size_t j = 0; j < nTracks; ++j)
         {
-            m_tracks[j].RemoveTag(wxCueTag::Name::DISCNUMBER);
-            m_tracks[j].RemoveTag(wxCueTag::Name::TOTALDISCS);
+            m_tracks[j].RemoveDiscInfoTags();
         }
     }
 

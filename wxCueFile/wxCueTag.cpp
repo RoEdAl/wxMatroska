@@ -35,6 +35,7 @@ const char wxCueTag::Name::SIZE_INFO[] = "SIZE_INFO";
 const char wxCueTag::Name::TOC_INFO[] = "TOC_INFO";
 const char wxCueTag::Name::TOC_INFO2[] = "TOC_INFO2";
 const char wxCueTag::Name::DISCNUMBER[] = "DISCNUMBER";
+const char wxCueTag::Name::DISCTOTAL[] = "DISCTOTAL";
 const char wxCueTag::Name::TOTALDISCS[] = "TOTALDISCS";
 const char wxCueTag::Name::RELEASECOUNTRY[] = "RELEASECOUNTRY";
 const char wxCueTag::Name::COMMENT[] = "COMMENT";

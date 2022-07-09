@@ -59,6 +59,7 @@ class wxCueTag
         static const char TOC_INFO[];
         static const char TOC_INFO2[];
         static const char DISCNUMBER[];
+        static const char DISCTOTAL[];
         static const char TOTALDISCS[];
         static const char RELEASECOUNTRY[];
         static const char COMMENT[];
