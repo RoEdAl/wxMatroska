@@ -41,8 +41,9 @@ TARGET_LINK_LIBRARIES(cue2mkc PRIVATE ${wxWidgets_LIBRARIES} Shlwapi.lib
 	wxWEBPHandler
 	nlohmann_json::nlohmann_json
 )
+TARGET_COMPILE_OPTIONS(cue2mkc PRIVATE "$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
-add_custom_command( TARGET cue2mkc POST_BUILD 
+ADD_CUSTOM_COMMAND( TARGET cue2mkc POST_BUILD 
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/cmake/dr-scan.cmake $<TARGET_FILE_DIR:cue2mkc>
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/cmake/mkcover.cmake $<TARGET_FILE_DIR:cue2mkc>
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/app.tags.json $<TARGET_FILE_DIR:cue2mkc>/$<TARGET_FILE_BASE_NAME:cue2mkc>.tags.json

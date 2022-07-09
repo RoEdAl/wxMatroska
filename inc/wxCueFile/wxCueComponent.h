@@ -90,6 +90,7 @@ class wxCueComponent
     void RemoveCdTextInfoTag(const wxCueTag&);
     void RemoveCdTextInfoTag(const wxString&);
     void RemoveCdTextInfoTags(const wxArrayCueTag&);
+    void RemoveDiscInfoTags();
 
     void AddTag(wxCueTag::TAG_SOURCE, const wxString&, const wxString&);
     bool AddTag(const wxCueTag&);
