@@ -282,6 +282,7 @@ class wxConfiguration: public MyConfiguration
         static const char RENDERED[];
         static const char CONVERTED[];
         static const char MKA[];
+        static const char AUDIO[];
     };
 
     struct FMT

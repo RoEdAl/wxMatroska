@@ -26,7 +26,7 @@ class wxInputFile
 
     wxInputFile(void);
     wxInputFile(const wxInputFile&);
-    wxInputFile(const wxString&);
+    wxInputFile(const wxString&, bool);
     wxInputFile& operator =(const wxInputFile&);
 
     bool IsOk() const;
@@ -37,6 +37,7 @@ class wxInputFile
 
     wxInputFile& SetInputFile(const wxFileName&);
     wxInputFile& SetDataFiles(const wxArrayFileName&);
+    wxInputFile& SetDataFile(const wxFileName&);
 
     wxString ToString(bool = false) const;
 };

@@ -46,6 +46,7 @@ const char wxConfiguration::TMP::EMBEDDED[] = "mbd";
 const char wxConfiguration::TMP::RENDERED[] = "rnr";
 const char wxConfiguration::TMP::CONVERTED[] = "cnv";
 const char wxConfiguration::TMP::MKA[] = "mka";
+const char wxConfiguration::TMP::AUDIO[] = "auo";
 
 const char wxConfiguration::FMT::MKA_CHAPTER[] = "%dp% - %dt% - %tt%";
 const char wxConfiguration::FMT::MKA_CONTAINER[] = "%dp% - %dt%";
@@ -435,6 +436,7 @@ void wxConfiguration::AddCmdLineParams(wxCmdLineParser& cmdLine) const
     cmdLine.AddOption(wxEmptyString, "ffmpeg-codec", wxString::Format(_("Use specific FFMPEG codec - possible values are: default, pcmle, pcmbe (default: %s)"), ToString(m_eFfmpegCodec)), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
     cmdLine.AddSwitch(wxEmptyString, "mono", wxString::Format(_("Assume input audio as dual mono, use only left channel (default: %s"), BoolToStr(m_bSingleAudioChannel)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
     cmdLine.AddSwitch(wxEmptyString, "mlang", wxString::Format(_("Use MLang library (default: %s)"), BoolToStr(m_bUseMLang)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
+    cmdLine.AddSwitch("ds", "use-data-files-separator", wxString::Format(_("Use data files separator (default: %s)"), BoolToStr(false)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
 
     // input files
     cmdLine.AddParam(_("<cue sheet>"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE | wxCMD_LINE_PARAM_OPTIONAL);
@@ -580,9 +582,12 @@ bool wxConfiguration::Read(const wxCmdLineParser& cmdLine)
 
     if (cmdLine.GetParamCount() > 0)
     {
-        for (size_t i = 0; i < cmdLine.GetParamCount(); ++i)
+        bool useDataFilesSeparator = false;
+        ReadNegatableSwitchValue(cmdLine, "ds", useDataFilesSeparator);
+
+        for (size_t i = 0, cnt = cmdLine.GetParamCount(); i < cnt; ++i)
         {
-            wxInputFile inputFile(cmdLine.GetParam(i));
+            const wxInputFile inputFile(cmdLine.GetParam(i), useDataFilesSeparator);
 
             if (inputFile.IsOk())
             {

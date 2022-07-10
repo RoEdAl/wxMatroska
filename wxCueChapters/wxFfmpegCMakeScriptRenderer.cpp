@@ -138,6 +138,17 @@ namespace
 
         return os;
     }
+
+    wxFileName get_tmp_audio(const wxFileName& workDir, const wxFileName& audioFile, const wxString& tmpStem, size_t audioIdx)
+    {
+        wxFileName tmpAudio(workDir);
+        wxString tmpFileName = tmpStem;
+        tmpFileName << '-' << wxConfiguration::TMP::AUDIO << audioIdx;
+        tmpAudio.SetName(tmpFileName);
+        tmpAudio.SetExt(audioFile.GetExt());
+
+        return tmpAudio;
+    }
 }
 
 void wxFfmpegCMakeScriptRenderer::render_ffmpeg_codec(bool manyDataFiles, const wxSamplingInfo& si, bool includeComments) const
@@ -211,7 +222,7 @@ void wxFfmpegCMakeScriptRenderer::render_ffmpeg_codec(bool manyDataFiles, const 
 void wxFfmpegCMakeScriptRenderer::RenderPre(
     const wxCueSheet& cueSheet,
     const wxFileName& workDir,
-    const wxString& tmpStem) const
+    const wxString& tmpStem)
 {
     wxFileName relDir;
     if (!m_cfg.UseFullPaths())
@@ -226,13 +237,28 @@ void wxFfmpegCMakeScriptRenderer::RenderPre(
     const wxSamplingInfo si = GetSamplingInfo(cueSheet);
     wxASSERT(si.IsOK());
 
+    wxArrayLong tmpAudioIdx;
     const wxArrayDataFile& dataFiles = cueSheet.GetDataFiles();
     for (size_t i = 0, cnt = dataFiles.GetCount(); i < cnt; ++i)
     {
         const wxDataFile& dataFile = dataFiles[i];
         wxASSERT(dataFile.HasRealFileName());
         const wxFileName fn = dataFile.GetRealFileName();
-        WriteSizeT(*m_os << "CMAKE_PATH(SET CUE2MKC_AUDIO_", i) << " \"" << GetCMakePath(GetRelativeFileName(fn, relDir)) << "\")" << endl;
+        if (NeedTemporaryLink(fn, m_cfg.UseFullPaths()))
+        {
+            WriteSizeT(*m_os << "CMAKE_PATH(SET CUE2MKC_AUDIO_", i) << " ${CUE2MKC_STEM}-";
+            WriteSizeT(*m_os << wxConfiguration::TMP::AUDIO, i) << '.' << fn.GetExt() << ')' << endl;
+            WriteSizeT(*m_os << "FILE(CREATE_LINK \"" << GetCMakePath(GetRelativeFileName(fn, relDir)) << "\" ${CUE2MKC_AUDIO_", i) << "} COPY_ON_ERROR)" << endl;
+
+            const wxFileName tmpAudio = get_tmp_audio(workDir, fn, tmpStem, i);
+            m_temporaryFiles.Add(tmpAudio);
+
+            tmpAudioIdx.Add(i);
+        }
+        else
+        {
+            WriteSizeT(*m_os << "CMAKE_PATH(SET CUE2MKC_AUDIO_", i) << " \"" << GetCMakePath(GetRelativeFileName(fn, relDir)) << "\")" << endl;
+        }
     }
 
     if (m_cfg.RunReplayGainScanner())
@@ -288,6 +314,11 @@ void wxFfmpegCMakeScriptRenderer::RenderPre(
     }
     *m_os << ')' << endl;
 
+    for (size_t i = 0, cnt = tmpAudioIdx.GetCount(); i < cnt; ++i)
+    {
+        *m_os << "FILE(REMOVE ${CUE2MKC_AUDIO_" << tmpAudioIdx[i] << "})" << endl;
+    }
+
     if (m_cfg.RunReplayGainScanner())
     {
         wxFileName ffScan(wxStandardPaths::Get().GetExecutablePath());
@@ -329,6 +360,7 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
         outDir = m_cfg.GetOutputDir(inputFile);
     }
 
+    wxArrayLong tmpAudioIdx;
     if (fnTmpMka.IsOk())
     {
         // single temporary audio track
@@ -343,7 +375,22 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
             const wxDataFile& dataFile = dataFiles[i];
             wxASSERT(dataFile.HasRealFileName());
             const wxFileName fn = dataFile.GetRealFileName();
-            WriteSizeT(*m_os << "CMAKE_PATH(SET CUE2MKC_AUDIO_", i) << " \"" << GetCMakePath(GetRelativeFileName(fn, outDir)) << "\")" << endl;
+
+            if (NeedTemporaryLink(fn, m_cfg.UseFullPaths()))
+            {
+                WriteSizeT(*m_os << "CMAKE_PATH(SET CUE2MKC_AUDIO_", i) << " ${CUE2MKC_STEM}-";
+                WriteSizeT(*m_os << wxConfiguration::TMP::AUDIO, i) << '.' << fn.GetExt() << ')' << endl;
+                WriteSizeT(*m_os << "FILE(CREATE_LINK \"" << GetCMakePath(GetRelativeFileName(fn, outDir)) << "\" ${CUE2MKC_AUDIO_", i) << "} COPY_ON_ERROR)" << endl;
+
+                const wxFileName tmpAudio = get_tmp_audio(outputDir, fn, tmpStem, i);
+                m_temporaryFiles.Add(tmpAudio);
+
+                tmpAudioIdx.Add(i);
+            }
+            else
+            {
+                WriteSizeT(*m_os << "CMAKE_PATH(SET CUE2MKC_AUDIO_", i) << " \"" << GetCMakePath(GetRelativeFileName(fn, outDir)) << "\")" << endl;
+            }
         }
     }
 
@@ -573,6 +620,10 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
         *m_os << "    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}" << endl;
     }
     *m_os << ')' << endl << endl;
+    for (size_t i = 0, cnt = tmpAudioIdx.GetCount(); i < cnt; ++i)
+    {
+        *m_os << "FILE(REMOVE ${CUE2MKC_AUDIO_" << tmpAudioIdx[i] << "})" << endl;
+    }
     *m_os << "MESSAGE(STATUS \"Replacing MKA container\")" << endl;
     *m_os << "FILE(RENAME ${TMP_MKA_FNAME} ${MKA_FNAME})" << endl;
 }

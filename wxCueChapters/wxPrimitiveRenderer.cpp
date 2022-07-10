@@ -923,3 +923,9 @@ wxSamplingInfo wxPrimitiveRenderer::GetSamplingInfo(const wxCueSheet& cueSheet) 
     }
     return si;
 }
+
+bool wxPrimitiveRenderer::NeedTemporaryLink(const wxFileName& fn, bool fullPath)
+{
+    const wxString s = fullPath ? fn.GetFullPath() : fn.GetName();
+    return s.Find(';') >= 0;
+}

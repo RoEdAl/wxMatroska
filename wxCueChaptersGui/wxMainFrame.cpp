@@ -1803,6 +1803,19 @@ void wxMainFrame::OnUpdateMsgCtrls(wxUpdateUIEvent& event)
     event.Enable(!m_pProcess && (m_listBoxMessages->GetCount() > 0));
 }
 
+namespace
+{
+    bool tree_ctrl_with_data_files(const wxTreeCtrl& treeCtrl, const wxTreeItemId& rootId)
+    {
+        wxTreeItemIdValue cookie;
+        for (wxTreeItemId i = treeCtrl.GetFirstChild(rootId, cookie); i.IsOk(); i = treeCtrl.GetNextChild(i, cookie))
+        {
+            if (treeCtrl.HasChildren(i)) return true;
+        }
+        return false;
+    }
+}
+
 bool wxMainFrame::read_options(wxArrayString& options) const
 {
     negatable_switch_option(options, m_checkBoxAbortOnErrors, 'a');
@@ -2059,6 +2072,11 @@ bool wxMainFrame::read_options(wxArrayString& options) const
         return false;
     }
 
+    if (tree_ctrl_with_data_files(*m_treeCtrlInputFiles, m_treeCtrlInputFilesRoot))
+    {
+        options.Add("-ds");
+    }
+
     wxTreeItemIdValue cookie;
 
     for (wxTreeItemId i = m_treeCtrlInputFiles->GetFirstChild(m_treeCtrlInputFilesRoot, cookie); i.IsOk(); i = m_treeCtrlInputFiles->GetNextChild(i, cookie))
@@ -2162,19 +2180,21 @@ void wxMainFrame::OnButtonAdd(wxCommandEvent& WXUNUSED(event))
     if (openFileDialog.ShowModal() != wxID_OK) return;
 
     wxFileName fileName;
-
     fileName.AssignDir(openFileDialog.GetDirectory());
 
     wxArrayString fileNames;
-
     openFileDialog.GetFilenames(fileNames);
-    for (wxArrayString::const_iterator i = fileNames.begin(); i != fileNames.end(); ++i)
-    {
-        fileName.SetFullName(*i);
-        AddMainItem(fileName.GetFullPath());
-    }
 
-    SuggestCommonDirPath();
+    {
+        wxWindowUpdateLocker locker(m_notebook);
+        for (wxArrayString::const_iterator i = fileNames.begin(); i != fileNames.end(); ++i)
+        {
+            fileName.SetFullName(*i);
+            AddMainItem(fileName.GetFullPath());
+        }
+
+        SuggestCommonDirPath();
+    }
 }
 
 void wxMainFrame::OnSuggestJoinMode(wxCommandEvent& event)
