@@ -96,7 +96,7 @@ void wxMyApp::InfoTools(wxMessageOutput& out)
 
 void wxMyApp::InfoAsciiToUnicode(wxMessageOutput& out)
 {
-    wxAsciiToUnicode::ShowReplTable(out);
+    wxAsciiToUnicode::ShowCharacters(out);
 }
 
 void wxMyApp::InfoFormatDescription(wxMessageOutput& out)
