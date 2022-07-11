@@ -8,15 +8,29 @@ namespace
 {
     constexpr char REG_EX[] = "\\b(?=\\d)(\\d{1,2}\\.\\p{Xps}+)";
 
-    bool get_num(const wxString& num, unsigned int& n)
+    std::optional<WXUINT> get_num(const wxString& num)
     {
         const int pos = num.First('.');
+        wxASSERT(pos > 0);
 
-        if (!num.Left(pos).ToUInt(&n)) return false;
+        WXUINT n;
+        if (!num.Left(pos).ToUInt(&n)) return std::nullopt;
+        if (n > 20) return std::nullopt;
+        return n;
+    }
 
-        if (n < 1 || n > 20) return false;
-
-        return true;
+    std::optional<wxUniChar> get_uchar(const wxString& num)
+    {
+        const std::optional<WXUINT> n = get_num(num);
+        if (!n.has_value()) return std::nullopt;
+        if (n.value() == 0u)
+        {
+            return 0x1F100; // DIGIT ZERO FULL STOP
+        }
+        else
+        {
+            return 0x2487 + n.value(); // DIGIT [ONE to TWENTY] FULL STOP
+        }
     }
 };
 
@@ -52,12 +66,10 @@ bool wxNumberFullStopCorrector::Process(const wxString& in, wxString& out) const
         out += w.Mid(0, idx);
 
         const wxString num = w.Mid(idx, len);
-        unsigned int   n;
-
-        if (get_num(num, n))
+        const std::optional<wxUniChar> c = get_uchar(num);
+        if (c.has_value())
         {
-            const wxUniChar c(0x2487 + n);
-            out += c;
+            out += c.value();
             out += thinSpace;
             replaced = true;
         }
