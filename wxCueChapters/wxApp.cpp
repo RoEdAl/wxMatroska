@@ -11,6 +11,8 @@
 #include <wxCueFile/wxCueSheetRenderer.h>
 #include <wxCueFile/wxTextCueSheetRenderer.h>
 #include <wxCueFile/wxAsciiToUnicode.h>
+#include <wxCueFile/wxNumberFullStopCorrector.h>
+#include <wxCueFile/wxSmallLetterParenthesizedCorrector.h>
 #include "wxConfiguration.h"
 #include "wxTemporaryFilesProvider.h"
 #include "wxPrimitiveRenderer.h"
@@ -96,7 +98,14 @@ void wxMyApp::InfoTools(wxMessageOutput& out)
 
 void wxMyApp::InfoAsciiToUnicode(wxMessageOutput& out)
 {
+    out.Output("ASCII to Unicode:");
     wxAsciiToUnicode::ShowCharacters(out);
+
+    out.Output("Full stop:");
+    wxNumberFullStopCorrector::ShowCharacters(out);
+
+    out.Output("Parenthesized small letters:");
+    wxSmallLetterParenthesizedCorrector::ShowCharacters(out);
 }
 
 void wxMyApp::InfoFormatDescription(wxMessageOutput& out)

@@ -9,8 +9,8 @@
 #include <wxCueFile/wxUnquoter.h>
 #include "wxRomanNumeralsConv.h"
 #include "wxDashesCorrector.h"
-#include "wxNumberFullStopCorrector.h"
-#include "wxSmallLetterParenthesizedCorrector.h"
+#include <wxCueFile/wxNumberFullStopCorrector.h>
+#include <wxCueFile/wxSmallLetterParenthesizedCorrector.h>
 #include <wxCueFile/wxAsciiToUnicode.h>
 
 wxStringCorrector::Configurator::Configurator()

@@ -6,7 +6,7 @@
 #define _WX_NUMBER_FULL_STOP_CORRECTOR_H_
 
 #ifndef _WX_STRING_PROCESSOR_H_
-#include <wxCueFile/wxStringProcessor.h>
+#include "wxStringProcessor.h"
 #endif
 
 class wxNumberFullStopCorrector: public wxStringProcessor
@@ -15,6 +15,7 @@ class wxNumberFullStopCorrector: public wxStringProcessor
 
     public:
 
+    static void ShowCharacters(wxMessageOutput&);
     wxNumberFullStopCorrector(void);
 
     virtual wxStringProcessor* const Clone() const wxOVERRIDE;

@@ -2,11 +2,32 @@
  * wxSmallLetterParenthesizedCorrector.cpp
  */
 
-#include "wxSmallLetterParenthesizedCorrector.h"
+#include <wxCueFile/wxSmallLetterParenthesizedCorrector.h>
 
 namespace
 {
     constexpr char REG_EX[] = "\\([a-z]\\)";
+
+    wxString get_parenthesized_char(char c)
+    {
+        wxString res = c;
+        return res.Prepend('(').Append(')');
+    }
+
+    void show_character(wxMessageOutput& out, char c, int uniChar)
+    {
+        const wxUniChar uc(uniChar);
+        const wxString us = uc;
+        const wxString str = get_parenthesized_char(c);
+        if (uniChar <= 0xFFFF)
+        {
+            out.Printf(_("\t%-10s%s\tU+%04X"), str, us, uniChar);
+        }
+        else
+        {
+            out.Printf(_("\t%-10s%s\tU+%X"), str, us, uniChar);
+        }
+    }
 }
 
 wxSmallLetterParenthesizedCorrector::wxSmallLetterParenthesizedCorrector():
@@ -18,6 +39,14 @@ wxSmallLetterParenthesizedCorrector::wxSmallLetterParenthesizedCorrector():
 wxStringProcessor* const wxSmallLetterParenthesizedCorrector::Clone() const
 {
     return new wxSmallLetterParenthesizedCorrector();
+}
+
+void wxSmallLetterParenthesizedCorrector::ShowCharacters(wxMessageOutput& out)
+{
+    for (char i = 'a'; i <= 'z'; ++i)
+    {
+        show_character(out, i, 0x249C + (i - 'a'));
+    }
 }
 
 bool wxSmallLetterParenthesizedCorrector::Process(const wxString& in, wxString& out) const

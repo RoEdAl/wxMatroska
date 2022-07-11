@@ -2,7 +2,7 @@
  * wxReduntantSpacesRemover.cpp
  */
 
-#include "wxNumberFullStopCorrector.h"
+#include <wxCueFile/wxNumberFullStopCorrector.h>
 
 namespace
 {
@@ -32,6 +32,21 @@ namespace
             return 0x2487 + n.value(); // DIGIT [ONE to TWENTY] FULL STOP
         }
     }
+
+    void show_character(wxMessageOutput& out, int n, int uniChar)
+    {
+        const wxUniChar c(uniChar);
+        const wxString us = c;
+        const wxString str = wxString::Format("%d.", n);
+        if (uniChar <= 0xFFFF)
+        {
+            out.Printf(_("\t%-10s%s\tU+%04X"), str, us, uniChar);
+        }
+        else
+        {
+            out.Printf(_("\t%-10s%s\tU+%X"), str, us, uniChar);
+        }
+    }
 };
 
 wxNumberFullStopCorrector::wxNumberFullStopCorrector():
@@ -43,6 +58,15 @@ wxNumberFullStopCorrector::wxNumberFullStopCorrector():
 wxStringProcessor* const wxNumberFullStopCorrector::Clone() const
 {
     return new wxNumberFullStopCorrector();
+}
+
+void wxNumberFullStopCorrector::ShowCharacters(wxMessageOutput& out)
+{
+    show_character(out, 0, 0x1F100);
+    for (int i = 0x2488; i <= 0x249B; ++i)
+    {
+        show_character(out, i-0x2487, i);
+    }
 }
 
 bool wxNumberFullStopCorrector::Process(const wxString& in, wxString& out) const

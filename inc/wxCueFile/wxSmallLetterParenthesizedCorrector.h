@@ -6,7 +6,7 @@
 #define _WX_SMALL_LETTER_PARTENTHESIZED_H_
 
 #ifndef _WX_STRING_PROCESSOR_H_
-#include <wxCueFile/wxStringProcessor.h>
+#include "wxStringProcessor.h"
 #endif
 
 class wxSmallLetterParenthesizedCorrector: public wxStringProcessor
@@ -14,6 +14,8 @@ class wxSmallLetterParenthesizedCorrector: public wxStringProcessor
     wxDECLARE_NO_COPY_CLASS(wxSmallLetterParenthesizedCorrector);
 
     public:
+
+    static void ShowCharacters(wxMessageOutput&);
 
     wxSmallLetterParenthesizedCorrector(void);
 
