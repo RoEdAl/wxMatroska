@@ -10,7 +10,7 @@ SET(CUECHAPTERS_GUI_SOURCE_FILES
 	LogListBox.cpp
 )
 
-ADD_EXECUTABLE(cue2mkc-frontend WIN32
+ADD_EXECUTABLE(wxCueChaptersGui WIN32
 	${CUECHAPTERS_GUI_SOURCE_FILES}
 	${CUECHAPTERS_GUI_HEADER_FILES}
 	wxCueChaptersGui.rc
@@ -18,8 +18,17 @@ ADD_EXECUTABLE(cue2mkc-frontend WIN32
 	${PROJECT_CONFIG_FILE}
 )
 
-TARGET_PRECOMPILE_HEADERS(cue2mkc-frontend PRIVATE StdWx.h)
-TARGET_INCLUDE_DIRECTORIES(cue2mkc-frontend PRIVATE ${WXMATROSKA_INCLUDE_DIR})
-TARGET_COMPILE_OPTIONS(cue2mkc-frontend PRIVATE "$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
-TARGET_LINK_LIBRARIES(cue2mkc-frontend ${wxWidgets_LIBRARIES} wxEncodingDetection wxCmdTools)
-SET_PROPERTY(TARGET cue2mkc-frontend PROPERTY FOLDER "gui")
+TARGET_PRECOMPILE_HEADERS(wxCueChaptersGui PRIVATE StdWx.h)
+TARGET_INCLUDE_DIRECTORIES(wxCueChaptersGui PRIVATE ${WXMATROSKA_INCLUDE_DIR})
+TARGET_COMPILE_OPTIONS(wxCueChaptersGui PRIVATE 
+	"$<$<CXX_COMPILER_ID:MSVC>:/utf-8>"
+	"$<$<CXX_COMPILER_ID:GNU>:-finput-charset=UTF-8>"
+	"$<$<CXX_COMPILER_ID:GNU>:-ffile-prefix-map=${WXMATROSKA_BASE_DIR}=.>"
+	"$<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>"
+	"$<$<CXX_COMPILER_ID:GNU>:-fvisibility-inlines-hidden>"
+)
+#TARGET_LINK_OPTIONS(wxCueChaptersGui PRIVATE "$<$<CXX_COMPILER_ID:GNU>:-municode>")
+TARGET_LINK_LIBRARIES(wxCueChaptersGui wxCmdTools wxEncodingDetection ${wxWidgets_LIBRARIES})
+SET_PROPERTY(TARGET wxCueChaptersGui PROPERTY FOLDER "gui")
+
+ADD_EXECUTABLE(cue2mkc-frontend ALIAS wxCueChaptersGui)

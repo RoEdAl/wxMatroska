@@ -7,7 +7,7 @@ class wxMBConvUnaccent: public wxMBConv
     private:
 
     static const long US_ASCII = 20127;
-    static const char REPL = ' ';
+    static const char REPL ;
     size_t m_minMBCharWidth;
 
     public:
@@ -106,4 +106,6 @@ class wxMBConvUnaccent: public wxMBConv
 
     virtual wxMBConv* Clone() const wxOVERRIDE { return new wxMBConvUnaccent(*this); }
 };
+
+const char wxMBConvUnaccent::REPL = ' ';
 

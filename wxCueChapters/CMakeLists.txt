@@ -22,7 +22,7 @@ set(CUECHAPTERS_SOURCE_FILES
 	cmake/mkcover.cmake
 )
 
-ADD_EXECUTABLE(cue2mkc
+ADD_EXECUTABLE(wxCueChapters
 	${CUECHAPTERS_SOURCE_FILES}
 	${CUECHAPTERS_HEADER_FILES}
 	wxCueChapters.rc
@@ -30,9 +30,9 @@ ADD_EXECUTABLE(cue2mkc
 	${CUECHAPTERS_PUBLIC_HEADER_FILES}
 )
 
-TARGET_PRECOMPILE_HEADERS(cue2mkc PRIVATE StdWx.h)
-TARGET_INCLUDE_DIRECTORIES(cue2mkc PRIVATE ${WXMATROSKA_INCLUDE_DIR})
-TARGET_LINK_LIBRARIES(cue2mkc PRIVATE ${wxWidgets_LIBRARIES} Shlwapi.lib
+TARGET_PRECOMPILE_HEADERS(wxCueChapters PRIVATE StdWx.h)
+TARGET_INCLUDE_DIRECTORIES(wxCueChapters PRIVATE ${WXMATROSKA_INCLUDE_DIR})
+TARGET_LINK_LIBRARIES(wxCueChapters PRIVATE
 	wxConsoleApp
 	wxEncodingDetection
 	wxCmdTools
@@ -40,13 +40,24 @@ TARGET_LINK_LIBRARIES(cue2mkc PRIVATE ${wxWidgets_LIBRARIES} Shlwapi.lib
 	TagLib
 	wxWEBPHandler
 	nlohmann_json::nlohmann_json
+	${wxWidgets_LIBRARIES}
 )
-TARGET_COMPILE_OPTIONS(cue2mkc PRIVATE "$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
+TARGET_COMPILE_OPTIONS(wxCueChapters PRIVATE
+	"$<$<CXX_COMPILER_ID:MSVC>:/utf-8>"
+	"$<$<CXX_COMPILER_ID:GNU>:-finput-charset=UTF-8>"
+	"$<$<CXX_COMPILER_ID:GNU>:-ffile-prefix-map=${WXMATROSKA_BASE_DIR}=.>"
+	"$<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>"
+	"$<$<CXX_COMPILER_ID:GNU>:-fvisibility-inlines-hidden>"
+)
+#TARGET_LINK_OPTIONS(wxCueChapters PRIVATE "$<$<CXX_COMPILER_ID:GNU>:-municode>")
 
-ADD_CUSTOM_COMMAND( TARGET cue2mkc POST_BUILD 
+ADD_CUSTOM_COMMAND( TARGET wxCueChapters POST_BUILD 
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/cmake/dr-scan.cmake $<TARGET_FILE_DIR:cue2mkc>
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/cmake/mkcover.cmake $<TARGET_FILE_DIR:cue2mkc>
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/app.tags.json $<TARGET_FILE_DIR:cue2mkc>/$<TARGET_FILE_BASE_NAME:cue2mkc>.tags.json
 )
 
-SET_PROPERTY(TARGET cue2mkc PROPERTY FOLDER "cli")
+SET_PROPERTY(TARGET wxCueChapters PROPERTY FOLDER "cli")
+
+ADD_EXECUTABLE(cue2mkc ALIAS wxCueChapters)
+

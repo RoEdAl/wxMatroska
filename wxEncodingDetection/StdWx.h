@@ -10,10 +10,12 @@
 #include <wx/wx.h>
 #include <wx/defs.h>
 #include <wx/log.h>
+#include <wx/stream.h>
 #include <wx/wfstream.h>
 #include <wx/txtstrm.h>
 #include <wx/mstream.h>
 #include <wx/filename.h>
+#include <wx/utils.h>
 
 #include <mlang.h>
 #include <shlwapi.h>

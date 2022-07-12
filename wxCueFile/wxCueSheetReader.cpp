@@ -281,7 +281,7 @@ wxCueSheetReader& wxCueSheetReader::SetErrorsAsWarnings(bool errorsAsWarnings)
 
 wxCueSheetReader& wxCueSheetReader::CorrectQuotationMarks(bool correctQuotationMarks, const wxString& lang)
 {
-    m_quoteCorrector.SetLang(correctQuotationMarks ? lang : wxEmptyString);
+    m_quoteCorrector.SetLang(correctQuotationMarks ? lang : wxString(wxEmptyString));
     return *this;
 }
 

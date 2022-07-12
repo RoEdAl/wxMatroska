@@ -237,7 +237,7 @@ void wxFfmpegCMakeScriptRenderer::RenderPre(
     const wxSamplingInfo si = GetSamplingInfo(cueSheet);
     wxASSERT(si.IsOK());
 
-    wxArrayLong tmpAudioIdx;
+    wxVector<size_t> tmpAudioIdx;
     const wxArrayDataFile& dataFiles = cueSheet.GetDataFiles();
     for (size_t i = 0, cnt = dataFiles.GetCount(); i < cnt; ++i)
     {
@@ -253,7 +253,7 @@ void wxFfmpegCMakeScriptRenderer::RenderPre(
             const wxFileName tmpAudio = get_tmp_audio(workDir, fn, tmpStem, i);
             m_temporaryFiles.Add(tmpAudio);
 
-            tmpAudioIdx.Add(i);
+            tmpAudioIdx.push_back(i);
         }
         else
         {
@@ -314,9 +314,9 @@ void wxFfmpegCMakeScriptRenderer::RenderPre(
     }
     *m_os << ')' << endl;
 
-    for (size_t i = 0, cnt = tmpAudioIdx.GetCount(); i < cnt; ++i)
+    for (wxVector<size_t>::const_iterator i=tmpAudioIdx.begin(), end = tmpAudioIdx.end(); i != end; ++i)
     {
-        *m_os << "FILE(REMOVE ${CUE2MKC_AUDIO_" << tmpAudioIdx[i] << "})" << endl;
+        WriteSizeT(*m_os << "FILE(REMOVE ${CUE2MKC_AUDIO_", *i) << "})" << endl;
     }
 
     if (m_cfg.RunReplayGainScanner())
@@ -360,7 +360,7 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
         outDir = m_cfg.GetOutputDir(inputFile);
     }
 
-    wxArrayLong tmpAudioIdx;
+    wxVector<size_t> tmpAudioIdx;
     if (fnTmpMka.IsOk())
     {
         // single temporary audio track
@@ -385,7 +385,7 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
                 const wxFileName tmpAudio = get_tmp_audio(outputDir, fn, tmpStem, i);
                 m_temporaryFiles.Add(tmpAudio);
 
-                tmpAudioIdx.Add(i);
+                tmpAudioIdx.push_back(i);
             }
             else
             {
@@ -620,9 +620,9 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
         *m_os << "    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}" << endl;
     }
     *m_os << ')' << endl << endl;
-    for (size_t i = 0, cnt = tmpAudioIdx.GetCount(); i < cnt; ++i)
+    for (wxVector<size_t>::const_iterator i = tmpAudioIdx.begin(), end = tmpAudioIdx.end(); i != end; ++i)
     {
-        *m_os << "FILE(REMOVE ${CUE2MKC_AUDIO_" << tmpAudioIdx[i] << "})" << endl;
+        WriteSizeT(*m_os << "FILE(REMOVE ${CUE2MKC_AUDIO_", *i) << "})" << endl;
     }
     *m_os << "MESSAGE(STATUS \"Replacing MKA container\")" << endl;
     *m_os << "FILE(RENAME ${TMP_MKA_FNAME} ${MKA_FNAME})" << endl;

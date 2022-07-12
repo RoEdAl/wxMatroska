@@ -27,7 +27,7 @@ class wxTemporaryFilesCleaner;
 
 #ifndef _WX_XML_CUE_SHEET_RENDERER_H_
 class wxXmlCueSheetRenderer;
-#endif;
+#endif
 
 #ifndef _WX_MKVMERGE_OPTS_RENDERER_H_
 class wxMkvmergeOptsRenderer;

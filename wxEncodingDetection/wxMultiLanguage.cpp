@@ -118,3 +118,7 @@ bool wxMultiLanguage::GetDefaultCodePage(wxUint32& codePage)
         return false;
     }
 }
+
+#ifdef __MINGW32__
+EXTERN_C const IID IID_IMultiLanguage2 = {0xDCCFC164, 0x2B38, 0x11d2, {0xB7, 0xEC, 0x00, 0xC0, 0x4F, 0x8F, 0x5D, 0x9A}};
+#endif

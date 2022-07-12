@@ -16,7 +16,7 @@ namespace
 {
     const size_t MAX_LICENSE_FILE_SIZE = 4 * 1024;
 
-#if defined( __WXMSW__ ) && defined( __VISUALC__ ) && defined( UNICODE )
+#if defined(__WXMSW__) && defined(UNICODE)
     bool str_2_translation_mode(const wxString& outputCharset, int& res)
     {
         if (outputCharset.CmpNoCase("utf8") == 0 || outputCharset.CmpNoCase("utf-8") == 0)
@@ -45,7 +45,10 @@ namespace
 // ================================================================================
 
 MyAppConsole::MyAppConsole(void):
-    m_sSeparator('=', 75),m_translationMode(_O_WTEXT)
+    m_sSeparator('=', 75)
+#if defined(__WXMSW__) && defined(UNICODE)
+    ,m_translationMode(_O_WTEXT)
+#endif
 {
 }
 
@@ -70,7 +73,7 @@ void MyAppConsole::OnInitCmdLine(wxCmdLineParser& parser)
 
     parser.AddLongSwitch("log-timestamps", _("Show/hide log timestamps"), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE | wxCMD_LINE_HIDDEN);
 
-#if defined( __WXMSW__ ) && defined( __VISUALC__ ) && defined( UNICODE )
+#if defined(__WXMSW__) && defined(UNICODE)
     parser.AddLongOption("output-charset",
                          _("Sets the character set to which strings are converted that are to be output (default: system's current locale) [utf8, utf16, text]"),
                          wxCMD_LINE_VAL_STRING,
@@ -78,7 +81,7 @@ void MyAppConsole::OnInitCmdLine(wxCmdLineParser& parser)
 #endif
 }
 
-#if defined( __WXMSW__ ) && defined( __VISUALC__ ) && defined( UNICODE )
+#if defined(__WXMSW__) && defined(UNICODE)
 bool MyAppConsole::OnCmdLineHelp(wxCmdLineParser& parser)
 {
     const bool res = ProcessOutputCharset(parser);
@@ -111,7 +114,7 @@ bool MyAppConsole::ProcessOutputCharset(wxCmdLineParser& parser)
 
 bool MyAppConsole::OnCmdLineParsed(wxCmdLineParser& parser)
 {
-#if defined( __WXMSW__ ) && defined( __VISUALC__ ) && defined( UNICODE )
+#if defined(__WXMSW__) && defined(UNICODE)
     if (!ProcessOutputCharset(parser))
     {
         return false;
@@ -143,7 +146,7 @@ bool MyAppConsole::OnCmdLineParsed(wxCmdLineParser& parser)
     return wxAppConsole::OnCmdLineParsed(parser);
 }
 
-#if defined( __WXMSW__ ) && defined( __VISUALC__ ) && defined( UNICODE )
+#if defined(__WXMSW__) && defined(UNICODE)
 int MyAppConsole::GetTranslationMode() const
 {
     return m_translationMode;
@@ -176,7 +179,7 @@ void MyAppConsole::OnAssertFailure(
     msgErr->Output("======== <ASSERT> =======");
 }
 
-#if defined( __WXMSW__ )
+#if defined(__WXMSW__)
 namespace
 {
     HRESULT co_initialize()
@@ -216,7 +219,7 @@ bool MyAppConsole::OnInit()
         return false;
     }
 
-#if defined( __WXMSW__ )
+#if defined(__WXMSW__)
     wxCHECK(co_initialize_ex(), false);
 #endif
 

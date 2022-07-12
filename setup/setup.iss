@@ -43,8 +43,12 @@ Name: gui; Description: {cm:desc_component_gui}; Types: full custom;
 Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked;
 
 [Files]
-Source: {#Cue2MkcExe}; DestDir: {app}; Flags: comparetimestamp; Components: cli; 
-Source: {#Cue2MkcGuiExe}; DestDir: {app}; Flags: comparetimestamp; Components: gui; 
+Source: {#Cue2MkcExe}; DestDir: {app}; DestName: {#Cue2MkcBase}.exe; Flags: comparetimestamp; Components: cli; 
+Source: {#Cue2MkcGuiExe}; DestDir: {app}; DestName: {#Cue2MkcBase}-frontend.exe; Flags: comparetimestamp; Components: gui;
+#ifdef MinGWBase
+Source: {#MinGWBase}\x86_64-w64-mingw32\lib\libstdc++-6.dll; DestDir: {app}; Flags: comparetimestamp; Components: cli gui; Attribs: notcontentindexed;
+Source: {#MinGWBase}\x86_64-w64-mingw32\lib\libgcc_s_seh-1.dll; DestDir: {app}; Flags: comparetimestamp; Components: cli gui; Attribs: notcontentindexed;
+#endif
 Source: {#WXWidgetsLibDir}\wxbase{#WXVerCompact}u{#WXDebug}_{#WXDllSuffix}; DestDir: {app}; Flags: comparetimestamp; Components: cli gui; Attribs: notcontentindexed;
 Source: {#WXWidgetsLibDir}\wxbase{#WXVerCompact}u{#WXDebug}_xml_{#WXDllSuffix}; DestDir: {app}; Flags: comparetimestamp; Components: cli; Attribs: notcontentindexed;
 Source: {#WXWidgetsLibDir}\wxmsw{#WXVerCompact}u{#WXDebug}_core_{#WXDllSuffix}; DestDir: {app}; Flags: comparetimestamp; Components: cli gui; Attribs: notcontentindexed;
@@ -55,15 +59,15 @@ Source: ..\wxCueChapters\cmake\mkcover.cmake; DestDir: {app}; Flags: comparetime
 Source: ..\wxCueChapters\app.tags.json; DestDir: {app}; DestName: {#Cue2MkcBase}.tags.json; Flags: comparetimestamp setntfscompression overwritereadonly uninsremovereadonly; Components: cli; Attribs: readonly notcontentindexed;
 
 [Icons]
-Name: {group}\{cm:cue2mkc} {cm:gui}; Filename: {app}\cue2mkc-frontend.exe; IconFilename: {app}\cue2mkc-frontend.exe; Comment: {cm:gui_comment}; Components: gui; 
+Name: {group}\{cm:cue2mkc} {cm:gui}; Filename: {app}\{#Cue2MkcBase}-frontend.exe; IconFilename: {app}\cue2mkc-frontend.exe; Comment: {cm:gui_comment}; Components: gui; 
 Name: {group}\{cm:cue2mkc} {cm:console}; Filename: {cmd}; Parameters: "/T:3F /F:ON /V:ON /K SET PATH={app};!PATH!"; WorkingDir: {userdocs}; Components: cli; 
 Name: {group}\{cm:license}; Filename: {app}\license.txt;
 Name: {group}\{cm:UninstallProgram,{cm:cue2mkc}}; Filename: {uninstallexe}
-Name: {autodesktop}\{cm:cue2mkc} {cm:gui}; Filename: {app}\cue2mkc-frontend.exe; WorkingDir: {app}; Tasks: desktopicon; Flags: createonlyiffileexists; Comment: {cm:gui_comment}; Components: gui;
+Name: {autodesktop}\{cm:cue2mkc} {cm:gui}; Filename: {app}\{#Cue2MkcBase}-frontend.exe; WorkingDir: {app}; Tasks: desktopicon; Flags: createonlyiffileexists; Comment: {cm:gui_comment}; Components: gui;
 Name: {autodesktop}\{cm:cue2mkc} {cm:console}; Filename: {cmd}; Parameters: "/T:3F /F:ON /V:ON /K SET PATH={app};!PATH!"; WorkingDir: {userdocs}; Tasks: desktopicon; Components: cli;
 
 [Run]
-Components: gui; Filename: {app}\cue2mkc-frontend.exe; Flags: PostInstall RunAsOriginalUser NoWait; Description: {cm:gui_run}; 
+Components: gui; Filename: {app}\{#Cue2MkcBase}-frontend.exe; Flags: PostInstall RunAsOriginalUser NoWait; Description: {cm:gui_run}; 
 
 [Registry]
 ; http://docs.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation

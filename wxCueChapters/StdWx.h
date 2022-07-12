@@ -27,6 +27,7 @@
 #include <wx/dir.h>
 #include <wx/stdpaths.h>
 #include <wx/tokenzr.h>
+#include <wx/vector.h>
 
 #ifndef NDEBUG
 #include <taglib/tdebuglistener.h>

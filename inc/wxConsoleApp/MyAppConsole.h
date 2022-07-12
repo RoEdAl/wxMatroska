@@ -11,7 +11,7 @@ class MyAppConsole:
     public:
 
     MyAppConsole(void);
-#if defined( __WXMSW__ ) && defined( __VISUALC__ ) && defined( UNICODE )
+#if defined(__WXMSW__) && defined(UNICODE)
     int GetTranslationMode() const;
 #endif
 
@@ -30,7 +30,7 @@ class MyAppConsole:
     virtual bool OnInit();
     virtual wxAppTraits* CreateTraits();
     virtual void OnInitCmdLine(wxCmdLineParser& parser);
-#if defined( __WXMSW__ ) && defined( __VISUALC__ ) && defined( UNICODE )
+#if defined(__WXMSW__) && defined(UNICODE)
     virtual bool OnCmdLineHelp(wxCmdLineParser& parser);
 #endif
     virtual bool OnCmdLineParsed(wxCmdLineParser&);
@@ -42,18 +42,16 @@ class MyAppConsole:
 
     private:
 
-#if defined( __WXMSW__ ) && defined( __VISUALC__ ) && defined( UNICODE )
+#if defined(__WXMSW__) && defined(UNICODE)
     bool ProcessOutputCharset(wxCmdLineParser&);
 #endif
 
     protected:
 
     wxString m_sSeparator;
-#if defined( __WXMSW__ ) && defined( __VISUALC__ ) && defined( UNICODE )
+#if defined(__WXMSW__) && defined(UNICODE)
     int m_translationMode;
 #endif
-
 };
 
 #endif
-
