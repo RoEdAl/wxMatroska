@@ -9,31 +9,11 @@ SET(CMAKE_C_STANDARD_REQUIRED ON)
 SET(CMAKE_CXX_STANDARD 17)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-FUNCTION(ConfigureTargetSourceEncoding TargetName)
-	TARGET_COMPILE_OPTIONS(${TargetName} PRIVATE
-		"$<$<CXX_COMPILER_ID:MSVC>:/utf-8>"
-		"$<$<CXX_COMPILER_ID:GNU>:-finput-charset=UTF-8>"
-		"$<$<CXX_COMPILER_ID:GNU>:-ffile-prefix-map=${WXMATROSKA_BASE_DIR}=.>"
-		"$<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>"
-		"$<$<CXX_COMPILER_ID:GNU>:-fvisibility-inlines-hidden>"
-	)
-ENDFUNCTION()
-
 INCLUDE(ExternalProject)
 INCLUDE(FetchContent)
 
-PROJECT(wxmatroska VERSION 1.6.1.0)
+PROJECT(wxmatroska VERSION 1.6.2.0)
 SET(WXMATROSKA_BASE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-
-FUNCTION(ConfigureSourceEncoding TargetName)
-	TARGET_COMPILE_OPTIONS(${TargetName} PRIVATE
-		"$<$<CXX_COMPILER_ID:MSVC>:/utf-8>"
-		"$<$<CXX_COMPILER_ID:GNU>:-finput-charset=UTF-8>"
-		"$<$<CXX_COMPILER_ID:GNU>:-ffile-prefix-map=${WXMATROSKA_BASE_DIR}=.>"
-		"$<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>"
-		"$<$<CXX_COMPILER_ID:GNU>:-fvisibility-inlines-hidden>"
-	)
-ENDFUNCTION()
 
 SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -51,15 +31,19 @@ SET(PROJECT_VERSION_STR "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PRO
 SET(PROJECT_VERSION_STR4 "${PROJECT_VERSION_MAJOR}, ${PROJECT_VERSION_MINOR}, ${PROJECT_VERSION_PATCH}, ${PROJECT_VERSION_TWEAK}")
 SET(PROJECT_VERSION_STR4_DOTTED ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}.${PROJECT_VERSION_TWEAK})
 
-SET(PROJECT_CONFIG_FILE ${PROJECT_BINARY_DIR}/app_config.h)
-SET(CMAKE_DEBUG_POSTFIX d)
+SET(PROJECT_INC_DIR ${PROJECT_BINARY_DIR}/include)
+SET(PROJECT_CONFIG_FILE ${PROJECT_INC_DIR}/app_config.h)
 
+FILE(MAKE_DIRECTORY ${PROJECT_INC_DIR})
 CONFIGURE_FILE(
 	${PROJECT_SOURCE_DIR}/app_config.h.in
 	${PROJECT_CONFIG_FILE}
 )
+INCLUDE_DIRECTORIES(${PROJECT_INC_DIR})
 
-INCLUDE_DIRECTORIES(${PROJECT_BINARY_DIR})
+IF(MSVC)
+	SET(CMAKE_DEBUG_POSTFIX d)
+ENDIF()
 
 # external libraries
 
@@ -80,7 +64,7 @@ IF(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
 			-DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
 			-DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}
 			-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-			"-DCMAKE_C_FLAGS_INIT=$ENV{CFLAGS} \"-ffile-prefix-map=${EXT_INSTALL_PREFIX}/Source/project_zlib=.\" -fvisibility=hidden"
+			"-DCMAKE_C_FLAGS_INIT=\"-ffile-prefix-map=${EXT_INSTALL_PREFIX}/Source/project_zlib=.\" -fvisibility=hidden"
 		PATCH_COMMAND
 			${CMAKE_COMMAND} -DSCRIPT_FILE=${EXT_INSTALL_PREFIX}/Source/project_zlib/CMakeLists.txt -P ${CMAKE_CURRENT_SOURCE_DIR}/cmp0074.cmake
 	)
@@ -120,8 +104,8 @@ IF(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
 			-DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
 			-DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}
 			-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-			"-DCMAKE_C_FLAGS_INIT=$ENV{CFLAGS} \"-ffile-prefix-map=${EXT_INSTALL_PREFIX}/Source/project_taglib=.\" -fvisibility=hidden"
-			"-DCMAKE_CXX_FLAGS_INIT=$ENV{CXXFLAGS} \"-ffile-prefix-map=${EXT_INSTALL_PREFIX}/Source/project_taglib=.\" -fvisibility=hidden -fvisibility-inlines-hidden"
+			"-DCMAKE_C_FLAGS_INIT=\"-ffile-prefix-map=${EXT_INSTALL_PREFIX}/Source/project_taglib=.\" -fvisibility=hidden"
+			"-DCMAKE_CXX_FLAGS_INIT=\"-ffile-prefix-map=${EXT_INSTALL_PREFIX}/Source/project_taglib=.\" -fvisibility=hidden -fvisibility-inlines-hidden"
 		PATCH_COMMAND
 			${CMAKE_COMMAND} -DSCRIPT_FILE=${EXT_INSTALL_PREFIX}/Source/project_taglib/CMakeLists.txt -P ${CMAKE_CURRENT_SOURCE_DIR}/cmp0074.cmake
 	)
@@ -178,7 +162,7 @@ IF(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
 			-DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
 			-DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}
 			-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-			"-DCMAKE_C_FLAGS_INIT=$ENV{CFLAGS} \"-ffile-prefix-map=${EXT_INSTALL_PREFIX}/Source/project_libwebp=.\" -fvisibility=hidden"
+			"-DCMAKE_C_FLAGS_INIT=\"-ffile-prefix-map=${EXT_INSTALL_PREFIX}/Source/project_libwebp=.\" -fvisibility=hidden"
 	)
 ELSE()
 	ExternalProject_Add (
@@ -311,7 +295,6 @@ FUNCTION(ConfigureWxWidgetsUsage Target)
 	)
 	# definitions
 	TARGET_COMPILE_DEFINITIONS(${Target} PRIVATE WXUSINGDLL)
-	
 ENDFUNCTION()
 
 IF(DEFINED WXWIDGETS_CFG_FILE)
@@ -364,9 +347,9 @@ ELSE()
 	FIND_PACKAGE(wxWidgets COMPONENTS core base zlib png xml REQUIRED)
 	MESSAGE(DEBUG "wxWidgets at: ${wxWidgets_ROOT_DIR}")
 	MESSAGE(DEBUG "wxWidgets use file: ${wxWidgets_USE_FILE}")
-	MESSAGE(STATUS "wxWidgets libs: ${wxWidgets_LIBRARIES}")
-	MESSAGE(STATUS "wxWidgets inc: ${wxWidgets_INCLUDE_DIRS}")
-	MESSAGE(STATUS "wxWidgets defs: ${wxWidgets_CXX_FLAGS}")
+	MESSAGE(DEBUG "wxWidgets libs: ${wxWidgets_LIBRARIES}")
+	MESSAGE(DEBUG "wxWidgets inc: ${wxWidgets_INCLUDE_DIRS}")
+	MESSAGE(DEBUG "wxWidgets defs: ${wxWidgets_CXX_FLAGS}")
 
 	GetWxWidgetsDllSuffix()
 	GetWxWidgetsVerCompact()
@@ -383,6 +366,16 @@ SET(WXMATROSKA_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/inc)
 FUNCTION(ConfigureWxMatroska TargetName)
 	TARGET_PRECOMPILE_HEADERS(${TargetName} PRIVATE StdWx.h)
 	TARGET_INCLUDE_DIRECTORIES(${TargetName} PRIVATE ${WXMATROSKA_INCLUDE_DIR})
+ENDFUNCTION()
+
+FUNCTION(ConfigureSourceEncoding TargetName)
+	TARGET_COMPILE_OPTIONS(${TargetName} PRIVATE
+		"$<$<CXX_COMPILER_ID:MSVC>:/utf-8>"
+		"$<$<CXX_COMPILER_ID:GNU>:-finput-charset=UTF-8>"
+		"$<$<CXX_COMPILER_ID:GNU>:-ffile-prefix-map=${WXMATROSKA_BASE_DIR}=.>"
+		"$<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>"
+		"$<$<CXX_COMPILER_ID:GNU>:-fvisibility-inlines-hidden>"
+	)
 ENDFUNCTION()
 
 ADD_COMPILE_DEFINITIONS("UNICODE" "_UNICODE")
