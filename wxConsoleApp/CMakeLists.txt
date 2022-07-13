@@ -13,7 +13,7 @@ ADD_LIBRARY(wxConsoleApp
 	${CONSOLEAPP_PUBLIC_HEADER_FILES}
 )
 
-TARGET_PRECOMPILE_HEADERS(wxConsoleApp PRIVATE StdWx.h)
-TARGET_INCLUDE_DIRECTORIES(wxConsoleApp PRIVATE ${WXMATROSKA_INCLUDE_DIR})
-TARGET_COMPILE_OPTIONS(wxConsoleApp PRIVATE "$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
+ConfigureWxMatroska(wxConsoleApp)
+ConfigureWxWidgetsUsage(wxConsoleApp)
+ConfigureSourceEncoding(wxConsoleApp)
 SET_PROPERTY(TARGET wxConsoleApp PROPERTY FOLDER "cli")

@@ -38,8 +38,8 @@ ADD_LIBRARY(wxCueFile
 	${CUEFILE_PUBLIC_HEADER_FILES}
 )
 
-TARGET_PRECOMPILE_HEADERS(wxCueFile PRIVATE StdWx.h)
-TARGET_INCLUDE_DIRECTORIES(wxCueFile PRIVATE ${WXMATROSKA_INCLUDE_DIR})
-TARGET_COMPILE_OPTIONS(wxCueFile PRIVATE "$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
+ConfigureWxMatroska(wxCueFile)
+ConfigureWxWidgetsUsage(wxCueFile)
+ConfigureSourceEncoding(wxCueFile)
 TARGET_LINK_LIBRARIES(wxCueFile PRIVATE TagLib wxWEBPHandler nlohmann_json::nlohmann_json)
 SET_PROPERTY(TARGET wxCueFile PROPERTY FOLDER "cli")

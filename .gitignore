@@ -5,3 +5,4 @@
 /.vs
 /lang.txt
 /uncrustify.exe
+/CMakeUserPresets.json

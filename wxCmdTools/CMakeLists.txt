@@ -11,7 +11,8 @@ ADD_LIBRARY(wxCmdTools
 	${CMD_TOOLS_PUBLIC_HEADER_FILES}
 )
 
-TARGET_PRECOMPILE_HEADERS(wxCmdTools PRIVATE StdWx.h)
-TARGET_INCLUDE_DIRECTORIES(wxCmdTools PRIVATE ${WXMATROSKA_INCLUDE_DIR})
-TARGET_COMPILE_OPTIONS(wxCmdTools PRIVATE "$<$<CXX_COMPILER_ID:MSVC>:/utf-8>" "$<$<CXX_COMPILER_ID:GNU>:-finput-charset=UTF-8>")
+ConfigureWxMatroska(wxCmdTools)
+ConfigureWxWidgetsUsage(wxCmdTools)
+ConfigureSourceEncoding(wxCmdTools)
+
 SET_PROPERTY(TARGET wxCmdTools PROPERTY FOLDER "tool")

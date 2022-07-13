@@ -9,11 +9,31 @@ SET(CMAKE_C_STANDARD_REQUIRED ON)
 SET(CMAKE_CXX_STANDARD 17)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+FUNCTION(ConfigureTargetSourceEncoding TargetName)
+	TARGET_COMPILE_OPTIONS(${TargetName} PRIVATE
+		"$<$<CXX_COMPILER_ID:MSVC>:/utf-8>"
+		"$<$<CXX_COMPILER_ID:GNU>:-finput-charset=UTF-8>"
+		"$<$<CXX_COMPILER_ID:GNU>:-ffile-prefix-map=${WXMATROSKA_BASE_DIR}=.>"
+		"$<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>"
+		"$<$<CXX_COMPILER_ID:GNU>:-fvisibility-inlines-hidden>"
+	)
+ENDFUNCTION()
+
 INCLUDE(ExternalProject)
 INCLUDE(FetchContent)
 
 PROJECT(wxmatroska VERSION 1.6.1.0)
 SET(WXMATROSKA_BASE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+
+FUNCTION(ConfigureSourceEncoding TargetName)
+	TARGET_COMPILE_OPTIONS(${TargetName} PRIVATE
+		"$<$<CXX_COMPILER_ID:MSVC>:/utf-8>"
+		"$<$<CXX_COMPILER_ID:GNU>:-finput-charset=UTF-8>"
+		"$<$<CXX_COMPILER_ID:GNU>:-ffile-prefix-map=${WXMATROSKA_BASE_DIR}=.>"
+		"$<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>"
+		"$<$<CXX_COMPILER_ID:GNU>:-fvisibility-inlines-hidden>"
+	)
+ENDFUNCTION()
 
 SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -282,30 +302,89 @@ FetchContent_Declare(json URL http://github.com/nlohmann/json/releases/download/
 FetchContent_MakeAvailable(json)
 
 # wxWidgets
-IF(DEFINED CMAKE_CONFIGURATION_TYPES)
-	SET(wxWidgets_CONFIGURATION mswu)
+
+FUNCTION(ConfigureWxWidgetsUsage Target)
+	# includes
+	TARGET_INCLUDE_DIRECTORIES(${Target} PRIVATE
+		${wxWidgets_LIB_DIR}/$<IF:$<CONFIG:Debug,RelWithDebInfo>,mswud,mswu>
+		${wxWidgets_ROOT_DIR}/include
+	)
+	# definitions
+	TARGET_COMPILE_DEFINITIONS(${Target} PRIVATE WXUSINGDLL)
+	
+ENDFUNCTION()
+
+IF(DEFINED WXWIDGETS_CFG_FILE)
+	MESSAGE(STATUS "wxWidgets configuration: ${WXWIDGETS_CFG_FILE}")
+	INCLUDE(${WXWIDGETS_CFG_FILE})
+	SET(wxWidgets_LIBRARIES 
+		debug ${WX_cored} optimized ${WX_core}
+		debug ${WX_based} optimized ${WX_base}
+		debug ${WX_xmld} optimized ${WX_xml}
+		debug ${WX_jpegd} optimized ${WX_jpeg}
+		debug ${WX_pngd} optimized ${WX_png}
+		debug ${WX_tiffd} optimized ${WX_tiff}
+		debug ${WX_zlibd} optimized ${WX_zlib}
+		debug ${WX_zlibd} optimized ${WX_zlib}
+		debug ${WX_regexd} optimized ${WX_regex}
+		debug ${WX_expatd} optimized ${WX_expat}
+		comctl32 uuid oleacc uxtheme rpcrt4 shlwapi version wsock32)
+	MESSAGE(DEBUG "wxWidgets libs: ${wxWidgets_LIBRARIES}")
 ELSE()
-	IF((CMAKE_BUILD_TYPE STREQUAL Debug) OR (CMAKE_BUILD_TYPE STREQUAL RelWithDebInfo))
-		SET(wxWidgets_CONFIGURATION mswud)
-	ELSE()
+	FUNCTION(GetWxWidgetsDllSuffix)
+		GET_FILENAME_COMPONENT(WXWIDGETS_DLL_SUFFIX ${wxWidgets_LIB_DIR} NAME)
+		STRING(FIND ${WXWIDGETS_DLL_SUFFIX} "_" LAST_UND_POS REVERSE)
+		STRING(SUBSTRING ${WXWIDGETS_DLL_SUFFIX} 0 ${LAST_UND_POS} WXWIDGETS_DLL_SUFFIX1)
+		STRING(SUBSTRING ${WXWIDGETS_DLL_SUFFIX} ${LAST_UND_POS} -1 WXWIDGETS_DLL_SUFFIX2)
+		STRING(REPLACE "_" "." WXWIDGETS_DLL_SUFFIX2 ${WXWIDGETS_DLL_SUFFIX2})
+		STRING(CONCAT PRES ${WXWIDGETS_DLL_SUFFIX1} ${WXWIDGETS_DLL_SUFFIX2})
+		SET(WXWIDGETS_DLL_SUFFIX ${PRES} PARENT_SCOPE)
+	ENDFUNCTION()
+
+	FUNCTION(GetWxWidgetsVerCompact)
+		FILE(GLOB WXBASEDLL ${wxWidgets_LIB_DIR}/wxbase*u_${WXWIDGETS_DLL_SUFFIX})
+		FOREACH(I IN LISTS WXBASEDLL)
+			CMAKE_PATH(GET I STEM LAST_ONLY IS)
+			STRING(REGEX MATCH "^wxbase([1-9]+)u" ISM ${IS})
+			SET(WXWIDGETS_VER_COMPACT ${CMAKE_MATCH_1} PARENT_SCOPE)
+			RETURN()
+		ENDFOREACH()
+	ENDFUNCTION()
+
+	IF(DEFINED CMAKE_CONFIGURATION_TYPES)
 		SET(wxWidgets_CONFIGURATION mswu)
+	ELSE()
+		IF((CMAKE_BUILD_TYPE STREQUAL Debug) OR (CMAKE_BUILD_TYPE STREQUAL RelWithDebInfo))
+			SET(wxWidgets_CONFIGURATION mswud)
+		ELSE()
+			SET(wxWidgets_CONFIGURATION mswu)
+		ENDIF()
 	ENDIF()
-ENDIF()
-FIND_PACKAGE(wxWidgets COMPONENTS core base zlib png xml REQUIRED)
-MESSAGE(DEBUG "wxWidgets at: ${wxWidgets_ROOT_DIR}")
-MESSAGE(DEBUG "wxWidgets use file: ${wxWidgets_USE_FILE}")
-MESSAGE(DEBUG "wxWidgets libs: ${wxWidgets_LIBRARIES}")
-MESSAGE(DEBUG "wxWidgets defs: ${wxWidgets_CXX_FLAGS}")
-INCLUDE(${wxWidgets_USE_FILE})
-IF(MINGW)
-	SET(WXWIDGETS_VER_COMPACT "317")
-ELSE()
-	SET(WXWIDGETS_VER_COMPACT "32")
+
+	FIND_PACKAGE(wxWidgets COMPONENTS core base zlib png xml REQUIRED)
+	MESSAGE(DEBUG "wxWidgets at: ${wxWidgets_ROOT_DIR}")
+	MESSAGE(DEBUG "wxWidgets use file: ${wxWidgets_USE_FILE}")
+	MESSAGE(STATUS "wxWidgets libs: ${wxWidgets_LIBRARIES}")
+	MESSAGE(STATUS "wxWidgets inc: ${wxWidgets_INCLUDE_DIRS}")
+	MESSAGE(STATUS "wxWidgets defs: ${wxWidgets_CXX_FLAGS}")
+
+	GetWxWidgetsDllSuffix()
+	GetWxWidgetsVerCompact()
+	MESSAGE(DEBUG "wxWidgets DLL suffix: ${WXWIDGETS_DLL_SUFFIX}")
+	MESSAGE(DEBUG "wxWidgets compact version: ${WXWIDGETS_VER_COMPACT}")
+
+	INCLUDE(${wxWidgets_USE_FILE})
 ENDIF()
 
 # -------------------------------------------------------------
 
 SET(WXMATROSKA_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/inc)
+
+FUNCTION(ConfigureWxMatroska TargetName)
+	TARGET_PRECOMPILE_HEADERS(${TargetName} PRIVATE StdWx.h)
+	TARGET_INCLUDE_DIRECTORIES(${TargetName} PRIVATE ${WXMATROSKA_INCLUDE_DIR})
+ENDFUNCTION()
+
 ADD_COMPILE_DEFINITIONS("UNICODE" "_UNICODE")
 
 ADD_SUBDIRECTORY(wxConsoleApp)

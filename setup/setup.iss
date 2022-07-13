@@ -46,12 +46,12 @@ Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:Ad
 Source: {#Cue2MkcExe}; DestDir: {app}; DestName: {#Cue2MkcBase}.exe; Flags: comparetimestamp; Components: cli; 
 Source: {#Cue2MkcGuiExe}; DestDir: {app}; DestName: {#Cue2MkcBase}-frontend.exe; Flags: comparetimestamp; Components: gui;
 #ifdef MinGWBase
-Source: {#MinGWBase}\x86_64-w64-mingw32\lib\libstdc++-6.dll; DestDir: {app}; Flags: comparetimestamp; Components: cli gui; Attribs: notcontentindexed;
-Source: {#MinGWBase}\x86_64-w64-mingw32\lib\libgcc_s_seh-1.dll; DestDir: {app}; Flags: comparetimestamp; Components: cli gui; Attribs: notcontentindexed;
+Source: {#MinGWBase}/x86_64-w64-mingw32/lib/libstdc++-6.dll; DestDir: {app}; Flags: comparetimestamp; Components: cli gui; Attribs: notcontentindexed;
+Source: {#MinGWBase}/x86_64-w64-mingw32/lib/libgcc_s_seh-1.dll; DestDir: {app}; Flags: comparetimestamp; Components: cli gui; Attribs: notcontentindexed;
 #endif
-Source: {#WXWidgetsLibDir}\wxbase{#WXVerCompact}u{#WXDebug}_{#WXDllSuffix}; DestDir: {app}; Flags: comparetimestamp; Components: cli gui; Attribs: notcontentindexed;
-Source: {#WXWidgetsLibDir}\wxbase{#WXVerCompact}u{#WXDebug}_xml_{#WXDllSuffix}; DestDir: {app}; Flags: comparetimestamp; Components: cli; Attribs: notcontentindexed;
-Source: {#WXWidgetsLibDir}\wxmsw{#WXVerCompact}u{#WXDebug}_core_{#WXDllSuffix}; DestDir: {app}; Flags: comparetimestamp; Components: cli gui; Attribs: notcontentindexed;
+Source: {#WXWidgetsLibDir}/wxbase{#WXVerCompact}u{#WXDebug}_{#WXDllSuffix}; DestDir: {app}; Flags: comparetimestamp; Components: cli gui; Attribs: notcontentindexed;
+Source: {#WXWidgetsLibDir}/wxbase{#WXVerCompact}u{#WXDebug}_xml_{#WXDllSuffix}; DestDir: {app}; Flags: comparetimestamp; Components: cli; Attribs: notcontentindexed;
+Source: {#WXWidgetsLibDir}/wxmsw{#WXVerCompact}u{#WXDebug}_core_{#WXDllSuffix}; DestDir: {app}; Flags: comparetimestamp; Components: cli gui; Attribs: notcontentindexed;
 Source: {#LicenseFileTxt}; DestDir: {app}; Flags: comparetimestamp setntfscompression overwritereadonly uninsremovereadonly; Components: cli gui; Attribs: readonly notcontentindexed;
 Source: ..\cue\ISO-639-2_utf-8.txt; DestDir: {app}; Flags: comparetimestamp setntfscompression overwritereadonly uninsremovereadonly; Components: cli; Attribs: readonly notcontentindexed;
 Source: ..\wxCueChapters\cmake\dr-scan.cmake; DestDir: {app}; Flags: comparetimestamp setntfscompression overwritereadonly uninsremovereadonly; Components: cli; Attribs: readonly notcontentindexed;

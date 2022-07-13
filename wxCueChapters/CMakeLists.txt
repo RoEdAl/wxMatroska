@@ -30,8 +30,10 @@ ADD_EXECUTABLE(wxCueChapters
 	${CUECHAPTERS_PUBLIC_HEADER_FILES}
 )
 
-TARGET_PRECOMPILE_HEADERS(wxCueChapters PRIVATE StdWx.h)
-TARGET_INCLUDE_DIRECTORIES(wxCueChapters PRIVATE ${WXMATROSKA_INCLUDE_DIR})
+ConfigureWxMatroska(wxCueChapters)
+ConfigureWxWidgetsUsage(wxCueChapters)
+ConfigureSourceEncoding(wxCueChapters)
+
 TARGET_LINK_LIBRARIES(wxCueChapters PRIVATE
 	wxConsoleApp
 	wxEncodingDetection
@@ -42,20 +44,24 @@ TARGET_LINK_LIBRARIES(wxCueChapters PRIVATE
 	nlohmann_json::nlohmann_json
 	${wxWidgets_LIBRARIES}
 )
-TARGET_COMPILE_OPTIONS(wxCueChapters PRIVATE
-	"$<$<CXX_COMPILER_ID:MSVC>:/utf-8>"
-	"$<$<CXX_COMPILER_ID:GNU>:-finput-charset=UTF-8>"
-	"$<$<CXX_COMPILER_ID:GNU>:-ffile-prefix-map=${WXMATROSKA_BASE_DIR}=.>"
-	"$<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>"
-	"$<$<CXX_COMPILER_ID:GNU>:-fvisibility-inlines-hidden>"
-)
+
 #TARGET_LINK_OPTIONS(wxCueChapters PRIVATE "$<$<CXX_COMPILER_ID:GNU>:-municode>")
 
-ADD_CUSTOM_COMMAND( TARGET wxCueChapters POST_BUILD 
-	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/cmake/dr-scan.cmake $<TARGET_FILE_DIR:cue2mkc>
-	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/cmake/mkcover.cmake $<TARGET_FILE_DIR:cue2mkc>
-	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/app.tags.json $<TARGET_FILE_DIR:cue2mkc>/$<TARGET_FILE_BASE_NAME:cue2mkc>.tags.json
+ADD_CUSTOM_COMMAND(TARGET wxCueChapters POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${wxWidgets_LIB_DIR}/wxbase${WXWIDGETS_VER_COMPACT}u$<$<CONFIG:Debug>:d>_${WXWIDGETS_DLL_SUFFIX} $<TARGET_FILE_DIR:wxCueChapters>
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${wxWidgets_LIB_DIR}/wxbase${WXWIDGETS_VER_COMPACT}u$<$<CONFIG:Debug>:d>_xml_${WXWIDGETS_DLL_SUFFIX} $<TARGET_FILE_DIR:wxCueChapters>
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${wxWidgets_LIB_DIR}/wxmsw${WXWIDGETS_VER_COMPACT}u$<$<CONFIG:Debug>:d>_core_${WXWIDGETS_DLL_SUFFIX} $<TARGET_FILE_DIR:wxCueChapters>
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/cmake/dr-scan.cmake $<TARGET_FILE_DIR:wxCueChapters>
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/cmake/mkcover.cmake $<TARGET_FILE_DIR:wxCueChapters>
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/app.tags.json $<TARGET_FILE_DIR:wxCueChapters>/$<TARGET_FILE_BASE_NAME:wxCueChapters>.tags.json
 )
+
+IF(DEFINED MINGW64_BASE)
+	ADD_CUSTOM_COMMAND(TARGET wxCueChapters POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${MINGW64_BASE}/x86_64-w64-mingw32/lib/libstdc++-6.dll $<TARGET_FILE_DIR:wxCueChapters>
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${MINGW64_BASE}/x86_64-w64-mingw32/lib/libgcc_s_seh-1.dll $<TARGET_FILE_DIR:wxCueChapters>
+	)
+ENDIF()
 
 SET_PROPERTY(TARGET wxCueChapters PROPERTY FOLDER "cli")
 

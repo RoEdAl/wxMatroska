@@ -18,17 +18,24 @@ ADD_EXECUTABLE(wxCueChaptersGui WIN32
 	${PROJECT_CONFIG_FILE}
 )
 
-TARGET_PRECOMPILE_HEADERS(wxCueChaptersGui PRIVATE StdWx.h)
-TARGET_INCLUDE_DIRECTORIES(wxCueChaptersGui PRIVATE ${WXMATROSKA_INCLUDE_DIR})
-TARGET_COMPILE_OPTIONS(wxCueChaptersGui PRIVATE 
-	"$<$<CXX_COMPILER_ID:MSVC>:/utf-8>"
-	"$<$<CXX_COMPILER_ID:GNU>:-finput-charset=UTF-8>"
-	"$<$<CXX_COMPILER_ID:GNU>:-ffile-prefix-map=${WXMATROSKA_BASE_DIR}=.>"
-	"$<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>"
-	"$<$<CXX_COMPILER_ID:GNU>:-fvisibility-inlines-hidden>"
-)
+ConfigureWxMatroska(wxCueChaptersGui)
+ConfigureWxWidgetsUsage(wxCueChaptersGui)
+ConfigureSourceEncoding(wxCueChaptersGui)
 #TARGET_LINK_OPTIONS(wxCueChaptersGui PRIVATE "$<$<CXX_COMPILER_ID:GNU>:-municode>")
 TARGET_LINK_LIBRARIES(wxCueChaptersGui wxCmdTools wxEncodingDetection ${wxWidgets_LIBRARIES})
-SET_PROPERTY(TARGET wxCueChaptersGui PROPERTY FOLDER "gui")
 
+ADD_CUSTOM_COMMAND(TARGET wxCueChaptersGui POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${wxWidgets_LIB_DIR}/wxbase${WXWIDGETS_VER_COMPACT}u$<$<CONFIG:Debug>:d>_${WXWIDGETS_DLL_SUFFIX} $<TARGET_FILE_DIR:wxCueChaptersGui>
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${wxWidgets_LIB_DIR}/wxbase${WXWIDGETS_VER_COMPACT}u$<$<CONFIG:Debug>:d>_xml_${WXWIDGETS_DLL_SUFFIX} $<TARGET_FILE_DIR:wxCueChaptersGui>
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${wxWidgets_LIB_DIR}/wxmsw${WXWIDGETS_VER_COMPACT}u$<$<CONFIG:Debug>:d>_core_${WXWIDGETS_DLL_SUFFIX} $<TARGET_FILE_DIR:wxCueChaptersGui>
+)
+
+IF(DEFINED MINGW64_BASE)
+	ADD_CUSTOM_COMMAND(TARGET wxCueChaptersGui POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${MINGW64_BASE}/x86_64-w64-mingw32/lib/libstdc++-6.dll $<TARGET_FILE_DIR:wxCueChaptersGui>
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${MINGW64_BASE}/x86_64-w64-mingw32/lib/libgcc_s_seh-1.dll $<TARGET_FILE_DIR:wxCueChaptersGui>
+	)
+ENDIF()
+
+SET_PROPERTY(TARGET wxCueChaptersGui PROPERTY FOLDER "gui")
 ADD_EXECUTABLE(cue2mkc-frontend ALIAS wxCueChaptersGui)

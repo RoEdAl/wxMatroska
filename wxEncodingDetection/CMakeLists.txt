@@ -18,11 +18,12 @@ ADD_LIBRARY(wxEncodingDetection
 	${ENCODING_DETECTION_PUBLIC_HEADER_FILES}
 )
 
-TARGET_PRECOMPILE_HEADERS(wxEncodingDetection PRIVATE StdWx.h)
-TARGET_INCLUDE_DIRECTORIES(wxEncodingDetection PRIVATE ${WXMATROSKA_INCLUDE_DIR})
-TARGET_COMPILE_OPTIONS(wxEncodingDetection PRIVATE "$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
+ConfigureWxMatroska(wxEncodingDetection)
+ConfigureWxWidgetsUsage(wxEncodingDetection)
+ConfigureSourceEncoding(wxEncodingDetection)
 TARGET_LINK_LIBRARIES(wxEncodingDetection PUBLIC "$<$<CXX_COMPILER_ID:GNU>:mlang>" )
 IF(MINGW)
 	TARGET_COMPILE_OPTIONS(wxEncodingDetection PRIVATE "-fpermissive")
 ENDIF()
+
 SET_PROPERTY(TARGET wxEncodingDetection PROPERTY FOLDER "tool")
