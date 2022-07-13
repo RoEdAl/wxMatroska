@@ -284,7 +284,7 @@ IF(NOT EXISTS ${PRESETS_FILE})
   },
   "configurePresets": [
     {
-		"name": "cfg-cue2mkc",
+		"name": "cue2mkc",
 		"hidden": true,
 		"installDir": "${sourceDir}/../install",
 		"environment": {
@@ -303,11 +303,13 @@ IF(NOT EXISTS ${PRESETS_FILE})
 		}
 	},
     {
-		"name": "cfg-cue2mkc-mingw64",
+		"name": "mingw64",
 		"hidden": true,
-		"inherits": "cfg-cue2mkc",
+		"inherits": "cue2mkc",
 		"environment": {
-			"MINGW64_BASE": "@CUE2MKC_MW64DIR@"
+			"MINGW64_BASE": "@CUE2MKC_MW64DIR@",
+			"CMAKE_BUILD_PARALLEL_LEVEL": "4",
+			"CMAKE_COLOR_DIAGNOSTICS": "OFF"
 		},
 		"cacheVariables": {
 			"CMAKE_MAKE_PROGRAM": {
@@ -318,6 +320,10 @@ IF(NOT EXISTS ${PRESETS_FILE})
 				"type": "PATH",
 				"value": "@CUE2MKC_WXDIR@/lib/gcc1210_x64_dll"
 			},
+			"CMAKE_COLOR_MAKEFILE": {
+				"type": "BOOLEAN",
+				"value": "OFF"
+			},
 			"WXWIDGETS_CFG_FILE": {
 				"type": "FILEPATH",
 				"value": "@MW64_CFG_USE_FILE@"
@@ -327,9 +333,9 @@ IF(NOT EXISTS ${PRESETS_FILE})
 		"toolchainFile": "@MW64_TOOLCHAIN_FILE@"
 	},
     {
-		"name": "cfg-cue2mkc-msvc",
+		"name": "msvc",
 		"hidden": true,
-		"inherits": "cfg-cue2mkc",
+		"inherits": "cue2mkc",
 		"cacheVariables": {
 			"wxWidgets_LIB_DIR": {
 				"type": "PATH",
@@ -344,15 +350,15 @@ IF(NOT EXISTS ${PRESETS_FILE})
 		"toolset": "v143,host=x64"
 	},	
 	{
-		"name": "cfg-msvc-x64",
-		"displayName": "Microsoft Visual Studio 2022 x64",
-		"inherits": "cfg-cue2mkc-msvc",
+		"name": "msvc-x64",
+		"displayName": "MSVC17 x64",
+		"inherits": "msvc",
 		"binaryDir": "${sourceDir}/../build-msvc-x64"
 	},
 	{
-		"name": "cfg-mingw64-release",
-		"displayName": "MinGW64",
-		"inherits": "cfg-cue2mkc-mingw64",
+		"name": "mingw64-release",
+		"displayName": "MinGW64 Release",
+		"inherits": "mingw64",
 		"binaryDir": "${sourceDir}/../build-mingw64-release",
 		"cacheVariables": {
 			"CMAKE_BUILD_TYPE": {
@@ -361,10 +367,10 @@ IF(NOT EXISTS ${PRESETS_FILE})
 			}
 		}
 	},
-		{
-		"name": "cfg-mingw64-debug",
-		"displayName": "MinGW64",
-		"inherits": "cfg-cue2mkc-mingw64",
+	{
+		"name": "mingw64-debug",
+		"displayName": "MinGW64 Debug",
+		"inherits": "mingw64",
 		"binaryDir": "${sourceDir}/../build-mingw64-debug",
 		"cacheVariables": {
 			"CMAKE_BUILD_TYPE": {
@@ -376,29 +382,33 @@ IF(NOT EXISTS ${PRESETS_FILE})
   ],
   "buildPresets": [
 	{
-		"name": "build-mingw64-release",
-		"configurePreset": "cfg-mingw64-release",
+		"name": "mingw64-release",
+		"displayName": "MinGW64 Release",
+		"configurePreset": "mingw64-release",
 		"targets": ["isetup"],
 		"cleanFirst": true,
 		"jobs": 4
 	},
 	{
-		"name": "build-mingw64-debug",
-		"configurePreset": "cfg-mingw64-debug",
+		"name": "mingw64-debug",
+		"displayName": "MinGW64 Debug",
+		"configurePreset": "mingw64-debug",
 		"targets": ["isetup"],
 		"cleanFirst": false,
-		"jobs": 4
+		"jobs": 1
 	},
 	{
-		"name": "build-msvc-release-x64",
-		"configurePreset": "cfg-msvc-x64",
+		"name": "msvc-release-x64",
+		"displayName": "MSVC Release x64",
+		"configurePreset": "msvc-x64",
 		"configuration": "MinSizeRel",
 		"targets": ["isetup"],
 		"cleanFirst": true
 	},
 	{
-		"name": "build-msvc-debug-x64",
-		"configurePreset": "cfg-msvc-x64",
+		"name": "msvc-debug-x64",
+		"displayName": "MSVC Debug x64",
+		"configurePreset": "msvc-x64",
 		"configuration": "Debug",
 		"targets": ["isetup"],
 		"cleanFirst": false
