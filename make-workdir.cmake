@@ -136,8 +136,8 @@ SET(CMAKE_CXX_COMPILER \${MINGW64_BASE}/bin/g++.exe)
 SET(CMAKE_C_VISIBILITY_PRESET hidden)
 SET(CMAKE_CXX_VISIBILITY_PRESET hidden)
 SET(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
-SET(CMAKE_C_FLAGS_INIT -fdiagnostics-plain-output)
-SET(CMAKE_CXX_FLAGS_INIT -fdiagnostics-plain-output)
+SET(CMAKE_C_FLAGS_INIT \"\\\"-ffile-prefix-map=\${MINGW64_BASE}=./gcc\\\" -fdiagnostics-plain-output\")
+SET(CMAKE_CXX_FLAGS_INIT \"\\\"-ffile-prefix-map=\${MINGW64_BASE}=./gcc\\\" -fdiagnostics-plain-output\")
 SET(CMAKE_MODULE_LINKER_FLAGS_INIT -fdiagnostics-plain-output)
 SET(CMAKE_SHARED_LINKER_FLAGS_INIT -fdiagnostics-plain-output)
 SET(CMAKE_EXE_LINKER_FLAGS_INIT -fdiagnostics-plain-output)
@@ -321,8 +321,8 @@ IF(NOT EXISTS ${PRESETS_FILE})
 			"MINGW64_BASE": "@CUE2MKC_MW64DIR@",
 			"CMAKE_BUILD_PARALLEL_LEVEL": "@PARALLEL_LEVEL@",
 			"CMAKE_COLOR_DIAGNOSTICS": "OFF",
-			"CFLAGS": "\"-ffile-prefix-map=@CMAKE_SOURCE_DIR@=.\" \"-ffile-prefix-map=@CUE2MKC_WXDIR@=.\"",
-			"CXXFLAGS": "\"-ffile-prefix-map=@CMAKE_SOURCE_DIR@=.\" \"-ffile-prefix-map=@CUE2MKC_WXDIR@=.\""
+			"CFLAGS": "\"-ffile-prefix-map=@CMAKE_SOURCE_DIR@=.\" \"-ffile-prefix-map=@CUE2MKC_WXDIR@=./wx\"",
+			"CXXFLAGS": "\"-ffile-prefix-map=@CMAKE_SOURCE_DIR@=.\" \"-ffile-prefix-map=@CUE2MKC_WXDIR@=./wx\""
 		},
 		"cacheVariables": {
 			"CMAKE_MAKE_PROGRAM": {
