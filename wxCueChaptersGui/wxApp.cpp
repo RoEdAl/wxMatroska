@@ -90,11 +90,16 @@ bool wxMyApp::OnInit()
         m_cue2MkcPath.SetFullName(fullName);
     #else
         const wxArrayString& dirs = m_cue2MkcPath.GetDirs();
-        const wxString       lastDir(dirs.Last());
+    #ifdef __MINGW32__
+        m_cue2MkcPath.RemoveLastDir();
+        m_cue2MkcPath.AppendDir("wxCueChapters");
+    #else
+		const wxString lastDir(dirs.Last());
         m_cue2MkcPath.RemoveLastDir();
         m_cue2MkcPath.RemoveLastDir();
         m_cue2MkcPath.AppendDir("wxCueChapters");
         m_cue2MkcPath.AppendDir(lastDir);
+    #endif
     #endif
     }
 

@@ -28,14 +28,17 @@ FUNCTION(DownloadPkgSha1 UrlBase FileName Sha1Hash StatusMsg)
 	)
 ENDFUNCTION()
 
+SET(PARALLEL_LEVEL 4)
 SET(WXWIDGETS_VERSION "3.2.0")
-
-SET(CUE2MKC_WORKDIR ${CMAKE_SOURCE_DIR}/..)
-CMAKE_PATH(ABSOLUTE_PATH CUE2MKC_WORKDIR NORMALIZE)
+SET(WX_VER_COMPACT 32)
 
 SET(INSTALL_MSVC ON)
 SET(INSTALL_MINGW64 ON)
 
+SET(CUE2MKC_WORKDIR ${CMAKE_SOURCE_DIR}/..)
+CMAKE_PATH(ABSOLUTE_PATH CUE2MKC_WORKDIR NORMALIZE)
+
+MESSAGE(STATUS "[CFG] wxWidgets version: ${WXWIDGETS_VERSION}")
 MESSAGE(STATUS "[CFG] Workdir: ${CUE2MKC_WORKDIR}")
 MESSAGE(STATUS "[CFG] Install MSVC: ${INSTALL_MSVC}")
 MESSAGE(STATUS "[CFG] Install MinGW64: ${INSTALL_MINGW64}")
@@ -43,21 +46,22 @@ MESSAGE(STATUS "[CFG] Install MinGW64: ${INSTALL_MINGW64}")
 CMAKE_PATH(APPEND CUE2MKC_WORKDIR download OUTPUT_VARIABLE CUE2MKC_DLDIR)
 
 # downloading
+
 SET(URL_WXWIDGETS "http://github.com/wxWidgets/wxWidgets/releases/download/v${WXWIDGETS_VERSION}")
-DownloadPkgSha1(${URL_WXWIDGETS} wxWidgets-${WXWIDGETS_VERSION}-headers.7z "75b5271d1a3f08f32557c7a8ca1782310ee279b4" "wxWidgets headers")
-DownloadPkgSha1(${URL_WXWIDGETS} wxWidgets-${WXWIDGETS_VERSION}-docs-html.tar.bz2 "9c9caa3b3ce30b7f8b1e30b7a6cc70353b21761d" "wxWidgets docs")
+DownloadPkgSha1(${URL_WXWIDGETS} wxWidgets-${WXWIDGETS_VERSION}-headers.7z 75b5271d1a3f08f32557c7a8ca1782310ee279b4 "wxWidgets headers")
+DownloadPkgSha1(${URL_WXWIDGETS} wxWidgets-${WXWIDGETS_VERSION}-docs-html.tar.bz2 9c9caa3b3ce30b7f8b1e30b7a6cc70353b21761d "wxWidgets docs")
 
 IF(INSTALL_MSVC)
-	DownloadPkgSha1(${URL_WXWIDGETS} wxMSW-${WXWIDGETS_VERSION}_vc14x_x64_Dev.7z "65ad095d125dea942b9a74339e0476d14a53e6af" "wxWidgets dev libraries [MSVC x64]")
-	DownloadPkgSha1(${URL_WXWIDGETS} wxMSW-${WXWIDGETS_VERSION}_vc14x_x64_ReleaseDLL.7z "c5164b52771aac9973123cfdbeecc5fe8606faba" "wxWidgets libraries [MSVC x64]")
-	DownloadPkgSha1(${URL_WXWIDGETS} wxMSW-${WXWIDGETS_VERSION}_vc14x_x64_ReleasePDB.7z "61549c7f12ec7c3398160be3445476a812987f9f" "wxWidgets PDBs [MSVC x64]")
+	DownloadPkgSha1(${URL_WXWIDGETS} wxMSW-${WXWIDGETS_VERSION}_vc14x_x64_Dev.7z 65ad095d125dea942b9a74339e0476d14a53e6af "wxWidgets dev libraries [MSVC x64]")
+	DownloadPkgSha1(${URL_WXWIDGETS} wxMSW-${WXWIDGETS_VERSION}_vc14x_x64_ReleaseDLL.7z c5164b52771aac9973123cfdbeecc5fe8606faba "wxWidgets libraries [MSVC x64]")
+	DownloadPkgSha1(${URL_WXWIDGETS} wxMSW-${WXWIDGETS_VERSION}_vc14x_x64_ReleasePDB.7z 61549c7f12ec7c3398160be3445476a812987f9f "wxWidgets PDBs [MSVC x64]")
 ENDIF()
 
 IF(INSTALL_MINGW64)
 	SET(URL_MINGW64 "http://github.com/niXman/mingw-builds-binaries/releases/download/12.1.0-rt_v10-rev3")
-	DownloadPkgSha1(${URL_MINGW64} x86_64-12.1.0-release-win32-seh-rt_v10-rev3.7z "3618baf9bb90c7c4d7b2bb419bc680995531d9cc" "MinGW64 runtime")
-	DownloadPkgSha1(${URL_WXWIDGETS} wxMSW-${WXWIDGETS_VERSION}_gcc1210_x64_Dev.7z "26a58b3dc1135163921910b69e0ac94f2cbd18a0" "wxWidgets dev libraries [MinGW64]")
-	DownloadPkgSha1(${URL_WXWIDGETS} wxMSW-${WXWIDGETS_VERSION}_gcc1210_x64_ReleaseDLL.7z "ca15f4ddc1d9ebf68a6a7764eda60a6369285b2d" "wxWidgets libraries [MinGW64]")
+	DownloadPkgSha1(${URL_MINGW64} x86_64-12.1.0-release-win32-seh-rt_v10-rev3.7z 3618baf9bb90c7c4d7b2bb419bc680995531d9cc "MinGW64 runtime")
+	DownloadPkgSha1(${URL_WXWIDGETS} wxMSW-${WXWIDGETS_VERSION}_gcc1210_x64_Dev.7z 26a58b3dc1135163921910b69e0ac94f2cbd18a0 "wxWidgets dev libraries [MinGW64]")
+	DownloadPkgSha1(${URL_WXWIDGETS} wxMSW-${WXWIDGETS_VERSION}_gcc1210_x64_ReleaseDLL.7z ca15f4ddc1d9ebf68a6a7764eda60a6369285b2d "wxWidgets libraries [MinGW64]")
 ENDIF()
 
 # extracting
@@ -124,22 +128,29 @@ IF(INSTALL_MINGW64)
 #
 # MinGW64 CMake toolchain
 #
-set(MINGW64_BASE \"${CUE2MKC_MW64DIR}\")
-set(CMAKE_MAKE_PROGRAM \${MINGW64_BASE}/bin/mingw32-make.exe)
-set(CMAKE_C_COMPILER \${MINGW64_BASE}/bin/gcc.exe)
-set(CMAKE_CXX_COMPILER \${MINGW64_BASE}/bin/g++.exe)
+SET(MINGW64_BASE \"${CUE2MKC_MW64DIR}\")
+SET(CMAKE_MAKE_PROGRAM \${MINGW64_BASE}/bin/mingw32-make.exe)
+SET(CMAKE_C_COMPILER \${MINGW64_BASE}/bin/gcc.exe)
+SET(CMAKE_CXX_COMPILER \${MINGW64_BASE}/bin/g++.exe)
 
-set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
-set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
-set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
-set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)		
+SET(CMAKE_C_VISIBILITY_PRESET hidden)
+SET(CMAKE_CXX_VISIBILITY_PRESET hidden)
+SET(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
+SET(CMAKE_C_FLAGS_INIT -fdiagnostics-plain-output)
+SET(CMAKE_CXX_FLAGS_INIT -fdiagnostics-plain-output)
+SET(CMAKE_MODULE_LINKER_FLAGS_INIT -fdiagnostics-plain-output)
+SET(CMAKE_SHARED_LINKER_FLAGS_INIT -fdiagnostics-plain-output)
+SET(CMAKE_EXE_LINKER_FLAGS_INIT -fdiagnostics-plain-output)
+SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+SET(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)		
 ")
 	ENDIF()
 ENDIF()
 
 # wxWidgets configuration
 
-SET(WX_VER_COMPACT 32)
 IF(INSTALL_MSVC)
 	CMAKE_PATH(APPEND CUE2MKC_WXDIR msvc-config.cmake OUTPUT_VARIABLE MSVC_CFG_USE_FILE)
 	IF(NOT EXISTS ${MSVC_CFG_USE_FILE})
@@ -308,8 +319,10 @@ IF(NOT EXISTS ${PRESETS_FILE})
 		"inherits": "cue2mkc",
 		"environment": {
 			"MINGW64_BASE": "@CUE2MKC_MW64DIR@",
-			"CMAKE_BUILD_PARALLEL_LEVEL": "4",
-			"CMAKE_COLOR_DIAGNOSTICS": "OFF"
+			"CMAKE_BUILD_PARALLEL_LEVEL": "@PARALLEL_LEVEL@",
+			"CMAKE_COLOR_DIAGNOSTICS": "OFF",
+			"CFLAGS": "\"-ffile-prefix-map=@CMAKE_SOURCE_DIR@=.\" \"-ffile-prefix-map=@CUE2MKC_WXDIR@=.\"",
+			"CXXFLAGS": "\"-ffile-prefix-map=@CMAKE_SOURCE_DIR@=.\" \"-ffile-prefix-map=@CUE2MKC_WXDIR@=.\""
 		},
 		"cacheVariables": {
 			"CMAKE_MAKE_PROGRAM": {
@@ -321,8 +334,8 @@ IF(NOT EXISTS ${PRESETS_FILE})
 				"value": "@CUE2MKC_WXDIR@/lib/gcc1210_x64_dll"
 			},
 			"CMAKE_COLOR_MAKEFILE": {
-				"type": "BOOLEAN",
-				"value": "OFF"
+				"type": "BOOL",
+				"value": false
 			},
 			"WXWIDGETS_CFG_FILE": {
 				"type": "FILEPATH",
@@ -387,7 +400,7 @@ IF(NOT EXISTS ${PRESETS_FILE})
 		"configurePreset": "mingw64-release",
 		"targets": ["isetup"],
 		"cleanFirst": true,
-		"jobs": 4
+		"jobs": @PARALLEL_LEVEL@
 	},
 	{
 		"name": "mingw64-debug",

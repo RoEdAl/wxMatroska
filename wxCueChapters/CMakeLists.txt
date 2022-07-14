@@ -54,6 +54,7 @@ ADD_CUSTOM_COMMAND(TARGET wxCueChapters POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/cmake/dr-scan.cmake $<TARGET_FILE_DIR:wxCueChapters>
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/cmake/mkcover.cmake $<TARGET_FILE_DIR:wxCueChapters>
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/app.tags.json $<TARGET_FILE_DIR:wxCueChapters>/$<TARGET_FILE_BASE_NAME:wxCueChapters>.tags.json
+	COMMAND ${CMAKE_COMMAND} -E create_hardlink $<TARGET_FILE:wxCueChapters> $<TARGET_FILE_DIR:wxCueChapters>/$<TARGET_FILE_PREFIX:wxCueChapters>cue2mkc$<TARGET_FILE_SUFFIX:wxCueChapters>
 )
 
 IF(DEFINED MINGW64_BASE)
@@ -63,7 +64,11 @@ IF(DEFINED MINGW64_BASE)
 	)
 ENDIF()
 
-SET_PROPERTY(TARGET wxCueChapters PROPERTY FOLDER "cli")
+SET_PROPERTY(TARGET wxCueChapters PROPERTY FOLDER cli)
 
-ADD_EXECUTABLE(cue2mkc ALIAS wxCueChapters)
+ADD_EXECUTABLE(cue2mkc IMPORTED)
+SET_TARGET_PROPERTIES(cue2mkc PROPERTIES
+	IMPORTED_LOCATION $<TARGET_FILE_DIR:wxCueChapters>/$<TARGET_FILE_PREFIX:wxCueChapters>cue2mkc$<TARGET_FILE_SUFFIX:wxCueChapters>
+	FOLDER cli
+)
 

@@ -23,7 +23,7 @@ ConfigureWxWidgetsUsage(wxEncodingDetection)
 ConfigureSourceEncoding(wxEncodingDetection)
 TARGET_LINK_LIBRARIES(wxEncodingDetection PUBLIC "$<$<CXX_COMPILER_ID:GNU>:mlang>" )
 IF(MINGW)
-	TARGET_COMPILE_OPTIONS(wxEncodingDetection PRIVATE "-fpermissive")
+	SET_SOURCE_FILES_PROPERTIES(wxEncodingDetection.cpp wxTextOutputStreamWithBOM.cpp PROPERTIES COMPILE_OPTIONS -fpermissive)
 ENDIF()
 
 SET_PROPERTY(TARGET wxEncodingDetection PROPERTY FOLDER "tool")

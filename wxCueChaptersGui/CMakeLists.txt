@@ -28,6 +28,7 @@ ADD_CUSTOM_COMMAND(TARGET wxCueChaptersGui POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${wxWidgets_LIB_DIR}/wxbase${WXWIDGETS_VER_COMPACT}u$<$<CONFIG:Debug>:d>_${WXWIDGETS_DLL_SUFFIX} $<TARGET_FILE_DIR:wxCueChaptersGui>
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${wxWidgets_LIB_DIR}/wxbase${WXWIDGETS_VER_COMPACT}u$<$<CONFIG:Debug>:d>_xml_${WXWIDGETS_DLL_SUFFIX} $<TARGET_FILE_DIR:wxCueChaptersGui>
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${wxWidgets_LIB_DIR}/wxmsw${WXWIDGETS_VER_COMPACT}u$<$<CONFIG:Debug>:d>_core_${WXWIDGETS_DLL_SUFFIX} $<TARGET_FILE_DIR:wxCueChaptersGui>
+	COMMAND ${CMAKE_COMMAND} -E create_hardlink $<TARGET_FILE:wxCueChaptersGui> $<TARGET_FILE_DIR:wxCueChaptersGui>/$<TARGET_FILE_PREFIX:wxCueChaptersGui>cue2mkc-frontend$<TARGET_FILE_SUFFIX:wxCueChaptersGui>
 )
 
 IF(DEFINED MINGW64_BASE)
@@ -37,5 +38,10 @@ IF(DEFINED MINGW64_BASE)
 	)
 ENDIF()
 
-SET_PROPERTY(TARGET wxCueChaptersGui PROPERTY FOLDER "gui")
-ADD_EXECUTABLE(cue2mkc-frontend ALIAS wxCueChaptersGui)
+SET_PROPERTY(TARGET wxCueChaptersGui PROPERTY FOLDER gui)
+
+ADD_EXECUTABLE(cue2mkc-frontend IMPORTED)
+SET_TARGET_PROPERTIES(cue2mkc-frontend PROPERTIES
+	IMPORTED_LOCATION $<TARGET_FILE_DIR:wxCueChaptersGui>/$<TARGET_FILE_PREFIX:wxCueChaptersGui>cue2mkc-frontend$<TARGET_FILE_SUFFIX:wxCueChaptersGui>
+	FOLDER gui
+)
