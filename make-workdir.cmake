@@ -1,44 +1,15 @@
-#
+﻿#
 # make-workdir.cmake
 #
 
 CMAKE_MINIMUM_REQUIRED(VERSION 3.23)
+INCLUDE(tmpl/utils.cmake)
 
-FUNCTION(RemoveLastChar Str)
-	STRING(LENGTH ${Str} StrLen)
-	MATH(EXPR StrLen1 "${StrLen}-1")
-	STRING(SUBSTRING ${Str} 0 ${StrLen1} StrTrimmed)
-	SET(CUE2MKC_WORKDIR ${StrTrimmed} PARENT_SCOPE)
-ENDFUNCTION()
-
-FUNCTION(DownloadPkgSha1 UrlBase FileName Sha1Hash StatusMsg)
-	CMAKE_PATH(APPEND CUE2MKC_DLDIR ${FileName} OUTPUT_VARIABLE PkgPath)
-	
-	IF(EXISTS ${PkgPath})
-		FILE(SHA1 ${PkgPath} PkgHash)
-		IF(NOT(${PkgHash} STREQUAL ${Sha1Hash}))
-			MESSAGE(STATUS "[DL] ${FileName}: expected SHA-1: ${Sha1Hash}, computed SHA-1: ${PkgHash}")
-			MESSAGE(STATUS "[DL] Invalid SHA-1 for file ${FileName}")
-			FILE(REMOVE ${PkgPath})
-		ELSE()
-			MESSAGE(VERBOSE "[DL] File ${FileName} already downloaded")
-			RETURN()
-		ENDIF()
-	ENDIF()
-	
-	MESSAGE(STATUS "[DL] ${StatusMsg}")
-	MESSAGE(VERBOSE "[DL] ${UrlBase}/${FileName}")
-	FILE(DOWNLOAD ${UrlBase}/${FileName} ${PkgPath}
-		EXPECTED_HASH SHA1=${Sha1Hash}
-		INACTIVITY_TIMEOUT 60
-		TIMEOUT 300
-	)
-ENDFUNCTION()
+# currently hardcoded configuration
 
 SET(PARALLEL_LEVEL 4)
 SET(WXWIDGETS_VERSION "3.2.0")
 SET(WX_VER_COMPACT 32)
-
 SET(INSTALL_MSVC ON)
 SET(INSTALL_MINGW64 ON)
 
@@ -46,14 +17,16 @@ SET(CUE2MKC_WORKDIR ${CMAKE_SOURCE_DIR}/..)
 CMAKE_PATH(ABSOLUTE_PATH CUE2MKC_WORKDIR NORMALIZE)
 RemoveLastChar(${CUE2MKC_WORKDIR})
 
+# show configuration
+
 MESSAGE(STATUS "[CFG] wxWidgets version: ${WXWIDGETS_VERSION}")
 MESSAGE(STATUS "[CFG] Workdir: ${CUE2MKC_WORKDIR}")
 MESSAGE(STATUS "[CFG] Install MSVC: ${INSTALL_MSVC}")
 MESSAGE(STATUS "[CFG] Install MinGW64: ${INSTALL_MINGW64}")
 
-CMAKE_PATH(APPEND CUE2MKC_WORKDIR download OUTPUT_VARIABLE CUE2MKC_DLDIR)
-
 # downloading
+
+CMAKE_PATH(APPEND CUE2MKC_WORKDIR download OUTPUT_VARIABLE CUE2MKC_DLDIR)
 
 SET(URL_WXWIDGETS "http://github.com/wxWidgets/wxWidgets/releases/download/v${WXWIDGETS_VERSION}")
 DownloadPkgSha1(${URL_WXWIDGETS} wxWidgets-${WXWIDGETS_VERSION}-headers.7z 75b5271d1a3f08f32557c7a8ca1782310ee279b4 "wxWidgets headers")
@@ -71,7 +44,7 @@ IF(INSTALL_MINGW64)
 	DownloadPkgSha1(${URL_WXWIDGETS} wxMSW-${WXWIDGETS_VERSION}_gcc1210_x64_Dev.7z 26a58b3dc1135163921910b69e0ac94f2cbd18a0 "wxWidgets dev libraries [MinGW64]")
 	DownloadPkgSha1(${URL_WXWIDGETS} wxMSW-${WXWIDGETS_VERSION}_gcc1210_x64_ReleaseDLL.7z ca15f4ddc1d9ebf68a6a7764eda60a6369285b2d "wxWidgets libraries [MinGW64]")
 	
-	SET(URL_GCC "https://gcc.gnu.org/onlinedocs/gcc-12.1.0")
+	SET(URL_GCC "http://gcc.gnu.org/onlinedocs/gcc-12.1.0")
 	DownloadPkgSha1(${URL_GCC} gcc.pdf 366da27b705374d4f07b508bdc642b6c5d5b4ca7 "GCC documentation - PDF")
 	DownloadPkgSha1(${URL_GCC} gcc-html.tar.gz 8fc02ede5b52e8abe4b67a6884e19a62899d809e "GCC documentation - HTML")
 ENDIF()
