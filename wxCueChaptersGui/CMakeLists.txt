@@ -31,10 +31,10 @@ ADD_CUSTOM_COMMAND(TARGET wxCueChaptersGui POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E create_hardlink $<TARGET_FILE:wxCueChaptersGui> $<TARGET_FILE_DIR:wxCueChaptersGui>/$<TARGET_FILE_PREFIX:wxCueChaptersGui>cue2mkc-frontend$<TARGET_FILE_SUFFIX:wxCueChaptersGui>
 )
 
-IF(DEFINED MINGW64_BASE)
+IF(DEFINED MINGW_DIR)
 	ADD_CUSTOM_COMMAND(TARGET wxCueChaptersGui POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${MINGW64_BASE}/x86_64-w64-mingw32/lib/libstdc++-6.dll $<TARGET_FILE_DIR:wxCueChaptersGui>
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${MINGW64_BASE}/x86_64-w64-mingw32/lib/libgcc_s_seh-1.dll $<TARGET_FILE_DIR:wxCueChaptersGui>
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${MINGW_DIR}/x86_64-w64-mingw32/lib/libstdc++-6.dll $<TARGET_FILE_DIR:wxCueChaptersGui>
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${MINGW_DIR}/x86_64-w64-mingw32/lib/libgcc_s_seh-1.dll $<TARGET_FILE_DIR:wxCueChaptersGui>
 	)
 ENDIF()
 
