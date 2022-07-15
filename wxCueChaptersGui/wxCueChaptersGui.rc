@@ -15,6 +15,7 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_DEFAULT
 */
 ico_main                      ICON                    "../gui/icons/cd_mka.ico"
 
+/*
 ico_cue_file                  ICON                    "../gui/icons/cue_file.ico"
 ico_file_add                  ICON                    "../gui/icons/cue_file_add.ico"
 ico_cue_file_remove           ICON                    "../gui/icons/cue_file_remove.ico"
@@ -22,6 +23,7 @@ ico_file_mask                 ICON                    "../gui/icons/file_mask.ic
 ico_folder                    ICON                    "../gui/icons/folder.ico"
 ico_media_file                ICON                    "../gui/icons/media_file.ico"
 ico_media_file_add            ICON                    "../gui/icons/media_file_add.ico"
+*/
 
 /*
 	Version
@@ -60,6 +62,4 @@ BEGIN
     END
 END
 
-#define wxUSE_RC_MANIFEST 1
-#define wxUSE_DPI_AWARE_MANIFEST 2
-#include <wx/msw/wx.rc>
+#include <wx/msw/wx-manifest.rc>

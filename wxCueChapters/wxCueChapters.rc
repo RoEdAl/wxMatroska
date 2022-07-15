@@ -13,7 +13,7 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_DEFAULT
 	Icon with lowest ID value placed first to ensure application icon
 	remains consistent on all systems.
 */
-0                       ICON                    "../gui/icons/cd_mka.ico"
+1                       ICON                    "../gui/icons/cd_mka.ico"
 
 /*
 	Version
@@ -52,6 +52,4 @@ BEGIN
     END
 END
 
-#define wxUSE_RC_MANIFEST 1
-#define wxUSE_DPI_AWARE_MANIFEST 0
-#include <wx/msw/wx.rc>
+#include <wx/msw/wx-manifest.rc>
