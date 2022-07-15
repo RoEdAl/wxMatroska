@@ -13,7 +13,6 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_DEFAULT
 	Icon with lowest ID value placed first to ensure application icon
 	remains consistent on all systems.
 */
-0                       	  ICON                    "../gui/icons/cd_mka.ico"
 ico_main                      ICON                    "../gui/icons/cd_mka.ico"
 
 ico_cue_file                  ICON                    "../gui/icons/cue_file.ico"
