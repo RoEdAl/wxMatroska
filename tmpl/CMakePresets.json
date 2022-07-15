@@ -1,0 +1,169 @@
+{
+  "version": 4,
+  "cmakeMinimumRequired": {"major": 3, "minor": 23, "patch": 0},
+  "configurePresets": [
+    {
+		"name": "cue2mkc",
+		"hidden": true,
+		"condition": {"type": "equals","lhs": "${hostSystemName}","rhs": "Windows"},
+		"installDir": "${sourceDir}/../install",
+		"environment": {
+			"CUE2MKC_WORKDIR": "@CUE2MKC_WORKDIR@",
+			"WXWIDGETS_DIR": "@WXWIDGETS_DIR@"
+		},
+		"cacheVariables": {
+			"wxWidgets_ROOT_DIR": {
+				"type": "PATH",
+				"value": "$env{WXWIDGETS_DIR}"
+			}
+		}
+	},
+	{
+		"name": "mingw",
+		"hidden": true,
+		"inherits": "cue2mkc",
+		"environment": {
+			"MINGW_DIR": "@MINGW_DIR@",
+			"CMAKE_COLOR_DIAGNOSTICS": "OFF",
+			"CMAKE_BUILD_PARALLEL_LEVEL": "@PARALLEL_LEVEL@"
+		},
+		"cacheVariables": {
+			"CMAKE_COLOR_MAKEFILE": {
+				"type": "BOOL",
+				"value": false
+			}
+		}
+	},
+    {
+		"name": "mingw64",
+		"hidden": true,
+		"inherits": "mingw",
+		"environment": {
+			"WXWIDGETS_LIB_DIR_NAME": "gcc1210_x64_dll",
+			"CMAKE_PROGRAM_PATH": "$env{MINGW_DIR}/bin;$env{MINGW_DIR}/x86_64-w64-mingw32/bin;$env{WXWIDGETS_DIR}/lib/$env{WXWIDGETS_LIB_DIR_NAME}",
+			"CFLAGS": "\"-ffile-prefix-map=${fileDir}=.\" \"-ffile-prefix-map=$env{WXWIDGETS_DIR}=./wx\"",
+			"CXXFLAGS": "\"-ffile-prefix-map=${fileDir}=.\" \"-ffile-prefix-map=$env{WXWIDGETS_DIR}=./wx\""
+		},
+		"cacheVariables": {
+			"wxWidgets_LIB_DIR": {
+				"type": "PATH",
+				"value": "$env{WXWIDGETS_DIR}/lib/$env{WXWIDGETS_LIB_DIR_NAME}"
+			},
+			"WXWIDGETS_CFG_FILE": {
+				"type": "FILEPATH",
+				"value": "$env{WXWIDGETS_DIR}/mingw64-config.cmake"
+			}
+		},
+		"generator": "MinGW Makefiles",
+		"toolchainFile": "$env{MINGW_DIR}/mingw-toolchain.cmake"
+	},
+    {
+		"name": "msvc",
+		"hidden": true,
+		"inherits": "cue2mkc",
+		"environment": {
+			"WXWIDGETS_LIB_DIR_NAME": "vc14x_x64_dll"
+		},
+		"cacheVariables": {
+			"wxWidgets_LIB_DIR": {
+				"type": "PATH",
+				"value": "$env{WXWIDGETS_DIR}/lib/$env{WXWIDGETS_LIB_DIR_NAME}"
+			},
+			"WXWIDGETS_CFG_FILE": {
+				"type": "FILEPATH",
+				"value": "$env{WXWIDGETS_DIR}/msvc-config.cmake"
+			}
+		},
+		"generator": "Visual Studio 17 2022",
+		"toolset": "v143,host=x64"
+	},	
+	{
+		"name": "mingw64-release",
+		"displayName": "MinGW64 Release",
+		"inherits": "mingw64",
+		"binaryDir": "${sourceDir}/../build-mingw64-release",
+		"cacheVariables": {
+			"CMAKE_BUILD_TYPE": {
+				"type": "STRING",
+				"value": "MinSizeRel"
+			}
+		}
+	},
+	{
+		"name": "mingw64-debug",
+		"displayName": "MinGW64 Debug",
+		"inherits": "mingw64",
+		"binaryDir": "${sourceDir}/../build-mingw64-debug",
+		"cacheVariables": {
+			"CMAKE_BUILD_TYPE": {
+				"type": "STRING",
+				"value": "Debug"
+			}
+		}
+	},
+	{
+		"name": "msvc-x64",
+		"displayName": "MSVC17 x64",
+		"inherits": "msvc",
+		"binaryDir": "${sourceDir}/../build-msvc-x64"
+	}
+  ],
+  "buildPresets": [
+    {
+		"name": "cue2mkc",
+		"hidden": true,
+		"condition": {"type": "equals","lhs": "${hostSystemName}","rhs": "Windows"},
+		"inheritConfigureEnvironment": true
+	},
+	{
+		"name": "mingw",
+		"hidden": true,
+		"inherits": "cue2mkc"
+	},
+	{
+		"name": "msvc",
+		"hidden": true,
+		"inherits": "cue2mkc"
+	},
+	{
+		"name": "debug",
+		"hidden": true,
+		"cleanFirst": false,
+		"targets": ["wxCueChapters", "wxCueChaptersGui"],
+		"jobs": 1
+	},
+	{
+		"name": "release",
+		"hidden": true,
+		"cleanFirst": true,
+		"targets": ["isetup"],
+		"jobs": @PARALLEL_LEVEL@
+	},
+	{
+		"name": "mingw64-release",
+		"displayName": "MinGW64 Release",
+		"inherits": ["mingw", "release"],
+		"configurePreset": "mingw64-release"
+	},
+	{
+		"name": "mingw64-debug",
+		"displayName": "MinGW64 Debug",
+		"inherits": ["mingw", "debug"],
+		"configurePreset": "mingw64-debug"
+	},
+	{
+		"name": "msvc-release-x64",
+		"displayName": "MSVC Release x64",
+		"inherits": ["msvc", "release"],
+		"configurePreset": "msvc-x64",
+		"configuration": "MinSizeRel"
+	},
+	{
+		"name": "msvc-debug-x64",
+		"displayName": "MSVC Debug x64",
+		"inherits": ["msvc", "debug"],
+		"configurePreset": "msvc-x64",
+		"configuration": "Debug"
+	}	
+  ]
+}
