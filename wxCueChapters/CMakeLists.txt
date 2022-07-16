@@ -33,7 +33,7 @@ ADD_EXECUTABLE(wxCueChapters
 ConfigureWxMatroska(wxCueChapters)
 ConfigureWxWidgetsUsage(wxCueChapters)
 ConfigureSourceEncoding(wxCueChapters)
-
+SET_PROPERTY(TARGET wxCueChapters PROPERTY OUTPUT_NAME cue2mkc)
 TARGET_LINK_LIBRARIES(wxCueChapters PRIVATE
 	wxConsoleApp
 	wxEncodingDetection
@@ -42,11 +42,10 @@ TARGET_LINK_LIBRARIES(wxCueChapters PRIVATE
 	TagLib
 	wxWEBPHandler
 	nlohmann_json::nlohmann_json
-	${wxWidgets_LIBRARIES}
 )
 
 SET_SOURCE_FILES_PROPERTIES(wxCueChapters.rc PROPERTIES COMPILE_DEFINITIONS "wxUSE_RC_MANIFEST=1;wxUSE_DPI_AWARE_MANIFEST=0")
-
+TARGET_LINK_OPTIONS(wxCueChapters PRIVATE "$<$<AND:$<CXX_COMPILER_ID:GNU>,$<NOT:$<CONFIG:Debug,RelWithDebInfo>>>:-s>")
 #TARGET_LINK_OPTIONS(wxCueChapters PRIVATE "$<$<CXX_COMPILER_ID:GNU>:-municode>")
 
 ADD_CUSTOM_COMMAND(TARGET wxCueChapters POST_BUILD
@@ -56,7 +55,6 @@ ADD_CUSTOM_COMMAND(TARGET wxCueChapters POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/cmake/dr-scan.cmake $<TARGET_FILE_DIR:wxCueChapters>
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/cmake/mkcover.cmake $<TARGET_FILE_DIR:wxCueChapters>
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/app.tags.json $<TARGET_FILE_DIR:wxCueChapters>/$<TARGET_FILE_BASE_NAME:wxCueChapters>.tags.json
-	COMMAND ${CMAKE_COMMAND} -E create_hardlink $<TARGET_FILE:wxCueChapters> $<TARGET_FILE_DIR:wxCueChapters>/$<TARGET_FILE_PREFIX:wxCueChapters>cue2mkc$<TARGET_FILE_SUFFIX:wxCueChapters>
 )
 
 IF(DEFINED MINGW_DIR)
@@ -67,10 +65,3 @@ IF(DEFINED MINGW_DIR)
 ENDIF()
 
 SET_PROPERTY(TARGET wxCueChapters PROPERTY FOLDER cli)
-
-ADD_EXECUTABLE(cue2mkc IMPORTED)
-SET_TARGET_PROPERTIES(cue2mkc PROPERTIES
-	IMPORTED_LOCATION $<TARGET_FILE_DIR:wxCueChapters>/$<TARGET_FILE_PREFIX:wxCueChapters>cue2mkc$<TARGET_FILE_SUFFIX:wxCueChapters>
-	FOLDER cli
-)
-

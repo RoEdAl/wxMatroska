@@ -8,7 +8,10 @@ FOREACH(H ${CMAKE_SYSTEM_PREFIX_PATH})
 ENDFOREACH()
 FIND_PROGRAM(ISCC "iscc" HINT ${ISCCHINT})
 
-SET(ISETUP_NAME cue2mkc_${EX_PLATFORM_NAME})
+ADD_EXECUTABLE(InnoSetup IMPORTED)
+SET_PROPERTY(TARGET InnoSetup PROPERTY IMPORTED_LOCATION ${ISCC})
+
+SET(ISETUP_NAME cue2mkc-${EX_PLATFORM_NAME}$<$<CONFIG:Debug>:-dbg>)
 SET(LICENSE_FILE license.md.txt)
 SET(LICENSE_FILE_TEMPLATE template.rtf)
 
@@ -48,17 +51,17 @@ IF(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
 		DEPENDS 
 			${ISETUP_SOURCE}
 			../cue/ISO-639-2_utf-8.txt
-			../wxCueChapters/cmake/dr-scan.cmake
-			../wxCueChapters/cmake/mkcover.cmake
-			../wxCueChapters/app.tags.json
+			$<TARGET_PROPERTY:wxCueChapters,SOURCE_DIR>/cmake/dr-scan.cmake
+			$<TARGET_PROPERTY:wxCueChapters,SOURCE_DIR>/cmake/mkcover.cmake
+			$<TARGET_PROPERTY:wxCueChapters,SOURCE_DIR>/app.tags.json
 			${CMAKE_CURRENT_BINARY_DIR}/license.txt
 			${CMAKE_CURRENT_BINARY_DIR}/license.rtf
 			$<TARGET_FILE:wxCueChapters>
 			$<TARGET_FILE:wxCueChaptersGui>
-		COMMAND ${ISCC}
+		COMMAND InnoSetup
 			/o${CMAKE_CURRENT_BINARY_DIR}
 			/f${ISETUP_NAME}
-			/dCue2MkcBase=cue2mkc
+			/dCue2MkcBase=$<TARGET_FILE_BASE_NAME:wxCueChapters>
 			/dCue2MkcExe=$<TARGET_FILE:wxCueChapters>
 			/dCue2MkcGuiExe=$<TARGET_FILE:wxCueChaptersGui>
 			/dCue2MkcExeArch=${EX_PLATFORM_NAME}
@@ -113,17 +116,17 @@ ELSE()
 		DEPENDS 
 			${ISETUP_SOURCE}
 			../cue/ISO-639-2_utf-8.txt
-			../wxCueChapters/cmake/dr-scan.cmake
-			../wxCueChapters/cmake/mkcover.cmake
-			../wxCueChapters/app.tags.json
+			$<TARGET_PROPERTY:wxCueChapters,SOURCE_DIR>/cmake/dr-scan.cmake
+			$<TARGET_PROPERTY:wxCueChapters,SOURCE_DIR>/cmake/mkcover.cmake
+			$<TARGET_PROPERTY:wxCueChapters,SOURCE_DIR>/app.tags.json
 			${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/license.txt
 			${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/license.rtf
 			$<TARGET_FILE:wxCueChapters>
 			$<TARGET_FILE:wxCueChaptersGui>
-		COMMAND ${ISCC}
+		COMMAND InnoSetup
 			/o${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>
 			/f${ISETUP_NAME}
-			/dCue2MkcBase=cue2mkc
+			/dCue2MkcBase=$<TARGET_FILE_BASE_NAME:wxCueChapters>
 			/dCue2MkcExe=$<TARGET_FILE:wxCueChapters>
 			/dCue2MkcGuiExe=$<TARGET_FILE:wxCueChaptersGui>
 			/dCue2MkcExeArch=${EX_PLATFORM_NAME}

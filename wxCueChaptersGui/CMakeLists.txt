@@ -21,8 +21,9 @@ ADD_EXECUTABLE(wxCueChaptersGui WIN32
 ConfigureWxMatroska(wxCueChaptersGui)
 ConfigureWxWidgetsUsage(wxCueChaptersGui)
 ConfigureSourceEncoding(wxCueChaptersGui)
-#TARGET_LINK_OPTIONS(wxCueChaptersGui PRIVATE "$<$<CXX_COMPILER_ID:GNU>:-municode>")
-TARGET_LINK_LIBRARIES(wxCueChaptersGui wxCmdTools wxEncodingDetection ${wxWidgets_LIBRARIES})
+SET_PROPERTY(TARGET wxCueChaptersGui PROPERTY OUTPUT_NAME cue2mkc-frontend)
+TARGET_LINK_OPTIONS(wxCueChaptersGui PRIVATE "$<$<AND:$<CXX_COMPILER_ID:GNU>,$<NOT:$<CONFIG:Debug,RelWithDebInfo>>>:-s>")
+TARGET_LINK_LIBRARIES(wxCueChaptersGui PRIVATE wxCmdTools wxEncodingDetection)
 
 SET_SOURCE_FILES_PROPERTIES(wxCueChaptersGui.rc PROPERTIES COMPILE_DEFINITIONS "wxUSE_RC_MANIFEST=1;wxUSE_DPI_AWARE_MANIFEST=2")
 
@@ -30,7 +31,6 @@ ADD_CUSTOM_COMMAND(TARGET wxCueChaptersGui POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${wxWidgets_LIB_DIR}/wxbase${WXWIDGETS_VER_COMPACT}u$<$<CONFIG:Debug>:d>_${WXWIDGETS_DLL_SUFFIX} $<TARGET_FILE_DIR:wxCueChaptersGui>
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${wxWidgets_LIB_DIR}/wxbase${WXWIDGETS_VER_COMPACT}u$<$<CONFIG:Debug>:d>_xml_${WXWIDGETS_DLL_SUFFIX} $<TARGET_FILE_DIR:wxCueChaptersGui>
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${wxWidgets_LIB_DIR}/wxmsw${WXWIDGETS_VER_COMPACT}u$<$<CONFIG:Debug>:d>_core_${WXWIDGETS_DLL_SUFFIX} $<TARGET_FILE_DIR:wxCueChaptersGui>
-	COMMAND ${CMAKE_COMMAND} -E create_hardlink $<TARGET_FILE:wxCueChaptersGui> $<TARGET_FILE_DIR:wxCueChaptersGui>/$<TARGET_FILE_PREFIX:wxCueChaptersGui>cue2mkc-frontend$<TARGET_FILE_SUFFIX:wxCueChaptersGui>
 )
 
 IF(DEFINED MINGW_DIR)
@@ -41,9 +41,3 @@ IF(DEFINED MINGW_DIR)
 ENDIF()
 
 SET_PROPERTY(TARGET wxCueChaptersGui PROPERTY FOLDER gui)
-
-ADD_EXECUTABLE(cue2mkc-frontend IMPORTED)
-SET_TARGET_PROPERTIES(cue2mkc-frontend PROPERTIES
-	IMPORTED_LOCATION $<TARGET_FILE_DIR:wxCueChaptersGui>/$<TARGET_FILE_PREFIX:wxCueChaptersGui>cue2mkc-frontend$<TARGET_FILE_SUFFIX:wxCueChaptersGui>
-	FOLDER gui
-)

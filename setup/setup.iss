@@ -8,22 +8,22 @@
 #define Cue2MkcFileVersionString GetFileVersionString(Cue2MkcExe)
 
 [Setup]
-AppID=cue2mkc
+AppID={#Cue2MkcBase}
 AppName={cm:cue2mkc}
 AppVerName={cm:cue2mkc} {#Cue2MkcExeArch} {#Cue2MkcFileVersion}
 AppVersion={#Cue2MkcFileVersion}
 AppCopyright={#Cue2MkcFileCopyright}
 AppPublisher={#Cue2MkcFileCompany}
-VersionInfoProductName=cue2mkc ({#Cue2MkcExeArch})
+VersionInfoProductName={#Cue2MkcBase} ({#Cue2MkcExeArch})
 VersionInfoDescription={#Cue2MkcFileDescription}
 VersionInfoVersion={#Cue2MkcFileVersion}
 VersionInfoCompany={#Cue2MkcFileCompany}
 VersionInfoCopyright={#Cue2MkcFileCopyright}
-DefaultDirName={autopf}\cue2mkc
+DefaultDirName={autopf}\{#Cue2MkcBase}
 SetupIconFile=..\gui\icons\cd_mka.ico
 ShowLanguageDialog=no
 Compression=lzma2/Max
-DefaultGroupName=cue2mkc
+DefaultGroupName={#Cue2MkcBase}
 ArchitecturesAllowed={#Cue2MkcExeArch}
 ArchitecturesInstallIn64BitMode={#Cue2MkcExeArch}
 

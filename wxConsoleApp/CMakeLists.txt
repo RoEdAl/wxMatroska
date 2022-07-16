@@ -7,7 +7,7 @@ SET(CONSOLEAPP_SOURCE_FILES
 	MyConfiguration.cpp
 )
 
-ADD_LIBRARY(wxConsoleApp
+ADD_LIBRARY(wxConsoleApp STATIC
 	${CONSOLEAPP_SOURCE_FILES}
 	${CONSOLEAPP_HEADER_FILES}
 	${CONSOLEAPP_PUBLIC_HEADER_FILES}
@@ -16,4 +16,5 @@ ADD_LIBRARY(wxConsoleApp
 ConfigureWxMatroska(wxConsoleApp)
 ConfigureWxWidgetsUsage(wxConsoleApp)
 ConfigureSourceEncoding(wxConsoleApp)
+SET_PROPERTY(TARGET wxConsoleApp PROPERTY OUTPUT_NAME ConsoleApp)
 SET_PROPERTY(TARGET wxConsoleApp PROPERTY FOLDER "cli")

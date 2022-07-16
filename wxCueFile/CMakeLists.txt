@@ -32,7 +32,7 @@ SET(CUEFILE_SOURCE_FILES
 	wxRegExStringProcessor.cpp
 )
 
-ADD_LIBRARY(wxCueFile
+ADD_LIBRARY(wxCueFile STATIC
 	${CUEFILE_SOURCE_FILES}
 	${CUEFILE_HEADER_FILES}
 	${CUEFILE_PUBLIC_HEADER_FILES}
@@ -41,5 +41,6 @@ ADD_LIBRARY(wxCueFile
 ConfigureWxMatroska(wxCueFile)
 ConfigureWxWidgetsUsage(wxCueFile)
 ConfigureSourceEncoding(wxCueFile)
+SET_PROPERTY(TARGET wxCueFile PROPERTY OUTPUT_NAME CueFile)
 TARGET_LINK_LIBRARIES(wxCueFile PRIVATE TagLib wxWEBPHandler nlohmann_json::nlohmann_json)
 SET_PROPERTY(TARGET wxCueFile PROPERTY FOLDER "cli")

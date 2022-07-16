@@ -5,7 +5,7 @@ SET(CMD_TOOLS_SOURCE_FILES
 	wxCmdTool.cpp
 )
 
-ADD_LIBRARY(wxCmdTools 
+ADD_LIBRARY(wxCmdTools STATIC
 	${CMD_TOOLS_SOURCE_FILES}
 	${CMD_TOOLS_HEADER_FILES}
 	${CMD_TOOLS_PUBLIC_HEADER_FILES}
@@ -14,5 +14,5 @@ ADD_LIBRARY(wxCmdTools
 ConfigureWxMatroska(wxCmdTools)
 ConfigureWxWidgetsUsage(wxCmdTools)
 ConfigureSourceEncoding(wxCmdTools)
-
+SET_PROPERTY(TARGET wxCmdTools PROPERTY OUTPUT_NAME CmdTools)
 SET_PROPERTY(TARGET wxCmdTools PROPERTY FOLDER "tool")
