@@ -328,6 +328,13 @@ TARGET_INCLUDE_DIRECTORIES(WebPDecoder INTERFACE ${EXT_INSTALL_PREFIX}/Install/p
 FetchContent_Declare(json URL http://github.com/nlohmann/json/releases/download/v3.10.5/json.tar.xz)
 FetchContent_MakeAvailable(json)
 
+# GNU
+
+IF(DEFINED MINGW_CFG_FILE)
+	MESSAGE(STATUS "MinGW configuration: ${MINGW_CFG_FILE}")
+	INCLUDE(${MINGW_CFG_FILE})
+ENDIF()
+
 # wxWidgets
 
 FUNCTION(ConfigureWxWidgetsUsage Target)
@@ -339,24 +346,10 @@ IF(DEFINED WXWIDGETS_CFG_FILE)
 	INCLUDE(${WXWIDGETS_CFG_FILE})
 	ADD_LIBRARY(wxWidgets INTERFACE)
 	SET(wxWidgets_LIBRARIES 
-		debug ${WX_cored} optimized ${WX_core}
-		debug ${WX_based} optimized ${WX_base}
-		debug ${WX_xmld} optimized ${WX_xml}
-		debug ${WX_jpegd} optimized ${WX_jpeg}
-		debug ${WX_pngd} optimized ${WX_png}
-		debug ${WX_tiffd} optimized ${WX_tiff}
-		debug ${WX_zlibd} optimized ${WX_zlib}
-		debug ${WX_zlibd} optimized ${WX_zlib}
-		debug ${WX_regexd} optimized ${WX_regex}
-		debug ${WX_expatd} optimized ${WX_expat}
+		WX_core	WX_base WX_xml WX_jpeg WX_png WX_tiff WX_zlib WX_regexu WX_expat
 		comctl32 uuid oleacc uxtheme rpcrt4 shlwapi version wsock32)
 	MESSAGE(DEBUG "wxWidgets libs: ${wxWidgets_LIBRARIES}")
 	TARGET_LINK_LIBRARIES(wxWidgets INTERFACE ${wxWidgets_LIBRARIES})
-	TARGET_COMPILE_DEFINITIONS(wxWidgets INTERFACE WXUSINGDLL)
-	TARGET_INCLUDE_DIRECTORIES(wxWidgets INTERFACE
-		${wxWidgets_LIB_DIR}/$<IF:$<CONFIG:Debug,RelWithDebInfo>,mswud,mswu>
-		${wxWidgets_ROOT_DIR}/include
-	)
 ELSE()
 	FUNCTION(GetWxWidgetsDllSuffix)
 		GET_FILENAME_COMPONENT(WXWIDGETS_DLL_SUFFIX ${wxWidgets_LIB_DIR} NAME)

@@ -52,6 +52,10 @@
 			"WXWIDGETS_CFG_FILE": {
 				"type": "FILEPATH",
 				"value": "$env{WXWIDGETS_DIR}/mingw64-config.cmake"
+			},
+			"MINGW_CFG_FILE": {
+				"type": "FILEPATH",
+				"value": "$env{MINGW_DIR}/mingw-config.cmake"
 			}
 		},
 		"generator": "MinGW Makefiles",

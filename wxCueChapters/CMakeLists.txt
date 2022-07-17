@@ -34,33 +34,47 @@ ConfigureWxMatroska(wxCueChapters)
 ConfigureWxWidgetsUsage(wxCueChapters)
 ConfigureSourceEncoding(wxCueChapters)
 SET_PROPERTY(TARGET wxCueChapters PROPERTY OUTPUT_NAME cue2mkc)
-TARGET_LINK_LIBRARIES(wxCueChapters PRIVATE
-	wxConsoleApp
-	wxEncodingDetection
-	wxCmdTools
-	wxCueFile
-	TagLib
-	wxWEBPHandler
-	nlohmann_json::nlohmann_json
+TARGET_LINK_LIBRARIES(wxCueChapters
+	PRIVATE
+		wxConsoleApp
+		wxEncodingDetection
+		wxCmdTools
+		wxCueFile
+		TagLib
+		wxWEBPHandler
+		nlohmann_json::nlohmann_json
 )
 
-SET_SOURCE_FILES_PROPERTIES(wxCueChapters.rc PROPERTIES COMPILE_DEFINITIONS "wxUSE_RC_MANIFEST=1;wxUSE_DPI_AWARE_MANIFEST=0")
+SET(MANIFEST_DEFS wxUSE_RC_MANIFEST=1 wxUSE_DPI_AWARE_MANIFEST=0)
+
+SET_SOURCE_FILES_PROPERTIES(wxCueChapters.rc PROPERTIES COMPILE_DEFINITIONS "${MANIFEST_DEFS}")
 TARGET_LINK_OPTIONS(wxCueChapters PRIVATE "$<$<AND:$<CXX_COMPILER_ID:GNU>,$<NOT:$<CONFIG:Debug,RelWithDebInfo>>>:-s>")
 #TARGET_LINK_OPTIONS(wxCueChapters PRIVATE "$<$<CXX_COMPILER_ID:GNU>:-municode>")
 
-ADD_CUSTOM_COMMAND(TARGET wxCueChapters POST_BUILD
-	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${wxWidgets_LIB_DIR}/wxbase${WXWIDGETS_VER_COMPACT}u$<$<CONFIG:Debug>:d>_${WXWIDGETS_DLL_SUFFIX} $<TARGET_FILE_DIR:wxCueChapters>
-	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${wxWidgets_LIB_DIR}/wxbase${WXWIDGETS_VER_COMPACT}u$<$<CONFIG:Debug>:d>_xml_${WXWIDGETS_DLL_SUFFIX} $<TARGET_FILE_DIR:wxCueChapters>
-	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${wxWidgets_LIB_DIR}/wxmsw${WXWIDGETS_VER_COMPACT}u$<$<CONFIG:Debug>:d>_core_${WXWIDGETS_DLL_SUFFIX} $<TARGET_FILE_DIR:wxCueChapters>
-	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/cmake/dr-scan.cmake $<TARGET_FILE_DIR:wxCueChapters>
-	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/cmake/mkcover.cmake $<TARGET_FILE_DIR:wxCueChapters>
-	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/app.tags.json $<TARGET_FILE_DIR:wxCueChapters>/$<TARGET_FILE_BASE_NAME:wxCueChapters>.tags.json
-)
-
-IF(DEFINED MINGW_DIR)
+IF(DEFINED WXWIDGETS_CFG_FILE)
 	ADD_CUSTOM_COMMAND(TARGET wxCueChapters POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${MINGW_DIR}/x86_64-w64-mingw32/lib/libstdc++-6.dll $<TARGET_FILE_DIR:wxCueChapters>
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${MINGW_DIR}/x86_64-w64-mingw32/lib/libgcc_s_seh-1.dll $<TARGET_FILE_DIR:wxCueChapters>
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:wxCueChapters> $<TARGET_FILE_DIR:wxCueChapters>
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different cmake/dr-scan.cmake cmake/mkcover.cmake $<TARGET_FILE_DIR:wxCueChapters>
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different app.tags.json $<TARGET_FILE_DIR:wxCueChapters>/$<TARGET_FILE_BASE_NAME:wxCueChapters>.tags.json
+		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+		COMMAND_EXPAND_LISTS
+	)
+ELSE()
+	ADD_CUSTOM_COMMAND(TARGET wxCueChapters POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+			${wxWidgets_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}wxbase${WXWIDGETS_VER_COMPACT}u$<$<CONFIG:Debug>:d>_${WXWIDGETS_DLL_SUFFIX}${CMAKE_SHARED_LIBRARY_SUFFIX}
+			${wxWidgets_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}wxbase${WXWIDGETS_VER_COMPACT}u$<$<CONFIG:Debug>:d>_xml_${WXWIDGETS_DLL_SUFFIX}${CMAKE_SHARED_LIBRARY_SUFFIX}
+			${wxWidgets_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}wxmsw${WXWIDGETS_VER_COMPACT}u$<$<CONFIG:Debug>:d>_core_${WXWIDGETS_DLL_SUFFIX}${CMAKE_SHARED_LIBRARY_SUFFIX}
+			$<TARGET_FILE_DIR:wxCueChapters>
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different cmake/dr-scan.cmake cmake/mkcover.cmake $<TARGET_FILE_DIR:wxCueChapters>
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different app.tags.json $<TARGET_FILE_DIR:wxCueChapters>/$<TARGET_FILE_BASE_NAME:wxCueChapters>.tags.json
+		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+	)
+ENDIF()
+
+IF(DEFINED MINGW_CFG_FILE)
+	ADD_CUSTOM_COMMAND(TARGET wxCueChapters POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_PROPERTY:GNU_gcc,IMPORTED_LOCATION> $<TARGET_PROPERTY:GNU_stdcxx,IMPORTED_LOCATION> $<TARGET_FILE_DIR:wxCueChapters>
 	)
 ENDIF()
 
