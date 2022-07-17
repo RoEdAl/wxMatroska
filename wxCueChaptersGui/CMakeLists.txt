@@ -22,7 +22,7 @@ ConfigureWxMatroska(wxCueChaptersGui)
 ConfigureWxWidgetsUsage(wxCueChaptersGui)
 ConfigureSourceEncoding(wxCueChaptersGui)
 SET_PROPERTY(TARGET wxCueChaptersGui PROPERTY OUTPUT_NAME cue2mkc-frontend)
-TARGET_LINK_OPTIONS(wxCueChaptersGui PRIVATE "$<$<AND:$<CXX_COMPILER_ID:GNU>,$<NOT:$<CONFIG:Debug,RelWithDebInfo>>>:-s>")
+#TARGET_LINK_OPTIONS(wxCueChaptersGui PRIVATE "$<$<AND:$<CXX_COMPILER_ID:GNU>,$<NOT:$<CONFIG:Debug,RelWithDebInfo>>>:-s>")
 TARGET_LINK_LIBRARIES(wxCueChaptersGui
 	PRIVATE wxCmdTools wxEncodingDetection
 )
@@ -51,3 +51,4 @@ IF(DEFINED MINGW_CFG_FILE)
 ENDIF()
 
 SET_PROPERTY(TARGET wxCueChaptersGui PROPERTY FOLDER gui)
+INSTALL(TARGETS wxCueChaptersGui DESTINATION $<LOWER_CASE:$<CONFIG>>)

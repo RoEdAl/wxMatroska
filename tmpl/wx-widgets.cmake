@@ -6,7 +6,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.23)
 
 SET(WX_PREFIX_LIB_STATIC ${CMAKE_STATIC_LIBRARY_PREFIX}wx)
 SET(WX_PREFIX_LIB_DYNAMIC ${CMAKE_DYNAMIC_LIBRARY_PREFIX}wx)
-SET(WX_SUFFIX_LIB_DYNAMIC _${WXWIDGETS_DLL_SUFFIX}${CMAKE_SHARED_LIBRARY_SUFFIX})
+SET(WX_SUFFIX_LIB_DYNAMIC _${WXWIDGETS_DLL_SUFFIX}_x64${CMAKE_SHARED_LIBRARY_SUFFIX})
 
 FUNCTION(WxConfigureStaticTarget Tgt)
 	TARGET_INCLUDE_DIRECTORIES(WX_${Tgt} INTERFACE
@@ -25,10 +25,10 @@ ENDFUNCTION()
 
 MACRO(WxAddImportedUnversionedStaticLibrary LibName LibPath LibPathDbg)
 	IF(NOT EXISTS ${LibPath})
-		MESSAGE(WARNING "WX_${LibName} - static library not found - ${LibPath}")
+		MESSAGE(WARNING "WX_${LibName} - static library not found")
 	ENDIF()
 	IF(NOT EXISTS ${LibPathDbg})
-		MESSAGE(WARNING "WX_${LibName} - debug static library not found ${LibPathDbg}")
+		MESSAGE(WARNING "WX_${LibName} - debug static library not found")
 	ENDIF()
 	
 	MESSAGE(VERBOSE "Adding static library WX_${LibName}")

@@ -6,7 +6,6 @@
 		"name": "cue2mkc",
 		"hidden": true,
 		"condition": {"type": "equals","lhs": "${hostSystemName}","rhs": "Windows"},
-		"installDir": "${sourceDir}/../install",
 		"environment": {
 			"CUE2MKC_WORKDIR": "@CUE2MKC_WORKDIR@",
 			"WXWIDGETS_DIR": "@WXWIDGETS_DIR@"
@@ -39,7 +38,7 @@
 		"hidden": true,
 		"inherits": "mingw",
 		"environment": {
-			"WXWIDGETS_LIB_DIR_NAME": "gcc1210_x64_dll",
+			"WXWIDGETS_LIB_DIR_NAME": "@WX_MW64_DLL_SUFFIX@",
 			"CMAKE_PROGRAM_PATH": "$env{MINGW_DIR}/bin;$env{MINGW_DIR}/x86_64-w64-mingw32/bin;$env{MINGW_DIR}/opt/bin;$env{WXWIDGETS_DIR}/lib/$env{WXWIDGETS_LIB_DIR_NAME}",
 			"CFLAGS": "\"-ffile-prefix-map=${fileDir}=.\" \"-ffile-prefix-map=$env{WXWIDGETS_DIR}=./wx\"",
 			"CXXFLAGS": "\"-ffile-prefix-map=${fileDir}=.\" \"-ffile-prefix-map=$env{WXWIDGETS_DIR}=./wx\""
@@ -47,7 +46,7 @@
 		"cacheVariables": {
 			"wxWidgets_LIB_DIR": {
 				"type": "PATH",
-				"value": "$env{WXWIDGETS_DIR}/lib/$env{WXWIDGETS_LIB_DIR_NAME}"
+				"value": "$env{WXWIDGETS_DIR}/lib/$env{WXWIDGETS_LIB_DIR_NAME}_x64_dll"
 			},
 			"WXWIDGETS_CFG_FILE": {
 				"type": "FILEPATH",
@@ -66,12 +65,12 @@
 		"hidden": true,
 		"inherits": "cue2mkc",
 		"environment": {
-			"WXWIDGETS_LIB_DIR_NAME": "vc14x_x64_dll"
+			"WXWIDGETS_LIB_DIR_NAME": "@WX_MSVC_DLL_SUFFIX@"
 		},
 		"cacheVariables": {
 			"wxWidgets_LIB_DIR": {
 				"type": "PATH",
-				"value": "$env{WXWIDGETS_DIR}/lib/$env{WXWIDGETS_LIB_DIR_NAME}"
+				"value": "$env{WXWIDGETS_DIR}/lib/$env{WXWIDGETS_LIB_DIR_NAME}_x64_dll"
 			},
 			"WXWIDGETS_CFG_FILE": {
 				"type": "FILEPATH",
@@ -85,7 +84,8 @@
 		"name": "mingw64-release",
 		"displayName": "MinGW64 Release",
 		"inherits": "mingw64",
-		"binaryDir": "${sourceDir}/../build-mingw64-release",
+		"binaryDir": "../build/mingw64/release",
+		"installDir": "../install/mingw64",
 		"cacheVariables": {
 			"CMAKE_BUILD_TYPE": {
 				"type": "STRING",
@@ -97,7 +97,8 @@
 		"name": "mingw64-debug",
 		"displayName": "MinGW64 Debug",
 		"inherits": "mingw64",
-		"binaryDir": "${sourceDir}/../build-mingw64-debug",
+		"binaryDir": "../build/mingw64/debug",
+		"installDir": "../install/mingw64",
 		"cacheVariables": {
 			"CMAKE_BUILD_TYPE": {
 				"type": "STRING",
@@ -109,7 +110,8 @@
 		"name": "msvc-x64",
 		"displayName": "MSVC17 x64",
 		"inherits": "msvc",
-		"binaryDir": "${sourceDir}/../build-msvc-x64"
+		"binaryDir": "../build/msvc-x64",
+		"installDir": "../install/msvc-x64"
 	}
   ],
   "buildPresets": [
@@ -117,6 +119,7 @@
 		"name": "cue2mkc",
 		"hidden": true,
 		"condition": {"type": "equals","lhs": "${hostSystemName}","rhs": "Windows"},
+		"targets": ["wxCueChapters", "wxCueChaptersGui"],
 		"inheritConfigureEnvironment": true
 	},
 	{
@@ -133,14 +136,12 @@
 		"name": "debug",
 		"hidden": true,
 		"cleanFirst": false,
-		"targets": ["wxCueChapters", "wxCueChaptersGui"],
 		"jobs": 1
 	},
 	{
 		"name": "release",
 		"hidden": true,
 		"cleanFirst": true,
-		"targets": ["isetup"],
 		"jobs": @PARALLEL_LEVEL@
 	},
 	{

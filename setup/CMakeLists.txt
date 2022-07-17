@@ -68,7 +68,7 @@ IF(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
 			/dLicenseFileRtf=${CMAKE_CURRENT_BINARY_DIR}/license.rtf
 			/dLicenseFileTxt=${CMAKE_CURRENT_BINARY_DIR}/license.txt
 			/dWXWidgetsLibDir=${wxWidgets_LIB_DIR}
-			/dWXDllSuffix=${WXWIDGETS_DLL_SUFFIX}
+			/dWXDllSuffix=${WXWIDGETS_DLL_SUFFIX}_x64
 			/dWXVerCompact=${WXWIDGETS_VER_COMPACT}
 			/dWXDebug=$<$<CONFIG:Debug>:d>
 			/dMinGWBase=${MINGW_DIR}
@@ -83,6 +83,10 @@ IF(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
 	ADD_CUSTOM_COMMAND(TARGET isetup POST_BUILD 
 		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/license.txt $<TARGET_FILE_DIR:wxCueChapters>
 		COMMENT "Copying license file"
+	)
+	INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/license.rtf ${CMAKE_CURRENT_BINARY_DIR}/license.txt
+		DESTINATION $<LOWER_CASE:$<CONFIG>>
+		PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
 	)
 ELSE()
 	ADD_CUSTOM_COMMAND( 
@@ -133,7 +137,7 @@ ELSE()
 			/dLicenseFileRtf=${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/license.rtf
 			/dLicenseFileTxt=${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/license.txt
 			/dWXWidgetsLibDir=${wxWidgets_LIB_DIR}
-			/dWXDllSuffix=${WXWIDGETS_DLL_SUFFIX}
+			/dWXDllSuffix=${WXWIDGETS_DLL_SUFFIX}_x64
 			/dWXVerCompact=${WXWIDGETS_VER_COMPACT}
 			/dWXDebug=$<$<CONFIG:Debug>:d>
 			$<$<NOT:$<CONFIG:Debug>>:/Q>
@@ -148,4 +152,10 @@ ELSE()
 		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/license.txt $<TARGET_FILE_DIR:wxCueChapters>
 		COMMENT "Copying license file"
 	)
+	
+	INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/license.rtf ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/license.txt
+		DESTINATION $<LOWER_CASE:$<CONFIG>>
+		PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+	)
 ENDIF()
+
