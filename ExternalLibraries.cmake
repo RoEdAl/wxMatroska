@@ -68,8 +68,6 @@ FetchContent_MakeAvailable(taglib webp json)
 
 # make aliases
 
-target_include_directories(tag INTERFACE ${taglib_SOURCE_DIR}/include)
-
 ADD_LIBRARY(ZLib ALIAS zlibstatic)
 ADD_LIBRARY(TagLib ALIAS tag)
 ADD_LIBRARY(WebP ALIAS webp)

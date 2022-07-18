@@ -35,10 +35,6 @@
 			"CMAKE_BUILD_PARALLEL_LEVEL": "@PARALLEL_LEVEL@"
 		},
 		"cacheVariables": {
-			"CMAKE_COLOR_MAKEFILE": {
-				"type": "BOOL",
-				"value": false
-			}
 		}
 	},
     {
@@ -63,6 +59,10 @@
 			"MINGW_CFG_FILE": {
 				"type": "FILEPATH",
 				"value": "$env{MINGW_DIR}/mingw-config.cmake"
+			},
+			"CMAKE_CONFIGURATION_TYPES": {
+				"type": "STRING",
+				"value": "Debug;Release;MinSizeRel;RelWithDebInfo"
 			}
 		},
 		"generator": "Ninja Multi-Config",
