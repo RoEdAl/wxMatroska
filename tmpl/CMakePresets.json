@@ -88,8 +88,7 @@
 			}
 		},
 		"generator": "Visual Studio 17 2022",
-		"toolset": "v143,host=x64",
-		"toolchainFile": "$env{CUE2MKC_WORKDIR}/ninja/vcpkg.cmake"
+		"toolset": "v143,host=x64"
 	},
 	{
 		"name": "msvc-x64",
