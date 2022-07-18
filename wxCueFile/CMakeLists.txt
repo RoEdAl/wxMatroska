@@ -42,5 +42,12 @@ ConfigureWxMatroska(wxCueFile)
 ConfigureWxWidgetsUsage(wxCueFile)
 ConfigureSourceEncoding(wxCueFile)
 SET_PROPERTY(TARGET wxCueFile PROPERTY OUTPUT_NAME CueFile)
-TARGET_LINK_LIBRARIES(wxCueFile PRIVATE TagLib wxWEBPHandler nlohmann_json::nlohmann_json)
+TARGET_LINK_LIBRARIES(wxCueFile
+	PRIVATE
+		wxEncodingDetection
+	PUBLIC
+		wxWEBPHandler
+		TagLib
+		nlohmann_json::nlohmann_json
+)
 SET_PROPERTY(TARGET wxCueFile PROPERTY FOLDER "cli")

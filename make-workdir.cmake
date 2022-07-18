@@ -49,6 +49,9 @@ IF(INSTALL_MINGW64)
 	DownloadPkgSha1(${URL_GCC} gcc-html.tar.gz 8fc02ede5b52e8abe4b67a6884e19a62899d809e "GCC documentation - HTML")
 ENDIF()
 
+SET(URL_NINJA "https://github.com/ninja-build/ninja/releases/download/v1.11.0")
+DownloadPkgSha1(${URL_NINJA} ninja-win.zip 31c7b577d3e5be57eb8acca527f73a484ace7d8c "Ninja builder")
+
 # extracting
 
 CMAKE_PATH(APPEND CUE2MKC_WORKDIR wx-widgets OUTPUT_VARIABLE WXWIDGETS_DIR)
@@ -117,6 +120,12 @@ IF(INSTALL_MINGW64)
 	
 	MESSAGE(DEBUG "[EXR] wxWidgets libraries #1 [MinGW64]")
 	FILE(ARCHIVE_EXTRACT INPUT ${CUE2MKC_DLDIR}/wxMSW-${WXWIDGETS_VERSION}_gcc1210_x64_ReleaseDLL.7z DESTINATION ${WXWIDGETS_DIR})
+ENDIF()
+
+CMAKE_PATH(APPEND CUE2MKC_WORKDIR ninja ninja.exe OUTPUT_VARIABLE NINJA_BINARY)
+IF(NOT EXISTS ${NINJA_BINARY})
+	MESSAGE(STATUS "[EXR] Ninja builder")
+	FILE(ARCHIVE_EXTRACT INPUT ${CUE2MKC_DLDIR}/ninja-win.zip DESTINATION ${CUE2MKC_WORKDIR}/ninja)
 ENDIF()
 
 # MINGW toolchain

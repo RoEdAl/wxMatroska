@@ -36,17 +36,12 @@ ConfigureSourceEncoding(wxCueChapters)
 SET_PROPERTY(TARGET wxCueChapters PROPERTY OUTPUT_NAME cue2mkc)
 TARGET_LINK_LIBRARIES(wxCueChapters
 	PRIVATE
-		wxConsoleApp
-		wxEncodingDetection
-		wxCmdTools
 		wxCueFile
-		TagLib
-		wxWEBPHandler
-		nlohmann_json::nlohmann_json
+		wxConsoleApp
+		wxCmdTools
 )
 
 SET(MANIFEST_DEFS wxUSE_RC_MANIFEST=1 wxUSE_DPI_AWARE_MANIFEST=0)
-
 SET_SOURCE_FILES_PROPERTIES(wxCueChapters.rc PROPERTIES COMPILE_DEFINITIONS "${MANIFEST_DEFS}")
 #TARGET_LINK_OPTIONS(wxCueChapters PRIVATE "$<$<AND:$<CXX_COMPILER_ID:GNU>,$<NOT:$<CONFIG:Debug,RelWithDebInfo>>>:-s>")
 #TARGET_LINK_OPTIONS(wxCueChapters PRIVATE "$<$<CXX_COMPILER_ID:GNU>:-municode>")
