@@ -549,6 +549,53 @@ namespace
         wxWindow* m_wnd;
     };
 
+    class ExclusiveCheckBoxEvtHandler
+    {
+        public:
+
+        ExclusiveCheckBoxEvtHandler(wxCheckBox* const checkBox1, wxCheckBox* const checkBox2)
+            :m_checkBox1(checkBox1), m_checkBox2(checkBox2)
+        {
+        }
+
+        ExclusiveCheckBoxEvtHandler(const ExclusiveCheckBoxEvtHandler& uiUpdater)
+            :m_checkBox1(uiUpdater.m_checkBox1), m_checkBox2(uiUpdater.m_checkBox2)
+        {
+        }
+
+        void Bind() const
+        {
+            m_checkBox1->Bind(wxEVT_CHECKBOX, *this);
+            m_checkBox2->Bind(wxEVT_CHECKBOX, *this);
+        }
+
+        void operator()(wxCommandEvent& event)
+        {
+            wxASSERT(event.GetEventObject()->IsSameAs(*m_checkBox1) || event.GetEventObject()->IsSameAs(*m_checkBox2));
+
+            const wxCheckBox* const eventSource = wxConstCast(wxDynamicCast(event.GetEventObject(), wxCheckBox), wxCheckBox);
+            wxCheckBox* const otherCheckBox = (eventSource == m_checkBox1) ? m_checkBox2 : m_checkBox1;
+
+            if (is_checked(eventSource))
+            {
+                // uncheck other checkbox
+                if (otherCheckBox->Is3State())
+                {
+                    otherCheckBox->Set3StateValue(wxCHK_UNCHECKED);
+                }
+                else
+                {
+                    otherCheckBox->SetValue(false);
+                }
+            }
+        }
+
+        private:
+
+        wxCheckBox* const m_checkBox1;
+        wxCheckBox* const m_checkBox2;
+    };
+
     wxString get_array_item(const wxArrayString& a, const size_t idx)
     {
         const size_t cnt = a.GetCount();
@@ -1136,9 +1183,9 @@ wxPanel* wxMainFrame::create_chapter_panel(wxNotebook* notebook, const wxSizerFl
         m_checkBoxLowercaseRomanLiterals->SetToolTip(_wxS("Examples:\niii\u2009\u2192\u2009\u2172 (small roman numeral three: U+2172)\nxii\u2009\u2192\u2009\u217B (small roman numeral twelve: U+217B"));
         sizer->Add(m_checkBoxLowercaseRomanLiterals);
 
-        m_checkBoxStrongRomanLiteralsParser = create_3state_checkbox(sizer, _("Strong Roman Numerals parser"));
-        m_checkBoxStrongRomanLiteralsParser->SetToolTip(_wxS("Use stronger roman numerals parser - include MCDL characters (XVI only by default)"));
-        sizer->Add(m_checkBoxStrongRomanLiteralsParser);
+        m_checkBoxAsciiToUnicode = create_3state_checkbox(sizer, _("ASCII to Unicode"));
+        m_checkBoxAsciiToUnicode->SetToolTip(_wxS("Convert some ASCII sequences to single Unicode character\n\nExamples:\n(C)\u2009\u2192\u2009\u00A9\nae\u2009\u2192\u2009\u00E6\n!!\u2009\u2192\u2009\u2016\n3/5\u2009\u2192\u2009\u2157\n==\u2009\u2192\u2009\u2261\n\nRun 'cue2mkc -info ascii-to-unicode' to see complete list"));
+        sizer->Add(m_checkBoxAsciiToUnicode);
 
         m_checkBoxNumberFullStop = create_3state_checkbox(sizer, _("Use '<number> full stop' characters"));
         m_checkBoxNumberFullStop->SetToolTip(_wxS("Use Unicode characters from \u2488 (digit one full stop: U+2488) to \u249B (number twenty full stop: U+249B)"));
@@ -1148,16 +1195,16 @@ wxPanel* wxMainFrame::create_chapter_panel(wxNotebook* notebook, const wxSizerFl
         m_checkBoxSmallLetterParenthesized->SetToolTip(_wxS("Use Unicode characters from \u249C (parenthesized latin small letter a: U-249C) to \u24B5 (parenthesized latin small letter z: U-24B5)"));
         sizer->Add(m_checkBoxSmallLetterParenthesized);
 
-        m_checkBoxAsciiToUnicode = create_3state_checkbox(sizer, _("ASCII to Unicode"));
-        m_checkBoxAsciiToUnicode->SetToolTip(_wxS("Convert some ASCII sequences to single Unicode character\n\nExamples:\n(C)\u2009\u2192\u2009\u00A9\nae\u2009\u2192\u2009\u00E6\n!!\u2009\u2192\u2009\u2016\n3/5\u2009\u2192\u2009\u2157\n==\u2009\u2192\u2009\u2261\n\nRun 'cue2mkc -info ascii-to-unicode' to see complete list"));
-        sizer->Add(m_checkBoxAsciiToUnicode);
-
         sizer->Add(create_horizontal_static_line(sizer), get_horizontal_static_line_sizer_flags(panel));
 
         m_checkBoxSmallEmDash = create_3state_checkbox(sizer, _("Use small em dash"));
         m_checkBoxSmallEmDash->SetToolTip(_wxS("When correcting dashes use '\uFE58' (U+FE58 : small em dash) character instead of '\u2014' (U+2014 : em dash) one"));
         m_checkBoxSmallEmDash->Bind(wxEVT_UPDATE_UI, CheckBoxUiUpdater(m_checkBoxCorrectDashes));
         sizer->Add(m_checkBoxSmallEmDash);
+
+        m_checkBoxStrongRomanLiteralsParser = create_3state_checkbox(sizer, _("Strong Roman Numerals parser"));
+        m_checkBoxStrongRomanLiteralsParser->SetToolTip(_wxS("Use stronger roman numerals parser - include MCDL characters (XVI only by default)"));
+        sizer->Add(m_checkBoxStrongRomanLiteralsParser);
 
         panelSizer->Add(sizer, sflags);
     }
@@ -1167,7 +1214,7 @@ wxPanel* wxMainFrame::create_chapter_panel(wxNotebook* notebook, const wxSizerFl
 
         {
             const wxString trackTitleFmt(_("%dp% - %dt% - %tt%"));
-            const wxSize editMinSize = calc_text_size(trackTitleFmt.Length() * 3);
+            const wxSize editMinSize = calc_text_size(trackTitleFmt.Length() * 2);
             const wxSizerFlags txtSizerFlags = wxSizerFlags().Expand().Proportion(1);
 
             wxFlexGridSizer* const innerSizer = new wxFlexGridSizer(0, 2, btnLeft.GetBorderInPixels(), 0);
@@ -1230,6 +1277,9 @@ wxPanel* wxMainFrame::create_adv_panel(wxNotebook* notebook, const wxSizerFlags&
         m_checkBoxRunReplayGainScanner = create_3state_checkbox(sizer, _("Generate ReplayGain tags"));
         m_checkBoxRunReplayGainScanner->SetToolTip(_wxS("Run ReplayGain/DR14 scanner on created Matroska\u2122 container"));
         sizer->Add(m_checkBoxRunReplayGainScanner);
+
+        const ExclusiveCheckBoxEvtHandler evtHandler(m_checkBoxRenderReplayGainTags, m_checkBoxRunReplayGainScanner);
+        evtHandler.Bind();
 
         m_checkBoxGenerateArtistTagsForTracks = create_3state_checkbox(sizer, _("Generate ARTIST tag for every track"), wxCHK_CHECKED);
         m_checkBoxGenerateArtistTagsForTracks->SetToolTip(_("Some media players (e.g. Foobar2000) requires ARTIST tag for every track (chapter)."));
