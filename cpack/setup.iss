@@ -27,6 +27,9 @@ Compression=lzma2/Max
 DefaultGroupName={#Cue2MkcBase}
 ArchitecturesAllowed={#Cue2MkcExeArch}
 ArchitecturesInstallIn64BitMode={#Cue2MkcExeArch}
+TimeStampsInUTC=yes
+TouchDate={#Cue2MkcTouchDate}
+TouchTime={#Cue2MkcTouchTime}
 
 [Languages]
 Name: en; MessagesFile: compiler:Default.isl; LicenseFile: license.rtf
@@ -44,8 +47,8 @@ Name: gui; Description: {cm:desc_component_gui}; Types: full custom;
 Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked;
 
 [Files]
-Source: {#Cue2MkcBase}.exe; DestDir: {app}; Flags: comparetimestamp; Components: cli; 
-Source: {#Cue2MkcBase}-frontend.exe; DestDir: {app}; Flags: comparetimestamp; Components: gui;
+Source: {#Cue2MkcBase}.exe; DestDir: {app}; Flags: comparetimestamp touch; Components: cli; 
+Source: {#Cue2MkcBase}-frontend.exe; DestDir: {app}; Flags: comparetimestamp touch; Components: gui;
 Source: *.dll; DestDir: {app}; Flags: comparetimestamp; Components: cli gui; Attribs: notcontentindexed;
 Source: *.txt; DestDir: {app}; Flags: comparetimestamp setntfscompression overwritereadonly uninsremovereadonly; Components: cli gui; Attribs: readonly notcontentindexed;
 Source: *.cmake; DestDir: {app}; Flags: comparetimestamp setntfscompression overwritereadonly uninsremovereadonly; Components: cli; Attribs: readonly notcontentindexed;
