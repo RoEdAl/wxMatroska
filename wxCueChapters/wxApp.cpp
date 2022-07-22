@@ -46,6 +46,16 @@ void wxMyApp::InfoVersion(wxMessageOutput& out)
     out.Output(wxVERSION_STRING);
     out.Output(wxCueSheetReader::GetTagLibVersion());
     out.Printf(_("Operating system: %s"), wxPlatformInfo::Get().GetOperatingSystemDescription());
+
+    wxString desc;
+    {
+        const wxScopedPtr<wxMBConv> conv(wxEncodingDetection::GetDefaultEncoding(true, desc));
+        if (conv)
+        {
+            out.Printf(_("Default encoding: %s"), desc);
+        }
+    }
+
     out.Printf(_("Compiler: %s %s"), INFO_CXX_COMPILER_ID, INFO_CXX_COMPILER_VERSION);
     out.Printf(_("Compiled on: %s %s (%s)"), INFO_HOST_SYSTEM_NAME, INFO_HOST_SYSTEM_VERSION, INFO_HOST_SYSTEM_PROCESSOR);
 }

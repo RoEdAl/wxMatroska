@@ -53,16 +53,12 @@ namespace
             {
                 wxMBConv_MLang* convMLang = new wxMBConv_MLang(codePage);
 
-                if (convMLang->GetDescription(description))
-                {
-                    return convMLang;
-                }
-                else
+                if (!convMLang->GetDescription(description))
                 {
                     wxLogError(_("Unable to get encoding description: %s"), description);
                     wxDELETE(convMLang);
-                    return nullptr;
                 }
+                return convMLang;
             }
         }
 
@@ -404,7 +400,7 @@ wxMBConv* wxEncodingDetection::GetDefaultEncoding(bool useMLang, wxString& descr
 {
     if (useMLang)
     {
-        return wxMBConv_MLang::Create(CP_THREAD_ACP, description);
+        return wxMBConv_MLang::Create(GetDefaultEncoding(), description);
     }
     else
     {
