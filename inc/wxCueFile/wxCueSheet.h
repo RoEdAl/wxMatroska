@@ -96,6 +96,7 @@ class wxCueSheet: public wxCueComponent, public wxAbstractDurationHolder
     const wxArrayDataFile& GetDataFiles() const;
     size_t GetLastDataFileIdx() const;
     bool HasFlacDataFile() const;
+    bool HasHiResAudio() const;
 
     bool GetRelatedTracks(size_t, size_t&, size_t&) const;
 

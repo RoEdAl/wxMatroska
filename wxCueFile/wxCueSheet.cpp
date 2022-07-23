@@ -331,6 +331,16 @@ bool wxCueSheet::HasFlacDataFile() const
     return false;
 }
 
+bool wxCueSheet::HasHiResAudio() const
+{
+    for (size_t i = 0, cnt = m_dataFiles.GetCount(); i < cnt; ++i)
+    {
+        const wxDataFile& dataFile = m_dataFiles[i];
+        if (dataFile.GetDuration().GetSamplingInfo().IsHiResAudio()) return true;
+    }
+    return false;
+}
+
 size_t wxCueSheet::GetLastDataFileIdx() const
 {
     if (m_dataFiles.IsEmpty()) return wxIndex::UnknownDataFileIdx;

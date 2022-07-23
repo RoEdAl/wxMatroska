@@ -400,7 +400,6 @@ void wxConfiguration::AddCmdLineParams(wxCmdLineParser& cmdLine) const
     cmdLine.AddSwitch(wxEmptyString, "attach-accurip-log", wxString::Format(_("Attach AccurateRip log (default: %s)"), ReadFlagTestStr(wxCueSheetReader::EC_FIND_ACCURIP_LOG)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
     cmdLine.AddSwitch("pd", "attachments-in-parent-dir", wxString::Format(_("Search attachments also in parent dir (default: %s)"), ReadFlagTestStr(wxCueSheetReader::EC_ATTACHMENTS_IN_PARENT_DIR)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
     cmdLine.AddSwitch(wxEmptyString, "apply-tags", wxString::Format(_("Apply tags from related JSON files (default: %s)"), ReadFlagTestStr(wxCueSheetReader::EC_APPLY_TAGS_FROM_FILE)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
-    cmdLine.AddOption(wxEmptyString, "audio-sample-width", _("Set audio sample width (default: auto, accepted values: 16, 24)"), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL);
 
     cmdLine.AddSwitch("rs", "remove-extra-spaces", wxString::Format(_("Tags processing - remove extra spaces (default: %s)"), ReadFlagTestStr(wxCueSheetReader::EC_REMOVE_EXTRA_SPACES)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
     cmdLine.AddSwitch("et", "ellipsize-tags", wxString::Format(_("Tags processing - ellipsize tags - convert last three dots to ellipsis (U+2026) character (default: %s)"), ReadFlagTestStr(wxCueSheetReader::EC_ELLIPSIZE_TAGS)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
@@ -433,8 +432,11 @@ void wxConfiguration::AddCmdLineParams(wxCmdLineParser& cmdLine) const
     cmdLine.AddSwitch(wxEmptyString, "use-cue-comments-tags", wxString::Format(_("Use tags from cuesheet comments (default: %s)"), TagSourcesTestStr(wxCueTag::TAG_CUE_COMMENT)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
     cmdLine.AddSwitch(wxEmptyString, "use-media-tags", wxString::Format(_("Use tags from media file(s) (default: %s)"), TagSourcesTestStr(wxCueTag::TAG_MEDIA_METADATA)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
 
+    cmdLine.AddOption(wxEmptyString, "audio-sample-width", _("Set audio sample width (default: auto, accepted values: 16, 24)"), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL);
     cmdLine.AddOption(wxEmptyString, "ffmpeg-codec", wxString::Format(_("Use specific FFMPEG codec - possible values are: default, pcmle, pcmbe (default: %s)"), ToString(m_eFfmpegCodec)), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
     cmdLine.AddSwitch(wxEmptyString, "mono", wxString::Format(_("Assume input audio as dual mono, use only left channel (default: %s"), BoolToStr(m_bSingleAudioChannel)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
+    cmdLine.AddSwitch("dg", "downgrade-hi-res-audio", wxString::Format(_wxS("Downgrade Hi\u2011Res audio (default: %s"), BoolToStr(m_downgradeHiResAudio)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
+
     cmdLine.AddSwitch(wxEmptyString, "mlang", wxString::Format(_("Use MLang library (default: %s)"), BoolToStr(m_bUseMLang)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
     cmdLine.AddSwitch("ds", "use-data-files-separator", wxString::Format(_("Use data files separator (default: %s)"), BoolToStr(false)), wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_SWITCH_NEGATABLE);
 
@@ -705,6 +707,7 @@ bool wxConfiguration::Read(const wxCmdLineParser& cmdLine)
             break;
         }
     }
+    ReadNegatableSwitchValue(cmdLine, "dg", m_downgradeHiResAudio);
 
     ReadNegatableSwitchValue(cmdLine, "convert-cover-file", m_convertCoverFile);
     if (cmdLine.Found("cover-file-ext", &s))
@@ -827,7 +830,6 @@ void wxConfiguration::FillArray(wxArrayString& as) const
     as.Add(wxString::Format("Chapter string language: %s", m_lang.value_or(LANG::UND)));
     as.Add(wxString::Format("For track 01 assume index %s as beginning of track", BoolToIdx(m_bTrackOneIndexOne)));
     as.Add(wxString::Format("Join mode: %s", BoolToStr(m_bJoinMode)));
-    as.Add(wxString::Format("Dual mono: %s", BoolToStr(m_bSingleAudioChannel)));
     as.Add(wxString::Format("Include DISCNUMBER tag: %s", BoolToStr(m_bIncludeDiscNumberTag)));
     as.Add(wxString::Format("Convert indexes to hidden subchapters: %s", BoolToStr(m_bHiddenIndexes)));
     as.Add(wxString::Format("Correct quotation marks: %s", BoolToStr(m_bCorrectQuotationMarks)));
@@ -842,7 +844,20 @@ void wxConfiguration::FillArray(wxArrayString& as) const
     as.Add(wxString::Format("Run ReplayGain scanner: %s", BoolToStr(m_bRunReplayGainScanner)));
     as.Add(wxString::Format("Read flags: %s", GetReadFlagsDesc(m_nReadFlags)));
     as.Add(wxString::Format("Use MLang library: %s", BoolToStr(m_bUseMLang)));
-    as.Add(wxString::Format("ffmpeg codec: %s", ToString(m_eFfmpegCodec)));
+    {
+        wxArrayString audioProcessingAttrs;
+
+        audioProcessingAttrs.Add(get_flag("dual-mono", m_bSingleAudioChannel));
+        if (m_eFfmpegCodec != CODEC_DEFAULT)
+        {
+            audioProcessingAttrs.Add(ToString(m_eFfmpegCodec));
+        }
+        if (m_downgradeHiResAudio)
+        {
+            audioProcessingAttrs.Add(get_flag("downgrade-hi-res", m_downgradeHiResAudio.value()));
+        }
+        as.Add(wxString::Format("Audio processing: %s", as_to_str(audioProcessingAttrs)));
+    }
     if (m_convertCoverFile || CoverFromPdf())
     {
         as.Add(wxString::Format("Convert cover file: %s", m_convertedCoverFileExt));
@@ -1479,6 +1494,8 @@ bool wxConfiguration::RunReplayGainScanner() const
 
 bool wxConfiguration::UseDefaultAudioSampleWidth() const
 {
+    if (m_downgradeHiResAudio.value_or(false)) return true;
+
     switch (m_eFfmpegCodec)
     {
         case CODEC_DEFAULT:
@@ -1499,6 +1516,11 @@ wxInt16 wxConfiguration::GetAudioSampleWidth() const
         default:
         return m_nAudioSampleWidth;
     }    
+}
+
+bool wxConfiguration::DowngradeHiResAudio() const
+{
+    return m_downgradeHiResAudio.value_or(false);
 }
 
 bool wxConfiguration::ConvertCoverFile() const

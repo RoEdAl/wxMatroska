@@ -154,6 +154,7 @@ class wxConfiguration: public MyConfiguration
     bool m_bSingleAudioChannel;
     bool m_bRunReplayGainScanner;
     wxInt16 m_nAudioSampleWidth;
+    std::optional<bool> m_downgradeHiResAudio;
     bool m_convertCoverFile;
     wxString m_convertedCoverFileExt;
 
@@ -214,6 +215,7 @@ class wxConfiguration: public MyConfiguration
     bool RunReplayGainScanner() const;
     bool UseDefaultAudioSampleWidth() const;
     wxInt16 GetAudioSampleWidth() const;
+    bool DowngradeHiResAudio() const;
     bool AudioFilteringRequired() const;
     bool ConvertCoverFile() const;
     bool CoverFromPdf() const;

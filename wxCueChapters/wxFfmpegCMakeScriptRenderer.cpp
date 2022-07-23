@@ -14,7 +14,16 @@ wxFfmpegCMakeScriptRenderer::wxFfmpegCMakeScriptRenderer(const wxConfiguration& 
 
 namespace
 {
-    wxString make_ffmpeg_filter(size_t cnt, bool opus, bool mono)
+    wxString get_aresample(wxUint16 dstSampleRate)
+    {
+        return wxString::Format("aresample=%hu:resampler=soxr:dither_method=shibata:precision=24:cutoff=0.91:osf=flt", dstSampleRate);
+    }
+
+    wxString make_ffmpeg_filter(size_t cnt,
+                                const wxSamplingInfo& si,
+                                bool opus,
+                                bool mono,
+                                bool hiResDowngrade)
     {
         wxArrayString filters;
 
@@ -28,9 +37,14 @@ namespace
             filters.Add("pan=mono|c0=FL");
         }
 
-        if (opus)
+        if (hiResDowngrade && si.IsHiResDensity())
+        {
+            const wxUint16 dngSampleRate = si.GetDowngradedSampleRate();
+            filters.Add(get_aresample(dngSampleRate));
+        }
+        else if (opus)
         { // resample
-            filters.Add("aresample=48000:resampler=soxr:dither_method=shibata:precision=24:cutoff=0.91:osf=flt");
+            filters.Add(get_aresample(48000));
         }
 
         if (filters.IsEmpty())
@@ -58,12 +72,10 @@ namespace
 
     wxTextOutputStream& put_audio_sample_fmt(
         wxTextOutputStream& os,
-        const wxSamplingInfo& si,
-        bool p)
+        wxUint16 bitsPerSample,
+        bool p
+    )
     {
-        wxASSERT(si.IsOK());
-
-        wxUint16 bitsPerSample = si.GetBitsPerSample();
         os << "-sample_fmt:a ";
         if (bitsPerSample <= 16)
         {
@@ -95,11 +107,23 @@ namespace
         return os;
     }
 
-    wxString get_uncompressed_audio_codec(const wxSamplingInfo& si, bool bigEndian)
+    wxTextOutputStream& put_audio_sample_fmt(
+        wxTextOutputStream& os,
+        const wxSamplingInfo& si,
+        bool hiResDowngrade,
+        bool p)
     {
-        wxString res;
+        wxASSERT(si.IsOK());
+        const wxUint16 bitsPerSample = (hiResDowngrade && si.IsHiResDepth()) ? 16u : si.GetBitsPerSample();
+        return put_audio_sample_fmt(os, bitsPerSample, p);
+    }
 
-        res << "pcm_s" << si.GetBitsPerSample();
+    wxString get_uncompressed_audio_codec(const wxSamplingInfo& si, bool hiResDowngrade, bool bigEndian)
+    {
+        const wxUint16 bitsPerSample = (hiResDowngrade && si.IsHiResDepth()) ? 16u : si.GetBitsPerSample();
+
+        wxString res;
+        res << "pcm_s" << bitsPerSample;
         if (bigEndian)
             res << "be";
         else
@@ -107,9 +131,9 @@ namespace
         return res;
     }
 
-    wxTextOutputStream& flac_codec(wxTextOutputStream& os, const wxSamplingInfo& si)
+    wxTextOutputStream& flac_codec(wxTextOutputStream& os, const wxSamplingInfo& si, bool hiResDowngrade)
     {
-        put_audio_sample_fmt(os << "        ", si, false) << endl;
+        put_audio_sample_fmt(os << "        ", si, hiResDowngrade, false) << endl;
         os << "        -lpc_type levinson " << endl;
         os << "        -ch_mode indep" << endl;
         os << "        -exact_rice_parameters 1" << endl;
@@ -118,9 +142,9 @@ namespace
         return os;
     }
 
-    wxTextOutputStream& wavpack_codec(wxTextOutputStream& os, const wxSamplingInfo& si)
+    wxTextOutputStream& wavpack_codec(wxTextOutputStream& os, const wxSamplingInfo& si, bool hiResDowngrade)
     {
-        put_audio_sample_fmt(os << "        ", si, true) << endl;
+        put_audio_sample_fmt(os << "        ", si, hiResDowngrade, true) << endl;
         os << "        -compression_level 1" << endl;
         os << "        -joint_stereo 0" << endl;
         os << "        -c:a wavpack" << endl;
@@ -152,7 +176,7 @@ namespace
     }
 }
 
-void wxFfmpegCMakeScriptRenderer::render_ffmpeg_codec(bool manyDataFiles, const wxSamplingInfo& si, bool includeComments) const
+void wxFfmpegCMakeScriptRenderer::render_ffmpeg_codec(bool manyDataFiles, const wxSamplingInfo& si, bool hiResDowngrade, bool includeComments) const
 {
     wxASSERT(si.IsOK());
 
@@ -163,7 +187,7 @@ void wxFfmpegCMakeScriptRenderer::render_ffmpeg_codec(bool manyDataFiles, const 
         {
             *m_os << "        # uncompressed audio" << endl;
         }
-        *m_os << "        -c:a " << get_uncompressed_audio_codec(si, false) << endl;
+        *m_os << "        -c:a " << get_uncompressed_audio_codec(si, hiResDowngrade, false) << endl;
         break;
 
         case wxConfiguration::CODEC_PCM_BE:
@@ -171,7 +195,7 @@ void wxFfmpegCMakeScriptRenderer::render_ffmpeg_codec(bool manyDataFiles, const 
         {
             *m_os << "        # uncompressed audio" << endl;
         }
-        *m_os << "        -c:a " << get_uncompressed_audio_codec(si, true) << endl;
+        *m_os << "        -c:a " << get_uncompressed_audio_codec(si, hiResDowngrade, true) << endl;
         break;
 
         case wxConfiguration::CODEC_FLAC:
@@ -179,7 +203,7 @@ void wxFfmpegCMakeScriptRenderer::render_ffmpeg_codec(bool manyDataFiles, const 
         {
             *m_os << "        # use FLAC codec" << endl;
         }
-        flac_codec(*m_os, si);
+        flac_codec(*m_os, si, hiResDowngrade);
         break;
 
         case wxConfiguration::CODEC_WAVPACK:
@@ -187,7 +211,7 @@ void wxFfmpegCMakeScriptRenderer::render_ffmpeg_codec(bool manyDataFiles, const 
         {
             *m_os << "        # use WavPack codec" << endl;
         }
-        wavpack_codec(*m_os, si);
+        wavpack_codec(*m_os, si, hiResDowngrade);
         break;
 
         case wxConfiguration::CODEC_OPUS:
@@ -206,7 +230,7 @@ void wxFfmpegCMakeScriptRenderer::render_ffmpeg_codec(bool manyDataFiles, const 
             {
                 *m_os << "        # reencode audio" << endl;
             }
-            flac_codec(*m_os, si);
+            flac_codec(*m_os, si, hiResDowngrade);
         }
         else
         {
@@ -288,12 +312,12 @@ void wxFfmpegCMakeScriptRenderer::RenderPre(
         WriteSizeT(*m_os << "        -i ${CUE2MKC_AUDIO_", i) << '}' << endl;
     }
 
-    if (cueSheet.HasManyDataFiles() || m_cfg.AudioFilteringRequired())
+    if (cueSheet.HasManyDataFiles() || m_cfg.AudioFilteringRequired() || (m_cfg.DowngradeHiResAudio() && cueSheet.HasHiResAudio()))
     {
         const bool opus = m_cfg.GetFfmpegCodec() == wxConfiguration::CODEC_OPUS;
 
         *m_os << "        -filter_complex_threads 1" << endl;
-        *m_os << "        -filter_complex " << make_ffmpeg_filter(dataFiles.GetCount(), opus, m_cfg.IsDualMono()) << endl;
+        *m_os << "        -filter_complex " << make_ffmpeg_filter(dataFiles.GetCount(), si, opus, m_cfg.IsDualMono(), m_cfg.DowngradeHiResAudio()) << endl;
         *m_os << "        -map [outa]" << endl;
     }
     else
@@ -303,7 +327,7 @@ void wxFfmpegCMakeScriptRenderer::RenderPre(
 
     *m_os << "        -map_metadata -1" << endl;
     *m_os << "        -map_chapters -1" << endl;
-    render_ffmpeg_codec(cueSheet.HasManyDataFiles(), si, false);
+    render_ffmpeg_codec(cueSheet.HasManyDataFiles(), si, m_cfg.DowngradeHiResAudio(), false);
     *m_os << "        -bitexact" << endl;
     *m_os << "        ${CUE2MKC_MKA}" << endl;
     *m_os << "    ENCODING UTF-8" << endl;
@@ -501,13 +525,14 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
     *m_os << "        -bitexact" << endl;
     *m_os << "        -i ${CUE2MKC_METADATA}" << endl << endl;
 
-    if (!fnTmpMka.IsOk() && (cueSheet.HasManyDataFiles() || m_cfg.AudioFilteringRequired()))
+    if (!fnTmpMka.IsOk() && (cueSheet.HasManyDataFiles() || m_cfg.AudioFilteringRequired() || (m_cfg.DowngradeHiResAudio() && cueSheet.HasHiResAudio())))
     {
         const bool opus = m_cfg.GetFfmpegCodec() == wxConfiguration::CODEC_OPUS;
+        const wxSamplingInfo si = GetSamplingInfo(cueSheet);
 
         *m_os << "        # concatenating audio sources" << endl;
         *m_os << "        -filter_complex_threads 1" << endl;
-        *m_os << "        -filter_complex " << make_ffmpeg_filter(cueSheet.GetDataFilesCount(), opus, m_cfg.IsDualMono()) << endl << endl;
+        *m_os << "        -filter_complex " << make_ffmpeg_filter(cueSheet.GetDataFilesCount(), si, opus, m_cfg.IsDualMono(), m_cfg.DowngradeHiResAudio()) << endl << endl;
     }
 
     *m_os << "        # attachment(s)" << endl;
@@ -602,7 +627,7 @@ void wxFfmpegCMakeScriptRenderer::RenderDisc(
         const wxSamplingInfo si = GetSamplingInfo(cueSheet);
         wxASSERT(si.IsOK());
 
-        render_ffmpeg_codec(!cueSheet.HasManyDataFiles(), si, true);
+        render_ffmpeg_codec(!cueSheet.HasManyDataFiles(), si, m_cfg.DowngradeHiResAudio(), true);
     }
 
     *m_os << "        # output opitons" << endl;

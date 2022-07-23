@@ -47,6 +47,7 @@ class wxMainFrame:
     wxCheckBox* m_checkBoxUseTagsFromMediaFiles;
     wxChoice* m_choiceFfmpegCodec;
     wxChoice* m_choiceAudioSampleWidth;
+    wxCheckBox* m_checkBoxDowngradeHiResAudio;
     wxCheckBox* m_checkBoxGenerateEditionUid;
     wxCheckBox* m_checkBoxReadMedatata;
     wxCheckBox* m_checkBoxUseMLang;

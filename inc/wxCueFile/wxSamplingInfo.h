@@ -38,6 +38,11 @@ class wxSamplingInfo
     wxSamplingInfo& SetBitsPerSample(wxUint16);
     wxSamplingInfo& ClearBitsPerSample();
 
+    bool IsHiResAudio() const;
+    bool IsHiResDepth() const;
+    bool IsHiResDensity() const;
+    wxUint16 GetDowngradedSampleRate() const;
+
     wxSamplingInfo& Assign(wxUint32, wxUint16, wxUint16);
     wxSamplingInfo& Invalidate();
     wxSamplingInfo& SetDefault();

@@ -109,6 +109,34 @@ wxSamplingInfo& wxSamplingInfo::ClearBitsPerSample()
     return *this;
 }
 
+bool wxSamplingInfo::IsHiResAudio() const
+{
+    return (m_samplingRate > 48000) || (m_bitsPerSample > 16);
+}
+
+bool wxSamplingInfo::IsHiResDepth() const
+{
+    return m_bitsPerSample > 16u;
+}
+
+bool wxSamplingInfo::IsHiResDensity() const
+{
+    return m_samplingRate > 48000u;
+}
+
+wxUint16 wxSamplingInfo::GetDowngradedSampleRate() const
+{
+    if ((m_samplingRate % 44100u) == 0u)
+    {
+        return 44100u;
+    }
+    else
+    {
+        return 48000u;
+    }
+}
+
+
 bool wxSamplingInfo::IsOK(bool ignoreBitsPerSample) const
 {
     return

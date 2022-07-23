@@ -149,6 +149,7 @@ class wxPrimitiveRenderer :protected wxTagRenderer, public wxTemporaryFilesProvi
     bool IsLanguageAgnostic(const wxCueTag&) const;
     virtual void GetTemporaryFiles(wxArrayFileName&) const;
     wxSamplingInfo GetSamplingInfo(const wxCueSheet&) const;
+    wxSamplingInfo GetDowngradedSamplingInfo(const wxCueSheet&) const;
     static bool NeedTemporaryLink(const wxFileName&, bool);
 
     public:

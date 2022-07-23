@@ -844,7 +844,7 @@ wxString wxPrimitiveRenderer::GetContainerFileName(const wxCueSheet& cueSheet) c
     }
     else
     {
-        const wxSamplingInfo si = GetSamplingInfo(cueSheet);
+        const wxSamplingInfo si = GetDowngradedSamplingInfo(cueSheet);
         if (si.IsStandardAudioFormat())
         {
             return fileName;
@@ -884,6 +884,24 @@ bool wxPrimitiveRenderer::ConvertCover(const wxCueSheet& cueSheet) const
     return (m_cfg.ConvertCoverFile() && cueSheet.HasCover()) || (m_cfg.CoverFromPdf() && cueSheet.HasPdfCover());
 }
 
+wxSamplingInfo wxPrimitiveRenderer::GetDowngradedSamplingInfo(const wxCueSheet& cueSheet) const
+{
+    wxSamplingInfo si = GetSamplingInfo(cueSheet);
+    if (m_cfg.DowngradeHiResAudio())
+    {
+        if (si.IsHiResDepth())
+        {
+            si.SetBitsPerSample(16u);
+        }
+
+        if (si.IsHiResDensity())
+        {
+            si.SetSamplingRate(si.GetDowngradedSampleRate());
+        }
+    }
+    return si;
+}
+
 wxSamplingInfo wxPrimitiveRenderer::GetSamplingInfo(const wxCueSheet& cueSheet) const
 {
     wxSamplingInfo si;
@@ -921,6 +939,7 @@ wxSamplingInfo wxPrimitiveRenderer::GetSamplingInfo(const wxCueSheet& cueSheet) 
             if (dfSi.GetBitsPerSample() > si.GetBitsPerSample()) si.SetBitsPerSample(dfSi.GetBitsPerSample());
         }
     }
+
     return si;
 }
 

@@ -24,7 +24,7 @@ class wxFfmpegCMakeScriptRenderer: public wxCMakeScriptRenderer
 
     protected:
 
-    void render_ffmpeg_codec(bool, const wxSamplingInfo&, bool) const;
+    void render_ffmpeg_codec(bool, const wxSamplingInfo&, bool, bool) const;
 
 };
 
