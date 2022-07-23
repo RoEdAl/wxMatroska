@@ -121,6 +121,7 @@ namespace
     wxTextOutputStream& wavpack_codec(wxTextOutputStream& os, const wxSamplingInfo& si)
     {
         put_audio_sample_fmt(os << "        ", si, true) << endl;
+        os << "        -compression_level 1" << endl;
         os << "        -joint_stereo 0" << endl;
         os << "        -c:a wavpack" << endl;
 
