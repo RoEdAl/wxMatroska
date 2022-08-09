@@ -1279,7 +1279,7 @@ void wxMainFrame::OnButtonDelete(wxCommandEvent& WXUNUSED(event))
         wxWindowUpdateLocker locker(m_listViewInputFiles);
 
         const wxDataViewItem emptyItem;
-        for (wxDataViewItemArray::const_reverse_iterator i = sel.rbegin(), end = sel.rend(); i != end; ++i)
+        for (wxDataViewItemArray::const_iterator i = sel.begin(), end = sel.end(); i != end; ++i)
         {
             const int row = m_listViewInputFiles->ItemToRow(*i);
             if (row == wxNOT_FOUND) continue;
@@ -1449,7 +1449,7 @@ void wxMainFrame::delete_temporary_files()
 
 void wxMainFrame::OnItemUpdated(wxThreadEvent& event)
 {
-    wxVector<wxVariant>& evPayload = event.GetPayload<wxVector<wxVariant>>();
+    const wxVector<wxVariant> evPayload = event.GetPayload<wxVector<wxVariant>>();
     wxASSERT(evPayload.size() == 3);
     {
         wxWindowUpdateLocker locker(m_listViewInputFiles);
