@@ -179,18 +179,18 @@ namespace
 
         void CreateTxtStreams()
         {
-            m_pTxtInputStream.reset(new wxTextInputStream(*(GetInputStream()), wxEmptyString, wxConvUTF8));
-            m_pTxtErrorStream.reset(new wxTextInputStream(*(GetErrorStream()), wxEmptyString, wxConvUTF8));
+            m_txtInputStream.reset(new wxTextInputStream(*(GetInputStream()), wxEmptyString, wxConvUTF8));
+            m_txtErrorStream.reset(new wxTextInputStream(*(GetErrorStream()), wxEmptyString, wxConvUTF8));
         }
 
         wxTextInputStream& GetTxtInputStream() const
         {
-            return *(m_pTxtInputStream.get());
+            return *(m_txtInputStream.get());
         }
 
         wxTextInputStream& GetTxtErrorStream() const
         {
-            return *(m_pTxtErrorStream.get());
+            return *(m_txtErrorStream.get());
         }
 
         bool HaveOutOrErr() const
@@ -200,8 +200,8 @@ namespace
 
         private:
 
-        wxScopedPtr< wxTextInputStream > m_pTxtInputStream;
-        wxScopedPtr< wxTextInputStream > m_pTxtErrorStream;
+        wxScopedPtr<wxTextInputStream> m_txtInputStream;
+        wxScopedPtr<wxTextInputStream> m_txtErrorStream;
     };
 
     class DropTarget:
@@ -694,7 +694,7 @@ namespace
         bool res = GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, pid) != 0;
         if (!res)
         {
-            WXDWORD err = GetLastError();
+            const WXDWORD err = GetLastError();
             wxLogError(_("exe[t]: signal CTRL+BREAK not sent, error code %d"), err);
         }
         res = FreeConsole() != 0;
@@ -815,7 +815,8 @@ wxPanel* wxMainFrame::create_src_dst_pannel(wxNotebook* notebook, const wxFont& 
         sizer->Add(m_textCtrlDst, btnMiddleExp);
 
         {
-            wxButton* const button = create_button(sizer, wxS("\u2026"));
+            wxButton* const button = create_button(sizer, wxS("\u22EF"));
+            button->SetFont(toolFont);
             button->Bind(wxEVT_UPDATE_UI, &wxMainFrame::OnUpdateCtrlDst, this);
             button->Bind(wxEVT_BUTTON, &wxMainFrame::OnChooseDst, this);
             sizer->Add(button, btnRight);
@@ -1469,9 +1470,9 @@ wxBoxSizer* wxMainFrame::create_bottom_ctrls(const wxFont& toolFont, const wxSiz
         m_checkBoxVerbose->Bind(wxEVT_CHECKBOX, &wxMainFrame::OnCheckVerbose, this);
         innerSizer->Add(m_checkBoxVerbose);
 
-        m_checkBoxSwitchToMessagesPane = create_checkbox(this, _("Switch to messages pane"), true);
+        m_checkBoxSwitchToMessagesPane = create_checkbox(this, _("Switch to Messages tab"), true);
         m_checkBoxSwitchToMessagesPane->SetFont(toolFont);
-        m_checkBoxSwitchToMessagesPane->SetToolTip(_("Switch to Messages pane before cue2mkc execution"));
+        m_checkBoxSwitchToMessagesPane->SetToolTip(_("Switch to Messages tab before execution"));
         innerSizer->Add(m_checkBoxSwitchToMessagesPane);
 
         sizer->Add(innerSizer, centerVertical);
@@ -1480,7 +1481,7 @@ wxBoxSizer* wxMainFrame::create_bottom_ctrls(const wxFont& toolFont, const wxSiz
     sizer->Add(0, 0, 1, wxEXPAND);
 
     {
-        wxButton* const button = new wxButton(this, wxID_ANY, _(m_execButtonCaptionRun));
+        wxButton* const button = new wxButton(this, wxID_ANY, m_execButtonCaptionRun);
         button->SetFont(wxFont(wxNORMAL_FONT->GetPointSize() + 1, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
         button->SetToolTip(_("Execute (or kill) cue2mkc utility"));
         button->Bind(wxEVT_UPDATE_UI, &wxMainFrame::OnUpdateButtonRun, this);
@@ -1513,7 +1514,7 @@ wxMainFrame::wxMainFrame(wxWindow* parent, wxWindowID id, const wxString& title,
 
         wxBoxSizer* const sizer = new wxBoxSizer(wxVERTICAL);
         sizer->Add(m_notebook = create_notebook(toolFont, btnLeft, btnMiddle, btnMiddleExp, btnRight, centerVertical), 1, wxEXPAND);
-        sizer->Add(create_bottom_ctrls(toolFont, btnLeft, btnMiddle, btnRight, centerVertical), 0, wxEXPAND | wxALL, 4);
+        sizer->Add(create_bottom_ctrls(toolFont, btnLeft, btnMiddle, btnRight, centerVertical), 0, wxEXPAND | wxALL, FromDIP(DEF_MARGIN*2));
         this->SetSizerAndFit(sizer);
     }
 
@@ -1589,7 +1590,7 @@ void wxMainFrame::ExecuteCmd(const wxFileName& exe, const wxString& params, cons
     wxString cmd, cmdDesc;
     get_cmd(exe, params, cmd, cmdDesc);
 
-    long pid = wxExecute(cmd, wxEXEC_HIDE_CONSOLE | wxEXEC_MAKE_GROUP_LEADER, m_pProcess.get(), &env);
+    const long pid = wxExecute(cmd, wxEXEC_HIDE_CONSOLE | wxEXEC_MAKE_GROUP_LEADER, m_pProcess.get(), &env);
 
     if (pid == 0)
     {
