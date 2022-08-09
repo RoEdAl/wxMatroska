@@ -1,3 +1,9 @@
 [submodule "mu-img2pdf/js"]
 	path = mu-img2pdf/js
 	url = https://github.com/RoEdAl/mu-img2pdf
+[submodule "wxCmdTools.import"]
+	path = wxCmdTools.import
+	url = https://github.com/RoEdAl/wxCmdTools.git
+[submodule "wxEncodingDetection.import"]
+	path = wxEncodingDetection.import
+	url = https://github.com/RoEdAl/wxEncodingDetection.git
