@@ -13,6 +13,18 @@ namespace
     const int AUTO_SCROLL_UPDATE_INTERVAL = 2000;
     const int TIMER_IDLE_WAKE_UP_INTERVAL = 250;
 
+    template<typename T>
+    const T* get_variant_data(const wxVariant& v)
+    {
+        return const_cast<const T*>(static_cast<T*>(v.GetData()));
+    }
+
+    template<typename T, typename R = typename T::R>
+    const R& get_variant_custom_val(const wxVariant& v)
+    {
+        return get_variant_data<T>(v)->GetValue();
+    }
+
     wxStaticBoxSizer* create_static_box_sizer(wxWindow* parent, const wxString& label, wxOrientation orientation)
     {
         return new wxStaticBoxSizer(new wxStaticBox(parent, wxID_ANY, label), orientation);
@@ -849,15 +861,15 @@ namespace
 
         wxString res;
 
-        for (wxArrayString::const_iterator i = options.begin(), end = options.end(); i != end; ++i)
+        for(const auto& i : options)
         {
-            if (have_spaces(*i, spaceChecker))
+            if (have_spaces(i, spaceChecker))
             {
-                res.Append('\"').Append(*i).Append("\" ");
+                res.Append('\"').Append(i).Append("\" ");
             }
             else
             {
-                res.Append(*i).Append(' ');
+                res.Append(i).Append(' ');
             }
         }
 
@@ -899,7 +911,7 @@ void wxMainFrame::ExecuteCmd(const wxFileName& exe, const wxString& params, cons
         m_notebook->ChangeSelection(m_notebook->GetPageCount() - 1);
     }
 
-    m_temporaryFiles.Clear();
+    m_temporaryFiles.clear();
     WX_APPEND_ARRAY(m_temporaryFiles, temporaryFiles);
 
     wxExecuteEnv env;
@@ -1140,8 +1152,7 @@ void wxMainFrame::build_script(wxJson& json, wxFileName& workingDirectory) const
             wxVariant v;
             dataModel->GetValue(v, *i, 1);
             if (v.GetType().CmpNoCase(wxS("wxFileName")) != 0) continue;
-            const wxVariantDataFileName* const vfn = const_cast<const wxVariantDataFileName*>(static_cast<wxVariantDataFileName*>(v.GetData()));
-            const wxFileName& fn = vfn->GetValue();
+            const wxFileName& fn = get_variant_custom_val<wxVariantDataFileName>(v);
             const wxString ext = fn.GetExt();
             if (ext.CmpNoCase("pdf") == 0)
             {
@@ -1157,7 +1168,7 @@ void wxMainFrame::build_script(wxJson& json, wxFileName& workingDirectory) const
             }
             else
             {
-                src.push_back(vfn->GetValue().GetFullPath().utf8_string());
+                src.push_back(fn.GetFullPath().utf8_string());
             }
         }
 
@@ -1204,8 +1215,8 @@ void wxMainFrame::OnExecMuTool(wxCommandEvent& WXUNUSED(event))
     params.Add(jsonPath.GetFullPath());
 
     wxArrayFileName temporaryFiles;
-    temporaryFiles.Add(jsonPath);
-    temporaryFiles.Add(tmpDocPath);
+    temporaryFiles.push_back(jsonPath);
+    temporaryFiles.push_back(tmpDocPath);
 
     ExecuteMuTool(params, workingDirectory, temporaryFiles);
 }
@@ -1243,9 +1254,10 @@ void wxMainFrame::OnButtonAdd(wxCommandEvent& WXUNUSED(event))
 
     {
         wxWindowUpdateLocker locker(m_listViewInputFiles);
-        for (wxArrayString::const_iterator i = fileNames.begin(); i != fileNames.end(); ++i)
+
+        for(const auto& i : fileNames)
         {
-            fileName.SetFullName(*i);
+            fileName.SetFullName(i);
             append_item(m_listViewInputFiles, fileName);
         }
     }
@@ -1278,13 +1290,14 @@ void wxMainFrame::OnButtonDelete(wxCommandEvent& WXUNUSED(event))
     {
         wxWindowUpdateLocker locker(m_listViewInputFiles);
 
-        const wxDataViewItem emptyItem;
-        for (wxDataViewItemArray::const_iterator i = sel.begin(), end = sel.end(); i != end; ++i)
+        for(const wxDataViewItem& i : sel)
         {
-            const int row = m_listViewInputFiles->ItemToRow(*i);
+            const int row = m_listViewInputFiles->ItemToRow(i);
             if (row == wxNOT_FOUND) continue;
             m_listViewInputFiles->DeleteItem(row);
         }
+
+        const wxDataViewItem emptyItem;
         m_listViewInputFiles->GetModel()->GetChildren(emptyItem, sel);
         if (!sel.empty())
         {
@@ -1427,9 +1440,8 @@ void wxMainFrame::OnCopyEvents(wxCommandEvent& WXUNUSED(event))
 
 void wxMainFrame::delete_temporary_files()
 {
-    for (size_t i = 0, cnt = m_temporaryFiles.GetCount(); i < cnt; ++i)
+    for(const auto& fn: m_temporaryFiles)
     {
-        const wxFileName& fn = m_temporaryFiles[i];
         const wxString fnFullPath = fn.GetFullPath();
 
         if (!wxFileExists(fnFullPath))
@@ -1444,7 +1456,7 @@ void wxMainFrame::delete_temporary_files()
         }
     }
 
-    m_temporaryFiles.Clear();
+    m_temporaryFiles.clear();
 }
 
 void wxMainFrame::OnItemUpdated(wxThreadEvent& event)
@@ -1471,77 +1483,72 @@ namespace
 
 wxThread::ExitCode wxMainFrame::Entry()
 {
-    wxDataViewItemArray elems;
     wxJson src;
-    m_listViewInputFiles->GetModel()->GetChildren(wxDataViewItem(), elems);
-    for (wxDataViewItemArray::const_iterator i = elems.begin(), end = elems.end(); i != end && !GetThread()->TestDestroy(); ++i)
+
+    wxDataViewModel* const dataModel = m_listViewInputFiles->GetModel();
+
+    wxDataViewItemArray elems;
+    dataModel->GetChildren(wxDataViewItem(), elems);
+    for (const auto& i : elems)
     {
-        wxDataViewModel* const dataModel = m_listViewInputFiles->GetModel();
-        wxVariant v;
+        if (GetThread()->TestDestroy()) break;
+
         wxVector<wxVariant> vals;
-        vals.push_back(i->m_pItem);
+        vals.push_back(i.m_pItem);
 
-        dataModel->GetValue(v, *i, 1);
+        wxVariant v;
+
+        dataModel->GetValue(v, i, 1);
         if (v.GetType().CmpNoCase(wxS("wxFileName")) != 0) continue;
-        const wxVariantDataFileName* const vfn = const_cast<const wxVariantDataFileName*>(static_cast<wxVariantDataFileName*>(v.GetData()));
-        const wxFileName fn = vfn->GetValue();
+        const wxFileName fn = get_variant_custom_val<wxVariantDataFileName>(v);
 
-        dataModel->GetValue(v, *i, 2);
+        dataModel->GetValue(v, i, 2);
         if (v.GetType().CmpNoCase(wxS("wxSize")) != 0) continue;
-        const wxVariantDataSize* const vs1 = const_cast<const wxVariantDataSize*>(static_cast<wxVariantDataSize*>(v.GetData()));
-        const wxSize imgSize = vs1->GetValue();
+        const wxSize imgSize = get_variant_custom_val<wxVariantDataSize>(v);
 
-        dataModel->GetValue(v, *i, 3);
+        dataModel->GetValue(v, i, 3);
         if (v.GetType().CmpNoCase(wxS("wxSize")) != 0) continue;
-        const wxVariantDataSize* const vs2 = const_cast<const wxVariantDataSize*>(static_cast<wxVariantDataSize*>(v.GetData()));
-        const wxSize imgResolution = vs2->GetValue();
+        const wxSize imgResolution = get_variant_custom_val<wxVariantDataSize>(v);
 
-        if (is_uninitialized(imgSize) || is_uninitialized(imgResolution))
+        if (!(is_uninitialized(imgSize) || is_uninitialized(imgResolution))) continue;
+
+        wxImage img;
+        if (img.LoadFile(fn.GetFullPath()))
         {
-            wxImage img;
-            if (img.LoadFile(fn.GetFullPath()))
+            const wxSize newImgSize = img.GetSize();
+
+            wxSize newImgResolution(img.GetOptionInt(wxIMAGE_OPTION_RESOLUTIONX), img.GetOptionInt(wxIMAGE_OPTION_RESOLUTIONY));
+            switch (img.GetOptionInt(wxIMAGE_OPTION_RESOLUTIONUNIT))
             {
-                const wxSize newImgSize = img.GetSize();
+                case wxIMAGE_RESOLUTION_INCHES:
+                break;
 
-                wxSize newImgResolution(img.GetOptionInt(wxIMAGE_OPTION_RESOLUTIONX), img.GetOptionInt(wxIMAGE_OPTION_RESOLUTIONY));
-                switch (img.GetOptionInt(wxIMAGE_OPTION_RESOLUTIONUNIT))
-                {
-                    case wxIMAGE_RESOLUTION_INCHES:
-                    break;
+                case wxIMAGE_RESOLUTION_CM: // -> DPI
+                newImgResolution.x = lroundf(2.54f * newImgResolution.x);
+                newImgResolution.y = lroundf(2.54f * newImgResolution.y);
+                break;
 
-                    case wxIMAGE_RESOLUTION_CM:
-                    newImgResolution.x = lroundf(2.54f * newImgResolution.x);
-                    newImgResolution.y = lroundf(2.54f * newImgResolution.y);
-                    break;
-
-                    default:
-                    newImgResolution.x = newImgResolution.y = 0;
-                    break;
-                }
-
-                const wxVariant newVImgSize(new wxVariantDataSize(newImgSize));
-                const wxVariant newVImgResolution(new wxVariantDataSize(newImgResolution));
-
-                vals.push_back(newVImgSize);
-                vals.push_back(newVImgResolution);
-            }
-            else
-            { // initialize anyway
-                const wxSize zeroSize(0, 0);
-                const wxVariant zeroVSize(new wxVariantDataSize(zeroSize));
-
-                vals.push_back(zeroVSize);
-                vals.push_back(zeroVSize);
+                default: // unknown
+                newImgResolution.x = newImgResolution.y = 0;
+                break;
             }
 
-            wxScopedPtr<wxThreadEvent> threadEvent(new wxThreadEvent);
-            threadEvent->SetPayload(vals);
-            wxQueueEvent(GetEventHandler(), threadEvent.release());
+            vals.push_back(wxVariantDataSize::Get(newImgSize));
+            vals.push_back(wxVariantDataSize::Get(newImgResolution));
         }
+        else
+        { // initialize anyway
+            const wxSize zeroSize(0, 0);
+            const wxVariant zeroVSize(wxVariantDataSize::Get(zeroSize));
+
+            vals.push_back(zeroVSize);
+            vals.push_back(zeroVSize);
+        }
+
+        wxScopedPtr<wxThreadEvent> threadEvent(new wxThreadEvent);
+        threadEvent->SetPayload(vals);
+        wxQueueEvent(GetEventHandler(), threadEvent.release());
     }
 
     return (wxThread::ExitCode)0;
 }
-
-#include <wx/arrimpl.cpp>	// this is a magic incantation which must be done!
-WX_DEFINE_OBJARRAY(wxArrayFileName);

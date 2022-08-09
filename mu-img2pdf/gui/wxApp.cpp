@@ -319,9 +319,9 @@ bool wxMyApp::GetFnColumn(const wxFileName& fn, wxVector<wxVariant>& column) con
         const wxSize elSize(isPdf ? 0 : -1, isPdf ? 0 : -1);
 
         column.push_back(wxVariant(wxBitmapBundle::FromIconBundle(m_iconMap.at(ext))));
-        column.push_back(wxVariant(new wxVariantDataFileName(fn)));
-        column.push_back(wxVariant(new wxVariantDataSize(elSize)));
-        column.push_back(wxVariant(new wxVariantDataSize(elSize)));
+        column.push_back(wxVariantDataFileName::Get(fn));
+        column.push_back(wxVariantDataSize::Get(elSize));
+        column.push_back(wxVariantDataSize::Get(elSize));
         return true;
     }
     catch (std::out_of_range WXUNUSED(oe))

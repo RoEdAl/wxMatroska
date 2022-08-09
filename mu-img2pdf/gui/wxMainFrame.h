@@ -8,12 +8,12 @@
 #include "LogListBox.h"
 #endif
 
-WX_DECLARE_OBJARRAY(wxFileName, wxArrayFileName);
-
 class wxMainFrame:
     public wxFrame, wxThreadHelper
 {
     wxDECLARE_NO_COPY_CLASS(wxMainFrame);
+
+    typedef wxVector<wxFileName> wxArrayFileName;
 
     protected:
 

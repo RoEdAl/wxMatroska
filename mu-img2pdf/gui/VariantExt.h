@@ -9,6 +9,13 @@ class wxVariantDataFileName: public wxVariantData
 {
     public:
 
+    typedef wxFileName R;
+
+    static wxVariant Get(const wxFileName& fn)
+    {
+        return wxVariant(new wxVariantDataFileName(fn));
+    }
+
     explicit wxVariantDataFileName(const wxFileName& fn)
         :m_fn(fn)
     {
@@ -91,6 +98,13 @@ class wxVariantDataFileName: public wxVariantData
 class wxVariantDataSize: public wxVariantData
 {
     public:
+
+    typedef wxSize R;
+
+    static wxVariant Get(const wxSize& sz)
+    {
+        return wxVariant(new wxVariantDataSize(sz));
+    }
 
     explicit wxVariantDataSize(const wxSize& size)
         :m_size(size)
