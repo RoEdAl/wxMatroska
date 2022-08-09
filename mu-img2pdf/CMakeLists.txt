@@ -1,0 +1,6 @@
+#
+# mu-img2pdf
+#
+ADD_SUBDIRECTORY(js)
+ADD_SUBDIRECTORY(gui)
+

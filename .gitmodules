@@ -1,0 +1,3 @@
+[submodule "mu-img2pdf/js"]
+	path = mu-img2pdf/js
+	url = https://github.com/RoEdAl/mu-img2pdf
