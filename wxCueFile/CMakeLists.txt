@@ -43,9 +43,8 @@ ConfigureWxWidgetsUsage(wxCueFile)
 ConfigureSourceEncoding(wxCueFile)
 SET_PROPERTY(TARGET wxCueFile PROPERTY OUTPUT_NAME CueFile)
 TARGET_LINK_LIBRARIES(wxCueFile
-	PRIVATE
-		wxEncodingDetection
 	PUBLIC
+		wxEncodingDetection
 		wxWEBPHandler
 		TagLib
 		nlohmann_json::nlohmann_json
