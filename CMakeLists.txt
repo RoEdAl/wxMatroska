@@ -165,7 +165,6 @@ ADD_SUBDIRECTORY(wxWEBPHandler)
 ADD_SUBDIRECTORY(wxCueFile)
 ADD_SUBDIRECTORY(wxCueChapters)
 ADD_SUBDIRECTORY(wxCueChaptersGui)
-ADD_SUBDIRECTORY(mu-img2pdf)
 ADD_SUBDIRECTORY(setup)
 
 INCLUDE(cpack/Installer.cmake)
