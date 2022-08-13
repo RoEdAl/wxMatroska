@@ -154,7 +154,7 @@ namespace
 
     wxSizerFlags get_middle_exp_crtl_sizer_flags(wxWindow* wnd)
     {
-        return wxSizerFlags().Border(wxLEFT | wxRIGHT, wnd->FromDIP(DEF_MARGIN)).Proportion(1).Expand();
+        return wxSizerFlags().CenterVertical().Border(wxLEFT | wxRIGHT, wnd->FromDIP(DEF_MARGIN)).Proportion(1);
     }
 
     wxSizerFlags get_right_crtl_sizer_flags(wxWindow* wnd)
