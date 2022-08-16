@@ -10,7 +10,7 @@ class ListBox:
 {
     public:
 
-    ListBox(wxWindow*);
+    ListBox(wxWindow* const);
     void ShowLastItem();
     wxString GetItemsAsText() const;
 };
@@ -20,12 +20,12 @@ class LogListBox:
 {
     public:
 
-    LogListBox(ListBox*);
+    LogListBox(ListBox* const);
     virtual void DoLogText(const wxString&);
 
     protected:
 
-    ListBox* m_listBox;
+    ListBox* const m_listBox;
 };
 
 class SimpleLogListBox:
@@ -33,12 +33,12 @@ class SimpleLogListBox:
 {
     public:
 
-    SimpleLogListBox(ListBox*);
+    SimpleLogListBox(ListBox* const);
     virtual void DoLogText(const wxString&);
 
     protected:
 
-    ListBox* m_listBox;
+    ListBox* const m_listBox;
 };
 
 #endif

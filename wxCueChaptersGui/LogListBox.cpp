@@ -6,8 +6,8 @@
 
  // ===============================================================================================================
 
-ListBox::ListBox(wxWindow* parent)
-    : wxListBox(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_SINGLE | wxLB_HSCROLL | wxLB_NEEDED_SB)
+ListBox::ListBox(wxWindow* const parent)
+    :wxListBox(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_SINGLE | wxLB_HSCROLL | wxLB_NEEDED_SB | wxBORDER_THEME)
 {
     const wxFont font(wxSMALL_FONT->GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
     SetFont(font);
@@ -30,7 +30,15 @@ wxString ListBox::GetItemsAsText() const
 
     for (int i = 0; i < cnt; ++i)
     {
-        *tos << GetString(i) << endl;
+        const wxString line = GetString(i);
+        if (line.IsEmpty())
+        {
+            *tos << endl;
+        }
+        else
+        {
+            *tos << GetString(i) << endl;
+        }
     }
 
     tos->Flush();
@@ -39,7 +47,7 @@ wxString ListBox::GetItemsAsText() const
 
 // ===============================================================================================================
 
-LogListBox::LogListBox(ListBox* listBox): m_listBox(listBox)
+LogListBox::LogListBox(ListBox* const listBox): m_listBox(listBox)
 {
     wxASSERT(listBox != nullptr);
 }
@@ -51,7 +59,7 @@ void LogListBox::DoLogText(const wxString& msg)
 
 // ===============================================================================================================
 
-SimpleLogListBox::SimpleLogListBox(ListBox* listBox): m_listBox(listBox)
+SimpleLogListBox::SimpleLogListBox(ListBox* const listBox): m_listBox(listBox)
 {
     wxASSERT(listBox != nullptr);
 }
