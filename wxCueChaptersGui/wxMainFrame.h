@@ -167,19 +167,19 @@ class wxMainFrame:
 
     private:
 
-    wxPanel* create_src_dst_pannel(wxNotebook* notebook, const wxFont& toolFont, const wxSizerFlags& btnLeft, const wxSizerFlags& btnMiddle, const wxSizerFlags& btnMiddleExp, const wxSizerFlags& btnRight);
-    wxPanel* create_general_panel(wxNotebook* notebook, const wxSizerFlags& btnLeft, const wxSizerFlags& centerVertical);
-    wxPanel* create_chapter_panel(wxNotebook* notebook, const wxSizerFlags& btnLeft, const wxSizerFlags& btnMiddle, const wxSizerFlags& centerVertical);
-    wxPanel* create_adv_panel(wxNotebook* notebook, const wxSizerFlags& btnLeft, const wxSizerFlags& centerVertical);
-    wxPanel* create_messages_panel(wxNotebook* notebook, const wxFont& toolFont, const wxSizerFlags& btnLeft, const wxSizerFlags& btnMiddle, const wxSizerFlags& btnRight, const wxSizerFlags& centerVertical);
-    wxNotebook* create_notebook(const wxFont& toolFont, const wxSizerFlags& btnLeft, const wxSizerFlags& btnMiddle, const wxSizerFlags& btnMiddleExp, const wxSizerFlags& btnRight, const wxSizerFlags& centerVertical);
-    wxBoxSizer* create_bottom_ctrls(const wxFont& toolFont, const wxSizerFlags& btnLeft, const wxSizerFlags& btnMiddle, const wxSizerFlags& btnRight, const wxSizerFlags& centerVertical);
-    bool read_options(wxArrayString& options) const;
+    wxPanel* create_src_dst_pannel(wxNotebook*);
+    wxPanel* create_general_panel(wxNotebook*);
+    wxPanel* create_chapter_panel(wxNotebook*);
+    wxPanel* create_adv_panel(wxNotebook*);
+    wxPanel* create_messages_panel(wxNotebook*);
+    wxNotebook* create_notebook();
+    wxBoxSizer* create_bottom_ctrls();
+    bool read_options(wxArrayString&) const;
     static void get_cmd_choices(int, wxArrayString&);
 
     public:
 
-    wxMainFrame(wxWindow* parent = nullptr, wxWindowID id = wxID_ANY, const wxString& title = _("cue2mkc frontend"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_FRAME_STYLE | wxCLIP_SIBLINGS | wxTAB_TRAVERSAL);
-    void OnDropFiles(const wxArrayString& fileNames);
+    wxMainFrame(wxWindow* = nullptr, wxWindowID = wxID_ANY, const wxString& = _("cue2mkc frontend"), const wxPoint& = wxDefaultPosition, const wxSize& = wxDefaultSize, long = wxDEFAULT_FRAME_STYLE | wxCLIP_SIBLINGS | wxTAB_TRAVERSAL);
+    void OnDropFiles(const wxArrayString&);
 };
 

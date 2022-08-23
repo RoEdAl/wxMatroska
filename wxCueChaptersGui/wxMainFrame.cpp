@@ -10,7 +10,6 @@ namespace
 {
     const int AUTO_SCROLL_UPDATE_INTERVAL = 2000;
     const int TIMER_IDLE_WAKE_UP_INTERVAL = 250;
-    const int DEF_MARGIN = 2;
 
     wxStaticBoxSizer* create_static_box_sizer(wxWindow* parent, const wxString& label, wxOrientation orientation)
     {
@@ -32,7 +31,7 @@ namespace
 
     wxSizerFlags get_horizontal_static_line_sizer_flags(wxWindow* wnd)
     {
-        return wxSizerFlags().Expand().Border(wxTOP | wxBOTTOM, wnd->FromDIP(2));
+        return wxSizerFlags().Expand().Border(wxTOP | wxBOTTOM, wnd->FromDIP(1));
     }
 
     wxStaticLine* create_horizontal_static_line(const wxStaticBoxSizer* parentSizer)
@@ -144,22 +143,22 @@ namespace
 
     wxSizerFlags get_left_ctrl_sizer_flags(wxWindow* wnd)
     {
-        return wxSizerFlags().CenterVertical().Border(wxRIGHT, wnd->FromDIP(DEF_MARGIN)).Proportion(0);
+        return wxSizerFlags().CenterVertical().Border(wxRIGHT).Proportion(0);
     }
 
     wxSizerFlags get_middle_crtl_sizer_flags(wxWindow* wnd)
     {
-        return wxSizerFlags().CenterVertical().Border(wxLEFT | wxRIGHT, wnd->FromDIP(DEF_MARGIN)).Proportion(0);
+        return wxSizerFlags().CenterVertical().Border(wxLEFT | wxRIGHT).Proportion(0);
     }
 
     wxSizerFlags get_middle_exp_crtl_sizer_flags(wxWindow* wnd)
     {
-        return wxSizerFlags().CenterVertical().Border(wxLEFT | wxRIGHT, wnd->FromDIP(DEF_MARGIN)).Proportion(1);
+        return wxSizerFlags().CenterVertical().Border(wxLEFT | wxRIGHT).Proportion(1);
     }
 
     wxSizerFlags get_right_crtl_sizer_flags(wxWindow* wnd)
     {
-        return wxSizerFlags().CenterVertical().Border(wxLEFT, wnd->FromDIP(DEF_MARGIN)).Proportion(0);
+        return wxSizerFlags().CenterVertical().Border(wxLEFT).Proportion(0);
     }
 
     wxSizerFlags get_vertical_allign_sizer_flags()
@@ -376,7 +375,7 @@ namespace
     {
         public:
 
-        CheckBoxUiUpdater(wxCheckBox* checkBox)
+        CheckBoxUiUpdater(const wxCheckBox* const checkBox)
             : m_checkBox(checkBox)
         {
         }
@@ -403,7 +402,7 @@ namespace
 
         private:
 
-        wxCheckBox* m_checkBox;
+        const wxCheckBox* m_checkBox;
 
         bool is_checked() const
         {
@@ -416,7 +415,7 @@ namespace
     {
         public:
 
-        ChoiceFormatUiUpdater(wxChoice* comboBox)
+        ChoiceFormatUiUpdater(const wxChoice* const comboBox)
             :m_choice(comboBox)
         {
         }
@@ -444,14 +443,14 @@ namespace
 
         private:
 
-        wxChoice* m_choice;
+        const wxChoice* m_choice;
     };
 
     class TreeCtrlUiUpdater
     {
         public:
 
-        TreeCtrlUiUpdater(wxTreeCtrl* treeCtrl)
+        TreeCtrlUiUpdater(const wxTreeCtrl* const treeCtrl)
             : m_treeCtrl(treeCtrl)
         {
         }
@@ -480,14 +479,14 @@ namespace
 
         private:
 
-        wxTreeCtrl* m_treeCtrl;
+        const wxTreeCtrl* m_treeCtrl;
     };
 
     class TreeCtrlProcessUiUpdater
     {
         public:
 
-        TreeCtrlProcessUiUpdater(wxTreeCtrl* treeCtrl, const wxScopedPtr< wxProcess >& process)
+        TreeCtrlProcessUiUpdater(const wxTreeCtrl* const treeCtrl, const wxScopedPtr< wxProcess >& process)
             : m_treeCtrl(treeCtrl), m_process(process)
         {
         }
@@ -511,7 +510,7 @@ namespace
 
         private:
 
-        wxTreeCtrl* m_treeCtrl;
+        const wxTreeCtrl* m_treeCtrl;
         const wxScopedPtr< wxProcess >& m_process;
     };
 
@@ -705,94 +704,89 @@ namespace
         kill_console_process(process.GetPid());
     }
 
-    wxSize calc_text_size(int charWidth)
+    wxSize calc_text_size(const wxWindow* const wnd, int charWidth)
     {
-        wxScreenDC dc;
-        wxString txt(wxUniChar(0x2013), charWidth);
-        const wxSize extent = dc.GetTextExtent(txt);
-        return wxSize(extent.GetWidth(), -1);
+        const wxSize res = wnd->GetTextExtent(wxString(wxUniChar(0x2013), charWidth));
+        return wxSize(res.x, -1);
     }
 
-    wxSize calc_text_size(int charWidth, int charHeight)
+    wxSize calc_text_size(const wxWindow* const wnd, int charWidth, int charHeight)
     {
-        wxScreenDC dc;
         wxString txt(wxUniChar(0x2013), charWidth);
-        const wxSize extent = dc.GetTextExtent(txt);
+        const wxSize extent = wnd->GetTextExtent(txt);
         return wxSize(extent.GetWidth(), extent.GetHeight() * charHeight);
     }
 }
 
-wxPanel* wxMainFrame::create_src_dst_pannel(wxNotebook* notebook, const wxFont& toolFont, const wxSizerFlags& btnLeft, const wxSizerFlags& btnMiddle, const wxSizerFlags& btnMiddleExp, const wxSizerFlags& btnRight)
+wxPanel* wxMainFrame::create_src_dst_pannel(wxNotebook* notebook)
 {
     wxPanel* const    panel = new wxPanel(notebook);
     wxBoxSizer* const panelSizer = new wxBoxSizer(wxVERTICAL);
 
     {
         wxStaticBoxSizer* const sizer = create_static_box_sizer(panel, _("Sources"), wxVERTICAL);
+        const int gap = FromDIP(1);
 
-        m_treeCtrlInputFiles = new wxTreeCtrl(sizer->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_TWIST_BUTTONS | wxTR_FULL_ROW_HIGHLIGHT | wxTR_HIDE_ROOT);
+        m_treeCtrlInputFiles = new wxTreeCtrl(sizer->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_TWIST_BUTTONS | wxTR_FULL_ROW_HIGHLIGHT | wxTR_HIDE_ROOT | wxBORDER_THEME);
         m_treeCtrlInputFilesRoot = m_treeCtrlInputFiles->AddRoot("hidden root");
-        sizer->Add(m_treeCtrlInputFiles, 1, wxEXPAND, btnLeft.GetBorderInPixels());
+        sizer->Add(m_treeCtrlInputFiles, 1, wxEXPAND);
 
         {
             wxBoxSizer* const innerSizer = new wxBoxSizer(wxHORIZONTAL);
             TreeCtrlUiUpdater uiUpdater(m_treeCtrlInputFiles);
 
             m_checkBoxSuggestJoin = create_checkbox(sizer, _("Suggest join mode"), true);
-            m_checkBoxSuggestJoin->SetFont(toolFont);
+            m_checkBoxSuggestJoin->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
             m_checkBoxSuggestJoin->Bind(wxEVT_CHECKBOX, &wxMainFrame::OnSuggestJoinMode, this);
-            innerSizer->Add(m_checkBoxSuggestJoin, btnLeft);
+            innerSizer->Add(m_checkBoxSuggestJoin, wxSizerFlags().CenterVertical());
 
             innerSizer->Add(0, 0, 1, wxEXPAND);
 
             {
                 wxButton* const button = create_button(sizer, _("Add"));
-                button->SetFont(toolFont);
+                button->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
                 button->Bind(wxEVT_BUTTON, &wxMainFrame::OnButtonAdd, this);
-                innerSizer->Add(button, btnLeft);
+                innerSizer->Add(button, wxSizerFlags().CenterVertical().Border(wxRIGHT, gap));
             }
 
             {
                 wxButton* const button = create_button(sizer, _("Delete"));
-                button->SetFont(toolFont);
+                button->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
                 button->Bind(wxEVT_UPDATE_UI, uiUpdater);
                 button->Bind(wxEVT_BUTTON, &wxMainFrame::OnButtonDelete, this);
-                innerSizer->Add(button, btnMiddle);
+                innerSizer->Add(button, wxSizerFlags().CenterVertical().Border(wxLEFT | wxRIGHT, gap));
             }
 
             {
                 wxButton* const button = create_button(sizer, _("Make mask"));
-                button->SetFont(toolFont);
+                button->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
                 button->Bind(wxEVT_UPDATE_UI, uiUpdater);
                 button->Bind(wxEVT_BUTTON, &wxMainFrame::OnButtonMakeMask, this);
-                innerSizer->Add(button, btnMiddle);
+                innerSizer->Add(button, wxSizerFlags().CenterVertical().Border(wxLEFT | wxRIGHT, gap));
             }
 
             {
                 wxButton* const button = create_button(sizer, _("Add media"));
-                button->SetFont(toolFont);
+                button->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
                 button->Bind(wxEVT_UPDATE_UI, uiUpdater);
                 button->Bind(wxEVT_BUTTON, &wxMainFrame::OnButtonAddMediaFile, this);
-                innerSizer->Add(button, btnMiddle);
+                innerSizer->Add(button, wxSizerFlags().CenterVertical().Border(wxLEFT | wxRIGHT, gap));
             }
 
             innerSizer->Add(create_vertical_static_line(sizer), get_vertical_static_line_sizer_flags(panel));
 
             {
                 wxButton* const button = create_button(sizer, _("Identify"));
-                button->SetFont(toolFont);
+                button->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
                 button->Bind(wxEVT_UPDATE_UI, TreeCtrlProcessUiUpdater(m_treeCtrlInputFiles, m_pProcess));
                 button->Bind(wxEVT_BUTTON, &wxMainFrame::OnButtonIdentifyMediaFile, this);
-                innerSizer->Add(button, btnRight);
+                innerSizer->Add(button, wxSizerFlags().CenterVertical().Border(wxLEFT, gap));
             }
 
-            sizer->Add(innerSizer, 0, wxTOP | wxBOTTOM | wxEXPAND, btnLeft.GetBorderInPixels());
+            sizer->Add(innerSizer, 0, wxTOP | wxBOTTOM | wxEXPAND, gap);
         }
 
-        wxSizerFlags sizerFlags;
-        sizerFlags.Expand().Proportion(1);
-
-        panelSizer->Add(sizer, sizerFlags);
+        panelSizer->Add(sizer, wxSizerFlags().Expand().Proportion(1));
     }
 
     {
@@ -807,36 +801,33 @@ wxPanel* wxMainFrame::create_src_dst_pannel(wxNotebook* notebook, const wxFont& 
 
             m_choiceDst = create_choice(sizer, choices);
         }
-        sizer->Add(m_choiceDst, btnLeft);
+        sizer->Add(m_choiceDst, wxSizerFlags().CenterVertical().Border(wxRIGHT));
 
         m_textCtrlDst = create_text_ctrl(sizer, wxEmptyString, 1024);
         m_textCtrlDst->SetValue(wxStandardPaths::Get().GetUserDir(wxStandardPaths::Dir_Music));
         m_textCtrlDst->Bind(wxEVT_UPDATE_UI, &wxMainFrame::OnUpdateCtrlDst, this);
-        sizer->Add(m_textCtrlDst, btnMiddleExp);
+        sizer->Add(m_textCtrlDst, wxSizerFlags().CenterVertical().Border(wxLEFT | wxRIGHT).Proportion(1));
 
         {
             wxButton* const button = create_button(sizer, wxS("\u22EF"));
-            button->SetFont(toolFont);
+            button->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
             button->Bind(wxEVT_UPDATE_UI, &wxMainFrame::OnUpdateCtrlDst, this);
             button->Bind(wxEVT_BUTTON, &wxMainFrame::OnChooseDst, this);
-            sizer->Add(button, btnRight);
+            sizer->Add(button, wxSizerFlags().CenterVertical().Border(wxLEFT));
         }
 
-        wxSizerFlags sizerFlags;
-        sizerFlags.Expand();
-
-        panelSizer->Add(sizer, sizerFlags);
+        panelSizer->Add(sizer, wxSizerFlags().Expand());
     }
 
     panel->SetSizerAndFit(panelSizer);
     return panel;
 }
 
-wxPanel* wxMainFrame::create_general_panel(wxNotebook* notebook, const wxSizerFlags& btnLeft, const wxSizerFlags& centerVertical)
+wxPanel* wxMainFrame::create_general_panel(wxNotebook* notebook)
 {
-    wxPanel* const     panel = new wxPanel(notebook);
-    wxWrapSizer* const panelSizer = new wxWrapSizer();
-    const wxSizerFlags sflags = wxSizerFlags().Expand().Border(wxLEFT);
+    wxScrolledWindow* const panel = new wxScrolledWindow(notebook);
+    const int panelGap = FromDIP(2);
+    wxGridBagSizer* const panelSizer = new wxGridBagSizer(panelGap, panelGap);
 
     {
         wxStaticBoxSizer* const sizer = create_static_box_sizer(panel, _("General"), wxVERTICAL);
@@ -865,30 +856,31 @@ wxPanel* wxMainFrame::create_general_panel(wxNotebook* notebook, const wxSizerFl
         {
             wxBoxSizer* const innerSizer = new wxBoxSizer(wxHORIZONTAL);
 
-            const wxSize editMinSize = calc_text_size(20);
+            const wxSize editMinSize = calc_text_size(panel, 20);
 
-            innerSizer->Add(create_static_text(sizer, _("Media types")), btnLeft);
+            innerSizer->Add(create_static_text(sizer, _("Media types")), wxSizerFlags().CenterVertical().Border(wxRIGHT, panelGap));
 
             m_textCtrlExt = create_text_ctrl(sizer, wxEmptyString, 40);
             m_textCtrlExt->SetSizeHints(editMinSize);
             m_textCtrlExt->SetToolTip(_("Comma separated list of alternate media files extensions (without leading dot)"));
-            innerSizer->Add(m_textCtrlExt, centerVertical);
+            innerSizer->Add(m_textCtrlExt, wxSizerFlags().CentreVertical().Proportion(1));
 
-            sizer->Add(innerSizer);
+            sizer->Add(innerSizer, wxSizerFlags().Expand());
         }
 
-        panelSizer->Add(sizer, sflags);
+        panelSizer->Add(sizer, wxGBPosition(0, 0), wxDefaultSpan, wxEXPAND);
     }
 
     {
         wxStaticBoxSizer* const sizer = create_static_box_sizer(panel, _("Output"), wxVERTICAL);
 
         {
-            wxGridBagSizer* const innerSizer = new wxGridBagSizer();
+            const int gap = FromDIP(1);
+            wxGridBagSizer* const innerSizer = new wxGridBagSizer(gap, gap);
             wxGBSpan              oneCol(1, 2);
 
             // col 0
-            innerSizer->Add(create_static_text(sizer, _("Format")), wxGBPosition(0, 0), wxDefaultSpan, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+            innerSizer->Add(create_static_text(sizer, _("Format")), wxGBPosition(0, 0));
 
             {
                 wxArrayString choices;
@@ -901,13 +893,13 @@ wxPanel* wxMainFrame::create_general_panel(wxNotebook* notebook, const wxSizerFl
 
                 m_choiceFormat = create_choice(sizer->GetStaticBox(), choices, 2);
             }
-            innerSizer->Add(m_choiceFormat, wxGBPosition(0, 1), wxDefaultSpan, wxEXPAND | wxBOTTOM, btnLeft.GetBorderInPixels());
+            innerSizer->Add(m_choiceFormat, wxGBPosition(0, 1), wxDefaultSpan, wxALIGN_CENTER_VERTICAL | wxEXPAND);
 
             // col 1
             {
                 {
                     wxStaticText* const staticText = create_static_text(sizer, _("Codec"));
-                    innerSizer->Add(staticText, wxGBPosition(1, 0), wxDefaultSpan, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+                    innerSizer->Add(staticText, wxGBPosition(1, 0), wxDefaultSpan, wxALIGN_CENTER_VERTICAL);
                 }
 
                 {
@@ -922,8 +914,7 @@ wxPanel* wxMainFrame::create_general_panel(wxNotebook* notebook, const wxSizerFl
                     m_choiceFfmpegCodec = create_choice(sizer, choices);
                     m_choiceFfmpegCodec->SetToolTip(_("Audio codec"));
 
-                    const wxSizerFlags choiceSizer = wxSizerFlags().Expand().Proportion(1).Border(wxLEFT, btnLeft.GetBorderInPixels());
-                    innerSizer->Add(m_choiceFfmpegCodec, wxGBPosition(1, 1), wxDefaultSpan, wxEXPAND | wxBOTTOM, btnLeft.GetBorderInPixels());
+                    innerSizer->Add(m_choiceFfmpegCodec, wxGBPosition(1, 1), wxDefaultSpan, wxALIGN_CENTER_VERTICAL | wxEXPAND);
                 }
             }
 
@@ -931,7 +922,7 @@ wxPanel* wxMainFrame::create_general_panel(wxNotebook* notebook, const wxSizerFl
             {
                 {
                     wxStaticText* const staticText = create_static_text(sizer, _("Bit depth"));
-                    innerSizer->Add(staticText, wxGBPosition(2, 0), wxDefaultSpan, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+                    innerSizer->Add(staticText, wxGBPosition(2, 0), wxDefaultSpan, wxALIGN_CENTER_VERTICAL);
                 }
 
                 {
@@ -943,14 +934,14 @@ wxPanel* wxMainFrame::create_general_panel(wxNotebook* notebook, const wxSizerFl
                     m_choiceAudioSampleWidth = create_choice(sizer, choices);
                     m_choiceAudioSampleWidth->SetToolTip(_("Audio sample width"));
 
-                    const wxSizerFlags choiceSizer = wxSizerFlags().Expand().Proportion(1).Border(wxLEFT, btnLeft.GetBorderInPixels());
-                    innerSizer->Add(m_choiceAudioSampleWidth, wxGBPosition(2, 1), wxDefaultSpan, wxEXPAND | wxBOTTOM, btnLeft.GetBorderInPixels());
+                    const wxSizerFlags choiceSizer = wxSizerFlags().Expand().Proportion(1).Border(wxLEFT);
+                    innerSizer->Add(m_choiceAudioSampleWidth, wxGBPosition(2, 1), wxDefaultSpan, wxALIGN_CENTER_VERTICAL | wxEXPAND);
                 }
             }
 
             // col 3
             m_checkBoxDowngradeHiResAudio = create_checkbox(sizer, _wxS("Downgrade Hi\u2011Res audio"));
-            innerSizer->Add(m_checkBoxDowngradeHiResAudio, wxGBPosition(3, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+            innerSizer->Add(m_checkBoxDowngradeHiResAudio, wxGBPosition(3, 0), oneCol, wxALIGN_CENTER_VERTICAL);
 
 
             // col 4
@@ -958,11 +949,11 @@ wxPanel* wxMainFrame::create_general_panel(wxNotebook* notebook, const wxSizerFl
                 const wxSizerFlags lineFlags = get_horizontal_static_line_sizer_flags(panel);
                 innerSizer->Add(create_horizontal_static_line(sizer),
                            wxGBPosition(4, 0), oneCol,
-                           lineFlags.GetFlags(), btnLeft.GetBorderInPixels());
+                           lineFlags.GetFlags(), lineFlags.GetBorderInPixels());
             }
 
             // col 5
-            innerSizer->Add(create_static_text(sizer, _("Language")), wxGBPosition(5, 0), wxDefaultSpan, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+            innerSizer->Add(create_static_text(sizer, _("Language")), wxGBPosition(5, 0));
 
             {
                 wxArrayString choices;
@@ -974,10 +965,10 @@ wxPanel* wxMainFrame::create_general_panel(wxNotebook* notebook, const wxSizerFl
                 m_textCtrlLang = create_combobox(sizer, choices);
             }
             m_textCtrlLang->SetToolTip(_("Default language for chapters and tags"));
-            innerSizer->Add(m_textCtrlLang, wxGBPosition(5, 1), wxDefaultSpan, wxEXPAND | wxBOTTOM, btnLeft.GetBorderInPixels());
+            innerSizer->Add(m_textCtrlLang, wxGBPosition(5, 1), wxDefaultSpan, wxALIGN_CENTER_VERTICAL | wxEXPAND);
 
             // col 6
-            innerSizer->Add(create_static_text(sizer, _("Text encoding")), wxGBPosition(6, 0), wxDefaultSpan, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+            innerSizer->Add(create_static_text(sizer, _("Text encoding")), wxGBPosition(6, 0));
 
             {
                 wxArrayString choices;
@@ -992,36 +983,37 @@ wxPanel* wxMainFrame::create_general_panel(wxNotebook* notebook, const wxSizerFl
                 m_choiceEncoding = create_choice(sizer->GetStaticBox(), choices, 2);
                 m_choiceEncoding->SetToolTip(_("Text encoding of generated CUE and XML files"));
             }
-            innerSizer->Add(m_choiceEncoding, wxGBPosition(6, 1), wxDefaultSpan, wxEXPAND | wxBOTTOM, btnLeft.GetBorderInPixels());
+            innerSizer->Add(m_choiceEncoding, wxGBPosition(6, 1), wxDefaultSpan, wxALIGN_CENTER_VERTICAL | wxEXPAND);
 
             // col 7
             {
                 const wxSizerFlags lineFlags = get_horizontal_static_line_sizer_flags(panel);
                 innerSizer->Add(create_horizontal_static_line(sizer),
                            wxGBPosition(7, 0), oneCol,
-                           lineFlags.GetFlags(), btnLeft.GetBorderInPixels());
+                           lineFlags.GetFlags(), lineFlags.GetBorderInPixels());
             }
 
 
             // col 8
             m_checkBoxRunTool = create_checkbox(sizer, _("Run selected tool"), true);
             m_checkBoxRunTool->Bind(wxEVT_UPDATE_UI, ChoiceFormatUiUpdater(m_choiceFormat));
-            innerSizer->Add(m_checkBoxRunTool, wxGBPosition(8, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+            innerSizer->Add(m_checkBoxRunTool, wxGBPosition(8, 0), oneCol, wxALIGN_CENTER_VERTICAL);
 
             sizer->Add(innerSizer, wxSizerFlags().Expand());
         }
 
-        panelSizer->Add(sizer, sflags);
+        panelSizer->Add(sizer, wxGBPosition(0, 1), wxDefaultSpan, wxEXPAND);
     }
 
     {
         wxStaticBoxSizer* const sizer = create_static_box_sizer(panel, _wxS("Matroska\u2122 container attachments"), wxVERTICAL);
 
         {
-            wxGridBagSizer* const innerSizer = new wxGridBagSizer();
+            const int gap = FromDIP(1);
+            wxGridBagSizer* const innerSizer = new wxGridBagSizer(gap, gap);
             wxGBSpan              oneCol(1, 2);
 
-            innerSizer->Add(create_static_text(sizer, _("Cue scheet attach mode")), wxGBPosition(0, 0), wxDefaultSpan, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+            innerSizer->Add(create_static_text(sizer, _("Cue scheet attach mode")), wxGBPosition(0, 0), wxDefaultSpan, wxALIGN_CENTER_VERTICAL | wxRIGHT | wxTOP, gap);
 
             {
                 wxArrayString choices;
@@ -1033,27 +1025,27 @@ wxPanel* wxMainFrame::create_general_panel(wxNotebook* notebook, const wxSizerFl
 
                 m_choiceCueSheetAttachMode = create_choice(sizer, choices);
             }
-            innerSizer->Add(m_choiceCueSheetAttachMode, wxGBPosition(0, 1), wxDefaultSpan, wxEXPAND | wxBOTTOM, btnLeft.GetBorderInPixels());
+            innerSizer->Add(m_choiceCueSheetAttachMode, wxGBPosition(0, 1), wxDefaultSpan, wxALIGN_CENTER_VERTICAL | wxEXPAND);
 
             {
                 const wxSizerFlags lineFlags = get_horizontal_static_line_sizer_flags(panel);
                 innerSizer->Add(create_horizontal_static_line(sizer),
                            wxGBPosition(1, 0), oneCol,
-                           lineFlags.GetFlags(), btnLeft.GetBorderInPixels());
+                           lineFlags.GetFlags(), lineFlags.GetBorderInPixels());
             }
 
             m_checkBoxAttachCover = create_3state_checkbox(sizer, _("Attach cover image(s)"), wxCHK_CHECKED);
-            innerSizer->Add(m_checkBoxAttachCover, wxGBPosition(2, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+            innerSizer->Add(m_checkBoxAttachCover, wxGBPosition(2, 0), oneCol, wxALIGN_CENTER_VERTICAL);
 
             m_checkBoxConvertCover = create_3state_checkbox(sizer, _("Convert cover image(s)"));
-            innerSizer->Add(m_checkBoxConvertCover, wxGBPosition(3, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+            innerSizer->Add(m_checkBoxConvertCover, wxGBPosition(3, 0), oneCol, wxALIGN_CENTER_VERTICAL);
 
             m_checkBoxCoverFromPdf = create_3state_checkbox(sizer, _("Create cover from PDF"));
-            innerSizer->Add(m_checkBoxCoverFromPdf, wxGBPosition(4, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+            innerSizer->Add(m_checkBoxCoverFromPdf, wxGBPosition(4, 0), oneCol, wxALIGN_CENTER_VERTICAL);
 
             {
                 wxStaticText* const staticText = create_static_text(sizer, _("Converted image type"));
-                innerSizer->Add(staticText, wxGBPosition(5, 0), wxDefaultSpan, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+                innerSizer->Add(staticText, wxGBPosition(5, 0), wxDefaultSpan, wxALIGN_CENTER_VERTICAL);
             }
 
             {
@@ -1064,47 +1056,48 @@ wxPanel* wxMainFrame::create_general_panel(wxNotebook* notebook, const wxSizerFl
 
                 m_choiceConvertedImageExt = create_choice(sizer, choices);
             }
-            innerSizer->Add(m_choiceConvertedImageExt, wxGBPosition(5, 1), wxDefaultSpan, wxEXPAND | wxBOTTOM, btnLeft.GetBorderInPixels());
+            innerSizer->Add(m_choiceConvertedImageExt, wxGBPosition(5, 1), wxDefaultSpan, wxALIGN_CENTER_VERTICAL | wxEXPAND);
 
             {
                 const wxSizerFlags lineFlags = get_horizontal_static_line_sizer_flags(panel);
                 innerSizer->Add(create_horizontal_static_line(sizer),
                            wxGBPosition(6, 0), oneCol,
-                           lineFlags.GetFlags(), btnLeft.GetBorderInPixels());
+                           lineFlags.GetFlags(), lineFlags.GetBorderInPixels());
             }
 
             m_checkBoxAttachLogs = create_3state_checkbox(sizer, _("Attach EAC log(s)"));
-            innerSizer->Add(m_checkBoxAttachLogs, wxGBPosition(7, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+            innerSizer->Add(m_checkBoxAttachLogs, wxGBPosition(7, 0), oneCol, wxALIGN_CENTER_VERTICAL);
 
             m_checkBoxAttachAccuRip = create_3state_checkbox(sizer, _("Attach AccurateRip log(s)"));
-            innerSizer->Add(m_checkBoxAttachAccuRip, wxGBPosition(8, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+            innerSizer->Add(m_checkBoxAttachAccuRip, wxGBPosition(8, 0), oneCol, wxALIGN_CENTER_VERTICAL);
 
             {
                 const wxSizerFlags lineFlags = get_horizontal_static_line_sizer_flags(panel);
                 innerSizer->Add(create_horizontal_static_line(sizer),
                            wxGBPosition(9, 0), oneCol,
-                           lineFlags.GetFlags(), btnLeft.GetBorderInPixels());
+                           lineFlags.GetFlags(), lineFlags.GetBorderInPixels());
             }
 
             m_checkBoxAttachmentsInParentDir = create_3state_checkbox(sizer, _("Attachments in parent dir"));
             m_checkBoxAttachmentsInParentDir->SetToolTip(_("Look for attachments (cover and logs) also in parent dir(s)"));
-            innerSizer->Add(m_checkBoxAttachmentsInParentDir, wxGBPosition(10, 0), oneCol, btnLeft.GetFlags(), btnLeft.GetBorderInPixels());
+            innerSizer->Add(m_checkBoxAttachmentsInParentDir, wxGBPosition(10, 0), oneCol, wxALIGN_CENTER_VERTICAL);
 
             sizer->Add(innerSizer, wxSizerFlags().Expand());
         }
 
-        panelSizer->Add(sizer, sflags);
+        panelSizer->Add(sizer, wxGBPosition(1, 0), wxDefaultSpan, wxEXPAND | wxBOTTOM, panelGap);
     }
 
-    panel->SetSizerAndFit(panelSizer);
+    panel->SetSizer(panelSizer);
+    panel->FitInside();
     return panel;
 }
 
-wxPanel* wxMainFrame::create_chapter_panel(wxNotebook* notebook, const wxSizerFlags& btnLeft, const wxSizerFlags& btnMiddle, const wxSizerFlags& centerVertical)
+wxPanel* wxMainFrame::create_chapter_panel(wxNotebook* notebook)
 {
-    wxPanel* const     panel = new wxPanel(notebook);
-    wxWrapSizer* const panelSizer = new wxWrapSizer();
-    const wxSizerFlags sflags = wxSizerFlags().Expand().Border(wxLEFT);
+    wxScrolledWindow* const panel = new wxScrolledWindow(notebook);
+    const int panelGap = FromDIP(2);
+    wxGridBagSizer* const panelSizer = new wxGridBagSizer(panelGap, panelGap);
 
     {
         wxStaticBoxSizer* const sizer = create_static_box_sizer(panel, _("Chapters"), wxVERTICAL);
@@ -1118,26 +1111,29 @@ wxPanel* wxMainFrame::create_chapter_panel(wxNotebook* notebook, const wxSizerFl
         sizer->Add(m_checkBoxChapterEndTimeFromNext);
 
         {
+            const int gap = FromDIP(1);
             wxBoxSizer* const innerSizer = new wxBoxSizer(wxHORIZONTAL);
 
             m_checkBoxOffset = create_checkbox(sizer, _("Offset"));
-            innerSizer->Add(m_checkBoxOffset, btnLeft);
+            innerSizer->Add(m_checkBoxOffset, wxSizerFlags().CenterVertical().Border(wxRIGHT, gap));
 
             m_textCtrlChapterOffset = create_text_ctrl(sizer, "150", 4);
             m_textCtrlChapterOffset->Bind(wxEVT_UPDATE_UI, CheckBoxUiUpdater(m_checkBoxOffset));
-            innerSizer->Add(m_textCtrlChapterOffset, btnMiddle);
+            innerSizer->Add(m_textCtrlChapterOffset, wxSizerFlags().CenterVertical().Border(wxLEFT | wxRIGHT, gap));
 
             wxStaticText* const staticText = create_static_text(sizer, _("frames"));
-            innerSizer->Add(staticText, centerVertical);
+            staticText->Bind(wxEVT_UPDATE_UI, CheckBoxUiUpdater(m_checkBoxOffset));
+            innerSizer->Add(staticText, wxSizerFlags().CenterVertical());
 
-            sizer->Add(innerSizer, 0, wxTOP, btnLeft.GetBorderInPixels());
+            sizer->Add(innerSizer, wxSizerFlags().Border(wxTOP | wxBOTTOM, gap));
         }
 
         {
+            const int gap = FromDIP(1);
             wxBoxSizer* const innerSizer = new wxBoxSizer(wxHORIZONTAL);
 
             m_checkBoxTrack01Idx = create_checkbox(sizer, _("For track 01 assume index"));
-            innerSizer->Add(m_checkBoxTrack01Idx, btnLeft);
+            innerSizer->Add(m_checkBoxTrack01Idx, wxSizerFlags().CenterVertical().Border(wxRIGHT, gap));
 
             {
                 wxArrayString choices;
@@ -1147,19 +1143,20 @@ wxPanel* wxMainFrame::create_chapter_panel(wxNotebook* notebook, const wxSizerFl
                 m_choiceIdx = create_choice(sizer->GetStaticBox(), choices, 1);
             }
             m_choiceIdx->Bind(wxEVT_UPDATE_UI, CheckBoxUiUpdater(m_checkBoxTrack01Idx));
-            innerSizer->Add(m_choiceIdx, btnMiddle);
+            innerSizer->Add(m_choiceIdx, wxSizerFlags().CenterVertical().Border(wxLEFT | wxRIGHT, gap));
 
             wxStaticText* const staticText = create_static_text(sizer, _("as beginning of track"));
-            innerSizer->Add(staticText, centerVertical);
+            staticText->Bind(wxEVT_UPDATE_UI, CheckBoxUiUpdater(m_checkBoxTrack01Idx));
+            innerSizer->Add(staticText, wxSizerFlags().CenterVertical().Border(wxLEFT, gap));
 
-            sizer->Add(innerSizer, 0, wxTOP, btnLeft.GetBorderInPixels());
+            sizer->Add(innerSizer, wxSizerFlags().Border(wxTOP | wxBOTTOM, gap));
         }
 
         m_checkBoxIdxToHiddenChapters = create_3state_checkbox(sizer, _("Convert indexes to hidden chapters"));
         m_checkBoxIdxToHiddenChapters->SetToolTip(_wxS("Convert CD indexes greater than 01 to hidden Matroska\u2122 chapters"));
-        sizer->Add(m_checkBoxIdxToHiddenChapters, 0, wxTOP, btnLeft.GetBorderInPixels());
+        sizer->Add(m_checkBoxIdxToHiddenChapters);
 
-        panelSizer->Add(sizer, sflags);
+        panelSizer->Add(sizer, wxGBPosition(0,0), wxDefaultSpan, wxEXPAND);
     }
 
     {
@@ -1212,7 +1209,7 @@ wxPanel* wxMainFrame::create_chapter_panel(wxNotebook* notebook, const wxSizerFl
         m_checkBoxStrongRomanLiteralsParser->SetToolTip(_wxS("Use stronger roman numerals parser - include MCDL characters (XVI only by default)"));
         sizer->Add(m_checkBoxStrongRomanLiteralsParser);
 
-        panelSizer->Add(sizer, sflags);
+        panelSizer->Add(sizer, wxGBPosition(0,1), wxDefaultSpan, wxEXPAND);
     }
 
     {
@@ -1220,15 +1217,15 @@ wxPanel* wxMainFrame::create_chapter_panel(wxNotebook* notebook, const wxSizerFl
 
         {
             const wxString trackTitleFmt(_("%dp% - %dt% - %tt%"));
-            const wxSize editMinSize = calc_text_size(trackTitleFmt.Length() * 2);
+            const wxSize editMinSize = calc_text_size(panel, trackTitleFmt.Length() * 2);
             const wxSizerFlags txtSizerFlags = wxSizerFlags().Expand().Proportion(1);
 
-            wxFlexGridSizer* const innerSizer = new wxFlexGridSizer(0, 2, btnLeft.GetBorderInPixels(), 0);
+            wxFlexGridSizer* const innerSizer = new wxFlexGridSizer(0, 2, FromDIP(1), 0);
             innerSizer->AddGrowableCol(1);
 
             m_checkBoxMkaTitleFmt = create_checkbox(sizer, _("Container"));
             m_checkBoxMkaTitleFmt->SetToolTip(_("Conainer and audio track title"));
-            innerSizer->Add(m_checkBoxMkaTitleFmt, centerVertical);
+            innerSizer->Add(m_checkBoxMkaTitleFmt, wxSizerFlags().CenterVertical());
 
             m_textCtrlMkaTitleFmt = create_text_ctrl(sizer, _("%dp% - %dt%"), 200);
             m_textCtrlMkaTitleFmt->SetSizeHints(editMinSize);
@@ -1236,7 +1233,7 @@ wxPanel* wxMainFrame::create_chapter_panel(wxNotebook* notebook, const wxSizerFl
             innerSizer->Add(m_textCtrlMkaTitleFmt, txtSizerFlags);
 
             m_checkBoxTrackTilteFmt = create_checkbox(sizer, _("Chapter/track"));
-            innerSizer->Add(m_checkBoxTrackTilteFmt, centerVertical);
+            innerSizer->Add(m_checkBoxTrackTilteFmt, wxSizerFlags().CenterVertical());
 
             m_textCtrlTrackTilteFmt = create_text_ctrl(sizer, trackTitleFmt, 200);
             m_textCtrlTrackTilteFmt->SetSizeHints(editMinSize);
@@ -1246,18 +1243,19 @@ wxPanel* wxMainFrame::create_chapter_panel(wxNotebook* notebook, const wxSizerFl
             sizer->Add(innerSizer, 0, wxEXPAND);
         }
 
-        panelSizer->Add(sizer, sflags);
+        panelSizer->Add(sizer, wxGBPosition(1,0), wxGBSpan(1, 2), wxEXPAND | wxBOTTOM, panelGap);
     }
 
-    panel->SetSizerAndFit(panelSizer);
+    panel->SetSizer(panelSizer);
+    panel->FitInside();
     return panel;
 }
 
-wxPanel* wxMainFrame::create_adv_panel(wxNotebook* notebook, const wxSizerFlags& btnLeft, const wxSizerFlags& centerVertical)
+wxPanel* wxMainFrame::create_adv_panel(wxNotebook* notebook)
 {
-    wxPanel* const     panel = new wxPanel(notebook);
-    wxWrapSizer* const panelSizer = new wxWrapSizer();
-    const wxSizerFlags sflags = wxSizerFlags().Expand().Border(wxLEFT);
+    wxScrolledWindow* const panel = new wxScrolledWindow(notebook);
+    const int panelGap = FromDIP(2);
+    wxGridBagSizer* const panelSizer = new wxGridBagSizer(panelGap, panelGap);
 
     {
         wxStaticBoxSizer* const sizer = create_static_box_sizer(panel, _("Tags processing"), wxVERTICAL);
@@ -1294,7 +1292,7 @@ wxPanel* wxMainFrame::create_adv_panel(wxNotebook* notebook, const wxSizerFlags&
         m_checkBoxRenderITunesTags = create_3state_checkbox(sizer, _wxS("Render iTunes\u00AE tags"));
         sizer->Add(m_checkBoxRenderITunesTags);
 
-        panelSizer->Add(sizer, sflags);
+        panelSizer->Add(sizer, wxGBPosition(0,0), wxDefaultSpan, wxEXPAND);
     }
 
     {
@@ -1316,7 +1314,7 @@ wxPanel* wxMainFrame::create_adv_panel(wxNotebook* notebook, const wxSizerFlags&
         m_checkBoxApplyTags->SetToolTip(_("File mask: *.tags.json"));
         sizer->Add(m_checkBoxApplyTags);
 
-        panelSizer->Add(sizer, sflags);
+        panelSizer->Add(sizer, wxGBPosition(0,1), wxDefaultSpan, wxEXPAND);
     }
 
     {
@@ -1331,14 +1329,15 @@ wxPanel* wxMainFrame::create_adv_panel(wxNotebook* notebook, const wxSizerFlags&
         m_checkBoxUseMLang = create_3state_checkbox(sizer, _("Use MLang library"));
         sizer->Add(m_checkBoxUseMLang);
 
-        panelSizer->Add(sizer, sflags);
+        panelSizer->Add(sizer, wxGBPosition(1,0), wxDefaultSpan, wxEXPAND);
     }
 
-    panel->SetSizerAndFit(panelSizer);
+    panel->SetSizer(panelSizer);
+    panel->FitInside();
     return panel;
 }
 
-wxPanel* wxMainFrame::create_messages_panel(wxNotebook* notebook, const wxFont& toolFont, const wxSizerFlags& btnLeft, const wxSizerFlags& btnMiddle, const wxSizerFlags& btnRight, const wxSizerFlags& centerVertical)
+wxPanel* wxMainFrame::create_messages_panel(wxNotebook* notebook)
 {
     wxPanel* const    panel = new wxPanel(notebook);
     wxBoxSizer* const panelSizer = new wxBoxSizer(wxVERTICAL);
@@ -1346,13 +1345,13 @@ wxPanel* wxMainFrame::create_messages_panel(wxNotebook* notebook, const wxFont& 
     wxCollapsiblePane* const collapsiblePane = new wxCollapsiblePane(panel, wxID_ANY, _("Tools"), wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxCP_NO_TLW_RESIZE);
     if (collapsiblePane->GetControlWidget() != nullptr)
     {
-        collapsiblePane->GetControlWidget()->SetFont(toolFont);
+        collapsiblePane->GetControlWidget()->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
     }
     collapsiblePane->Bind(wxEVT_COLLAPSIBLEPANE_CHANGED, CollapsiblePaneUiUpdater(panel));
 
     {
         wxWindow* const insPane = collapsiblePane->GetPane();
-        insPane->SetFont(toolFont);
+        insPane->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
         {
             wxBoxSizer* const innerSizer = new wxBoxSizer(wxHORIZONTAL);
 
@@ -1367,7 +1366,7 @@ wxPanel* wxMainFrame::create_messages_panel(wxNotebook* notebook, const wxFont& 
 
             m_choiceTool->Bind(wxEVT_UPDATE_UI, &wxMainFrame::OnUpdateRunUiCtrl, this);
             m_choiceTool->Bind(wxEVT_CHOICE, &wxMainFrame::OnToolChoice, this);
-            innerSizer->Add(m_choiceTool, btnLeft);
+            innerSizer->Add(m_choiceTool, wxSizerFlags().CenterVertical());
 
             {
                 wxArrayString choices;
@@ -1377,13 +1376,13 @@ wxPanel* wxMainFrame::create_messages_panel(wxNotebook* notebook, const wxFont& 
             }
 
             m_choiceToolParam->Bind(wxEVT_UPDATE_UI, &wxMainFrame::OnUpdateRunUiCtrl, this);
-            innerSizer->Add(m_choiceToolParam, btnLeft);
+            innerSizer->Add(m_choiceToolParam, wxSizerFlags().CenterVertical());
 
             {
                 wxButton* const button = create_button(insPane, _("Run"));
                 button->Bind(wxEVT_UPDATE_UI, &wxMainFrame::OnUpdateRunUiCtrl, this);
                 button->Bind(wxEVT_BUTTON, &wxMainFrame::OnToolExec, this);
-                innerSizer->Add(button, btnLeft);
+                innerSizer->Add(button, wxSizerFlags().CenterVertical());
             }
 
             innerSizer->Add(0, 0, 1, wxEXPAND);
@@ -1392,7 +1391,7 @@ wxPanel* wxMainFrame::create_messages_panel(wxNotebook* notebook, const wxFont& 
                 wxCheckBox* const checkBox = create_checkbox(insPane, _("Auto scroll"), m_autoScroll);
                 checkBox->Bind(wxEVT_UPDATE_UI, &wxMainFrame::OnUpdateRunUiCtrl, this);
                 checkBox->Bind(wxEVT_CHECKBOX, &wxMainFrame::OnCheckAutoScroll, this);
-                innerSizer->Add(checkBox, btnRight);
+                innerSizer->Add(checkBox, wxSizerFlags().CenterVertical().Border(wxRIGHT));
             }
 
             {
@@ -1400,20 +1399,18 @@ wxPanel* wxMainFrame::create_messages_panel(wxNotebook* notebook, const wxFont& 
                 checkBox->SetToolTip(_("Show/hide message timestamps"));
                 checkBox->Bind(wxEVT_CHECKBOX, &wxMainFrame::OnCheckShowTimestamps, this);
                 checkBox->Bind(wxEVT_UPDATE_UI, &wxMainFrame::OnUpdateRunUiCtrl, this);
-                innerSizer->Add(checkBox, btnRight);
+                innerSizer->Add(checkBox, wxSizerFlags().CenterVertical().Border(wxLEFT));
                 m_checkBoxShowTimestamps = checkBox;
             }
 
             insPane->SetSizer(innerSizer);
         }
-        panelSizer->Add(collapsiblePane, 0, wxEXPAND | wxLEFT | wxRIGHT, wxSizerFlags::GetDefaultBorder());
+        panelSizer->Add(collapsiblePane, 0, wxEXPAND | wxLEFT | wxRIGHT, FromDIP(wxSizerFlags::GetDefaultBorder()));
     }
 
     {
-        const wxSize listMinSize = calc_text_size(80, 20);
         m_listBoxMessages = new ListBox(panel);
-        m_listBoxMessages->SetSizeHints(listMinSize);
-        panelSizer->Add(m_listBoxMessages, 1, wxEXPAND | wxALL, wxSizerFlags::GetDefaultBorder());
+        panelSizer->Add(m_listBoxMessages, 1, wxEXPAND | wxALL, FromDIP(wxSizerFlags::GetDefaultBorder()));
     }
 
     {
@@ -1421,43 +1418,43 @@ wxPanel* wxMainFrame::create_messages_panel(wxNotebook* notebook, const wxFont& 
 
         {
             wxStaticText* const staticTxt = create_static_text(panel, wxEmptyString);
-            staticTxt->SetFont(toolFont);
+            staticTxt->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
             staticTxt->Bind(wxEVT_UPDATE_UI, &wxMainFrame::OnUpdateMsgCnt, this);
-            sizer->Add(staticTxt, centerVertical);
+            sizer->Add(staticTxt, wxSizerFlags().CenterVertical());
         }
 
         sizer->Add(0, 0, 1, wxEXPAND);
 
         {
             wxButton* const button = create_button(panel, _("Copy"));
-            button->SetFont(toolFont);
+            button->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
             button->SetToolTip(_("Copy all messages to clipboard"));
             button->Bind(wxEVT_BUTTON, &wxMainFrame::OnCopyEvents, this);
             button->Bind(wxEVT_UPDATE_UI, &wxMainFrame::OnUpdateMsgCtrls, this);
-            sizer->Add(button, centerVertical);
+            sizer->Add(button, wxSizerFlags().CenterVertical());
         }
 
-        panelSizer->Add(sizer, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, wxSizerFlags::GetDefaultBorder());
+        panelSizer->Add(sizer, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, FromDIP(wxSizerFlags::GetDefaultBorder()));
     }
 
     panel->SetSizerAndFit(panelSizer);
     return panel;
 }
 
-wxNotebook* wxMainFrame::create_notebook(const wxFont& toolFont, const wxSizerFlags& btnLeft, const wxSizerFlags& btnMiddle, const wxSizerFlags& btnMiddleExp, const wxSizerFlags& btnRight, const wxSizerFlags& centerVertical)
+wxNotebook* wxMainFrame::create_notebook()
 {
     wxNotebook* const notebook = new wxNotebook(this, wxID_ANY);
 
-    notebook->AddPage(create_src_dst_pannel(notebook, toolFont, btnLeft, btnMiddle, btnMiddleExp, btnRight), _("Source and destination"), true);
-    notebook->AddPage(create_general_panel(notebook, btnLeft, centerVertical), _("General options"));
-    notebook->AddPage(create_chapter_panel(notebook, btnLeft, btnMiddle, centerVertical), _("Chapters and formatting"));
-    notebook->AddPage(create_adv_panel(notebook, btnLeft, centerVertical), _("Advanced options"));
-    notebook->AddPage(create_messages_panel(notebook, toolFont, btnLeft, btnMiddle, btnRight, centerVertical), _("Messages"));
+    notebook->AddPage(create_src_dst_pannel(notebook), _("Source and destination"), true);
+    notebook->AddPage(create_general_panel(notebook), _("General options"));
+    notebook->AddPage(create_chapter_panel(notebook), _("Chapters and formatting"));
+    notebook->AddPage(create_adv_panel(notebook), _("Advanced options"));
+    notebook->AddPage(create_messages_panel(notebook), _("Messages"));
 
     return notebook;
 }
 
-wxBoxSizer* wxMainFrame::create_bottom_ctrls(const wxFont& toolFont, const wxSizerFlags& btnLeft, const wxSizerFlags& btnMiddle, const wxSizerFlags& btnRight, const wxSizerFlags& centerVertical)
+wxBoxSizer* wxMainFrame::create_bottom_ctrls()
 {
     wxBoxSizer* const sizer = new wxBoxSizer(wxHORIZONTAL);
 
@@ -1465,28 +1462,28 @@ wxBoxSizer* wxMainFrame::create_bottom_ctrls(const wxFont& toolFont, const wxSiz
         wxBoxSizer* const innerSizer = new wxBoxSizer(wxVERTICAL);
 
         m_checkBoxVerbose = create_checkbox(this, _("Verbose mode"), wxLog::GetVerbose());
-        m_checkBoxVerbose->SetFont(toolFont);
+        m_checkBoxVerbose->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
         m_checkBoxVerbose->SetToolTip(_("Run cue2mkc in verbose mode"));
         m_checkBoxVerbose->Bind(wxEVT_CHECKBOX, &wxMainFrame::OnCheckVerbose, this);
         innerSizer->Add(m_checkBoxVerbose);
 
         m_checkBoxSwitchToMessagesPane = create_checkbox(this, _("Switch to Messages tab"), true);
-        m_checkBoxSwitchToMessagesPane->SetFont(toolFont);
+        m_checkBoxSwitchToMessagesPane->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
         m_checkBoxSwitchToMessagesPane->SetToolTip(_("Switch to Messages tab before execution"));
         innerSizer->Add(m_checkBoxSwitchToMessagesPane);
 
-        sizer->Add(innerSizer, centerVertical);
+        sizer->Add(innerSizer, wxSizerFlags().CenterVertical());
     }
 
     sizer->Add(0, 0, 1, wxEXPAND);
 
     {
         wxButton* const button = new wxButton(this, wxID_ANY, m_execButtonCaptionRun);
-        button->SetFont(wxFont(wxNORMAL_FONT->GetPointSize() + 1, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
+        button->SetWindowVariant(wxWINDOW_VARIANT_LARGE);
         button->SetToolTip(_("Execute (or kill) cue2mkc utility"));
         button->Bind(wxEVT_UPDATE_UI, &wxMainFrame::OnUpdateButtonRun, this);
         button->Bind(wxEVT_BUTTON, &wxMainFrame::OnExecCue2Mkc, this);
-        sizer->Add(button, centerVertical);
+        sizer->Add(button, wxSizerFlags().CenterVertical());
     }
 
     return sizer;
@@ -1504,17 +1501,9 @@ wxMainFrame::wxMainFrame(wxWindow* parent, wxWindowID id, const wxString& title,
     SetIcon(wxIcon("ico_main"));
 
     {
-        const wxFont toolFont(wxSMALL_FONT->GetPointSize(), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
-
-        const wxSizerFlags btnLeft(get_left_ctrl_sizer_flags(this));
-        const wxSizerFlags btnMiddle(get_middle_crtl_sizer_flags(this));
-        const wxSizerFlags btnMiddleExp(get_middle_exp_crtl_sizer_flags(this));
-        const wxSizerFlags btnRight(get_right_crtl_sizer_flags(this));
-        const wxSizerFlags centerVertical(get_vertical_allign_sizer_flags());
-
         wxBoxSizer* const sizer = new wxBoxSizer(wxVERTICAL);
-        sizer->Add(m_notebook = create_notebook(toolFont, btnLeft, btnMiddle, btnMiddleExp, btnRight, centerVertical), 1, wxEXPAND);
-        sizer->Add(create_bottom_ctrls(toolFont, btnLeft, btnMiddle, btnRight, centerVertical), 0, wxEXPAND | wxALL, FromDIP(DEF_MARGIN*2));
+        sizer->Add(m_notebook = create_notebook(), 1, wxEXPAND);
+        sizer->Add(create_bottom_ctrls(), 0, wxEXPAND | wxALL, FromDIP(4));
         this->SetSizerAndFit(sizer);
     }
 

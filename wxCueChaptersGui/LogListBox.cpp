@@ -9,7 +9,7 @@
 ListBox::ListBox(wxWindow* const parent)
     :wxListBox(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_SINGLE | wxLB_HSCROLL | wxLB_NEEDED_SB | wxBORDER_THEME)
 {
-    const wxFont font(wxSMALL_FONT->GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+    const wxFont font(wxNORMAL_FONT->GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL_FONT->GetStyle(), wxNORMAL_FONT->GetWeight());
     SetFont(font);
     SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 }
