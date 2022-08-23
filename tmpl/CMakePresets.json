@@ -3,7 +3,7 @@
   "cmakeMinimumRequired": {"major": 3, "minor": 23, "patch": 0},
   "configurePresets": [
     {
-		"name": "cue2mkc",
+		"name": "base",
 		"hidden": true,
 		"condition": {"type": "equals","lhs": "${hostSystemName}","rhs": "Windows"},
 		"environment": {
@@ -23,13 +23,25 @@
 			"FETCHCONTENT_UPDATES_DISCONNECTED": {
 				"type": "BOOL",
 				"value": true
-			}
+			},
+			"CPACK_THREADS": {
+				"type": "STRING",
+				"value": "@PARALLEL_LEVEL@"
+			},
+			"CPACK_ARCHIVE_THREADS": {
+				"type": "STRING",
+				"value": "@PARALLEL_LEVEL@"
+			},
+			"CPACK_PACKAGE_DIRECTORY": {
+				"type": "PATH",
+				"value": "$env{CUE2MKC_WORKDIR}/archive"
+			}		
 		}
 	},
 	{
 		"name": "mingw",
 		"hidden": true,
-		"inherits": "cue2mkc",
+		"inherits": "base",
 		"environment": {
 			"MINGW_DIR": "@MINGW_DIR@",
 			"CMAKE_COLOR_DIAGNOSTICS": "OFF",
@@ -76,7 +88,7 @@
 		"name": "msvc",
 		"displayName": "@MSVC_GENERATOR@ - @MSVC_TOOLSET@",
 		"hidden": false,
-		"inherits": "cue2mkc",
+		"inherits": "base",
 		"environment": {
 			"WXWIDGETS_LIB_DIR_NAME": "@WX_MSVC_DLL_SUFFIX@"
 		},
@@ -88,6 +100,14 @@
 			"WXWIDGETS_CFG_FILE": {
 				"type": "FILEPATH",
 				"value": "$env{WXWIDGETS_DIR}/msvc-config.cmake"
+			},
+			"CMAKE_C_FLAGS_INIT": {
+				"type": "STRING",
+				"value": "/arch:AVX"
+			},
+			"CMAKE_CXX_FLAGS_INIT": {
+				"type": "STRING",
+				"value": "/arch:AVX"
 			}
 		},
 		"generator": "@MSVC_GENERATOR@",
@@ -98,7 +118,7 @@
   ],
   "buildPresets": [
     {
-		"name": "cue2mkc",
+		"name": "base",
 		"hidden": true,
 		"condition": {"type": "equals","lhs": "${hostSystemName}","rhs": "Windows"},
 		"targets": ["wxCueChapters", "wxCueChaptersGui"],
@@ -107,13 +127,15 @@
 	{
 		"name": "mingw64",
 		"hidden": true,
-		"inherits": "cue2mkc",
+		"inherits": "base",
+		"targets": ["package"],
 		"configurePreset": "mingw64"
 	},
 	{
 		"name": "msvc",
 		"hidden": true,
-		"inherits": "cue2mkc",
+		"inherits": "base",
+		"targets": ["PACKAGE"],
 		"configurePreset": "msvc"
 	},
 	{
