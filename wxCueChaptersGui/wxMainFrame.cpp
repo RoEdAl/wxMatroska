@@ -792,6 +792,7 @@ wxPanel* wxMainFrame::create_src_dst_pannel(wxNotebook* notebook)
     {
         wxStaticBoxSizer* const sizer = create_static_box_sizer(panel, _("Destination"), wxHORIZONTAL);
         sizer->GetStaticBox()->Bind(wxEVT_UPDATE_UI, &wxMainFrame::OnUpdateDst, this);
+        const int gap = panel->FromDIP(2);
 
         {
             wxArrayString choices;
@@ -806,14 +807,13 @@ wxPanel* wxMainFrame::create_src_dst_pannel(wxNotebook* notebook)
         m_textCtrlDst = create_text_ctrl(sizer, wxEmptyString, 1024);
         m_textCtrlDst->SetValue(wxStandardPaths::Get().GetUserDir(wxStandardPaths::Dir_Music));
         m_textCtrlDst->Bind(wxEVT_UPDATE_UI, &wxMainFrame::OnUpdateCtrlDst, this);
-        sizer->Add(m_textCtrlDst, wxSizerFlags().CenterVertical().Border(wxLEFT | wxRIGHT).Proportion(1));
+        sizer->Add(m_textCtrlDst, wxSizerFlags().CenterVertical().Border(wxLEFT | wxRIGHT, gap).Proportion(1));
 
         {
-            wxButton* const button = create_button(sizer, wxS("\u22EF"));
-            button->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
+            wxButton* const button = create_button(sizer, wxS("\u2009\u22EF\u2009"));
             button->Bind(wxEVT_UPDATE_UI, &wxMainFrame::OnUpdateCtrlDst, this);
             button->Bind(wxEVT_BUTTON, &wxMainFrame::OnChooseDst, this);
-            sizer->Add(button, wxSizerFlags().CenterVertical().Border(wxLEFT));
+            sizer->Add(button, wxSizerFlags().CenterVertical());
         }
 
         panelSizer->Add(sizer, wxSizerFlags().Expand());
@@ -1118,8 +1118,10 @@ wxPanel* wxMainFrame::create_chapter_panel(wxNotebook* notebook)
             innerSizer->Add(m_checkBoxOffset, wxSizerFlags().CenterVertical().Border(wxRIGHT, gap));
 
             m_textCtrlChapterOffset = create_text_ctrl(sizer, "150", 4);
+            const wxSize textCtrlSize = calc_text_size(panel, 8);
+            m_textCtrlChapterOffset->SetSizeHints(textCtrlSize);
             m_textCtrlChapterOffset->Bind(wxEVT_UPDATE_UI, CheckBoxUiUpdater(m_checkBoxOffset));
-            innerSizer->Add(m_textCtrlChapterOffset, wxSizerFlags().CenterVertical().Border(wxLEFT | wxRIGHT, gap));
+            innerSizer->Add(m_textCtrlChapterOffset, wxSizerFlags().CenterVertical().Border(wxRIGHT, 2 * gap));
 
             wxStaticText* const staticText = create_static_text(sizer, _("frames"));
             staticText->Bind(wxEVT_UPDATE_UI, CheckBoxUiUpdater(m_checkBoxOffset));
@@ -1143,7 +1145,7 @@ wxPanel* wxMainFrame::create_chapter_panel(wxNotebook* notebook)
                 m_choiceIdx = create_choice(sizer->GetStaticBox(), choices, 1);
             }
             m_choiceIdx->Bind(wxEVT_UPDATE_UI, CheckBoxUiUpdater(m_checkBoxTrack01Idx));
-            innerSizer->Add(m_choiceIdx, wxSizerFlags().CenterVertical().Border(wxLEFT | wxRIGHT, gap));
+            innerSizer->Add(m_choiceIdx, wxSizerFlags().CenterVertical().Border(wxRIGHT, 2 * gap));
 
             wxStaticText* const staticText = create_static_text(sizer, _("as beginning of track"));
             staticText->Bind(wxEVT_UPDATE_UI, CheckBoxUiUpdater(m_checkBoxTrack01Idx));
@@ -1339,10 +1341,11 @@ wxPanel* wxMainFrame::create_adv_panel(wxNotebook* notebook)
 
 wxPanel* wxMainFrame::create_messages_panel(wxNotebook* notebook)
 {
-    wxPanel* const    panel = new wxPanel(notebook);
+    wxScrolledWindow* const panel = new wxScrolledWindow(notebook);
     wxBoxSizer* const panelSizer = new wxBoxSizer(wxVERTICAL);
 
     wxCollapsiblePane* const collapsiblePane = new wxCollapsiblePane(panel, wxID_ANY, _("Tools"), wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxCP_NO_TLW_RESIZE);
+    collapsiblePane->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
     if (collapsiblePane->GetControlWidget() != nullptr)
     {
         collapsiblePane->GetControlWidget()->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
@@ -1354,6 +1357,7 @@ wxPanel* wxMainFrame::create_messages_panel(wxNotebook* notebook)
         insPane->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
         {
             wxBoxSizer* const innerSizer = new wxBoxSizer(wxHORIZONTAL);
+            const int gap = insPane->FromDIP(1);
 
             {
                 wxArrayString choices;
@@ -1366,7 +1370,7 @@ wxPanel* wxMainFrame::create_messages_panel(wxNotebook* notebook)
 
             m_choiceTool->Bind(wxEVT_UPDATE_UI, &wxMainFrame::OnUpdateRunUiCtrl, this);
             m_choiceTool->Bind(wxEVT_CHOICE, &wxMainFrame::OnToolChoice, this);
-            innerSizer->Add(m_choiceTool, wxSizerFlags().CenterVertical());
+            innerSizer->Add(m_choiceTool, wxSizerFlags().CenterVertical().Border(wxRIGHT, gap));
 
             {
                 wxArrayString choices;
@@ -1376,7 +1380,7 @@ wxPanel* wxMainFrame::create_messages_panel(wxNotebook* notebook)
             }
 
             m_choiceToolParam->Bind(wxEVT_UPDATE_UI, &wxMainFrame::OnUpdateRunUiCtrl, this);
-            innerSizer->Add(m_choiceToolParam, wxSizerFlags().CenterVertical());
+            innerSizer->Add(m_choiceToolParam, wxSizerFlags().CenterVertical().Border(wxRIGHT, gap));
 
             {
                 wxButton* const button = create_button(insPane, _("Run"));
@@ -1437,7 +1441,8 @@ wxPanel* wxMainFrame::create_messages_panel(wxNotebook* notebook)
         panelSizer->Add(sizer, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, FromDIP(wxSizerFlags::GetDefaultBorder()));
     }
 
-    panel->SetSizerAndFit(panelSizer);
+    panel->SetSizer(panelSizer);
+    panel->FitInside();
     return panel;
 }
 
