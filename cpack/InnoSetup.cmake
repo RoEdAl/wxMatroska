@@ -68,6 +68,16 @@ EXECUTE_PROCESS(
 		/dCue2MkcExeArch=x64
 		/dCue2MkcTouchDate=${TOUCH_DATE}
 		/dCue2MkcTouchTime=${TOUCH_TIME}
+		/dCMakeVersion=3.24.1
+		/dCMakeChecksum=c1b17431a16337d517f7ba78c7067b6f143a12686cb8087f3dd32f3fa45f5aae
+		/dMKVToolNixVersion=70.0.0
+		/dMKVToolNixChecksum=11d93865550d0af2c4069226185f3aab747976e23ef72f2f76fed5f4cc5976e4
+		/dFfMpegVersion=5.1
+		/dFfMpegChecksum=2e9910937a8626061b78261a00fa807c9a8c1aad0b878b3e9a8a411176f818ae
+		/dImgMagickVersion=7.1.0
+		/dImgMagickChecksum=2feca79db7a5ee54d396f0afb132b68b2172d15efee6a6e322abf4abfffd5515
+		/dMuPdfVersion=1.20.0
+		/dMuPdfChecksum=a847eb233fcbbbb8b8fe1425bc57c3701542036b71dc32188d622fba94b0d4e0		
 		${ISETUP_ARGS}
 		${ISETUP_SCRIPT}
 	ENCODING UTF-8
