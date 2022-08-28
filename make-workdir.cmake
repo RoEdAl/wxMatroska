@@ -36,22 +36,22 @@ CMAKE_PATH(APPEND CUE2MKC_WORKDIR download OUTPUT_VARIABLE CUE2MKC_DLDIR)
 SET(URL_WXWIDGETS "https://github.com/wxWidgets/wxWidgets/releases/download/v${WXWIDGETS_VERSION}")
 DownloadPkgSha1(${URL_WXWIDGETS} wxWidgets-${WXWIDGETS_VERSION}-docs-html.tar.bz2 9c9caa3b3ce30b7f8b1e30b7a6cc70353b21761d "wxWidgets docs")
 
-SET(URL_WXWIDGETS "https://github.com/RoEdAl/wxwidgets-builds/releases/download/v${WXWIDGETS_VERSION}-b1")
+SET(URL_WXWIDGETS "https://github.com/RoEdAl/wxwidgets-builds/releases/download/v${WXWIDGETS_VERSION}-build2")
 IF(INSTALL_MSVC)
-	DownloadPkgSha1(${URL_WXWIDGETS} wxWidgets-vc-dbg-${WXWIDGETS_VERSION}-win64.7z 98896dff00b5aadd6eb0eeb8013e2e8221643cd0 "wxWidgets dev libraries [MSVC x64]")
-	DownloadPkgSha1(${URL_WXWIDGETS} wxWidgets-vc-${WXWIDGETS_VERSION}-win64.7z 41a53e834661077ad7585b94cf7ed58ea47628a6 "wxWidgets libraries [MSVC x64]")
+	DownloadPkgSha1(${URL_WXWIDGETS} wxWidgets-vc-dbg-${WXWIDGETS_VERSION}-win64.7z fefd3126a164a9f8a965c3328e8e9a651fc10b46 "wxWidgets dev libraries [MSVC x64]")
+	DownloadPkgSha1(${URL_WXWIDGETS} wxWidgets-vc-${WXWIDGETS_VERSION}-win64.7z 4536fac13ca3720e370ad5a14e293c726964f512 "wxWidgets libraries [MSVC x64]")
 ENDIF()
 
 IF(INSTALL_MINGW64)
-	DownloadPkgSha1(${URL_WXWIDGETS} wxWidgets-gcc-dbg-${WXWIDGETS_VERSION}-win64.7z 5ff2b7c96a700aa6c7d4a7e4742626280a6a6b99 "wxWidgets dev libraries [MinGW64]")
-	DownloadPkgSha1(${URL_WXWIDGETS} wxWidgets-gcc-${WXWIDGETS_VERSION}-win64.7z 737806c5659dbe845dfcf9fd3a332f6579d56288 "wxWidgets libraries [MinGW64]")
+	DownloadPkgSha1(${URL_WXWIDGETS} wxWidgets-gcc-dbg-${WXWIDGETS_VERSION}-win64.7z 0feb4d3651955cb28bf75b056a5e7aa96c8727fe "wxWidgets dev libraries [MinGW64]")
+	DownloadPkgSha1(${URL_WXWIDGETS} wxWidgets-gcc-${WXWIDGETS_VERSION}-win64.7z 6e9553fa91076f255da01b925b512b31561cf883 "wxWidgets libraries [MinGW64]")
 	
-	SET(URL_MINGW64 "https://github.com/RoEdAl/ucrt-mingw-builds/releases/download/v12.1.0-v10-ucrt1")
-	DownloadPkgSha1(${URL_MINGW64} x86_64-12.1.0-release-win32-seh-rt_v10-rev0.7z c0828ab2283ad4809bf474c594e0721e61c4c77c "MinGW64 runtime")
-	
-	SET(URL_GCC "http://gcc.gnu.org/onlinedocs/gcc-12.1.0")
-	DownloadPkgSha1(${URL_GCC} gcc.pdf 366da27b705374d4f07b508bdc642b6c5d5b4ca7 "GCC documentation - PDF")
-	DownloadPkgSha1(${URL_GCC} gcc-html.tar.gz 8fc02ede5b52e8abe4b67a6884e19a62899d809e "GCC documentation - HTML")
+	SET(URL_MINGW64 "https://github.com/RoEdAl/ucrt-mingw-builds/releases/download/v12.2.0-rt10-ucrt1")
+	DownloadPkgSha1(${URL_MINGW64} x86_64-12.2.0-release-win32-seh-rt_v10-rev0.7z 7ac51a2536139bf8aa3a14a1a90f125492907589 "MinGW64 runtime")
+		
+	SET(URL_GCC "http://gcc.gnu.org/onlinedocs/gcc-12.2.0")
+	DownloadPkgSha1(${URL_GCC} gcc.pdf becbd022de78a4f818d53d3229a19f9edb03f88e "GCC documentation - PDF")
+	DownloadPkgSha1(${URL_GCC} gcc-html.tar.gz e3ef867a3803961b01fbd57e7c5d19bc36757573 "GCC documentation - HTML")
 ENDIF()
 
 SET(URL_NINJA "http://github.com/ninja-build/ninja/releases/download/v1.11.0")
@@ -63,18 +63,15 @@ DownloadPkgSha1(${URL_PANDOC} pandoc-${PANDOC_VERSION}-windows-x86_64.zip 7a581c
 
 # extracting
 
-CMAKE_PATH(APPEND CUE2MKC_WORKDIR wx-widgets OUTPUT_VARIABLE WXWIDGETS_DIR)
-
 FUNCTION(ExtractWxArchive ar_name)
 	SET(ARCHIVE_NAME wxWidgets-${ar_name}-${WXWIDGETS_VERSION}-win64)
 	FILE(ARCHIVE_EXTRACT INPUT ${CUE2MKC_DLDIR}/${ARCHIVE_NAME}.7z DESTINATION ${WXWIDGETS_DIR})
-	FILE(COPY ${WXWIDGETS_DIR}/${ARCHIVE_NAME}/bin DESTINATION ${WXWIDGETS_DIR})
 	FILE(COPY ${WXWIDGETS_DIR}/${ARCHIVE_NAME}/include DESTINATION ${WXWIDGETS_DIR})
 	FILE(COPY ${WXWIDGETS_DIR}/${ARCHIVE_NAME}/lib DESTINATION ${WXWIDGETS_DIR})
 	FILE(REMOVE_RECURSE ${WXWIDGETS_DIR}/${ARCHIVE_NAME})
 ENDFUNCTION()
 
-CMAKE_PATH(APPEND WXWIDGETS_DIR include msvc wx setup.h OUTPUT_VARIABLE WX_TEST_FILE)
+CMAKE_PATH(APPEND CUE2MKC_WORKDIR wx-widgets OUTPUT_VARIABLE WXWIDGETS_DIR)
 
 CMAKE_PATH(APPEND WXWIDGETS_DIR docs index.html OUTPUT_VARIABLE WX_TEST_FILE)
 IF(NOT EXISTS ${WX_TEST_FILE})
@@ -102,7 +99,7 @@ IF(INSTALL_MINGW64)
 	CMAKE_PATH(APPEND CUE2MKC_WORKDIR mingw64 OUTPUT_VARIABLE MINGW_DIR)
 	IF(NOT EXISTS ${MINGW_DIR})
 		MESSAGE(STATUS "[EXTR] MinGW64 runtime")
-		FILE(ARCHIVE_EXTRACT INPUT ${CUE2MKC_DLDIR}/x86_64-12.1.0-release-win32-seh-rt_v10-rev0.7z DESTINATION ${CUE2MKC_WORKDIR})
+		FILE(ARCHIVE_EXTRACT INPUT ${CUE2MKC_DLDIR}/x86_64-12.2.0-release-win32-seh-rt_v10-rev0.7z DESTINATION ${CUE2MKC_WORKDIR})
 	ENDIF()
 	
 	CMAKE_PATH(APPEND MINGW_DIR doc OUTPUT_VARIABLE MINGW_DOC_DIR)
