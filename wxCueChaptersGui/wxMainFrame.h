@@ -162,9 +162,6 @@ class wxMainFrame:
     bool m_autoScroll;
     wxString m_logTimestamp;
 
-    wxString m_execButtonCaptionRun;
-    wxString m_execButtonCaptionKill;
-
     private:
 
     wxPanel* create_src_dst_pannel(wxNotebook*);

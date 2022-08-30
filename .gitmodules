@@ -4,3 +4,6 @@
 [submodule "wxCmdTools"]
 	path = wxCmdTools
 	url = https://github.com/RoEdAl/wxCmdTools.git
+[submodule "material-design-icons"]
+	path = material-design-icons
+	url = https://github.com/RoEdAl/material-design-icons.git

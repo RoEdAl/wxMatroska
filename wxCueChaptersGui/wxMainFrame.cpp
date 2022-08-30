@@ -141,6 +141,82 @@ namespace
         return create_text_ctrl(parentSizer->GetStaticBox(), label, maxLength);
     }
 
+    wxBitmapButton* create_bitmap_button(wxWindow* const parent, const wxBitmapBundle& bitmapBundle, const wxWindowVariant windowVariant = wxWINDOW_VARIANT_SMALL)
+    {
+        wxBitmapButton* const res = new wxBitmapButton(parent, wxID_ANY, bitmapBundle);
+        res->SetWindowVariant(windowVariant);
+        return res;
+    }
+
+    wxBitmapButton* create_bitmap_button(const wxStaticBoxSizer* const parentSizer, const wxBitmapBundle& bitmapBundle, const wxWindowVariant windowVariant = wxWINDOW_VARIANT_SMALL)
+    {
+        return create_bitmap_button(parentSizer->GetStaticBox(), bitmapBundle, windowVariant);
+    }
+
+    wxBitmapButton* create_bitmap_button(wxWindow* const parent, const wxString& resName, const wxWindowVariant windowVariant = wxWINDOW_VARIANT_SMALL)
+    {
+        wxBitmapBundle bitmapBundle;
+        if (wxGetApp().LoadMaterialDesignIcon(resName, windowVariant, bitmapBundle))
+        {
+            return create_bitmap_button(parent, bitmapBundle, windowVariant);
+        }
+        else
+        {
+            return nullptr;
+        }
+    }
+
+    wxBitmapButton* create_bitmap_button(const wxStaticBoxSizer* const parentSizer, const wxString& resName, const wxWindowVariant windowVariant = wxWINDOW_VARIANT_SMALL)
+    {
+        wxBitmapBundle bitmapBundle;
+        if (wxGetApp().LoadMaterialDesignIcon(resName, windowVariant, bitmapBundle))
+        {
+            return create_bitmap_button(parentSizer, bitmapBundle, windowVariant);
+        }
+        else
+        {
+            return nullptr;
+        }
+    }
+
+    wxStaticBitmap* create_static_bitmap(wxWindow* const parent, const wxBitmapBundle& bitmapBundle, const wxWindowVariant windowVariant = wxWINDOW_VARIANT_SMALL)
+    {
+        wxStaticBitmap* const res = new wxStaticBitmap(parent, wxID_ANY, bitmapBundle);
+        res->SetWindowVariant(windowVariant);
+        return res;
+    }
+
+    wxStaticBitmap* create_static_bitmap(const wxStaticBoxSizer* const parentSizer, const wxBitmapBundle& bitmapBundle, const wxWindowVariant windowVariant = wxWINDOW_VARIANT_SMALL)
+    {
+        return create_static_bitmap(parentSizer->GetStaticBox(), bitmapBundle, windowVariant);
+    }
+
+    wxStaticBitmap* create_static_bitmap(wxWindow* const parent, const wxString& resName, const wxWindowVariant windowVariant = wxWINDOW_VARIANT_SMALL)
+    {
+        wxBitmapBundle bitmapBundle;
+        if (wxGetApp().LoadMaterialDesignIcon(resName, windowVariant, bitmapBundle))
+        {
+            return create_static_bitmap(parent, bitmapBundle, windowVariant);
+        }
+        else
+        {
+            return nullptr;
+        }
+    }
+
+    wxStaticBitmap* create_static_bitmap(const wxStaticBoxSizer* const parentSizer, const wxString& resName, const wxWindowVariant windowVariant = wxWINDOW_VARIANT_SMALL)
+    {
+        wxBitmapBundle bitmapBundle;
+        if (wxGetApp().LoadMaterialDesignIcon(resName, windowVariant, bitmapBundle))
+        {
+            return create_static_bitmap(parentSizer, bitmapBundle, windowVariant);
+        }
+        else
+        {
+            return nullptr;
+        }
+    }
+
     wxSizerFlags get_left_ctrl_sizer_flags(wxWindow* wnd)
     {
         return wxSizerFlags().CenterVertical().Border(wxRIGHT).Proportion(0);
@@ -743,31 +819,27 @@ wxPanel* wxMainFrame::create_src_dst_pannel(wxNotebook* notebook)
             innerSizer->Add(0, 0, 1, wxEXPAND);
 
             {
-                wxButton* const button = create_button(sizer, _("Add"));
-                button->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
+                wxBitmapButton* const button = create_bitmap_button(sizer, "content-add");
                 button->Bind(wxEVT_BUTTON, &wxMainFrame::OnButtonAdd, this);
                 innerSizer->Add(button, wxSizerFlags().CenterVertical().Border(wxRIGHT, gap));
             }
 
             {
-                wxButton* const button = create_button(sizer, _("Delete"));
-                button->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
+                wxBitmapButton* const button = create_bitmap_button(sizer, "content-remove");
                 button->Bind(wxEVT_UPDATE_UI, uiUpdater);
                 button->Bind(wxEVT_BUTTON, &wxMainFrame::OnButtonDelete, this);
                 innerSizer->Add(button, wxSizerFlags().CenterVertical().Border(wxLEFT | wxRIGHT, gap));
             }
 
             {
-                wxButton* const button = create_button(sizer, _("Make mask"));
-                button->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
+                wxBitmapButton* const button = create_bitmap_button(sizer, "editor-data_array");
                 button->Bind(wxEVT_UPDATE_UI, uiUpdater);
                 button->Bind(wxEVT_BUTTON, &wxMainFrame::OnButtonMakeMask, this);
                 innerSizer->Add(button, wxSizerFlags().CenterVertical().Border(wxLEFT | wxRIGHT, gap));
             }
 
             {
-                wxButton* const button = create_button(sizer, _("Add media"));
-                button->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
+                wxBitmapButton* const button = create_bitmap_button(sizer, "av-audio_file");
                 button->Bind(wxEVT_UPDATE_UI, uiUpdater);
                 button->Bind(wxEVT_BUTTON, &wxMainFrame::OnButtonAddMediaFile, this);
                 innerSizer->Add(button, wxSizerFlags().CenterVertical().Border(wxLEFT | wxRIGHT, gap));
@@ -776,7 +848,7 @@ wxPanel* wxMainFrame::create_src_dst_pannel(wxNotebook* notebook)
             innerSizer->Add(create_vertical_static_line(sizer), get_vertical_static_line_sizer_flags(panel));
 
             {
-                wxButton* const button = create_button(sizer, _("Identify"));
+                wxBitmapButton* const button = create_bitmap_button(sizer, "action-info");
                 button->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
                 button->Bind(wxEVT_UPDATE_UI, TreeCtrlProcessUiUpdater(m_treeCtrlInputFiles, m_pProcess));
                 button->Bind(wxEVT_BUTTON, &wxMainFrame::OnButtonIdentifyMediaFile, this);
@@ -810,7 +882,7 @@ wxPanel* wxMainFrame::create_src_dst_pannel(wxNotebook* notebook)
         sizer->Add(m_textCtrlDst, wxSizerFlags().CenterVertical().Border(wxLEFT | wxRIGHT, gap).Proportion(1));
 
         {
-            wxButton* const button = create_button(sizer, wxS("\u2009\u22EF\u2009"));
+            wxBitmapButton* const button = create_bitmap_button(sizer, "navigation-more_horiz", wxWINDOW_VARIANT_NORMAL);
             button->Bind(wxEVT_UPDATE_UI, &wxMainFrame::OnUpdateCtrlDst, this);
             button->Bind(wxEVT_BUTTON, &wxMainFrame::OnChooseDst, this);
             sizer->Add(button, wxSizerFlags().CenterVertical());
@@ -1341,7 +1413,7 @@ wxPanel* wxMainFrame::create_adv_panel(wxNotebook* notebook)
 
 wxPanel* wxMainFrame::create_messages_panel(wxNotebook* notebook)
 {
-    wxScrolledWindow* const panel = new wxScrolledWindow(notebook);
+    wxPanel* const panel = new wxPanel(notebook);
     wxBoxSizer* const panelSizer = new wxBoxSizer(wxVERTICAL);
 
     wxCollapsiblePane* const collapsiblePane = new wxCollapsiblePane(panel, wxID_ANY, _("Tools"), wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxCP_NO_TLW_RESIZE);
@@ -1383,7 +1455,7 @@ wxPanel* wxMainFrame::create_messages_panel(wxNotebook* notebook)
             innerSizer->Add(m_choiceToolParam, wxSizerFlags().CenterVertical().Border(wxRIGHT, gap));
 
             {
-                wxButton* const button = create_button(insPane, _("Run"));
+                wxButton* const button = create_bitmap_button(insPane, "action-launch");
                 button->Bind(wxEVT_UPDATE_UI, &wxMainFrame::OnUpdateRunUiCtrl, this);
                 button->Bind(wxEVT_BUTTON, &wxMainFrame::OnToolExec, this);
                 innerSizer->Add(button, wxSizerFlags().CenterVertical());
@@ -1430,15 +1502,14 @@ wxPanel* wxMainFrame::create_messages_panel(wxNotebook* notebook)
         sizer->Add(0, 0, 1, wxEXPAND);
 
         {
-            wxButton* const button = create_button(panel, _("Copy"));
-            button->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
+            wxBitmapButton* const button = create_bitmap_button(panel, "content-content_copy");
             button->SetToolTip(_("Copy all messages to clipboard"));
             button->Bind(wxEVT_BUTTON, &wxMainFrame::OnCopyEvents, this);
             button->Bind(wxEVT_UPDATE_UI, &wxMainFrame::OnUpdateMsgCtrls, this);
             sizer->Add(button, wxSizerFlags().CenterVertical());
         }
 
-        panelSizer->Add(sizer, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, FromDIP(wxSizerFlags::GetDefaultBorder()));
+        panelSizer->Add(sizer, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, panel->FromDIP(wxSizerFlags::GetDefaultBorder()));
     }
 
     panel->SetSizer(panelSizer);
@@ -1483,7 +1554,7 @@ wxBoxSizer* wxMainFrame::create_bottom_ctrls()
     sizer->Add(0, 0, 1, wxEXPAND);
 
     {
-        wxButton* const button = new wxButton(this, wxID_ANY, m_execButtonCaptionRun);
+        wxBitmapButton* const button = create_bitmap_button(this, "action-launch", wxWINDOW_VARIANT_LARGE);
         button->SetWindowVariant(wxWINDOW_VARIANT_LARGE);
         button->SetToolTip(_("Execute (or kill) cue2mkc utility"));
         button->Bind(wxEVT_UPDATE_UI, &wxMainFrame::OnUpdateButtonRun, this);
@@ -1498,9 +1569,7 @@ wxMainFrame::wxMainFrame(wxWindow* parent, wxWindowID id, const wxString& title,
     : wxFrame(parent, id, title, pos, size, style),
     m_pPrevLog(nullptr),
     m_logTimestamp(wxLog::GetTimestamp()),
-    m_autoScroll(true),
-    m_execButtonCaptionRun(_("Run")),
-    m_execButtonCaptionKill(_("Kill"))
+    m_autoScroll(true)
 {
     SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_FRAMEBK));
     SetIcon(wxIcon("ico_main"));
@@ -1828,11 +1897,9 @@ void wxMainFrame::OnUpdateButtonRun(wxUpdateUIEvent& event)
     #else
         event.Enable(true);
     #endif
-        event.SetText(m_execButtonCaptionKill);
         return;
     }
 
-    event.SetText(m_execButtonCaptionRun);
     if (!m_treeCtrlInputFiles->HasChildren(m_treeCtrlInputFilesRoot))
     {
         event.Enable(false);

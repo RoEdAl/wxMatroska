@@ -28,6 +28,11 @@ class wxMyApp:
     const wxFileName& GetFfmpegPath() const;
     const wxFileName& GetFfprobePath() const;
 
+    bool MaterialDesignIconsFound() const;
+    const wxFileName& GetMaterialDesignIconsPath() const;
+    bool LoadMaterialDesignIcon(const wxWindow* const, const wxString&, wxBitmapBundle&) const;
+    bool LoadMaterialDesignIcon(const wxString&, const wxWindowVariant, wxBitmapBundle&) const;
+
     void ShowToolPaths() const;
 
     bool ShowLogTimestamps(bool showTimestamps = true);
@@ -39,6 +44,7 @@ class wxMyApp:
     wxFileName m_mkvPropEditPath;
     wxFileName m_ffmpegPath;
     wxFileName m_ffprobePath;
+    wxFileName m_materialDesignIconsPath;
 
     public:
 
