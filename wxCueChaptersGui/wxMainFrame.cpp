@@ -593,7 +593,7 @@ namespace
             m_checkBox2->Bind(wxEVT_CHECKBOX, *this);
         }
 
-        void operator()(wxCommandEvent& event)
+        void operator()(wxCommandEvent& event) const
         {
             wxASSERT(event.GetEventObject()->IsSameAs(*m_checkBox1) || event.GetEventObject()->IsSameAs(*m_checkBox2));
 
