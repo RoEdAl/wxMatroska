@@ -8,58 +8,57 @@
 
 namespace
 {
-    const int AUTO_SCROLL_UPDATE_INTERVAL = 2000;
-    const int TIMER_IDLE_WAKE_UP_INTERVAL = 250;
+    constexpr int AUTO_SCROLL_UPDATE_INTERVAL = 2000;
+    constexpr int TIMER_IDLE_WAKE_UP_INTERVAL = 250;
 
-    wxStaticBoxSizer* create_static_box_sizer(wxWindow* parent, const wxString& label, wxOrientation orientation)
+    wxStaticBoxSizer* create_static_box_sizer(wxWindow* const parent, const wxString& label, const wxOrientation orientation)
     {
         return new wxStaticBoxSizer(new wxStaticBox(parent, wxID_ANY, label), orientation);
     }
 
-    wxStaticText* create_static_text(wxWindow* parent, const wxString& label)
+    wxStaticText* create_static_text(wxWindow* const parent, const wxString& label)
     {
         wxStaticText* const res = new wxStaticText(parent, wxID_ANY, label);
-
         res->Wrap(-1);
         return res;
     }
 
-    wxStaticLine* create_horizontal_static_line(wxWindow* parent)
-    {
-        return new wxStaticLine(parent, wxID_ANY, wxDefaultPosition, wxSize(0, parent->FromDIP(1)), wxLI_HORIZONTAL);
-    }
-
-    wxSizerFlags get_horizontal_static_line_sizer_flags(wxWindow* wnd)
-    {
-        return wxSizerFlags().Expand().Border(wxTOP | wxBOTTOM, wnd->FromDIP(1));
-    }
-
-    wxStaticLine* create_horizontal_static_line(const wxStaticBoxSizer* parentSizer)
-    {
-        return create_horizontal_static_line(parentSizer->GetStaticBox());
-    }
-
-    wxStaticLine* create_vertical_static_line(wxWindow* parent)
-    {
-        return new wxStaticLine(parent, wxID_ANY, wxDefaultPosition, wxSize(parent->FromDIP(1), 0), wxLI_VERTICAL);
-    }
-
-    wxSizerFlags get_vertical_static_line_sizer_flags(wxWindow* wnd)
-    {
-        return wxSizerFlags().Expand().Border(wxLEFT | wxRIGHT, wnd->FromDIP(2));
-    }
-
-    wxStaticLine* create_vertical_static_line(const wxStaticBoxSizer* parentSizer)
-    {
-        return create_vertical_static_line(parentSizer->GetStaticBox());
-    }
-
-    wxStaticText* create_static_text(const wxStaticBoxSizer* parentSizer, const wxString& label)
+    wxStaticText* create_static_text(const wxStaticBoxSizer* const parentSizer, const wxString& label)
     {
         return create_static_text(parentSizer->GetStaticBox(), label);
     }
 
-    wxComboBox* create_combobox(wxWindow* parent, const wxArrayString& choices, size_t selIdx = -1)
+    wxStaticLine* create_horizontal_static_line(wxWindow* const parent)
+    {
+        return new wxStaticLine(parent, wxID_ANY, wxDefaultPosition, wxSize(0, parent->FromDIP(1)), wxLI_HORIZONTAL);
+    }
+
+    wxSizerFlags get_horizontal_static_line_sizer_flags(const wxWindow* const wnd)
+    {
+        return wxSizerFlags().Expand().Border(wxTOP | wxBOTTOM, wnd->FromDIP(1));
+    }
+
+    wxStaticLine* create_horizontal_static_line(const wxStaticBoxSizer* const parentSizer)
+    {
+        return create_horizontal_static_line(parentSizer->GetStaticBox());
+    }
+
+    wxStaticLine* create_vertical_static_line(wxWindow* const parent)
+    {
+        return new wxStaticLine(parent, wxID_ANY, wxDefaultPosition, wxSize(parent->FromDIP(1), 0), wxLI_VERTICAL);
+    }
+
+    wxSizerFlags get_vertical_static_line_sizer_flags(const wxWindow* const wnd)
+    {
+        return wxSizerFlags().Expand().Border(wxLEFT | wxRIGHT, wnd->FromDIP(2));
+    }
+
+    wxStaticLine* create_vertical_static_line(const wxStaticBoxSizer* const parentSizer)
+    {
+        return create_vertical_static_line(parentSizer->GetStaticBox());
+    }
+
+    wxComboBox* create_combobox(wxWindow* const parent, const wxArrayString& choices, const size_t selIdx = -1)
     {
         wxComboBox* const res = new wxComboBox(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, choices);
         if (selIdx >= 0)
@@ -69,74 +68,77 @@ namespace
         return res;
     }
 
-    wxComboBox* create_combobox(wxStaticBoxSizer* sizer, const wxArrayString& choices, size_t selIdx = -1)
+    wxComboBox* create_combobox(const wxStaticBoxSizer* const sizer, const wxArrayString& choices, const size_t selIdx = -1)
     {
         return create_combobox(sizer->GetStaticBox(), choices, selIdx);
     }
 
-    wxChoice* create_choice(wxWindow* parent, const wxArrayString& choices, size_t selIdx = 0)
+    wxChoice* create_choice(wxWindow* const parent, const wxArrayString& choices, const size_t selIdx = 0)
     {
         wxChoice* const choice = new wxChoice(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, choices);
         choice->SetSelection(selIdx);
         return choice;
     }
 
-    wxChoice* create_choice(wxStaticBoxSizer* sizer, const wxArrayString& choices, size_t selIdx = 0)
+    wxChoice* create_choice(const wxStaticBoxSizer* const sizer, const wxArrayString& choices, const size_t selIdx = 0)
     {
         return create_choice(sizer->GetStaticBox(), choices, selIdx);
     }
 
-    wxCheckBox* create_checkbox(wxWindow* parent, const wxString& label, bool val = false)
+    wxCheckBox* create_checkbox(wxWindow* const parent, const wxString& label, const bool val = false)
     {
         wxCheckBox* const res = new wxCheckBox(parent, wxID_ANY, label);
-
         res->SetValue(val);
         return res;
     }
 
-    wxCheckBox* create_checkbox(const wxStaticBoxSizer* parentSizer, const wxString& label, bool val = false)
+    wxCheckBox* create_checkbox(const wxStaticBoxSizer* const parentSizer, const wxString& label, const bool val = false)
     {
         return create_checkbox(parentSizer->GetStaticBox(), label, val);
     }
 
-    wxCheckBox* create_3state_checkbox(wxWindow* parent, const wxString& label, wxCheckBoxState state = wxCHK_UNDETERMINED)
+    wxCheckBox* create_3state_checkbox(wxWindow* const parent, const wxString& label, const wxCheckBoxState state = wxCHK_UNDETERMINED)
     {
         wxCheckBox* const res = new wxCheckBox(parent, wxID_ANY, label, wxDefaultPosition, wxDefaultSize, wxCHK_3STATE | wxCHK_ALLOW_3RD_STATE_FOR_USER);
-
         res->Set3StateValue(state);
         return res;
     }
 
-    bool is_checked(const wxCheckBox* checkBox)
-    {
-        if (checkBox->Is3State()) return (checkBox->Get3StateValue() == wxCHK_CHECKED);
-        else return checkBox->GetValue();
-    }
-
-    wxCheckBox* create_3state_checkbox(const wxStaticBoxSizer* parentSizer, const wxString& label, wxCheckBoxState state = wxCHK_UNDETERMINED)
+    wxCheckBox* create_3state_checkbox(const wxStaticBoxSizer* const parentSizer, const wxString& label, const wxCheckBoxState state = wxCHK_UNDETERMINED)
     {
         return create_3state_checkbox(parentSizer->GetStaticBox(), label, state);
     }
 
-    wxButton* create_button(const wxStaticBoxSizer* parentSizer, const wxString& label)
+    bool is_checked(const wxCheckBox* const checkBox)
     {
-        return new wxButton(parentSizer->GetStaticBox(), wxID_ANY, label, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+        if (checkBox->Is3State())
+        {
+            return (checkBox->Get3StateValue() == wxCHK_CHECKED);
+        }
+        else
+        {
+            return checkBox->GetValue();
+        }
     }
 
-    wxButton* create_button(wxWindow* parent, const wxString& label)
+    wxButton* create_button(wxWindow* const parent, const wxString& label)
     {
         return new wxButton(parent, wxID_ANY, label, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
     }
 
-    wxTextCtrl* create_text_ctrl(wxWindow* parent, const wxString& label = wxEmptyString, unsigned long maxLength = 0)
+    wxButton* create_button(const wxStaticBoxSizer* const parentSizer, const wxString& label)
+    {
+        return create_button(parentSizer->GetStaticBox(), label);
+    }
+
+    wxTextCtrl* create_text_ctrl(wxWindow* const parent, const wxString& label = wxEmptyString, const unsigned long maxLength = 0)
     {
         wxTextCtrl* const res = new wxTextCtrl(parent, wxID_ANY, label);
-
         if (maxLength > 0) res->SetMaxLength(maxLength);
         return res;
     }
 
-    wxTextCtrl* create_text_ctrl(const wxStaticBoxSizer* parentSizer, const wxString& label = wxEmptyString, unsigned long maxLength = 0)
+    wxTextCtrl* create_text_ctrl(const wxStaticBoxSizer* const parentSizer, const wxString& label = wxEmptyString, const unsigned long maxLength = 0)
     {
         return create_text_ctrl(parentSizer->GetStaticBox(), label, maxLength);
     }
@@ -156,27 +158,13 @@ namespace
     wxBitmapButton* create_bitmap_button(wxWindow* const parent, const wxString& resName, const wxWindowVariant windowVariant = wxWINDOW_VARIANT_SMALL)
     {
         wxBitmapBundle bitmapBundle;
-        if (wxGetApp().LoadMaterialDesignIcon(resName, windowVariant, bitmapBundle))
-        {
-            return create_bitmap_button(parent, bitmapBundle, windowVariant);
-        }
-        else
-        {
-            return nullptr;
-        }
+        wxCHECK_MSG(wxGetApp().LoadMaterialDesignIcon(resName, windowVariant, bitmapBundle), nullptr, wxString::Format("Fail to load bitmap: id=%s", resName));
+        return create_bitmap_button(parent, bitmapBundle, windowVariant);
     }
 
     wxBitmapButton* create_bitmap_button(const wxStaticBoxSizer* const parentSizer, const wxString& resName, const wxWindowVariant windowVariant = wxWINDOW_VARIANT_SMALL)
     {
-        wxBitmapBundle bitmapBundle;
-        if (wxGetApp().LoadMaterialDesignIcon(resName, windowVariant, bitmapBundle))
-        {
-            return create_bitmap_button(parentSizer, bitmapBundle, windowVariant);
-        }
-        else
-        {
-            return nullptr;
-        }
+        return create_bitmap_button(parentSizer->GetStaticBox(), resName, windowVariant);
     }
 
     wxStaticBitmap* create_static_bitmap(wxWindow* const parent, const wxBitmapBundle& bitmapBundle, const wxWindowVariant windowVariant = wxWINDOW_VARIANT_SMALL)
@@ -194,52 +182,13 @@ namespace
     wxStaticBitmap* create_static_bitmap(wxWindow* const parent, const wxString& resName, const wxWindowVariant windowVariant = wxWINDOW_VARIANT_SMALL)
     {
         wxBitmapBundle bitmapBundle;
-        if (wxGetApp().LoadMaterialDesignIcon(resName, windowVariant, bitmapBundle))
-        {
-            return create_static_bitmap(parent, bitmapBundle, windowVariant);
-        }
-        else
-        {
-            return nullptr;
-        }
+        wxCHECK_MSG(wxGetApp().LoadMaterialDesignIcon(resName, windowVariant, bitmapBundle), nullptr, wxString::Format("Fail to load bitmap: id=%s", resName));
+        return create_static_bitmap(parent, bitmapBundle, windowVariant);
     }
 
     wxStaticBitmap* create_static_bitmap(const wxStaticBoxSizer* const parentSizer, const wxString& resName, const wxWindowVariant windowVariant = wxWINDOW_VARIANT_SMALL)
     {
-        wxBitmapBundle bitmapBundle;
-        if (wxGetApp().LoadMaterialDesignIcon(resName, windowVariant, bitmapBundle))
-        {
-            return create_static_bitmap(parentSizer, bitmapBundle, windowVariant);
-        }
-        else
-        {
-            return nullptr;
-        }
-    }
-
-    wxSizerFlags get_left_ctrl_sizer_flags(wxWindow* wnd)
-    {
-        return wxSizerFlags().CenterVertical().Border(wxRIGHT).Proportion(0);
-    }
-
-    wxSizerFlags get_middle_crtl_sizer_flags(wxWindow* wnd)
-    {
-        return wxSizerFlags().CenterVertical().Border(wxLEFT | wxRIGHT).Proportion(0);
-    }
-
-    wxSizerFlags get_middle_exp_crtl_sizer_flags(wxWindow* wnd)
-    {
-        return wxSizerFlags().CenterVertical().Border(wxLEFT | wxRIGHT).Proportion(1);
-    }
-
-    wxSizerFlags get_right_crtl_sizer_flags(wxWindow* wnd)
-    {
-        return wxSizerFlags().CenterVertical().Border(wxLEFT).Proportion(0);
-    }
-
-    wxSizerFlags get_vertical_allign_sizer_flags()
-    {
-        return wxSizerFlags().CenterVertical().Proportion(0);
+        return create_static_bitmap(parentSizer->GetStaticBox(), resName, windowVariant);
     }
 
     class MyProcess:
@@ -300,7 +249,7 @@ namespace
         wxMainFrame* const m_pMainFrame;
     };
 
-    bool negatable_switch_option(wxArrayString& options, const wxCheckBox* checkBox, const wxString& cmdSwitch)
+    bool negatable_switch_option(wxArrayString& options, const wxCheckBox* const checkBox, const wxString& cmdSwitch)
     {
         if (!checkBox->IsEnabled())
         {
@@ -346,7 +295,7 @@ namespace
         }
     }
 
-    bool negatable_long_switch_option(wxArrayString& options, const wxCheckBox* checkBox, const wxString& cmdSwitch)
+    bool negatable_long_switch_option(wxArrayString& options, const wxCheckBox* const checkBox, const wxString& cmdSwitch)
     {
         if (!checkBox->IsEnabled())
         {
@@ -478,7 +427,7 @@ namespace
 
         private:
 
-        const wxCheckBox* m_checkBox;
+        const wxCheckBox* const m_checkBox;
 
         bool is_checked() const
         {
@@ -519,7 +468,7 @@ namespace
 
         private:
 
-        const wxChoice* m_choice;
+        const wxChoice* const m_choice;
     };
 
     class TreeCtrlUiUpdater
@@ -555,7 +504,7 @@ namespace
 
         private:
 
-        const wxTreeCtrl* m_treeCtrl;
+        const wxTreeCtrl* const m_treeCtrl;
     };
 
     class TreeCtrlProcessUiUpdater
@@ -586,7 +535,7 @@ namespace
 
         private:
 
-        const wxTreeCtrl* m_treeCtrl;
+        const wxTreeCtrl* const m_treeCtrl;
         const wxScopedPtr< wxProcess >& m_process;
     };
 
@@ -621,7 +570,7 @@ namespace
 
         private:
 
-        wxWindow* m_wnd;
+        wxWindow* const m_wnd;
     };
 
     class ExclusiveCheckBoxEvtHandler
